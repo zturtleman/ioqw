@@ -582,7 +582,7 @@ void Team_ReturnFlagSound(gentity_t *ent, int team) {
 	gentity_t *te;
 
 	if (ent == NULL) {
-		G_Printf("Warning:  NULL passed to Team_ReturnFlagSound\n");
+		G_Printf("Warning: NULL passed to Team_ReturnFlagSound\n");
 		return;
 	}
 
@@ -606,7 +606,7 @@ void Team_TakeFlagSound(gentity_t *ent, int team) {
 	gentity_t *te;
 
 	if (ent == NULL) {
-		G_Printf("Warning:  NULL passed to Team_TakeFlagSound\n");
+		G_Printf("Warning: NULL passed to Team_TakeFlagSound\n");
 		return;
 	}
 	// only play sound when the flag was at the base or not picked up the last 10 seconds
@@ -651,7 +651,7 @@ void Team_CaptureFlagSound(gentity_t *ent, int team) {
 	gentity_t *te;
 
 	if (ent == NULL) {
-		G_Printf("Warning:  NULL passed to Team_CaptureFlagSound\n");
+		G_Printf("Warning: NULL passed to Team_CaptureFlagSound\n");
 		return;
 	}
 

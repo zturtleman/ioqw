@@ -4,14 +4,12 @@
 	loadMenu { "ui/main.menu" }
  	loadMenu { "ui/joinserver.menu" }
  	loadMenu { "ui/filter.menu" }
-	loadMenu { "ui/punkbuster.menu" }
  	loadMenu { "ui/player.menu" }
  	loadMenu { "ui/setup.menu" }
  	loadMenu { "ui/fight.menu" }
  	loadMenu { "ui/skirmish.menu" }
  	loadMenu { "ui/createserver.menu" }
 	loadMenu { "ui/controls.menu" }
-	loadMenu { "ui/cdkey.menu" }
 	loadMenu { "ui/system.menu" }
 	loadMenu { "ui/options.menu" }
 	loadMenu { "ui/help.menu" }

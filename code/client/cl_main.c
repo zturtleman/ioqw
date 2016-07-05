@@ -3248,11 +3248,10 @@ void CL_Init(void) {
 	Cvar_Get("team_headmodel", "*james", CVAR_USERINFO|CVAR_ARCHIVE);
 	Cvar_Get("g_redTeam", "Stroggs", CVAR_SERVERINFO|CVAR_ARCHIVE);
 	Cvar_Get("g_blueTeam", "Pagans", CVAR_SERVERINFO|CVAR_ARCHIVE);
-	Cvar_Get("color1", "4", CVAR_USERINFO|CVAR_ARCHIVE);
+	Cvar_Get("color1", "5", CVAR_USERINFO|CVAR_ARCHIVE);
 	Cvar_Get("color2", "5", CVAR_USERINFO|CVAR_ARCHIVE);
 	Cvar_Get("handicap", "100", CVAR_USERINFO|CVAR_ARCHIVE);
 	Cvar_Get("teamtask", "0", CVAR_USERINFO);
-	Cvar_Get("sex", "male", CVAR_USERINFO|CVAR_ARCHIVE);
 	Cvar_Get("cl_anonymous", "0", CVAR_USERINFO|CVAR_ARCHIVE);
 	Cvar_Get("password", "", CVAR_USERINFO);
 	Cvar_Get("cg_predictItems", "1", CVAR_USERINFO|CVAR_ARCHIVE);

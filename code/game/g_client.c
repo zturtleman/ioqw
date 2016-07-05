@@ -408,9 +408,9 @@ void CopyToBodyQue(gentity_t *ent) {
 		return;
 	}
 	// grab a body que and cycle to the next one
-	body = level.bodyQue[level.bodyQueIndex];
 	level.bodyQueIndex = (level.bodyQueIndex + 1) % BODY_QUEUE_SIZE;
 
+	body = level.bodyQue[level.bodyQueIndex];
 	body->s = ent->s;
 	body->s.eFlags = EF_DEAD; // clear EF_TALK, etc
 

@@ -604,7 +604,6 @@ typedef struct {
 	qhandle_t energyMarkShader;
 	// powerup shaders
 	qhandle_t quadShader;
-	qhandle_t redQuadShader;
 	qhandle_t quadWeaponShader;
 	qhandle_t invisShader;
 	qhandle_t regenShader;
@@ -724,9 +723,6 @@ typedef struct {
 	sfxHandle_t watrInSound;
 	sfxHandle_t watrOutSound;
 	sfxHandle_t watrUnSound;
-#ifdef MISSIONPACK
-	sfxHandle_t weaponHoverSound;
-#endif
 	// teamplay sounds
 	sfxHandle_t captureAwardSound;
 	sfxHandle_t redScoredSound;

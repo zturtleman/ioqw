@@ -295,21 +295,16 @@ static void CG_Item(centity_t *cent) {
 	if ((item->giType == IT_WEAPON) || (item->giType == IT_ARMOR)) {
 		ent.renderfx |= RF_MINLIGHT;
 	}
-	// increase the size of the weapons when they are presented as items
+	// add the weapon ready sound
 	if (item->giType == IT_WEAPON) {
-		VectorScale(ent.axis[0], 1.5, ent.axis[0]);
-		VectorScale(ent.axis[1], 1.5, ent.axis[1]);
-		VectorScale(ent.axis[2], 1.5, ent.axis[2]);
 		ent.nonNormalizedAxes = qtrue;
-#ifdef MISSIONPACK
-		trap_S_AddLoopingSound(cent->currentState.number, cent->lerpOrigin, vec3_origin, cgs.media.weaponHoverSound);
-#endif
+
+		if (wi->readySound) {
+			trap_S_AddLoopingSound(cent->currentState.number, cent->lerpOrigin, vec3_origin, wi->readySound);
+		}
 	}
 
 	if (item->giType == IT_HOLDABLE && item->giTag == HI_KAMIKAZE) {
-		VectorScale(ent.axis[0], 2, ent.axis[0]);
-		VectorScale(ent.axis[1], 2, ent.axis[1]);
-		VectorScale(ent.axis[2], 2, ent.axis[2]);
 		ent.nonNormalizedAxes = qtrue;
 	}
 	// add to refresh list
@@ -436,7 +431,10 @@ static void CG_Missile(centity_t *cent) {
 
 	if (cent->currentState.weapon == WP_PROX_LAUNCHER) {
 		if (s1->generic1 == TEAM_BLUE) {
+			trap_R_AddLightToScene(cent->lerpOrigin, 25, 0.5f, 0.7f, 1.0f);
 			ent.hModel = cgs.media.blueProxMine;
+		} else {
+			trap_R_AddLightToScene(cent->lerpOrigin, 25, 1.0f, 0, 0);
 		}
 	}
 	// convert direction of travel into axis

@@ -31,7 +31,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "g_public.h"
 // the "gameversion" client command will print this plus compile date
 #define GAMEVERSION BASEGAME
-#define BODY_QUEUE_SIZE 8
+#define BODY_QUEUE_SIZE 64
 #define INFINITE 1000000
 #define FRAMETIME 100 // msec
 #define CARNAGE_REWARD_TIME 3000

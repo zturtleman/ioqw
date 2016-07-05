@@ -1836,8 +1836,6 @@ static void CG_PlayerPowerups(centity_t *cent, refEntity_t *torso) {
 		} else {
 			CG_TrailItem(cent, cgs.media.redFlagModel);
 		}
-
-		trap_R_AddLightToScene(cent->lerpOrigin, 200 + (rand()&31), 1.0, 0.2f, 0.2f);
 	}
 	// blueflag
 	if (powerups & (1 << PW_BLUEFLAG)) {
@@ -1846,8 +1844,6 @@ static void CG_PlayerPowerups(centity_t *cent, refEntity_t *torso) {
 		} else {
 			CG_TrailItem(cent, cgs.media.blueFlagModel);
 		}
-
-		trap_R_AddLightToScene(cent->lerpOrigin, 200 + (rand()&31), 0.2f, 0.2f, 1.0);
 	}
 	// neutralflag
 	if (powerups & (1 << PW_NEUTRALFLAG)) {
@@ -1856,8 +1852,6 @@ static void CG_PlayerPowerups(centity_t *cent, refEntity_t *torso) {
 		} else {
 			CG_TrailItem(cent, cgs.media.neutralFlagModel);
 		}
-
-		trap_R_AddLightToScene(cent->lerpOrigin, 200 + (rand()&31), 1.0, 1.0, 1.0);
 	}
 }
 
@@ -2075,12 +2069,7 @@ void CG_AddRefEntityWithPowerups(refEntity_t *ent, entityState_t *state, int tea
 		trap_R_AddRefEntityToScene(ent);
 
 		if (state->powerups & (1 << PW_QUAD)) {
-			if (team == TEAM_RED) {
-				ent->customShader = cgs.media.redQuadShader;
-			} else {
-				ent->customShader = cgs.media.quadShader;
-			}
-
+			ent->customShader = cgs.media.quadShader;
 			trap_R_AddRefEntityToScene(ent);
 		}
 

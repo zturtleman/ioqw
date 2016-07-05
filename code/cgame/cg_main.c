@@ -731,7 +731,6 @@ static void CG_RegisterSounds(void) {
 	cgs.media.wstbimpdSound = trap_S_RegisterSound("sound/weapons/proxmine/wstbimpd.wav", qfalse);
 	cgs.media.wstbactvSound = trap_S_RegisterSound("sound/weapons/proxmine/wstbactv.wav", qfalse);
 #ifdef MISSIONPACK
-	cgs.media.weaponHoverSound = trap_S_RegisterSound("sound/weapons/weapon_hover.wav", qfalse);
 	cgs.media.winnerSound = trap_S_RegisterSound("sound/feedback/voc_youwin.wav", qfalse);
 	cgs.media.loserSound = trap_S_RegisterSound("sound/feedback/voc_youlose.wav", qfalse);
 #endif
@@ -896,7 +895,6 @@ static void CG_RegisterGraphics(void) {
 	if (cgs.gametype >= GT_TEAM || cg_buildScript.integer) {
 		cgs.media.redFriendShader = trap_R_RegisterShader("sprites/team_red");
 		cgs.media.blueFriendShader = trap_R_RegisterShader("sprites/team_blue");
-		cgs.media.redQuadShader = trap_R_RegisterShader("powerups/blueflag");
 		cgs.media.teamStatusBar = trap_R_RegisterShader("gfx/2d/colorbar.tga");
 	}
 

@@ -688,7 +688,7 @@ gentity_t *fire_plasma(gentity_t *self, vec3_t start, vec3_t dir) {
 	bolt->clipmask = MASK_SHOT;
 	bolt->target_ent = NULL;
 	bolt->s.pos.trType = TR_LINEAR;
-	bolt->s.pos.trTime = level.time - MISSILE_PRESTEP_TIME; // move a bit on the very first frame
+	bolt->s.pos.trTime = level.time;
 
 	VectorCopy(start, bolt->s.pos.trBase);
 	VectorScale(dir, 2000, bolt->s.pos.trDelta);

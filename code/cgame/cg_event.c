@@ -841,8 +841,9 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			break;
 		case EV_PLAYER_TELEPORT_IN:
 			DEBUGNAME("EV_PLAYER_TELEPORT_IN");
-			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.teleInSound);
+			trap_R_AddLightToScene(cent->lerpOrigin, 300, 1.0f, 1.0f, 0.9f);
 			CG_SpawnEffect(position);
+			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.teleInSound);
 			break;
 		case EV_PLAYER_TELEPORT_OUT:
 			DEBUGNAME("EV_PLAYER_TELEPORT_OUT");
@@ -990,6 +991,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			break;
 		case EV_ITEM_RESPAWN:
 			DEBUGNAME("EV_ITEM_RESPAWN");
+			trap_R_AddLightToScene(cent->lerpOrigin, 100, 1.0f, 1.0f, 0.9f);
 			cent->miscTime = cg.time; // scale up from this
 			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.respawnSound);
 			break;
