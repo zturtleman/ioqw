@@ -1321,7 +1321,7 @@ static void ServerOptions_MenuInit( qboolean multiplayer ) {
 	s_serveroptions.picframe.focuspic			= GAMESERVER_SELECT;
 
 	y = 272;
-	if( s_serveroptions.gametype != GT_CTF ) {
+	if( s_serveroptions.gametype <= GT_TEAM ) {
 		s_serveroptions.fraglimit.generic.type       = MTYPE_FIELD;
 		s_serveroptions.fraglimit.generic.name       = "Frag Limit:";
 		s_serveroptions.fraglimit.generic.flags      = QMF_NUMBERSONLY|QMF_PULSEIFFOCUS|QMF_SMALLFONT;
@@ -1492,7 +1492,7 @@ static void ServerOptions_MenuInit( qboolean multiplayer ) {
 		}
 	}
 
-	if( s_serveroptions.gametype != GT_CTF ) {
+	if( s_serveroptions.gametype <= GT_TEAM ) {
 		Menu_AddItem( &s_serveroptions.menu, &s_serveroptions.fraglimit );
 	}
 	else {
@@ -1614,6 +1614,14 @@ static int QDECL UI_BotSelectMenu_SortCompare( const void *arg1, const void *arg
 
 	name1 = Info_ValueForKey( info1, "name" );
 	name2 = Info_ValueForKey( info2, "name" );
+
+	// put random option first
+	if (Q_stricmp(name1, "Random") == 0) {
+		return -1;
+	}
+	if (Q_stricmp(name2, "Random") == 0) {
+		return 1;
+	}
 
 	return Q_stricmp( name1, name2 );
 }

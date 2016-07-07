@@ -71,14 +71,9 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define NUM_CROSSHAIRS 10
 #define TEAM_OVERLAY_MAXNAME_WIDTH 12
 #define TEAM_OVERLAY_MAXLOCATION_WIDTH 16
-#define DEFAULT_MODEL "sarge"
-#ifdef MISSIONPACK
+#define DEFAULT_MODEL "james"
 #define DEFAULT_TEAM_MODEL "james"
 #define DEFAULT_TEAM_HEAD "*james"
-#else
-#define DEFAULT_TEAM_MODEL "sarge"
-#define DEFAULT_TEAM_HEAD "sarge"
-#endif
 #define DEFAULT_REDTEAM_NAME "Stroggs"
 #define DEFAULT_BLUETEAM_NAME "Pagans"
 
@@ -426,6 +421,7 @@ typedef struct {
 	// view rendering
 	refdef_t refdef;
 	vec3_t refdefViewAngles;		// will be converted to refdef.viewaxis
+	float fov;						// either range checked cg_fov or forced value
 	// zoom key
 	qboolean zoomed;
 	int zoomTime;

@@ -117,6 +117,10 @@ static void CG_ParseScores(void) {
 /*
 =======================================================================================================================================
 CG_ParseTeamInfo
+
+Format: "tinfo" team numstrings string(there are numstrings strings).
+
+Each string is "clientNum location health armor weapon powerups".
 =======================================================================================================================================
 */
 static void CG_ParseTeamInfo(void) {
@@ -197,7 +201,7 @@ static void CG_ParseWarmup(void) {
 	if (warmup == 0 && cg.warmup) {
 
 	} else if (warmup > 0 && cg.warmup <= 0) {
-		if (cgs.gametype >= GT_CTF && cgs.gametype <= GT_HARVESTER) {
+		if (cgs.gametype >= GT_CTF) {
 			trap_S_StartLocalSound(cgs.media.countPrepareTeamSound, CHAN_ANNOUNCER);
 		} else {
 			trap_S_StartLocalSound(cgs.media.countPrepareSound, CHAN_ANNOUNCER);
@@ -963,9 +967,7 @@ void CG_VoiceChat(int mode) {
 	cmd = CG_Argv(4);
 
 	if (cg_noTaunt.integer != 0) {
-		if (!strcmp(cmd, VOICECHAT_KILLINSULT) || !strcmp(cmd, VOICECHAT_TAUNT) || \
-			!strcmp(cmd, VOICECHAT_DEATHINSULT) || !strcmp(cmd, VOICECHAT_KILLGAUNTLET) || \
-			!strcmp(cmd, VOICECHAT_PRAISE)) {
+		if (!strcmp(cmd, VOICECHAT_PRAISE) || !strcmp(cmd, VOICECHAT_KILLINSULT) || !strcmp(cmd, VOICECHAT_TAUNT) || !strcmp(cmd, VOICECHAT_DEATHINSULT) || !strcmp(cmd, VOICECHAT_KILLGAUNTLET)) {
 			return;
 		}
 	}

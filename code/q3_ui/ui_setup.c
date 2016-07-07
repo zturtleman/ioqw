@@ -149,6 +149,7 @@ UI_SetupMenu_Init
 */
 static void UI_SetupMenu_Init( void ) {
 	int				y;
+	int				numItems;
 
 	UI_SetupMenu_Cache();
 
@@ -179,8 +180,13 @@ static void UI_SetupMenu_Init( void ) {
 	setupMenuInfo.framer.width  					= 256;
 	setupMenuInfo.framer.height  					= 334;
 
-	y = 134;
-	setupMenuInfo.setupplayer.generic.type			= MTYPE_PTEXT;
+	if( !trap_Cvar_VariableValue( "cl_paused" ) ) {
+		numItems = 5; // 7
+	} else {
+		numItems = 4;
+	}
+
+	y = (SCREEN_HEIGHT - numItems*SETUP_MENU_VERTICAL_SPACING) / 2;
 	setupMenuInfo.setupplayer.generic.flags			= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
 	setupMenuInfo.setupplayer.generic.x				= 320;
 	setupMenuInfo.setupplayer.generic.y				= y;

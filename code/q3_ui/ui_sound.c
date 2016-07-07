@@ -52,7 +52,7 @@ SOUND OPTIONS MENU
 #define ID_BACK				19
 #define ID_APPLY			20
 
-#define DEFAULT_SDL_SND_SPEED 22050
+#define DEFAULT_SDL_SND_SPEED 48000
 
 static const char *quality_items[] = {
 	"Low", "Medium", "High", NULL
@@ -162,6 +162,9 @@ static void UI_SoundOptionsMenu_Event( void* ptr, int event ) {
 					break;
 				case 2:
 					speed = 44100;
+					break;
+				case 3:
+					speed = 48000;
 					break;
 			}
 
@@ -417,8 +420,10 @@ static void UI_SoundOptionsMenu_Init( void ) {
 		soundOptionsInfo.quality_original = 0;
 	else if (speed <= 22050)
 		soundOptionsInfo.quality_original = 1;
-	else // 44100
+	else if (speed <= 44100)
 		soundOptionsInfo.quality_original = 2;
+	else // 48000
+		soundOptionsInfo.quality_original = 3;
 	soundOptionsInfo.quality.curvalue = soundOptionsInfo.quality_original;
 
 //	soundOptionsInfo.a3d.curvalue = (int)trap_Cvar_VariableValue( "s_usingA3D" );

@@ -3791,7 +3791,7 @@ void FS_Restart(int checksumFeed) {
 	// if we can't find default.cfg, assume that the paths are busted and error out now, rather than getting an unreadable
 	// graphics screen when the font fails to load
 	if (FS_ReadFile("default.cfg", NULL) <= 0) {
-		// this might happen when connecting to a pure server not using BASEGAME/pak0.pk3 (for instance a TA demo server)
+		// this might happen when connecting to a pure server not using BASEGAME/pak0.pk3 (for instance a Team Arena demo server)
 		if (lastValidBase[0]) {
 			FS_PureServerSetLoadedPaks("", "");
 			Cvar_Set("fs_basepath", lastValidBase);

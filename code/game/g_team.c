@@ -150,38 +150,40 @@ static __attribute__((format(printf, 2, 3))) void QDECL PrintMsg(gentity_t *ent,
 =======================================================================================================================================
 AddTeamScore
 
-Used for gametype > GT_TEAM.
-For gametype GT_TEAM the level.teamScores is updated in AddScore in g_combat.c.
+For gametype GT_TEAM this is called in AddScore in g_combat.c (checks fraglimit to win). For gametype > GT_TEAM this is called when
+gametype-specific scoring happens (checks capturelimit to win (e.g. capture flag, kill obelisk, return skulls)).
 =======================================================================================================================================
 */
 void AddTeamScore(vec3_t origin, int team, int score) {
+	int eventParm;
+	int otherTeam;
 	gentity_t *te;
 
-	te = G_TempEntity(origin, EV_GLOBAL_TEAM_SOUND);
-	te->r.svFlags |= SVF_BROADCAST;
+	if (score == 0) {
+		return;
+	}
 
-	if (team == TEAM_RED) {
-		if (level.teamScores[TEAM_RED] + score == level.teamScores[TEAM_BLUE]) {
-			// teams are tied sound
-			te->s.eventParm = GTS_TEAMS_ARE_TIED;
-		} else if (level.teamScores[TEAM_RED] <= level.teamScores[TEAM_BLUE] && level.teamScores[TEAM_RED] + score > level.teamScores[TEAM_BLUE]) {
-			// red took the lead sound
-			te->s.eventParm = GTS_REDTEAM_TOOK_LEAD;
-		} else {
-			// red scored sound
-			te->s.eventParm = GTS_REDTEAM_SCORED;
-		}
-	} else {
-		if (level.teamScores[TEAM_BLUE] + score == level.teamScores[TEAM_RED]) {
-			// teams are tied sound
-			te->s.eventParm = GTS_TEAMS_ARE_TIED;
-		} else if (level.teamScores[TEAM_BLUE] <= level.teamScores[TEAM_RED] && level.teamScores[TEAM_BLUE] + score > level.teamScores[TEAM_RED]) {
-			// blue took the lead sound
-			te->s.eventParm = GTS_BLUETEAM_TOOK_LEAD;
-		} else {
-			// blue scored sound
-			te->s.eventParm = GTS_BLUETEAM_SCORED;
-		}
+	eventParm = -1;
+	otherTeam = OtherTeam(team);
+
+	if (level.teamScores[team] + score == level.teamScores[otherTeam]) {
+		//teams are tied sound
+		eventParm = GTS_TEAMS_ARE_TIED;
+	} else if (level.teamScores[team] >= level.teamScores[otherTeam] && level.teamScores[team] + score < level.teamScores[otherTeam]) {
+		// other team took the lead sound (negative score)
+		eventParm = (otherTeam == TEAM_RED) ? GTS_REDTEAM_TOOK_LEAD : GTS_BLUETEAM_TOOK_LEAD;
+	} else if (level.teamScores[team] <= level.teamScores[otherTeam] && level.teamScores[team] + score > level.teamScores[otherTeam]) {
+		// this team took the lead sound
+		eventParm = (team == TEAM_RED) ? GTS_REDTEAM_TOOK_LEAD : GTS_BLUETEAM_TOOK_LEAD;
+	} else if (score > 0 && g_gametype.integer != GT_TEAM) {
+		// team scored sound
+		eventParm = (team == TEAM_RED) ? GTS_REDTEAM_SCORED : GTS_BLUETEAM_SCORED;
+	}
+
+	if (eventParm != -1) {
+		te = G_TempEntity(origin, EV_GLOBAL_TEAM_SOUND);
+		te->r.svFlags |= SVF_BROADCAST;
+		te->s.eventParm = eventParm;
 	}
 
 	level.teamScores[team] += score;

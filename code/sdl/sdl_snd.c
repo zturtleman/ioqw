@@ -174,7 +174,7 @@ qboolean SNDDMA_Init(void) {
 	desired.freq = (int)s_sdlSpeed->value;
 
 	if (!desired.freq) {
-		desired.freq = 22050;
+		desired.freq = 48000;
 	}
 
 	desired.format = ((tmp == 16) ? AUDIO_S16SYS : AUDIO_U8);
@@ -190,7 +190,7 @@ qboolean SNDDMA_Init(void) {
 			desired.samples = 512;
 		} else if (desired.freq <= 44100) {
 			desired.samples = 1024;
-		} else {
+		} else { // 48000
 			desired.samples = 2048; // (*shrug*)
 		}
 	}

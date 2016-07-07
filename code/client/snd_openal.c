@@ -370,7 +370,7 @@ static void S_AL_BufferLoad(sfxHandle_t sfx, qboolean cache) {
 	if (info.size == 0) {
 		// We have no data to buffer, so buffer silence
 		byte dummyData[2] = {0};
-		qalBufferData(curSfx->buffer, AL_FORMAT_MONO16, (void *)dummyData, 2, 22050);
+		qalBufferData(curSfx->buffer, AL_FORMAT_MONO16, (void *)dummyData, 2, 48000);
 	} else {
 		qalBufferData(curSfx->buffer, format, data, info.size, info.rate);
 	}
@@ -1829,7 +1829,7 @@ static void S_AL_MusicProcess(ALuint b) {
 	if (l == 0) {
 		// We have no data to buffer, so buffer silence
 		byte dummyData[2] = {0};
-		qalBufferData(b, AL_FORMAT_MONO16, (void *)dummyData, 2, 22050);
+		qalBufferData(b, AL_FORMAT_MONO16, (void *)dummyData, 2, 48000);
 	} else {
 		qalBufferData(b, format, decode_buffer, l, curstream->info.rate);
 	}
