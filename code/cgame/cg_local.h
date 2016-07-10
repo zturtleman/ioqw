@@ -132,6 +132,13 @@ typedef struct {
 	qboolean barrelSpinning;
 } playerEntity_t;
 
+#define MAX_CG_SKIN_SURFACES 32
+
+typedef struct {
+	int numSurfaces;
+	qhandle_t surfaces[MAX_CG_SKIN_SURFACES];
+} cgSkin_t;
+
 /**************************************************************************************************************************************
 
 	centity_t have a direct correspondence with gentity_t in the game, but only the entityState_t is directly communicated to the cgame.
@@ -422,6 +429,7 @@ typedef struct {
 	refdef_t refdef;
 	vec3_t refdefViewAngles;		// will be converted to refdef.viewaxis
 	float fov;						// either range checked cg_fov or forced value
+	int numMiscGameModels;
 	// zoom key
 	qboolean zoomed;
 	int zoomTime;
@@ -779,6 +787,16 @@ typedef struct {
 	sfxHandle_t wstbactvSound;
 } cgMedia_t;
 
+#define MAX_STATIC_GAMEMODELS 1024
+
+typedef struct cg_gamemodel_s {
+	qhandle_t model;
+	cgSkin_t skin;
+	vec3_t org;
+	vec3_t axes[3];
+	vec_t radius;
+} cg_gamemodel_t;
+
 /**************************************************************************************************************************************
 
 	The client game static (cgs) structure hold everything loaded or calculated from the gamestate. It will NOT be cleared when a
@@ -839,6 +857,7 @@ typedef struct {
 	qboolean sizingHud;
 	void *capturedItem;
 	qhandle_t activeCursor;
+	cg_gamemodel_t miscGameModels[MAX_STATIC_GAMEMODELS];
 	// orders
 	int currentOrder;
 	qboolean orderPending;
@@ -989,6 +1008,9 @@ void CG_TestModelPrevSkin_f(void);
 void CG_ZoomDown_f(void);
 void CG_ZoomUp_f(void);
 void CG_AddBufferedSound(sfxHandle_t sfx);
+void CG_SetupFrustum(void);
+qboolean CG_CullPoint(vec3_t pt);
+qboolean CG_CullPointAndRadius(const vec3_t pt, vec_t radius);
 void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoPlayback);
 // cg_drawtools.c
 void CG_AdjustFrom640(float *x, float *y, float *w, float *h);
@@ -1050,7 +1072,7 @@ qhandle_t CG_StatusHandle(int task);
 // cg_player.c
 void CG_Player(centity_t *cent);
 void CG_ResetPlayerEntity(centity_t *cent);
-void CG_AddRefEntityWithPowerups(refEntity_t *ent, entityState_t *state, int team);
+void CG_AddRefEntityWithPowerups(refEntity_t *ent, entityState_t *state);
 void CG_NewClientInfo(int clientNum);
 sfxHandle_t CG_CustomSound(int clientNum, const char *soundName);
 // cg_predict.c

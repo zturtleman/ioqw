@@ -358,6 +358,7 @@ extern cvar_t *cl_voipGainDuringCapture;
 extern cvar_t *cl_voipCaptureMult;
 extern cvar_t *cl_voipShowMeter;
 extern cvar_t *cl_voip;
+extern cvar_t *con_autochat;
 // 20ms at 48k
 #define VOIP_MAX_FRAME_SAMPLES (20 * 48)
 // 3 frame is 60ms of audio, the max opus will encode at once

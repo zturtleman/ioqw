@@ -430,7 +430,7 @@ static void CG_Missile(centity_t *cent) {
 	ent.renderfx = RF_NOSHADOW;
 
 	if (cent->currentState.weapon == WP_PROX_LAUNCHER) {
-		if (s1->generic1 == TEAM_BLUE) {
+		if (s1->team == TEAM_BLUE) {
 			trap_R_AddLightToScene(cent->lerpOrigin, 25, 0.5f, 0.7f, 1.0f);
 			ent.hModel = cgs.media.blueProxMine;
 		} else {
@@ -452,7 +452,7 @@ static void CG_Missile(centity_t *cent) {
 		}
 	}
 	// add to refresh list, possibly with quad glow
-	CG_AddRefEntityWithPowerups(&ent, s1, TEAM_FREE);
+	CG_AddRefEntityWithPowerups(&ent, s1);
 }
 
 /*

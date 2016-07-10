@@ -48,6 +48,8 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define SVF_NOSERVERINFO		0x00000200 // don't send CS_SERVERINFO updates to this client so that it can be updated for ping tools without lagging clients
 #define SVF_CAPSULE				0x00000400 // use capsule for collision detection instead of bbox
 #define SVF_NOTSINGLECLIENT		0x00000800 // send entity to everyone but one client (entityShared_t->singleClient)
+#define SVF_VISDUMMY			0x00001000 // this ent is a "visibility dummy" and needs it's master to be sent to players that can see it even if they can't see the master ent
+#define SVF_VISDUMMY_MULTIPLE	0x00002000 // so that one vis dummy can add to snapshot multiple speakers
 
 typedef struct {
 	qboolean linked;		// qfalse if not in any good cluster
@@ -70,6 +72,10 @@ typedef struct {
 	// ent->r.ownerNum == passEntityNum (don't interact with your own missiles)
 	// entity[ent->r.ownerNum].r.ownerNum == passEntityNum (don't interact with other missiles from owner)
 	int ownerNum;
+	// if set, portal entities are only sent to client if distance between portal and player <= portalCullDistance
+	int portalCullDistance;
+	// if SVF_VISDUMMY, number of master, else if not 0, it's the number of a target_vis_dummy_multiple.
+	int visDummyNum;
 } entityShared_t;
 // the server looks at a sharedEntity, which is the start of the game's gentity_t structure
 typedef struct {

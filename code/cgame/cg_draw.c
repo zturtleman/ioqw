@@ -2529,6 +2529,50 @@ static void CG_DrawTourneyScoreboard(void) {
 
 /*
 =======================================================================================================================================
+CG_DrawMiscGamemodels
+=======================================================================================================================================
+*/
+void CG_DrawMiscGamemodels(void) {
+	int i, j;
+	refEntity_t ent;
+	int drawn = 0;
+
+	memset(&ent, 0, sizeof(ent));
+
+	ent.reType = RT_MODEL;
+	ent.nonNormalizedAxes = qtrue;
+	// static gamemodels don't project shadows
+	ent.renderfx = RF_NOSHADOW;
+
+	for (i = 0; i < cg.numMiscGameModels; i++) {
+		if (cgs.miscGameModels[i].radius) {
+			if (CG_CullPointAndRadius(cgs.miscGameModels[i].org, cgs.miscGameModels[i].radius)) {
+				continue;
+			}
+		}
+
+		if (!trap_R_inPVS(cg.refdef.vieworg, cgs.miscGameModels[i].org)) {
+			continue;
+		}
+
+		VectorCopy(cgs.miscGameModels[i].org, ent.origin);
+		VectorCopy(cgs.miscGameModels[i].org, ent.oldorigin);
+		VectorCopy(cgs.miscGameModels[i].org, ent.lightingOrigin);
+
+		for (j = 0; j < 3; j++) {
+			VectorCopy(cgs.miscGameModels[i].axes[j], ent.axis[j]);
+		}
+
+		ent.hModel = cgs.miscGameModels[i].model;
+
+		trap_R_AddRefEntityToScene(&ent);
+
+		drawn++;
+	}
+}
+
+/*
+=======================================================================================================================================
 CG_DrawActive
 
 Perform all drawing needed to completely fill the screen.
@@ -2552,6 +2596,8 @@ void CG_DrawActive(stereoFrame_t stereoView) {
 	if (stereoView != STEREO_CENTER) {
 		CG_DrawCrosshair3D();
 	}
+
+	CG_DrawMiscGamemodels();
 	// draw 3D view
 	trap_R_RenderScene(&cg.refdef);
 	// draw status bar and other floating elements

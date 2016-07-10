@@ -723,6 +723,77 @@ int bg_numItems = ARRAY_LEN(bg_itemlist) - 1;
 
 /*
 =======================================================================================================================================
+BG_CheckSpawnEntity
+=======================================================================================================================================
+*/
+qboolean BG_CheckSpawnEntity(const bgEntitySpawnInfo_t *info) {
+	int i, gametype;
+	char *s, *value, *gametypeName;
+	static char *gametypeNames[GT_MAX_GAME_TYPE] = {"ffa", "tournament", "single", "team", "ctf", "oneflag", "obelisk", "harvester"};
+
+	gametype = info->gametype;
+	// check for "notsingle" flag
+	if (gametype == GT_SINGLE_PLAYER) {
+		info->spawnInt("notsingle", "0", &i);
+
+		if (i) {
+			return qfalse;
+		}
+	}
+	// check for "notteam" flag (GT_FFA, GT_TOURNAMENT, GT_SINGLE_PLAYER)
+	if (gametype >= GT_TEAM) {
+		info->spawnInt("notteam", "0", &i);
+
+		if (i) {
+			return qfalse;
+		}
+	} else {
+		info->spawnInt("notfree", "0", &i);
+
+		if (i) {
+			return qfalse;
+		}
+	}
+#ifdef MISSIONPACK
+	info->spawnInt("notta", "0", &i);
+
+	if (i) {
+		return qfalse;
+	}
+#else
+	info->spawnInt("notq3a", "0", &i);
+
+	if (i) {
+		return qfalse;
+	}
+#endif
+	if (info->spawnString("!gametype", NULL, &value)) {
+		if (gametype >= 0 && gametype < GT_MAX_GAME_TYPE) {
+			gametypeName = gametypeNames[gametype];
+			s = strstr(value, gametypeName);
+
+			if (s) {
+				return qfalse;
+			}
+		}
+	}
+
+	if (info->spawnString("gametype", NULL, &value)) {
+		if (gametype >= 0 && gametype < GT_MAX_GAME_TYPE) {
+			gametypeName = gametypeNames[gametype];
+			s = strstr(value, gametypeName);
+
+			if (!s) {
+				return qfalse;
+			}
+		}
+	}
+
+	return qtrue;
+}
+
+/*
+=======================================================================================================================================
 BG_FindItemForPowerup
 =======================================================================================================================================
 */
@@ -877,11 +948,7 @@ qboolean BG_CanItemBeGrabbed(int gametype, const entityState_t *ent, const playe
 				return qfalse;
 			}
 			// check team only
-			if ((ent->generic1 & 2) && (ps->persistant[PERS_TEAM] != TEAM_RED)) {
-				return qfalse;
-			}
-
-			if ((ent->generic1 & 4) && (ps->persistant[PERS_TEAM] != TEAM_BLUE)) {
+			if (ent->team != 255 && (ps->persistant[PERS_TEAM] != ent->team)) {
 				return qfalse;
 			}
 
@@ -1238,7 +1305,8 @@ void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, qboolean s
 	}
 
 	s->loopSound = ps->loopSound;
-	s->generic1 = ps->generic1;
+	s->tokens = ps->tokens;
+	s->team = ps->persistant[PERS_TEAM];
 }
 
 /*
@@ -1318,5 +1386,6 @@ void BG_PlayerStateToEntityStateExtraPolate(playerState_t *ps, entityState_t *s,
 	}
 
 	s->loopSound = ps->loopSound;
-	s->generic1 = ps->generic1;
+	s->tokens = ps->tokens;
+	s->team = ps->persistant[PERS_TEAM];
 }

@@ -570,7 +570,7 @@ void Console_Key(int key) {
 	// enter finishes the line
 	if (key == K_ENTER || key == K_KP_ENTER) {
 		// if not in the game explicitly prepend a slash if needed
-		if (clc.state != CA_ACTIVE && g_consoleField.buffer[0] && g_consoleField.buffer[0] != '\\' && g_consoleField.buffer[0] != '/') {
+		if (clc.state != CA_ACTIVE && con_autochat->integer && g_consoleField.buffer[0] && g_consoleField.buffer[0] != '\\' && g_consoleField.buffer[0] != '/') {
 			char temp[MAX_EDIT_LINE - 1];
 
 			Q_strncpyz(temp, g_consoleField.buffer, sizeof(temp));
@@ -588,7 +588,10 @@ void Console_Key(int key) {
 			if (!g_consoleField.buffer[0]) {
 				return; // empty lines just scroll the console without adding to history
 			} else {
-				Cbuf_AddText("cmd say ");
+				if (con_autochat->integer) {
+					Cbuf_AddText("cmd say");
+				}
+
 				Cbuf_AddText(g_consoleField.buffer);
 				Cbuf_AddText("\n");
 			}

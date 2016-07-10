@@ -352,7 +352,7 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 	tokens = 0;
 
 	if (g_gametype.integer == GT_HARVESTER) {
-		tokens = targ->client->ps.generic1;
+		tokens = targ->client->ps.tokens;
 	}
 
 	if (targ->client->ps.powerups[enemy_flag_pw]) {
@@ -372,7 +372,7 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 
 		return;
 	}
-	// did the attacker frag a head carrier? other->client->ps.generic1
+	// did the attacker frag a head carrier?
 	if (tokens) {
 		attacker->client->pers.teamState.lastfraggedcarrier = level.time;
 
@@ -516,7 +516,7 @@ void Team_CheckHurtCarrier(gentity_t *targ, gentity_t *attacker) {
 		attacker->client->pers.teamState.lasthurtcarrier = level.time;
 	}
 	// skulls
-	if (targ->client->ps.generic1 && targ->client->sess.sessionTeam != attacker->client->sess.sessionTeam) {
+	if (targ->client->ps.tokens && targ->client->sess.sessionTeam != attacker->client->sess.sessionTeam) {
 		attacker->client->pers.teamState.lasthurtcarrier = level.time;
 	}
 }
@@ -869,8 +869,8 @@ int Pickup_Team(gentity_t *ent, gentity_t *other) {
 
 	if (g_gametype.integer == GT_HARVESTER) {
 		// the only team items that can be picked up in harvester are the cubes
-		if (ent->spawnflags != cl->sess.sessionTeam) {
-			cl->ps.generic1 += 1;
+		if (ent->s.team != cl->sess.sessionTeam) {
+			cl->ps.tokens += 1;
 		}
 
 		G_FreeEntity(ent);
@@ -1306,7 +1306,7 @@ static void ObeliskTouch(gentity_t *self, gentity_t *other, trace_t *trace) {
 		return;
 	}
 
-	tokens = other->client->ps.generic1;
+	tokens = other->client->ps.tokens;
 
 	if (tokens <= 0) {
 		return;
@@ -1322,7 +1322,7 @@ static void ObeliskTouch(gentity_t *self, gentity_t *other, trace_t *trace) {
 
 	other->client->rewardTime = level.time + REWARD_SPRITE_TIME;
 	other->client->ps.persistant[PERS_CAPTURES] += tokens;
-	other->client->ps.generic1 = 0;
+	other->client->ps.tokens = 0;
 
 	CalculateRanks();
 

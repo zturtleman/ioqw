@@ -296,6 +296,15 @@ void *Hunk_Alloc(int size, ha_pref preference);
 #define CIN_silent	 8
 #define CIN_shader	16
 
+typedef struct {
+	int gametype;
+	// callbacks to test the entity, these will be different functions during game and cgame
+	qboolean (*spawnInt)(const char *key, const char *defaultString, int *out);
+	qboolean (*spawnString)(const char *key, const char *defaultString, char **out);
+} bgEntitySpawnInfo_t;
+
+qboolean BG_CheckSpawnEntity(const bgEntitySpawnInfo_t *info);
+
 /*
 ==============================================================
 
@@ -1031,7 +1040,7 @@ typedef struct playerState_s {
 	int persistant[MAX_PERSISTANT];	// stats that aren't cleared on death
 	int powerups[MAX_POWERUPS];		// level.time that the powerup runs out
 	int ammo[MAX_WEAPONS];
-	int generic1;
+	int tokens;				// harvester skulls
 	int loopSound;
 	int jumppad_ent;		// jumppad entity hit this frame
 	// not communicated over the net at all
@@ -1109,12 +1118,13 @@ typedef struct entityState_s {
 	int solid;			// for client side prediction, trap_linkentity sets this properly
 	int event;			// impulse events -- muzzle flashes, footsteps, etc
 	int eventParm;
+	int team;
 	// for players
 	int powerups;		// bit flags
 	int weapon;			// determines weapon and flash model, etc
 	int legsAnim;		// mask off ANIM_TOGGLEBIT
 	int torsoAnim;		// mask off ANIM_TOGGLEBIT
-	int generic1;
+	int tokens;			// harvester skulls
 } entityState_t;
 
 typedef enum {
