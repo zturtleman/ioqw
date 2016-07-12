@@ -26,9 +26,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "tr_local.h"
 
 glconfig_t  glConfig;
-qboolean    textureFilterAnisotropic = qfalse;
-int         maxAnisotropy = 0;
-float       displayAspect = 0.0f;
 
 glstate_t	glState;
 
@@ -143,7 +140,6 @@ cvar_t  *r_noborder;
 
 cvar_t	*r_customwidth;
 cvar_t	*r_customheight;
-cvar_t	*r_customPixelAspect;
 
 cvar_t	*r_overBrightBits;
 cvar_t	*r_mapOverBrightBits;
@@ -169,6 +165,8 @@ cvar_t	*r_maxpolys;
 int		max_polys;
 cvar_t	*r_maxpolyverts;
 int		max_polyverts;
+cvar_t	*r_maxpolybuffers;
+int		max_polybuffers;
 
 /*
 ** InitOpenGL
@@ -268,29 +266,27 @@ typedef struct vidmode_s
 {
 	const char *description;
 	int width, height;
-	float pixelAspect;		// pixel width / height
 } vidmode_t;
 
 vidmode_t r_vidModes[] =
 {
-	{ "Mode  0: 320x240",		320,	240,	1 },
-	{ "Mode  1: 400x300",		400,	300,	1 },
-	{ "Mode  2: 512x384",		512,	384,	1 },
-	{ "Mode  3: 640x480",		640,	480,	1 },
-	{ "Mode  4: 800x600",		800,	600,	1 },
-	{ "Mode  5: 960x720",		960,	720,	1 },
-	{ "Mode  6: 1024x768",		1024,	768,	1 },
-	{ "Mode  7: 1152x864",		1152,	864,	1 },
-	{ "Mode  8: 1280x1024",		1280,	1024,	1 },
-	{ "Mode  9: 1600x1200",		1600,	1200,	1 },
-	{ "Mode 10: 2048x1536",		2048,	1536,	1 },
-	{ "Mode 11: 856x480 (wide)",856,	480,	1 }
+	{ "Mode  0: 320x240",		320,	240		},
+	{ "Mode  1: 400x300",		400,	300		},
+	{ "Mode  2: 512x384",		512,	384		},
+	{ "Mode  3: 640x480",		640,	480		},
+	{ "Mode  4: 800x600",		800,	600		},
+	{ "Mode  5: 960x720",		960,	720		},
+	{ "Mode  6: 1024x768",		1024,	768		},
+	{ "Mode  7: 1152x864",		1152,	864		},
+	{ "Mode  8: 1280x1024",		1280,	1024	},
+	{ "Mode  9: 1600x1200",		1600,	1200	},
+	{ "Mode 10: 2048x1536",		2048,	1536	},
+	{ "Mode 11: 856x480 (wide)",856,	480		}
 };
 static int	s_numVidModes = ARRAY_LEN( r_vidModes );
 
 qboolean R_GetModeInfo( int *width, int *height, float *windowAspect, int mode ) {
 	vidmode_t	*vm;
-	float			pixelAspect;
 
 	if ( mode < -1 ) {
 		return qfalse;
@@ -302,16 +298,14 @@ qboolean R_GetModeInfo( int *width, int *height, float *windowAspect, int mode )
 	if ( mode == -1 ) {
 		*width = r_customwidth->integer;
 		*height = r_customheight->integer;
-		pixelAspect = r_customPixelAspect->value;
 	} else {
 		vm = &r_vidModes[mode];
 
 		*width  = vm->width;
 		*height = vm->height;
-		pixelAspect = vm->pixelAspect;
 	}
 
-	*windowAspect = (float)*width / ( *height * pixelAspect );
+	*windowAspect = (float)*width / *height;
 
 	return qtrue;
 }
@@ -1036,7 +1030,6 @@ void R_Register( void )
 	r_noborder = ri.Cvar_Get("r_noborder", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_customwidth = ri.Cvar_Get( "r_customwidth", "1600", CVAR_ARCHIVE | CVAR_LATCH );
 	r_customheight = ri.Cvar_Get( "r_customheight", "1024", CVAR_ARCHIVE | CVAR_LATCH );
-	r_customPixelAspect = ri.Cvar_Get( "r_customPixelAspect", "1", CVAR_ARCHIVE | CVAR_LATCH );
 	r_simpleMipMaps = ri.Cvar_Get( "r_simpleMipMaps", "1", CVAR_ARCHIVE | CVAR_LATCH );
 	r_vertexLight = ri.Cvar_Get( "r_vertexLight", "0", CVAR_ARCHIVE | CVAR_LATCH );
 	r_uiFullScreen = ri.Cvar_Get( "r_uifullscreen", "0", 0);
@@ -1142,6 +1135,7 @@ void R_Register( void )
 
 	r_maxpolys = ri.Cvar_Get( "r_maxpolys", va("%d", MAX_POLYS), 0);
 	r_maxpolyverts = ri.Cvar_Get( "r_maxpolyverts", va("%d", MAX_POLYVERTS), 0);
+	r_maxpolybuffers = ri.Cvar_Get( "r_maxpolybuffers", va("%d", MAX_POLYBUFFERS), 0);
 
 	// make sure all the commands added here are also
 	// removed in R_Shutdown
@@ -1173,8 +1167,8 @@ void R_Init( void ) {
 	Com_Memset( &backEnd, 0, sizeof( backEnd ) );
 	Com_Memset( &tess, 0, sizeof( tess ) );
 
-	if(sizeof(glconfig_t) != 11332)
-		ri.Error( ERR_FATAL, "Mod ABI incompatible: sizeof(glconfig_t) == %u != 11332", (unsigned int) sizeof(glconfig_t));
+	if(sizeof(glconfig_t) != 35928)
+		ri.Error( ERR_FATAL, "Mod ABI incompatible: sizeof(glconfig_t) == %u != 35928", (unsigned int) sizeof(glconfig_t));
 
 //	Swap_Init();
 
@@ -1182,6 +1176,8 @@ void R_Init( void ) {
 		ri.Printf( PRINT_WARNING, "tess.xyz not 16 byte aligned\n" );
 	}
 	Com_Memset( tess.constantColor255, 255, sizeof( tess.constantColor255 ) );
+
+	R_NoiseInit();
 
 	//
 	// init function tables
@@ -1192,6 +1188,7 @@ void R_Init( void ) {
 		tr.squareTable[i]	= ( i < FUNCTABLE_SIZE/2 ) ? 1.0f : -1.0f;
 		tr.sawToothTable[i] = (float)i / FUNCTABLE_SIZE;
 		tr.inverseSawToothTable[i] = 1.0f - tr.sawToothTable[i];
+		tr.noiseTable[i]	= R_NoiseGet4f(0, 0, 0, i);
 
 		if ( i < FUNCTABLE_SIZE / 2 )
 		{
@@ -1212,8 +1209,6 @@ void R_Init( void ) {
 
 	R_InitFogTable();
 
-	R_NoiseInit();
-
 	R_Register();
 
 	max_polys = r_maxpolys->integer;
@@ -1224,10 +1219,17 @@ void R_Init( void ) {
 	if (max_polyverts < MAX_POLYVERTS)
 		max_polyverts = MAX_POLYVERTS;
 
-	ptr = ri.Hunk_Alloc( sizeof( *backEndData ) + sizeof(srfPoly_t) * max_polys + sizeof(polyVert_t) * max_polyverts, h_low);
+	max_polybuffers = r_maxpolybuffers->integer;
+	if (max_polybuffers < MAX_POLYBUFFERS)
+		max_polybuffers = MAX_POLYBUFFERS;
+
+	ptr = ri.Hunk_Alloc( sizeof( *backEndData ) + sizeof(srfPoly_t) * max_polys + sizeof(polyVert_t) * max_polyverts
+			+ sizeof(srfPolyBuffer_t) * max_polybuffers, h_low);
 	backEndData = (backEndData_t *) ptr;
 	backEndData->polys = (srfPoly_t *) ((char *) ptr + sizeof( *backEndData ));
 	backEndData->polyVerts = (polyVert_t *) ((char *) ptr + sizeof( *backEndData ) + sizeof(srfPoly_t) * max_polys);
+	backEndData->polybuffers = (srfPolyBuffer_t *) ((char *) ptr + sizeof( *backEndData ) + sizeof(srfPoly_t) * max_polys
+			+ sizeof(polyVert_t) * max_polyverts);
 	R_InitNextFrame();
 
 	InitOpenGL();
@@ -1354,6 +1356,7 @@ refexport_t *GetRefAPI ( int apiVersion, refimport_t *rimp ) {
 	re.ClearScene = RE_ClearScene;
 	re.AddRefEntityToScene = RE_AddRefEntityToScene;
 	re.AddPolyToScene = RE_AddPolyToScene;
+	re.AddPolyBufferToScene = RE_AddPolyBufferToScene;
 	re.LightForPoint = R_LightForPoint;
 	re.AddLightToScene = RE_AddLightToScene;
 	re.AddAdditiveLightToScene = RE_AddAdditiveLightToScene;

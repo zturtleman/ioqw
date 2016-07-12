@@ -886,6 +886,8 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 	trap_S_ClearLoopingSounds(qfalse);
 	// clear all the render lists
 	trap_R_ClearScene();
+	// clear poly buffers for this frame
+	CG_PB_ClearPolyBuffers();
 	// set up cg.snap and possibly cg.nextSnap
 	CG_ProcessSnapshots();
 	// if we haven't received any snapshots yet, all we can draw is the information screen
@@ -915,6 +917,7 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 		CG_AddMarks();
 		CG_AddParticles();
 		CG_AddLocalEntities();
+		CG_AddAtmosphericEffects();
 	}
 
 	CG_AddViewWeapon(&cg.predictedPlayerState);

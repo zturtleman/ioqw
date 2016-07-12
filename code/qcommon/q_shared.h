@@ -296,15 +296,6 @@ void *Hunk_Alloc(int size, ha_pref preference);
 #define CIN_silent	 8
 #define CIN_shader	16
 
-typedef struct {
-	int gametype;
-	// callbacks to test the entity, these will be different functions during game and cgame
-	qboolean (*spawnInt)(const char *key, const char *defaultString, int *out);
-	qboolean (*spawnString)(const char *key, const char *defaultString, char **out);
-} bgEntitySpawnInfo_t;
-
-qboolean BG_CheckSpawnEntity(const bgEntitySpawnInfo_t *info);
-
 /*
 ==============================================================
 

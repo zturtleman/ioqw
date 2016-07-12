@@ -119,7 +119,8 @@ typedef enum {
 	GF_SAWTOOTH, 
 	GF_INVERSE_SAWTOOTH, 
 
-	GF_NOISE
+	GF_NOISE,
+	GF_RANDOM
 
 } genFunc_t;
 
@@ -404,6 +405,9 @@ typedef struct {
 	int			numPolys;
 	struct srfPoly_s	*polys;
 
+	int			numPolyBuffers;
+	struct srfPolyBuffer_s	*polybuffers;
+
 	int			numDrawSurfs;
 	struct drawSurf_s	*drawSurfs;
 
@@ -474,6 +478,7 @@ typedef enum {
 	SF_GRID,
 	SF_TRIANGLES,
 	SF_POLY,
+	SF_POLYBUFFER,
 	SF_MD3,
 	SF_MDR,
 	SF_IQM,
@@ -504,6 +509,10 @@ typedef struct srfPoly_s {
 	polyVert_t		*verts;
 } srfPoly_t;
 
+typedef struct srfPolyBuffer_s {
+	surfaceType_t surfaceType;
+	polyBuffer_t *pPolyBuffer;
+} srfPolyBuffer_t;
 
 typedef struct srfFlare_s {
 	surfaceType_t	surfaceType;
@@ -944,6 +953,7 @@ typedef struct {
 	float					triangleTable[FUNCTABLE_SIZE];
 	float					sawToothTable[FUNCTABLE_SIZE];
 	float					inverseSawToothTable[FUNCTABLE_SIZE];
+	float					noiseTable[FUNCTABLE_SIZE];
 	float					fogTable[FOG_TABLE_SIZE];
 } trGlobals_t;
 
@@ -1068,6 +1078,7 @@ void R_AddRailSurfaces( trRefEntity_t *e, qboolean isUnderwater );
 void R_AddLightningBoltSurfaces( trRefEntity_t *e );
 
 void R_AddPolygonSurfaces( void );
+void R_AddPolygonBufferSurfaces( void );
 
 void R_DecomposeSort( unsigned sort, int *entityNum, shader_t **shader, 
 					 int *fogNum, int *dlightMap );
@@ -1353,6 +1364,7 @@ void R_InitNextFrame( void );
 void RE_ClearScene( void );
 void RE_AddRefEntityToScene( const refEntity_t *ent );
 void RE_AddPolyToScene( qhandle_t hShader , int numVerts, const polyVert_t *verts, int num );
+void RE_AddPolyBufferToScene( polyBuffer_t* pPolyBuffer );
 void RE_AddLightToScene( const vec3_t org, float intensity, float r, float g, float b );
 void RE_AddAdditiveLightToScene( const vec3_t org, float intensity, float r, float g, float b );
 void RE_RenderScene( const refdef_t *fd );
@@ -1551,11 +1563,13 @@ typedef struct {
 	trRefEntity_t	entities[MAX_REFENTITIES];
 	srfPoly_t	*polys;//[MAX_POLYS];
 	polyVert_t	*polyVerts;//[MAX_POLYVERTS];
+	srfPolyBuffer_t *polybuffers;//[MAX_POLYBUFFERS];
 	renderCommandList_t	commands;
 } backEndData_t;
 
 extern	int		max_polys;
 extern	int		max_polyverts;
+extern	int		max_polybuffers;
 
 extern	backEndData_t	*backEndData;	// the second one may not be allocated
 

@@ -187,6 +187,7 @@ static void UI_SetupMenu_Init( void ) {
 	}
 
 	y = (SCREEN_HEIGHT - numItems*SETUP_MENU_VERTICAL_SPACING) / 2;
+	setupMenuInfo.setupplayer.generic.type			= MTYPE_PTEXT;
 	setupMenuInfo.setupplayer.generic.flags			= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
 	setupMenuInfo.setupplayer.generic.x				= 320;
 	setupMenuInfo.setupplayer.generic.y				= y;

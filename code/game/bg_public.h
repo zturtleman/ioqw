@@ -534,7 +534,32 @@ gitem_t *BG_FindItemForHoldable(holdable_t pw);
 
 #define ITEM_INDEX(x) ((x)-bg_itemlist)
 
+typedef struct {
+	int gametype;
+	// callbacks to test the entity, these will be different functions during game and cgame
+	qboolean (*spawnInt)(const char *key, const char *defaultString, int *out);
+	qboolean (*spawnString)(const char *key, const char *defaultString, char **out);
+} bgEntitySpawnInfo_t;
+
+qboolean BG_CheckSpawnEntity(const bgEntitySpawnInfo_t *info);
 qboolean BG_CanItemBeGrabbed(int gametype, const entityState_t *ent, const playerState_t *ps);
+#define MAX_MAP_SIZE 65536
+// bg_tracemap.c
+typedef struct {
+	// callbacks to test the world
+	// these will be different functions during game and cgame
+	void (*trace)(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask);
+	int (*pointcontents)(const vec3_t point, int passEntityNum);
+} bgGenTracemap_t;
+
+void BG_GenerateTracemap(const char *mapname, vec3_t mapcoordsMins, vec3_t mapcoordsMaxs, bgGenTracemap_t *gen);
+qboolean BG_LoadTraceMap(char *rawmapname, vec2_t world_mins, vec2_t world_maxs);
+float BG_GetSkyHeightAtPoint(vec3_t pos);
+float BG_GetSkyGroundHeightAtPoint(vec3_t pos);
+float BG_GetGroundHeightAtPoint(vec3_t pos);
+int BG_GetTracemapGroundFloor(void);
+int BG_GetTracemapGroundCeil(void);
+void FinalizeTracemapClamp(int *x, int *y);
 // g_dmflags->integer flags
 #define DF_NO_FALLING	8
 #define DF_FIXED_FOV	16

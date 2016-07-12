@@ -2597,6 +2597,8 @@ void CG_DrawActive(stereoFrame_t stereoView) {
 		CG_DrawCrosshair3D();
 	}
 
+	CG_PB_RenderPolyBuffers();
+
 	CG_DrawMiscGamemodels();
 	// draw 3D view
 	trap_R_RenderScene(&cg.refdef);

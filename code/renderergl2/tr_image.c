@@ -2113,16 +2113,16 @@ done:
 
 	if (mipmap)
 	{
-		if (textureFilterAnisotropic && !cubemap)
+		if (glConfig.textureFilterAnisotropic && !cubemap)
 			qglTextureParameteri(image->texnum, textureTarget, GL_TEXTURE_MAX_ANISOTROPY_EXT,
-			(GLint)Com_Clamp(1, maxAnisotropy, r_ext_max_anisotropy->integer));
+			(GLint)Com_Clamp(1, glConfig.maxAnisotropy, r_ext_max_anisotropy->integer));
 
 		qglTextureParameterf(image->texnum, textureTarget, GL_TEXTURE_MIN_FILTER, gl_filter_min);
 		qglTextureParameterf(image->texnum, textureTarget, GL_TEXTURE_MAG_FILTER, gl_filter_max);
 	}
 	else
 	{
-		if (textureFilterAnisotropic && !cubemap)
+		if (glConfig.textureFilterAnisotropic && !cubemap)
 			qglTextureParameteri(image->texnum, textureTarget, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1);
 
 		qglTextureParameterf(image->texnum, textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

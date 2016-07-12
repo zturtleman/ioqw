@@ -377,6 +377,8 @@ typedef struct {
 **************************************************************************************************************************************/
 
 #define MAX_PREDICTED_EVENTS 16
+#define MAX_SPAWN_VARS 64
+#define MAX_SPAWN_VARS_CHARS 2048
 
 typedef struct {
 	int clientFrame;				// incremented each frame
@@ -429,6 +431,16 @@ typedef struct {
 	refdef_t refdef;
 	vec3_t refdefViewAngles;		// will be converted to refdef.viewaxis
 	float fov;						// either range checked cg_fov or forced value
+	// spawn variables
+	qboolean spawning;				// the CG_Spawn*() functions are valid
+	int numSpawnVars;
+	char *spawnVars[MAX_SPAWN_VARS][2]; // key / value pairs
+	int numSpawnVarChars;
+	char spawnVarChars[MAX_SPAWN_VARS_CHARS];
+	int spawnEntityOffset;
+	vec2_t mapcoordsMins;
+	vec2_t mapcoordsMaxs;
+	qboolean mapcoordsValid;
 	int numMiscGameModels;
 	// zoom key
 	qboolean zoomed;
@@ -1137,6 +1149,13 @@ void CG_Bleed(vec3_t origin, int entityNum);
 localEntity_t *CG_MakeExplosion(vec3_t origin, vec3_t dir, qhandle_t hModel, qhandle_t shader, int msec, qboolean isSprite);
 // cg_snapshot.c
 void CG_ProcessSnapshots(void);
+// cg_spawn.c
+qboolean CG_SpawnString(const char *key, const char *defaultString, char **out);
+// spawn string returns a temporary reference, you must CopyString() if you want to keep it
+qboolean CG_SpawnFloat(const char *key, const char *defaultString, float *out);
+qboolean CG_SpawnInt(const char *key, const char *defaultString, int *out);
+qboolean CG_SpawnVector(const char *key, const char *defaultString, float *out);
+void CG_ParseEntitiesFromString(void);
 // cg_info.c
 void CG_LoadingString(const char *s);
 void CG_LoadingItem(int itemNum);
@@ -1160,6 +1179,13 @@ void CG_PlayBufferedVoiceChats(void);
 void CG_Respawn(void);
 void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops);
 void CG_CheckChangedPredictableEvents(playerState_t *ps);
+// cg_atmospheric.c
+void CG_EffectParse(const char *effectstr);
+void CG_AddAtmosphericEffects(void);
+// cg_polybus.c
+polyBuffer_t *CG_PB_FindFreePolyBuffer(qhandle_t shader, int numVerts, int numIndicies);
+void CG_PB_ClearPolyBuffers(void);
+void CG_PB_RenderPolyBuffers(void);
 
 /*
 =======================================================================================================================================
@@ -1244,6 +1270,7 @@ void trap_R_AddRefEntityToScene(const refEntity_t *re);
 // polys are intended for simple wall marks, not really for doing significant construction
 void trap_R_AddPolyToScene(qhandle_t hShader , int numVerts, const polyVert_t *verts);
 void trap_R_AddPolysToScene(qhandle_t hShader , int numVerts, const polyVert_t *verts, int numPolys);
+void trap_R_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer);
 void trap_R_AddLightToScene(const vec3_t org, float intensity, float r, float g, float b);
 void trap_R_AddAdditiveLightToScene(const vec3_t org, float intensity, float r, float g, float b);
 int trap_R_LightForPoint(vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec3_t lightDir);

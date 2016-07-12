@@ -73,6 +73,24 @@ typedef struct poly_s {
 	polyVert_t			*verts;
 } poly_t;
 
+// =========================================
+// Gordon, these MUST NOT exceed the values for SHADER_MAX_VERTEXES/SHADER_MAX_INDEXES
+#define MAX_PB_VERTS    1025 // SHADER_MAX_VERTEXES
+#define MAX_PB_INDICIES ( MAX_PB_VERTS * 6 )
+
+typedef struct polyBuffer_s {
+	vec4_t xyz[MAX_PB_VERTS];
+	vec2_t st[MAX_PB_VERTS];
+	byte color[MAX_PB_VERTS][4];
+	int numVerts;
+
+	int indicies[MAX_PB_INDICIES];
+	int numIndicies;
+
+	qhandle_t shader;
+} polyBuffer_t;
+// =========================================
+
 typedef enum {
 	RT_MODEL,
 	RT_POLY,
@@ -188,7 +206,7 @@ typedef struct {
 	char					renderer_string[MAX_STRING_CHARS];
 	char					vendor_string[MAX_STRING_CHARS];
 	char					version_string[MAX_STRING_CHARS];
-	char					extensions_string[BIG_INFO_STRING];
+	char					extensions_string[BIG_INFO_STRING * 4];
 
 	int						maxTextureSize;			// queried from GL
 	int						numTextureUnits;		// multitexture ability
@@ -201,13 +219,18 @@ typedef struct {
 	qboolean				deviceSupportsGamma;
 	textureCompression_t	textureCompression;
 	qboolean				textureEnvAddAvailable;
+	qboolean				textureFilterAnisotropic;
+	int						maxAnisotropy;
 
-	int						vidWidth, vidHeight;
-	// aspect is the screen's physical width / height, which may be different
-	// than scrWidth / scrHeight if the pixels are non-square
-	// normal screens should be 4/3, but wide aspect monitors may be 16/9
+	// Game resolution, aspect, and refresh rate.
+	int						vidWidth;
+	int						vidHeight;
 	float					windowAspect;
 
+	// Display (desktop) resolution, aspect, and refresh rate.
+	int						displayWidth;
+	int						displayHeight;
+	float					displayAspect;
 	int						displayFrequency;
 
 	// synonymous with "does rendering consume the entire screen?", therefore
