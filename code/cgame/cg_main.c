@@ -798,10 +798,6 @@ static void CG_RegisterGraphics(void) {
 	CG_LoadingString(cgs.mapname);
 
 	trap_R_LoadWorldMap(cgs.mapname);
-
-	CG_LoadingString("entities");
-
-	CG_ParseEntitiesFromString();
 	// precache status bar pics
 	CG_LoadingString("game media");
 

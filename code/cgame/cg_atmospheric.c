@@ -977,13 +977,13 @@ void CG_AddAtmosphericEffects(void) {
 	vec3_t currvec;
 	float currweight;
 
-	if (cg_atmFx.numDrops <= 0 || cg_atmFx.numEffectShaders == 0 || cg_atmosphericEffects.value <= 0) {
+	if (cg_atmFx.numDrops <= 0 || cg_atmFx.numEffectShaders == 0) {
 		return;
 	}
 #ifndef ATM_NEW
 	CG_ClearPolyPool();
 #endif // ATM_NEW
-	max = cg_atmosphericEffects.value < 1 ? cg_atmosphericEffects.value * cg_atmFx.numDrops : cg_atmFx.numDrops;
+	max = cg_atmFx.numDrops;
 
 	if (CG_EffectGustCurrent(currvec, &currweight, &currnum)) {
 		CG_EffectGust(); // Recalculate gust parameters

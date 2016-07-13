@@ -1183,7 +1183,7 @@ void CG_CheckChangedPredictableEvents(playerState_t *ps);
 void CG_EffectParse(const char *effectstr);
 void CG_AddAtmosphericEffects(void);
 // cg_polybus.c
-polyBuffer_t *CG_PB_FindFreePolyBuffer(qhandle_t shader, int numVerts, int numIndicies);
+// polyBuffer_t *CG_PB_FindFreePolyBuffer(qhandle_t shader, int numVerts, int numIndicies);
 void CG_PB_ClearPolyBuffers(void);
 void CG_PB_RenderPolyBuffers(void);
 
@@ -1270,7 +1270,7 @@ void trap_R_AddRefEntityToScene(const refEntity_t *re);
 // polys are intended for simple wall marks, not really for doing significant construction
 void trap_R_AddPolyToScene(qhandle_t hShader , int numVerts, const polyVert_t *verts);
 void trap_R_AddPolysToScene(qhandle_t hShader , int numVerts, const polyVert_t *verts, int numPolys);
-void trap_R_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer);
+// void trap_R_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer);
 void trap_R_AddLightToScene(const vec3_t org, float intensity, float r, float g, float b);
 void trap_R_AddAdditiveLightToScene(const vec3_t org, float intensity, float r, float g, float b);
 int trap_R_LightForPoint(vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec3_t lightDir);
