@@ -111,7 +111,7 @@ const char *VM_ValueToSymbol(vm_t *vm, int value) {
 		return sym->symName;
 	}
 
-	Com_sprintf(text, sizeof(text), "%s+%i", sym->symName, value - sym->symValue);
+	Com_sprintf(text, sizeof(text), "%s + %i", sym->symName, value - sym->symValue);
 
 	return text;
 }
@@ -751,15 +751,15 @@ VM_Call
 
 Upon a system call, the stack will look like:
 
-sp+32	parm1
-sp+28	parm0
-sp+24	return value
-sp+20	return address
-sp+16	local1
-sp+14	local0
-sp+12	arg1
-sp+8	arg0
-sp+4	return stack
+sp + 32	parm1
+sp + 28	parm0
+sp + 24	return value
+sp + 20	return address
+sp + 16	local1
+sp + 14	local0
+sp + 12	arg1
+sp + 8	arg0
+sp + 4	return stack
 sp		return address
 
 An interpreted function will immediately execute an OP_ENTER instruction, which will subtract space for locals from sp.
@@ -779,13 +779,13 @@ intptr_t QDECL VM_Call(vm_t *vm, int callnum, ...) {
 	lastVM = vm;
 
 	if (vm_debugLevel) {
-		Com_Printf("VM_Call( %d )\n", callnum);
+		Com_Printf("VM_Call(%d)\n", callnum);
 	}
 
 	++vm->callLevel;
 	// if we have a dll loaded, call it directly
 	if (vm->entryPoint) {
-		// rcg010207 - see dissertation at top of VM_DllSyscall() in this file.
+		//rcg010207 - see dissertation at top of VM_DllSyscall() in this file.
 		int args[MAX_VMMAIN_ARGS - 1];
 		va_list ap;
 		va_start(ap, callnum);

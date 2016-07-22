@@ -59,18 +59,16 @@ static qboolean winsockInitialized = qfalse;
 // needed for socklen_t on OSX 10.2
 #define _BSD_SOCKLEN_T_
 #endif
-
-	#include <sys/socket.h>
-	#include <errno.h>
-	#include <netdb.h>
-	#include <netinet/in.h>
-	#include <arpa/inet.h>
-	#include <net/if.h>
-	#include <sys/ioctl.h>
-	#include <sys/types.h>
-	#include <sys/time.h>
-	#include <unistd.h>
-
+#include <sys/socket.h>
+#include <errno.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <net/if.h>
+#include <sys/ioctl.h>
+#include <sys/types.h>
+#include <sys/time.h>
+#include <unistd.h>
 #if !defined(__sun) && !defined(__sgi)
 #include <ifaddrs.h>
 #endif
@@ -113,9 +111,9 @@ static struct ipv6_mreq curgroup;
 // And the currently bound address.
 static struct sockaddr_in6 boundto;
 #ifndef IF_NAMESIZE
-	#define IF_NAMESIZE 16
+#define IF_NAMESIZE 16
 #endif
-// use an admin local address per default so that network admins can decide on how to handle quakewars traffic.
+// use an admin local address per default so that network admins can decide on how to handle Quake Wars traffic.
 #define NET_MULTICAST_IP6 "ff04::696f:7175:616b:6533"
 #define MAX_IPS 32
 
@@ -980,7 +978,6 @@ void NET_SetMulticast6(void) {
 
 	if (!*net_mcast6addr->string || !Sys_StringToSockaddr(net_mcast6addr->string, (struct sockaddr *)&addr, sizeof(addr), AF_INET6)) {
 		Com_Printf("WARNING: NET_JoinMulticast6: Incorrect multicast address given, please set cvar %s to a sane value.\n", net_mcast6addr->name);
-
 		Cvar_SetValue(net_enabled->name, net_enabled->integer|NET_DISABLEMCAST);
 		return;
 	}

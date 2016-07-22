@@ -66,7 +66,9 @@ winding_t *AllocWinding(int points) {
 
 	s = sizeof(vec_t) * 3 * points + sizeof(int);
 	w = Z_Malloc(s);
+
 	Com_Memset(w, 0, s);
+
 	return w;
 }
 
@@ -362,6 +364,7 @@ void ClipWindingEpsilon(winding_t *in, vec3_t normal, vec_t dist, vec_t epsilon,
 	}
 
 	maxpts = in->numpoints + 4; // cant use counts[0] + 2 because of fp grouping errors
+
 	*front = f = AllocWinding(maxpts);
 	*back = b = AllocWinding(maxpts);
 

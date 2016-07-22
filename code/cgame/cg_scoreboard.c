@@ -142,30 +142,32 @@ static void CG_DrawClientScore(int y, score_t *score, float *color, float fade, 
 		CG_DrawHead(headx, y, 16, 16, score->client, headAngles);
 	}
 	// draw the team task
-	switch (ci->teamTask) {
-		case TEAMTASK_OFFENSE:
-			CG_DrawPic(headx + 48, y, 16, 16, cgs.media.assaultShader);
-			break;
-		case TEAMTASK_DEFENSE:
-			CG_DrawPic(headx + 48, y, 16, 16, cgs.media.defendShader);
-			break;
-		case TEAMTASK_RETRIEVE:
-			CG_DrawPic(headx + 48, y, 16, 16, cgs.media.retrieveShader);
-			break;
-		case TEAMTASK_ESCORT:
-			CG_DrawPic(headx + 48, y, 16, 16, cgs.media.escortShader);
-			break;
-		case TEAMTASK_FOLLOW:
-			CG_DrawPic(headx + 48, y, 16, 16, cgs.media.followShader);
-			break;
-		case TEAMTASK_CAMP:
-			CG_DrawPic(headx + 48, y, 16, 16, cgs.media.campShader);
-			break;
-		case TEAMTASK_PATROL:
-			CG_DrawPic(headx + 48, y, 16, 16, cgs.media.patrolShader);
-			break;
-		default:
-			break;
+	if (ci->teamTask != TEAMTASK_NONE) {
+		switch (ci->teamTask) {
+			case TEAMTASK_OFFENSE:
+				CG_DrawPic(headx + 48, y, 16, 16, cgs.media.assaultShader);
+				break;
+			case TEAMTASK_DEFENSE:
+				CG_DrawPic(headx + 48, y, 16, 16, cgs.media.defendShader);
+				break;
+			case TEAMTASK_RETRIEVE:
+				CG_DrawPic(headx + 48, y, 16, 16, cgs.media.retrieveShader);
+				break;
+			case TEAMTASK_ESCORT:
+				CG_DrawPic(headx + 48, y, 16, 16, cgs.media.escortShader);
+				break;
+			case TEAMTASK_FOLLOW:
+				CG_DrawPic(headx + 48, y, 16, 16, cgs.media.followShader);
+				break;
+			case TEAMTASK_CAMP:
+				CG_DrawPic(headx + 48, y, 16, 16, cgs.media.campShader);
+				break;
+			case TEAMTASK_PATROL:
+				CG_DrawPic(headx + 48, y, 16, 16, cgs.media.patrolShader);
+				break;
+			default:
+				break;
+		}
 	}
 	// draw the score line
 	if (score->ping == -1) {

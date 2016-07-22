@@ -200,8 +200,8 @@ static void CG_Speaker(centity_t *cent) {
 
 	trap_S_StartSound(NULL, cent->currentState.number, CHAN_ITEM, cgs.gameSounds[cent->currentState.eventParm]);
 
-	// ent->s.frame = ent->wait * 10;
-	// ent->s.clientNum = ent->random * 10;
+	//ent->s.frame = ent->wait * 10;
+	//ent->s.clientNum = ent->random * 10;
 	cent->miscTime = cg.time + cent->currentState.frame * 100 + cent->currentState.clientNum * 100 * crandom();
 }
 

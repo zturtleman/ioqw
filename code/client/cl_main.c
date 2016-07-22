@@ -778,8 +778,11 @@ void CL_Record_f(void) {
 	MSG_WriteByte(&buf, svc_EOF);
 	// write it to the demo file
 	len = LittleLong(clc.serverMessageSequence - 1);
+
 	FS_Write(&len, 4, clc.demofile);
+
 	len = LittleLong(buf.cursize);
+
 	FS_Write(&len, 4, clc.demofile);
 	FS_Write(buf.data, buf.cursize, clc.demofile);
 	// the rest of the demo file will be copied from net messages
@@ -2799,6 +2802,7 @@ void CL_InitRenderer(void) {
 	cls.charSetShader = re.RegisterShader("gfx/2d/bigchars");
 	cls.whiteShader = re.RegisterShader("white");
 	cls.consoleShader = re.RegisterShader("console");
+
 	g_console_field_width = cls.glconfig.vidWidth / SMALLCHAR_WIDTH - 2;
 	g_consoleField.widthInChars = g_console_field_width;
 }
@@ -3314,6 +3318,7 @@ void CL_Init(void) {
 	CL_GenerateQKey();
 	Cvar_Get("cl_guid", "", CVAR_USERINFO|CVAR_ROM);
 	CL_UpdateGUID(NULL, 0);
+
 	Com_Printf("----- Client Initialization Complete -----\n");
 }
 
@@ -3381,6 +3386,7 @@ void CL_Shutdown(char *finalmsg, qboolean disconnect, qboolean quit) {
 	Com_Memset(&cls, 0, sizeof(cls));
 
 	Key_SetCatcher(0);
+
 	Com_Printf("-----------------------\n");
 }
 

@@ -740,6 +740,7 @@ void CM_TraceThroughSphere(traceWork_t *tw, vec3_t origin, float radius, vec3_t 
 
 	// if inside the sphere
 	VectorSubtract(start, origin, dir);
+
 	l1 = VectorLengthSquared(dir);
 
 	if (l1 < Square(radius)) {
@@ -747,6 +748,7 @@ void CM_TraceThroughSphere(traceWork_t *tw, vec3_t origin, float radius, vec3_t 
 		tw->trace.startsolid = qtrue;
 		// test for allsolid
 		VectorSubtract(end, origin, dir);
+
 		l1 = VectorLengthSquared(dir);
 
 		if (l1 < Square(radius)) {
@@ -757,9 +759,12 @@ void CM_TraceThroughSphere(traceWork_t *tw, vec3_t origin, float radius, vec3_t 
 	}
 
 	VectorSubtract(end, start, dir);
+
 	length = VectorNormalize(dir);
 	l1 = CM_DistanceFromLineSquared(origin, start, end, dir);
+
 	VectorSubtract(end, origin, v1);
+
 	l2 = VectorLengthSquared(v1);
 	// if no intersection with the sphere and the end point is at least an epsilon away
 	if (l1 >= Square(radius) && l2 > Square(radius + SURFACE_CLIP_EPSILON)) {
@@ -836,12 +841,14 @@ void CM_TraceThroughVerticalCylinder(traceWork_t *tw, vec3_t origin, float radiu
 	if (start[2] <= origin[2] + halfheight && start[2] >= origin[2] - halfheight) {
 		// if inside the cylinder
 		VectorSubtract(start2d, org2d, dir);
+
 		l1 = VectorLengthSquared(dir);
 
 		if (l1 < Square(radius)) {
 			tw->trace.fraction = 0;
 			tw->trace.startsolid = qtrue;
 			VectorSubtract(end2d, org2d, dir);
+
 			l1 = VectorLengthSquared(dir);
 
 			if (l1 < Square(radius)) {
@@ -853,9 +860,12 @@ void CM_TraceThroughVerticalCylinder(traceWork_t *tw, vec3_t origin, float radiu
 	}
 
 	VectorSubtract(end2d, start2d, dir);
+
 	length = VectorNormalize(dir);
 	l1 = CM_DistanceFromLineSquared(org2d, start2d, end2d, dir);
+
 	VectorSubtract(end2d, org2d, v1);
+
 	l2 = VectorLengthSquared(v1);
 	// if no intersection with the cylinder and the end point is at least an epsilon away
 	if (l1 >= Square(radius) && l2 > Square(radius + SURFACE_CLIP_EPSILON)) {
@@ -1103,7 +1113,7 @@ void CM_TraceThroughTree(traceWork_t *tw, int num, float p1f, float p2f, vec3_t 
 		frac2 = 1;
 	}
 
-	midf = p1f + (p2f - p1f)*frac2;
+	midf = p1f + (p2f - p1f) * frac2;
 
 	mid[0] = p1[0] + frac2 * (p2[0] - p1[0]);
 	mid[1] = p1[1] + frac2 * (p2[1] - p1[1]);

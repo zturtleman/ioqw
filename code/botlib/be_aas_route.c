@@ -225,6 +225,7 @@ AAS_FreeRoutingCache
 =======================================================================================================================================
 */
 void AAS_FreeRoutingCache(aas_routingcache_t *cache) {
+
 	AAS_UnlinkCache(cache);
 	routingcachesize -= cache->size;
 	FreeMemory(cache);

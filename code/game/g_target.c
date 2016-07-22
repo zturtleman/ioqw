@@ -245,7 +245,7 @@ Normal sounds play each time the target is used.
 Looped sounds will be toggled by use functions.
 Multiple identical looping sounds will just increase volume without any speed cost.
 "wait" : Seconds between auto triggerings, 0 = don't auto trigger
-"random"	wait variance, default is 0
+"random" wait variance, default is 0
 */
 void SP_target_speaker(gentity_t *ent) {
 	char buffer[MAX_QPATH];

@@ -93,8 +93,7 @@ size_t S_OGG_Callback_read(void *ptr, size_t size, size_t nmemb, void *datasourc
 	stream->pos += bytesRead;
 	// this function returns the number of elements read not the number of bytes
 	nMembRead = bytesRead / size;
-	// even if the last member is only read partially
-	// it is counted as a whole in the return value
+	// even if the last member is only read partially it is counted as a whole in the return value
 	if (bytesRead % size) {
 		nMembRead++;
 	}

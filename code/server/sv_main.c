@@ -488,7 +488,6 @@ qboolean SVC_RateLimit(leakyBucket_t *bucket, int burst, int period) {
 
 		if (bucket->burst < burst) {
 			bucket->burst++;
-
 			return qfalse;
 		}
 	}
@@ -626,9 +625,9 @@ void SVC_Info(netadr_t from) {
 	Info_SetValueForKey(infostring, "challenge", Cmd_Argv(1));
 	Info_SetValueForKey(infostring, "gamename", com_gamename->string);
 #ifdef LEGACY_PROTOCOL
-	if (com_legacyprotocol->integer > 0)
+	if (com_legacyprotocol->integer > 0) {
 		Info_SetValueForKey(infostring, "protocol", va("%i", com_legacyprotocol->integer));
-	else
+	} else
 #endif
 		Info_SetValueForKey(infostring, "protocol", va("%i", com_protocol->integer));
 
@@ -1022,7 +1021,7 @@ void SV_Frame(int msec) {
 
 	// the menu kills the server with this cvar
 	if (sv_killserver->integer) {
-		SV_Shutdown("Server was killed");
+		SV_Shutdown("Server was killed.");
 		Cvar_Set("sv_killserver", "0");
 		return;
 	}

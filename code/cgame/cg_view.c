@@ -441,12 +441,12 @@ static void CG_OffsetFirstPersonView(void) {
 #if 0
 	{
 #define NECK_LENGTH 8
-	vec3_t forward, up;
+		vec3_t forward, up;
 
-	cg.refdef.vieworg[2] -= NECK_LENGTH;
-	AngleVectors(cg.refdefViewAngles, forward, NULL, up);
-	VectorMA(cg.refdef.vieworg, 3, forward, cg.refdef.vieworg);
-	VectorMA(cg.refdef.vieworg, NECK_LENGTH, up, cg.refdef.vieworg);
+		cg.refdef.vieworg[2] -= NECK_LENGTH;
+		AngleVectors(cg.refdefViewAngles, forward, NULL, up);
+		VectorMA(cg.refdef.vieworg, 3, forward, cg.refdef.vieworg);
+		VectorMA(cg.refdef.vieworg, NECK_LENGTH, up, cg.refdef.vieworg);
 	}
 #endif
 }

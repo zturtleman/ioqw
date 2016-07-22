@@ -423,7 +423,7 @@ void SV_SpawnServer(char *server, qboolean killBots) {
 	svs.snapFlagServerBit ^= SNAPFLAG_SERVERCOUNT;
 	// set nextmap to the same map, but it may be overriden by the game startup or another console command
 	Cvar_Set("nextmap", "map_restart 0");
-	// Cvar_Set("nextmap", va("map %s", server));
+	//Cvar_Set("nextmap", va("map %s", server));
 
 	for (i = 0; i < sv_maxclients->integer; i++) {
 		// save when the server started for each client already connected
@@ -441,6 +441,7 @@ void SV_SpawnServer(char *server, qboolean killBots) {
 	Cvar_Set("cl_paused", "0");
 	// get a new checksum feed and restart the file system
 	sv.checksumFeed = (((int)rand() << 16) ^ rand()) ^ Com_Milliseconds();
+
 	FS_Restart(sv.checksumFeed);
 
 	CM_LoadMap(va("maps/%s.bsp", server), qfalse, &checksum);
@@ -546,6 +547,7 @@ void SV_SpawnServer(char *server, qboolean killBots) {
 	// the server sends these to the clients so they can figure out which pk3s should be auto-downloaded
 	p = FS_ReferencedPakChecksums();
 	Cvar_Set("sv_referencedPaks", p);
+
 	p = FS_ReferencedPakNames();
 	Cvar_Set("sv_referencedPakNames", p);
 	// save systeminfo and serverinfo strings

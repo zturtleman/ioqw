@@ -707,6 +707,7 @@ void Cmd_Follow_f(gentity_t *ent) {
 	}
 
 	trap_Argv(1, arg, sizeof(arg));
+
 	i = ClientNumberFromString(ent, arg);
 
 	if (i == -1) {

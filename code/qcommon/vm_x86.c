@@ -1578,10 +1578,10 @@ void VM_Compile(vm_t *vm, vmHeader_t *header) {
 					EmitString("81 F8"); // cmp eax, vm->instructionCount
 					Emit4(vm->instructionCount);
 #if idx64
-					EmitString("73 04"); // jae +4
+					EmitString("73 04"); // jae + 4
 					EmitRexString(0x49, "FF 24 C0"); // jmp qword ptr [r8 + eax * 8]
 #else
-					EmitString("73 07"); // jae +7
+					EmitString("73 07"); // jae + 7
 					EmitString("FF 24 85"); // jmp dword ptr [instructionPointers + eax * 4]
 					Emit4((intptr_t)vm->instructionPointers);
 #endif

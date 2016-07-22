@@ -473,7 +473,6 @@ intptr_t CL_CgameSystemCalls(intptr_t *args) {
 			// Com_EventLoop(); // FIXME: if a server restarts here, BAD THINGS HAPPEN!
 			// We can't call Com_EventLoop here, a restart will crash and this _does_ happen
 			// if there is a map change while we are downloading at pk3.
-			// ZOID
 			SCR_UpdateScreen();
 			return 0;
 		case CG_CM_LOADMAP:
@@ -559,9 +558,6 @@ intptr_t CL_CgameSystemCalls(intptr_t *args) {
 			return 0;
 		case CG_R_ADDPOLYSTOSCENE:
 			re.AddPolyToScene(args[1], args[2], VMA(3), args[4]);
-			return 0;
-		case CG_R_ADDPOLYBUFFERTOSCENE:
-//			re.AddPolyBufferToScene(VMA(1));
 			return 0;
 		case CG_R_LIGHTFORPOINT:
 			return re.LightForPoint(VMA(1), VMA(2), VMA(3), VMA(4));

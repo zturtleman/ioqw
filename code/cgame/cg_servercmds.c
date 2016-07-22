@@ -684,6 +684,7 @@ int CG_HeadModelVoiceChats(char *filename) {
 	trap_FS_Read(buf, len, f);
 	buf[len] = 0;
 	trap_FS_FCloseFile(f);
+
 	ptr = buf;
 	p = &ptr;
 	token = COM_ParseExt(p, qtrue);

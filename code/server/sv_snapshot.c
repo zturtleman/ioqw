@@ -25,7 +25,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "server.h"
 
 /*
-=============================================================================
+=======================================================================================================================================
 
 	Delta encode a client frame onto the network channel
 
@@ -43,7 +43,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 	<playerstate>
 	<packetentities>
 
-=============================================================================
+=======================================================================================================================================
 */
 
 /*
@@ -75,20 +75,19 @@ static void SV_EmitPacketEntities(clientSnapshot_t *from, clientSnapshot_t *to, 
 		if (newindex >= to->num_entities) {
 			newnum = 9999;
 		} else {
-			newent = &svs.snapshotEntities[(to->first_entity+newindex) % svs.numSnapshotEntities];
+			newent = &svs.snapshotEntities[(to->first_entity + newindex) % svs.numSnapshotEntities];
 			newnum = newent->number;
 		}
 
 		if (oldindex >= from_num_entities) {
 			oldnum = 9999;
 		} else {
-			oldent = &svs.snapshotEntities[(from->first_entity+oldindex) % svs.numSnapshotEntities];
+			oldent = &svs.snapshotEntities[(from->first_entity + oldindex) % svs.numSnapshotEntities];
 			oldnum = oldent->number;
 		}
 
 		if (newnum == oldnum) {
-			// delta update from old position
-			// because the force parm is qfalse, this will not result in any bytes being emited if the entity has not changed at all
+			// delta update from old position because the force parm is qfalse, this will not result in any bytes being emited if the entity has not changed at all
 			MSG_WriteDeltaEntity(msg, oldent, newent, qfalse);
 			oldindex++;
 			newindex++;
@@ -256,7 +255,7 @@ static int QDECL SV_QsortEntityNumbers(const void *a, const void *b) {
 SV_AddEntToSnapshot
 =======================================================================================================================================
 */
-static void SV_AddEntToSnapshot(sharedEntity_t *clientEnt, svEntity_t *svEnt, sharedEntity_t *gEnt, snapshotEntityNumbers_t *eNums) {
+static void SV_AddEntToSnapshot(svEntity_t *svEnt, sharedEntity_t *gEnt, snapshotEntityNumbers_t *eNums) {
 
 	// if we have already added this entity to this snapshot, don't add again
 	if (svEnt->snapshotCounter == sv.snapshotCounter) {
@@ -280,7 +279,7 @@ SV_AddEntitiesVisibleFromPoint
 */
 static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *frame, snapshotEntityNumbers_t *eNums, qboolean portal) {
 	int e, i;
-	sharedEntity_t *ent, *playerEnt;
+	sharedEntity_t *ent;
 	svEntity_t *svEnt;
 	int l;
 	int clientarea, clientcluster;
@@ -300,7 +299,6 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 	// calculate the visible areas
 	frame->areabytes = CM_WriteAreaBits(frame->areabits, clientarea);
 	clientpvs = CM_ClusterPVS(clientcluster);
-	playerEnt = SV_GentityNum(frame->ps.clientNum);
 
 	for (e = 0; e < sv.num_entities; e++) {
 		ent = SV_GentityNum(e);
@@ -347,7 +345,7 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 		}
 		// broadcast entities are always sent
 		if (ent->r.svFlags & SVF_BROADCAST) {
-			SV_AddEntToSnapshot(playerEnt, svEnt, ent, eNums);
+			SV_AddEntToSnapshot(svEnt, ent, eNums);
 			continue;
 		}
 		// ignore if not touching a PV leaf
@@ -393,6 +391,7 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 		// visibility dummies
 		if (ent->r.svFlags & SVF_VISDUMMY) {
 			sharedEntity_t *ment = NULL;
+
 			// find master
 			ment = SV_GentityNum(ent->r.visDummyNum);
 
@@ -404,7 +403,7 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 					continue;
 				}
 
-				SV_AddEntToSnapshot(playerEnt, master, ment, eNums);
+				SV_AddEntToSnapshot(master, ment, eNums);
 			}
 			// master needs to be added, but not this dummy ent
 			continue;
@@ -444,18 +443,19 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 				}
 
 				if (ment->r.visDummyNum == ent->s.number) {
-					SV_AddEntToSnapshot(playerEnt, master, ment, eNums);
+					SV_AddEntToSnapshot(master, ment, eNums);
 				}
 			}
 			// masters need to be added, but not this dummy ent
 			continue;
 		}
 		// add it
-		SV_AddEntToSnapshot(playerEnt, svEnt, ent, eNums);
+		SV_AddEntToSnapshot(svEnt, ent, eNums);
 		// if it's a portal entity, add everything visible from its camera position
 		if (ent->r.svFlags & SVF_PORTAL) {
 			if (ent->r.portalCullDistance) {
 				vec3_t dir;
+
 				VectorSubtract(ent->s.origin, origin, dir);
 
 				if (VectorLengthSquared(dir) > (float)ent->r.portalCullDistance * ent->r.portalCullDistance) {
@@ -508,8 +508,7 @@ static void SV_BuildClientSnapshot(client_t *client) {
 	// grab the current playerState_t
 	ps = SV_GameClientNum(client - svs.clients);
 	frame->ps = *ps;
-	// never send client's own entity, because it can
-	// be regenerated from the playerstate
+	// never send client's own entity, because it can be regenerated from the playerstate
 	clientNum = frame->ps.clientNum;
 
 	if (clientNum < 0 || clientNum >= MAX_GENTITIES) {
@@ -538,6 +537,7 @@ static void SV_BuildClientSnapshot(client_t *client) {
 		ent = SV_GentityNum(entityNumbers.snapshotEntities[i]);
 		state = &svs.snapshotEntities[svs.nextSnapshotEntities % svs.numSnapshotEntities];
 		*state = ent->s;
+
 		svs.nextSnapshotEntities++;
 		// this should never hit, map should always be restarted first in SV_Frame
 		if (svs.nextSnapshotEntities >= 0x7FFFFFFE) {
@@ -627,6 +627,7 @@ void SV_SendClientSnapshot(client_t *client) {
 	}
 
 	MSG_Init(&msg, msg_buf, sizeof(msg_buf));
+
 	msg.allowoverflow = qtrue;
 	// NOTE, MRE: all server->client messages now acknowledge
 	// let the client know which reliable clientCommands we have received

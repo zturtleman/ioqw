@@ -62,9 +62,9 @@ IN_PrintKey
 static void IN_PrintKey(const SDL_Keysym *keysym, keyNum_t key, qboolean down) {
 
 	if (down) {
-		Com_Printf("+ ");
+		Com_Printf("+");
 	} else {
-		Com_Printf("  ");
+		Com_Printf("");
 	}
 
 	Com_Printf("Scancode: 0x%02x(%s) Sym: 0x%02x(%s)", keysym->scancode, SDL_GetScancodeName(keysym->scancode), keysym->sym, SDL_GetKeyName(keysym->sym));

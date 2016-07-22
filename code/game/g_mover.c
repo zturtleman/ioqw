@@ -1298,7 +1298,7 @@ void Reached_Train(gentity_t *ent) {
 		// after func_door are used. The desired effect with very very big speed is to have instant move, so any not null duration
 		// lower than a frame duration should be sufficient. Afaik, the negative case don't have to be supported.
 		ent->s.pos.trDuration = 1;
-		// Tequila comment: Don't send entity to clients so it becomes really invisible
+		// Don't send entity to clients so it becomes really invisible
 		ent->r.svFlags |= SVF_NOCLIENT;
 	}
 	// looping sound

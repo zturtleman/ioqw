@@ -279,7 +279,7 @@ static void CG_DrawField(int x, int y, int width, int value) {
 		if (*ptr == '-') {
 			frame = STAT_MINUS;
 		} else {
-			frame = *ptr -'0';
+			frame = *ptr - '0';
 		}
 
 		CG_DrawPic(x, y, CHAR_WIDTH, CHAR_HEIGHT, cgs.media.numberShaders[frame]);

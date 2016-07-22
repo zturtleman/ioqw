@@ -261,21 +261,17 @@ typedef struct {
 } fileHandleData_t;
 
 static fileHandleData_t fsh[MAX_FILE_HANDLES];
-
 // TTimo - https://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=540
 // whether we did a reorder on the current search path when joining the server
 static qboolean fs_reordered;
-
 // never load anything from pk3 files that are not present at the server when pure
 static int fs_numServerPaks = 0;
 static int fs_serverPaks[MAX_SEARCH_PATHS]; // checksums
 static char *fs_serverPakNames[MAX_SEARCH_PATHS]; // pk3 names
-
 // only used for autodownload, to make sure the client has at least all the pk3 files that are referenced at the server side
 static int fs_numServerReferencedPaks;
 static int fs_serverReferencedPaks[MAX_SEARCH_PATHS]; // checksums
 static char *fs_serverReferencedPakNames[MAX_SEARCH_PATHS]; // pk3 names
-
 // last valid game folder used
 char lastValidBase[MAX_OSPATH];
 char lastValidGame[MAX_OSPATH];
@@ -1055,7 +1051,6 @@ qboolean FS_IsDemoExt(const char *filename, int namelen) {
 			return qtrue;
 		}
 #endif
-
 		for (index = 0; demo_protocols[index]; index++) {
 			if (demo_protocols[index] == protocol) {
 				return qtrue;
@@ -1132,7 +1127,6 @@ long FS_FOpenFileReadDir(const char *filename, searchpath_t *search, fileHandle_
 			}
 		} else if (search->dir) {
 			dir = search->dir;
-
 			netpath = FS_BuildOSPath(dir->path, dir->gamedir, filename);
 			filep = Sys_FOpen(netpath, "rb");
 
@@ -1171,9 +1165,8 @@ long FS_FOpenFileReadDir(const char *filename, searchpath_t *search, fileHandle_
 				// case and separator insensitive comparisons
 				if (!FS_FilenameCompare(pakFile->name, filename)) {
 					// found it!
-
-					// mark the pak as having been referenced and mark specifics on cgame and ui shaders, txt, arena files by themselves
-					// do not count as a reference as these are loaded from all pk3s from every pk3 file..
+					// Mark the pak as having been referenced and mark specifics on cgame and ui.
+					// Shaders, txt, and arena files by themselves do not count as a reference as these are loaded from all pk3s.
 					len = strlen(filename);
 
 					if (!(pak->referenced & FS_GENERAL_REF)) {
@@ -1222,7 +1215,6 @@ long FS_FOpenFileReadDir(const char *filename, searchpath_t *search, fileHandle_
 		}
 	} else if (search->dir) {
 		// check a file in the directory tree
-
 		// if we are running restricted, the only files we will allow to come from the directory are .cfg files
 		len = strlen(filename);
 		// FIXME TTimo I'm not sure about the fs_numServerPaks test if you are using FS_ReadFile to find out if a file exists,
@@ -1458,7 +1450,7 @@ int FS_Read(void *buffer, int len, fileHandle_t f) {
 				if (!tries) {
 					tries = 1;
 				} else {
-					return len-remaining; // Com_Error(ERR_FATAL, "FS_Read: 0 bytes read");
+					return len - remaining; // Com_Error(ERR_FATAL, "FS_Read: 0 bytes read");
 				}
 			}
 
@@ -1968,8 +1960,7 @@ static pack_t *FS_LoadZipFile(const char *zipfile, const char *basename) {
 	namePtr = ((char *)buildBuffer) + gi.number_entry * sizeof(fileInPack_t);
 	fs_headerLongs = Z_Malloc((gi.number_entry + 1) * sizeof(int));
 	fs_headerLongs[fs_numHeaderLongs++] = LittleLong(fs_checksumFeed);
-	// get the hash table size from the number of files in the zip
-	// because lots of custom pk3 files have less than 32 or 64 files
+	// get the hash table size from the number of files in the zip because lots of custom pk3 files have less than 32 or 64 files
 	for (i = 1; i <= MAX_FILEHASH_SIZE; i <<= 1) {
 		if (i > gi.number_entry) {
 			break;
@@ -2208,7 +2199,7 @@ char **FS_ListFilteredFiles(const char *path, const char *extension, char *filte
 				} else {
 					zpathLen = FS_ReturnPath(name, zpath, &depth);
 
-					if ((depth-pathDepth) > 2 || pathLength > zpathLen || Q_stricmpn(name, path, pathLength)) {
+					if ((depth - pathDepth) > 2 || pathLength > zpathLen || Q_stricmpn(name, path, pathLength)) {
 						continue;
 					}
 					// check for extension match
@@ -2999,7 +2990,7 @@ static char *fs_serverReferencedPakNames[MAX_SEARCH_PATHS];
 ------------------------------------------------------------------------------
 dlstring == qfalse
 
-We are not interested in a download string format, we want something human- readable (this is used for diagnostics while connecting to
+We are not interested in a download string format, we want something human-readable (this is used for diagnostics while connecting to
 a pure server).
 =======================================================================================================================================
 */
@@ -3026,7 +3017,7 @@ qboolean FS_ComparePaks(char *neededpaks, int len, qboolean dlstring) {
 			) {
 			continue;
 		}
-		// Make sure the server cannot make us write to non-quakewars directories.
+		// Make sure the server cannot make us write to non-quake wars directories.
 		if (FS_CheckDirTraversal(fs_serverReferencedPakNames[i])) {
 			Com_Printf("WARNING: Invalid download name %s\n", fs_serverReferencedPakNames[i]);
 			continue;
@@ -3582,8 +3573,7 @@ const char *FS_ReferencedPakNames(void) {
 	searchpath_t *search;
 
 	info[0] = 0;
-	// we want to return ALL pk3's from the fs_game path
-	// and referenced one's from base game
+	// we want to return ALL pk3's from the fs_game path and referenced one's from base game
 	for (search = fs_searchpaths; search; search = search->next) {
 		// is the element a pak file?
 		if (search->pack) {

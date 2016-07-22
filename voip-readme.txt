@@ -1,5 +1,5 @@
 Quake Wars VoIP support documentation.
-Last updated 6/25/2008 by Ryan C. Gordon.
+Updated 6/25/2008 by Ryan C. Gordon.
 Updated for Spearmint 12/14/2012 by Zack Middleton.
 
 There are two ways to use VoIP in Quake Wars. You can either use Mumble as an
@@ -13,10 +13,9 @@ Mumble is here: http://mumble.sourceforge.net/  ... Quake Wars can supply it
  Linux, Mac OS X, and Windows, and probably other platforms Mumble supports
  in the future.
 
-The built-in stuff offers tighter in-game integration, works on any platform
- that Quake Wars supports, and doesn't require anything more than a recent build
- of the game. The rest of this document is concerned with the built-in VoIP
- support.
+The built-in stuff offers tighter in-game integration and works on any platform
+ that Quake Wars supports. The rest of this document is concerned with the
+ built-in VoIP support.
 
 
 Quick start for servers:
@@ -45,9 +44,9 @@ s_alCapture: set to "1" (the default) to have the audio layer open an OpenAL
              get bits from the microphone. This means you won't transmit, but
              you can still hear other people.
 
-cl_voipSendTarget: a string: "all" to broadcast to everyone, "team" to broadcast
-                   to everyone on your team, "none" to send to no one,
-                   "attacker" to send to the last person that hit
+cl_voipSendTarget: a string: "team" (the default) to broadcast to everyone on
+                   your team, "all" to broadcast to everyone, "none" to send to
+                   no one, "attacker" to send to the last person that hit
                    you, "crosshair" to send to the people currently in your
                    crosshair, "spatial" to talk to all people in hearing
                    range or a comma-separated list of client numbers, like
@@ -103,8 +102,8 @@ cg_voipShowMeter: Set to "1" (the default) to show a volume meter as you are
                   game can "hear" you. Set to "0" to disable the display of
                   the meter.
 
-cg_voipShowCrosshairMeter: Set to "1" (the default) to show a volume meter for
-                  clients when you point your crosshair at them. Set to "0" to
+cg_voipShowCrosshairMeter: Set to "1" to show a volume meter for clients when
+                  you point your crosshair at them. Set to "0" (the default) to
                   disable the display of the meter.
 
     The cg_* variables are part of cgame, mods may opt to change or remove them.
@@ -140,7 +139,6 @@ voip gain <clientnum> <gain>
     Sets the volume ("gain") for player number <clientnum> to <gain> ...
      A gain of 0.0 is silence, and 2.0 doubles the volume. Use this if someone
      is too quiet or too loud.
-
 
 
 

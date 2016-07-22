@@ -1190,7 +1190,6 @@ void CL_KeyDownEvent(int key, unsigned time) {
 	}
 	// keys can still be used for bound actions
 	if ((key < 128 || key == K_MOUSE1) && (clc.demoplaying || clc.state == CA_CINEMATIC) && Key_GetCatcher() == 0) {
-
 		if (Cvar_VariableValue("com_cameraMode") == 0) {
 			Cvar_Set("nextdemo", "");
 			key = K_ESCAPE;
@@ -1300,8 +1299,7 @@ Normal keyboard characters, already shifted / capslocked / etc.
 */
 void CL_CharEvent(int key) {
 
-	// delete is not a printable character and is
-	// otherwise handled by Field_KeyDownEvent
+	// delete is not a printable character and is otherwise handled by Field_KeyDownEvent
 	if (key == 127) {
 		return;
 	}

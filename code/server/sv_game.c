@@ -284,6 +284,7 @@ SV_LocateGameData
 =======================================================================================================================================
 */
 void SV_LocateGameData(sharedEntity_t *gEnts, int numGEntities, int sizeofGEntity_t, playerState_t *clients, int sizeofGameClient) {
+
 	sv.gentities = gEnts;
 	sv.gentitySize = sizeofGEntity_t;
 	sv.num_entities = numGEntities;
@@ -449,6 +450,7 @@ intptr_t SV_GameSystemCalls(intptr_t *args) {
 				return qtrue;
 			}
 		}
+
 		case G_DEBUG_POLYGON_CREATE:
 			return BotImport_DebugPolygonCreate(args[1], args[2], VMA(3));
 		case G_DEBUG_POLYGON_DELETE:

@@ -62,6 +62,7 @@ int GeneticSelection(int numranks, float *rankings) {
 	if (sum > 0) {
 		// select a bot where the ones with the highest rankings have the highest chance of being selected
 		//sum *= random();
+
 		for (i = 0; i < numranks; i++) {
 			if (rankings[i] < 0) {
 				continue;

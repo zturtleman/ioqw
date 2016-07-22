@@ -113,7 +113,6 @@ void CM_StoreBrushes(leafList_t *ll, int nodenum) {
 	cbrush_t *b;
 
 	leafnum = -1 - nodenum;
-
 	leaf = &cm.leafs[leafnum];
 
 	for (k = 0; k < leaf->numLeafBrushes; k++) {

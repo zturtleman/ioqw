@@ -1239,7 +1239,7 @@ redump:
 	}
 	// one more frame hits the dust
 //	assert(cinTable[currentHandle].RoQFrameSize <= 65536);
-//	r = FS_Read(cin.file, cinTable[currentHandle].RoQFrameSize+8, cinTable[currentHandle].iFile);
+//	r = FS_Read(cin.file, cinTable[currentHandle].RoQFrameSize + 8, cinTable[currentHandle].iFile);
 	cinTable[currentHandle].RoQPlayed += cinTable[currentHandle].RoQFrameSize + 8;
 }
 
@@ -1487,7 +1487,7 @@ int CIN_PlayCinematic(const char *arg, int x, int y, int w, int h, int systemBit
 
 	if (RoQID == 0x1084) {
 		RoQ_init();
-//		FS_Read(cin.file, cinTable[currentHandle].RoQFrameSize+8, cinTable[currentHandle].iFile);
+//		FS_Read(cin.file, cinTable[currentHandle].RoQFrameSize + 8, cinTable[currentHandle].iFile);
 
 		cinTable[currentHandle].status = FMV_PLAY;
 		Com_DPrintf("trFMV::play(), playing %s\n", arg);

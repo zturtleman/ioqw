@@ -1048,7 +1048,9 @@ void BotUpdateEntityItems(void) {
 		AAS_EntityInfo(ent, &entinfo);
 		// FIXME: don't do this
 		// skip all floating items for now
-		// if (entinfo.groundent != ENTITYNUM_WORLD) continue;
+		//if (entinfo.groundent != ENTITYNUM_WORLD) {
+		//	continue;
+		//}
 		// if the entity is still moving
 		if (entinfo.origin[0] != entinfo.lastvisorigin[0] || entinfo.origin[1] != entinfo.lastvisorigin[1] || entinfo.origin[2] != entinfo.lastvisorigin[2]) {
 			continue;

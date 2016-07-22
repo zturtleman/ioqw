@@ -259,7 +259,7 @@ void CL_ParseSnapshot(msg_t *msg) {
 	len = MSG_ReadByte(msg);
 
 	if (len > sizeof(newSnap.areamask)) {
-		Com_Error(ERR_DROP, "CL_ParseSnapshot: Invalid size %d for areamask", len);
+		Com_Error(ERR_DROP, "CL_ParseSnapshot: Invalid size %d for areamask.", len);
 		return;
 	}
 
@@ -557,7 +557,7 @@ void CL_ParseDownload(msg_t *msg) {
 	size = MSG_ReadShort(msg);
 
 	if (size < 0 || size > sizeof(data)) {
-		Com_Error(ERR_DROP, "CL_ParseDownload: Invalid size %d for download chunk", size);
+		Com_Error(ERR_DROP, "CL_ParseDownload: Invalid size %d for download chunk.", size);
 		return;
 	}
 

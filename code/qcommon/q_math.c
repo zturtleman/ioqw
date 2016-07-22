@@ -383,6 +383,7 @@ void RotatePointAroundVector(vec3_t dst, const vec3_t dir, const vec3_t point, f
 	zrot[0][0] = zrot[1][1] = zrot[2][2] = 1.0F;
 
 	rad = DEG2RAD(degrees);
+
 	zrot[0][0] = cos(rad);
 	zrot[0][1] = sin(rad);
 	zrot[1][0] = -sin(rad);
@@ -537,8 +538,7 @@ Given a normalized forward vector, create two other perpendicular vectors.
 void MakeNormalVectors(const vec3_t forward, vec3_t right, vec3_t up) {
 	float d;
 
-	// this rotate and negate guarantees a vector
-	// not colinear with the original
+	// this rotate and negate guarantees a vector not colinear with the original
 	right[1] = -forward[0];
 	right[2] = forward[1];
 	right[0] = forward[2];

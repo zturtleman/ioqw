@@ -703,6 +703,7 @@ static int GetConfigString(int index, char *buf, int size) {
 	}
 
 	Q_strncpyz(buf, cl.gameState.stringData + offset, size);
+
 	return qtrue;
 }
 

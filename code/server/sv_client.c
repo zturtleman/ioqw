@@ -76,6 +76,7 @@ void SV_GetChallenge(netadr_t from) {
 	} else
 #endif
 		gameMismatch = !*gameName || strcmp(gameName, com_gamename->string) != 0;
+
 	// reject client if the gamename string sent by the client doesn't match ours
 	if (gameMismatch) {
 		NET_OutOfBandPrint(NS_SERVER, from, "print\nGame mismatch: This is a %s server\n", com_gamename->string);
@@ -294,8 +295,7 @@ void SV_DirectConnect(netadr_t from) {
 			newcl = cl;
 			// this doesn't work because it nukes the players userinfo
 
-//			// disconnect the client from the game first so any flags the
-//			// player might have are dropped
+//			// disconnect the client from the game first so any flags the player might have are dropped
 //			VM_Call(gvm, GAME_CLIENT_DISCONNECT, newcl - svs.clients);
 			goto gotnewcl;
 		}
@@ -795,8 +795,8 @@ int SV_WriteDownloadToClient(client_t *cl, msg_t *msg) {
 						"The server you are connecting to is not a pure server, set autodownload to No in your settings and you might be able to join the game anyway.\n", cl->downloadName);
 				}
 			} else {
-			// NOTE TTimo this is NOT supposed to happen unless bug in our filesystem scheme?
-			// if the pk3 is referenced, it must have been found somewhere in the filesystem
+				// NOTE TTimo this is NOT supposed to happen unless bug in our filesystem scheme?
+				// if the pk3 is referenced, it must have been found somewhere in the filesystem
 				Com_Printf("clientDownload: %d : \"%s\" file not found on server\n", (int)(cl - svs.clients), cl->downloadName);
 				Com_sprintf(errorMessage, sizeof(errorMessage), "File \"%s\" not found on server for autodownloading.\n", cl->downloadName);
 			}
@@ -1734,6 +1734,7 @@ void SV_ExecuteClientMessage(client_t *cl, msg_t *msg) {
 	} else if (c != clc_EOF) {
 		Com_Printf("WARNING: bad command byte for client %i\n", (int)(cl - svs.clients));
 	}
+
 //	if (msg->readcount != msg->cursize) {
 //		Com_Printf("WARNING: Junk at end of packet for client %i\n", cl - svs.clients);
 //	}

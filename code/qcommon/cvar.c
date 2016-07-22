@@ -1334,6 +1334,7 @@ void Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultVal
 
 	vmCvar->handle = cv - cvar_indexes;
 	vmCvar->modificationCount = -1;
+
 	Cvar_Update(vmCvar);
 }
 

@@ -417,6 +417,7 @@ int AAS_BestReachableArea(vec3_t origin, vec3_t mins, vec3_t maxs, vec3_t goalor
 			// FIXME: cannot enable next line right now because the reachability does not have to be calculated when the level items
 			// are loaded if the origin is in an area with reachability
 			//if (AAS_AreaReachability(areanum)) return areanum;
+
 			if (areanum) {
 				return areanum;
 			}
@@ -435,6 +436,7 @@ int AAS_BestReachableArea(vec3_t origin, vec3_t mins, vec3_t maxs, vec3_t goalor
 			return areanum;
 		}
 	}
+
 	//AAS_PresenceTypeBoundingBox(PRESENCE_CROUCH, bbmins, bbmaxs);
 	// NOTE: the goal origin does not have to be in the goal area because the bot will have to move towards the item origin anyway
 	VectorCopy(origin, goalorigin);
@@ -925,6 +927,7 @@ int AAS_Reachability_Swim(int area1num, int area2num) {
 					if (AAS_AreaVolume(area2num) < 800) {
 						lreach->traveltime += 200;
 					}
+
 					//if (!(AAS_PointContents(start) & MASK_WATER)) lreach->traveltime += 500;
 					// link the reachability
 					lreach->next = areareachability[area1num];
@@ -1556,6 +1559,7 @@ int AAS_Reachability_Step_Barrier_WaterJump_WalkOffLedge(int area1num, int area2
 				lreach->areanum = area2num;
 				lreach->facenum = 0;
 				lreach->edgenum = ground_bestarea2groundedgenum;
+
 				VectorMA(ground_beststart, INSIDEUNITS_WALKSTART, ground_bestnormal, lreach->start);
 				VectorMA(ground_bestend, INSIDEUNITS_WALKEND, ground_bestnormal, lreach->end);
 				lreach->traveltype = TRAVEL_WALK;
@@ -1848,8 +1852,8 @@ float AAS_ClosestEdgePoints(vec3_t v1, vec3_t v2, vec3_t v3, vec3_t v4, aas_plan
 	}
 
 	return bestdist;
-}*/
-
+}
+*/
 /*
 =======================================================================================================================================
 AAS_ClosestEdgePoints
@@ -2385,6 +2389,7 @@ int AAS_Reachability_Jump(int area1num, int area2num) {
 		lreach->traveltype = traveltype;
 
 		VectorSubtract(bestend, beststart, dir);
+
 		height = dir[2];
 		dir[2] = 0;
 
@@ -2698,6 +2703,7 @@ int AAS_Reachability_Ladder(int area1num, int area2num) {
 					lreach->traveltime = 10;
 					lreach->next = areareachability[area2num];
 					areareachability[area2num] = lreach;
+
 					reach_jump++;
 					return qtrue;
 #ifdef REACH_DEBUG
@@ -2757,10 +2763,10 @@ int AAS_Reachability_Ladder(int area1num, int area2num) {
 					lreach->traveltime = 10;
 					lreach->next = areareachability[area2num];
 					areareachability[area2num] = lreach;
+
 					reach_jump++;
 
 					Log_Write("jump far to ladder reach between %d and %d\r\n", area2num, area1num);
-
 					break;
 				}
 			}*/
@@ -2871,6 +2877,7 @@ void AAS_Reachability_Teleport(void) {
 			botimport.Print(PRT_MESSAGE, "trigger_teleport model = \"%s\"\n", model);
 //#endif REACH_DEBUG
 			VectorClear(angles);
+
 			AAS_BSPModelMinsMaxsOrigin(atoi(model + 1), angles, mins, maxs, origin);
 
 			if (!AAS_ValueForBSPEpairKey(ent, "target", target, MAX_EPAIRKEY)) {
@@ -3543,6 +3550,7 @@ void AAS_Reachability_FuncBobbing(void) {
 				nextstartreach = startreach->next;
 				//trace = AAS_TraceClientBBox(startreach->start, move_start_top, PRESENCE_NORMAL, -1);
 				//if (trace.fraction < 1) continue;
+
 				for (endreach = firstendreach; endreach; endreach = nextendreach) {
 					nextendreach = endreach->next;
 					//trace = AAS_TraceClientBBox(endreach->end, move_end_top, PRESENCE_NORMAL, -1);

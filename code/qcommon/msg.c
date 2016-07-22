@@ -291,6 +291,7 @@ int MSG_ReadBits(msg_t *msg, int bits) {
 
 		if (bits) {
 //			fp = fopen("c:\\netchan.bin", "a");
+
 			for (i = 0; i < bits; i += 8) {
 				Huff_offsetReceive(msgHuff.decompressor.tree, &get, msg->data, &msg->bit);
 //				fwrite(&get, 1, 1, fp);
@@ -931,9 +932,9 @@ void MSG_WriteDeltaUsercmdKey(msg_t *msg, int key, usercmd_t *from, usercmd_t *t
 	}
 
 	if (from->angles[0] == to->angles[0] && from->angles[1] == to->angles[1] && from->angles[2] == to->angles[2] && from->forwardmove == to->forwardmove && from->rightmove == to->rightmove && from->upmove == to->upmove && from->buttons == to->buttons && from->weapon == to->weapon) {
-			MSG_WriteBits(msg, 0, 1); // no change
-			oldsize += 7;
-			return;
+		MSG_WriteBits(msg, 0, 1); // no change
+		oldsize += 7;
+		return;
 	}
 
 	key ^= to->serverTime;

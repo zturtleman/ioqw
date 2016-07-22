@@ -287,7 +287,7 @@ void PM_StepSlideMove(qboolean gravity) {
 		if (pm->debugLevel) {
 			Com_Printf("%i:bend\n", c_pmove);
 		}
-	} else 
+	} else
 #endif
 	{
 		// use the step move

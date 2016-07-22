@@ -1255,7 +1255,7 @@ int BotWalkInDirection(bot_movestate_t *ms, vec3_t dir, float speed, int type) {
 		//AAS_ClearShownDebugLines();
 		VectorCopy(ms->origin, origin);
 		origin[2] += 0.5;
-		AAS_PredictClientMovement(&move, ms->entitynum, origin, presencetype, qtrue, velocity, cmdmove, cmdframes, maxframes, 0.1f, stopevent, 0, qfalse); //qtrue
+		AAS_PredictClientMovement(&move, ms->entitynum, origin, presencetype, qtrue, velocity, cmdmove, cmdframes, maxframes, 0.1f, stopevent, 0, qfalse); // qtrue
 		// if prediction time wasn't enough to fully predict the movement
 		if (move.frames >= maxframes && (type & MOVE_JUMP)) {
 			//botimport.Print(PRT_MESSAGE, "client %d: max prediction frames\n", ms->client);
@@ -1599,6 +1599,7 @@ bot_moveresult_t BotTravel_Swim(bot_movestate_t *ms, aas_reachability_t *reach) 
 	// swim straight to reachability end
 	VectorSubtract(reach->start, ms->origin, dir);
 	VectorNormalize(dir);
+
 	BotCheckBlocked(ms, dir, qtrue, &result);
 	// elementary actions
 	EA_Move(ms->client, dir, 400);
@@ -1828,11 +1829,13 @@ bot_moveresult_t BotTravel_Jump(bot_movestate_t *ms, aas_reachability_t *reach) 
 		//if (AAS_HorizontalVelocityForJump(sv_jumpvel, ms->origin, reach->end, &horspeed)) {
 		//	speed = horspeed * 400 / botlibglobals.sv_maxwalkvelocity->value;
 		//}
+
 		hordir[0] = reach->end[0] - ms->origin[0];
 		hordir[1] = reach->end[1] - ms->origin[1];
 		VectorNormalize(hordir);
 		// elementary action jump
 		EA_Jump(ms->client);
+
 		ms->jumpreach = ms->lastreachnum;
 		speed = 600;
 	} else {
@@ -1844,7 +1847,8 @@ bot_moveresult_t BotTravel_Jump(bot_movestate_t *ms, aas_reachability_t *reach) 
 	EA_Move(ms->client, hordir, speed);
 	VectorCopy(hordir, result.movedir);
 	return result;
-}*/
+}
+*/
 /*
 bot_moveresult_t BotTravel_Jump(bot_movestate_t *ms, aas_reachability_t *reach) {
 	vec3_t hordir, dir1, dir2, mins, maxs, start, end;
@@ -1856,6 +1860,7 @@ bot_moveresult_t BotTravel_Jump(bot_movestate_t *ms, aas_reachability_t *reach) 
 	hordir[0] = reach->start[0] - reach->end[0];
 	hordir[1] = reach->start[1] - reach->end[1];
 	hordir[2] = 0;
+
 	VectorNormalize(hordir);
 	VectorCopy(reach->start, start);
 	start[2] += 1;
@@ -1901,6 +1906,7 @@ bot_moveresult_t BotTravel_Jump(bot_movestate_t *ms, aas_reachability_t *reach) 
 		hordir[0] = reach->end[0] - ms->origin[0];
 		hordir[1] = reach->end[1] - ms->origin[1];
 		hordir[2] = 0;
+
 		VectorNormalize(hordir);
 		// elementary action jump
 		if (dist1 < 24) {
@@ -1910,6 +1916,7 @@ bot_moveresult_t BotTravel_Jump(bot_movestate_t *ms, aas_reachability_t *reach) 
 		}
 
 		EA_Move(ms->client, hordir, 600);
+
 		ms->jumpreach = ms->lastreachnum;
 	} else {
 		//botimport.Print(PRT_MESSAGE, "going towards run to point\n");
@@ -2094,7 +2101,8 @@ bot_moveresult_t BotTravel_Ladder(bot_movestate_t *ms, aas_reachability_t *reach
 
 		speed = 400 - (200 - 4 * dist);
 		EA_Move(ms->client, dir, speed);
-	}*/
+	}
+*/
 	// save the movement direction
 	VectorCopy(dir, result.movedir);
 	return result;
@@ -2371,18 +2379,21 @@ void BotFuncBobStartEnd(aas_reachability_t *reach, vec3_t start, vec3_t end, vec
 	if (spawnflags & 1) {
 		start[0] = num0;
 		end[0] = num1;
+
 		origin[0] += mid[0];
 		origin[1] = mid[1];
 		origin[2] = mid[2];
 	} else if (spawnflags & 2) {
 		start[1] = num0;
 		end[1] = num1;
+
 		origin[0] = mid[0];
 		origin[1] += mid[1];
 		origin[2] = mid[2];
 	} else {
 		start[2] = num0;
 		end[2] = num1;
+
 		origin[0] = mid[0];
 		origin[1] = mid[1];
 		origin[2] += mid[2];

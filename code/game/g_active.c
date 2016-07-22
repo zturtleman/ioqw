@@ -682,7 +682,6 @@ void ClientThink_Real(gentity_t *ent) {
 	usercmd_t *ucmd;
 
 	client = ent->client;
-
 	// don't think if the client is not yet connected (and thus not yet spawned in)
 	if (client->pers.connected != CON_CONNECTED) {
 		return;

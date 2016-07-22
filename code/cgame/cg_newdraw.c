@@ -1735,7 +1735,7 @@ void CG_DrawNewTeamInfo(rectDef_t *rect, float text_x, float text_y, float scale
 
 /*
 =======================================================================================================================================
-G_DrawTeamSpectators
+CG_DrawTeamSpectators
 =======================================================================================================================================
 */
 void CG_DrawTeamSpectators(rectDef_t *rect, float scale, vec4_t color, qhandle_t shader) {

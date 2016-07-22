@@ -137,6 +137,7 @@ void Com_BeginRedirect(char *buffer, int buffersize, void (*flush)(char *)) {
 	rd_buffer = buffer;
 	rd_buffersize = buffersize;
 	rd_flush = flush;
+
 	*rd_buffer = 0;
 }
 
@@ -1165,8 +1166,7 @@ typedef struct memstatic_s {
 	byte mem[2];
 } memstatic_t;
 
-memstatic_t emptystring =
-	{{(sizeof(memblock_t) + 2 + 3) & ~3, TAG_STATIC, NULL, NULL, ZONEID}, {'\0', '\0'}};
+memstatic_t emptystring = {{(sizeof(memblock_t) + 2 + 3) & ~3, TAG_STATIC, NULL, NULL, ZONEID}, {'\0', '\0'}};
 memstatic_t numberstring[] = {
 	{{(sizeof(memstatic_t) + 3) & ~3, TAG_STATIC, NULL, NULL, ZONEID}, {'0', '\0'}},
 	{{(sizeof(memstatic_t) + 3) & ~3, TAG_STATIC, NULL, NULL, ZONEID}, {'1', '\0'}},
@@ -3315,7 +3315,7 @@ void Field_AutoComplete(field_t *field) {
 =======================================================================================================================================
 Com_RandomBytes
 
-fills string array with len random bytes, preferably from the OS randomizer.
+Fills string array with len random bytes, preferably from the OS randomizer.
 =======================================================================================================================================
 */
 void Com_RandomBytes(byte *string, int len) {

@@ -1306,6 +1306,7 @@ static void compile_one_insn(vm_t *vm, struct func_info * const fp, struct src_i
 			POP_GPR(fp);
 			break;
 		}
+
 		case OP_SEX8:
 			MAYBE_EMIT_CONST(fp);
 			in(SLLI, rFIRST(fp), 24, rFIRST(fp));
@@ -1495,6 +1496,7 @@ static void compile_one_insn(vm_t *vm, struct func_info * const fp, struct src_i
 			POP_FPR(fp);
 			break;
 		}
+
 		case OP_CVIF:
 			MAYBE_EMIT_CONST(fp);
 			PUSH_FPR(fp);

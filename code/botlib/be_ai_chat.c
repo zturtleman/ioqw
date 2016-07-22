@@ -411,7 +411,7 @@ IsWhiteSpace
 */
 int IsWhiteSpace(char c) {
 
-	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '(' || c == ')' || c == '?' || c == ':' || c == '\''|| c == '/' || c == ',' || c == '.' || c == '[' || c == ']' || c == '-' || c == '_' || c == '+' || c == '=') {
+	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '(' || c == ')' || c == '?' || c == ':' || c == '\'' || c == '/' || c == ',' || c == '.' || c == '[' || c == ']' || c == '-' || c == '_' || c == '+' || c == '=') {
 		return qfalse;
 	}
 
@@ -1630,7 +1630,7 @@ bot_stringlist_t *BotCheckChatMessageIntegrety(char *message, bot_stringlist_t *
 					// find the random keyword
 					if (!RandomString(temp)) {
 						if (!BotFindStringInList(stringlist, temp)) {
-							Log_Write("%s = {\"%s\"} //MISSING RANDOM\r\n", temp, temp);
+							Log_Write("%s = {\"%s\"} // MISSING RANDOM\r\n", temp, temp);
 							s = GetClearedMemory(sizeof(bot_stringlist_t) + strlen(temp) + 1);
 							s->string = (char *)s + sizeof(bot_stringlist_t);
 							strcpy(s->string, temp);
@@ -2332,7 +2332,7 @@ int BotLoadChatFile(int chatstate, char *chatfile, char *chatname) {
 			}
 
 			cs->chat = ichatdata[n]->chat;
-		//	botimport.Print(PRT_MESSAGE, "retained %s from %s\n", chatname, chatfile);
+			//botimport.Print(PRT_MESSAGE, "retained %s from %s\n", chatname, chatfile);
 			return BLERR_NOERROR;
 		}
 

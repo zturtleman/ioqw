@@ -165,7 +165,7 @@ void CG_DamageFeedback(int yawByte, int pitchByte, int damage) {
 		cg.damageX = 1.0;
 	}
 
-	if (cg.damageX < - 1.0) {
+	if (cg.damageX < -1.0) {
 		cg.damageX = -1.0;
 	}
 
@@ -173,7 +173,7 @@ void CG_DamageFeedback(int yawByte, int pitchByte, int damage) {
 		cg.damageY = 1.0;
 	}
 
-	if (cg.damageY < - 1.0) {
+	if (cg.damageY < -1.0) {
 		cg.damageY = -1.0;
 	}
 	// don't let the screen flashes vary as much

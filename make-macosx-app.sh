@@ -129,17 +129,17 @@ fi
 
 AVAILABLE_ARCHS=""
 
-IOQW_VERSION=`grep '^VERSION=' Makefile | sed -e 's/.*=\(.*\)/\1/'`
-IOQW_CLIENT_ARCHS=""
-IOQW_SERVER_ARCHS=""
-IOQW_RENDERER_GL1_ARCHS=""
-IOQW_RENDERER_GL2_ARCHS=""
-IOQW_CGAME_ARCHS=""
-IOQW_GAME_ARCHS=""
-IOQW_UI_ARCHS=""
-IOQW_MP_CGAME_ARCHS=""
-IOQW_MP_GAME_ARCHS=""
-IOQW_MP_UI_ARCHS=""
+IOQ3_VERSION=`grep '^VERSION=' Makefile | sed -e 's/.*=\(.*\)/\1/'`
+IOQ3_CLIENT_ARCHS=""
+IOQ3_SERVER_ARCHS=""
+IOQ3_RENDERER_GL1_ARCHS=""
+IOQ3_RENDERER_GL2_ARCHS=""
+IOQ3_CGAME_ARCHS=""
+IOQ3_GAME_ARCHS=""
+IOQ3_UI_ARCHS=""
+IOQ3_MP_CGAME_ARCHS=""
+IOQ3_MP_GAME_ARCHS=""
+IOQ3_MP_UI_ARCHS=""
 
 BASEDIR="Data"
 MISSIONPACKDIR="missionpack"
@@ -161,7 +161,7 @@ RENDERER_OPENGL2_NAME="${RENDERER_OPENGL}2.dylib"
 
 ICNSDIR="misc"
 ICNS="quakewars.icns"
-PKGINFO="APPLIOQW"
+PKGINFO="APPLIOQ3"
 
 OBJROOT="build"
 #BUILT_PRODUCTS_DIR="${OBJROOT}/${TARGET_NAME}-darwin-${CURRENT_ARCH}"
@@ -177,13 +177,13 @@ EXECUTABLE_NAME="${PRODUCT_NAME}"
 for ARCH in $SEARCH_ARCHS; do
 	CURRENT_ARCH=${ARCH}
 	BUILT_PRODUCTS_DIR="${OBJROOT}/${TARGET_NAME}-darwin-${CURRENT_ARCH}"
-	IOQW_CLIENT="${EXECUTABLE_NAME}.${CURRENT_ARCH}"
-	IOQW_SERVER="${DEDICATED_NAME}.${CURRENT_ARCH}"
-	IOQW_RENDERER_GL1="${RENDERER_OPENGL}1_${CURRENT_ARCH}.dylib"
-	IOQW_RENDERER_GL2="${RENDERER_OPENGL}2_${CURRENT_ARCH}.dylib"
-	IOQW_CGAME="${CGAME}${CURRENT_ARCH}.dylib"
-	IOQW_GAME="${GAME}${CURRENT_ARCH}.dylib"
-	IOQW_UI="${UI}${CURRENT_ARCH}.dylib"
+	IOQ3_CLIENT="${EXECUTABLE_NAME}.${CURRENT_ARCH}"
+	IOQ3_SERVER="${DEDICATED_NAME}.${CURRENT_ARCH}"
+	IOQ3_RENDERER_GL1="${RENDERER_OPENGL}1_${CURRENT_ARCH}.dylib"
+	IOQ3_RENDERER_GL2="${RENDERER_OPENGL}2_${CURRENT_ARCH}.dylib"
+	IOQ3_CGAME="${CGAME}${CURRENT_ARCH}.dylib"
+	IOQ3_GAME="${GAME}${CURRENT_ARCH}.dylib"
+	IOQ3_UI="${UI}${CURRENT_ARCH}.dylib"
 
 	if [ ! -d ${BUILT_PRODUCTS_DIR} ]; then
 		CURRENT_ARCH=""
@@ -192,43 +192,43 @@ for ARCH in $SEARCH_ARCHS; do
 	fi
 
 	# executables
-	if [ -e ${BUILT_PRODUCTS_DIR}/${IOQW_CLIENT} ]; then
-		IOQW_CLIENT_ARCHS="${BUILT_PRODUCTS_DIR}/${IOQW_CLIENT} ${IOQW_CLIENT_ARCHS}"
+	if [ -e ${BUILT_PRODUCTS_DIR}/${IOQ3_CLIENT} ]; then
+		IOQ3_CLIENT_ARCHS="${BUILT_PRODUCTS_DIR}/${IOQ3_CLIENT} ${IOQ3_CLIENT_ARCHS}"
 		VALID_ARCHS="${ARCH} ${VALID_ARCHS}"
 	else
 		continue
 	fi
-	if [ -e ${BUILT_PRODUCTS_DIR}/${IOQW_SERVER} ]; then
-		IOQW_SERVER_ARCHS="${BUILT_PRODUCTS_DIR}/${IOQW_SERVER} ${IOQW_SERVER_ARCHS}"
+	if [ -e ${BUILT_PRODUCTS_DIR}/${IOQ3_SERVER} ]; then
+		IOQ3_SERVER_ARCHS="${BUILT_PRODUCTS_DIR}/${IOQ3_SERVER} ${IOQ3_SERVER_ARCHS}"
 	fi
 
 	# renderers
-	if [ -e ${BUILT_PRODUCTS_DIR}/${IOQW_RENDERER_GL1} ]; then
-		IOQW_RENDERER_GL1_ARCHS="${BUILT_PRODUCTS_DIR}/${IOQW_RENDERER_GL1} ${IOQW_RENDERER_GL1_ARCHS}"
+	if [ -e ${BUILT_PRODUCTS_DIR}/${IOQ3_RENDERER_GL1} ]; then
+		IOQ3_RENDERER_GL1_ARCHS="${BUILT_PRODUCTS_DIR}/${IOQ3_RENDERER_GL1} ${IOQ3_RENDERER_GL1_ARCHS}"
 	fi
-	if [ -e ${BUILT_PRODUCTS_DIR}/${IOQW_RENDERER_GL2} ]; then
-		IOQW_RENDERER_GL2_ARCHS="${BUILT_PRODUCTS_DIR}/${IOQW_RENDERER_GL2} ${IOQW_RENDERER_GL2_ARCHS}"
+	if [ -e ${BUILT_PRODUCTS_DIR}/${IOQ3_RENDERER_GL2} ]; then
+		IOQ3_RENDERER_GL2_ARCHS="${BUILT_PRODUCTS_DIR}/${IOQ3_RENDERER_GL2} ${IOQ3_RENDERER_GL2_ARCHS}"
 	fi
 
 	# game
-	if [ -e ${BUILT_PRODUCTS_DIR}/${BASEDIR}/${IOQW_CGAME} ]; then
-		IOQW_CGAME_ARCHS="${BUILT_PRODUCTS_DIR}/${BASEDIR}/${IOQW_CGAME} ${IOQW_CGAME_ARCHS}"
+	if [ -e ${BUILT_PRODUCTS_DIR}/${BASEDIR}/${IOQ3_CGAME} ]; then
+		IOQ3_CGAME_ARCHS="${BUILT_PRODUCTS_DIR}/${BASEDIR}/${IOQ3_CGAME} ${IOQ3_CGAME_ARCHS}"
 	fi
-	if [ -e ${BUILT_PRODUCTS_DIR}/${BASEDIR}/${IOQW_GAME} ]; then
-		IOQW_GAME_ARCHS="${BUILT_PRODUCTS_DIR}/${BASEDIR}/${IOQW_GAME} ${IOQW_GAME_ARCHS}"
+	if [ -e ${BUILT_PRODUCTS_DIR}/${BASEDIR}/${IOQ3_GAME} ]; then
+		IOQ3_GAME_ARCHS="${BUILT_PRODUCTS_DIR}/${BASEDIR}/${IOQ3_GAME} ${IOQ3_GAME_ARCHS}"
 	fi
-	if [ -e ${BUILT_PRODUCTS_DIR}/${BASEDIR}/${IOQW_UI} ]; then
-		IOQW_UI_ARCHS="${BUILT_PRODUCTS_DIR}/${BASEDIR}/${IOQW_UI} ${IOQW_UI_ARCHS}"
+	if [ -e ${BUILT_PRODUCTS_DIR}/${BASEDIR}/${IOQ3_UI} ]; then
+		IOQ3_UI_ARCHS="${BUILT_PRODUCTS_DIR}/${BASEDIR}/${IOQ3_UI} ${IOQ3_UI_ARCHS}"
 	fi
 	# missionpack
-	if [ -e ${BUILT_PRODUCTS_DIR}/${MISSIONPACKDIR}/${IOQW_CGAME} ]; then
-		IOQW_MP_CGAME_ARCHS="${BUILT_PRODUCTS_DIR}/${MISSIONPACKDIR}/${IOQW_CGAME} ${IOQW_MP_CGAME_ARCHS}"
+	if [ -e ${BUILT_PRODUCTS_DIR}/${MISSIONPACKDIR}/${IOQ3_CGAME} ]; then
+		IOQ3_MP_CGAME_ARCHS="${BUILT_PRODUCTS_DIR}/${MISSIONPACKDIR}/${IOQ3_CGAME} ${IOQ3_MP_CGAME_ARCHS}"
 	fi
-	if [ -e ${BUILT_PRODUCTS_DIR}/${MISSIONPACKDIR}/${IOQW_GAME} ]; then
-		IOQW_MP_GAME_ARCHS="${BUILT_PRODUCTS_DIR}/${MISSIONPACKDIR}/${IOQW_GAME} ${IOQW_MP_GAME_ARCHS}"
+	if [ -e ${BUILT_PRODUCTS_DIR}/${MISSIONPACKDIR}/${IOQ3_GAME} ]; then
+		IOQ3_MP_GAME_ARCHS="${BUILT_PRODUCTS_DIR}/${MISSIONPACKDIR}/${IOQ3_GAME} ${IOQ3_MP_GAME_ARCHS}"
 	fi
-	if [ -e ${BUILT_PRODUCTS_DIR}/${MISSIONPACKDIR}/${IOQW_UI} ]; then
-		IOQW_MP_UI_ARCHS="${BUILT_PRODUCTS_DIR}/${MISSIONPACKDIR}/${IOQW_UI} ${IOQW_MP_UI_ARCHS}"
+	if [ -e ${BUILT_PRODUCTS_DIR}/${MISSIONPACKDIR}/${IOQ3_UI} ]; then
+		IOQ3_MP_UI_ARCHS="${BUILT_PRODUCTS_DIR}/${MISSIONPACKDIR}/${IOQ3_UI} ${IOQ3_MP_UI_ARCHS}"
 	fi
 
 	#echo "valid arch: ${ARCH}"
@@ -238,12 +238,12 @@ done
 cd `dirname $0`
 
 if [ ! -f Makefile ]; then
-	echo "$0 must be run from the ioid3-qw build directory"
+	echo "$0 must be run from the ioquake3 build directory"
 	exit 1
 fi
 
-if [ "${IOQW_CLIENT_ARCHS}" == "" ]; then
-	echo "$0: no quakewars binary architectures were found for target '${TARGET_NAME}'"
+if [ "${IOQ3_CLIENT_ARCHS}" == "" ]; then
+	echo "$0: no ioquake3 binary architectures were found for target '${TARGET_NAME}'"
 	exit 1
 fi
 
@@ -294,7 +294,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
     <key>CFBundleIconFile</key>
     <string>quakewars</string>
     <key>CFBundleIdentifier</key>
-    <string>org.ioid3-games.${PRODUCT_NAME}</string>
+    <string>org.ioquake.${PRODUCT_NAME}</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
@@ -302,17 +302,17 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>${IOQW_VERSION}</string>
+    <string>${IOQ3_VERSION}</string>
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>CFBundleVersion</key>
-    <string>${IOQW_VERSION}</string>
+    <string>${IOQ3_VERSION}</string>
     <key>CGDisableCoalescedUpdates</key>
     <true/>
     <key>LSMinimumSystemVersion</key>
     <string>${MACOSX_DEPLOYMENT_TARGET}</string>
     <key>NSHumanReadableCopyright</key>
-    <string>Copyright © 1999-2015 id Software LLC, Dark Legion Development, Ioquake3 contributors, Spearmint contributors, Ioid3 contributors.</string>
+    <string>Copyright © 1999-2015 id Software LLC, Ioquake3 contributors, Spearmint contributors, Ioid3 contributors.</string>
     <key>NSPrincipalClass</key>
     <string>NSApplication</string>
 </dict>
@@ -349,27 +349,27 @@ function action()
 #
 
 # executables
-action ${BUNDLEBINDIR}/${EXECUTABLE_NAME}				"${IOQW_CLIENT_ARCHS}"
-action ${BUNDLEBINDIR}/${DEDICATED_NAME}				"${IOQW_SERVER_ARCHS}"
+action ${BUNDLEBINDIR}/${EXECUTABLE_NAME}				"${IOQ3_CLIENT_ARCHS}"
+action ${BUNDLEBINDIR}/${DEDICATED_NAME}				"${IOQ3_SERVER_ARCHS}"
 
 # renderers
-action ${BUNDLEBINDIR}/${RENDERER_OPENGL1_NAME}		"${IOQW_RENDERER_GL1_ARCHS}"
-action ${BUNDLEBINDIR}/${RENDERER_OPENGL2_NAME}		"${IOQW_RENDERER_GL2_ARCHS}"
+action ${BUNDLEBINDIR}/${RENDERER_OPENGL1_NAME}		"${IOQ3_RENDERER_GL1_ARCHS}"
+action ${BUNDLEBINDIR}/${RENDERER_OPENGL2_NAME}		"${IOQ3_RENDERER_GL2_ARCHS}"
 symlinkArch "${RENDERER_OPENGL}1" "${RENDERER_OPENGL}1" "_" "${BUNDLEBINDIR}"
 symlinkArch "${RENDERER_OPENGL}2" "${RENDERER_OPENGL}2" "_" "${BUNDLEBINDIR}"
 
 # game
-action ${BUNDLEBINDIR}/${BASEDIR}/${CGAME_NAME}			"${IOQW_CGAME_ARCHS}"
-action ${BUNDLEBINDIR}/${BASEDIR}/${GAME_NAME}			"${IOQW_GAME_ARCHS}"
-action ${BUNDLEBINDIR}/${BASEDIR}/${UI_NAME}			"${IOQW_UI_ARCHS}"
+action ${BUNDLEBINDIR}/${BASEDIR}/${CGAME_NAME}			"${IOQ3_CGAME_ARCHS}"
+action ${BUNDLEBINDIR}/${BASEDIR}/${GAME_NAME}			"${IOQ3_GAME_ARCHS}"
+action ${BUNDLEBINDIR}/${BASEDIR}/${UI_NAME}			"${IOQ3_UI_ARCHS}"
 symlinkArch "${CGAME}"	"${CGAME}"	""	"${BUNDLEBINDIR}/${BASEDIR}"
 symlinkArch "${GAME}"	"${GAME}"	""	"${BUNDLEBINDIR}/${BASEDIR}"
 symlinkArch "${UI}"		"${UI}"		""	"${BUNDLEBINDIR}/${BASEDIR}"
 
 # missionpack
-action ${BUNDLEBINDIR}/${MISSIONPACKDIR}/${CGAME_NAME}	"${IOQW_MP_CGAME_ARCHS}"
-action ${BUNDLEBINDIR}/${MISSIONPACKDIR}/${GAME_NAME}	"${IOQW_MP_GAME_ARCHS}"
-action ${BUNDLEBINDIR}/${MISSIONPACKDIR}/${UI_NAME}		"${IOQW_MP_UI_ARCHS}"
+action ${BUNDLEBINDIR}/${MISSIONPACKDIR}/${CGAME_NAME}	"${IOQ3_MP_CGAME_ARCHS}"
+action ${BUNDLEBINDIR}/${MISSIONPACKDIR}/${GAME_NAME}	"${IOQ3_MP_GAME_ARCHS}"
+action ${BUNDLEBINDIR}/${MISSIONPACKDIR}/${UI_NAME}		"${IOQ3_MP_UI_ARCHS}"
 symlinkArch "${CGAME}"	"${CGAME}"	""	"${BUNDLEBINDIR}/${MISSIONPACKDIR}"
 symlinkArch "${GAME}"	"${GAME}"	""	"${BUNDLEBINDIR}/${MISSIONPACKDIR}"
 symlinkArch "${UI}"		"${UI}"		""	"${BUNDLEBINDIR}/${MISSIONPACKDIR}"

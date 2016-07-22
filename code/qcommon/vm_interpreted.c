@@ -288,15 +288,15 @@ VM_Call
 
 Upon a system call, the stack will look like:
 
-sp+32	parm1
-sp+28	parm0
-sp+24	return stack
-sp+20	return address
-sp+16	local1
-sp+14	local0
-sp+12	arg1
-sp+8	arg0
-sp+4	return stack
+sp + 32	parm1
+sp + 28	parm0
+sp + 24	return stack
+sp + 20	return address
+sp + 16	local1
+sp + 14	local0
+sp + 12	arg1
+sp + 8	arg0
+sp + 4	return stack
 sp		return address
 
 An interpreted function will immediately execute an OP_ENTER instruction, which will subtract space for locals from sp
@@ -343,13 +343,12 @@ int VM_CallInterpreted(vm_t *vm, int *args) {
 	*(int *)&image[programStack] = -1; // will terminate the loop on return
 
 	VM_Debug(0);
-	// leave a free spot at start of stack so that as long as opStack is valid, opStack-1 will not corrupt anything
+	// leave a free spot at start of stack so that as long as opStack is valid, opStack - 1 will not corrupt anything
 	opStack = PADP(stack, 16);
 	*opStack = 0xDEADBEEF;
 	opStackOfs = 0;
 	// vm_debugLevel = 2;
-	// main interpreter loop, will exit when a LEAVE instruction
-	// grabs the -1 program counter
+	// main interpreter loop, will exit when a LEAVE instruction grabs the -1 program counter
 #define r2 codeImage[programCounter]
 	while (1) {
 		int opcode, r0, r1;
@@ -576,7 +575,6 @@ nextInstruction2:
 				programCounter = vm->instructionPointers[r0];
 				opStackOfs--;
 				goto nextInstruction;
-
 			case OP_EQ:
 				opStackOfs -= 2;
 

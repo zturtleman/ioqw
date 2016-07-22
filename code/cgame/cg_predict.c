@@ -430,6 +430,7 @@ void CG_PredictPlayerState(void) {
 	// if we don't have the commands right after the snapshot, we can't accurately predict a current position, so just freeze at
 	// the last good position we had
 	cmdNum = current - CMD_BACKUP + 1;
+
 	trap_GetUserCmd(cmdNum, &oldestCmd);
 
 	if (oldestCmd.serverTime > cg.snap->ps.commandTime && oldestCmd.serverTime < cg.time) { // special check for map_restart

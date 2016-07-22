@@ -1139,7 +1139,6 @@ CG_ParticleBulletDebris
 =======================================================================================================================================
 */
 void CG_ParticleBulletDebris(vec3_t org, vec3_t vel, int duration) {
-
 	cparticle_t *p;
 
 	if (!free_particles) {
@@ -1433,6 +1432,7 @@ void CG_Particle_Bleed(qhandle_t pshader, vec3_t start, vec3_t dir, int fleshEnt
 	p->vel[2] = -20;
 
 	VectorClear(p->accel);
+
 	p->rotate = qfalse;
 	p->roll = rand()%179;
 	p->color = BLOODRED;

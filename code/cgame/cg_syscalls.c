@@ -525,15 +525,6 @@ void trap_R_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *v
 
 /*
 =======================================================================================================================================
-trap_R_AddPolyBufferToScene
-=======================================================================================================================================
-*/
-void trap_R_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer) {
-	syscall(CG_R_ADDPOLYBUFFERTOSCENE, pPolyBuffer);
-}
-
-/*
-=======================================================================================================================================
 trap_R_LightForPoint
 =======================================================================================================================================
 */
@@ -786,7 +777,7 @@ int trap_PC_ReadToken(int handle, pc_token_t *pc_token) {
 
 /*
 =======================================================================================================================================
-rap_PC_SourceFileAndLine
+trap_PC_SourceFileAndLine
 =======================================================================================================================================
 */
 int trap_PC_SourceFileAndLine(int handle, char *filename, int *line) {
@@ -857,9 +848,10 @@ e_status trap_CIN_RunCinematic(int handle) {
 /*
 =======================================================================================================================================
 trap_CIN_DrawCinematic
+
+Draws the current frame.
 =======================================================================================================================================
 */
-// draws the current frame
 void trap_CIN_DrawCinematic(int handle) {
 	syscall(CG_CIN_DRAWCINEMATIC, handle);
 }
@@ -867,9 +859,10 @@ void trap_CIN_DrawCinematic(int handle) {
 /*
 =======================================================================================================================================
 trap_CIN_SetExtents
+
+Allows you to resize the animation dynamically.
 =======================================================================================================================================
 */
-// allows you to resize the animation dynamically
 void trap_CIN_SetExtents(int handle, int x, int y, int w, int h) {
 	syscall(CG_CIN_SETEXTENTS, handle, x, y, w, h);
 }

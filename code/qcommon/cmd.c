@@ -193,7 +193,7 @@ void Cbuf_Execute(void) {
 				quotes++;
 			}
 
-			if (!(quotes & 1)) {
+			if (!(quotes&1)) {
 				if (i < cmd_text.cursize - 1) {
 					if (!in_star_comment && text[i] == '/' && text[i + 1] == '/') {
 						in_slash_comment = qtrue;
@@ -376,7 +376,7 @@ void Cmd_ArgvBuffer(int arg, char *buffer, int bufferLength) {
 =======================================================================================================================================
 Cmd_Args
 
-Returns a single string containing argv(1) to argv(argc()-1).
+Returns a single string containing argv(1) to argv(argc() - 1).
 =======================================================================================================================================
 */
 char *Cmd_Args(void) {
@@ -400,7 +400,7 @@ char *Cmd_Args(void) {
 =======================================================================================================================================
 Cmd_ArgsFrom
 
-Returns a single string containing argv(arg) to argv(argc()-1).
+Returns a single string containing argv(arg) to argv(argc() - 1).
 =======================================================================================================================================
 */
 char *Cmd_ArgsFrom(int arg) {

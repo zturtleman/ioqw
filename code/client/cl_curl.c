@@ -210,6 +210,7 @@ CL_cURL_CallbackWrite
 =======================================================================================================================================
 */
 static size_t CL_cURL_CallbackWrite(void *buffer, size_t size, size_t nmemb, void *stream) {
+
 	FS_Write(buffer, size * nmemb, ((fileHandle_t *)stream)[0]);
 	return size * nmemb;
 }
@@ -221,7 +222,6 @@ qcurl_easy_setopt_warn
 */
 CURLcode qcurl_easy_setopt_warn(CURL *curl, CURLoption option, ...) {
 	CURLcode result;
-
 	va_list argp;
 	va_start(argp, option);
 
