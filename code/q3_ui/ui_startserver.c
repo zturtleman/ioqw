@@ -92,8 +92,8 @@ static startserver_t s_startserver;
 
 static const char *gametype_items[] = {
 	"Free For All",
-	"Team Deathmatch",
 	"Tournament",
+	"Team Deathmatch",
 	"Capture the Flag",
 	"One Flag CTF",
 	"Overload",
@@ -101,8 +101,8 @@ static const char *gametype_items[] = {
 	NULL
 };
 
-static int gametype_remap[] = {GT_FFA, GT_TEAM, GT_TOURNAMENT, GT_CTF, GT_1FCTF, GT_OBELISK, GT_HARVESTER};
-static int gametype_remap2[] = {0, 2, 0, 1, 3, 4, 5, 6};
+static int gametype_remap[] = {GT_FFA, GT_TOURNAMENT, GT_TEAM, GT_CTF, GT_1FCTF, GT_OBELISK, GT_HARVESTER};
+static int gametype_remap2[] = {0, 0, 1, 2, 3, 4, 5, 6};
 
 static void UI_ServerOptionsMenu( qboolean multiplayer );
 
@@ -125,6 +125,11 @@ static int GametypeBits( char *string ) {
 			break;
 		}
 
+		if( Q_stricmp( token, "single" ) == 0 ) {
+			bits |= 1 << GT_SINGLE_PLAYER;
+			continue;
+		}
+
 		if( Q_stricmp( token, "ffa" ) == 0 ) {
 			bits |= 1 << GT_FFA;
 			continue;
@@ -132,11 +137,6 @@ static int GametypeBits( char *string ) {
 
 		if( Q_stricmp( token, "tourney" ) == 0 ) {
 			bits |= 1 << GT_TOURNAMENT;
-			continue;
-		}
-
-		if( Q_stricmp( token, "single" ) == 0 ) {
-			bits |= 1 << GT_SINGLE_PLAYER;
 			continue;
 		}
 
@@ -644,7 +644,8 @@ typedef struct {
 	menubitmap_s		mappic;
 	menubitmap_s		picframe;
 
-	menulist_s			dedicated;
+	menuradiobutton_s	publicserver;
+	menuradiobutton_s	dedicated;
 	menufield_s			timelimit;
 	menufield_s			fraglimit;
 	menufield_s			flaglimit;
@@ -673,13 +674,6 @@ typedef struct {
 } serveroptions_t;
 
 static serveroptions_t s_serveroptions;
-
-static const char *dedicated_list[] = {
-	"No",
-	"LAN",
-	"Internet",
-	NULL
-};
 
 static const char *playerType_list[] = {
 	"Open",
@@ -738,6 +732,7 @@ static void ServerOptions_Start( void ) {
 	int		timelimit;
 	int		fraglimit;
 	int		maxclients;
+	int		publicserver;
 	int		dedicated;
 	int		friendlyfire;
 	int		flaglimit;
@@ -750,6 +745,7 @@ static void ServerOptions_Start( void ) {
 	timelimit	 = atoi( s_serveroptions.timelimit.field.buffer );
 	fraglimit	 = atoi( s_serveroptions.fraglimit.field.buffer );
 	flaglimit	 = atoi( s_serveroptions.flaglimit.field.buffer );
+	publicserver = s_serveroptions.publicserver.curvalue;
 	dedicated	 = s_serveroptions.dedicated.curvalue;
 	friendlyfire = s_serveroptions.friendlyfire.curvalue;
 	pure		 = s_serveroptions.pure.curvalue;
@@ -809,8 +805,14 @@ static void ServerOptions_Start( void ) {
 		break;
 	}
 
-	trap_Cvar_SetValue( "sv_maxclients", Com_Clamp( 0, 12, maxclients ) );
-	trap_Cvar_SetValue( "dedicated", Com_Clamp( 0, 2, dedicated ) );
+	trap_Cvar_SetValue( "sv_maxclients", Com_Clamp( 0, 64, maxclients ) );
+	if( s_serveroptions.multiplayer ) {
+		trap_Cvar_SetValue( "ui_publicServer", Com_Clamp( 0, 1, publicserver ) );
+		trap_Cvar_SetValue( "sv_public", Com_Clamp( 0, 1, publicserver ) );
+	} else {
+		trap_Cvar_SetValue( "sv_public", 0 );
+	}
+	trap_Cvar_SetValue( "dedicated", Com_Clamp( 0, 1, dedicated ) );
 	trap_Cvar_SetValue ("timelimit", Com_Clamp( 0, timelimit, timelimit ) );
 	trap_Cvar_SetValue ("fraglimit", Com_Clamp( 0, fraglimit, fraglimit ) );
 	trap_Cvar_SetValue ("capturelimit", Com_Clamp( 0, flaglimit, flaglimit ) );
@@ -846,7 +848,7 @@ static void ServerOptions_Start( void ) {
 
 	// set player's team
 	if( dedicated == 0 && s_serveroptions.gametype >= GT_TEAM ) {
-		trap_Cmd_ExecuteText( EXEC_APPEND, va( "wait 5; team %s\n", playerTeam_list[s_serveroptions.playerTeam[0].curvalue] ) );
+		trap_Cvar_Set("teampref", playerTeam_list[s_serveroptions.playerTeam[0].curvalue] );
 	}
 }
 
@@ -1205,6 +1207,7 @@ static void ServerOptions_SetMenuItems( void ) {
 		break;
 	}
 
+	s_serveroptions.publicserver.curvalue = Com_Clamp( 0, 1, trap_Cvar_VariableValue( "ui_publicServer" ) );
 	Q_strncpyz( s_serveroptions.hostname.field.buffer, UI_Cvar_VariableString( "sv_hostname" ), sizeof( s_serveroptions.hostname.field.buffer ) );
 	s_serveroptions.pure.curvalue = Com_Clamp( 0, 1, trap_Cvar_VariableValue( "sv_pure" ) );
 
@@ -1370,14 +1373,20 @@ static void ServerOptions_MenuInit( qboolean multiplayer ) {
 
 	if( s_serveroptions.multiplayer ) {
 		y += BIGCHAR_HEIGHT+2;
-		s_serveroptions.dedicated.generic.type		= MTYPE_SPINCONTROL;
+		s_serveroptions.publicserver.generic.type	= MTYPE_RADIOBUTTON;
+		s_serveroptions.publicserver.generic.flags	= QMF_PULSEIFFOCUS|QMF_SMALLFONT;
+		s_serveroptions.publicserver.generic.x		= OPTIONS_X;
+		s_serveroptions.publicserver.generic.y		= y;
+		s_serveroptions.publicserver.generic.name	= "Advertise on Internet:";
+
+		y += BIGCHAR_HEIGHT+2;
+		s_serveroptions.dedicated.generic.type	= MTYPE_RADIOBUTTON;
 		s_serveroptions.dedicated.generic.id		= ID_DEDICATED;
-		s_serveroptions.dedicated.generic.flags		= QMF_PULSEIFFOCUS|QMF_SMALLFONT;
+		s_serveroptions.dedicated.generic.flags	= QMF_PULSEIFFOCUS|QMF_SMALLFONT;
 		s_serveroptions.dedicated.generic.callback	= ServerOptions_Event;
-		s_serveroptions.dedicated.generic.x			= OPTIONS_X;
-		s_serveroptions.dedicated.generic.y			= y;
-		s_serveroptions.dedicated.generic.name		= "Dedicated:";
-		s_serveroptions.dedicated.itemnames			= dedicated_list;
+		s_serveroptions.dedicated.generic.x		= OPTIONS_X;
+		s_serveroptions.dedicated.generic.y		= y;
+		s_serveroptions.dedicated.generic.name	= "Dedicated:";
 	}
 
 	if( s_serveroptions.multiplayer ) {
@@ -1398,7 +1407,7 @@ static void ServerOptions_MenuInit( qboolean multiplayer ) {
 	s_serveroptions.botSkill.generic.x				= 32 + (strlen(s_serveroptions.botSkill.generic.name) + 2 ) * SMALLCHAR_WIDTH;
 	s_serveroptions.botSkill.generic.y				= y;
 	s_serveroptions.botSkill.itemnames				= botSkill_list;
-	s_serveroptions.botSkill.curvalue				= 1;
+	s_serveroptions.botSkill.curvalue				= 2;
 
 	y += ( 2 * SMALLCHAR_HEIGHT );
 	s_serveroptions.player0.generic.type			= MTYPE_TEXT;
@@ -1504,9 +1513,8 @@ static void ServerOptions_MenuInit( qboolean multiplayer ) {
 	}
 	Menu_AddItem( &s_serveroptions.menu, &s_serveroptions.pure );
 	if( s_serveroptions.multiplayer ) {
+		Menu_AddItem( &s_serveroptions.menu, &s_serveroptions.publicserver );
 		Menu_AddItem( &s_serveroptions.menu, &s_serveroptions.dedicated );
-	}
-	if( s_serveroptions.multiplayer ) {
 		Menu_AddItem( &s_serveroptions.menu, &s_serveroptions.hostname );
 	}
 

@@ -181,6 +181,27 @@ void Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize) 
 
 /*
 =======================================================================================================================================
+Cvar_LatchedVariableStringBuffer
+=======================================================================================================================================
+*/
+void Cvar_LatchedVariableStringBuffer(const char *var_name, char *buffer, int bufsize) {
+	cvar_t *var;
+
+	var = Cvar_FindVar(var_name);
+
+	if (!var) {
+		*buffer = 0;
+	} else {
+		if (var->latchedString) {
+			Q_strncpyz(buffer, var->latchedString, bufsize);
+		} else {
+			Q_strncpyz(buffer, var->string, bufsize);
+		}
+	}
+}
+
+/*
+=======================================================================================================================================
 Cvar_Flags
 =======================================================================================================================================
 */
@@ -1290,6 +1311,31 @@ void Cvar_CheckRange(cvar_t *var, float min, float max, qboolean integral) {
 	var->integral = integral;
 	// Force an initial range check
 	Cvar_Set(var->name, var->string);
+}
+
+/*
+=======================================================================================================================================
+Cvar_CheckRangeSafe
+
+Basically a slightly modified Cvar_CheckRange for the interpreted modules.
+=======================================================================================================================================
+*/
+void Cvar_CheckRangeSafe(const char *varName, float min, float max, qboolean integral) {
+	cvar_t *var;
+
+	var = Cvar_FindVar(varName);
+
+	if (!var) {
+		Com_Printf("A VM tried to add range check to unregistered cvar %s.\n", varName);
+		return;
+	}
+	// ZTM: FIXME: g_gametype shouldn't be setup in server...
+	if (!(var->flags & (CVAR_VM_CREATED|CVAR_USER_CREATED)) && Q_stricmp(varName, "g_gametype")) {
+		Com_Printf("A VM tried to add range check to engine cvar %s.\n", varName);
+		return;
+	}
+
+	Cvar_CheckRange(var, min, max, integral);
 }
 
 /*

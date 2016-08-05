@@ -372,7 +372,16 @@ COM_Parse
 =======================================================================================================================================
 */
 char *COM_Parse(char **data_p) {
-	return COM_ParseExt(data_p, qtrue);
+	return COM_ParseExt2(data_p, qtrue, 0);
+}
+
+/*
+=======================================================================================================================================
+COM_ParseExt
+=======================================================================================================================================
+*/
+char *COM_ParseExt(char **data_p, qboolean allowLineBreaks) {
+	return COM_ParseExt2(data_p, allowLineBreaks, 0);
 }
 
 /*
@@ -417,7 +426,7 @@ Will never return NULL, just empty strings.
 If "allowLineBreaks" is qtrue then an empty string will be returned if the next token is a newline.
 =======================================================================================================================================
 */
-static char *SkipWhitespace(char *data, qboolean *hasNewLines) {
+static char *SkipWhitespace(char *data, int *linesSkipped) {
 	int c;
 
 	while ((c = *data) <= ' ') {
@@ -426,8 +435,7 @@ static char *SkipWhitespace(char *data, qboolean *hasNewLines) {
 		}
 
 		if (c == '\n') {
-			com_lines++;
-			*hasNewLines = qtrue;
+			*linesSkipped += 1;
 		}
 
 		data++;
@@ -519,12 +527,12 @@ int COM_Compress(char *data_p) {
 
 /*
 =======================================================================================================================================
-COM_ParseExt
+COM_ParseExt2
 =======================================================================================================================================
 */
-char *COM_ParseExt(char **data_p, qboolean allowLineBreaks) {
+char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks, char delimiter) {
 	int c = 0, len;
-	qboolean hasNewLines = qfalse;
+	int linesSkipped = 0;
 	char *data;
 
 	data = *data_p;
@@ -539,17 +547,20 @@ char *COM_ParseExt(char **data_p, qboolean allowLineBreaks) {
 
 	while (1) {
 		// skip whitespace
-		data = SkipWhitespace(data, &hasNewLines);
+		data = SkipWhitespace(data, &linesSkipped);
 
 		if (!data) {
 			*data_p = NULL;
 			return com_token;
 		}
 
-		if (hasNewLines && !allowLineBreaks) {
-			*data_p = data;
+		if (data && linesSkipped && !allowLineBreaks) {
+			// ZTM: Don't move the pointer so that calling SkipRestOfLine afterwards works as expected
+			//*data_p = data;
 			return com_token;
 		}
+
+		com_lines += linesSkipped;
 
 		c = *data;
 		// skip double slash comments
@@ -560,7 +571,7 @@ char *COM_ParseExt(char **data_p, qboolean allowLineBreaks) {
 				data++;
 			}
 		// skip /* */ comments
-		} else if (c == '/' && data[1] == '*') {
+		} else if (c=='/' && data[1] == '*') {
 			data += 2;
 
 			while (*data && (*data != '*' || data[1] != '/')) {
@@ -587,7 +598,7 @@ char *COM_ParseExt(char **data_p, qboolean allowLineBreaks) {
 		while (1) {
 			c = *data++;
 
-			if (c == '\"' || !c) {
+			if (c=='\"' || !c) {
 				com_token[len] = 0;
 				*data_p = (char *)data;
 				return com_token;
@@ -612,7 +623,7 @@ char *COM_ParseExt(char **data_p, qboolean allowLineBreaks) {
 
 		data++;
 		c = *data;
-	} while (c > 32);
+	} while (c > 32 && c != delimiter);
 
 	com_token[len] = 0;
 	*data_p = (char *)data;

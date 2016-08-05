@@ -59,10 +59,11 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define LEGACY_PROTOCOL
 #endif
 // Heartbeat for dpmaster protocol. You shouldn't change this unless you know what you're doing
-#define HEARTBEAT_FOR_MASTER			"DarkPlaces"
+#define HEARTBEAT_FOR_MASTER		"DarkPlaces"
+#define FLATLINE_FOR_MASTER			HEARTBEAT_FOR_MASTER
 // When com_gamename is LEGACY_MASTER_GAMENAME, use quake3 master protocol.
 // You shouldn't change this unless you know what you're doing
-#define LEGACY_MASTER_GAMENAME			"Quake3Arena"
+#define LEGACY_MASTER_GAMENAME		"Quake3Arena"
 #define LEGACY_HEARTBEAT_FOR_MASTER		"QuakeArena-1"
 #define BASETA							"missionpack"
 #ifndef PRODUCT_VERSION
@@ -316,6 +317,9 @@ typedef int fixed16_t;
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846f // matches value in gcc v2 math.h
+#endif
+#ifndef M_PI_2
+#define M_PI_2 1.57079632679489661923f // pi / 2
 #endif
 #define NUMVERTEXNORMALS 162
 extern vec3_t bytedirs[NUMVERTEXNORMALS];
@@ -634,7 +638,6 @@ vec_t VectorNormalize2(const vec3_t v, vec3_t out);
 void Vector4Scale(const vec4_t in, vec_t scale, vec4_t out);
 void VectorRotate(vec3_t in, vec3_t matrix[3], vec3_t out);
 int Q_log2(int val);
-float Q_acos(float c);
 int Q_rand(int *seed);
 float Q_random(int *seed);
 float Q_crandom(int *seed);
@@ -662,6 +665,8 @@ qboolean PlaneFromPoints(vec4_t plane, const vec3_t a, const vec3_t b, const vec
 void ProjectPointOnPlane(vec3_t dst, const vec3_t p, const vec3_t normal);
 void RotatePointAroundVector(vec3_t dst, const vec3_t dir, const vec3_t point, float degrees);
 void RotateAroundDirection(vec3_t axis[3], float yaw);
+float Q_acos(float c);
+float Q_asin(float c);
 void MakeNormalVectors(const vec3_t forward, vec3_t right, vec3_t up);
 // perpendicular vector could be replaced by this
 //int PlaneTypeForNormal(vec3_t normal);
@@ -683,7 +688,8 @@ void COM_DefaultExtension(char *path, int maxSize, const char *extension);
 void COM_BeginParseSession(const char *name);
 int COM_GetCurrentParseLine(void);
 char *COM_Parse(char **data_p);
-char *COM_ParseExt(char **data_p, qboolean allowLineBreak);
+char *COM_ParseExt(char **data_p, qboolean allowLineBreaks);
+char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks, char delimiter);
 int COM_Compress(char *data_p);
 void COM_ParseError(char *format, ...) __attribute__((format(printf, 1, 2)));
 void COM_ParseWarning(char *format, ...) __attribute__((format(printf, 1, 2)));

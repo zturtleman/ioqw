@@ -63,7 +63,7 @@ void G_RankRunFrame() {
 
 			if (ent->r.svFlags & SVF_BOT) {
 				// no bots in ranked games
-				trap_SendConsoleCommand(EXEC_INSERT, va("kick %s\n", ent->client->pers.netname));
+				trap_Cmd_ExecuteText(EXEC_INSERT, va("kick %s\n", ent->client->pers.netname));
 				continue;
 			}
 

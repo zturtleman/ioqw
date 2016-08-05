@@ -175,7 +175,7 @@ int AAS_AgainstLadder(vec3_t origin) {
 		// get the plane the face is in
 		plane = &aasworld.planes[face->planenum ^ side];
 		// if the origin is pretty close to the plane
-		if (abs(DotProduct(plane->normal, origin) - plane->dist) < 3) {
+		if (fabsf(DotProduct(plane->normal, origin) - plane->dist) < 3) {
 			if (AAS_PointInsideFace(abs(facenum), origin, 0.1f)) {
 				return qtrue;
 			}
@@ -540,9 +540,9 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 	int areas[20], numareas;
 	vec3_t points[20];
 	vec3_t org, end, feet, start, stepend, lastorg, wishdir;
-	vec3_t frame_test_vel, old_frame_test_vel, left_test_vel;
+	vec3_t frame_test_vel, old_frame_test_vel, left_test_vel, savevel;
 	vec3_t up = {0, 0, 1};
-	aas_plane_t *plane, *plane2;
+	aas_plane_t *plane, *plane2, *lplane;
 	aas_trace_t trace, steptrace;
 
 	if (frametime <= 0) {
@@ -573,6 +573,7 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 	VectorScale(velocity, frametime, frame_test_vel);
 
 	jump_frame = -1;
+	lplane = NULL;
 	// predict a maximum of 'maxframes' ahead
 	for (n = 0; n < maxframes; n++) {
 		swimming = AAS_Swimming(org);
@@ -591,7 +592,18 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 
 		crouch = qfalse;
 		// apply command movement
-		if (n < cmdframes) {
+		if (cmdframes < 0) {
+			// cmdmove is the destination, we should keep moving towards it
+			VectorSubtract(cmdmove, org, wishdir);
+			VectorNormalize(wishdir);
+			VectorScale(wishdir, phys_maxwalkvelocity, wishdir);
+			VectorCopy(frame_test_vel, savevel);
+			VectorScale(wishdir, frametime, frame_test_vel);
+
+			if (!swimming) {
+				frame_test_vel[2] = savevel[2];
+			}
+		} else if (n < cmdframes) {
 			// ax = 0;
 			maxvel = phys_maxwalkvelocity;
 			accelerate = phys_airaccelerate;
@@ -674,6 +686,7 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 			// trace a bounding box
 			trace = AAS_TraceClientBBox(org, end, presencetype, entnum);
 //#ifdef AAS_MOVE_DEBUG
+#if 0 // ZTM: interfering with my testing
 			if (visualize) {
 				if (trace.startsolid) {
 					botimport.Print(PRT_MESSAGE, "PredictMovement: start solid\n");
@@ -681,6 +694,7 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 
 				AAS_DebugLine(org, trace.endpos, LINECOLOR_RED);
 			}
+#endif
 //#endif // AAS_MOVE_DEBUG
 			if (stopevent & (SE_ENTERAREA|SE_TOUCHJUMPPAD|SE_TOUCHTELEPORTER|SE_TOUCHCLUSTERPORTAL)) {
 				numareas = AAS_TraceAreas(org, trace.endpos, areas, points, 20);
@@ -806,6 +820,7 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 							left_test_vel[2] = 0;
 							frame_test_vel[2] = 0;
 //#ifdef AAS_MOVE_DEBUG
+#if 0 // ZTM: interfering with my testing
 							if (visualize) {
 								if (steptrace.endpos[2] - org[2] > 0.125) {
 									VectorCopy(org, start);
@@ -813,6 +828,7 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 									AAS_DebugLine(org, start, LINECOLOR_BLUE);
 								}
 							}
+#endif
 //#endif // AAS_MOVE_DEBUG
 							org[2] = steptrace.endpos[2];
 							step = qtrue;
@@ -823,6 +839,12 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 				if (!step) {
 					// velocity left to test for this frame is the projection of the current test velocity into the hit plane
 					VectorMA(left_test_vel, -DotProduct(left_test_vel, plane->normal), plane->normal, left_test_vel);
+					// if this is the same plane we hit before, nudge velocity out along it, which fixes some epsilon issues with non-axial planes
+					if (lplane && DotProduct(lplane->normal, plane->normal) > 0.99) {
+						VectorAdd(plane->normal, left_test_vel, left_test_vel);
+					}
+
+					lplane = plane;
 					// store the old velocity for landing check
 					VectorCopy(frame_test_vel, old_frame_test_vel);
 					// test velocity for the next frame is the projection of the velocity of the current frame into the hit plane
@@ -872,6 +894,11 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 								move->endcontents = 0;
 								move->time = n * frametime;
 								move->frames = n;
+
+								if (visualize) {
+									AAS_DebugLine(origin, move->endpos, LINECOLOR_RED);
+								}
+
 								return qtrue;
 							}
 						}
@@ -928,6 +955,11 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 				move->endcontents = pc;
 				move->time = n * frametime;
 				move->frames = n;
+
+				if (visualize) {
+					AAS_DebugLine(origin, move->endpos, LINECOLOR_YELLOW);
+				}
+
 				return qtrue;
 			}
 		}
@@ -964,7 +996,7 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 			VectorCopy(org, start);
 			VectorCopy(start, end);
 			end[2] -= 48 + aassettings.phys_maxbarrier;
-			gaptrace = AAS_TraceClientBBox(start, end, PRESENCE_CROUCH, -1);
+			gaptrace = AAS_TraceClientBBox(start, end, PRESENCE_CROUCH, entnum);
 			// if solid is found the bot cannot walk any further and will not fall into a gap
 			if (!gaptrace.startsolid) {
 				// if it is a gap (lower than one step height)
@@ -979,6 +1011,11 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 						move->endcontents = 0;
 						move->time = n * frametime;
 						move->frames = n;
+
+						if (visualize) {
+							AAS_DebugLine(origin, move->endpos, LINECOLOR_CYAN);
+						}
+
 						return qtrue;
 					}
 				}
@@ -994,6 +1031,10 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 	move->endcontents = 0;
 	move->time = n * frametime;
 	move->frames = n;
+
+	if (visualize) {
+		AAS_DebugLine(origin, move->endpos, LINECOLOR_GREEN);
+	}
 
 	return qtrue;
 }

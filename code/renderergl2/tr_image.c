@@ -118,8 +118,8 @@ void GL_TextureMode( const char *string ) {
 	for ( i = 0 ; i < tr.numImages ; i++ ) {
 		glt = tr.images[ i ];
 		if ( glt->flags & IMGFLAG_MIPMAP && !(glt->flags & IMGFLAG_CUBEMAP)) {
-			qglTextureParameterf(glt->texnum, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
-			qglTextureParameterf(glt->texnum, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
+			qglTextureParameterfEXT(glt->texnum, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
+			qglTextureParameterfEXT(glt->texnum, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
 		}
 	}
 }
@@ -1860,7 +1860,7 @@ static void RawImage_UploadToRgtc2Texture(GLuint texture, byte *data, int width,
 		}
 	}
 
-	qglCompressedTextureImage2D(texture, GL_TEXTURE_2D, mip, GL_COMPRESSED_RG_RGTC2, width, height, 0, size, compressedData);
+	qglCompressedTextureImage2DEXT(texture, GL_TEXTURE_2D, mip, GL_COMPRESSED_RG_RGTC2, width, height, 0, size, compressedData);
 
 	ri.Hunk_FreeTempMemory(compressedData);
 }
@@ -1940,7 +1940,7 @@ static void RawImage_UploadTexture(GLuint texture, byte *data, int x, int y, int
 		do
 		{
 			lastMip = (width == 1 && height == 1) || !mipmap;
-			qglTextureImage2D(texture, target, miplevel, internalFormat, width, height, 0, dataFormat, dataType, NULL);
+			qglTextureImage2DEXT(texture, target, miplevel, internalFormat, width, height, 0, dataFormat, dataType, NULL);
 
 			width = MAX(1, width >> 1);
 			height = MAX(1, height >> 1);
@@ -1973,9 +1973,9 @@ static void RawImage_UploadTexture(GLuint texture, byte *data, int x, int y, int
 		if (compressed)
 		{
 			if (subtexture)
-				qglCompressedTextureSubImage2D(texture, target, miplevel, x, y, width, height, picFormat, size, data);
+				qglCompressedTextureSubImage2DEXT(texture, target, miplevel, x, y, width, height, picFormat, size, data);
 			else
-				qglCompressedTextureImage2D(texture, target, miplevel, picFormat, width, height, 0, size, data);
+				qglCompressedTextureImage2DEXT(texture, target, miplevel, picFormat, width, height, 0, size, data);
 		}
 		else
 		{
@@ -1985,9 +1985,9 @@ static void RawImage_UploadTexture(GLuint texture, byte *data, int x, int y, int
 			if (rgtc)
 				RawImage_UploadToRgtc2Texture(texture, data, width, height, miplevel);
 			else if (subtexture)
-				qglTextureSubImage2D(texture, target, miplevel, x, y, width, height, dataFormat, dataType, data);
+				qglTextureSubImage2DEXT(texture, target, miplevel, x, y, width, height, dataFormat, dataType, data);
 			else
-				qglTextureImage2D(texture, target, miplevel, internalFormat, width, height, 0, dataFormat, dataType, data);
+				qglTextureImage2DEXT(texture, target, miplevel, internalFormat, width, height, 0, dataFormat, dataType, data);
 
 			if (!lastMip && numMips < 2)
 			{
@@ -2114,19 +2114,19 @@ done:
 	if (mipmap)
 	{
 		if (glConfig.textureFilterAnisotropic && !cubemap)
-			qglTextureParameteri(image->texnum, textureTarget, GL_TEXTURE_MAX_ANISOTROPY_EXT,
+			qglTextureParameteriEXT(image->texnum, textureTarget, GL_TEXTURE_MAX_ANISOTROPY_EXT,
 			(GLint)Com_Clamp(1, glConfig.maxAnisotropy, r_ext_max_anisotropy->integer));
 
-		qglTextureParameterf(image->texnum, textureTarget, GL_TEXTURE_MIN_FILTER, gl_filter_min);
-		qglTextureParameterf(image->texnum, textureTarget, GL_TEXTURE_MAG_FILTER, gl_filter_max);
+		qglTextureParameterfEXT(image->texnum, textureTarget, GL_TEXTURE_MIN_FILTER, gl_filter_min);
+		qglTextureParameterfEXT(image->texnum, textureTarget, GL_TEXTURE_MAG_FILTER, gl_filter_max);
 	}
 	else
 	{
 		if (glConfig.textureFilterAnisotropic && !cubemap)
-			qglTextureParameteri(image->texnum, textureTarget, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1);
+			qglTextureParameteriEXT(image->texnum, textureTarget, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1);
 
-		qglTextureParameterf(image->texnum, textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		qglTextureParameterf(image->texnum, textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		qglTextureParameterfEXT(image->texnum, textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		qglTextureParameterfEXT(image->texnum, textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
 
 	// Fix for sampling depth buffer on old nVidia cards
@@ -2137,9 +2137,9 @@ done:
 		case GL_DEPTH_COMPONENT16_ARB:
 		case GL_DEPTH_COMPONENT24_ARB:
 		case GL_DEPTH_COMPONENT32_ARB:
-			qglTextureParameterf(image->texnum, textureTarget, GL_DEPTH_TEXTURE_MODE, GL_LUMINANCE);
-			qglTextureParameterf(image->texnum, textureTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			qglTextureParameterf(image->texnum, textureTarget, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			qglTextureParameterfEXT(image->texnum, textureTarget, GL_DEPTH_TEXTURE_MODE, GL_LUMINANCE);
+			qglTextureParameterfEXT(image->texnum, textureTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			qglTextureParameterfEXT(image->texnum, textureTarget, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			break;
 		default:
 			break;
@@ -2201,14 +2201,14 @@ image_t *R_CreateImage2( const char *name, byte *pic, int width, int height, GLe
 
 	if (image->flags & IMGFLAG_CUBEMAP)
 	{
-		qglTextureParameterf(image->texnum, GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, glWrapClampMode);
-		qglTextureParameterf(image->texnum, GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, glWrapClampMode);
-		qglTextureParameteri(image->texnum, GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, glWrapClampMode);
+		qglTextureParameterfEXT(image->texnum, GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, glWrapClampMode);
+		qglTextureParameterfEXT(image->texnum, GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, glWrapClampMode);
+		qglTextureParameteriEXT(image->texnum, GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, glWrapClampMode);
 	}
 	else
 	{
-		qglTextureParameterf(image->texnum, GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, glWrapClampMode);
-		qglTextureParameterf(image->texnum, GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, glWrapClampMode);
+		qglTextureParameterfEXT(image->texnum, GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, glWrapClampMode);
+		qglTextureParameterfEXT(image->texnum, GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, glWrapClampMode);
 	}
 
 	hash = generateHashValue(name);
@@ -2765,11 +2765,8 @@ void R_CreateBuiltinImages( void ) {
 		if (r_drawSunRays->integer)
 			tr.sunRaysImage = R_CreateImage("*sunRays", NULL, width, height, IMGTYPE_COLORALPHA, IMGFLAG_NO_COMPRESSION | IMGFLAG_CLAMPTOEDGE, rgbFormat);
 
-		if (glRefConfig.framebufferObject)
-		{
-			tr.renderDepthImage  = R_CreateImage("*renderdepth",  NULL, width, height, IMGTYPE_COLORALPHA, IMGFLAG_NO_COMPRESSION | IMGFLAG_CLAMPTOEDGE, GL_DEPTH_COMPONENT24_ARB);
-			tr.textureDepthImage = R_CreateImage("*texturedepth", NULL, PSHADOW_MAP_SIZE, PSHADOW_MAP_SIZE, IMGTYPE_COLORALPHA, IMGFLAG_NO_COMPRESSION | IMGFLAG_CLAMPTOEDGE, GL_DEPTH_COMPONENT24_ARB);
-		}
+		tr.renderDepthImage  = R_CreateImage("*renderdepth",  NULL, width, height, IMGTYPE_COLORALPHA, IMGFLAG_NO_COMPRESSION | IMGFLAG_CLAMPTOEDGE, GL_DEPTH_COMPONENT24_ARB);
+		tr.textureDepthImage = R_CreateImage("*texturedepth", NULL, PSHADOW_MAP_SIZE, PSHADOW_MAP_SIZE, IMGTYPE_COLORALPHA, IMGFLAG_NO_COMPRESSION | IMGFLAG_CLAMPTOEDGE, GL_DEPTH_COMPONENT24_ARB);
 
 		{
 			unsigned short sdata[4];
@@ -2824,8 +2821,8 @@ void R_CreateBuiltinImages( void ) {
 			for ( x = 0; x < 4; x++)
 			{
 				tr.sunShadowDepthImage[x] = R_CreateImage(va("*sunshadowdepth%i", x), NULL, r_shadowMapSize->integer, r_shadowMapSize->integer, IMGTYPE_COLORALPHA, IMGFLAG_NO_COMPRESSION | IMGFLAG_CLAMPTOEDGE, GL_DEPTH_COMPONENT24_ARB);
-				qglTextureParameterf(tr.sunShadowDepthImage[x]->texnum, GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
-				qglTextureParameterf(tr.sunShadowDepthImage[x]->texnum, GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+				qglTextureParameterfEXT(tr.sunShadowDepthImage[x]->texnum, GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+				qglTextureParameterfEXT(tr.sunShadowDepthImage[x]->texnum, GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 			}
 
 			tr.screenShadowImage = R_CreateImage("*screenShadow", NULL, width, height, IMGTYPE_COLORALPHA, IMGFLAG_NO_COMPRESSION | IMGFLAG_CLAMPTOEDGE, GL_RGBA8);
@@ -2955,112 +2952,6 @@ SKINS
 */
 
 /*
-==================
-CommaParse
-
-This is unfortunate, but the skin files aren't
-compatable with our normal parsing rules.
-==================
-*/
-static char *CommaParse( char **data_p ) {
-	int c = 0, len;
-	char *data;
-	static	char	com_token[MAX_TOKEN_CHARS];
-
-	data = *data_p;
-	len = 0;
-	com_token[0] = 0;
-
-	// make sure incoming data is valid
-	if ( !data ) {
-		*data_p = NULL;
-		return com_token;
-	}
-
-	while ( 1 ) {
-		// skip whitespace
-		while( (c = *data) <= ' ') {
-			if( !c ) {
-				break;
-			}
-			data++;
-		}
-
-
-		c = *data;
-
-		// skip double slash comments
-		if ( c == '/' && data[1] == '/' )
-		{
-			data += 2;
-			while (*data && *data != '\n') {
-				data++;
-			}
-		}
-		// skip /* */ comments
-		else if ( c=='/' && data[1] == '*' ) 
-		{
-			data += 2;
-			while ( *data && ( *data != '*' || data[1] != '/' ) ) 
-			{
-				data++;
-			}
-			if ( *data ) 
-			{
-				data += 2;
-			}
-		}
-		else
-		{
-			break;
-		}
-	}
-
-	if ( c == 0 ) {
-		return "";
-	}
-
-	// handle quoted strings
-	if (c == '\"')
-	{
-		data++;
-		while (1)
-		{
-			c = *data++;
-			if (c=='\"' || !c)
-			{
-				com_token[len] = 0;
-				*data_p = ( char * ) data;
-				return com_token;
-			}
-			if (len < MAX_TOKEN_CHARS - 1)
-			{
-				com_token[len] = c;
-				len++;
-			}
-		}
-	}
-
-	// parse a regular word
-	do
-	{
-		if (len < MAX_TOKEN_CHARS - 1)
-		{
-			com_token[len] = c;
-			len++;
-		}
-		data++;
-		c = *data;
-	} while (c>32 && c != ',' );
-
-	com_token[len] = 0;
-
-	*data_p = ( char * ) data;
-	return com_token;
-}
-
-
-/*
 ===============
 RE_RegisterSkin
 
@@ -3077,6 +2968,7 @@ qhandle_t RE_RegisterSkin( const char *name ) {
 	char		*text_p;
 	char		*token;
 	char		surfName[MAX_QPATH];
+	char		shaderName[MAX_QPATH];
 
 	if ( !name || !name[0] ) {
 		ri.Printf( PRINT_DEVELOPER, "Empty name passed to RE_RegisterSkin\n" );
@@ -3130,7 +3022,7 @@ qhandle_t RE_RegisterSkin( const char *name ) {
 	text_p = text.c;
 	while ( text_p && *text_p ) {
 		// get surface name
-		token = CommaParse( &text_p );
+		token = COM_ParseExt2( &text_p, qtrue, ',' );
 		Q_strncpyz( surfName, token, sizeof( surfName ) );
 
 		if ( !token[0] ) {
@@ -3148,7 +3040,8 @@ qhandle_t RE_RegisterSkin( const char *name ) {
 		}
 		
 		// parse the shader name
-		token = CommaParse( &text_p );
+		token = COM_ParseExt2( &text_p, qfalse, ',' );
+		Q_strncpyz( shaderName, token, sizeof( shaderName ) );
 
 		if ( skin->numSurfaces >= MD3_MAX_SURFACES ) {
 			ri.Printf( PRINT_WARNING, "WARNING: Ignoring surfaces in '%s', the max is %d surfaces!\n", name, MD3_MAX_SURFACES );
@@ -3157,7 +3050,7 @@ qhandle_t RE_RegisterSkin( const char *name ) {
 
 		surf = skin->surfaces[ skin->numSurfaces ] = ri.Hunk_Alloc( sizeof( *skin->surfaces[0] ), h_low );
 		Q_strncpyz( surf->name, surfName, sizeof( surf->name ) );
-		surf->shader = R_FindShader( token, LIGHTMAP_NONE, qtrue );
+		surf->shader = R_FindShader( shaderName, LIGHTMAP_NONE, qtrue );
 		skin->numSurfaces++;
 	}
 

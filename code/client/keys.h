@@ -54,4 +54,6 @@ qboolean Key_IsDown(int keynum);
 qboolean Key_GetOverstrikeMode(void);
 void Key_SetOverstrikeMode(qboolean state);
 void Key_ClearStates(void);
-int Key_GetKey(const char *binding);
+int Key_GetKey(const char *binding, int startKey);
+void Key_KeynumToStringBuf(int keynum, char *buf, int buflen);
+void Key_GetBindingBuf(int keynum, char *buf, int buflen);

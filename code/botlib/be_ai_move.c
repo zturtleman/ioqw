@@ -46,7 +46,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 //#define DEBUG_ELEVATOR
 //#define DEBUG_GRAPPLE
 // movement state
-// NOTE: the moveflags MFL_ONGROUND, MFL_TELEPORTED, MFL_WATERJUMP and MFL_GRAPPLEPULL must be set outside the movement code
+// NOTE: the moveflags MFL_ONGROUND, MFL_TELEPORTED, MFL_WATERJUMP, MFL_GRAPPLEPULL, and MFL_GRAPPLEEXISTS must be set outside the movement code
 typedef struct bot_movestate_s {
 	// input vars (all set outside the movement code)
 	vec3_t origin;								// origin of the bot
@@ -216,6 +216,12 @@ void BotInitMoveState(int handle, bot_initmove_t *initmove) {
 
 	if (initmove->or_moveflags & MFL_GRAPPLEPULL) {
 		ms->moveflags |= MFL_GRAPPLEPULL;
+	}
+
+	ms->moveflags &= ~MFL_GRAPPLEEXISTS;
+
+	if (initmove->or_moveflags & MFL_GRAPPLEEXISTS) {
+		ms->moveflags |= MFL_GRAPPLEEXISTS;
 	}
 }
 
@@ -2163,7 +2169,7 @@ bot_moveresult_t BotTravel_Elevator(bot_movestate_t *ms, aas_reachability_t *rea
 		botimport.Print(PRT_MESSAGE, "bot on elevator\n");
 #endif // DEBUG_ELEVATOR
 		// if vertically not too far from the end point
-		if (abs(ms->origin[2] - reach->end[2]) < sv_maxbarrier->value) {
+		if (fabsf(ms->origin[2] - reach->end[2]) < sv_maxbarrier->value) {
 #ifdef DEBUG_ELEVATOR
 			botimport.Print(PRT_MESSAGE, "bot moving to end\n");
 #endif // DEBUG_ELEVATOR
@@ -2651,22 +2657,14 @@ GrappleState
 =======================================================================================================================================
 */
 int GrappleState(bot_movestate_t *ms, aas_reachability_t *reach) {
-	int i;
-	aas_entityinfo_t entinfo;
 
 	// if the grapple hook is pulling
 	if (ms->moveflags & MFL_GRAPPLEPULL) {
 		return 2;
 	}
-	// check for a visible grapple missile entity or visible grapple entity
-	for (i = AAS_NextEntity(0); i; i = AAS_NextEntity(i)) {
-		if (AAS_EntityType(i) == (int)entitytypemissile->value) {
-			AAS_EntityInfo(i, &entinfo);
-
-			if (entinfo.weapon == (int)weapindex_grapple->value) {
-				return 1;
-			}
-		}
+	//if the grapple hook entity exists
+	if (ms->moveflags & MFL_GRAPPLEEXISTS) {
+		return 1;
 	}
 	// no valid grapple at all
 	return 0;

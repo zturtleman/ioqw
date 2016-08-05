@@ -133,6 +133,33 @@ void CG_DrawPic(float x, float y, float width, float height, qhandle_t hShader) 
 
 /*
 =======================================================================================================================================
+CG_SetClipRegion
+=======================================================================================================================================
+*/
+void CG_SetClipRegion(float x, float y, float w, float h) {
+	vec4_t clip;
+
+	CG_AdjustFrom640(&x, &y, &w, &h);
+
+	clip[0] = x;
+	clip[1] = y;
+	clip[2] = x + w;
+	clip[3] = y + h;
+
+	trap_R_SetClipRegion(clip);
+}
+
+/*
+=======================================================================================================================================
+CG_ClearClipRegion
+=======================================================================================================================================
+*/
+void CG_ClearClipRegion(void) {
+	trap_R_SetClipRegion(NULL);
+}
+
+/*
+=======================================================================================================================================
 CG_DrawChar
 
 Coordinates and size in 640 * 480 virtual screen size.
@@ -455,6 +482,38 @@ CG_ColorForHealth
 */
 void CG_ColorForHealth(vec4_t hcolor) {
 	CG_GetColorForHealth(cg.snap->ps.stats[STAT_HEALTH], cg.snap->ps.stats[STAT_ARMOR], hcolor);
+}
+
+/*
+=======================================================================================================================================
+CG_KeysStringForBinding
+=======================================================================================================================================
+*/
+void CG_KeysStringForBinding(const char *binding, char *string, int stringSize) {
+	char name2[32];
+	int keys[2];
+	int i, key;
+
+	for (i = 0, key = 0; i < 2; i++) {
+		key = trap_Key_GetKey(binding, key);
+		keys[i] = key;
+		key++;
+	}
+
+	if (keys[0] == -1) {
+		Q_strncpyz(string, "???", stringSize);
+		return;
+	}
+
+	trap_Key_KeynumToStringBuf(keys[0], string, MIN(32, stringSize));
+	Q_strupr(string);
+
+	if (keys[1] != -1) {
+		trap_Key_KeynumToStringBuf(keys[1], name2, 32);
+		Q_strupr(name2);
+		Q_strcat(string, stringSize, " or ");
+		Q_strcat(string, stringSize, name2);
+	}
 }
 
 static int propMap[128][3] = {

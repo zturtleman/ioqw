@@ -97,17 +97,10 @@ cl_voipCaptureMult: Multiply recorded audio by this value after denoising.
                     too much data. Set this to 1.0 to get no change, less to
                     be quieter.
 
-cg_voipShowMeter: Set to "1" (the default) to show a volume meter as you are
+cl_voipShowMeter: Set to "1" (the default) to show a volume meter as you are
                   recording from the microphone, so you can see how well the
                   game can "hear" you. Set to "0" to disable the display of
                   the meter.
-
-cg_voipShowCrosshairMeter: Set to "1" to show a volume meter for clients when
-                  you point your crosshair at them. Set to "0" (the default) to
-                  disable the display of the meter.
-
-    The cg_* variables are part of cgame, mods may opt to change or remove them.
-
 
 
 Console commands:

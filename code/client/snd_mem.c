@@ -227,13 +227,19 @@ qboolean S_LoadSound(sfx_t *sfx) {
 	byte *data;
 	short *samples;
 	snd_info_t info;
-//	int size;
+	int size_per_sec;
 
 	// load it in
 	data = S_CodecLoad(sfx->soundName, &info);
 
 	if (!data) {
 		return qfalse;
+	}
+
+	size_per_sec = info.rate * info.channels * info.width;
+
+	if (size_per_sec > 0) {
+		sfx->duration = (int)(1000.0f * ((double)info.size / size_per_sec));
 	}
 
 	if (info.width == 1) {

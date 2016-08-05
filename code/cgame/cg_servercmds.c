@@ -167,7 +167,7 @@ void CG_ParseServerinfo(void) {
 	info = CG_ConfigString(CS_SERVERINFO);
 
 	cgs.gametype = atoi(Info_ValueForKey(info, "g_gametype"));
-	trap_Cvar_Set("g_gametype", va("%i", cgs.gametype));
+	trap_Cvar_SetValue("g_gametype", cgs.gametype);
 
 	cgs.dmflags = atoi(Info_ValueForKey(info, "dmflags"));
 	cgs.fraglimit = atoi(Info_ValueForKey(info, "fraglimit"));
@@ -470,15 +470,15 @@ static void CG_MapRestart(void) {
 		CG_CenterPrint("FIGHT!", 120, GIANTCHAR_WIDTH * 2);
 	}
 #ifdef MISSIONPACK
-	if (cg_singlePlayerActive.integer) {
-		trap_Cvar_Set("ui_matchStartTime", va("%i", cg.time));
+	if (cg_singlePlayer.integer) {
+		trap_Cvar_SetValue("ui_matchStartTime", cg.time);
 
 		if (cg_recordSPDemo.integer && *cg_recordSPDemoName.string) {
-			trap_SendConsoleCommand(va("set g_synchronousclients 1; record %s \n", cg_recordSPDemoName.string));
+			trap_Cmd_ExecuteText(EXEC_APPEND, va("set g_synchronousclients 1; record %s \n", cg_recordSPDemoName.string));
 		}
 	}
 #endif
-	trap_Cvar_Set("cg_thirdPerson", "0");
+	trap_Cvar_SetValue("cg_thirdPerson", 0);
 }
 
 #define MAX_VOICEFILESIZE 16384

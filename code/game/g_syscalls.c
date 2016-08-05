@@ -102,6 +102,15 @@ void trap_Argv(int n, char *buffer, int bufferLength) {
 
 /*
 =======================================================================================================================================
+trap_Args
+=======================================================================================================================================
+*/
+void trap_Args(char *buffer, int bufferLength) {
+	syscall(G_ARGS, buffer, bufferLength);
+}
+
+/*
+=======================================================================================================================================
 trap_FS_FOpenFile
 =======================================================================================================================================
 */
@@ -129,6 +138,15 @@ void trap_FS_Write(const void *buffer, int len, fileHandle_t f) {
 
 /*
 =======================================================================================================================================
+trap_FS_Seek
+=======================================================================================================================================
+*/
+int trap_FS_Seek(fileHandle_t f, long offset, int origin) {
+	return syscall(G_FS_SEEK, f, offset, origin);
+}
+
+/*
+=======================================================================================================================================
 trap_FS_FCloseFile
 =======================================================================================================================================
 */
@@ -147,20 +165,29 @@ int trap_FS_GetFileList(const char *path, const char *extension, char *listbuf, 
 
 /*
 =======================================================================================================================================
-trap_FS_Seek
+trap_FS_Delete
 =======================================================================================================================================
 */
-int trap_FS_Seek(fileHandle_t f, long offset, int origin) {
-	return syscall(G_FS_SEEK, f, offset, origin);
+int trap_FS_Delete(const char *path) {
+	return syscall(G_FS_DELETE, path);
 }
 
 /*
 =======================================================================================================================================
-trap_SendConsoleCommand
+trap_FS_Rename
 =======================================================================================================================================
 */
-void trap_SendConsoleCommand(int exec_when, const char *text) {
-	syscall(G_SEND_CONSOLE_COMMAND, exec_when, text);
+int trap_FS_Rename(const char *from, const char *to) {
+	return syscall(G_FS_RENAME, from, to);
+}
+
+/*
+=======================================================================================================================================
+trap_Cmd_ExecuteText
+=======================================================================================================================================
+*/
+void trap_Cmd_ExecuteText(int exec_when, const char *text) {
+	syscall(G_CMD_EXECUTETEXT, exec_when, text);
 }
 
 /*
@@ -192,6 +219,27 @@ void trap_Cvar_Set(const char *var_name, const char *value) {
 
 /*
 =======================================================================================================================================
+trap_Cvar_SetValue
+=======================================================================================================================================
+*/
+void trap_Cvar_SetValue(const char *var_name, float value) {
+	syscall(G_CVAR_SET_VALUE, var_name, PASSFLOAT(value));
+}
+
+/*
+=======================================================================================================================================
+trap_Cvar_VariableValue
+=======================================================================================================================================
+*/
+float trap_Cvar_VariableValue(const char *var_name) {
+	floatint_t fi;
+
+	fi.i = syscall(G_CVAR_VARIABLE_VALUE, var_name);
+	return fi.f;
+}
+
+/*
+=======================================================================================================================================
 trap_Cvar_VariableIntegerValue
 =======================================================================================================================================
 */
@@ -206,6 +254,33 @@ trap_Cvar_VariableStringBuffer
 */
 void trap_Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize) {
 	syscall(G_CVAR_VARIABLE_STRING_BUFFER, var_name, buffer, bufsize);
+}
+
+/*
+=======================================================================================================================================
+trap_Cvar_LatchedVariableStringBuffer
+=======================================================================================================================================
+*/
+void trap_Cvar_LatchedVariableStringBuffer(const char *var_name, char *buffer, int bufsize) {
+	syscall(G_CVAR_LATCHED_VARIABLE_STRING_BUFFER, var_name, buffer, bufsize);
+}
+
+/*
+=======================================================================================================================================
+trap_Cvar_InfoStringBuffer
+=======================================================================================================================================
+*/
+void trap_Cvar_InfoStringBuffer(int bit, char *buffer, int bufsize) {
+	syscall(G_CVAR_INFO_STRING_BUFFER, bit, buffer, bufsize);
+}
+
+/*
+=======================================================================================================================================
+trap_Cvar_CheckRange
+=======================================================================================================================================
+*/
+void trap_Cvar_CheckRange(const char *var_name, float min, float max, qboolean integral) {
+	syscall(G_CVAR_CHECK_RANGE, var_name, PASSFLOAT(min), PASSFLOAT(max), integral);
 }
 
 /*
@@ -471,10 +546,27 @@ void trap_SnapVector(float *v) {
 
 /*
 =======================================================================================================================================
+trap_AddCommand
+=======================================================================================================================================
+*/
+void trap_AddCommand(const char *cmdName) {
+	syscall(G_ADDCOMMAND, cmdName);
+}
+
+/*
+=======================================================================================================================================
+trap_RemoveCommand
+=======================================================================================================================================
+*/
+void trap_RemoveCommand(const char *cmdName) {
+	syscall(G_REMOVECOMMAND, cmdName);
+}
+// BotLib traps start here
+/*
+=======================================================================================================================================
 trap_BotLibSetup
 =======================================================================================================================================
 */
-// BotLib traps start here
 int trap_BotLibSetup(void) {
 	return syscall(BOTLIB_SETUP);
 }
@@ -504,15 +596,6 @@ trap_BotLibVarGet
 */
 int trap_BotLibVarGet(char *var_name, char *value, int size) {
 	return syscall(BOTLIB_LIBVAR_GET, var_name, value, size);
-}
-
-/*
-=======================================================================================================================================
-trap_BotLibDefine
-=======================================================================================================================================
-*/
-int trap_BotLibDefine(char *string) {
-	return syscall(BOTLIB_PC_ADD_GLOBAL_DEFINE, string);
 }
 
 /*
@@ -722,6 +805,15 @@ trap_AAS_AreaReachability
 */
 int trap_AAS_AreaReachability(int areanum) {
 	return syscall(BOTLIB_AAS_AREA_REACHABILITY, areanum);
+}
+
+/*
+=======================================================================================================================================
+trap_AAS_BestReachableArea
+=======================================================================================================================================
+*/
+int trap_AAS_BestReachableArea(vec3_t origin, vec3_t mins, vec3_t maxs, vec3_t goalorigin) {
+	return syscall(BOTLIB_AAS_BEST_REACHABLE_AREA, origin, mins, maxs, goalorigin);
 }
 
 /*
@@ -1677,11 +1769,29 @@ int trap_GeneticParentsAndChildSelection(int numranks, float *ranks, int *parent
 
 /*
 =======================================================================================================================================
+trap_PC_AddGlobalDefine
+=======================================================================================================================================
+*/
+int trap_PC_AddGlobalDefine(char *string) {
+	return syscall(G_PC_ADD_GLOBAL_DEFINE, string);
+}
+
+/*
+=======================================================================================================================================
+trap_PC_RemoveAllGlobalDefines
+=======================================================================================================================================
+*/
+void trap_PC_RemoveAllGlobalDefines(void) {
+	syscall(G_PC_REMOVE_ALL_GLOBAL_DEFINES);
+}
+
+/*
+=======================================================================================================================================
 trap_PC_LoadSource
 =======================================================================================================================================
 */
 int trap_PC_LoadSource(const char *filename) {
-	return syscall(BOTLIB_PC_LOAD_SOURCE, filename);
+	return syscall(G_PC_LOAD_SOURCE, filename);
 }
 
 /*
@@ -1690,7 +1800,7 @@ trap_PC_FreeSource
 =======================================================================================================================================
 */
 int trap_PC_FreeSource(int handle) {
-	return syscall(BOTLIB_PC_FREE_SOURCE, handle);
+	return syscall(G_PC_FREE_SOURCE, handle);
 }
 
 /*
@@ -1699,7 +1809,16 @@ trap_PC_ReadToken
 =======================================================================================================================================
 */
 int trap_PC_ReadToken(int handle, pc_token_t *pc_token) {
-	return syscall(BOTLIB_PC_READ_TOKEN, handle, pc_token);
+	return syscall(G_PC_READ_TOKEN, handle, pc_token);
+}
+
+/*
+=======================================================================================================================================
+trap_PC_UnreadToken
+=======================================================================================================================================
+*/
+void trap_PC_UnreadToken(int handle) {
+	syscall(G_PC_UNREAD_TOKEN, handle);
 }
 
 /*
@@ -1708,5 +1827,5 @@ trap_PC_SourceFileAndLine
 =======================================================================================================================================
 */
 int trap_PC_SourceFileAndLine(int handle, char *filename, int *line) {
-	return syscall(BOTLIB_PC_SOURCE_FILE_AND_LINE, handle, filename, line);
+	return syscall(G_PC_SOURCE_FILE_AND_LINE, handle, filename, line);
 }

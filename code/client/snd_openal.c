@@ -126,6 +126,7 @@ typedef struct alSfx_s {
 	qboolean inMemory;			// Sound is stored in memory
 	qboolean isLocked;			// Sound is locked (can not be unloaded)
 	int lastUsedTime;			// Time last used
+	int duration;				// Milliseconds
 	int loopCnt;				// number of loops using this sfx
 	int loopActiveCnt;			// number of playing loops using this sfx
 	int masterLoopSrc;			// All other sources looping this buffer are synced to this master src
@@ -333,6 +334,7 @@ static void S_AL_BufferLoad(sfxHandle_t sfx, qboolean cache) {
 	ALuint format;
 	void *data;
 	snd_info_t info;
+	int size_per_sec;
 	alSfx_t *curSfx = &knownSfx[sfx];
 
 	// Nothing?
@@ -349,6 +351,12 @@ static void S_AL_BufferLoad(sfxHandle_t sfx, qboolean cache) {
 	if (!data) {
 		S_AL_BufferUseDefault(sfx);
 		return;
+	}
+
+	size_per_sec = info.rate * info.channels * info.width;
+
+	if (size_per_sec > 0) {
+		curSfx->duration = (int)(1000.0f * ((double)info.size / size_per_sec));
 	}
 
 	curSfx->isDefaultChecked = qtrue;
@@ -489,6 +497,21 @@ static sfxHandle_t S_AL_RegisterSound(const char *sample, qboolean compressed) {
 	}
 
 	return sfx;
+}
+
+/*
+=======================================================================================================================================
+S_AL_SoundDuration
+=======================================================================================================================================
+*/
+static int S_AL_SoundDuration(sfxHandle_t sfx) {
+
+	if (sfx < 0 || sfx >= numSfx) {
+		Com_Printf(S_COLOR_RED "ERROR: S_AL_SoundDuration: handle %i out of range\n", sfx);
+		return 0;
+	}
+
+	return knownSfx[sfx].duration;
 }
 
 /*
@@ -2247,7 +2270,7 @@ qboolean S_AL_Init(soundInterface_t *si) {
 	// New console variables
 	s_alPrecache = Cvar_Get("s_alPrecache", "1", CVAR_ARCHIVE);
 	s_alGain = Cvar_Get("s_alGain", "1.0", CVAR_ARCHIVE);
-	s_alSources = Cvar_Get("s_alSources", "96", CVAR_ARCHIVE);
+	s_alSources = Cvar_Get("s_alSources", "128", CVAR_ARCHIVE);
 	s_alDopplerFactor = Cvar_Get("s_alDopplerFactor", "1.0", CVAR_ARCHIVE);
 	s_alDopplerSpeed = Cvar_Get("s_alDopplerSpeed", "9000", CVAR_ARCHIVE);
 	s_alMinDistance = Cvar_Get("s_alMinDistance", "120", CVAR_CHEAT);
@@ -2429,6 +2452,7 @@ qboolean S_AL_Init(soundInterface_t *si) {
 	si->DisableSounds = S_AL_DisableSounds;
 	si->BeginRegistration = S_AL_BeginRegistration;
 	si->RegisterSound = S_AL_RegisterSound;
+	si->SoundDuration = S_AL_SoundDuration;
 	si->ClearSoundBuffer = S_AL_ClearSoundBuffer;
 	si->SoundInfo = S_AL_SoundInfo;
 	si->SoundList = S_AL_SoundList;

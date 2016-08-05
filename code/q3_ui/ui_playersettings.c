@@ -39,6 +39,8 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define ART_FX_WHITE		"menu/art/fx_white"
 #define ART_FX_YELLOW		"menu/art/fx_yel"
 
+#define NUM_COLOR_EFFECTS 7
+
 #define ID_NAME			10
 #define ID_HANDICAP		11
 #define ID_EFFECTS		12
@@ -65,7 +67,7 @@ typedef struct {
 	menubitmap_s		item_null;
 
 	qhandle_t			fxBasePic;
-	qhandle_t			fxPic[7];
+	qhandle_t			fxPic[NUM_COLOR_EFFECTS];
 	playerInfo_t		playerinfo;
 	int					current_fx;
 	char				playerModel[MAX_QPATH];
@@ -73,8 +75,8 @@ typedef struct {
 
 static playersettings_t	s_playersettings;
 
-static int gamecodetoui[] = {4,2,3,0,5,1,6};
-static int uitogamecode[] = {4,6,2,3,1,5,7};
+static int gamecodetoui[NUM_COLOR_EFFECTS] = {4,2,3,0,5,1,6};
+static int uitogamecode[NUM_COLOR_EFFECTS] = {4,6,2,3,1,5,7};
 
 static const char *handicap_items[] = {
 	"None",
@@ -209,6 +211,7 @@ static void PlayerSettings_DrawEffects( void *self ) {
 	qboolean		focus;
 	int				style;
 	float			*color;
+	float			xOffset;
 
 	item = (menulist_s *)self;
 	focus = (item->generic.parent->cursor == item->generic.menuPosition);
@@ -222,8 +225,10 @@ static void PlayerSettings_DrawEffects( void *self ) {
 
 	UI_DrawProportionalString( item->generic.x, item->generic.y, "Effects", style, color );
 
+	xOffset = 128.0f / (NUM_COLOR_EFFECTS + 1);
+
 	UI_DrawHandlePic( item->generic.x + 64, item->generic.y + PROP_HEIGHT + 8, 128, 8, s_playersettings.fxBasePic );
-	UI_DrawHandlePic( item->generic.x + 64 + item->curvalue * 16 + 8, item->generic.y + PROP_HEIGHT + 6, 16, 12, s_playersettings.fxPic[item->curvalue] );
+	UI_DrawHandlePic( item->generic.x + 64 + item->curvalue * xOffset + xOffset * 0.5f, item->generic.y + PROP_HEIGHT + 6, 16, 12, s_playersettings.fxPic[item->curvalue] );
 }
 
 
@@ -298,8 +303,8 @@ static void PlayerSettings_SetMenuItems( void ) {
 
 	// effects color
 	c = trap_Cvar_VariableValue( "color1" ) - 1;
-	if( c < 0 || c > 6 ) {
-		c = 6;
+	if( c < 0 || c > NUM_COLOR_EFFECTS-1 ) {
+		c = NUM_COLOR_EFFECTS-1;
 	}
 	s_playersettings.effects.curvalue = gamecodetoui[c];
 
@@ -423,7 +428,7 @@ static void PlayerSettings_MenuInit( void ) {
 	s_playersettings.effects.generic.top		= y - 8;
 	s_playersettings.effects.generic.right		= 192 + 200;
 	s_playersettings.effects.generic.bottom		= y + 2* PROP_HEIGHT;
-	s_playersettings.effects.numitems			= 7;
+	s_playersettings.effects.numitems			= NUM_COLOR_EFFECTS;
 
 	s_playersettings.model.generic.type			= MTYPE_BITMAP;
 	s_playersettings.model.generic.name			= ART_MODEL0;

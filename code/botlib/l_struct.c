@@ -45,6 +45,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #define qtrue true
 #define qfalse false
+#define Com_sprintf snprintf
 #endif // BSPC
 /*
 =======================================================================================================================================

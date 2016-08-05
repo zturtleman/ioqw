@@ -729,7 +729,7 @@ BG_CheckSpawnEntity
 qboolean BG_CheckSpawnEntity(const bgEntitySpawnInfo_t *info) {
 	int i, gametype;
 	char *s, *value, *gametypeName;
-	static char *gametypeNames[GT_MAX_GAME_TYPE] = {"ffa", "tournament", "single", "team", "ctf", "oneflag", "obelisk", "harvester"};
+	static char *gametypeNames[GT_MAX_GAME_TYPE] = {"single", "ffa", "tournament", "team", "ctf", "oneflag", "obelisk", "harvester"};
 
 	gametype = info->gametype;
 	// check for "notsingle" flag
@@ -740,7 +740,7 @@ qboolean BG_CheckSpawnEntity(const bgEntitySpawnInfo_t *info) {
 			return qfalse;
 		}
 	}
-	// check for "notteam" flag (GT_FFA, GT_TOURNAMENT, GT_SINGLE_PLAYER)
+	// check for "notteam" flag (GT_SINGLE_PLAYER, GT_FFA, GT_TOURNAMENT)
 	if (gametype >= GT_TEAM) {
 		info->spawnInt("notteam", "0", &i);
 
@@ -1393,4 +1393,13 @@ void BG_PlayerStateToEntityStateExtraPolate(playerState_t *ps, entityState_t *s,
 	s->loopSound = ps->loopSound;
 	s->tokens = ps->tokens;
 	s->team = ps->persistant[PERS_TEAM];
+}
+
+/*
+=======================================================================================================================================
+cmdcmp
+=======================================================================================================================================
+*/
+int cmdcmp(const void *a, const void *b) {
+	return Q_stricmp((const char *)a, ((dummyCmd_t *)b)->name);
 }

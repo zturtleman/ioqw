@@ -41,7 +41,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 // TTimo https://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=551
 #define SVF_CLIENTMASK			0x00000002
 #define SVF_BOT					0x00000008 // set if the entity is a bot
-#define SVF_BROADCAST			0x00000020 // send to all connected clients
+#define SVF_BROADCAST			0x00000020 // send to all connected players (r.cullDistance will still be checked)
 #define SVF_PORTAL				0x00000040 // merge a second pvs at origin2 into snapshots
 #define SVF_USE_CURRENT_ORIGIN	0x00000080 // entity->r.currentOrigin instead of entity->s.origin for link position (missiles and movers)
 #define SVF_SINGLECLIENT		0x00000100 // only send to a single client (entityShared_t->singleClient)
@@ -72,6 +72,8 @@ typedef struct {
 	// ent->r.ownerNum == passEntityNum (don't interact with your own missiles)
 	// entity[ent->r.ownerNum].r.ownerNum == passEntityNum (don't interact with other missiles from owner)
 	int ownerNum;
+	// if set, entity is only sent to client if distance between entity and client <= cullDistance (even if SVF_BROADCAST is set)
+	int cullDistance;
 	// if set, portal entities are only sent to client if distance between portal and player <= portalCullDistance
 	int portalCullDistance;
 	// if SVF_VISDUMMY, number of master, else if not 0, it's the number of a target_vis_dummy_multiple.
@@ -89,35 +91,56 @@ typedef struct {
 
 **************************************************************************************************************************************/
 
+	// See sharedTraps_t in qcommon.h for TRAP_MEMSET = 0, etc.
+
 typedef enum {
 	//============== general Quake services ==================
-
-	G_PRINT,					// (const char *string);
+	G_PRINT = 20,				// (const char *string);
 	// print message on the local console
 	G_ERROR,					// (const char *string);
 	// abort the game
 	G_MILLISECONDS,				// (void);
 	// get current time for profiling reasons
 	// this should NOT be used for any game related tasks, because it is not journaled
+	G_REAL_TIME,				// (qtime_t *qtime);
+	G_SNAPVECTOR,				// (float *v);
+	// ClientCommand and ServerCommand parameter access
+	G_ARGC,						// (void);
+	G_ARGV,						// (int n, char *buffer, int bufferLength);
+	G_ARGS,						// (char *buffer, int bufferLength);
+	G_ADDCOMMAND,				// (const char *cmdName);
+	G_REMOVECOMMAND,			// (const char *cmdName);
+	G_CMD_EXECUTETEXT,			// (const char *text);
+	// add commands to the console as if they were typed in for map changing, etc.
 	// console variable interaction
 	G_CVAR_REGISTER,			// (vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags);
 	G_CVAR_UPDATE,				// (vmCvar_t *vmCvar);
 	G_CVAR_SET,					// (const char *var_name, const char *value);
+	G_CVAR_SET_VALUE,			// (const char *var_name, float value);
+	G_CVAR_RESET,				// (const char *var_name);
+	G_CVAR_VARIABLE_VALUE,		// (const char *var_name);
 	G_CVAR_VARIABLE_INTEGER_VALUE, // (const char *var_name);
 	G_CVAR_VARIABLE_STRING_BUFFER, // (const char *var_name, char *buffer, int bufsize);
-	G_ARGC,						// (void);
-	// ClientCommand and ServerCommand parameter access
-	G_ARGV,						// (int n, char *buffer, int bufferLength);
+	G_CVAR_LATCHED_VARIABLE_STRING_BUFFER, // (const char *var_name, char *buffer, int bufsize);
+	G_CVAR_INFO_STRING_BUFFER,	// (int bit, char *buffer, int bufsize);
+	G_CVAR_CHECK_RANGE,			// (const char *var_name, float min, float max, qboolean integral);
 	G_FS_FOPEN_FILE,			// (const char *qpath, fileHandle_t *file, fsMode_t mode);
 	G_FS_READ,					// (void *buffer, int len, fileHandle_t f);
 	G_FS_WRITE,					// (const void *buffer, int len, fileHandle_t f);
+	G_FS_SEEK,
 	G_FS_FCLOSE_FILE,			// (fileHandle_t f);
-	G_SEND_CONSOLE_COMMAND,		// (const char *text);
-	// add commands to the console as if they were typed in for map changing, etc
-
+	G_FS_GETFILELIST,
+	G_FS_DELETE,				// (const void *path);
+	G_FS_RENAME,				// (const void *from, const void *to);
+	G_PC_ADD_GLOBAL_DEFINE,
+	G_PC_REMOVE_ALL_GLOBAL_DEFINES,
+	G_PC_LOAD_SOURCE,
+	G_PC_FREE_SOURCE,
+	G_PC_READ_TOKEN,
+	G_PC_UNREAD_TOKEN,
+	G_PC_SOURCE_FILE_AND_LINE,
 	//=========== server specific functionality =============
-
-	G_LOCATE_GAME_DATA,			// (gentity_t *gEnts, int numGEntities, int sizeofGEntity_t, playerState_t *clients, int sizeofGameClient);
+	G_LOCATE_GAME_DATA = 100,	// (gentity_t *gEnts, int numGEntities, int sizeofGEntity_t, playerState_t *clients, int sizeofGameClient);
 	// the game needs to let the server system know where and how big the gentities are, so it can look at them directly without going through an interface
 	G_DROP_CLIENT,				// (int clientNum, const char *reason);
 	// kick a client off the server with a message
@@ -157,20 +180,14 @@ typedef enum {
 	G_GET_USERCMD,				// (int clientNum, usercmd_t *cmd)
 	G_GET_ENTITY_TOKEN,			// qboolean (char *buffer, int bufferSize)
 	// Retrieves the next string token from the entity spawn text, returning false when all tokens have been parsed. This should only be done at GAME_INIT time.
-	G_FS_GETFILELIST,
 	G_DEBUG_POLYGON_CREATE,
 	G_DEBUG_POLYGON_DELETE,
-	G_REAL_TIME,
-	G_SNAPVECTOR,
 	G_TRACECAPSULE,				// (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask);
 	G_ENTITY_CONTACTCAPSULE,	// (const vec3_t mins, const vec3_t maxs, const gentity_t *ent);
-	// 1.32
-	G_FS_SEEK,
 	BOTLIB_SETUP = 200,			// (void);
 	BOTLIB_SHUTDOWN,			// (void);
 	BOTLIB_LIBVAR_SET,
 	BOTLIB_LIBVAR_GET,
-	BOTLIB_PC_ADD_GLOBAL_DEFINE,
 	BOTLIB_START_FRAME,
 	BOTLIB_LOAD_MAP,
 	BOTLIB_UPDATENTITY,
@@ -197,6 +214,7 @@ typedef enum {
 	BOTLIB_AAS_AREA_TRAVEL_TIME_TO_GOAL_AREA,
 	BOTLIB_AAS_SWIMMING,
 	BOTLIB_AAS_PREDICT_CLIENT_MOVEMENT,
+	BOTLIB_AAS_BEST_REACHABLE_AREA,
 	BOTLIB_EA_SAY = 400,
 	BOTLIB_EA_SAY_TEAM,
 	BOTLIB_EA_COMMAND,
@@ -298,11 +316,7 @@ typedef enum {
 	BOTLIB_AI_ADD_AVOID_SPOT,
 	BOTLIB_AAS_ALTERNATIVE_ROUTE_GOAL,
 	BOTLIB_AAS_PREDICT_ROUTE,
-	BOTLIB_AAS_POINT_REACHABILITY_AREA_INDEX,
-	BOTLIB_PC_LOAD_SOURCE,
-	BOTLIB_PC_FREE_SOURCE,
-	BOTLIB_PC_READ_TOKEN,
-	BOTLIB_PC_SOURCE_FILE_AND_LINE
+	BOTLIB_AAS_POINT_REACHABILITY_AREA_INDEX
 } gameImport_t;
 
 /*

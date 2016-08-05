@@ -234,7 +234,7 @@ void CL_Voip_f(void) {
 		reason = "Voip codec not initialized";
 	} else if (!clc.voipEnabled) {
 		reason = "Server doesn't support VoIP";
-	} else if (!clc.demoplaying && (Cvar_VariableValue("g_gametype") == GT_SINGLE_PLAYER || Cvar_VariableValue("ui_singlePlayerActive"))) {
+	} else if (!clc.demoplaying && Com_GameIsSinglePlayer()) {
 		reason = "running in single-player mode";
 	}
 
@@ -3183,10 +3183,10 @@ void CL_Init(void) {
 	cl_yawspeed = Cvar_Get("cl_yawspeed", "140", CVAR_ARCHIVE);
 	cl_pitchspeed = Cvar_Get("cl_pitchspeed", "140", CVAR_ARCHIVE);
 	cl_anglespeedkey = Cvar_Get("cl_anglespeedkey", "1.5", 0);
-	cl_maxpackets = Cvar_Get("cl_maxpackets", "30", CVAR_ARCHIVE);
+	cl_maxpackets = Cvar_Get("cl_maxpackets", "60", CVAR_ARCHIVE);
 	cl_packetdup = Cvar_Get("cl_packetdup", "1", CVAR_ARCHIVE);
 	cl_run = Cvar_Get("cl_run", "1", CVAR_ARCHIVE);
-	cl_sensitivity = Cvar_Get("sensitivity", "5", CVAR_ARCHIVE);
+	cl_sensitivity = Cvar_Get("sensitivity", "2.5", CVAR_ARCHIVE);
 	cl_mouseAccel = Cvar_Get("cl_mouseAccel", "0", CVAR_ARCHIVE);
 	cl_freelook = Cvar_Get("cl_freelook", "1", CVAR_ARCHIVE);
 	// 0: legacy mouse acceleration
@@ -3215,22 +3215,17 @@ void CL_Init(void) {
 	m_yaw = Cvar_Get("m_yaw", "0.022", CVAR_ARCHIVE);
 	m_forward = Cvar_Get("m_forward", "0.25", CVAR_ARCHIVE);
 	m_side = Cvar_Get("m_side", "0.25", CVAR_ARCHIVE);
-#ifdef __APPLE__
-	// Input is jittery on OS X w/o this
-	m_filter = Cvar_Get("m_filter", "1", CVAR_ARCHIVE);
-#else
-	m_filter = Cvar_Get("m_filter", "0", CVAR_ARCHIVE);
-#endif
+	m_filter = Cvar_Get("m_filter", "1", CVAR_ARCHIVE); // Input is jittery on OS X w/o this
 	j_pitch = Cvar_Get("j_pitch", "0.022", CVAR_ARCHIVE);
 	j_yaw = Cvar_Get("j_yaw", "-0.022", CVAR_ARCHIVE);
 	j_forward = Cvar_Get("j_forward", "-0.25", CVAR_ARCHIVE);
 	j_side = Cvar_Get("j_side", "0.25", CVAR_ARCHIVE);
-	j_up = Cvar_Get("j_up", "1", CVAR_ARCHIVE);
+	j_up = Cvar_Get("j_up", "0", CVAR_ARCHIVE);
 	j_pitch_axis = Cvar_Get("j_pitch_axis", "3", CVAR_ARCHIVE);
-	j_yaw_axis = Cvar_Get("j_yaw_axis", "4", CVAR_ARCHIVE);
+	j_yaw_axis = Cvar_Get("j_yaw_axis", "2", CVAR_ARCHIVE);
 	j_forward_axis = Cvar_Get("j_forward_axis", "1", CVAR_ARCHIVE);
 	j_side_axis = Cvar_Get("j_side_axis", "0", CVAR_ARCHIVE);
-	j_up_axis = Cvar_Get("j_up_axis", "2", CVAR_ARCHIVE);
+	j_up_axis = Cvar_Get("j_up_axis", "4", CVAR_ARCHIVE);
 	Cvar_CheckRange(j_pitch_axis, 0, MAX_JOYSTICK_AXIS - 1, qtrue);
 	Cvar_CheckRange(j_yaw_axis, 0, MAX_JOYSTICK_AXIS - 1, qtrue);
 	Cvar_CheckRange(j_forward_axis, 0, MAX_JOYSTICK_AXIS - 1, qtrue);
@@ -3245,7 +3240,7 @@ void CL_Init(void) {
 	// userinfo
 	Cvar_Get("name", "UnnamedPlayer", CVAR_USERINFO|CVAR_ARCHIVE);
 	cl_rate = Cvar_Get("rate", "25000", CVAR_USERINFO|CVAR_ARCHIVE);
-	Cvar_Get("snaps", "20", CVAR_USERINFO|CVAR_ARCHIVE);
+	Cvar_Get("snaps", "60", CVAR_USERINFO|CVAR_ARCHIVE);
 	Cvar_Get("model", "james", CVAR_USERINFO|CVAR_ARCHIVE);
 	Cvar_Get("headmodel", "*james", CVAR_USERINFO|CVAR_ARCHIVE);
 	Cvar_Get("team_model", "james", CVAR_USERINFO|CVAR_ARCHIVE);
@@ -3265,7 +3260,7 @@ void CL_Init(void) {
 #endif
 #ifdef USE_VOIP
 	cl_voipSend = Cvar_Get("cl_voipSend", "0", 0);
-	cl_voipSendTarget = Cvar_Get("cl_voipSendTarget", "spatial", 0);
+	cl_voipSendTarget = Cvar_Get("cl_voipSendTarget", "team", 0);
 	cl_voipGainDuringCapture = Cvar_Get("cl_voipGainDuringCapture", "0.2", CVAR_ARCHIVE);
 	cl_voipCaptureMult = Cvar_Get("cl_voipCaptureMult", "2.0", CVAR_ARCHIVE);
 	cl_voipUseVAD = Cvar_Get("cl_voipUseVAD", "0", CVAR_ARCHIVE);

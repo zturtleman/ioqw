@@ -89,15 +89,17 @@ void G_InitSessionData(gclient_t *client, char *userinfo) {
 	sess = &client->sess;
 	// initial team determination
 	if (g_gametype.integer >= GT_TEAM) {
-		if (g_teamAutoJoin.integer && !(g_entities[client - level.clients].r.svFlags & SVF_BOT)) {
-			sess->sessionTeam = PickTeam(-1);
-			BroadcastTeamChange(client, -1);
-		} else {
-			// always spawn as spectator in team games
-			sess->sessionTeam = TEAM_SPECTATOR;
+		// always spawn as spectator in team games
+		sess->sessionTeam = TEAM_SPECTATOR;
+		sess->spectatorState = SPECTATOR_FREE;
+		// allow specifying team, mainly for bots (and humans via start server menu)
+		value = Info_ValueForKey(userinfo, "teampref");
+
+		if (value[0] || g_teamAutoJoin.integer) {
+			SetTeam(&g_entities[client - level.clients], value);
 		}
 	} else {
-		value = Info_ValueForKey(userinfo, "team");
+		value = Info_ValueForKey(userinfo, "teampref");
 
 		if (value[0] == 's') {
 			// a willing spectator, not a waiting-in-line
@@ -105,8 +107,8 @@ void G_InitSessionData(gclient_t *client, char *userinfo) {
 		} else {
 			switch (g_gametype.integer) {
 				default:
-				case GT_FFA:
 				case GT_SINGLE_PLAYER:
+				case GT_FFA:
 					if (g_maxGameClients.integer > 0 && level.numNonSpectatorClients >= g_maxGameClients.integer) {
 						sess->sessionTeam = TEAM_SPECTATOR;
 					} else {
@@ -125,9 +127,9 @@ void G_InitSessionData(gclient_t *client, char *userinfo) {
 					break;
 			}
 		}
-	}
 
-	sess->spectatorState = SPECTATOR_FREE;
+		sess->spectatorState = SPECTATOR_FREE;
+	}
 
 	AddTournamentQueue(client);
 
@@ -160,7 +162,7 @@ G_WriteSessionData
 void G_WriteSessionData(void) {
 	int i;
 
-	trap_Cvar_Set("session", va("%i", g_gametype.integer));
+	trap_Cvar_SetValue("session", g_gametype.integer);
 
 	for (i = 0; i < level.maxclients; i++) {
 		if (level.clients[i].pers.connected == CON_CONNECTED) {

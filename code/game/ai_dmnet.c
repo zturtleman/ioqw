@@ -89,11 +89,11 @@ void BotRecordNodeSwitch(bot_state_t *bs, char *node, char *str, char *s) {
 
 	ClientName(bs->client, netname, sizeof(netname));
 	Com_sprintf(nodeswitch[numnodeswitches], 144, "%s at %2.1f entered %s: %s from %s\n", netname, FloatTime(), node, str, s);
-#ifdef DEBUG
-	if (0) {
+
+	if (bot_shownodechanges.integer) {
 		BotAI_Print(PRT_MESSAGE, "%s", nodeswitch[numnodeswitches]);
 	}
-#endif // DEBUG
+
 	numnodeswitches++;
 }
 
@@ -2162,7 +2162,7 @@ int AINode_Battle_Fight(bot_state_t *bs) {
 	if (bs->enemy >= MAX_CLIENTS) {
 		// if attacking an obelisk
 		if (bs->enemy == redobelisk.entitynum || bs->enemy == blueobelisk.entitynum) {
-			target[2] += 16;
+			target[2] += OBELISK_TARGET_HEIGHT;
 		}
 	}
 	// update the reachability area and origin if possible
@@ -2485,7 +2485,7 @@ int AINode_Battle_Retreat(bot_state_t *bs) {
 		if (bs->enemy >= MAX_CLIENTS) {
 			// if attacking an obelisk
 			if (bs->enemy == redobelisk.entitynum || bs->enemy == blueobelisk.entitynum) {
-				target[2] += 16;
+				target[2] += OBELISK_TARGET_HEIGHT;
 			}
 		}
 		// update the reachability area and origin if possible
@@ -2662,7 +2662,7 @@ int AINode_Battle_NBG(bot_state_t *bs) {
 		if (bs->enemy >= MAX_CLIENTS) {
 			// if attacking an obelisk
 			if (bs->enemy == redobelisk.entitynum || bs->enemy == blueobelisk.entitynum) {
-				target[2] += 16;
+				target[2] += OBELISK_TARGET_HEIGHT;
 			}
 		}
 		// update the reachability area and origin if possible

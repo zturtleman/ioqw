@@ -65,8 +65,6 @@ vmCvar_t bot_challenge;
 vmCvar_t bot_predictobstacles;
 vmCvar_t g_spSkill;
 
-extern vmCvar_t bot_developer;
-
 vec3_t lastteleport_origin; // last teleport event origin
 float lastteleport_time; // last teleport event time
 int max_bspmodelindex; // maximum BSP model index
@@ -791,9 +789,8 @@ void BotCTFSeekGoals(bot_state_t *bs) {
 	}
 
 	bs->owndecision_time = FloatTime() + 5;
-#ifdef DEBUG
+
 	BotPrintTeamGoal(bs);
-#endif // DEBUG
 }
 
 /*
@@ -1027,9 +1024,8 @@ void Bot1FCTFSeekGoals(bot_state_t *bs) {
 	}
 
 	bs->owndecision_time = FloatTime() + 5;
-#ifdef DEBUG
+
 	BotPrintTeamGoal(bs);
-#endif // DEBUG
 }
 
 /*
@@ -1627,6 +1623,32 @@ void BotChooseWeapon(bot_state_t *bs) {
 
 /*
 =======================================================================================================================================
+BotWantsToWalk
+=======================================================================================================================================
+*/
+qboolean BotWantsToWalk(bot_state_t *bs) {
+
+	if (bs->walker <= 0.5f) {
+		return qfalse;
+	}
+	// never walk if carrying a flag
+	if (BotCTFCarryingFlag(bs)) {
+		return qfalse;
+	}
+
+	if (Bot1FCTFCarryingFlag(bs)) {
+		return qfalse;
+	}
+	// never walk if carrying cubes
+	if (BotHarvesterCarryingCubes(bs)) {
+		return qfalse;
+	}
+
+	return qtrue;
+}
+
+/*
+=======================================================================================================================================
 BotSetupForMovement
 =======================================================================================================================================
 */
@@ -1655,6 +1677,14 @@ void BotSetupForMovement(bot_state_t *bs) {
 	if ((bs->cur_ps.pm_flags & PMF_TIME_WATERJUMP) && (bs->cur_ps.pm_time > 0)) {
 		initmove.or_moveflags |= MFL_WATERJUMP;
 	}
+	// set the grapple pull flag
+	if (bs->cur_ps.pm_flags & PMF_GRAPPLE_PULL) {
+		initmove.or_moveflags |= MFL_GRAPPLEPULL;
+	}
+	// set the grapple exists flag
+	if (g_entities[bs->entitynum].client->hook) {
+		initmove.or_moveflags |= MFL_GRAPPLEEXISTS;
+	}
 	// set presence type
 	if (bs->cur_ps.pm_flags & PMF_DUCKED) {
 		initmove.presencetype = PRESENCE_CROUCH;
@@ -1662,7 +1692,7 @@ void BotSetupForMovement(bot_state_t *bs) {
 		initmove.presencetype = PRESENCE_NORMAL;
 	}
 
-	if (bs->walker > 0.5) {
+	if (BotWantsToWalk(bs)) {
 		initmove.or_moveflags |= MFL_WALK;
 	}
 
@@ -2823,10 +2853,11 @@ bot_moveresult_t BotAttackMove(bot_state_t *bs, int tfl) {
 	int movetype, i, attackentity;
 	float attack_skill, jumper, croucher, dist, strafechange_time;
 	float attack_dist, attack_range;
-	vec3_t forward, backward, sideward, hordir, up = {0, 0, 1};
+	vec3_t forward, backward, sideward, start, hordir, up = {0, 0, 1};
 	aas_entityinfo_t entinfo;
 	bot_moveresult_t moveresult;
 	bot_goal_t goal;
+	bsp_trace_t bsptrace;
 
 	attackentity = bs->enemy;
 
@@ -2875,7 +2906,14 @@ bot_moveresult_t BotAttackMove(bot_state_t *bs, int tfl) {
 	}
 
 	if (bs->attackcrouch_time > FloatTime()) {
-		movetype = MOVE_CROUCH;
+		// get the start point aiming from
+		VectorCopy(bs->origin, start);
+		start[2] += CROUCH_VIEWHEIGHT;
+		BotAI_Trace(&bsptrace, start, NULL, NULL, entinfo.origin, bs->client, MASK_SHOT);
+		// only try to crouch if the enemy remains visible
+		if (bsptrace.fraction >= 1.0 || bsptrace.ent == attackentity) {
+			movetype = MOVE_CROUCH;
+		}
 	}
 	// if the bot should jump
 	if (movetype == MOVE_JUMP) {
@@ -3162,8 +3200,16 @@ int BotFindEnemy(bot_state_t *bs, int curenemy) {
 
 	if (curenemy >= 0) {
 		BotEntityInfo(curenemy, &curenemyinfo);
-
-		if (EntityCarriesFlag(&curenemyinfo)) {
+		// only concentrate on flag carrier if not carrying a flag
+		if (EntityCarriesFlag(&curenemyinfo) && !BotCTFCarryingFlag(bs)) {
+			return qfalse;
+		}
+		// only concentrate on cube carrier if not carrying cubes
+		if (EntityCarriesCubes(&curenemyinfo) && !BotHarvesterCarryingCubes(bs)) {
+			return qfalse;
+		}
+		// looking for revenge
+		if (curenemy == bs->revenge_enemy && bs->revenge_kills > 0) {
 			return qfalse;
 		}
 
@@ -3210,6 +3256,14 @@ int BotFindEnemy(bot_state_t *bs, int curenemy) {
 		if (i == curenemy) {
 			continue;
 		}
+		// if the enemy has targeting disabled
+		if (g_entities[i].flags & FL_NOTARGET) {
+			continue;
+		}
+		// if on the same team
+		if (BotSameTeam(bs, i)) {
+			continue;
+		}
 
 		BotEntityInfo(i, &entinfo);
 
@@ -3239,8 +3293,8 @@ int BotFindEnemy(bot_state_t *bs, int curenemy) {
 		// calculate the distance towards the enemy
 		VectorSubtract(entinfo.origin, bs->origin, dir);
 		squaredist = VectorLengthSquared(dir);
-		// if this entity is not carrying a flag
-		if (!EntityCarriesFlag(&entinfo)) {
+		//if this entity is not carrying a flag or cubes
+		if (!EntityCarriesFlag(&entinfo) && !EntityCarriesCubes(&entinfo)) {
 			// if this enemy is further away than the current one
 			if (curenemy >= 0 && squaredist > cursquaredist) {
 				continue;
@@ -3248,10 +3302,6 @@ int BotFindEnemy(bot_state_t *bs, int curenemy) {
 		}
 		// if the bot has no
 		if (squaredist > Square(900.0 + alertness * 4000.0)) {
-			continue;
-		}
-		// if on the same team
-		if (BotSameTeam(bs, i)) {
 			continue;
 		}
 		// if the bot's health decreased or the enemy is shooting
@@ -3583,7 +3633,7 @@ void BotAimAtEnemy(bot_state_t *bs) {
 		VectorCopy(entinfo.origin, target);
 		// if attacking an obelisk
 		if (bs->enemy == redobelisk.entitynum || bs->enemy == blueobelisk.entitynum) {
-			target[2] += 32;
+			target[2] += OBELISK_TARGET_HEIGHT;
 		}
 		// aim at the obelisk
 		VectorSubtract(target, bs->eye, dir);
@@ -3725,10 +3775,10 @@ void BotAimAtEnemy(bot_state_t *bs) {
 				}
 			}
 		}
-		// if the projectile does radial damage
-		if (aim_skill > 0.6 && wi.proj.damagetype & DAMAGETYPE_RADIAL) {
-			// if the enemy isn't standing significantly higher than the bot
-			if (entinfo.origin[2] < bs->origin[2] + 16) {
+		// if the projectile does large radial damage
+		if (aim_skill > 0.6 && (wi.proj.damagetype & DAMAGETYPE_RADIAL) && wi.proj.radius > 50) {
+			// if the enemy isn't standing significantly higher than the bot and isn't in water
+			if (entinfo.origin[2] < bs->origin[2] + 16 && !(trap_AAS_PointContents(entinfo.origin) & (CONTENTS_WATER|CONTENTS_SLIME|CONTENTS_LAVA))) {
 				// try to aim at the ground in front of the enemy
 				VectorCopy(entinfo.origin, end);
 				end[2] -= 64;
@@ -5291,11 +5341,20 @@ void BotCheckEvents(bot_state_t *bs, entityState_t *state) {
 		case EV_OBITUARY:
 		{
 			int target, attacker, mod;
+			float vengefulness;
+			qboolean getRevenge;
 
 			target = state->otherEntityNum;
 			attacker = state->otherEntityNum2;
 			mod = state->eventParm;
-
+			// does the bot want revenge?
+			if (level.numPlayingClients < 3) {
+				getRevenge = qfalse;
+			} else {
+				vengefulness = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_VENGEFULNESS, 0, 1);
+				getRevenge = (random() < vengefulness);
+			}
+			// the bot was killed
 			if (target == bs->client) {
 				bs->botdeathtype = mod;
 				bs->lastkilledby = attacker;
@@ -5307,12 +5366,38 @@ void BotCheckEvents(bot_state_t *bs, entityState_t *state) {
 				}
 
 				bs->num_deaths++;
-			// else if this client was killed by the bot
+
+				if (!bs->botsuicide) {
+					if (getRevenge) {
+						if (attacker != bs->revenge_enemy) {
+							bs->revenge_enemy = attacker;
+							bs->revenge_kills = 0;
+						}
+
+						bs->revenge_kills++;
+					} else {
+						bs->revenge_enemy = -1;
+						bs->revenge_kills = 0;
+					}
+				}
+			// if this player was killed by the bot
 			} else if (attacker == bs->client) {
 				bs->enemydeathtype = mod;
 				bs->lastkilledplayer = target;
 				bs->killedenemy_time = FloatTime();
 				bs->num_kills++;
+				// revenge!
+				if (target == bs->revenge_enemy) {
+					if (getRevenge) {
+						bs->revenge_kills--;
+					} else {
+						bs->revenge_kills = 0;
+					}
+
+					if (bs->revenge_kills <= 0) {
+						bs->revenge_enemy = -1;
+					}
+				}
 			} else if (attacker == bs->enemy && target == attacker) {
 				bs->enemysuicide = qtrue;
 			}
@@ -5515,7 +5600,7 @@ BotDeathmatchAI
 =======================================================================================================================================
 */
 void BotDeathmatchAI(bot_state_t *bs, float thinktime) {
-	char gender[144], name[144], buf[144];
+	char gender[144], name[144];
 	int i;
 
 	// if the bot has just been setup
@@ -5524,11 +5609,6 @@ void BotDeathmatchAI(bot_state_t *bs, float thinktime) {
 
 		if (bs->setupcount > 0) {
 			return;
-		}
-		// set the team
-		if (!bs->map_restart && g_gametype.integer != GT_TOURNAMENT) {
-			Com_sprintf(buf, sizeof(buf), "team %s", bs->settings.team);
-			trap_EA_Command(bs->client, buf);
 		}
 		// get the gender characteristic
 		trap_Characteristic_String(bs->character, CHARACTERISTIC_GENDER, gender, sizeof(gender));
@@ -5733,7 +5813,7 @@ void BotSetupDeathmatchAI(void) {
 	trap_Cvar_Register(&bot_testrchat, "bot_testrchat", "0", 0);
 	trap_Cvar_Register(&bot_challenge, "bot_challenge", "0", 0);
 	trap_Cvar_Register(&bot_predictobstacles, "bot_predictobstacles", "1", 0);
-	trap_Cvar_Register(&g_spSkill, "g_spSkill", "2", 0);
+	trap_Cvar_Register(&g_spSkill, "g_spSkill", "3", 0);
 
 	if (gametype == GT_CTF) {
 		if (trap_BotGetLevelItemGoal(-1, "Red Flag", &ctf_redflag) < 0) {

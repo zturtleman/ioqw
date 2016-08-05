@@ -113,6 +113,10 @@ static qboolean S_ValidSoundInterface(soundInterface_t *si) {
 		return qfalse;
 	}
 
+	if (!si->SoundDuration) {
+		return qfalse;
+	}
+
 	if (!si->ClearSoundBuffer) {
 		return qfalse;
 	}
@@ -359,6 +363,20 @@ sfxHandle_t S_RegisterSound(const char *sample, qboolean compressed) {
 S_ClearSoundBuffer
 =======================================================================================================================================
 */
+int S_SoundDuration(sfxHandle_t handle) {
+
+	if (si.SoundDuration) {
+		return si.SoundDuration(handle);
+	} else {
+		return 0;
+	}
+}
+
+/*
+=======================================================================================================================================
+S_ClearSoundBuffer
+=======================================================================================================================================
+*/
 void S_ClearSoundBuffer(void) {
 
 	if (si.ClearSoundBuffer) {
@@ -531,8 +549,8 @@ void S_Init(void) {
 
 	Com_Printf("------ Initializing Sound ------\n");
 
-	s_volume = Cvar_Get("s_volume", "0.8", CVAR_ARCHIVE);
-	s_musicVolume = Cvar_Get("s_musicvolume", "0.25", CVAR_ARCHIVE);
+	s_volume = Cvar_Get("s_volume", "1", CVAR_ARCHIVE);
+	s_musicVolume = Cvar_Get("s_musicvolume", "0", CVAR_ARCHIVE);
 	s_muted = Cvar_Get("s_muted", "0", CVAR_ROM);
 	s_doppler = Cvar_Get("s_doppler", "1", CVAR_ARCHIVE);
 	s_backend = Cvar_Get("s_backend", "", CVAR_ROM);

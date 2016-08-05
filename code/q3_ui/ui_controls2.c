@@ -761,25 +761,21 @@ Controls_GetKeyAssignment
 */
 static void Controls_GetKeyAssignment (char *command, int *twokeys)
 {
-	int		count;
-	int		j;
-	char	b[256];
+	int		key;
+	int		i;
 
 	twokeys[0] = twokeys[1] = -1;
-	count = 0;
+	key = 0;
 
-	for ( j = 0; j < 256; j++ )
+	for ( i = 0; i < 2; i++ )
 	{
-		trap_Key_GetBindingBuf( j, b, 256 );
-		if ( *b == 0 ) {
-			continue;
+		key = trap_Key_GetKey( command, key );
+		if ( key == -1 ) {
+			break;
 		}
-		if ( !Q_stricmp( b, command ) ) {
-			twokeys[count] = j;
-			count++;
-			if (count == 2)
-				break;
-		}
+
+		twokeys[i] = key;
+		key++;
 	}
 }
 

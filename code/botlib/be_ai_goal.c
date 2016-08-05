@@ -81,9 +81,9 @@ typedef struct campspot_s {
 } campspot_t;
 // FIXME: these are game specific
 typedef enum {
+	GT_SINGLE_PLAYER, // single player tournament
 	GT_FFA, // free for all
 	GT_TOURNAMENT, // one on one tournament
-	GT_SINGLE_PLAYER, // single player tournament
 	//-- team games go after this --
 	GT_TEAM, // team deathmatch
 	GT_CTF, // capture the flag
@@ -543,7 +543,7 @@ void BotInitLevelItems(void) {
 	// validate the modelindexes of the item info
 	for (i = 0; i < ic->numiteminfo; i++) {
 		if (!ic->iteminfo[i].modelindex) {
-			Log_Write("item %s has modelindex 0", ic->iteminfo[i].classname);
+			Log_Write("item %s has modelindex 0\n", ic->iteminfo[i].classname);
 		}
 	}
 
@@ -956,7 +956,7 @@ int BotGetNextCampSpotGoal(int num, bot_goal_t *goal) {
 
 	return 0;
 }
-
+#if 0
 /*
 =======================================================================================================================================
 BotFindEntityForLevelItem
@@ -975,6 +975,9 @@ void BotFindEntityForLevelItem(levelitem_t *li) {
 	}
 
 	for (ent = AAS_NextEntity(0); ent; ent = AAS_NextEntity(ent)) {
+		if (g_entities[ent].s.eType != ET_ITEM) {
+			continue;
+		}
 		// get the model index of the entity
 		modelindex = AAS_EntityModelindex(ent);
 
@@ -999,7 +1002,7 @@ void BotFindEntityForLevelItem(levelitem_t *li) {
 		}
 	}
 }
-
+#endif
 /*
 =======================================================================================================================================
 BotUpdateEntityItems

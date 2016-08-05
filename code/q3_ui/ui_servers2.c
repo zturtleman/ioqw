@@ -101,9 +101,9 @@ MULTIPLAYER MENU (SERVER BROWSER)
 #define GAMES_TEAMPLAY		2
 #define GAMES_TOURNEY		3
 #define GAMES_CTF			4
-#define GAMES_1FCTF			5 
-#define GAMES_OBELISK		6 
-#define GAMES_HARVESTER		7 
+#define GAMES_1FCTF			5
+#define GAMES_OBELISK		6
+#define GAMES_HARVESTER		7
 
 static const char *master_items[] = {
 	"Local",
@@ -119,9 +119,12 @@ static const char *master_items[] = {
 static const char *servertype_items[] = {
 	"All",
 	"Free For All",
-	"Team Deathmatch",
 	"Tournament",
+	"Team Deathmatch",
 	"Capture the Flag",
+	"One Flag CTF",
+	"Overload",
+	"Harvester",
 	NULL
 };
 
@@ -506,14 +509,14 @@ static void ArenaServers_UpdateMenu( void ) {
 			}
 			break;
 
-		case GAMES_TEAMPLAY:
-			if( servernodeptr->gametype != GT_TEAM ) {
+		case GAMES_TOURNEY:
+			if( servernodeptr->gametype != GT_TOURNAMENT ) {
 				continue;
 			}
 			break;
 
-		case GAMES_TOURNEY:
-			if( servernodeptr->gametype != GT_TOURNAMENT ) {
+		case GAMES_TEAMPLAY:
+			if( servernodeptr->gametype != GT_TEAM ) {
 				continue;
 			}
 			break;

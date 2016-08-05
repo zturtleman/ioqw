@@ -710,9 +710,9 @@ void ClientThink_Real(gentity_t *ent) {
 	}
 
 	if (pmove_msec.integer < 8) {
-		trap_Cvar_Set("pmove_msec", "8");
+		trap_Cvar_SetValue("pmove_msec", 8);
 	} else if (pmove_msec.integer > 33) {
-		trap_Cvar_Set("pmove_msec", "33");
+		trap_Cvar_SetValue("pmove_msec", 33);
 	}
 
 	if (pmove_fixed.integer || client->pers.pmoveFixed) {
@@ -825,7 +825,7 @@ void ClientThink_Real(gentity_t *ent) {
 				pm.cmd.upmove = 0;
 
 				if (level.time - level.intermissionQueued >= 2000 && level.time - level.intermissionQueued <= 2500) {
-					trap_SendConsoleCommand(EXEC_APPEND, "centerview\n");
+					trap_Cmd_ExecuteText(EXEC_APPEND, "centerview\n");
 				}
 
 				ent->client->ps.pm_type = PM_SPINTERMISSION;

@@ -91,6 +91,8 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define ART_FX_WHITE		"menu/art/fx_white"
 #define ART_FX_YELLOW		"menu/art/fx_yel"
 
+#define NUM_COLOR_EFFECTS 7
+
 #define ASSET_GRADIENTBAR "ui/assets/gradientbar2.tga"
 #define ASSET_SCROLLBAR             "ui/assets/scrollbar.tga"
 #define ASSET_SCROLLBAR_ARROWDOWN   "ui/assets/scrollbar_arrow_dwn_a.tga"
@@ -306,9 +308,10 @@ typedef struct {
   qboolean fontRegistered;
 
   // player settings
-	qhandle_t fxBasePic;
-  qhandle_t fxPic[7];
-	qhandle_t	crosshairShader[NUM_CROSSHAIRS];
+  qhandle_t fxBasePic;
+  qhandle_t fxPic[NUM_COLOR_EFFECTS];
+  qhandle_t crosshairShader[NUM_CROSSHAIRS];
+
 
 } cachedAssets_t;
 
@@ -355,6 +358,7 @@ typedef struct {
 	void (*keynumToStringBuf)( int keynum, char *buf, int buflen );
 	void (*getBindingBuf)( int keynum, char *buf, int buflen );
 	void (*setBinding)( int keynum, const char *binding );
+	int (*getKey)( const char *binding, int startKey );
 	void (*executeText)(int exec_when, const char *text );	
 	void (*Error)(int level, const char *error, ...) __attribute__ ((noreturn, format (printf, 2, 3)));
 	void (*Print)(const char *msg, ...) __attribute__ ((format (printf, 1, 2)));

@@ -83,7 +83,7 @@ void UpdateTournamentInfo(void) {
 #ifdef MISSIONPACK
 		won = qfalse;
 
-		if (g_gametype.integer >= GT_CTF) {
+		if (g_gametype.integer >= GT_TEAM) {
 			score1 = level.teamScores[TEAM_RED];
 			score2 = level.teamScores[TEAM_BLUE];
 
@@ -138,7 +138,7 @@ void UpdateTournamentInfo(void) {
 		strcat(msg, buf);
 	}
 
-	trap_SendConsoleCommand(EXEC_APPEND, msg);
+	trap_Cmd_ExecuteText(EXEC_APPEND, msg);
 }
 
 /*

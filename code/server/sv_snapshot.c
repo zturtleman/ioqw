@@ -343,6 +343,16 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 		if (svEnt->snapshotCounter == sv.snapshotCounter) {
 			continue;
 		}
+		// limit based on distance
+		if (ent->r.cullDistance) {
+			vec3_t dir;
+
+			VectorSubtract(ent->s.origin, origin, dir);
+
+			if (VectorLengthSquared(dir) > (float)ent->r.cullDistance * ent->r.cullDistance) {
+				continue;
+			}
+		}
 		// broadcast entities are always sent
 		if (ent->r.svFlags & SVF_BROADCAST) {
 			SV_AddEntToSnapshot(svEnt, ent, eNums);

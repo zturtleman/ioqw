@@ -264,6 +264,7 @@ typedef struct {
 	int follow1, follow2;			// clientNums for auto-follow spectators
 	int snd_fry;					// sound index for standing in lava
 	int warmupModificationCount;	// for detecting if g_warmup is changed
+	int botReportModificationCount;
 	// voting state
 	char voteString[MAX_STRING_CHARS];
 	char voteDisplayString[MAX_STRING_CHARS];
@@ -309,7 +310,7 @@ char *G_NewString(const char *string);
 void Cmd_Score_f(gentity_t *ent);
 void StopFollowing(gentity_t *ent);
 void BroadcastTeamChange(gclient_t *client, int oldTeam);
-void SetTeam(gentity_t *ent, char *s);
+void SetTeam(gentity_t *ent, const char *s);
 void Cmd_FollowCycle_f(gentity_t *ent, int dir);
 // g_items.c
 void G_CheckTeamItems(void);
@@ -404,12 +405,15 @@ void CalculateRanks(void);
 qboolean SpotWouldTelefrag(gentity_t *spot);
 // g_svcmds.c
 qboolean ConsoleCommand(void);
+void G_RegisterCommands(void);
+void G_UnregisterCommands(void);
 void G_ProcessIPBans(void);
 qboolean G_FilterPacket(char *from);
 // g_weapon.c
 void FireWeapon(gentity_t *ent);
 void G_StartKamikaze(gentity_t *ent);
 // g_cmds.c
+char *ConcatArgs(int start);
 void DeathmatchScoreboardMessage(gentity_t *ent);
 // g_main.c
 void MoveClientToIntermission(gentity_t *ent);
@@ -465,7 +469,6 @@ void BotInterbreedEndMatch(void);
 typedef struct bot_settings_s {
 	char characterfile[MAX_FILEPATH];
 	float skill;
-	char team[MAX_FILEPATH];
 } bot_settings_t;
 
 int BotAISetup(int restart);
@@ -475,6 +478,7 @@ int BotAISetupClient(int client, struct bot_settings_s *settings, qboolean resta
 int BotAIShutdownClient(int client, qboolean restart);
 int BotAIStartFrame(int time);
 void BotTestAAS(vec3_t origin);
+void Svcmd_BotTeamplayReport_f(void);
 
 #include "g_team.h" // teamplay specific stuff
 
@@ -532,27 +536,7 @@ extern vmCvar_t g_enableDust;
 extern vmCvar_t g_enableBreath;
 extern vmCvar_t g_singlePlayer;
 extern vmCvar_t g_proxMineTimeout;
-
-void trap_Print(const char *text);
-void trap_Error(const char *text) __attribute__((noreturn));
-int trap_Milliseconds(void);
-int trap_RealTime(qtime_t *qtime);
-int trap_Argc(void);
-void trap_Argv(int n, char *buffer, int bufferLength);
-void trap_Args(char *buffer, int bufferLength);
-int trap_FS_FOpenFile(const char *qpath, fileHandle_t *f, fsMode_t mode);
-void trap_FS_Read(void *buffer, int len, fileHandle_t f);
-void trap_FS_Write(const void *buffer, int len, fileHandle_t f);
-void trap_FS_FCloseFile(fileHandle_t f);
-int trap_FS_GetFileList(const char *path, const char *extension, char *listbuf, int bufsize);
-int trap_FS_Seek(fileHandle_t f, long offset, int origin); // fsOrigin_t
-void trap_SendConsoleCommand(int exec_when, const char *text);
-void trap_Cvar_Register(vmCvar_t *cvar, const char *var_name, const char *value, int flags);
-void trap_Cvar_Update(vmCvar_t *cvar);
-void trap_Cvar_Set(const char *var_name, const char *value);
-int trap_Cvar_VariableIntegerValue(const char *var_name);
-float trap_Cvar_VariableValue(const char *var_name);
-void trap_Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize);
+// Additional shared traps in bg_public.h
 void trap_LocateGameData(gentity_t *gEnts, int numGEntities, int sizeofGEntity_t, playerState_t *gameClients, int sizeofGameClient);
 void trap_DropClient(int clientNum, const char *reason);
 void trap_SendServerCommand(int clientNum, const char *text);
@@ -563,6 +547,7 @@ void trap_SetUserinfo(int num, const char *buffer);
 void trap_GetServerinfo(char *buffer, int bufferSize);
 void trap_SetBrushModel(gentity_t *ent, const char *name);
 void trap_Trace(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask);
+void trap_TraceCapsule(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask);
 int trap_PointContents(const vec3_t point, int passEntityNum);
 qboolean trap_InPVS(const vec3_t p1, const vec3_t p2);
 qboolean trap_InPVSIgnorePortals(const vec3_t p1, const vec3_t p2);
@@ -582,7 +567,6 @@ int trap_BotLibSetup(void);
 int trap_BotLibShutdown(void);
 int trap_BotLibVarSet(char *var_name, char *value);
 int trap_BotLibVarGet(char *var_name, char *value, int size);
-int trap_BotLibDefine(char *string);
 int trap_BotLibStartFrame(float time);
 int trap_BotLibLoadMap(const char *mapname);
 int trap_BotLibUpdateEntity(int ent, void /* struct bot_updateentity_s */ *bue);
@@ -606,6 +590,7 @@ int trap_AAS_VectorForBSPEpairKey(int ent, char *key, vec3_t v);
 int trap_AAS_FloatForBSPEpairKey(int ent, char *key, float *value);
 int trap_AAS_IntForBSPEpairKey(int ent, char *key, int *value);
 int trap_AAS_AreaReachability(int areanum);
+int trap_AAS_BestReachableArea(vec3_t origin, vec3_t mins, vec3_t maxs, vec3_t goalorigin);
 int trap_AAS_AreaTravelTimeToGoalArea(int areanum, vec3_t origin, int goalareanum, int travelflags);
 int trap_AAS_EnableRoutingArea(int areanum, int enable);
 int trap_AAS_PredictRoute(void /*struct aas_predictroute_s*/ *route, int areanum, vec3_t origin, int goalareanum, int travelflags, int maxareas, int maxtime, int stopevent, int stopcontents, int stoptfl, int stopareanum);
@@ -711,4 +696,3 @@ int trap_BotAllocWeaponState(void);
 void trap_BotFreeWeaponState(int weaponstate);
 void trap_BotResetWeaponState(int weaponstate);
 int trap_GeneticParentsAndChildSelection(int numranks, float *ranks, int *parent1, int *parent2, int *child);
-void trap_SnapVector(float *v);

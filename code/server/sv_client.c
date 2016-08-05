@@ -53,8 +53,12 @@ void SV_GetChallenge(netadr_t from) {
 	char *gameName;
 	qboolean gameMismatch;
 
+	// Don't allow players to connect if sv_public is -2
+	if (sv_public->integer <= -2) {
+		return;
+	}
 	// ignore if we are in single player
-	if (Cvar_VariableValue("g_gametype") == GT_SINGLE_PLAYER || Cvar_VariableValue("ui_singlePlayerActive")) {
+	if (Com_GameIsSinglePlayer()) {
 		return;
 	}
 	// Prevent using getchallenge as an amplifier
@@ -1152,9 +1156,8 @@ void SV_UserinfoChanged(client_t *cl) {
 	Q_strncpyz(cl->name, Info_ValueForKey(cl->userinfo, "name"), sizeof(cl->name));
 	// rate command
 
-	// if the client is on the same subnet as the server and we aren't running an
-	// internet public server, assume they don't need a rate choke
-	if (Sys_IsLANAddress(cl->netchan.remoteAddress) && com_dedicated->integer != 2 && sv_lanForceRate->integer == 1) {
+	// if the client is on the same subnet as the server, assume they don't need a rate choke
+	if (Sys_IsLANAddress(cl->netchan.remoteAddress) && sv_lanForceRate->integer == 1) {
 		cl->rate = 99999; // lans should not rate limit
 	} else {
 		val = Info_ValueForKey(cl->userinfo, "rate");

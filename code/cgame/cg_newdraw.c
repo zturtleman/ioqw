@@ -57,7 +57,7 @@ void CG_InitTeamChat(void) {
 CG_SetPrintString
 =======================================================================================================================================
 */
-void CG_SetPrintString(int type, const char *p) {
+void CG_SetPrintString(q3print_t type, const char *p) {
 
 	if (type == SYSTEM_PRINT) {
 		strcpy(systemChat, p);
@@ -120,21 +120,21 @@ void CG_CheckOrderPending(void) {
 
 		if (cg_currentSelectedPlayer.integer == numSortedTeamPlayers) {
 			// to everyone
-			trap_SendConsoleCommand(va("cmd vsay_team %s\n", p2));
+			trap_Cmd_ExecuteText(EXEC_APPEND, va("cmd vsay_team %s\n", p2));
 		} else {
 			// for the player self
 			if (sortedTeamPlayers[cg_currentSelectedPlayer.integer] == cg.snap->ps.clientNum && p1) {
-				trap_SendConsoleCommand(va("teamtask %i\n", cgs.currentOrder));
-				//trap_SendConsoleCommand(va("cmd say_team %s\n", p2));
-				trap_SendConsoleCommand(va("cmd vsay_team %s\n", p1));
+				trap_Cmd_ExecuteText(EXEC_APPEND, va("teamtask %i\n", cgs.currentOrder));
+				//trap_Cmd_ExecuteText(EXEC_APPEND, va("cmd say_team %s\n", p2));
+				trap_Cmd_ExecuteText(EXEC_APPEND, va("cmd vsay_team %s\n", p1));
 			} else if (p2) {
-				//trap_SendConsoleCommand(va("cmd say_team %s, %s\n", ci->name, p));
-				trap_SendConsoleCommand(va("cmd vtell %d %s\n", sortedTeamPlayers[cg_currentSelectedPlayer.integer], p2));
+				//trap_Cmd_ExecuteText(EXEC_APPEND, va("cmd say_team %s, %s\n", ci->name, p));
+				trap_Cmd_ExecuteText(EXEC_APPEND, va("cmd vtell %d %s\n", sortedTeamPlayers[cg_currentSelectedPlayer.integer], p2));
 			}
 		}
 
 		if (b) {
-			trap_SendConsoleCommand(b);
+			trap_Cmd_ExecuteText(EXEC_APPEND, b);
 		}
 
 		cgs.orderPending = qfalse;
@@ -153,7 +153,7 @@ static void CG_SetSelectedPlayerName(void) {
 
 		if (ci) {
 			trap_Cvar_Set("cg_selectedPlayerName", ci->name);
-			trap_Cvar_Set("cg_selectedPlayer", va("%d", sortedTeamPlayers[cg_currentSelectedPlayer.integer]));
+			trap_Cvar_SetValue("cg_selectedPlayer", sortedTeamPlayers[cg_currentSelectedPlayer.integer]);
 			cgs.currentOrder = ci->teamTask;
 		}
 	} else {
@@ -1733,74 +1733,30 @@ void CG_DrawNewTeamInfo(rectDef_t *rect, float text_x, float text_y, float scale
 	}
 }
 
+#define SPECTATORS_PIXELS_PER_SECOND 30.0f
 /*
 =======================================================================================================================================
 CG_DrawTeamSpectators
 =======================================================================================================================================
 */
-void CG_DrawTeamSpectators(rectDef_t *rect, float scale, vec4_t color, qhandle_t shader) {
+static void CG_DrawTeamSpectators(rectDef_t *rect, float scale, vec4_t color, qhandle_t shader) {
+	char *text = cg.spectatorList;
+	float textWidth = MAX(rect->w, CG_Text_Width(text, scale, 0));
+	int now = trap_Milliseconds();
+	int delta = now - cg.spectatorTime;
 
-	if (cg.spectatorLen) {
-		float maxX;
+	CG_SetClipRegion(rect->x, rect->y, rect->w, rect->h);
+	CG_Text_Paint(rect->x - cg.spectatorOffset, rect->y + rect->h - 3, scale, color, text, 0, 0, 0);
+	CG_Text_Paint(rect->x + textWidth - cg.spectatorOffset, rect->y + rect->h - 3, scale, color, text, 0, 0, 0);
+	CG_ClearClipRegion();
 
-		if (cg.spectatorWidth == -1) {
-			cg.spectatorWidth = 0;
-			cg.spectatorPaintX = rect->x + 1;
-			cg.spectatorPaintX2 = -1;
-		}
+	cg.spectatorOffset += (delta / 1000.0f) * SPECTATORS_PIXELS_PER_SECOND;
 
-		if (cg.spectatorOffset > cg.spectatorLen) {
-			cg.spectatorOffset = 0;
-			cg.spectatorPaintX = rect->x + 1;
-			cg.spectatorPaintX2 = -1;
-		}
-
-		if (cg.time > cg.spectatorTime) {
-			cg.spectatorTime = cg.time + 10;
-
-			if (cg.spectatorPaintX <= rect->x + 2) {
-				if (cg.spectatorOffset < cg.spectatorLen) {
-					cg.spectatorPaintX += CG_Text_Width(&cg.spectatorList[cg.spectatorOffset], scale, 1) - 1;
-					cg.spectatorOffset++;
-				} else {
-					cg.spectatorOffset = 0;
-
-					if (cg.spectatorPaintX2 >= 0) {
-						cg.spectatorPaintX = cg.spectatorPaintX2;
-					} else {
-						cg.spectatorPaintX = rect->x + rect->w - 2;
-					}
-
-					cg.spectatorPaintX2 = -1;
-				}
-			} else {
-				cg.spectatorPaintX--;
-
-				if (cg.spectatorPaintX2 >= 0) {
-					cg.spectatorPaintX2--;
-				}
-			}
-		}
-
-		maxX = rect->x + rect->w - 2;
-
-		CG_Text_Paint_Limit(&maxX, cg.spectatorPaintX, rect->y + rect->h - 3, scale, color, &cg.spectatorList[cg.spectatorOffset], 0, 0);
-
-		if (cg.spectatorPaintX2 >= 0) {
-			float maxX2 = rect->x + rect->w - 2;
-
-			CG_Text_Paint_Limit(&maxX2, cg.spectatorPaintX2, rect->y + rect->h - 3, scale, color, cg.spectatorList, 0, cg.spectatorOffset);
-		}
-
-		if (cg.spectatorOffset && maxX > 0) {
-			// if we have an offset (we are skipping the first part of the string) and we fit the string
-			if (cg.spectatorPaintX2 == -1) {
-				cg.spectatorPaintX2 = rect->x + rect->w - 2;
-			}
-		} else {
-			cg.spectatorPaintX2 = -1;
-		}
+	while (cg.spectatorOffset > textWidth) {
+		cg.spectatorOffset -= textWidth;
 	}
+
+	cg.spectatorTime = now;
 }
 
 /*
@@ -2170,7 +2126,7 @@ void CG_KeyEvent(int key, qboolean down) {
 		return;
 	}
 
-	//if (key == trap_Key_GetKey("teamMenu") || !Display_CaptureItem(cgs.cursorX, cgs.cursorY)) {
+	//if (key == trap_Key_GetKey("teamMenu", 0) || !Display_CaptureItem(cgs.cursorX, cgs.cursorY)) {
 		// if we see this then we should always be visible
 		// CG_EventHandling(CGAME_EVENT_NONE);
 		// trap_Key_SetCatcher(0);

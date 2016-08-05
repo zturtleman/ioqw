@@ -44,6 +44,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define DEFAULT_VIEWHEIGHT 26
 #define CROUCH_VIEWHEIGHT 12
 #define DEAD_VIEWHEIGHT -16
+#define OBELISK_TARGET_HEIGHT 56
 
 /**************************************************************************************************************************************
 
@@ -71,22 +72,22 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define CS_INTERMISSION		22 // when 1, fraglimit/timelimit has been hit and intermission will start in a second or two
 #define CS_FLAGSTATUS		23 // string indicating flag status in CTF
 #define CS_SHADERSTATE		24
-#define CS_BOTINFO			25
 #define CS_ITEMS			27 // string of 0's and 1's that tell which items are present
 #define CS_MODELS			32
 #define CS_SOUNDS			(CS_MODELS + MAX_MODELS)
 #define CS_PLAYERS			(CS_SOUNDS + MAX_SOUNDS)
 #define CS_LOCATIONS		(CS_PLAYERS + MAX_CLIENTS)
 #define CS_PARTICLES		(CS_LOCATIONS + MAX_LOCATIONS)
-#define CS_MAX				(CS_PARTICLES + MAX_LOCATIONS)
+#define CS_BOTINFO			(CS_PARTICLES + MAX_LOCATIONS)
+#define CS_MAX				(CS_BOTINFO + MAX_CLIENTS)
 #if (CS_MAX) > MAX_CONFIGSTRINGS
 #error overflow: (CS_MAX) > MAX_CONFIGSTRINGS
 #endif
 
 typedef enum {
+	GT_SINGLE_PLAYER,	// single player ffa
 	GT_FFA,				// free for all
 	GT_TOURNAMENT,		// one on one tournament
-	GT_SINGLE_PLAYER,	// single player ffa
 	//-- team games go after this --
 	GT_TEAM,			// team deathmatch
 	GT_CTF,				// capture the flag
@@ -625,6 +626,12 @@ qboolean BG_PlayerTouchesItem(playerState_t *ps, entityState_t *item, int atTime
 #define KAMI_BOOMSPHERE_MAXRADIUS 720
 #define KAMI_SHOCKWAVE2_MAXRADIUS 704
 
+typedef struct {
+	const char *name;
+} dummyCmd_t;
+
+int cmdcmp(const void *a, const void *b);
+
 #define VOICECHAT_GETFLAG			"getflag"			// command someone to get the flag
 #define VOICECHAT_OFFENSE			"offense"			// command someone to go on offense
 #define VOICECHAT_DEFENDFLAG		"defendflag"		// command someone to defend the flag
@@ -659,3 +666,63 @@ qboolean BG_PlayerTouchesItem(playerState_t *ps, entityState_t *item, int atTime
 #define VOICECHAT_DEATHINSULT		"death_insult"		// you just killed me
 #define VOICECHAT_KILLGAUNTLET		"kill_gauntlet"		// I just killed you with the gauntlet
 #define VOICECHAT_TRASH				"trash"				// lots of trash talk
+
+
+/*
+=======================================================================================================================================
+
+	SYSTEM TRAPS
+
+	System calls shared by game, cgame, and ui.
+
+=======================================================================================================================================
+*/
+
+// print message on the local console
+void trap_Print(const char *fmt);
+// abort the game
+void trap_Error(const char *fmt) __attribute__((noreturn));
+// milliseconds should only be used for performance tuning, never for anything game related. Get time from the CG_DrawActiveFrame parameter
+int trap_Milliseconds(void);
+int trap_RealTime(qtime_t *qtime);
+void trap_SnapVector(float *v);
+// ServerCommand and ConsoleCommand parameter access
+int trap_Argc(void);
+void trap_Argv(int n, char *buffer, int bufferLength);
+void trap_Args(char *buffer, int bufferLength);
+void trap_LiteralArgs(char *buffer, int bufferLength);
+// register a command name so the console can perform command completion.
+void trap_AddCommand(const char *cmdName);
+void trap_RemoveCommand(const char *cmdName);
+void trap_Cmd_ExecuteText(int exec_when, const char *text);
+// console variable interaction
+void trap_Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags);
+void trap_Cvar_Update(vmCvar_t *vmCvar);
+void trap_Cvar_Set(const char *var_name, const char *value);
+void trap_Cvar_SetValue(const char *var_name, float value);
+void trap_Cvar_Reset(const char *var_name);
+int trap_Cvar_VariableIntegerValue(const char *var_name);
+float trap_Cvar_VariableValue(const char *var_name);
+void trap_Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize);
+void trap_Cvar_LatchedVariableStringBuffer(const char *var_name, char *buffer, int bufsize);
+void trap_Cvar_InfoStringBuffer(int bit, char *buffer, int bufsize);
+void trap_Cvar_CheckRange(const char *var_name, float min, float max, qboolean integral);
+// filesystem access
+// returns length of file
+int trap_FS_FOpenFile(const char *qpath, fileHandle_t *f, fsMode_t mode);
+void trap_FS_Read(void *buffer, int len, fileHandle_t f);
+void trap_FS_Write(const void *buffer, int len, fileHandle_t f);
+int trap_FS_Seek(fileHandle_t f, long offset, int origin); // fsOrigin_t
+int trap_FS_Tell(fileHandle_t f);
+void trap_FS_FCloseFile(fileHandle_t f);
+int trap_FS_GetFileList(const char *path, const char *extension, char *listbuf, int bufsize);
+int trap_FS_Delete(const char *path);
+int trap_FS_Rename(const char *from, const char *to);
+int trap_PC_AddGlobalDefine(char *define);
+void trap_PC_RemoveAllGlobalDefines(void);
+int trap_PC_LoadSource(const char *filename);
+int trap_PC_FreeSource(int handle);
+int trap_PC_ReadToken(int handle, pc_token_t *pc_token);
+void trap_PC_UnreadToken(int handle);
+int trap_PC_SourceFileAndLine(int handle, char *filename, int *line);
+void *trap_Alloc(int size, const char *tag);

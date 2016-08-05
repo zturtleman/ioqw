@@ -569,11 +569,10 @@ static void FS_CheckFilenameIsMutable(const char *filename, const char *function
 FS_Remove
 =======================================================================================================================================
 */
-void FS_Remove(const char *osPath) {
+int FS_Remove(const char *osPath) {
 
 	FS_CheckFilenameIsMutable(osPath, __func__);
-
-	remove(osPath);
+	return remove(osPath) != -1;
 }
 
 /*
@@ -581,11 +580,10 @@ void FS_Remove(const char *osPath) {
 FS_HomeRemove
 =======================================================================================================================================
 */
-void FS_HomeRemove(const char *homePath) {
+int FS_HomeRemove(const char *homePath) {
 
 	FS_CheckFilenameIsMutable(homePath, __func__);
-
-	remove(FS_BuildOSPath(fs_homepath->string, fs_gamedir, homePath));
+	return remove(FS_BuildOSPath(fs_homepath->string, fs_gamedir, homePath)) != -1;
 }
 
 /*
@@ -789,11 +787,15 @@ void FS_SV_Rename(const char *from, const char *to, qboolean safe) {
 FS_Rename
 =======================================================================================================================================
 */
-void FS_Rename(const char *from, const char *to) {
+qboolean FS_Rename(const char *from, const char *to) {
 	char *from_ospath, *to_ospath;
 
 	if (!fs_searchpaths) {
 		Com_Error(ERR_FATAL, "Filesystem call made without initialization");
+	}
+
+	if (!from || !*from || !to || !*to || Q_stricmp(from, to) == 0) {
+		return qfalse;
 	}
 	// don't let sound stutter
 	S_ClearSoundBuffer();
@@ -807,7 +809,11 @@ void FS_Rename(const char *from, const char *to) {
 
 	FS_CheckFilenameIsMutable(to_ospath, __func__);
 
-	rename(from_ospath, to_ospath);
+	if (FS_CreatePath(to_ospath)) {
+		return qfalse;
+	}
+
+	return rename(from_ospath, to_ospath) == 0;
 }
 
 /*
@@ -1384,6 +1390,137 @@ int FS_FindVM(void **startSearch, char *found, int foundlen, const char *name, i
 	}
 
 	return -1;
+}
+
+/*
+=======================================================================================================================================
+FS_AllowDeletion
+=======================================================================================================================================
+*/
+qboolean FS_AllowDeletion(char *filename) {
+
+	// for safety, only allow deletion from the save, profiles and demo directory
+	if (Q_strncmp(filename, "save/", 5) != 0 && Q_strncmp(filename, "profiles/", 9) != 0 && Q_strncmp(filename, "demos/", 6) != 0) {
+		return qfalse;
+	}
+
+	return qtrue;
+}
+
+/*
+=======================================================================================================================================
+FS_DeleteDir
+=======================================================================================================================================
+*/
+int FS_DeleteDir(char *dirname, qboolean nonEmpty, qboolean recursive) {
+	char *ospath;
+	char **pFiles = NULL;
+	int i, nFiles = 0;
+	char fileName[MAX_QPATH];
+
+	if (!fs_searchpaths) {
+		Com_Error(ERR_FATAL, "Filesystem call made without initialization\n");
+	}
+
+	if (!dirname || dirname[0] == 0) {
+		return 0;
+	}
+
+	if (!FS_AllowDeletion(dirname)) {
+		return 0;
+	}
+
+	if (recursive) {
+		ospath = FS_BuildOSPath(fs_homepath->string, fs_gamedir, dirname);
+		pFiles = Sys_ListFiles(ospath, "/", NULL, &nFiles, qfalse);
+
+		for (i = 0; i < nFiles; i++) {
+			char temp[MAX_OSPATH];
+
+			if (!Q_stricmp(pFiles[i], "..") || !Q_stricmp(pFiles[i], ".")) {
+				continue;
+			}
+
+			Com_sprintf(temp, sizeof(temp), "%s/%s", dirname, pFiles[i]);
+
+			if (!FS_DeleteDir(temp, nonEmpty, recursive)) {
+				return 0;
+			}
+		}
+
+		Sys_FreeFileList(pFiles);
+	}
+
+	if (nonEmpty) {
+		ospath = FS_BuildOSPath(fs_homepath->string, fs_gamedir, dirname);
+		pFiles = Sys_ListFiles(ospath, NULL, NULL, &nFiles, qfalse);
+
+		for (i = 0; i < nFiles; i++) {
+			Com_sprintf(fileName, sizeof(fileName), "%s/%s", dirname, pFiles[i]);
+			ospath = FS_BuildOSPath(fs_homepath->string, fs_gamedir, fileName);
+
+			if (!FS_Remove(ospath)) { // failure
+				return 0;
+			}
+		}
+
+		Sys_FreeFileList(pFiles);
+	}
+
+	ospath = FS_BuildOSPath(fs_homepath->string, fs_gamedir, dirname);
+
+	if (Sys_Rmdir(ospath)) {
+		return 1;
+	}
+
+	return 0;
+}
+
+/*
+=======================================================================================================================================
+FS_Delete
+
+Using fs_homepath for the file to remove.
+=======================================================================================================================================
+*/
+int FS_Delete(char *filename) {
+	char *ospath;
+	int stat;
+
+	if (!fs_searchpaths) {
+		Com_Error(ERR_FATAL, "Filesystem call made without initialization\n");
+	}
+
+	if (!filename || !*filename) {
+		return 0;
+	}
+
+	if (!FS_AllowDeletion(filename)) {
+		Com_Printf(S_COLOR_YELLOW "WARNING: Not allowed to delete %s\n", filename);
+		return 0;
+	}
+
+	ospath = FS_BuildOSPath(fs_homepath->string, fs_gamedir, filename);
+
+	if (fs_debug->integer) {
+		Com_Printf("FS_Delete: %s\n", ospath);
+	}
+
+	stat = Sys_StatFile(ospath);
+
+	if (stat == -1) {
+		return 0;
+	}
+
+	if (stat == 1) {
+		return(FS_DeleteDir(filename, qtrue, qtrue));
+	} else {
+		if (FS_Remove(ospath)) { // success
+			return 1;
+		}
+	}
+
+	return 0;
 }
 
 /*

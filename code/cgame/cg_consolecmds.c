@@ -58,7 +58,8 @@ Keybinding command.
 =======================================================================================================================================
 */
 static void CG_SizeUp_f(void) {
-	trap_Cvar_Set("cg_viewsize", va("%i", (int)(cg_viewsize.integer + 10)));
+	// manually clamp here so cvar range warning isn't show
+	trap_Cvar_SetValue("cg_viewsize", Com_Clamp(30, 100, (int)(cg_viewsize.integer + 10)));
 }
 
 /*
@@ -69,7 +70,8 @@ Keybinding command.
 =======================================================================================================================================
 */
 static void CG_SizeDown_f(void) {
-	trap_Cvar_Set("cg_viewsize", va("%i", (int)(cg_viewsize.integer - 10)));
+	// manually clamp here so cvar range warning isn't show
+	trap_Cvar_SetValue("cg_viewsize", Com_Clamp(30, 100, (int)(cg_viewsize.integer - 10)));
 }
 
 /*
@@ -89,9 +91,9 @@ CG_ScoresDown_f
 =======================================================================================================================================
 */
 static void CG_ScoresDown_f(void) {
-#ifdef MISSIONPACK
-		CG_BuildSpectatorString();
-#endif
+
+	CG_BuildSpectatorString();
+
 	if (cg.scoresRequestTime + 2000 < cg.time) {
 		// the scores are more than two seconds out of data, so request new ones
 		cg.scoresRequestTime = cg.time;
@@ -359,8 +361,8 @@ CG_ConfirmOrder_f
 */
 static void CG_ConfirmOrder_f(void) {
 
-	trap_SendConsoleCommand(va("cmd vtell %d %s\n", cgs.acceptLeader, VOICECHAT_YES));
-	trap_SendConsoleCommand("+button5; wait; -button5");
+	trap_Cmd_ExecuteText(EXEC_NOW, va("cmd vtell %d %s\n", cgs.acceptLeader, VOICECHAT_YES));
+	trap_Cmd_ExecuteText(EXEC_NOW, "+button5; wait; -button5");
 
 	if (cg.time < cgs.acceptOrderTime) {
 		trap_SendClientCommand(va("teamtask %d\n", cgs.acceptTask));
@@ -375,8 +377,8 @@ CG_DenyOrder_f
 */
 static void CG_DenyOrder_f(void) {
 
-	trap_SendConsoleCommand(va("cmd vtell %d %s\n", cgs.acceptLeader, VOICECHAT_NO));
-	trap_SendConsoleCommand("+button6; wait; -button6");
+	trap_Cmd_ExecuteText(EXEC_NOW, va("cmd vtell %d %s\n", cgs.acceptLeader, VOICECHAT_NO));
+	trap_Cmd_ExecuteText(EXEC_NOW, "+button6; wait; -button6");
 
 	if (cg.time < cgs.acceptOrderTime) {
 		cgs.acceptOrderTime = 0;
@@ -391,9 +393,9 @@ CG_TaskOffense_f
 static void CG_TaskOffense_f(void) {
 
 	if (cgs.gametype == GT_CTF || cgs.gametype == GT_1FCTF) {
-		trap_SendConsoleCommand(va("cmd vsay_team %s\n", VOICECHAT_ONGETFLAG));
+		trap_Cmd_ExecuteText(EXEC_NOW, va("cmd vsay_team %s\n", VOICECHAT_ONGETFLAG));
 	} else {
-		trap_SendConsoleCommand(va("cmd vsay_team %s\n", VOICECHAT_ONOFFENSE));
+		trap_Cmd_ExecuteText(EXEC_NOW, va("cmd vsay_team %s\n", VOICECHAT_ONOFFENSE));
 	}
 
 	trap_SendClientCommand(va("teamtask %d\n", TEAMTASK_OFFENSE));
@@ -405,7 +407,7 @@ CG_TaskDefense_f
 =======================================================================================================================================
 */
 static void CG_TaskDefense_f(void) {
-	trap_SendConsoleCommand(va("cmd vsay_team %s\n", VOICECHAT_ONDEFENSE));
+	trap_Cmd_ExecuteText(EXEC_NOW, va("cmd vsay_team %s\n", VOICECHAT_ONDEFENSE));
 	trap_SendClientCommand(va("teamtask %d\n", TEAMTASK_DEFENSE));
 }
 
@@ -415,7 +417,7 @@ CG_TaskPatrol_f
 =======================================================================================================================================
 */
 static void CG_TaskPatrol_f(void) {
-	trap_SendConsoleCommand(va("cmd vsay_team %s\n", VOICECHAT_ONPATROL));
+	trap_Cmd_ExecuteText(EXEC_NOW, va("cmd vsay_team %s\n", VOICECHAT_ONPATROL));
 	trap_SendClientCommand(va("teamtask %d\n", TEAMTASK_PATROL));
 }
 
@@ -425,7 +427,7 @@ CG_TaskCamp_f
 =======================================================================================================================================
 */
 static void CG_TaskCamp_f(void) {
-	trap_SendConsoleCommand(va("cmd vsay_team %s\n", VOICECHAT_ONCAMPING));
+	trap_Cmd_ExecuteText(EXEC_NOW, va("cmd vsay_team %s\n", VOICECHAT_ONCAMPING));
 	trap_SendClientCommand(va("teamtask %d\n", TEAMTASK_CAMP));
 }
 
@@ -435,7 +437,7 @@ CG_TaskFollow_f
 =======================================================================================================================================
 */
 static void CG_TaskFollow_f(void) {
-	trap_SendConsoleCommand(va("cmd vsay_team %s\n", VOICECHAT_ONFOLLOW));
+	trap_Cmd_ExecuteText(EXEC_NOW, va("cmd vsay_team %s\n", VOICECHAT_ONFOLLOW));
 	trap_SendClientCommand(va("teamtask %d\n", TEAMTASK_FOLLOW));
 }
 
@@ -445,7 +447,7 @@ CG_TaskRetrieve_f
 =======================================================================================================================================
 */
 static void CG_TaskRetrieve_f(void) {
-	trap_SendConsoleCommand(va("cmd vsay_team %s\n", VOICECHAT_ONRETURNFLAG));
+	trap_Cmd_ExecuteText(EXEC_NOW, va("cmd vsay_team %s\n", VOICECHAT_ONRETURNFLAG));
 	trap_SendClientCommand(va("teamtask %d\n", TEAMTASK_RETRIEVE));
 }
 
@@ -455,7 +457,7 @@ CG_TaskEscort_f
 =======================================================================================================================================
 */
 static void CG_TaskEscort_f(void) {
-	trap_SendConsoleCommand(va("cmd vsay_team %s\n", VOICECHAT_ONFOLLOWCARRIER));
+	trap_Cmd_ExecuteText(EXEC_NOW, va("cmd vsay_team %s\n", VOICECHAT_ONFOLLOWCARRIER));
 	trap_SendClientCommand(va("teamtask %d\n", TEAMTASK_ESCORT));
 }
 
@@ -465,7 +467,7 @@ CG_TaskOwnFlag_f
 =======================================================================================================================================
 */
 static void CG_TaskOwnFlag_f(void) {
-	trap_SendConsoleCommand(va("cmd vsay_team %s\n", VOICECHAT_IHAVEFLAG));
+	trap_Cmd_ExecuteText(EXEC_NOW, va("cmd vsay_team %s\n", VOICECHAT_IHAVEFLAG));
 }
 
 /*
@@ -474,7 +476,7 @@ CG_TauntKillInsult_f
 =======================================================================================================================================
 */
 static void CG_TauntKillInsult_f(void) {
-	trap_SendConsoleCommand("cmd vsay kill_insult\n");
+	trap_Cmd_ExecuteText(EXEC_NOW, "cmd vsay kill_insult\n");
 }
 
 /*
@@ -483,7 +485,7 @@ CG_TauntPraise_f
 =======================================================================================================================================
 */
 static void CG_TauntPraise_f(void) {
-	trap_SendConsoleCommand("cmd vsay praise\n");
+	trap_Cmd_ExecuteText(EXEC_NOW, "cmd vsay praise\n");
 }
 
 /*
@@ -492,7 +494,7 @@ CG_TauntTaunt_f
 =======================================================================================================================================
 */
 static void CG_TauntTaunt_f(void) {
-	trap_SendConsoleCommand("cmd vtaunt\n");
+	trap_Cmd_ExecuteText(EXEC_NOW, "cmd vtaunt\n");
 }
 
 /*
@@ -501,7 +503,7 @@ CG_TauntDeathInsult_f
 =======================================================================================================================================
 */
 static void CG_TauntDeathInsult_f(void) {
-	trap_SendConsoleCommand("cmd vsay death_insult\n");
+	trap_Cmd_ExecuteText(EXEC_NOW, "cmd vsay death_insult\n");
 }
 
 /*
@@ -510,7 +512,7 @@ CG_TauntGauntlet_f
 =======================================================================================================================================
 */
 static void CG_TauntGauntlet_f(void) {
-	trap_SendConsoleCommand("cmd vsay kill_gauntlet\n");
+	trap_Cmd_ExecuteText(EXEC_NOW, "cmd vsay kill_gauntlet\n");
 }
 
 /*

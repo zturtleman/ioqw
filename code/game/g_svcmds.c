@@ -330,9 +330,9 @@ void Svcmd_EntityList_f(void) {
 	int e;
 	gentity_t *check;
 
-	check = g_entities + 1;
+	check = g_entities;
 
-	for (e = 1; e < level.num_entities; e++, check++) {
+	for (e = 0; e < level.num_entities; e++, check++) {
 		if (!check->inuse) {
 			continue;
 		}
@@ -465,7 +465,42 @@ void Svcmd_ForceTeam_f(void) {
 	SetTeam(&g_entities[cl - level.clients], str);
 }
 
-char *ConcatArgs(int start);
+/*
+=======================================================================================================================================
+Svcmd_ListIPs_f
+=======================================================================================================================================
+*/
+void Svcmd_ListIPs_f(void) {
+	trap_Cmd_ExecuteText(EXEC_NOW, "g_banIPs\n");
+}
+#if 0
+/*
+=======================================================================================================================================
+Svcmd_Say_f
+=======================================================================================================================================
+*/
+void Svcmd_Say_f(void) {
+	trap_SendServerCommand(-1, va("print \"server: %s\n\"", ConcatArgs(1)));
+}
+#endif
+struct svcmd {
+	char *cmd;
+	qboolean dedicated;
+	void (*function)(void);
+} svcmds[] = {
+	{"abort_podium", qfalse, Svcmd_AbortPodium_f},
+	{"addbot", qfalse, Svcmd_AddBot_f},
+	{"addip", qfalse, Svcmd_AddIP_f},
+	{"botreport", qfalse, Svcmd_BotTeamplayReport_f},
+	{"entityList", qfalse, Svcmd_EntityList_f},
+	{"forceteam", qfalse, Svcmd_ForceTeam_f},
+	{"game_memory", qfalse, Svcmd_GameMem_f},
+	{"listip", qfalse, Svcmd_ListIPs_f},
+	{"removeip", qfalse, Svcmd_RemoveIP_f},
+	//{"say", qtrue, Svcmd_Say_f},
+};
+
+const size_t numSvCmds = ARRAY_LEN(svcmds);
 
 /*
 =======================================================================================================================================
@@ -474,63 +509,58 @@ ConsoleCommand
 */
 qboolean ConsoleCommand(void) {
 	char cmd[MAX_TOKEN_CHARS];
+	struct svcmd *command;
 
 	trap_Argv(0, cmd, sizeof(cmd));
 
-	if (Q_stricmp(cmd, "entitylist") == 0) {
-		Svcmd_EntityList_f();
-		return qtrue;
-	}
+	command = bsearch(cmd, svcmds, numSvCmds, sizeof(struct svcmd), cmdcmp);
 
-	if (Q_stricmp(cmd, "forceteam") == 0) {
-		Svcmd_ForceTeam_f();
-		return qtrue;
-	}
-
-	if (Q_stricmp(cmd, "game_memory") == 0) {
-		Svcmd_GameMem_f();
-		return qtrue;
-	}
-
-	if (Q_stricmp(cmd, "addbot") == 0) {
-		Svcmd_AddBot_f();
-		return qtrue;
-	}
-
-	if (Q_stricmp(cmd, "botlist") == 0) {
-		Svcmd_BotList_f();
-		return qtrue;
-	}
-
-	if (Q_stricmp(cmd, "abort_podium") == 0) {
-		Svcmd_AbortPodium_f();
-		return qtrue;
-	}
-
-	if (Q_stricmp(cmd, "addip") == 0) {
-		Svcmd_AddIP_f();
-		return qtrue;
-	}
-
-	if (Q_stricmp(cmd, "removeip") == 0) {
-		Svcmd_RemoveIP_f();
-		return qtrue;
-	}
-
-	if (Q_stricmp(cmd, "listip") == 0) {
-		trap_SendConsoleCommand(EXEC_NOW, "g_banIPs\n");
-		return qtrue;
-	}
-
-	if (g_dedicated.integer) {
-		if (Q_stricmp(cmd, "say") == 0) {
-			trap_SendServerCommand(-1, va("print \"server: %s\n\"", ConcatArgs(1)));
-			return qtrue;
+	if (!command) {
+		if (g_dedicated.integer) {
+			G_Printf("unknown command: %s\n", cmd);
 		}
-		// everything else will also be printed as a say command
-		trap_SendServerCommand(-1, va("print \"server: %s\n\"", ConcatArgs(0)));
-		return qtrue;
+
+		return qfalse;
 	}
 
-	return qfalse;
+	if (command->dedicated && !g_dedicated.integer) {
+		return qfalse;
+	}
+
+	command->function();
+	return qtrue;
+}
+
+/*
+=======================================================================================================================================
+G_RegisterCommands
+=======================================================================================================================================
+*/
+void G_RegisterCommands(void) {
+	int i;
+
+	for (i = 0; i < numSvCmds; i++) {
+		if (svcmds[i].dedicated && !g_dedicated.integer) {
+			continue;
+		}
+
+		trap_AddCommand(svcmds[i].cmd);
+	}
+}
+
+/*
+=======================================================================================================================================
+G_UnregisterCommands
+=======================================================================================================================================
+*/
+void G_UnregisterCommands(void) {
+	int i;
+
+	for (i = 0; i < numSvCmds; i++) {
+		if (svcmds[i].dedicated && !g_dedicated.integer) {
+			continue;
+		}
+
+		trap_RemoveCommand(svcmds[i].cmd);
+	}
 }

@@ -49,18 +49,6 @@ extern gentity_t *podium3;
 
 /*
 =======================================================================================================================================
-trap_Cvar_VariableValue
-=======================================================================================================================================
-*/
-float trap_Cvar_VariableValue(const char *var_name) {
-	char buf[128];
-
-	trap_Cvar_VariableStringBuffer(var_name, buf, sizeof(buf));
-	return atof(buf);
-}
-
-/*
-=======================================================================================================================================
 G_ParseInfos
 =======================================================================================================================================
 */
@@ -235,7 +223,7 @@ static void PlayerIntroSound(const char *modelAndSkin) {
 		skin = model;
 	}
 
-	trap_SendConsoleCommand(EXEC_APPEND, va("play sound/player/announce/%s.wav\n", skin));
+	trap_Cmd_ExecuteText(EXEC_APPEND, va("play sound/player/announce/%s.wav\n", skin));
 }
 
 /*
@@ -370,7 +358,7 @@ void G_AddRandomBot(int team) {
 	Q_strncpyz(netname, value, sizeof(netname));
 	Q_CleanStr(netname);
 
-	trap_SendConsoleCommand(EXEC_INSERT, va("addbot %s %f %s %i\n", netname, skill, teamstr, 0));
+	trap_Cmd_ExecuteText(EXEC_INSERT, va("addbot %s %f %s %i\n", netname, skill, teamstr, 0));
 }
 
 /*
@@ -397,7 +385,7 @@ int G_RemoveRandomBot(int team) {
 			continue;
 		}
 
-		trap_SendConsoleCommand(EXEC_INSERT, va("clientkick %d\n", i));
+		trap_Cmd_ExecuteText(EXEC_INSERT, va("clientkick %d\n", i));
 		return qtrue;
 	}
 
@@ -506,7 +494,37 @@ void G_CheckMinimumPlayers(void) {
 		return;
 	}
 
-	if (g_gametype.integer >= GT_TEAM) {
+	if (g_gametype.integer == GT_FFA) {
+		if (minplayers >= g_maxclients.integer) {
+			minplayers = g_maxclients.integer - 1;
+		}
+
+		humanplayers = G_CountHumanPlayers(TEAM_FREE);
+		botplayers = G_CountBotPlayers(TEAM_FREE);
+
+		if (humanplayers + botplayers < minplayers) {
+			G_AddRandomBot(TEAM_FREE);
+		} else if (humanplayers + botplayers > minplayers && botplayers) {
+			G_RemoveRandomBot(TEAM_FREE);
+		}
+	} else if (g_gametype.integer == GT_TOURNAMENT) {
+		if (minplayers >= g_maxclients.integer) {
+			minplayers = g_maxclients.integer - 1;
+		}
+
+		humanplayers = G_CountHumanPlayers(-1);
+		botplayers = G_CountBotPlayers(-1);
+
+		if (humanplayers + botplayers < minplayers) {
+			G_AddRandomBot(TEAM_FREE);
+		} else if (humanplayers + botplayers > minplayers && botplayers) {
+			// try to remove spectators first
+			if (!G_RemoveRandomBot(TEAM_SPECTATOR)) {
+				// just remove the bot that is playing
+				G_RemoveRandomBot(-1);
+			}
+		}
+	} else if (g_gametype.integer >= GT_TEAM) {
 		if (minplayers >= g_maxclients.integer / 2) {
 			minplayers = (g_maxclients.integer / 2) - 1;
 		}
@@ -527,36 +545,6 @@ void G_CheckMinimumPlayers(void) {
 			G_AddRandomBot(TEAM_BLUE);
 		} else if (humanplayers + botplayers > minplayers && botplayers) {
 			G_RemoveRandomBot(TEAM_BLUE);
-		}
-	} else if (g_gametype.integer == GT_TOURNAMENT) {
-		if (minplayers >= g_maxclients.integer) {
-			minplayers = g_maxclients.integer - 1;
-		}
-
-		humanplayers = G_CountHumanPlayers(-1);
-		botplayers = G_CountBotPlayers(-1);
-
-		if (humanplayers + botplayers < minplayers) {
-			G_AddRandomBot(TEAM_FREE);
-		} else if (humanplayers + botplayers > minplayers && botplayers) {
-			// try to remove spectators first
-			if (!G_RemoveRandomBot(TEAM_SPECTATOR)) {
-				// just remove the bot that is playing
-				G_RemoveRandomBot(-1);
-			}
-		}
-	} else if (g_gametype.integer == GT_FFA) {
-		if (minplayers >= g_maxclients.integer) {
-			minplayers = g_maxclients.integer - 1;
-		}
-
-		humanplayers = G_CountHumanPlayers(TEAM_FREE);
-		botplayers = G_CountBotPlayers(TEAM_FREE);
-
-		if (humanplayers + botplayers < minplayers) {
-			G_AddRandomBot(TEAM_FREE);
-		} else if (humanplayers + botplayers > minplayers && botplayers) {
-			G_RemoveRandomBot(TEAM_FREE);
 		}
 	}
 }
@@ -642,7 +630,6 @@ qboolean G_BotConnect(int clientNum, qboolean restart) {
 
 	Q_strncpyz(settings.characterfile, Info_ValueForKey(userinfo, "characterfile"), sizeof(settings.characterfile));
 	settings.skill = atof(Info_ValueForKey(userinfo, "skill"));
-	Q_strncpyz(settings.team, Info_ValueForKey(userinfo, "team"), sizeof(settings.team));
 
 	if (!BotAISetupClient(clientNum, &settings, restart)) {
 		trap_DropClient(clientNum, "BotAISetupClient failed");
@@ -724,9 +711,9 @@ static void G_AddBot(const char *name, float skill, const char *team, int delay,
 
 	Info_SetValueForKey(userinfo, "name", botname);
 	Info_SetValueForKey(userinfo, "rate", "25000");
-	Info_SetValueForKey(userinfo, "snaps", "20");
+	Info_SetValueForKey(userinfo, "snaps", "60");
 	Info_SetValueForKey(userinfo, "skill", va("%.2f", skill));
-	Info_SetValueForKey(userinfo, "team", team);
+	Info_SetValueForKey(userinfo, "teampref", team);
 	// handicap
 	if (skill >= 1 && skill < 2) {
 		Info_SetValueForKey(userinfo, "handicap", "50");
@@ -830,7 +817,7 @@ void Svcmd_AddBot_f(void) {
 	trap_Argv(2, string, sizeof(string));
 
 	if (!string[0]) {
-		skill = 4;
+		skill = 3;
 	} else {
 		skill = atof(string);
 	}
@@ -916,11 +903,11 @@ static void G_SpawnBots(char *botList, int baseDelay) {
 	skill = trap_Cvar_VariableValue("g_spSkill");
 
 	if (skill < 1) {
-		trap_Cvar_Set("g_spSkill", "1");
 		skill = 1;
+		trap_Cvar_SetValue("g_spSkill", skill);
 	} else if (skill > 5) {
-		trap_Cvar_Set("g_spSkill", "5");
 		skill = 5;
+		trap_Cvar_SetValue("g_spSkill", skill);
 	}
 
 	Q_strncpyz(bots, botList, sizeof(bots));
@@ -947,7 +934,7 @@ static void G_SpawnBots(char *botList, int baseDelay) {
 			*p++ = 0;
 		}
 		// we must add the bot this way, calling G_AddBot directly at this stage does "Bad Things"
-		trap_SendConsoleCommand(EXEC_INSERT, va("addbot %s %f free %i\n", bot, skill, delay));
+		trap_Cmd_ExecuteText(EXEC_INSERT, va("addbot %s %f free %i\n", bot, skill, delay));
 
 		delay += BOT_BEGIN_DELAY_INCREMENT;
 	}
@@ -1087,27 +1074,15 @@ void G_InitBots(qboolean restart) {
 			return;
 		}
 
-		strValue = Info_ValueForKey(arenainfo, "fraglimit");
-		fragLimit = atoi(strValue);
-
-		if (fragLimit) {
-			trap_Cvar_Set("fraglimit", strValue);
-		} else {
-			trap_Cvar_Set("fraglimit", "0");
-		}
-
-		strValue = Info_ValueForKey(arenainfo, "timelimit");
-		timeLimit = atoi(strValue);
-
-		if (timeLimit) {
-			trap_Cvar_Set("timelimit", strValue);
-		} else {
-			trap_Cvar_Set("timelimit", "0");
-		}
+		fragLimit = atoi(Info_ValueForKey(arenainfo, "fraglimit"));
+		timeLimit = atoi(Info_ValueForKey(arenainfo, "timelimit"));
 
 		if (!fragLimit && !timeLimit) {
-			trap_Cvar_Set("fraglimit", "10");
-			trap_Cvar_Set("timelimit", "0");
+			trap_Cvar_SetValue("fraglimit", 10);
+			trap_Cvar_SetValue("timelimit", 0);
+		} else {
+			trap_Cvar_SetValue("fraglimit", fragLimit);
+			trap_Cvar_SetValue("timelimit", timeLimit);
 		}
 
 		basedelay = BOT_BEGIN_DELAY_BASE;

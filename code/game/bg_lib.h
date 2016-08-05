@@ -79,6 +79,7 @@ typedef int cmp_t(const void *, const void *);
 void qsort(void *a, size_t n, size_t es, cmp_t *cmp);
 void srand(unsigned seed);
 int rand(void);
+void *bsearch(const void *key, const void *base, size_t nmemb, size_t size, cmp_t *compar);
 // String functions
 size_t strlen(const char *string);
 char *strcat(char *strDestination, const char *strSource);
@@ -108,9 +109,15 @@ double floor(double x);
 double sqrt(double x);
 double sin(double x);
 double cos(double x);
+float Q_acos(float c);
+float Q_asin(float c);
 double atan2(double y, double x);
 double tan(double x);
+double atan(double x);
+double pow(double base, double exponent);
+double exp(double x);
+double log(double x);
+double log10(double x);
 int abs(int n);
 double fabs(double x);
-double acos(double x);
 #endif // BG_LIB_H

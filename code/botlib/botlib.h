@@ -42,12 +42,14 @@ struct weaponinfo_s;
 
 #define BOTFILESBASEFOLDER "botfiles"
 // debug line colors
-#define LINECOLOR_NONE		-1
-#define LINECOLOR_RED		1 // 0xf2f2f0f0L
-#define LINECOLOR_GREEN		2 // 0xd0d1d2d3L
-#define LINECOLOR_BLUE		3 // 0xf3f3f1f1L
-#define LINECOLOR_YELLOW	4 // 0xdcdddedfL
-#define LINECOLOR_ORANGE	5 // 0xe0e1e2e3L
+#define LINECOLOR_NONE		0
+#define LINECOLOR_RED		1
+#define LINECOLOR_GREEN		2
+#define LINECOLOR_YELLOW	3
+#define LINECOLOR_BLUE		4
+#define LINECOLOR_MAGENTA	5
+#define LINECOLOR_CYAN		6
+#define LINECOLOR_WHITE		7
 // Print types
 #define PRT_MESSAGE	1
 #define PRT_WARNING	2
@@ -215,6 +217,7 @@ typedef struct aas_export_s {
 	// be_aas_reach.c
 	//--------------------------------------------
 	int (*AAS_AreaReachability)(int areanum);
+	int (*AAS_BestReachableArea)(vec3_t origin, vec3_t mins, vec3_t maxs, vec3_t goalorigin);
 	//--------------------------------------------
 	// be_aas_route.c
 	//--------------------------------------------
@@ -374,9 +377,11 @@ typedef struct botlib_export_s {
 	int (*BotLibVarGet)(char *var_name, char *value, int size);
 	// sets a C-like define returns BLERR_
 	int (*PC_AddGlobalDefine)(char *string);
+	void (*PC_RemoveAllGlobalDefines)(void);
 	int (*PC_LoadSourceHandle)(const char *filename);
 	int (*PC_FreeSourceHandle)(int handle);
 	int (*PC_ReadTokenHandle)(int handle, pc_token_t *pc_token);
+	void (*PC_UnreadLastTokenHandle)(int handle);
 	int (*PC_SourceFileAndLine)(int handle, char *filename, int *line);
 	// start a frame in the bot library
 	int (*BotLibStartFrame)(float time);

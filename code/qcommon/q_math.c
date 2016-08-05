@@ -1143,7 +1143,7 @@ int Q_isnan(float x) {
 =======================================================================================================================================
 Q_acos
 
-The msvc acos doesn't always return a value between -PI and PI:
+The msvc acos doesn't always return a value between 0 and PI:
 
 int i;
 i = 1065353246;
@@ -1156,11 +1156,34 @@ float Q_acos(float c) {
 	angle = acos(c);
 
 	if (angle > M_PI) {
-		return (float)M_PI;
+		return M_PI;
 	}
 
-	if (angle < -M_PI) {
-		return (float)M_PI;
+	if (angle < 0.0f) {
+		return 0.0f;
+	}
+
+	return angle;
+}
+
+/*
+=======================================================================================================================================
+Q_asin
+
+The msvc asin probably has same odd behavior as acos.
+=======================================================================================================================================
+*/
+float Q_asin(float c) {
+	float angle;
+
+	angle = asin(c);
+
+	if (angle > M_PI_2) {
+		return M_PI_2;
+	}
+
+	if (angle < -M_PI_2) {
+		return -M_PI_2;
 	}
 
 	return angle;

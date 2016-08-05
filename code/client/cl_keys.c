@@ -877,11 +877,11 @@ char *Key_GetBinding(int keynum) {
 Key_GetKey
 =======================================================================================================================================
 */
-int Key_GetKey(const char *binding) {
+int Key_GetKey(const char *binding, int startKey) {
 	int i;
 
 	if (binding) {
-		for (i = 0; i < MAX_KEYS; i++) {
+		for (i = startKey; i < MAX_KEYS; i++) {
 			if (keys[i].binding && Q_stricmp(binding, keys[i].binding) == 0) {
 				return i;
 			}
@@ -1332,6 +1332,32 @@ void Key_ClearStates(void) {
 
 		keys[i].down = 0;
 		keys[i].repeats = 0;
+	}
+}
+
+/*
+=======================================================================================================================================
+Key_KeynumToStringBuf
+=======================================================================================================================================
+*/
+void Key_KeynumToStringBuf(int keynum, char *buf, int buflen) {
+	Q_strncpyz(buf, Key_KeynumToString(keynum), buflen);
+}
+
+/*
+=======================================================================================================================================
+Key_GetBindingBuf
+=======================================================================================================================================
+*/
+void Key_GetBindingBuf(int keynum, char *buf, int buflen) {
+	char *value;
+
+	value = Key_GetBinding(keynum);
+
+	if (value) {
+		Q_strncpyz(buf, value, buflen);
+	} else {
+		*buf = 0;
 	}
 }
 

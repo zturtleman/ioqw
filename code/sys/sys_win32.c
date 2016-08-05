@@ -39,6 +39,8 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include <shlobj.h>
 #include <psapi.h>
 #include <float.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 // Used to determine where to store user-specific files
 static char homePath[MAX_OSPATH] = {0};
 // Used to store the Steam Quake 3 installation path
@@ -319,6 +321,20 @@ qboolean Sys_Mkdir(const char *path) {
 
 /*
 =======================================================================================================================================
+Sys_Rmdir
+=======================================================================================================================================
+*/
+qboolean Sys_Rmdir(const char *path) {
+
+	if (RemoveDirectory(path) != 0) {
+		return qfalse;
+	}
+
+	return qtrue;
+}
+
+/*
+=======================================================================================================================================
 Sys_Mkfifo
 
 Noop on windows because named pipes do not function the same way.
@@ -326,6 +342,30 @@ Noop on windows because named pipes do not function the same way.
 */
 FILE *Sys_Mkfifo(const char *ospath) {
 	return NULL;
+}
+
+/*
+=======================================================================================================================================
+Sys_StatFile
+
+Test a file given OS path:
+	returns -1 if not found.
+	returns 1 if directory.
+	returns 0 otherwise.
+=======================================================================================================================================
+*/
+int Sys_StatFile(char *ospath) {
+	struct _stat st;
+
+	if (_stat(ospath, &st) == -1) {
+		return -1;
+	}
+
+	if (st.st_mode & _S_IFDIR) {
+		return 1;
+	}
+
+	return 0;
 }
 
 /*

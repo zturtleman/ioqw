@@ -709,9 +709,9 @@ typedef struct shaderProgram_s
 {
 	char            name[MAX_QPATH];
 
-	GLhandleARB     program;
-	GLhandleARB     vertexShader;
-	GLhandleARB     fragmentShader;
+	GLuint          program;
+	GLuint          vertexShader;
+	GLuint          fragmentShader;
 	uint32_t        attribs;	// vertex array attributes
 
 	// uniform parameters
@@ -1380,6 +1380,9 @@ typedef enum {
 // We can't change glConfig_t without breaking DLL/vms compatibility, so
 // store extensions we have here.
 typedef struct {
+	int openglMajorVersion;
+	int openglMinorVersion;
+
 	qboolean    drawRangeElements;
 	qboolean    multiDrawArrays;
 	qboolean	occlusionQuery;
@@ -1396,8 +1399,6 @@ typedef struct {
 	qboolean textureNonPowerOfTwo;
 	qboolean textureFloat;
 	qboolean halfFloatPixel;
-	qboolean packedDepthStencil;
-	qboolean arbTextureCompression;
 	textureCompressionRef_t textureCompression;
 	qboolean swizzleNormalmap;
 	
@@ -1617,6 +1618,8 @@ typedef struct {
 
 	frontEndCounters_t		pc;
 	int						frontEndMsec;		// not in pc due to clearing issue
+
+	vec4_t					clipRegion;			// 2D clipping region
 
 	//
 	// put large tables at the end, so most elements will be
@@ -2465,6 +2468,7 @@ void R_AddCapShadowmapCmd( int dlight, int cubeSide );
 void R_AddPostProcessCmd (void);
 
 void RE_SetColor( const float *rgba );
+void RE_SetClipRegion( const float *region );
 void RE_StretchPic ( float x, float y, float w, float h, 
 					  float s1, float t1, float s2, float t2, qhandle_t hShader );
 void RE_BeginFrame( stereoFrame_t stereoFrame );

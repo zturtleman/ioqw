@@ -280,20 +280,23 @@ typedef enum {
 } vmInterpret_t;
 
 typedef enum {
-	TRAP_MEMSET = 100,
+	TRAP_MEMSET = 0,
 	TRAP_MEMCPY,
 	TRAP_STRNCPY,
 	TRAP_SIN,
 	TRAP_COS,
 	TRAP_ATAN2,
 	TRAP_SQRT,
-	TRAP_MATRIXMULTIPLY,
-	TRAP_ANGLEVECTORS,
-	TRAP_PERPENDICULARVECTOR,
 	TRAP_FLOOR,
 	TRAP_CEIL,
-	TRAP_TESTPRINTINT,
-	TRAP_TESTPRINTFLOAT
+	TRAP_ACOS,
+	TRAP_ASIN,
+	TRAP_TAN,
+	TRAP_ATAN,
+	TRAP_POW,
+	TRAP_EXP,
+	TRAP_LOG,
+	TRAP_LOG10
 } sharedTraps_t;
 
 void VM_Init(void);
@@ -340,6 +343,8 @@ void Cbuf_AddText(const char *text);
 // Adds command text at the end of the buffer, does NOT add a final \n
 void Cbuf_ExecuteText(int exec_when, const char *text);
 // this can be used in place of either Cbuf_AddText or Cbuf_InsertText
+void Cbuf_ExecuteTextSafe(int exec_when, const char *text);
+// used by VMs with special handling for unsafe calls.
 void Cbuf_Execute(void);
 // Pulls off \n terminated lines of text from the command buffer and sends them through Cmd_ExecuteString. Stops when the buffer is empty.
 // Normally called once per frame, but may be explicitly invoked.
@@ -428,6 +433,8 @@ int Cvar_VariableIntegerValue(const char *var_name);
 char *Cvar_VariableString(const char *var_name);
 void Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize);
 // returns an empty string if not defined
+void Cvar_LatchedVariableStringBuffer(const char *var_name, char *buffer, int bufsize);
+// returns the latched value if there is one, else the normal one, empty string if not defined
 int Cvar_Flags(const char *var_name);
 // returns CVAR_NONEXISTENT if cvar doesn't exist or the flags of that particular CVAR.
 void Cvar_CommandCompletion(void(*callback)(const char *s));
@@ -447,6 +454,8 @@ char *Cvar_InfoString_Big(int bit);
 // returns an info string containing all the cvars that have the given bit set in their flags (CVAR_USERINFO, CVAR_SERVERINFO, CVAR_SYSTEMINFO, etc.)
 void Cvar_InfoStringBuffer(int bit, char *buff, int buffsize);
 void Cvar_CheckRange(cvar_t *cv, float minVal, float maxVal, qboolean shouldBeIntegral);
+void Cvar_CheckRangeSafe(const char *varName, float min, float max, qboolean integral);
+// basically a slightly modified Cvar_CheckRange for the interpreted modules
 void Cvar_SetDescription(cvar_t *var, const char *var_description);
 void Cvar_Restart(qboolean unsetVM);
 void Cvar_Restart_f(void);
@@ -515,6 +524,7 @@ long FS_FOpenFileRead(const char *qpath, fileHandle_t *file, qboolean uniqueFILE
 // file IO goes through FS_ReadFile, which Does The Right Thing already.
 int FS_FileIsInPAK(const char *filename, int *pChecksum);
 // returns 1 if a file is in the PAK file, otherwise -1
+int FS_Delete(char *filename); // only works inside the 'save' directory (for deleting savegames/images)
 int FS_Write(const void *buffer, int len, fileHandle_t f);
 int FS_Read2(void *buffer, int len, fileHandle_t f);
 int FS_Read(void *buffer, int len, fileHandle_t f);
@@ -569,9 +579,9 @@ void FS_PureServerSetLoadedPaks(const char *pakSums, const char *pakNames);
 qboolean FS_CheckDirTraversal(const char *checkdir);
 qboolean FS_idPak(char *pak, char *base, int numPaks);
 qboolean FS_ComparePaks(char *neededpaks, int len, qboolean dlstring);
-void FS_Rename(const char *from, const char *to);
-void FS_Remove(const char *osPath);
-void FS_HomeRemove(const char *homePath);
+qboolean FS_Rename(const char *from, const char *to);
+int FS_Remove(const char *osPath);
+int FS_HomeRemove(const char *homePath);
 void FS_FilenameCompletion(const char *dir, const char *ext, qboolean stripExt, void(*callback)(const char *s), qboolean allowNonPureFilesOnDisk);
 const char *FS_GetCurrentGameDir(void);
 qboolean FS_Which(const char *filename, void *searchPath);
@@ -661,6 +671,7 @@ int Com_RealTime(qtime_t *qtime);
 qboolean Com_SafeMode(void);
 void Com_RunAndTimeServerPacket(netadr_t *evFrom, msg_t *buf);
 qboolean Com_IsVoipTarget(uint8_t *voipTargets, int voipTargetsSize, int clientNum);
+qboolean Com_GameIsSinglePlayer(void);
 void Com_StartupVariable(const char *match);
 // checks for and removes command line "+set var arg" constructs
 // if match is NULL, all set commands will be executed, otherwise only a set with the exact name. Only used during startup.
@@ -675,6 +686,7 @@ extern cvar_t *com_timescale;
 extern cvar_t *com_sv_running;
 extern cvar_t *com_cl_running;
 extern cvar_t *com_version;
+extern cvar_t *com_singlePlayerActive;
 extern cvar_t *com_blood;
 extern cvar_t *com_buildScript; // for building release pak files
 extern cvar_t *com_journal;
@@ -865,7 +877,9 @@ qboolean Sys_IsLANAddress(netadr_t adr);
 void Sys_ShowIP(void);
 FILE *Sys_FOpen(const char *ospath, const char *mode);
 qboolean Sys_Mkdir(const char *path);
+qboolean Sys_Rmdir(const char *path);
 FILE *Sys_Mkfifo(const char *ospath);
+int Sys_StatFile(char *ospath);
 char *Sys_Cwd(void);
 void Sys_SetDefaultInstallPath(const char *path);
 char *Sys_DefaultInstallPath(void);

@@ -28,7 +28,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 //#define SCREWUP
 //#define BOTLIB
-//#define MEQCC
 //#define BSPC
 
 #ifdef SCREWUP
@@ -56,16 +55,6 @@ typedef enum {
 #include "l_log.h"
 #include "l_libvar.h"
 #endif // BOTLIB
-#ifdef MEQCC
-// include files for usage in MrElusive's QuakeC Compiler
-#include "qcc.h"
-#include "l_script.h"
-#include "l_memory.h"
-#include "l_log.h"
-
-#define qtrue true
-#define qfalse false
-#endif // MEQCC
 #ifdef BSPC
 // include files for usage in the BSP Converter
 #include "../bspc/qbsp.h"
@@ -74,6 +63,7 @@ typedef enum {
 
 #define qtrue true
 #define qfalse false
+#define Com_sprintf snprintf
 #endif // BSPC
 
 #define PUNCTABLE
@@ -241,9 +231,6 @@ void QDECL ScriptError(script_t *script, char *str, ...) {
 #ifdef BOTLIB
 	botimport.Print(PRT_ERROR, "file %s, line %d: %s\n", script->filename, script->line, text);
 #endif // BOTLIB
-#ifdef MEQCC
-	printf("error: file %s, line %d: %s\n", script->filename, script->line, text);
-#endif // MEQCC
 #ifdef BSPC
 	Log_Print("error: file %s, line %d: %s\n", script->filename, script->line, text);
 #endif // BSPC
@@ -268,9 +255,6 @@ void QDECL ScriptWarning(script_t *script, char *str, ...) {
 #ifdef BOTLIB
 	botimport.Print(PRT_WARNING, "file %s, line %d: %s\n", script->filename, script->line, text);
 #endif // BOTLIB
-#ifdef MEQCC
-	printf("warning: file %s, line %d: %s\n", script->filename, script->line, text);
-#endif // MEQCC
 #ifdef BSPC
 	Log_Print("warning: file %s, line %d: %s\n", script->filename, script->line, text);
 #endif // BSPC
@@ -1535,9 +1519,5 @@ PS_SetBaseFolder
 =======================================================================================================================================
 */
 void PS_SetBaseFolder(char *path) {
-#ifdef BSPC
-	sprintf(basefolder, path);
-#else
 	Com_sprintf(basefolder, sizeof(basefolder), "%s", path);
-#endif
 }

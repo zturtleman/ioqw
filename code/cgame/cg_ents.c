@@ -386,9 +386,9 @@ static void CG_Missile(centity_t *cent) {
 		weapon->missileTrailFunc(cent, weapon);
 	}
 /*
-	if (cent->currentState.modelindex == TEAM_RED) {
+	if (s1->team == TEAM_RED) {
 		col = 1;
-	} else if (cent->currentState.modelindex == TEAM_BLUE) {
+	} else if (s1->team == TEAM_BLUE) {
 		col = 2;
 	} else {
 		col = 0;
@@ -784,7 +784,7 @@ static void CG_TeamBase(centity_t *cent) {
 				}
 
 				VectorCopy(cent->currentState.angles, angles);
-				angles[YAW] += (float)16 * acos(1 - c) * 180 / M_PI;
+				angles[YAW] += (float)16 * Q_acos(1 - c) * 180 / M_PI;
 				AnglesToAxis(angles, model.axis);
 
 				VectorScale(model.axis[0], c, model.axis[0]);
@@ -795,7 +795,7 @@ static void CG_TeamBase(centity_t *cent) {
 				model.shaderRGBA[1] = 0xff;
 				model.shaderRGBA[2] = 0xff;
 				model.shaderRGBA[3] = 0xff;
-				model.origin[2] += 56;
+				model.origin[2] += OBELISK_TARGET_HEIGHT;
 				model.hModel = cgs.media.overloadTargetModel;
 				trap_R_AddRefEntityToScene(&model);
 			} else {
@@ -814,7 +814,7 @@ static void CG_TeamBase(centity_t *cent) {
 			model.hModel = cgs.media.overloadLightsModel;
 			trap_R_AddRefEntityToScene(&model);
 			// show the target
-			model.origin[2] += 56;
+			model.origin[2] += OBELISK_TARGET_HEIGHT;
 			model.hModel = cgs.media.overloadTargetModel;
 			trap_R_AddRefEntityToScene(&model);
 		}

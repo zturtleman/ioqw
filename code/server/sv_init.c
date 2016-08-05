@@ -230,7 +230,7 @@ SV_BoundMaxClients
 static void SV_BoundMaxClients(int minimum) {
 
 	// get the current maxclients value
-	Cvar_Get("sv_maxclients", "8", 0);
+	Cvar_Get("sv_maxclients", "64", 0);
 
 	sv_maxclients->modified = qfalse;
 
@@ -259,7 +259,7 @@ static void SV_Startup(void) {
 
 	svs.clients = Z_Malloc(sizeof(client_t) * sv_maxclients->integer);
 
-	if (com_dedicated->integer) {
+	if (!Com_GameIsSinglePlayer()) {
 		svs.numSnapshotEntities = sv_maxclients->integer * PACKET_BACKUP * MAX_SNAPSHOT_ENTITIES;
 	} else {
 		// we don't need nearly as many when playing locally
@@ -333,7 +333,7 @@ void SV_ChangeMaxClients(void) {
 	// free the old clients on the hunk
 	Hunk_FreeTempMemory(oldClients);
 	// allocate new snapshot entities
-	if (com_dedicated->integer) {
+	if (!Com_GameIsSinglePlayer()) {
 		svs.numSnapshotEntities = sv_maxclients->integer * PACKET_BACKUP * MAX_SNAPSHOT_ENTITIES;
 	} else {
 		// we don't need nearly as many when playing locally
@@ -588,10 +588,10 @@ void SV_Init(void) {
 	// serverinfo vars
 	sv_gametype = Cvar_Get("g_gametype", "0", CVAR_SERVERINFO|CVAR_LATCH);
 	Cvar_Get("sv_keywords", "", CVAR_SERVERINFO);
-	sv_mapname = Cvar_Get("mapname", "nomap", CVAR_SERVERINFO|CVAR_ROM);
+	sv_mapname = Cvar_Get("mapname", "Nomap", CVAR_SERVERINFO|CVAR_ROM);
 	sv_privateClients = Cvar_Get("sv_privateClients", "0", CVAR_SERVERINFO);
-	sv_hostname = Cvar_Get("sv_hostname", "noname", CVAR_SERVERINFO|CVAR_ARCHIVE);
-	sv_maxclients = Cvar_Get("sv_maxclients", "8", CVAR_SERVERINFO|CVAR_LATCH);
+	sv_hostname = Cvar_Get("sv_hostname", "Noname", CVAR_SERVERINFO|CVAR_ARCHIVE);
+	sv_maxclients = Cvar_Get("sv_maxclients", "64", CVAR_SERVERINFO|CVAR_LATCH);
 	sv_minRate = Cvar_Get("sv_minRate", "0", CVAR_ARCHIVE|CVAR_SERVERINFO);
 	sv_maxRate = Cvar_Get("sv_maxRate", "0", CVAR_ARCHIVE|CVAR_SERVERINFO);
 	sv_dlRate = Cvar_Get("sv_dlRate", "100", CVAR_ARCHIVE|CVAR_SERVERINFO);
@@ -634,6 +634,8 @@ void SV_Init(void) {
 	sv_mapChecksum = Cvar_Get("sv_mapChecksum", "", CVAR_ROM);
 	sv_lanForceRate = Cvar_Get("sv_lanForceRate", "1", CVAR_ARCHIVE);
 	sv_banFile = Cvar_Get("sv_banFile", "serverbans.dat", CVAR_ARCHIVE);
+	sv_public = Cvar_Get("sv_public", "0", 0);
+	Cvar_CheckRange(sv_public, -2, 1, qtrue);
 	// initialize bot cvars so they are listed and can be set before loading the botlib
 	SV_BotInitCvars();
 	// init the botlib here because we need the pre-compiler in the UI
@@ -712,6 +714,7 @@ void SV_Shutdown(char *finalmsg) {
 
 	Cvar_Set("sv_running", "0");
 	Cvar_Set("ui_singlePlayerActive", "0");
+	Cvar_Set("sv_public", "0");
 
 	Com_Printf("---------------------------\n");
 	// disconnect any local clients

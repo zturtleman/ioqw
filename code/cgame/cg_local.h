@@ -459,13 +459,8 @@ typedef struct {
 	int scoreFadeTime;
 	char killerName[MAX_NAME_LENGTH];
 	char spectatorList[MAX_STRING_CHARS];	// list of names
-	int spectatorLen;						// length of list
-	float spectatorWidth;					// width in device units
-	int spectatorTime;						// next time to offset
-	int spectatorPaintX;					// current paint x
-	int spectatorPaintX2;					// current paint x
-	int spectatorOffset;					// current offset from start
-	int spectatorPaintLen;					// current offset from start
+	int spectatorTime;						// last time offset
+	float spectatorOffset;					// current offset from start
 	// skull trails
 	skulltrail_t skulltrails[MAX_CLIENTS];
 	// centerprinting
@@ -683,6 +678,7 @@ typedef struct {
 	sfxHandle_t sfx_chghit;
 	sfxHandle_t sfx_chghitflesh;
 	sfxHandle_t sfx_chghitmetal;
+	sfxHandle_t sfx_chgstop;
 	sfxHandle_t kamikazeExplodeSound;
 	sfxHandle_t kamikazeImplodeSound;
 	sfxHandle_t kamikazeFarSound;
@@ -948,6 +944,7 @@ extern vmCvar_t cg_thirdPerson;
 extern vmCvar_t cg_lagometer;
 extern vmCvar_t cg_drawAttacker;
 extern vmCvar_t cg_synchronousClients;
+extern vmCvar_t cg_singlePlayer;
 extern vmCvar_t cg_teamChatTime;
 extern vmCvar_t cg_teamChatHeight;
 extern vmCvar_t cg_stats;
@@ -988,8 +985,6 @@ extern vmCvar_t cg_redTeamName;
 extern vmCvar_t cg_blueTeamName;
 extern vmCvar_t cg_currentSelectedPlayer;
 extern vmCvar_t cg_currentSelectedPlayerName;
-extern vmCvar_t cg_singlePlayer;
-extern vmCvar_t cg_singlePlayerActive;
 extern vmCvar_t cg_recordSPDemo;
 extern vmCvar_t cg_recordSPDemoName;
 #endif
@@ -1028,6 +1023,8 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 void CG_AdjustFrom640(float *x, float *y, float *w, float *h);
 void CG_FillRect(float x, float y, float width, float height, const float *color);
 void CG_DrawPic(float x, float y, float width, float height, qhandle_t hShader);
+void CG_SetClipRegion(float x, float y, float w, float h);
+void CG_ClearClipRegion(void);
 void CG_DrawString(float x, float y, const char *string, float charWidth, float charHeight, const float *modulate);
 void CG_DrawStringExt(int x, int y, const char *string, const float *setColor, qboolean forceColor, qboolean shadow, int charWidth, int charHeight, int maxChars);
 void CG_DrawBigString(int x, int y, const char *s, float alpha);
@@ -1039,12 +1036,19 @@ float *CG_FadeColor(int startMsec, int totalMsec);
 float *CG_TeamColor(int team);
 void CG_TileClear(void);
 void CG_ColorForHealth(vec4_t hcolor);
+void CG_KeysStringForBinding(const char *binding, char *string, int stringSize);
 void CG_GetColorForHealth(int health, int armor, vec4_t hcolor);
 void UI_DrawProportionalString(int x, int y, const char *str, int style, vec4_t color);
 void CG_DrawRect(float x, float y, float width, float height, float size, const float *color);
 void CG_DrawSides(float x, float y, float w, float h, float size);
 void CG_DrawTopBottom(float x, float y, float w, float h, float size);
 // cg_draw.c, cg_newDraw.c
+typedef enum {
+	SYSTEM_PRINT,
+	CHAT_PRINT,
+	TEAMCHAT_PRINT
+} q3print_t;
+
 extern int sortedTeamPlayers[TEAM_MAXOVERLAY];
 extern int numSortedTeamPlayers;
 extern int drawTeamOverlayModificationCount;
@@ -1069,7 +1073,7 @@ float CG_GetValue(int ownerDraw);
 qboolean CG_OwnerDrawVisible(int flags);
 void CG_RunMenuScript(char **args);
 void CG_ShowResponseHead(void);
-void CG_SetPrintString(int type, const char *p);
+void CG_SetPrintString(q3print_t type, const char *p);
 void CG_InitTeamChat(void);
 void CG_GetTeamColor(vec4_t *color);
 const char *CG_GetGameStatusText(void);
@@ -1081,6 +1085,20 @@ const char *CG_GameTypeString(void);
 qboolean CG_YourTeamHasFlag(void);
 qboolean CG_OtherTeamHasFlag(void);
 qhandle_t CG_StatusHandle(int task);
+// cg_particles.c
+void CG_ClearParticles(void);
+void CG_AddParticles(void);
+void CG_ParticleSnow(qhandle_t pshader, vec3_t origin, vec3_t origin2, int turb, float range, int snum);
+void CG_ParticleSmoke(qhandle_t pshader, centity_t *cent);
+void CG_AddParticleShrapnel(localEntity_t *le);
+void CG_ParticleSnowFlurry(qhandle_t pshader, centity_t *cent);
+void CG_ParticleBulletDebris(vec3_t org, vec3_t vel, int duration);
+void CG_ParticleSparks(vec3_t org, vec3_t vel, int duration, float x, float y, float speed);
+void CG_ParticleDust(centity_t *cent, vec3_t origin, vec3_t dir);
+void CG_ParticleMisc(qhandle_t pshader, vec3_t origin, int size, int duration, float alpha);
+void CG_ParticleExplosion(char *animStr, vec3_t origin, vec3_t vel, int duration, int sizeStart, int sizeEnd);
+extern qboolean initparticles;
+int CG_NewParticleArea(int num);
 // cg_player.c
 void CG_Player(centity_t *cent);
 void CG_ResetPlayerEntity(centity_t *cent);
@@ -1185,97 +1203,18 @@ void CG_CheckChangedPredictableEvents(playerState_t *ps);
 
 	SYSTEM TRAPS
 
-	These functions are how the cgame communicates with the main game system
+	These functions are how the cgame communicates with the main game system.
 
 =======================================================================================================================================
 */
 
-// print message on the local console
-void trap_Print(const char *fmt);
-// abort the game
-void trap_Error(const char *fmt) __attribute__((noreturn));
-// milliseconds should only be used for performance tuning, never for anything game related. Get time from the CG_DrawActiveFrame parameter
-int trap_Milliseconds(void);
-// console variable interaction
-void trap_Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags);
-void trap_Cvar_Update(vmCvar_t *vmCvar);
-void trap_Cvar_Set(const char *var_name, const char *value);
-void trap_Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize);
-// ServerCommand and ConsoleCommand parameter access
-int trap_Argc(void);
-void trap_Argv(int n, char *buffer, int bufferLength);
-void trap_Args(char *buffer, int bufferLength);
-// filesystem access
-// returns length of file
-int trap_FS_FOpenFile(const char *qpath, fileHandle_t *f, fsMode_t mode);
-void trap_FS_Read(void *buffer, int len, fileHandle_t f);
-void trap_FS_Write(const void *buffer, int len, fileHandle_t f);
-void trap_FS_FCloseFile(fileHandle_t f);
-int trap_FS_Seek(fileHandle_t f, long offset, int origin); // fsOrigin_t
-// add commands to the local console as if they were typed in for map changing, etc.
-// The command is not executed immediately, but will be executed in order the next time console commands are processed
-void trap_SendConsoleCommand(const char *text);
-// register a command name so the console can perform command completion.
-// FIXME: replace this with a normal console command "defineCommand"?
-void trap_AddCommand(const char *cmdName);
-void trap_RemoveCommand(const char *cmdName);
-// send a string to the server over the network
-void trap_SendClientCommand(const char *s);
-// force a screen update, only used during gamestate load
-void trap_UpdateScreen(void);
-// model collision
-void trap_CM_LoadMap(const char *mapname);
-int trap_CM_NumInlineModels(void);
-clipHandle_t trap_CM_InlineModel(int index); // 0 = world, 1+ = bmodels
-clipHandle_t trap_CM_TempBoxModel(const vec3_t mins, const vec3_t maxs);
-int trap_CM_PointContents(const vec3_t p, clipHandle_t model);
-int trap_CM_TransformedPointContents(const vec3_t p, clipHandle_t model, const vec3_t origin, const vec3_t angles);
-void trap_CM_BoxTrace(trace_t *results, const vec3_t start, const vec3_t end, const vec3_t mins, const vec3_t maxs, clipHandle_t model, int brushmask);
-void trap_CM_CapsuleTrace(trace_t *results, const vec3_t start, const vec3_t end, const vec3_t mins, const vec3_t maxs, clipHandle_t model, int brushmask);
-void trap_CM_TransformedBoxTrace(trace_t *results, const vec3_t start, const vec3_t end, const vec3_t mins, const vec3_t maxs, clipHandle_t model, int brushmask, const vec3_t origin, const vec3_t angles);
-void trap_CM_TransformedCapsuleTrace(trace_t *results, const vec3_t start, const vec3_t end, const vec3_t mins, const vec3_t maxs, clipHandle_t model, int brushmask, const vec3_t origin, const vec3_t angles);
-// Returns the projection of a polygon onto the solid brushes in the world
-int trap_CM_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection, int maxPoints, vec3_t pointBuffer, int maxFragments, markFragment_t *fragmentBuffer);
-// normal sounds will have their volume dynamically changed as their entity moves and the listener moves
-void trap_S_StartSound(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx);
-void trap_S_StopLoopingSound(int entnum);
-// a local sound is always played full volume
-void trap_S_StartLocalSound(sfxHandle_t sfx, int channelNum);
-void trap_S_ClearLoopingSounds(qboolean killall);
-void trap_S_AddLoopingSound(int entityNum, const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx);
-void trap_S_AddRealLoopingSound(int entityNum, const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx);
-void trap_S_UpdateEntityPosition(int entityNum, const vec3_t origin);
-// respatialize recalculates the volumes of sound as they should be heard by the given entityNum and position
-void trap_S_Respatialize(int entityNum, const vec3_t origin, vec3_t axis[3], int inwater);
-sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed); // returns buzz if not found
-void trap_S_StartBackgroundTrack(const char *intro, const char *loop); // empty name stops music
-void trap_S_StopBackgroundTrack(void);
-void trap_R_LoadWorldMap(const char *mapname);
-// all media should be registered during level startup to prevent hitches during gameplay
-qhandle_t trap_R_RegisterModel(const char *name);		// returns rgb axis if not found
-qhandle_t trap_R_RegisterSkin(const char *name);		// returns all white if not found
-qhandle_t trap_R_RegisterShader(const char *name);		// returns all white if not found
-qhandle_t trap_R_RegisterShaderNoMip(const char *name);	// returns all white if not found
-// a scene is built up by calls to R_ClearScene and the various R_Add functions.
-// Nothing is drawn until R_RenderScene is called.
-void trap_R_ClearScene(void);
-void trap_R_AddRefEntityToScene(const refEntity_t *re);
-// polys are intended for simple wall marks, not really for doing significant construction
-void trap_R_AddPolyToScene(qhandle_t hShader , int numVerts, const polyVert_t *verts);
-void trap_R_AddPolysToScene(qhandle_t hShader , int numVerts, const polyVert_t *verts, int numPolys);
-void trap_R_AddLightToScene(const vec3_t org, float intensity, float r, float g, float b);
-void trap_R_AddAdditiveLightToScene(const vec3_t org, float intensity, float r, float g, float b);
-int trap_R_LightForPoint(vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec3_t lightDir);
-void trap_R_RenderScene(const refdef_t *fd);
-void trap_R_SetColor(const float *rgba); // NULL = 1, 1, 1, 1
-void trap_R_DrawStretchPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader);
-void trap_R_ModelBounds(clipHandle_t model, vec3_t mins, vec3_t maxs);
-int trap_R_LerpTag(orientation_t *tag, clipHandle_t mod, int startFrame, int endFrame, float frac, const char *tagName);
-void trap_R_RemapShader(const char *oldShader, const char *newShader, const char *timeOffset);
-qboolean trap_R_inPVS(const vec3_t p1, const vec3_t p2);
+void trap_GetClipboardData(char *buf, int bufsize);
 // The glconfig_t will not change during the life of a cgame.
 // If it needs to change, the entire cgame will be restarted, because all the qhandle_t are then invalid.
 void trap_GetGlconfig(glconfig_t *glconfig);
+// force a screen update, only used during gamestate load
+void trap_UpdateScreen(void);
+int trap_MemoryRemaining(void);
 // the gamestate should be grabbed at startup, and whenever a configstring changes
 void trap_GetGameState(gameState_t *gamestate);
 // cgame will poll each frame to see if a newer snapshot has arrived that it is interested in.
@@ -1295,43 +1234,85 @@ int trap_GetCurrentCmdNumber(void);
 qboolean trap_GetUserCmd(int cmdNumber, usercmd_t *ucmd);
 // used for the weapon select and zoom
 void trap_SetUserCmdValue(int stateValue, float sensitivityScale);
-// aids for VM testing
-void testPrintInt(char *string, int i);
-void testPrintFloat(char *string, float f);
-int trap_MemoryRemaining(void);
+// send a string to the server over the network
+void trap_SendClientCommand(const char *s);
+// model collision
+void trap_CM_LoadMap(const char *mapname);
+int trap_CM_NumInlineModels(void);
+clipHandle_t trap_CM_InlineModel(int index); // 0 = world, 1+ = bmodels
+clipHandle_t trap_CM_TempBoxModel(const vec3_t mins, const vec3_t maxs);
+int trap_CM_PointContents(const vec3_t p, clipHandle_t model);
+int trap_CM_TransformedPointContents(const vec3_t p, clipHandle_t model, const vec3_t origin, const vec3_t angles);
+void trap_CM_BoxTrace(trace_t *results, const vec3_t start, const vec3_t end, const vec3_t mins, const vec3_t maxs, clipHandle_t model, int brushmask);
+void trap_CM_CapsuleTrace(trace_t *results, const vec3_t start, const vec3_t end, const vec3_t mins, const vec3_t maxs, clipHandle_t model, int brushmask);
+void trap_CM_TransformedBoxTrace(trace_t *results, const vec3_t start, const vec3_t end, const vec3_t mins, const vec3_t maxs, clipHandle_t model, int brushmask, const vec3_t origin, const vec3_t angles);
+void trap_CM_TransformedCapsuleTrace(trace_t *results, const vec3_t start, const vec3_t end, const vec3_t mins, const vec3_t maxs, clipHandle_t model, int brushmask, const vec3_t origin, const vec3_t angles);
+// Returns the projection of a polygon onto the solid brushes in the world
+int trap_CM_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection, int maxPoints, vec3_t pointBuffer, int maxFragments, markFragment_t *fragmentBuffer);
+void trap_R_LoadWorldMap(const char *mapname);
+qboolean trap_GetEntityToken(char *buffer, int bufferSize);
+// all media should be registered during level startup to prevent hitches during gameplay
+qhandle_t trap_R_RegisterModel(const char *name);		// returns rgb axis if not found
+qhandle_t trap_R_RegisterSkin(const char *name);		// returns all white if not found
+qhandle_t trap_R_RegisterShader(const char *name);		// returns all white if not found
+qhandle_t trap_R_RegisterShaderNoMip(const char *name);	// returns all white if not found
 void trap_R_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font);
+// a scene is built up by calls to R_ClearScene and the various R_Add functions.
+// Nothing is drawn until R_RenderScene is called.
+void trap_R_ClearScene(void);
+void trap_R_AddRefEntityToScene(const refEntity_t *re);
+// polys are intended for simple wall marks, not really for doing significant construction
+void trap_R_AddPolyToScene(qhandle_t hShader , int numVerts, const polyVert_t *verts);
+void trap_R_AddPolysToScene(qhandle_t hShader , int numVerts, const polyVert_t *verts, int numPolys);
+void trap_R_AddLightToScene(const vec3_t org, float intensity, float r, float g, float b);
+void trap_R_AddAdditiveLightToScene(const vec3_t org, float intensity, float r, float g, float b);
+int trap_R_LightForPoint(vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec3_t lightDir);
+void trap_R_RenderScene(const refdef_t *fd);
+void trap_R_SetColor(const float *rgba); // NULL = 1, 1, 1, 1
+void trap_R_SetClipRegion(const float *region);
+void trap_R_DrawStretchPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader);
+void trap_R_ModelBounds(clipHandle_t model, vec3_t mins, vec3_t maxs);
+int trap_R_LerpTag(orientation_t *tag, clipHandle_t mod, int startFrame, int endFrame, float frac, const char *tagName);
+void trap_R_RemapShader(const char *oldShader, const char *newShader, const char *timeOffset);
+qboolean trap_R_inPVS(const vec3_t p1, const vec3_t p2);
+// normal sounds will have their volume dynamically changed as their entity moves and the listener moves
+void trap_S_StartSound(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx);
+// a local sound is always played full volume
+void trap_S_StartLocalSound(sfxHandle_t sfx, int channelNum);
+void trap_S_StopLoopingSound(int entnum);
+void trap_S_ClearLoopingSounds(qboolean killall);
+void trap_S_AddLoopingSound(int entityNum, const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx);
+void trap_S_AddRealLoopingSound(int entityNum, const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx);
+void trap_S_UpdateEntityPosition(int entityNum, const vec3_t origin);
+// respatialize recalculates the volumes of sound as they should be heard by the given entityNum and position
+void trap_S_Respatialize(int entityNum, const vec3_t origin, vec3_t axis[3], int inwater);
+sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed); // returns buzz if not found
+int trap_S_SoundDuration(sfxHandle_t handle);
+void trap_S_StartBackgroundTrack(const char *intro, const char *loop); // empty name stops music
+void trap_S_StopBackgroundTrack(void);
+void trap_Key_KeynumToStringBuf(int keynum, char *buf, int buflen);
+void trap_Key_GetBindingBuf(int keynum, char *buf, int buflen);
+void trap_Key_SetBinding(int keynum, const char *binding);
 qboolean trap_Key_IsDown(int keynum);
+qboolean trap_Key_GetOverstrikeMode(void);
+void trap_Key_SetOverstrikeMode(qboolean state);
+void trap_Key_ClearStates(void);
 int trap_Key_GetCatcher(void);
 void trap_Key_SetCatcher(int catcher);
-int trap_Key_GetKey(const char *binding);
-
-typedef enum {
-	SYSTEM_PRINT,
-	CHAT_PRINT,
-	TEAMCHAT_PRINT
-} q3print_t;
-
+int trap_Key_GetKey(const char *binding, int startKey);
+// this returns a handle. arg0 is the name in the format "idlogo.roq", set arg1 to NULL, alteredstates to qfalse (do not alter gamestate)
 int trap_CIN_PlayCinematic(const char *arg0, int xpos, int ypos, int width, int height, int bits);
+// stops playing the cinematic and ends it. should always return FMV_EOF
+// cinematics must be stopped in reverse order of when they are started
 e_status trap_CIN_StopCinematic(int handle);
+// will run a frame of the cinematic but will not draw it. Will return FMV_EOF if the end of the cinematic has been reached.
 e_status trap_CIN_RunCinematic(int handle);
+// draws the current frame
 void trap_CIN_DrawCinematic(int handle);
+// allows you to resize the animation dynamically
 void trap_CIN_SetExtents(int handle, int x, int y, int w, int h);
-int trap_RealTime(qtime_t *qtime);
-void trap_SnapVector(float *v);
+/*
 qboolean trap_loadCamera(const char *name);
 void trap_startCamera(int time);
 qboolean trap_getCameraInfo(int time, vec3_t *origin, vec3_t *angles);
-qboolean trap_GetEntityToken(char *buffer, int bufferSize);
-void CG_ClearParticles(void);
-void CG_AddParticles(void);
-void CG_ParticleSnow(qhandle_t pshader, vec3_t origin, vec3_t origin2, int turb, float range, int snum);
-void CG_ParticleSmoke(qhandle_t pshader, centity_t *cent);
-void CG_AddParticleShrapnel(localEntity_t *le);
-void CG_ParticleSnowFlurry(qhandle_t pshader, centity_t *cent);
-void CG_ParticleBulletDebris(vec3_t org, vec3_t vel, int duration);
-void CG_ParticleSparks(vec3_t org, vec3_t vel, int duration, float x, float y, float speed);
-void CG_ParticleDust(centity_t *cent, vec3_t origin, vec3_t dir);
-void CG_ParticleMisc(qhandle_t pshader, vec3_t origin, int size, int duration, float alpha);
-void CG_ParticleExplosion(char *animStr, vec3_t origin, vec3_t vel, int duration, int sizeStart, int sizeEnd);
-extern qboolean initparticles;
-int CG_NewParticleArea(int num);
+*/

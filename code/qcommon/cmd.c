@@ -164,6 +164,21 @@ void Cbuf_ExecuteText(int exec_when, const char *text) {
 
 /*
 =======================================================================================================================================
+Cbuf_ExecuteTextSafe
+=======================================================================================================================================
+*/
+void Cbuf_ExecuteTextSafe(int exec_when, const char *text) {
+
+	if (exec_when == EXEC_NOW && (!strncmp(text, "snd_restart", 11) || !strncmp(text, "vid_restart", 11) || !strncmp(text, "quit", 5))) {
+		Com_Printf(S_COLOR_YELLOW "turning EXEC_NOW '%.11s' into EXEC_INSERT\n", text);
+		exec_when = EXEC_INSERT;
+	}
+
+	Cbuf_ExecuteText(exec_when, text);
+}
+
+/*
+=======================================================================================================================================
 Cbuf_Execute
 =======================================================================================================================================
 */

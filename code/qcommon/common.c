@@ -40,8 +40,8 @@ int demo_protocols[] = {67, 66, 0};
 #define MAX_NUM_ARGVS 50
 #define MIN_DEDICATED_COMHUNKMEGS 1
 #define MIN_COMHUNKMEGS 56
-#define DEF_COMHUNKMEGS 128
-#define DEF_COMZONEMEGS 24
+#define DEF_COMHUNKMEGS 768
+#define DEF_COMZONEMEGS 512
 #define DEF_COMHUNKMEGS_S XSTRING(DEF_COMHUNKMEGS)
 #define DEF_COMZONEMEGS_S XSTRING(DEF_COMZONEMEGS)
 
@@ -71,6 +71,7 @@ cvar_t *com_logfile; // 1 = buffer log, 2 = flush after each print
 cvar_t *com_pipefile;
 cvar_t *com_showtrace;
 cvar_t *com_version;
+cvar_t *com_singlePlayerActive;
 cvar_t *com_blood;
 cvar_t *com_buildScript; // for automated data building scripts
 #ifdef CINEMATICS_INTRO
@@ -2575,11 +2576,10 @@ void Com_Init(char *commandLine) {
 	Com_StartupVariable(NULL);
 	// get dedicated here for proper hunk megs initialization
 #ifdef DEDICATED
-	com_dedicated = Cvar_Get("dedicated", "1", CVAR_INIT);
-	Cvar_CheckRange(com_dedicated, 1, 2, qtrue);
+	com_dedicated = Cvar_Get("dedicated", "1", CVAR_ROM);
 #else
 	com_dedicated = Cvar_Get("dedicated", "0", CVAR_LATCH);
-	Cvar_CheckRange(com_dedicated, 0, 2, qtrue);
+	Cvar_CheckRange(com_dedicated, 0, 1, qtrue);
 #endif
 	// allocate the stack based hunk allocator
 	Com_InitHunkMemory();
@@ -2587,7 +2587,8 @@ void Com_Init(char *commandLine) {
 	cvar_modifiedFlags &= ~CVAR_ARCHIVE;
 	// init commands and vars
 	com_altivec = Cvar_Get("com_altivec", "1", CVAR_ARCHIVE);
-	com_maxfps = Cvar_Get("com_maxfps", "85", CVAR_ARCHIVE);
+	com_maxfps = Cvar_Get("com_maxfps", "60", CVAR_ARCHIVE);
+	com_singlePlayerActive = Cvar_Get("ui_singlePlayerActive", "0", CVAR_SYSTEMINFO|CVAR_ROM);
 	com_blood = Cvar_Get("com_blood", "1", CVAR_ARCHIVE);
 	com_logfile = Cvar_Get("logfile", "0", CVAR_TEMP);
 	com_timescale = Cvar_Get("timescale", "1", CVAR_CHEAT|CVAR_SYSTEMINFO);
@@ -3359,6 +3360,15 @@ qboolean Com_IsVoipTarget(uint8_t *voipTargets, int voipTargetsSize, int clientN
 	}
 
 	return qfalse;
+}
+
+/*
+=======================================================================================================================================
+Com_GameIsSinglePlayer
+=======================================================================================================================================
+*/
+qboolean Com_GameIsSinglePlayer(void) {
+	return (com_singlePlayerActive->integer);
 }
 
 /*

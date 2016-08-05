@@ -84,6 +84,27 @@ static const char *ctfMessages[] = {
 	NULL
 };
 
+static const char *ctfVoiceChats[] = {
+	"startleader",
+	"defend",
+	"followme",
+	"getflag",
+	"camp",
+	NULL,
+	"stopleader",
+	NULL
+};
+static const char *ctfButtons[] = {
+	NULL,
+	"8", // defend
+	"10", // followme
+	"7", // getflag
+	NULL,
+	NULL,
+	NULL,
+	NULL
+};
+
 #define NUM_TEAM_ORDERS		6
 static const char *teamOrders[] = {
 	"I Am the Leader",
@@ -104,6 +125,24 @@ static const char *teamMessages[] = {
 	NULL
 };
 
+static const char *teamVoiceChats[] = {
+	"startleader",
+	"followme",
+	"patrol",
+	"camp",
+	NULL,
+	"stopleader",
+	NULL
+};
+static const char *teamButtons[] = {
+	NULL,
+	"10", // followme
+	"9", // patrol
+	NULL,
+	NULL,
+	NULL,
+	NULL
+};
 
 /*
 ===============
@@ -257,6 +296,8 @@ static void UI_TeamOrdersMenu_ListEvent( void *ptr, int event ) {
 	int		id;
 	int		selection;
 	char	message[256];
+	const char **voiceChats;
+	const char **buttons;
 
 	if (event != QM_ACTIVATED)
 		return;
@@ -277,12 +318,34 @@ static void UI_TeamOrdersMenu_ListEvent( void *ptr, int event ) {
 
 	if( id == ID_LIST_CTF_ORDERS ) {
 		Com_sprintf( message, sizeof(message), ctfMessages[selection], teamOrdersMenuInfo.botNames[teamOrdersMenuInfo.selectedBot] );
+		voiceChats = ctfVoiceChats;
+		buttons = ctfButtons;
 	}
 	else {
 		Com_sprintf( message, sizeof(message), teamMessages[selection], teamOrdersMenuInfo.botNames[teamOrdersMenuInfo.selectedBot] );
+		voiceChats = teamVoiceChats;
+		buttons = teamButtons;
 	}
 
-	trap_Cmd_ExecuteText( EXEC_APPEND, va( "say_team \"%s\"\n", message ) );
+	if (teamOrdersMenuInfo.selectedBot == 0) // Everyone
+	{
+		if (voiceChats[selection] != NULL && buttons[selection] != NULL)
+			trap_Cmd_ExecuteText( EXEC_APPEND, va( "cmd vsay_team %s; +button%s; wait; -button%s", voiceChats[selection], buttons[selection], buttons[selection] ));
+		else if (voiceChats[selection] != NULL)
+			trap_Cmd_ExecuteText( EXEC_APPEND, va( "cmd vsay_team %s", voiceChats[selection] ) );
+		else
+			trap_Cmd_ExecuteText( EXEC_APPEND, va( "say_team \"%s\"\n", message ) );
+	}
+	else
+	{
+		if (voiceChats[selection] != NULL && buttons[selection] != NULL)
+			trap_Cmd_ExecuteText( EXEC_APPEND, va( "cmd vtell %s %s; +button%s; wait; -button%s", teamOrdersMenuInfo.botNames[teamOrdersMenuInfo.selectedBot], voiceChats[selection], buttons[selection], buttons[selection] ) );
+		else if (voiceChats[selection] != NULL)
+			trap_Cmd_ExecuteText( EXEC_APPEND, va( "cmd vtell %s", voiceChats[selection] ) );
+		else
+			trap_Cmd_ExecuteText( EXEC_APPEND, va( "say_team \"%s\"\n", message ) );
+	}
+
 	UI_PopMenu();
 }
 

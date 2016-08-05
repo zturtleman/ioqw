@@ -502,7 +502,7 @@ void BroadcastTeamChange(gclient_t *client, int oldTeam) {
 SetTeam
 =======================================================================================================================================
 */
-void SetTeam(gentity_t *ent, char *s) {
+void SetTeam(gentity_t *ent, const char *s) {
 	int team, oldTeam;
 	gclient_t *client;
 	int clientNum;
@@ -543,7 +543,7 @@ void SetTeam(gentity_t *ent, char *s) {
 			team = PickTeam(clientNum);
 		}
 
-		if (g_teamForceBalance.integer) {
+		if (g_teamForceBalance.integer && !client->pers.localClient && !(ent->r.svFlags & SVF_BOT)) {
 			int counts[TEAM_NUM_TEAMS];
 
 			counts[TEAM_BLUE] = TeamCount(clientNum, TEAM_BLUE);
@@ -612,10 +612,14 @@ void SetTeam(gentity_t *ent, char *s) {
 	if (oldTeam == TEAM_RED || oldTeam == TEAM_BLUE) {
 		CheckTeamLeader(oldTeam);
 	}
-
-	BroadcastTeamChange(client, oldTeam);
 	// get and distribute relevant parameters
 	ClientUserinfoChanged(clientNum);
+	// player hasn't spawned yet, they sent teampref or g_teamAutoJoin is enabled
+	if (client->pers.connected != CON_CONNECTED) {
+		return;
+	}
+
+	BroadcastTeamChange(client, oldTeam);
 
 	ClientBegin(clientNum);
 }
@@ -652,24 +656,10 @@ void Cmd_Team_f(gentity_t *ent) {
 	int oldTeam;
 	char s[MAX_TOKEN_CHARS];
 
+	oldTeam = ent->client->sess.sessionTeam;
+
 	if (trap_Argc() != 2) {
-		oldTeam = ent->client->sess.sessionTeam;
-
-		switch (oldTeam) {
-			case TEAM_RED:
-				trap_SendServerCommand(ent - g_entities, "print \"Red team\n\"");
-				break;
-			case TEAM_BLUE:
-				trap_SendServerCommand(ent - g_entities, "print \"Blue team\n\"");
-				break;
-			case TEAM_FREE:
-				trap_SendServerCommand(ent - g_entities, "print \"Free team\n\"");
-				break;
-			case TEAM_SPECTATOR:
-				trap_SendServerCommand(ent - g_entities, "print \"Spectator team\n\"");
-				break;
-		}
-
+		trap_SendServerCommand(ent - g_entities, va("print \"You are on the %s team.\n\"", TeamName(oldTeam)));
 		return;
 	}
 
@@ -686,7 +676,9 @@ void Cmd_Team_f(gentity_t *ent) {
 
 	SetTeam(ent, s);
 
-	ent->client->switchTeamTime = level.time + 5000;
+	if (oldTeam != ent->client->sess.sessionTeam) {
+		ent->client->switchTeamTime = level.time + 5000;
+	}
 }
 
 /*
@@ -1230,9 +1222,9 @@ void Cmd_Where_f(gentity_t *ent) {
 }
 
 static const char *gameNames[] = {
+	"Single Player",
 	"Free For All",
 	"Tournament",
-	"Single Player",
 	"Team Deathmatch",
 	"Capture the Flag",
 	"One Flag CTF",
@@ -1302,13 +1294,13 @@ void Cmd_CallVote_f(gentity_t *ent) {
 	// if there is still a vote to be executed
 	if (level.voteExecuteTime) {
 		level.voteExecuteTime = 0;
-		trap_SendConsoleCommand(EXEC_APPEND, va("%s\n", level.voteString));
+		trap_Cmd_ExecuteText(EXEC_APPEND, va("%s\n", level.voteString));
 	}
 	// special case for g_gametype, check for bad values
 	if (!Q_stricmp(arg1, "g_gametype")) {
 		i = atoi(arg2);
 
-		if (i == GT_SINGLE_PLAYER || i < GT_FFA || i >= GT_MAX_GAME_TYPE) {
+		if (i == GT_SINGLE_PLAYER || i < 0 || i >= GT_MAX_GAME_TYPE) {
 			trap_SendServerCommand(ent - g_entities, "print \"Invalid gametype.\n\"");
 			return;
 		}

@@ -2001,6 +2001,8 @@ CG_DrawVote
 static void CG_DrawVote(void) {
 	char *s;
 	int sec;
+	char yesKeys[64];
+	char noKeys[64];
 
 	if (!cgs.voteTime) {
 		return;
@@ -2016,16 +2018,12 @@ static void CG_DrawVote(void) {
 	if (sec < 0) {
 		sec = 0;
 	}
-#ifdef MISSIONPACK
-	s = va("VOTE(%i):%s yes:%i no:%i", sec, cgs.voteString, cgs.voteYes, cgs.voteNo);
-	CG_DrawSmallString(0, 58, s, 1.0F);
 
-	s = "or press ESC then click Vote";
-	CG_DrawSmallString(0, 58 + SMALLCHAR_HEIGHT + 2, s, 1.0F);
-#else
-	s = va("VOTE(%i):%s yes:%i no:%i", sec, cgs.voteString, cgs.voteYes, cgs.voteNo);
+	CG_KeysStringForBinding("vote yes", yesKeys, sizeof(yesKeys));
+	CG_KeysStringForBinding("vote no", noKeys, sizeof(noKeys));
+
+	s = va("Vote (%i): %s. Yes: %i, No: %i. Press %s to vote for Yes or %s to vote for No (or press ESC then click Vote).", sec, cgs.voteString, cgs.voteYes, cgs.voteNo, yesKeys, noKeys);
 	CG_DrawSmallString(0, 58, s, 1.0F);
-#endif
 }
 
 /*
@@ -2036,6 +2034,8 @@ CG_DrawTeamVote
 static void CG_DrawTeamVote(void) {
 	char *s;
 	int sec, cs_offset;
+	char yesKeys[64];
+	char noKeys[64];
 
 	if (cgs.clientinfo[cg.clientNum].team == TEAM_RED) {
 		cs_offset = 0;
@@ -2060,7 +2060,10 @@ static void CG_DrawTeamVote(void) {
 		sec = 0;
 	}
 
-	s = va("TEAMVOTE(%i):%s yes:%i no:%i", sec, cgs.teamVoteString[cs_offset], cgs.teamVoteYes[cs_offset], cgs.teamVoteNo[cs_offset]);
+	CG_KeysStringForBinding("vote yes", yesKeys, sizeof(yesKeys));
+	CG_KeysStringForBinding("vote no", noKeys, sizeof(noKeys));
+
+	s = va("TEAMVOTE (%i): %s. Yes: %i, No: %i. Press %s to vote for Yes or %s to vote for No (or press ESC then click Vote).", sec, cgs.teamVoteString[cs_offset], cgs.teamVoteYes[cs_offset], cgs.teamVoteNo[cs_offset], yesKeys, noKeys);
 	CG_DrawSmallString(0, 90, s, 1.0F);
 }
 
@@ -2117,6 +2120,8 @@ static qboolean CG_DrawScoreboard(void) {
 		if (firstTime) {
 			CG_SetScoreSelection(menuScoreboard);
 			firstTime = qfalse;
+			// Update time now to prevent spectator list from jumping.
+			cg.spectatorTime = trap_Milliseconds();
 		}
 
 		Menu_Paint(menuScoreboard, qtrue);
@@ -2156,6 +2161,60 @@ static void CG_DrawIntermission(void) {
 
 /*
 =======================================================================================================================================
+CG_DrawBotInfo
+
+Draw info for bot that player is following.
+=======================================================================================================================================
+*/
+static qboolean CG_DrawBotInfo(int y) {
+	const char *info, *str, *leader, *carrying, *action;
+	int x;
+
+	if (!(cg.snap->ps.pm_flags & PMF_FOLLOW)) {
+		return qfalse;
+	}
+
+	info = CG_ConfigString(CS_BOTINFO + cg.snap->ps.clientNum);
+
+	if (!*info) {
+		return qfalse;
+	}
+
+	action = Info_ValueForKey(info, "a");
+
+	if (*action) {
+		x = 0.5 * (640 - BIGCHAR_WIDTH * CG_DrawStrlen(action));
+
+		CG_DrawBigString(x, y, action, 1.0F);
+
+		y += BIGCHAR_HEIGHT + 2;
+	}
+
+	leader = Info_ValueForKey(info, "l");
+
+	if (*leader) {
+		str = "Bot is leader.";
+		x = 0.5 * (640 - BIGCHAR_WIDTH * CG_DrawStrlen(str));
+
+		CG_DrawBigString(x, y, str, 1.0F);
+
+		y += BIGCHAR_HEIGHT + 2;
+	}
+
+	carrying = Info_ValueForKey(info, "c");
+
+	if (*carrying) {
+		str = va("Bot carrying: %s.", carrying);
+		x = 0.5 * (640 - BIGCHAR_WIDTH * CG_DrawStrlen(str));
+
+		CG_DrawBigString(x, y, str, 1.0F);
+	}
+
+	return qtrue;
+}
+
+/*
+=======================================================================================================================================
 CG_DrawFollow
 =======================================================================================================================================
 */
@@ -2179,6 +2238,9 @@ static qboolean CG_DrawFollow(void) {
 	x = 0.5 * (640 - GIANT_WIDTH * CG_DrawStrlen(name));
 
 	CG_DrawStringExt(x, 40, name, color, qtrue, qtrue, GIANT_WIDTH, GIANT_HEIGHT, 0);
+
+	CG_DrawBotInfo(40 + GIANT_HEIGHT);
+
 	return qtrue;
 }
 

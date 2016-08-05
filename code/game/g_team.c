@@ -767,19 +767,10 @@ int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team) {
 
 	cl->ps.powerups[enemy_flag] = 0;
 
-	teamgame.last_flag_capture = level.time;
-	teamgame.last_capture_team = team;
-	// Increase the team's score
-	AddTeamScore(ent->s.pos.trBase, other->client->sess.sessionTeam, 1);
-
-	Team_ForceGesture(other->client->sess.sessionTeam);
-
 	other->client->rewardTime = level.time + REWARD_SPRITE_TIME;
 	other->client->ps.persistant[PERS_CAPTURES]++;
 	// other gets another 10 frag bonus
 	AddScore(other, ent->r.currentOrigin, CTF_CAPTURE_BONUS);
-
-	Team_CaptureFlagSound(ent, team);
 	// Ok, let's do the player loop, hand out the bonuses
 	for (i = 0; i < g_maxclients.integer; i++) {
 		player = &g_entities[i];
@@ -809,9 +800,16 @@ int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team) {
 		}
 	}
 
-	Team_ResetFlags();
+	teamgame.last_flag_capture = level.time;
+	teamgame.last_capture_team = team;
+	// Increase the team's score
+	AddTeamScore(ent->s.pos.trBase, other->client->sess.sessionTeam, 1);
 
 	CalculateRanks();
+
+	Team_ResetFlags();
+	Team_CaptureFlagSound(ent, team);
+	Team_ForceGesture(other->client->sess.sessionTeam);
 
 	return 0; // Do not respawn this automatically
 }
@@ -1263,12 +1261,6 @@ static void ObeliskDie(gentity_t *self, gentity_t *inflictor, gentity_t *attacke
 
 	otherTeam = OtherTeam(self->spawnflags);
 
-	AddTeamScore(self->s.pos.trBase, otherTeam, 1);
-
-	Team_ForceGesture(otherTeam);
-
-	CalculateRanks();
-
 	self->takedamage = qfalse;
 	self->think = ObeliskRespawn;
 	self->nextthink = level.time + g_obeliskRespawnDelay.integer * 1000;
@@ -1285,6 +1277,13 @@ static void ObeliskDie(gentity_t *self, gentity_t *inflictor, gentity_t *attacke
 		attacker->client->rewardTime = level.time + REWARD_SPRITE_TIME;
 		attacker->client->ps.persistant[PERS_CAPTURES]++;
 	}
+
+	AddTeamScore(self->s.pos.trBase, otherTeam, 1);
+
+	CalculateRanks();
+
+	Team_CaptureFlagSound(self, self->spawnflags);
+	Team_ForceGesture(otherTeam);
 
 	teamgame.redObeliskAttackedTime = 0;
 	teamgame.blueObeliskAttackedTime = 0;
@@ -1314,19 +1313,17 @@ static void ObeliskTouch(gentity_t *self, gentity_t *other, trace_t *trace) {
 
 	PrintMsg(NULL, "%s" S_COLOR_WHITE " brought in %i skull%s.\n", other->client->pers.netname, tokens, tokens ? "s" : "");
 
-	AddTeamScore(self->s.pos.trBase, other->client->sess.sessionTeam, tokens);
-
-	Team_ForceGesture(other->client->sess.sessionTeam);
-
-	AddScore(other, self->r.currentOrigin, CTF_CAPTURE_BONUS * tokens);
-
 	other->client->rewardTime = level.time + REWARD_SPRITE_TIME;
 	other->client->ps.persistant[PERS_CAPTURES] += tokens;
 	other->client->ps.tokens = 0;
 
+	AddScore(other, self->r.currentOrigin, CTF_CAPTURE_BONUS * tokens);
+	AddTeamScore(self->s.pos.trBase, other->client->sess.sessionTeam, tokens);
+
 	CalculateRanks();
 
 	Team_CaptureFlagSound(self, self->spawnflags);
+	Team_ForceGesture(other->client->sess.sessionTeam);
 }
 
 /*
