@@ -330,10 +330,10 @@ intptr_t SV_GameSystemCalls(intptr_t *args) {
 	switch (args[0]) {
 		case TRAP_MEMSET:
 			Com_Memset(VMA(1), args[2], args[3]);
-			return 0;
+			return args[1];
 		case TRAP_MEMCPY:
 			Com_Memcpy(VMA(1), VMA(2), args[3]);
-			return 0;
+			return args[1];
 		case TRAP_STRNCPY:
 			strncpy(VMA(1), VMA(2), args[3]);
 			return args[1];
@@ -415,9 +415,6 @@ intptr_t SV_GameSystemCalls(intptr_t *args) {
 		case G_CVAR_INFO_STRING_BUFFER:
 			Cvar_InfoStringBuffer(args[1], VMA(2), args[3]);
 			return 0;
-		case G_CVAR_CHECK_RANGE:
-			Cvar_CheckRangeSafe(VMA(1), VMF(2), VMF(3), args[4]);
-			return 0;
 		case G_ARGC:
 			return Cmd_Argc();
 		case G_ARGV:
@@ -429,11 +426,9 @@ intptr_t SV_GameSystemCalls(intptr_t *args) {
 		case G_FS_FOPEN_FILE:
 			return FS_FOpenFileByMode(VMA(1), VMA(2), args[3]);
 		case G_FS_READ:
-			FS_Read2(VMA(1), args[2], args[3]);
-			return 0;
+			return FS_Read2(VMA(1), args[2], args[3]);
 		case G_FS_WRITE:
-			FS_Write(VMA(1), args[2], args[3]);
-			return 0;
+			return FS_Write(VMA(1), args[2], args[3]);
 		case G_FS_SEEK:
 			return FS_Seek(args[1], args[2], args[3]);
 		case G_FS_FCLOSE_FILE:

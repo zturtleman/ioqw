@@ -714,10 +714,10 @@ intptr_t CL_UISystemCalls(intptr_t *args) {
 	switch (args[0]) {
 		case TRAP_MEMSET:
 			Com_Memset(VMA(1), args[2], args[3]);
-			return 0;
+			return args[1];
 		case TRAP_MEMCPY:
 			Com_Memcpy(VMA(1), VMA(2), args[3]);
-			return 0;
+			return args[1];
 		case TRAP_STRNCPY:
 			strncpy(VMA(1), VMA(2), args[3]);
 			return args[1];
@@ -806,9 +806,6 @@ intptr_t CL_UISystemCalls(intptr_t *args) {
 			return 0;
 		case UI_CVAR_INFO_STRING_BUFFER:
 			Cvar_InfoStringBuffer(args[1], VMA(2), args[3]);
-			return 0;
-		case UI_CVAR_CHECK_RANGE:
-			Cvar_CheckRangeSafe(VMA(1), VMF(2), VMF(3), args[4]);
 			return 0;
 		case UI_FS_FOPENFILE:
 			return FS_FOpenFileByMode(VMA(1), VMA(2), args[3]);

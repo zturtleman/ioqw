@@ -39,12 +39,12 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define MFL_SWIMMING		   4 // bot is swimming
 #define MFL_AGAINSTLADDER	   8 // bot is against a ladder
 #define MFL_WATERJUMP		  16 // bot is waterjumping
-#define MFL_TELEPORTED		  32 //bot is being teleported
-#define MFL_GRAPPLEPULL		  64 //bot is being pulled by the grapple
-#define MFL_GRAPPLEEXISTS	 128 //bot grappling hook entity exists
-#define MFL_ACTIVEGRAPPLE	 256 //bot is using the grapple hook
-#define MFL_GRAPPLERESET	 512 //bot has reset the grapple
-#define MFL_WALK			1024 //bot should walk slowly
+#define MFL_TELEPORTED		  32 // bot is being teleported
+#define MFL_GRAPPLEPULL		  64 // bot is being pulled by the grapple
+#define MFL_GRAPPLEEXISTS	 128 // bot grappling hook entity exists
+#define MFL_ACTIVEGRAPPLE	 256 // bot is using the grapple hook
+#define MFL_GRAPPLERESET	 512 // bot has reset the grapple
+#define MFL_WALK			1024 // bot should walk slowly
 // move result flags
 #define MOVERESULT_MOVEMENTVIEW			  1 // bot uses view for movement
 #define MOVERESULT_SWIMVIEW				  2 // bot uses view for swimming

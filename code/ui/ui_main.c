@@ -1076,10 +1076,17 @@ static void UI_DrawGameType(rectDef_t *rect, float scale, vec4_t color, int text
 }
 
 static void UI_DrawNetGameType(rectDef_t *rect, float scale, vec4_t color, int textStyle) {
+	if (ui_netGameType.integer < 0 || ui_netGameType.integer > uiInfo.numGameTypes) {
+		trap_Cvar_SetValue("ui_netGameType", 0);
+		trap_Cvar_SetValue("ui_actualNetGameType", 0);
+	}
   Text_Paint(rect->x, rect->y, scale, color, uiInfo.gameTypes[ui_netGameType.integer].gameType , 0, 0, textStyle);
 }
 
 static void UI_DrawJoinGameType(rectDef_t *rect, float scale, vec4_t color, int textStyle) {
+	if (ui_joinGameType.integer < 0 || ui_joinGameType.integer > uiInfo.numJoinGameTypes) {
+		trap_Cvar_SetValue("ui_joinGameType", 0);
+	}
   Text_Paint(rect->x, rect->y, scale, color, uiInfo.joinGameTypes[ui_joinGameType.integer].gameType , 0, 0, textStyle);
 }
 
@@ -1216,6 +1223,16 @@ static void UI_DrawEffects(rectDef_t *rect, float scale, vec4_t color) {
 
 static void UI_DrawMapPreview(rectDef_t *rect, float scale, vec4_t color, qboolean net) {
 	int map = (net) ? ui_currentNetMap.integer : ui_currentMap.integer;
+	if (map < 0 || map > uiInfo.mapCount) {
+		if (net) {
+			ui_currentNetMap.integer = 0;
+			trap_Cvar_SetValue("ui_currentNetMap", 0);
+		} else {
+			ui_currentMap.integer = 0;
+			trap_Cvar_SetValue("ui_currentMap", 0);
+		}
+		map = 0;
+	}
 
 	if (uiInfo.mapList[map].levelShot == -1) {
 		uiInfo.mapList[map].levelShot = trap_R_RegisterShaderNoMip(uiInfo.mapList[map].imageName);
@@ -1231,6 +1248,10 @@ static void UI_DrawMapPreview(rectDef_t *rect, float scale, vec4_t color, qboole
 
 static void UI_DrawMapTimeToBeat(rectDef_t *rect, float scale, vec4_t color, int textStyle) {
 	int minutes, seconds, time;
+	if (ui_currentMap.integer < 0 || ui_currentMap.integer > uiInfo.mapCount) {
+		ui_currentMap.integer = 0;
+		trap_Cvar_SetValue("ui_currentMap", 0);
+	}
 
 	time = uiInfo.mapList[ui_currentMap.integer].timeToBeat[uiInfo.gameTypes[ui_gameType.integer].gtEnum];
 
@@ -1245,6 +1266,16 @@ static void UI_DrawMapTimeToBeat(rectDef_t *rect, float scale, vec4_t color, int
 static void UI_DrawMapCinematic(rectDef_t *rect, float scale, vec4_t color, qboolean net) {
 
 	int map = (net) ? ui_currentNetMap.integer : ui_currentMap.integer; 
+	if (map < 0 || map > uiInfo.mapCount) {
+		if (net) {
+			ui_currentNetMap.integer = 0;
+			trap_Cvar_SetValue("ui_currentNetMap", 0);
+		} else {
+			ui_currentMap.integer = 0;
+			trap_Cvar_SetValue("ui_currentMap", 0);
+		}
+		map = 0;
+	}
 
 	if (uiInfo.mapList[map].cinematic >= -1) {
 		if (uiInfo.mapList[map].cinematic == -1) {
@@ -1326,6 +1357,11 @@ static void UI_DrawNetMapPreview(rectDef_t *rect, float scale, vec4_t color) {
 }
 
 static void UI_DrawNetMapCinematic(rectDef_t *rect, float scale, vec4_t color) {
+	if (ui_currentNetMap.integer < 0 || ui_currentNetMap.integer > uiInfo.mapCount) {
+		ui_currentNetMap.integer = 0;
+		trap_Cvar_SetValue("ui_currentNetMap", 0);
+	}
+
 	if (uiInfo.serverStatus.currentServerCinematic >= 0) {
 	  trap_CIN_RunCinematic(uiInfo.serverStatus.currentServerCinematic);
 	  trap_CIN_SetExtents(uiInfo.serverStatus.currentServerCinematic, rect->x, rect->y, rect->w, rect->h);
@@ -3307,7 +3343,7 @@ static void UI_RunMenuScript(char **args) {
 			UI_StartSkirmish(qfalse);
 		} else if (Q_stricmp(name, "closeingame") == 0) {
 			trap_Key_SetCatcher( trap_Key_GetCatcher() & ~KEYCATCH_UI );
-			trap_Cvar_SetValue( "cl_paused", 0 ); 
+			trap_Cvar_SetValue( "cl_paused", 0 );
 			Menus_CloseAll();
 		} else if (Q_stricmp(name, "voteMap") == 0) {
 			if (ui_currentNetMap.integer >=0 && ui_currentNetMap.integer < uiInfo.mapCount) {
@@ -3410,7 +3446,7 @@ static void UI_RunMenuScript(char **args) {
 					}
 				}
 				trap_Key_SetCatcher( trap_Key_GetCatcher() & ~KEYCATCH_UI );
-				trap_Cvar_SetValue( "cl_paused", 0 ); 
+				trap_Cvar_SetValue( "cl_paused", 0 );
 				Menus_CloseAll();
 			}
 		} else if (Q_stricmp(name, "voiceOrdersTeam") == 0) {
@@ -3422,7 +3458,7 @@ static void UI_RunMenuScript(char **args) {
 					trap_Cmd_ExecuteText( EXEC_APPEND, "\n" );
 				}
 				trap_Key_SetCatcher( trap_Key_GetCatcher() & ~KEYCATCH_UI );
-				trap_Cvar_SetValue( "cl_paused", 0 ); 
+				trap_Cvar_SetValue( "cl_paused", 0 );
 				Menus_CloseAll();
 			}
 		} else if (Q_stricmp(name, "voiceOrders") == 0) {
@@ -3435,7 +3471,7 @@ static void UI_RunMenuScript(char **args) {
 					trap_Cmd_ExecuteText( EXEC_APPEND, "\n" );
 				}
 				trap_Key_SetCatcher( trap_Key_GetCatcher() & ~KEYCATCH_UI );
-				trap_Cvar_SetValue( "cl_paused", 0 ); 
+				trap_Cvar_SetValue( "cl_paused", 0 );
 				Menus_CloseAll();
 			}
 		} else if (Q_stricmp(name, "glCustom") == 0) {
@@ -4797,20 +4833,17 @@ static void UI_ParseGameInfo(const char *teamFile) {
 		}
 
 	}
-
-	trap_Cvar_CheckRange( "ui_netGameType", 0, uiInfo.numGameTypes-1, qtrue );
-	trap_Cvar_CheckRange( "ui_joinGameType", 0, uiInfo.numJoinGameTypes-1, qtrue );
 }
 
 static void UI_Pause(qboolean b) {
 	if (b) {
 		// pause the game and set the ui keycatcher
-	  trap_Cvar_SetValue( "cl_paused", 1 ); 
+	  trap_Cvar_SetValue( "cl_paused", 1 );
 		trap_Key_SetCatcher( KEYCATCH_UI );
 	} else {
 		// unpause the game and clear the ui keycatcher
 		trap_Key_SetCatcher( trap_Key_GetCatcher() & ~KEYCATCH_UI );
-		trap_Cvar_SetValue( "cl_paused", 0 ); 
+		trap_Cvar_SetValue( "cl_paused", 0 );
 	}
 }
 
@@ -5096,7 +5129,7 @@ void _UI_KeyEvent( int key, qboolean down ) {
 			}
 		} else {
 			trap_Key_SetCatcher( trap_Key_GetCatcher() & ~KEYCATCH_UI );
-			trap_Cvar_SetValue( "cl_paused", 0 ); 
+			trap_Cvar_SetValue( "cl_paused", 0 );
 		}
   }
 
@@ -5153,7 +5186,7 @@ void _UI_SetActiveMenu( uiMenuCommand_t menu ) {
 	  switch ( menu ) {
 	  case UIMENU_NONE:
 			trap_Key_SetCatcher( trap_Key_GetCatcher() & ~KEYCATCH_UI );
-			trap_Cvar_SetValue( "cl_paused", 0 ); 
+			trap_Cvar_SetValue( "cl_paused", 0 );
 			Menus_CloseAll();
 
 		  return;
@@ -5190,7 +5223,7 @@ void _UI_SetActiveMenu( uiMenuCommand_t menu ) {
 			Menus_ActivateByName("endofgame");
 		  return;
 	  case UIMENU_INGAME:
-		  trap_Cvar_SetValue( "cl_paused", 1 ); 
+		  trap_Cvar_SetValue( "cl_paused", 1 );
 			trap_Key_SetCatcher( KEYCATCH_UI );
 			UI_BuildPlayerList();
 			Menus_CloseAll();
@@ -5741,8 +5774,6 @@ void UI_RegisterCvars( void ) {
 	for ( i = 0, cv = cvarTable ; i < cvarTableSize ; i++, cv++ ) {
 		trap_Cvar_Register( cv->vmCvar, cv->cvarName, cv->defaultString, cv->cvarFlags );
 	}
-
-	trap_Cvar_CheckRange( "ui_actualNetGameType", 0, GT_MAX_GAME_TYPE-1, qtrue );
 }
 
 /*

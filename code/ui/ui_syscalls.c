@@ -111,10 +111,6 @@ void trap_Cvar_InfoStringBuffer( int bit, char *buffer, int bufsize ) {
 	syscall( UI_CVAR_INFO_STRING_BUFFER, bit, buffer, bufsize );
 }
 
-void trap_Cvar_CheckRange( const char *var_name, float min, float max, qboolean integral ) {
-	syscall( UI_CVAR_CHECK_RANGE, var_name, PASSFLOAT(min), PASSFLOAT(max), integral );
-}
-
 int trap_Argc( void ) {
 	return syscall( UI_ARGC );
 }
@@ -135,12 +131,12 @@ int trap_FS_FOpenFile( const char *qpath, fileHandle_t *f, fsMode_t mode ) {
 	return syscall( UI_FS_FOPENFILE, qpath, f, mode );
 }
 
-void trap_FS_Read( void *buffer, int len, fileHandle_t f ) {
-	syscall( UI_FS_READ, buffer, len, f );
+int trap_FS_Read( void *buffer, int len, fileHandle_t f ) {
+	return syscall( UI_FS_READ, buffer, len, f );
 }
 
-void trap_FS_Write( const void *buffer, int len, fileHandle_t f ) {
-	syscall( UI_FS_WRITE, buffer, len, f );
+int trap_FS_Write( const void *buffer, int len, fileHandle_t f ) {
+	return syscall( UI_FS_WRITE, buffer, len, f );
 }
 
 int trap_FS_Seek( fileHandle_t f, long offset, int origin ) {

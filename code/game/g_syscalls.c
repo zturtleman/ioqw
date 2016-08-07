@@ -123,8 +123,8 @@ int trap_FS_FOpenFile(const char *qpath, fileHandle_t *f, fsMode_t mode) {
 trap_FS_Read
 =======================================================================================================================================
 */
-void trap_FS_Read(void *buffer, int len, fileHandle_t f) {
-	syscall(G_FS_READ, buffer, len, f);
+int trap_FS_Read(void *buffer, int len, fileHandle_t f) {
+	return syscall(G_FS_READ, buffer, len, f);
 }
 
 /*
@@ -132,8 +132,8 @@ void trap_FS_Read(void *buffer, int len, fileHandle_t f) {
 trap_FS_Write
 =======================================================================================================================================
 */
-void trap_FS_Write(const void *buffer, int len, fileHandle_t f) {
-	syscall(G_FS_WRITE, buffer, len, f);
+int trap_FS_Write(const void *buffer, int len, fileHandle_t f) {
+	return syscall(G_FS_WRITE, buffer, len, f);
 }
 
 /*
@@ -272,15 +272,6 @@ trap_Cvar_InfoStringBuffer
 */
 void trap_Cvar_InfoStringBuffer(int bit, char *buffer, int bufsize) {
 	syscall(G_CVAR_INFO_STRING_BUFFER, bit, buffer, bufsize);
-}
-
-/*
-=======================================================================================================================================
-trap_Cvar_CheckRange
-=======================================================================================================================================
-*/
-void trap_Cvar_CheckRange(const char *var_name, float min, float max, qboolean integral) {
-	syscall(G_CVAR_CHECK_RANGE, var_name, PASSFLOAT(min), PASSFLOAT(max), integral);
 }
 
 /*

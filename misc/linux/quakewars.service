@@ -5,7 +5,7 @@ Description=This service spawns a Quake Wars dedicated server with sane defaults
 
 [Service]
 User=quakewars
-ExecStart=$(which quakewars.x86_64) +set sv_public 1
+ExecStart=$(which quakewars-server.x86_64) +set sv_public 1
 Restart=on-abort
 # there are several options to tweak the server's performance:
 # net_port defines the UDP-port used for connections to the server.

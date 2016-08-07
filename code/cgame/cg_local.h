@@ -656,6 +656,7 @@ typedef struct {
 	qhandle_t scoreboardScore;
 	qhandle_t scoreboardTime;
 	// sounds
+	sfxHandle_t itemPickupSounds[MAX_ITEMS];
 	sfxHandle_t quadSound;
 	sfxHandle_t tracerSound;
 	sfxHandle_t selectSound;
