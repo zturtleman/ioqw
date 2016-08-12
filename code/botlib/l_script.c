@@ -1041,18 +1041,14 @@ int PS_ExpectTokenType(script_t *script, int type, int subtype, token_t *token) 
 
 			if (subtype & TT_DECIMAL) {
 				strcpy(str, "decimal");
-			}
-
-			if (subtype & TT_HEX) {
+			} else if (subtype & TT_HEX) {
 				strcpy(str, "hex");
-			}
-
-			if (subtype & TT_OCTAL) {
+			} else if (subtype & TT_OCTAL) {
 				strcpy(str, "octal");
-			}
-
-			if (subtype & TT_BINARY) {
+			} else if (subtype & TT_BINARY) {
 				strcpy(str, "binary");
+			} else {
+				strcpy(str, "unknown");
 			}
 
 			if (subtype & TT_LONG) {

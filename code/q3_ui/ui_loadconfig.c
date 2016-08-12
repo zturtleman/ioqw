@@ -202,7 +202,7 @@ static void LoadConfig_MenuInit(void) {
 	s_configs.list.columns = 3;
 
 	if (!s_configs.list.numitems) {
-		strcpy(s_configs.names,"No Files Found.");
+		strcpy(s_configs.names, "No Files Found.");
 		s_configs.list.numitems = 1;
 		// degenerate case, not selectable
 		s_configs.go.generic.flags |= (QMF_INACTIVE|QMF_HIDDEN);
@@ -217,7 +217,7 @@ static void LoadConfig_MenuInit(void) {
 		// strip extension
 		len = strlen(configname);
 
-		if (!Q_stricmp(configname + len - 4,".cfg")) {
+		if (!Q_stricmp(configname + len - 4, ".cfg")) {
 			configname[len - 4] = '\0';
 		}
 

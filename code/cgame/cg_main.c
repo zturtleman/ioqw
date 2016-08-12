@@ -275,9 +275,9 @@ static cvarTable_t cvarTable[] = {
 	{&cg_paused, "cl_paused", "0", CVAR_ROM},
 	{&cg_blood, "com_blood", "1", CVAR_ARCHIVE},
 	{&cg_synchronousClients, "g_synchronousClients", "0", CVAR_SYSTEMINFO},
-	{&cg_enableDust, "g_enableDust", "0", CVAR_SERVERINFO},
-	{&cg_enableBreath, "g_enableBreath", "0", CVAR_SERVERINFO},
-	{&cg_obeliskRespawnDelay, "g_obeliskRespawnDelay", "10", CVAR_SERVERINFO},
+	{&cg_enableDust, "cg_enableDust", "0", 0},
+	{&cg_enableBreath, "cg_enableBreath", "0", 0},
+	{&cg_obeliskRespawnDelay, "g_obeliskRespawnDelay", "10", CVAR_SYSTEMINFO},
 #ifdef MISSIONPACK
 	{&cg_redTeamName, "g_redteam", DEFAULT_REDTEAM_NAME, CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_USERINFO},
 	{&cg_blueTeamName, "g_blueteam", DEFAULT_BLUETEAM_NAME, CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_USERINFO},
@@ -1634,7 +1634,7 @@ static const char *CG_FeederItemText(float feederID, int index, int column, qhan
 
 				break;
 			case 2:
-				if (cg.snap->ps.stats[STAT_CLIENTS_READY] & (1 << sp->client)) {
+				if (Com_ClientListContains(&cg.readyPlayers, sp->client)) {
 					return "Ready";
 				}
 

@@ -830,11 +830,6 @@ void UI_SetActiveMenu(uiMenuCommand_t menu) {
 			UI_MainMenu();
 			return;
 		case UIMENU_INGAME:
-			/*
-			// GRank
-			UI_RankingsMenu();
-			return;
-			*/
 			trap_Cvar_SetValue("cl_paused", 1);
 			UI_InGameMenu();
 			return;

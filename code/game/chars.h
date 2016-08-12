@@ -148,6 +148,3 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define CHARACTERISTIC_CHAT_REPLY					53 // float [0, 1]
 // tendency to use the grapple hook when available
 #define CHARACTERISTIC_GRAPPLE_USER					54 // float [0, 1]
-//=====================================================================================================================================
-// max characteristics for game VM
-#define MAX_CHARACTERISTICS							55

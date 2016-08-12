@@ -307,6 +307,7 @@ char *modNames[] = {
 	"MOD_CRUSH",
 	"MOD_TARGET_LASER",
 	"MOD_SUICIDE",
+	"MOD_SUICIDE_TEAM_CHANGE",
 #ifdef MISSIONPACK
 	"MOD_JUICED",
 #endif
@@ -489,12 +490,15 @@ void PlayerDie(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int d
 	}
 
 	G_LogPrintf("Kill: %i %i %i: %s killed %s by %s\n", killer, self->s.number, meansOfDeath, killerName, self->client->pers.netname, obit);
-	// broadcast the death event to everyone
-	ent = G_TempEntity(self->r.currentOrigin, EV_OBITUARY);
-	ent->s.eventParm = meansOfDeath;
-	ent->s.otherEntityNum = self->s.number;
-	ent->s.otherEntityNum2 = killer;
-	ent->r.svFlags = SVF_BROADCAST; // send to everyone
+	// don't send death obituary when swiching teams
+	if (meansOfDeath != MOD_SUICIDE_TEAM_CHANGE) {
+		// broadcast the death event to everyone
+		ent = G_TempEntity(self->r.currentOrigin, EV_OBITUARY);
+		ent->s.eventParm = meansOfDeath;
+		ent->s.otherEntityNum = self->s.number;
+		ent->s.otherEntityNum2 = killer;
+		ent->r.svFlags = SVF_BROADCAST; // send to everyone
+	}
 
 	self->enemy = attacker;
 	self->client->ps.persistant[PERS_KILLED]++;
@@ -530,7 +534,7 @@ void PlayerDie(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int d
 	// Add team bonuses
 	Team_FragBonuses(self, inflictor, attacker);
 	// if I committed suicide, the flag does not fall, it returns.
-	if (meansOfDeath == MOD_SUICIDE) {
+	if (meansOfDeath == MOD_SUICIDE || meansOfDeath == MOD_SUICIDE_TEAM_CHANGE) {
 		if (self->client->ps.powerups[PW_NEUTRALFLAG]) { // only happens in One Flag CTF
 			Team_ReturnFlag(TEAM_FREE);
 			self->client->ps.powerups[PW_NEUTRALFLAG] = 0;
@@ -681,9 +685,9 @@ int RaySphereIntersections(vec3_t origin, float radius, vec3_t point, vec3_t dir
 	float b, c, d, t;
 
 	//	| origin - (point + t * dir)|= radius
-	//	a = dir[0]^2 + dir[1]^2 + dir[2]^2;
+	//	a = dir[0] ^ 2 + dir[1] ^ 2 + dir[2] ^ 2;
 	//	b = 2 * (dir[0] * (point[0] - origin[0]) + dir[1] * (point[1] - origin[1]) + dir[2] * (point[2] - origin[2]));
-	//	c = (point[0] - origin[0])^2 + (point[1] - origin[1])^2 + (point[2] - origin[2]) ^ 2 - radius ^ 2;
+	//	c = (point[0] - origin[0]) ^ 2 + (point[1] - origin[1]) ^ 2 + (point[2] - origin[2]) ^ 2 - radius ^ 2;
 	// normalize dir so a = 1
 	VectorNormalize(dir);
 
@@ -933,12 +937,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	// add to the damage inflicted on a player this frame
 	// the total will be turned into screen blends and view angle kicks at the end of the frame
 	if (client) {
-		if (attacker) {
-			client->ps.persistant[PERS_ATTACKER] = attacker->s.number;
-		} else {
-			client->ps.persistant[PERS_ATTACKER] = ENTITYNUM_WORLD;
-		}
-
+		client->ps.persistant[PERS_ATTACKER] = attacker->s.number;
 		client->damage_armor += asave;
 		client->damage_blood += take;
 		client->damage_knockback += knockback;

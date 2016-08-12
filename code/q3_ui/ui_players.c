@@ -290,7 +290,7 @@ static qboolean UI_PositionEntityOnTag(refEntity_t *entity, const refEntity_t *p
 		VectorMA(entity->origin, lerped.origin[i], parent->axis[i], entity->origin);
 	}
 	// cast away const because of compiler problems
-	MatrixMultiply(lerped.axis, ((refEntity_t*)parent)->axis, entity->axis);
+	MatrixMultiply(lerped.axis, ((refEntity_t *)parent)->axis, entity->axis);
 	entity->backlerp = parent->backlerp;
 	return returnValue;
 }

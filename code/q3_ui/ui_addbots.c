@@ -198,7 +198,7 @@ static int QDECL UI_AddBotsMenu_SortCompare(const void *arg1, const void *arg2) 
 	name2 = Info_ValueForKey(info2, "name");
 	// put random option first
 	if (Q_stricmp(name1, "Random") == 0) {
-		return - 1;
+		return -1;
 	}
 
 	if (Q_stricmp(name2, "Random") == 0) {
@@ -257,7 +257,7 @@ static void UI_AddBotsMenu_Init(void) {
 	char info[MAX_INFO_STRING];
 
 	trap_GetConfigString(CS_SERVERINFO, info, MAX_INFO_STRING);
-	gametype = atoi(Info_ValueForKey(info,"g_gametype"));
+	gametype = atoi(Info_ValueForKey(info, "g_gametype"));
 
 	memset(&addBotsMenuInfo, 0, sizeof(addBotsMenuInfo));
 

@@ -319,7 +319,6 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 	gentity_t *ent;
 	int flag_pw, enemy_flag_pw;
 	int otherteam;
-	int tokens;
 	gentity_t *flag, *carrier = NULL;
 	char *c;
 	vec3_t v1, v2;
@@ -349,12 +348,6 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 		enemy_flag_pw = PW_NEUTRALFLAG;
 	} 
 	// did the attacker frag the flag carrier?
-	tokens = 0;
-
-	if (g_gametype.integer == GT_HARVESTER) {
-		tokens = targ->client->ps.tokens;
-	}
-
 	if (targ->client->ps.powerups[enemy_flag_pw]) {
 		attacker->client->pers.teamState.lastfraggedcarrier = level.time;
 
@@ -372,8 +365,10 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 
 		return;
 	}
-	// did the attacker frag a head carrier?
-	if (tokens) {
+	// did the attacker frag a skull carrier?
+	if (g_gametype.integer == GT_HARVESTER && targ->client->ps.tokens) {
+		int tokens = targ->client->ps.tokens;
+
 		attacker->client->pers.teamState.lastfraggedcarrier = level.time;
 
 		AddScore(attacker, targ->r.currentOrigin, CTF_FRAG_CARRIER_BONUS * tokens * tokens);
@@ -760,9 +755,9 @@ int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team) {
 	}
 
 	if (g_gametype.integer == GT_1FCTF) {
-		PrintMsg(NULL, "%s" S_COLOR_WHITE " captured the flag!\n", cl->pers.netname);
+		trap_SendServerCommand(-1, va("cp \"%s" S_COLOR_WHITE "\ncaptured the flag!\n\"", cl->pers.netname));
 	} else {
-		PrintMsg(NULL, "%s" S_COLOR_WHITE " captured the %s flag!\n", cl->pers.netname, TeamName(OtherTeam(team)));
+		trap_SendServerCommand(-1, va("cp \"%s" S_COLOR_WHITE "\ncaptured the %s flag!\n\"", cl->pers.netname, TeamName(OtherTeam(team))));
 	}
 
 	cl->ps.powerups[enemy_flag] = 0;
@@ -1287,6 +1282,8 @@ static void ObeliskDie(gentity_t *self, gentity_t *inflictor, gentity_t *attacke
 
 	teamgame.redObeliskAttackedTime = 0;
 	teamgame.blueObeliskAttackedTime = 0;
+
+	trap_SendServerCommand(-1, va("cp \"%s" S_COLOR_WHITE "\ndestroyed the %s obelisk!\n\"", attacker->client->pers.netname, TeamName(self->spawnflags)));
 }
 
 /*
@@ -1296,12 +1293,15 @@ ObeliskTouch
 */
 static void ObeliskTouch(gentity_t *self, gentity_t *other, trace_t *trace) {
 	int tokens;
+	team_t otherTeam;
 
 	if (!other->client) {
 		return;
 	}
 
-	if (OtherTeam(other->client->sess.sessionTeam) != self->spawnflags) {
+	otherTeam = OtherTeam(other->client->sess.sessionTeam);
+
+	if (otherTeam != self->spawnflags) {
 		return;
 	}
 
@@ -1311,7 +1311,7 @@ static void ObeliskTouch(gentity_t *self, gentity_t *other, trace_t *trace) {
 		return;
 	}
 
-	PrintMsg(NULL, "%s" S_COLOR_WHITE " brought in %i skull%s.\n", other->client->pers.netname, tokens, tokens ? "s" : "");
+	trap_SendServerCommand(-1, va("cp \"%s" S_COLOR_WHITE "\nbrought in %i %s %s!\n\"", other->client->pers.netname, tokens, TeamName(otherTeam), (tokens == 1) ? "skull" : "skulls"));
 
 	other->client->rewardTime = level.time + REWARD_SPRITE_TIME;
 	other->client->ps.persistant[PERS_CAPTURES] += tokens;

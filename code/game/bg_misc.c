@@ -126,7 +126,7 @@ gitem_t bg_itemlist[] = {
 	{
 		"item_armor_shard",
 		"sound/misc/ar1_pkup.wav",
-		{"models/powerups/armor/shard.md3", "models/powerups/armor/shard_sphere.md3", NULL, NULL},
+		{"models/powerups/armor/shard.md3", NULL, NULL, NULL},
 /* icon */		"icons/iconr_shard",
 /* pickup */	"Armor Shard",
 		5,

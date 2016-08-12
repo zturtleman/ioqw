@@ -1032,7 +1032,7 @@ static void VM_CompileFunction(source_instruction_t * const i_first) {
 					prepareStack = 2;
 				}
 
-				in(iADDI, rPSTACK, rPSTACK, - i_now->arg.si);
+				in(iADDI, rPSTACK, rPSTACK, -i_now->arg.si);
 				break;
 			case OP_LEAVE:
 				if (i_const) {

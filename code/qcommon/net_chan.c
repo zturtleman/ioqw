@@ -116,11 +116,8 @@ void Netchan_TransmitNextFragment(netchan_t *chan) {
 	if (chan->sock == NS_CLIENT) {
 		MSG_WriteShort(&send, qport->integer);
 	}
-#ifdef LEGACY_PROTOCOL
-	if (!chan->compat)
-#endif
-		MSG_WriteLong(&send, NETCHAN_GENCHECKSUM(chan->challenge, chan->outgoingSequence));
 
+	MSG_WriteLong(&send, NETCHAN_GENCHECKSUM(chan->challenge, chan->outgoingSequence));
 	// copy the reliable message to the packet first
 	fragmentLength = FRAGMENT_SIZE;
 
@@ -184,10 +181,8 @@ void Netchan_Transmit(netchan_t *chan, int length, const byte *data) {
 	if (chan->sock == NS_CLIENT) {
 		MSG_WriteShort(&send, qport->integer);
 	}
-#ifdef LEGACY_PROTOCOL
-	if (!chan->compat)
-#endif
-		MSG_WriteLong(&send, NETCHAN_GENCHECKSUM(chan->challenge, chan->outgoingSequence));
+
+	MSG_WriteLong(&send, NETCHAN_GENCHECKSUM(chan->challenge, chan->outgoingSequence));
 
 	chan->outgoingSequence++;
 
@@ -214,7 +209,7 @@ copied out.
 =======================================================================================================================================
 */
 qboolean Netchan_Process(netchan_t *chan, msg_t *msg) {
-	int sequence;
+	int sequence, checksum;
 	int fragmentStart, fragmentLength;
 	qboolean fragmented;
 
@@ -222,6 +217,7 @@ qboolean Netchan_Process(netchan_t *chan, msg_t *msg) {
 //	Netchan_UnScramblePacket(msg);
 	// get sequence numbers
 	MSG_BeginReadingOOB(msg);
+
 	sequence = MSG_ReadLong(msg);
 	// check for fragment information
 	if (sequence & FRAGMENT_BIT) {
@@ -234,15 +230,11 @@ qboolean Netchan_Process(netchan_t *chan, msg_t *msg) {
 	if (chan->sock == NS_SERVER) {
 		MSG_ReadShort(msg);
 	}
-#ifdef LEGACY_PROTOCOL
-	if (!chan->compat)
-#endif
-	{
-		int checksum = MSG_ReadLong(msg);
-		// UDP spoofing protection
-		if (NETCHAN_GENCHECKSUM(chan->challenge, sequence) != checksum) {
-			return qfalse;
-		}
+
+	checksum = MSG_ReadLong(msg);
+	// UDP spoofing protection
+	if (NETCHAN_GENCHECKSUM(chan->challenge, sequence) != checksum) {
+		return qfalse;
 	}
 	// read the fragment information
 	if (fragmented) {

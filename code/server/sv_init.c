@@ -35,7 +35,13 @@ static void SV_SendConfigstring(client_t *client, int index) {
 	int maxChunkSize = MAX_STRING_CHARS - 24;
 	int len;
 
-	len = strlen(sv.configstrings[index]);
+	if (sv.configstrings[index].restricted && Com_ClientListContains(&sv.configstrings[index].clientList, client - svs.clients)) {
+		// Send a blank config string for this client if it's listed
+		SV_SendServerCommand(client, "cs %i \"\"\n", index);
+		return;
+	}
+
+	len = strlen(sv.configstrings[index].s);
 
 	if (len >= maxChunkSize) {
 		int sent = 0;
@@ -52,7 +58,7 @@ static void SV_SendConfigstring(client_t *client, int index) {
 				cmd = "bcs1";
 			}
 
-			Q_strncpyz(buf, &sv.configstrings[index][sent], maxChunkSize);
+			Q_strncpyz(buf, &sv.configstrings[index].s[sent], maxChunkSize);
 
 			SV_SendServerCommand(client, "%s %i \"%s\"\n", cmd, index, buf);
 
@@ -61,7 +67,7 @@ static void SV_SendConfigstring(client_t *client, int index) {
 		}
 	} else {
 		// standard cs, just send it
-		SV_SendServerCommand(client, "cs %i \"%s\"\n", index, sv.configstrings[index]);
+		SV_SendServerCommand(client, "cs %i \"%s\"\n", index, sv.configstrings[index].s);
 	}
 }
 
@@ -109,13 +115,13 @@ void SV_SetConfigstring(int index, const char *val) {
 		val = "";
 	}
 	// don't bother broadcasting an update if no change
-	if (!strcmp(val, sv.configstrings[index])) {
+	if (!strcmp(val, sv.configstrings[index].s)) {
 		return;
 	}
 	// change the string in sv
-	Z_Free(sv.configstrings[index]);
+	Z_Free(sv.configstrings[index].s);
 
-	sv.configstrings[index] = CopyString(val);
+	sv.configstrings[index].s = CopyString(val);
 	// send it to all the clients if we aren't spawning a new server
 	if (sv.state == SS_GAME || sv.restarting) {
 		// send the data to all relevant clients
@@ -152,12 +158,34 @@ void SV_GetConfigstring(int index, char *buffer, int bufferSize) {
 		Com_Error(ERR_DROP, "SV_GetConfigstring: bad index %i", index);
 	}
 
-	if (!sv.configstrings[index]) {
+	if (!sv.configstrings[index].s) {
 		buffer[0] = 0;
 		return;
 	}
 
-	Q_strncpyz(buffer, sv.configstrings[index], bufferSize);
+	Q_strncpyz(buffer, sv.configstrings[index].s, bufferSize);
+}
+
+/*
+=======================================================================================================================================
+SV_SetConfigstringRestrictions
+=======================================================================================================================================
+*/
+void SV_SetConfigstringRestrictions(int index, const clientList_t *clientList) {
+	int i;
+	clientList_t oldClientList = sv.configstrings[index].clientList;
+
+	sv.configstrings[index].clientList = *clientList;
+	sv.configstrings[index].restricted = qtrue;
+
+	for (i = 0; i < sv_maxclients->integer; i++) {
+		if (svs.clients[i].state >= CS_CONNECTED) {
+			if (Com_ClientListContains(&oldClientList, i) != Com_ClientListContains(clientList, i)) {
+				// A client has left or joined the restricted list, so update
+				SV_SendConfigstring(&svs.clients[i], index);
+			}
+		}
+	}
 }
 
 /*
@@ -350,8 +378,8 @@ static void SV_ClearServer(void) {
 	int i;
 
 	for (i = 0; i < MAX_CONFIGSTRINGS; i++) {
-		if (sv.configstrings[i]) {
-			Z_Free(sv.configstrings[i]);
+		if (sv.configstrings[i].s) {
+			Z_Free(sv.configstrings[i].s);
 		}
 	}
 
@@ -435,7 +463,10 @@ void SV_SpawnServer(char *server, qboolean killBots) {
 	SV_ClearServer();
 
 	for (i = 0; i < MAX_CONFIGSTRINGS; i++) {
-		sv.configstrings[i] = CopyString("");
+		sv.configstrings[i].s = CopyString("");
+		sv.configstrings[i].restricted = qfalse;
+
+		Com_Memset(&sv.configstrings[i].clientList, 0, sizeof(clientList_t));
 	}
 	// make sure we are not paused
 	Cvar_Set("cl_paused", "0");

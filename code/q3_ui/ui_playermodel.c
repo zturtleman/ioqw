@@ -312,7 +312,7 @@ static void PlayerModel_PicEvent(void *ptr, int event) {
 	// get model and strip icon_
 	modelnum = s_playermodel.modelpage * MAX_MODELSPERPAGE + i;
 	buffptr = s_playermodel.modelnames[modelnum] + strlen("models/players/");
-	pdest = strstr(buffptr,"icon_");
+	pdest = strstr(buffptr, "icon_");
 
 	if (pdest) {
 		// track the whole model/skin name
@@ -397,7 +397,7 @@ static void PlayerModel_BuildList(void) {
 			dirptr[dirlen - 1] = '\0';
 		}
 
-		if (!strcmp(dirptr,".") || !strcmp(dirptr,"..")) {
+		if (!strcmp(dirptr, ".") || !strcmp(dirptr, "..")) {
 			continue;
 		}
 		// iterate all skin files in directory
@@ -409,7 +409,7 @@ static void PlayerModel_BuildList(void) {
 
 			COM_StripExtension(fileptr, skinname, sizeof(skinname));
 			// look for icon_????
-			if (!Q_stricmpn(skinname,"icon_", 5)) {
+			if (!Q_stricmpn(skinname, "icon_", 5)) {
 				Com_sprintf(s_playermodel.modelnames[s_playermodel.nummodels++], sizeof(s_playermodel.modelnames[s_playermodel.nummodels]), "models/players/%s/%s", dirptr, skinname);
 				//if (s_playermodel.nummodels >= MAX_PLAYERMODELS) {
 				//	return;
@@ -456,7 +456,7 @@ static void PlayerModel_SetMenuItems(void) {
 	for (i = 0; i < s_playermodel.nummodels; i++) {
 		// strip icon_
 		buffptr = s_playermodel.modelnames[i] + strlen("models/players/");
-		pdest = strstr(buffptr,"icon_");
+		pdest = strstr(buffptr, "icon_");
 
 		if (pdest) {
 			Q_strncpyz(modelskin, buffptr, pdest - buffptr + 1);

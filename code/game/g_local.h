@@ -32,7 +32,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 // the "gameversion" client command will print this plus compile date
 #define GAMEVERSION BASEGAME
 #define BODY_QUEUE_SIZE 64
-#define INFINITE 1000000
 #define FRAMETIME 100 // msec
 #define CARNAGE_REWARD_TIME 3000
 #define REWARD_SPRITE_TIME 2000
@@ -532,8 +531,6 @@ extern vmCvar_t g_smoothClients;
 extern vmCvar_t pmove_fixed;
 extern vmCvar_t pmove_msec;
 extern vmCvar_t g_rankings;
-extern vmCvar_t g_enableDust;
-extern vmCvar_t g_enableBreath;
 extern vmCvar_t g_singlePlayer;
 extern vmCvar_t g_proxMineTimeout;
 // Additional shared traps in bg_public.h
@@ -542,6 +539,7 @@ void trap_DropClient(int clientNum, const char *reason);
 void trap_SendServerCommand(int clientNum, const char *text);
 void trap_SetConfigstring(int num, const char *string);
 void trap_GetConfigstring(int num, char *buffer, int bufferSize);
+void trap_SetConfigstringRestrictions(int num, const clientList_t *clientList);
 void trap_GetUserinfo(int num, char *buffer, int bufferSize);
 void trap_SetUserinfo(int num, const char *buffer);
 void trap_GetServerinfo(char *buffer, int bufferSize);

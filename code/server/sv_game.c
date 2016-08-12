@@ -378,6 +378,14 @@ intptr_t SV_GameSystemCalls(intptr_t *args) {
 		case G_SNAPVECTOR:
 			Q_SnapVector(VMA(1));
 			return 0;
+		case G_ARGC:
+			return Cmd_Argc();
+		case G_ARGV:
+			Cmd_ArgvBuffer(args[1], VMA(2), args[3]);
+			return 0;
+		case G_ARGS:
+			Cmd_ArgsBuffer(VMA(1), args[2]);
+			return 0;
 		case G_ADDCOMMAND:
 			Cmd_AddCommand(VMA(1), NULL);
 			return 0;
@@ -414,14 +422,6 @@ intptr_t SV_GameSystemCalls(intptr_t *args) {
 			return 0;
 		case G_CVAR_INFO_STRING_BUFFER:
 			Cvar_InfoStringBuffer(args[1], VMA(2), args[3]);
-			return 0;
-		case G_ARGC:
-			return Cmd_Argc();
-		case G_ARGV:
-			Cmd_ArgvBuffer(args[1], VMA(2), args[3]);
-			return 0;
-		case G_ARGS:
-			Cmd_ArgsBuffer(VMA(1), args[2]);
 			return 0;
 		case G_FS_FOPEN_FILE:
 			return FS_FOpenFileByMode(VMA(1), VMA(2), args[3]);
@@ -465,6 +465,47 @@ intptr_t SV_GameSystemCalls(intptr_t *args) {
 		case G_SEND_SERVER_COMMAND:
 			SV_GameSendServerCommand(args[1], VMA(2));
 			return 0;
+		case G_GET_USERCMD:
+			SV_GetUsercmd(args[1], VMA(2));
+			return 0;
+		case G_SET_CONFIGSTRING:
+			SV_SetConfigstring(args[1], VMA(2));
+			return 0;
+		case G_GET_CONFIGSTRING:
+			SV_GetConfigstring(args[1], VMA(2), args[3]);
+			return 0;
+		case G_SET_CONFIGSTRING_RESTRICTIONS:
+			SV_SetConfigstringRestrictions(args[1], VMA(2));
+			return 0;
+		case G_SET_USERINFO:
+			SV_SetUserinfo(args[1], VMA(2));
+			return 0;
+		case G_GET_USERINFO:
+			SV_GetUserinfo(args[1], VMA(2), args[3]);
+			return 0;
+		case G_GET_SERVERINFO:
+			SV_GetServerinfo(VMA(1), args[2]);
+			return 0;
+		case G_SET_BRUSH_MODEL:
+			SV_SetBrushModel(VMA(1), VMA(2));
+			return 0;
+		case G_TRACE:
+			SV_Trace(VMA(1), VMA(2), VMA(3), VMA(4), VMA(5), args[6], args[7], /*int capsule*/ qfalse);
+			return 0;
+		case G_TRACECAPSULE:
+			SV_Trace(VMA(1), VMA(2), VMA(3), VMA(4), VMA(5), args[6], args[7], /*int capsule*/ qtrue);
+			return 0;
+		case G_POINT_CONTENTS:
+			return SV_PointContents(VMA(1), args[2]);
+		case G_IN_PVS:
+			return SV_inPVS(VMA(1), VMA(2));
+		case G_IN_PVS_IGNORE_PORTALS:
+			return SV_inPVSIgnorePortals(VMA(1), VMA(2));
+		case G_ADJUST_AREA_PORTAL_STATE:
+			SV_AdjustAreaPortalState(VMA(1), args[2]);
+			return 0;
+		case G_AREAS_CONNECTED:
+			return CM_AreasConnected(args[1], args[2]);
 		case G_LINKENTITY:
 			SV_LinkEntity(VMA(1));
 			return 0;
@@ -477,49 +518,6 @@ intptr_t SV_GameSystemCalls(intptr_t *args) {
 			return SV_EntityContact(VMA(1), VMA(2), VMA(3), /*int capsule*/ qfalse);
 		case G_ENTITY_CONTACTCAPSULE:
 			return SV_EntityContact(VMA(1), VMA(2), VMA(3), /*int capsule*/ qtrue);
-		case G_TRACE:
-			SV_Trace(VMA(1), VMA(2), VMA(3), VMA(4), VMA(5), args[6], args[7], /*int capsule*/ qfalse);
-			return 0;
-		case G_TRACECAPSULE:
-			SV_Trace(VMA(1), VMA(2), VMA(3), VMA(4), VMA(5), args[6], args[7], /*int capsule*/ qtrue);
-			return 0;
-		case G_POINT_CONTENTS:
-			return SV_PointContents(VMA(1), args[2]);
-		case G_SET_BRUSH_MODEL:
-			SV_SetBrushModel(VMA(1), VMA(2));
-			return 0;
-		case G_IN_PVS:
-			return SV_inPVS(VMA(1), VMA(2));
-		case G_IN_PVS_IGNORE_PORTALS:
-			return SV_inPVSIgnorePortals(VMA(1), VMA(2));
-		case G_SET_CONFIGSTRING:
-			SV_SetConfigstring(args[1], VMA(2));
-			return 0;
-		case G_GET_CONFIGSTRING:
-			SV_GetConfigstring(args[1], VMA(2), args[3]);
-			return 0;
-		case G_SET_USERINFO:
-			SV_SetUserinfo(args[1], VMA(2));
-			return 0;
-		case G_GET_USERINFO:
-			SV_GetUserinfo(args[1], VMA(2), args[3]);
-			return 0;
-		case G_GET_SERVERINFO:
-			SV_GetServerinfo(VMA(1), args[2]);
-			return 0;
-		case G_ADJUST_AREA_PORTAL_STATE:
-			SV_AdjustAreaPortalState(VMA(1), args[2]);
-			return 0;
-		case G_AREAS_CONNECTED:
-			return CM_AreasConnected(args[1], args[2]);
-		case G_BOT_ALLOCATE_CLIENT:
-			return SV_BotAllocateClient();
-		case G_BOT_FREE_CLIENT:
-			SV_BotFreeClient(args[1]);
-			return 0;
-		case G_GET_USERCMD:
-			SV_GetUsercmd(args[1], VMA(2));
-			return 0;
 		case G_GET_ENTITY_TOKEN:
 		{
 			const char *s;
@@ -538,6 +536,11 @@ intptr_t SV_GameSystemCalls(intptr_t *args) {
 			return BotImport_DebugPolygonCreate(args[1], args[2], VMA(3));
 		case G_DEBUG_POLYGON_DELETE:
 			BotImport_DebugPolygonDelete(args[1]);
+			return 0;
+		case G_BOT_ALLOCATE_CLIENT:
+			return SV_BotAllocateClient();
+		case G_BOT_FREE_CLIENT:
+			SV_BotFreeClient(args[1]);
 			return 0;
 		case BOTLIB_SETUP:
 			return SV_BotLibSetup();

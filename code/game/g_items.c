@@ -272,13 +272,13 @@ Pickup_Armor
 int Pickup_Armor(gentity_t *ent, gentity_t *other) {
 	int max;
 
-	other->client->ps.stats[STAT_ARMOR] += ent->item->quantity;
-
 	if (other->client && bg_itemlist[other->client->ps.stats[STAT_PERSISTANT_POWERUP]].giTag == PW_GUARD) {
 		max = other->client->ps.stats[STAT_MAX_HEALTH];
 	} else {
 		max = other->client->ps.stats[STAT_MAX_HEALTH] * 2;
 	}
+
+	other->client->ps.stats[STAT_ARMOR] += ent->item->quantity;
 
 	if (other->client->ps.stats[STAT_ARMOR] > max) {
 		other->client->ps.stats[STAT_ARMOR] = max;

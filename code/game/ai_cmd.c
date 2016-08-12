@@ -240,13 +240,8 @@ FindClientByName
 int FindClientByName(char *name) {
 	int i;
 	char buf[MAX_INFO_STRING];
-	static int maxclients;
 
-	if (!maxclients) {
-		maxclients = trap_Cvar_VariableIntegerValue("sv_maxclients");
-	}
-
-	for (i = 0; i < maxclients && i < MAX_CLIENTS; i++) {
+	for (i = 0; i < level.maxclients; i++) {
 		ClientName(i, buf, sizeof(buf));
 
 		if (!Q_stricmp(buf, name)) {
@@ -254,7 +249,7 @@ int FindClientByName(char *name) {
 		}
 	}
 
-	for (i = 0; i < maxclients && i < MAX_CLIENTS; i++) {
+	for (i = 0; i < level.maxclients; i++) {
 		ClientName(i, buf, sizeof(buf));
 
 		if (stristr(buf, name)) {
@@ -273,13 +268,8 @@ FindEnemyByName
 int FindEnemyByName(bot_state_t *bs, char *name) {
 	int i;
 	char buf[MAX_INFO_STRING];
-	static int maxclients;
 
-	if (!maxclients) {
-		maxclients = trap_Cvar_VariableIntegerValue("sv_maxclients");
-	}
-
-	for (i = 0; i < maxclients && i < MAX_CLIENTS; i++) {
+	for (i = 0; i < level.maxclients; i++) {
 		if (BotSameTeam(bs, i)) {
 			continue;
 		}
@@ -291,7 +281,7 @@ int FindEnemyByName(bot_state_t *bs, char *name) {
 		}
 	}
 
-	for (i = 0; i < maxclients && i < MAX_CLIENTS; i++) {
+	for (i = 0; i < level.maxclients; i++) {
 		if (BotSameTeam(bs, i)) {
 			continue;
 		}
@@ -314,15 +304,10 @@ NumPlayersOnSameTeam
 int NumPlayersOnSameTeam(bot_state_t *bs) {
 	int i, num;
 	char buf[MAX_INFO_STRING];
-	static int maxclients;
-
-	if (!maxclients) {
-		maxclients = trap_Cvar_VariableIntegerValue("sv_maxclients");
-	}
 
 	num = 0;
 
-	for (i = 0; i < maxclients && i < MAX_CLIENTS; i++) {
+	for (i = 0; i < level.maxclients; i++) {
 		trap_GetConfigstring(CS_PLAYERS + i, buf, MAX_INFO_STRING);
 
 		if (strlen(buf)) {
@@ -1915,6 +1900,8 @@ void BotMatch_CTF(bot_state_t *bs, bot_match_t *match) {
 		if (match->subtype & ST_1FCTFGOTFLAG) {
 			trap_BotMatchVariable(match, NETNAME, netname, sizeof(netname));
 			bs->flagcarrier = ClientFromName(netname);
+			bs->flagstatuschanged = 1;
+			bs->lastflagcapture_time = FloatTime();
 		}
 	}
 }

@@ -31,12 +31,16 @@ DeathmatchScoreboardMessage
 */
 void DeathmatchScoreboardMessage(gentity_t *ent) {
 	char entry[1024];
-	char string[1400];
+	char string[1000];
 	int stringlength;
 	int i, j;
 	gclient_t *cl;
 	int numSorted, scoreFlags, accuracy, perfect;
 
+	// don't send scores to bots (bots don't parse them)
+	if (ent->r.svFlags & SVF_BOT) {
+		return;
+	}
 	// send the latest information on all clients
 	string[0] = 0;
 	stringlength = 0;
@@ -486,14 +490,20 @@ Let everyone know about a team change.
 */
 void BroadcastTeamChange(gclient_t *client, int oldTeam) {
 
-	if (client->sess.sessionTeam == TEAM_RED) {
-		trap_SendServerCommand(-1, va("cp \"%s" S_COLOR_WHITE " joined the red team.\n\"", client->pers.netname));
-	} else if (client->sess.sessionTeam == TEAM_BLUE) {
-		trap_SendServerCommand(-1, va("cp \"%s" S_COLOR_WHITE " joined the blue team.\n\"", client->pers.netname));
-	} else if (client->sess.sessionTeam == TEAM_SPECTATOR && oldTeam != TEAM_SPECTATOR) {
-		trap_SendServerCommand(-1, va("cp \"%s" S_COLOR_WHITE " joined the spectators.\n\"", client->pers.netname));
+	if (client->sess.sessionTeam == oldTeam) {
+		return;
+	}
+
+	if (client->sess.sessionTeam == TEAM_SPECTATOR) {
+		trap_SendServerCommand(-1, va("print \"%s" S_COLOR_WHITE " joined the spectators.\n\"", client->pers.netname));
 	} else if (client->sess.sessionTeam == TEAM_FREE) {
-		trap_SendServerCommand(-1, va("cp \"%s" S_COLOR_WHITE " joined the battle.\n\"", client->pers.netname));
+		trap_SendServerCommand(-1, va("print \"%s" S_COLOR_WHITE " joined the battle.\n\"", client->pers.netname));
+	} else if (client->sess.sessionTeam == TEAM_RED) {
+		trap_SendServerCommand(-1, va("print \"%s" S_COLOR_WHITE " joined the red team.\n\"", client->pers.netname));
+	} else if (client->sess.sessionTeam == TEAM_BLUE) {
+		trap_SendServerCommand(-1, va("print \"%s" S_COLOR_WHITE " joined the blue team.\n\"", client->pers.netname));
+	} else {
+		trap_SendServerCommand(-1, va("print \"%s" S_COLOR_WHITE " joined the %s team.\n\"", client->pers.netname, TeamName(client->sess.sessionTeam)));
 	}
 }
 
@@ -578,8 +588,8 @@ void SetTeam(gentity_t *ent, const char *s) {
 	}
 	// execute the team change
 
-	// if the player was dead leave the body
-	if (client->ps.stats[STAT_HEALTH] <= 0) {
+	// if the player was dead leave the body, but only if they're actually in game
+	if (client->ps.stats[STAT_HEALTH] <= 0 && client->pers.connected == CON_CONNECTED) {
 		CopyToBodyQue(ent);
 	}
 	// he starts at 'base'
@@ -589,7 +599,7 @@ void SetTeam(gentity_t *ent, const char *s) {
 		// Kill him (makes sure he loses flags, etc)
 		ent->flags &= ~FL_GODMODE;
 		ent->client->ps.stats[STAT_HEALTH] = ent->health = 0;
-		PlayerDie(ent, ent, ent, 100000, MOD_SUICIDE);
+		PlayerDie(ent, ent, ent, 100000, MOD_SUICIDE_TEAM_CHANGE);
 	}
 	// they go to the end of the line for tournaments
 	if (team == TEAM_SPECTATOR && oldTeam != team) {

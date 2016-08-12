@@ -73,14 +73,7 @@ void SV_GetChallenge(netadr_t from) {
 	}
 
 	gameName = Cmd_Argv(2);
-#ifdef LEGACY_PROTOCOL
-	// gamename is optional for legacy protocol
-	if (com_legacyprotocol->integer && !*gameName) {
-		gameMismatch = qfalse;
-	} else
-#endif
-		gameMismatch = !*gameName || strcmp(gameName, com_gamename->string) != 0;
-
+	gameMismatch = !*gameName || strcmp(gameName, com_gamename->string) != 0;
 	// reject client if the gamename string sent by the client doesn't match ours
 	if (gameMismatch) {
 		NET_OutOfBandPrint(NS_SERVER, from, "print\nGame mismatch: This is a %s server\n", com_gamename->string);
@@ -547,10 +540,10 @@ static void SV_SendClientGameState(client_t *client) {
 	MSG_WriteLong(&msg, client->reliableSequence);
 	// write the configstrings
 	for (start = 0; start < MAX_CONFIGSTRINGS; start++) {
-		if (sv.configstrings[start][0]) {
+		if (sv.configstrings[start].s[0]) {
 			MSG_WriteByte(&msg, svc_configstring);
 			MSG_WriteShort(&msg, start);
-			MSG_WriteBigString(&msg, sv.configstrings[start]);
+			MSG_WriteBigString(&msg, sv.configstrings[start].s);
 		}
 	}
 	// write the baselines
@@ -1175,16 +1168,6 @@ void SV_UserinfoChanged(client_t *cl) {
 			cl->rate = 3000;
 		}
 	}
-
-	val = Info_ValueForKey(cl->userinfo, "handicap");
-
-	if (strlen(val)) {
-		i = atoi(val);
-
-		if (i <= 0 || i > 100 || strlen(val) > 4) {
-			Info_SetValueForKey(cl->userinfo, "handicap", "100");
-		}
-	}
 	// snaps command
 	val = Info_ValueForKey(cl->userinfo, "snaps");
 
@@ -1208,17 +1191,9 @@ void SV_UserinfoChanged(client_t *cl) {
 		cl->snapshotMsec = i;
 	}
 #ifdef USE_VOIP
-#ifdef LEGACY_PROTOCOL
-	if (cl->compat) {
-		cl->hasVoip = qfalse;
-	} else
+	val = Info_ValueForKey(cl->userinfo, "cl_voipProtocol");
+	cl->hasVoip = !Q_stricmp(val, "opus");
 #endif
-	{
-		val = Info_ValueForKey(cl->userinfo, "cl_voipProtocol");
-		cl->hasVoip = !Q_stricmp(val, "opus");
-	}
-#endif
-	// TTimo
 	// maintain the IP information
 	// the banning code relies on this being consistently present
 	if (NET_IsLocalAddress(cl->netchan.remoteAddress)) {

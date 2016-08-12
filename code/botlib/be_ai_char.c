@@ -41,11 +41,15 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "be_interface.h"
 #include "be_ai_char.h"
 
-#define MAX_CHARACTERISTICS 80
+#define DEFAULT_CHARACTER "bots/default_c.c"
+
+#define MAX_CHARACTERISTICS 55
+// interpolation requires 3 slots per-character plus 2 default character slots, and account for handle 0 being a dummy
+#define MAX_BOT_CHARACTERS (3 * MAX_CLIENTS + 2 + 1)
+
 #define CT_INTEGER 1
 #define CT_FLOAT 2
 #define CT_STRING 3
-#define DEFAULT_CHARACTER "bots/default_c.c"
 // characteristic value
 union cvalue {
 	int integer;
@@ -64,7 +68,7 @@ typedef struct bot_character_s {
 	bot_characteristic_t c[1]; // variable sized
 } bot_character_t;
 
-bot_character_t *botcharacters[MAX_CLIENTS + 1];
+bot_character_t *botcharacters[MAX_BOT_CHARACTERS];
 
 /*
 =======================================================================================================================================
@@ -73,7 +77,7 @@ BotCharacterFromHandle
 */
 bot_character_t *BotCharacterFromHandle(int handle) {
 
-	if (handle <= 0 || handle > MAX_CLIENTS) {
+	if (handle <= 0 || handle >= MAX_BOT_CHARACTERS) {
 		botimport.Print(PRT_FATAL, "character handle %d out of range\n", handle);
 		return NULL;
 	}
@@ -137,7 +141,7 @@ BotFreeCharacter2
 */
 void BotFreeCharacter2(int handle) {
 
-	if (handle <= 0 || handle > MAX_CLIENTS) {
+	if (handle <= 0 || handle >= MAX_BOT_CHARACTERS) {
 		botimport.Print(PRT_FATAL, "character handle %d out of range\n", handle);
 		return;
 	}
@@ -344,7 +348,7 @@ BotFindCachedCharacter
 int BotFindCachedCharacter(char *charfile, float skill) {
 	int handle;
 
-	for (handle = 1; handle <= MAX_CLIENTS; handle++) {
+	for (handle = 1; handle < MAX_BOT_CHARACTERS; handle++) {
 		if (!botcharacters[handle]) {
 			continue;
 		}
@@ -371,13 +375,13 @@ int BotLoadCachedCharacter(char *charfile, float skill, int reload) {
 	starttime = Sys_MilliSeconds();
 #endif // DEBUG
 	// find a free spot for a character
-	for (handle = 1; handle <= MAX_CLIENTS; handle++) {
+	for (handle = 1; handle < MAX_BOT_CHARACTERS; handle++) {
 		if (!botcharacters[handle]) {
 			break;
 		}
 	}
 
-	if (handle > MAX_CLIENTS) {
+	if (handle >= MAX_BOT_CHARACTERS) {
 		return 0;
 	}
 	// try to load a cached character with the given skill
@@ -501,13 +505,13 @@ int BotInterpolateCharacters(int handle1, int handle2, float desiredskill) {
 		return 0;
 	}
 	// find a free spot for a character
-	for (handle = 1; handle <= MAX_CLIENTS; handle++) {
+	for (handle = 1; handle < MAX_BOT_CHARACTERS; handle++) {
 		if (!botcharacters[handle]) {
 			break;
 		}
 	}
 
-	if (handle > MAX_CLIENTS) {
+	if (handle >= MAX_BOT_CHARACTERS) {
 		return 0;
 	}
 
@@ -788,7 +792,7 @@ BotShutdownCharacters
 void BotShutdownCharacters(void) {
 	int handle;
 
-	for (handle = 1; handle <= MAX_CLIENTS; handle++) {
+	for (handle = 1; handle < MAX_BOT_CHARACTERS; handle++) {
 		if (botcharacters[handle]) {
 			BotFreeCharacter2(handle);
 		}

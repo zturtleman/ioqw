@@ -54,7 +54,6 @@ bot_waypoint_t botai_waypoints[MAX_WAYPOINTS];
 bot_waypoint_t *botai_freewaypoints;
 // NOTE: not using a cvars which can be updated because the game should be reloaded anyway
 int gametype; // game type
-int maxclients; // maximum number of clients
 
 vmCvar_t bot_grapple;
 vmCvar_t bot_rocketjump;
@@ -193,7 +192,9 @@ qboolean EntityIsDead(aas_entityinfo_t *entinfo) {
 
 	if (entinfo->number >= 0 && entinfo->number < MAX_CLIENTS) {
 		// retrieve the current client state
-		BotAI_GetClientState(entinfo->number, &ps);
+		if (!BotAI_GetClientState(entinfo->number, &ps)) {
+			return qfalse;
+		}
 
 		if (ps.pm_type != PM_NORMAL) {
 			return qtrue;
@@ -219,25 +220,6 @@ qboolean EntityCarriesFlag(aas_entityinfo_t *entinfo) {
 	}
 
 	if (entinfo->powerups & (1 << PW_NEUTRALFLAG)) {
-		return qtrue;
-	}
-
-	return qfalse;
-}
-
-/*
-=======================================================================================================================================
-EntityIsInvisible
-=======================================================================================================================================
-*/
-qboolean EntityIsInvisible(aas_entityinfo_t *entinfo) {
-
-	// the flag is always visible
-	if (EntityCarriesFlag(entinfo)) {
-		return qfalse;
-	}
-
-	if (entinfo->powerups & (1 << PW_INVIS)) {
 		return qtrue;
 	}
 
@@ -315,6 +297,38 @@ qboolean EntityCarriesCubes(aas_entityinfo_t *entinfo) {
 	BotAI_GetEntityState(entinfo->number, &state);
 
 	if (state.tokens > 0) {
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
+/*
+=======================================================================================================================================
+EntityIsInvisible
+=======================================================================================================================================
+*/
+qboolean EntityIsInvisible(aas_entityinfo_t *entinfo) {
+
+	// if player is invisible
+	if (entinfo->powerups & (1 << PW_INVIS)) {
+		// a shooting player is always visible
+		if (EntityIsShooting(entinfo)) {
+			return qfalse;
+		}
+		// the flag is always visible
+		if (EntityCarriesFlag(entinfo)) {
+			return qfalse;
+		}
+		// cubes are always visible
+		if (EntityCarriesCubes(entinfo)) {
+			return qfalse;
+		}
+		// kamikaze is always visible
+		if (EntityHasKamikaze(entinfo)) {
+			return qfalse;
+		}
+		// invisible
 		return qtrue;
 	}
 
@@ -1412,38 +1426,14 @@ char *ClientName(int client, char *name, int size) {
 
 /*
 =======================================================================================================================================
-ClientSkin
-=======================================================================================================================================
-*/
-char *ClientSkin(int client, char *skin, int size) {
-	char buf[MAX_INFO_STRING];
-
-	if (client < 0 || client >= MAX_CLIENTS) {
-		BotAI_Print(PRT_ERROR, "ClientSkin: client out of range\n");
-		return "[client out of range]";
-	}
-
-	trap_GetConfigstring(CS_PLAYERS + client, buf, sizeof(buf));
-	strncpy(skin, Info_ValueForKey(buf, "model"), size - 1);
-	skin[size - 1] = '\0';
-	return skin;
-}
-
-/*
-=======================================================================================================================================
 ClientFromName
 =======================================================================================================================================
 */
 int ClientFromName(char *name) {
 	int i;
 	char buf[MAX_INFO_STRING];
-	static int maxclients;
 
-	if (!maxclients) {
-		maxclients = trap_Cvar_VariableIntegerValue("sv_maxclients");
-	}
-
-	for (i = 0; i < maxclients && i < MAX_CLIENTS; i++) {
+	for (i = 0; i < level.maxclients; i++) {
 		trap_GetConfigstring(CS_PLAYERS + i, buf, sizeof(buf));
 		Q_CleanStr(buf);
 
@@ -1463,13 +1453,8 @@ ClientOnSameTeamFromName
 int ClientOnSameTeamFromName(bot_state_t *bs, char *name) {
 	int i;
 	char buf[MAX_INFO_STRING];
-	static int maxclients;
 
-	if (!maxclients) {
-		maxclients = trap_Cvar_VariableIntegerValue("sv_maxclients");
-	}
-
-	for (i = 0; i < maxclients && i < MAX_CLIENTS; i++) {
+	for (i = 0; i < level.maxclients; i++) {
 		if (!BotSameTeam(bs, i)) {
 			continue;
 		}
@@ -2338,6 +2323,56 @@ int TeamPlayIsOn(void) {
 
 /*
 =======================================================================================================================================
+BotCanCamp
+=======================================================================================================================================
+*/
+qboolean BotCanCamp(bot_state_t *bs) {
+
+	// if the bot's team does not lead
+	if (g_gametype.integer >= GT_TEAM && bs->ownteamscore < bs->enemyteamscore) {
+		return qfalse;
+	}
+	// if the enemy is located way higher than the bot
+	if (bs->inventory[ENEMY_HEIGHT] > 200) {
+		return qfalse;
+	}
+	// if the bot is very low on health
+	if (bs->inventory[INVENTORY_HEALTH] < 60) {
+		return qfalse;
+	}
+	// if the bot is low on health
+	if (bs->inventory[INVENTORY_HEALTH] < 80) {
+		// if the bot has insufficient armor
+		if (bs->inventory[INVENTORY_ARMOR] < 40) {
+			return qfalse;
+		}
+	}
+	// if the bot has the quad powerup
+	if (bs->inventory[INVENTORY_QUAD]) {
+		return qfalse;
+	}
+	// if the bot has the invisibility powerup
+	if (bs->inventory[INVENTORY_INVISIBILITY]) {
+		return qfalse;
+	}
+	// if the bot has the regen powerup
+	if (bs->inventory[INVENTORY_REGEN]) {
+		return qfalse;
+	}
+	// the bot should have at least have a good weapon with some ammo
+	if (!(bs->inventory[INVENTORY_ROCKETLAUNCHER] > 0 && bs->inventory[INVENTORY_ROCKETS] > 10)
+		&& !(bs->inventory[INVENTORY_RAILGUN] > 0 && bs->inventory[INVENTORY_SLUGS] > 10)
+		&& !(bs->inventory[INVENTORY_PLASMAGUN] > 0 && bs->inventory[INVENTORY_CELLS] > 80)
+		&& !(bs->inventory[INVENTORY_CHAINGUN] > 0 && bs->inventory[INVENTORY_BELT] > 80)
+		&& !(bs->inventory[INVENTORY_BFG10K] > 0 && bs->inventory[INVENTORY_BFGAMMO] > 10)) {
+		return qfalse;
+	}
+
+	return qtrue;
+}
+
+/*
+=======================================================================================================================================
 BotAggression
 =======================================================================================================================================
 */
@@ -2717,7 +2752,7 @@ int BotWantsToCamp(bot_state_t *bs) {
 		return qfalse;
 	}
 	// if the bot isn't healthy enough
-	if (BotAggression(bs) < 50) {
+	if (!BotCanCamp(bs)) {
 		return qfalse;
 	}
 	// the bot should have at least have the rocket launcher, the railgun or the bfg10k with some ammo
@@ -3078,8 +3113,13 @@ float BotEntityVisible(int viewer, vec3_t eye, vec3_t viewangles, float fov, int
 	aas_entityinfo_t entinfo;
 	vec3_t dir, entangles, start, end, middle;
 
-	// calculate middle of bounding box
+
 	BotEntityInfo(ent, &entinfo);
+
+	if (!entinfo.valid) {
+		return 0;
+	}
+	// calculate middle of bounding box
 	VectorAdd(entinfo.mins, entinfo.maxs, middle);
 	VectorScale(middle, 0.5, middle);
 	VectorAdd(entinfo.origin, middle, middle);
@@ -3188,7 +3228,7 @@ int BotFindEnemy(bot_state_t *bs, int curenemy) {
 	int i, healthdecrease;
 	float f, alertness, easyfragger, vis;
 	float squaredist, cursquaredist;
-	aas_entityinfo_t entinfo, curenemyinfo;
+	aas_entityinfo_t entinfo, curenemyinfo, curbotinfo;
 	vec3_t dir, angles;
 
 	alertness = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_ALERTNESS, 0, 1);
@@ -3248,7 +3288,7 @@ int BotFindEnemy(bot_state_t *bs, int curenemy) {
 		}
 	}
 
-	for (i = 0; i < maxclients && i < MAX_CLIENTS; i++) {
+	for (i = 0; i < level.maxclients; i++) {
 		if (i == bs->client) {
 			continue;
 		}
@@ -3274,8 +3314,8 @@ int BotFindEnemy(bot_state_t *bs, int curenemy) {
 		if (EntityIsDead(&entinfo) || entinfo.number == bs->entitynum) {
 			continue;
 		}
-		// if the enemy is invisible and not shooting
-		if (EntityIsInvisible(&entinfo) && !EntityIsShooting(&entinfo)) {
+		//if the enemy is invisible
+		if (EntityIsInvisible(&entinfo)) {
 			continue;
 		}
 		// if not an easy fragger don't shoot at chatting players
@@ -3308,7 +3348,7 @@ int BotFindEnemy(bot_state_t *bs, int curenemy) {
 		if (curenemy < 0 && (healthdecrease || EntityIsShooting(&entinfo))) {
 			f = 360;
 		} else {
-			f = 90 + 90 - (90 - (squaredist > Square(810) ? Square(810) : squaredist) / (810 * 9));
+			f = 160;
 		}
 		// check if the enemy is visible
 		vis = BotEntityVisible(bs->entitynum, bs->eye, bs->viewangles, f, i);
@@ -3316,8 +3356,13 @@ int BotFindEnemy(bot_state_t *bs, int curenemy) {
 		if (vis <= 0) {
 			continue;
 		}
-		// if the enemy is quite far away, not shooting and the bot is not damaged
-		if (curenemy < 0 && squaredist > Square(100) && !healthdecrease && !EntityIsShooting(&entinfo)) {
+		// if the enemy is quite far away and doesn't have a flag or cubes and the bot is not damaged try to ignore this enemy
+		if (curenemy < 0 && squaredist > Square(100) && !healthdecrease && !EntityCarriesFlag(&entinfo) && !EntityCarriesCubes(&entinfo)) {
+			BotEntityInfo(bs->client, &curbotinfo);
+			// if the bot is invisible and want to get the flag, ignore enemies
+			if (EntityIsInvisible(&curbotinfo) && bs->ltgtype == LTG_GETFLAG) {
+				continue;
+			}
 			// check if we can avoid this enemy
 			VectorSubtract(bs->origin, entinfo.origin, dir);
 			vectoangles(dir, angles);
@@ -3359,7 +3404,7 @@ int BotTeamFlagCarrierVisible(bot_state_t *bs) {
 	float vis;
 	aas_entityinfo_t entinfo;
 
-	for (i = 0; i < maxclients && i < MAX_CLIENTS; i++) {
+	for (i = 0; i < level.maxclients; i++) {
 		if (i == bs->client) {
 			continue;
 		}
@@ -3399,7 +3444,7 @@ int BotTeamFlagCarrier(bot_state_t *bs) {
 	int i;
 	aas_entityinfo_t entinfo;
 
-	for (i = 0; i < maxclients && i < MAX_CLIENTS; i++) {
+	for (i = 0; i < level.maxclients; i++) {
 		if (i == bs->client) {
 			continue;
 		}
@@ -3434,7 +3479,7 @@ int BotEnemyFlagCarrierVisible(bot_state_t *bs) {
 	float vis;
 	aas_entityinfo_t entinfo;
 
-	for (i = 0; i < maxclients && i < MAX_CLIENTS; i++) {
+	for (i = 0; i < level.maxclients; i++) {
 		if (i == bs->client) {
 			continue;
 		}
@@ -3484,7 +3529,7 @@ void BotVisibleTeamMatesAndEnemies(bot_state_t *bs, int *teammates, int *enemies
 		*enemies = 0;
 	}
 
-	for (i = 0; i < maxclients && i < MAX_CLIENTS; i++) {
+	for (i = 0; i < level.maxclients; i++) {
 		if (i == bs->client) {
 			continue;
 		}
@@ -3533,7 +3578,7 @@ int BotTeamCubeCarrierVisible(bot_state_t *bs) {
 	float vis;
 	aas_entityinfo_t entinfo;
 
-	for (i = 0; i < maxclients && i < MAX_CLIENTS; i++) {
+	for (i = 0; i < level.maxclients; i++) {
 		if (i == bs->client) {
 			continue;
 		}
@@ -3574,7 +3619,7 @@ int BotEnemyCubeCarrierVisible(bot_state_t *bs) {
 	float vis;
 	aas_entityinfo_t entinfo;
 
-	for (i = 0; i < maxclients && i < MAX_CLIENTS; i++) {
+	for (i = 0; i < level.maxclients; i++) {
 		if (i == bs->client) {
 			continue;
 		}
@@ -3647,19 +3692,6 @@ void BotAimAtEnemy(bot_state_t *bs) {
 
 	aim_skill = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_SKILL, 0, 1);
 	aim_accuracy = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_ACCURACY, 0, 1);
-
-	if (aim_skill > 0.95) {
-		// don't aim too early
-		reactiontime = 0.5 * trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_REACTIONTIME, 0, 1);
-
-		if (bs->enemysight_time > FloatTime() - reactiontime) {
-			return;
-		}
-
-		if (bs->teleport_time > FloatTime() - reactiontime) {
-			return;
-		}
-	}
 	// get the weapon information
 	trap_BotGetWeaponInfo(bs->ws, bs->weaponnum, &wi);
 	// get the weapon specific aim accuracy and or aim skill
@@ -3685,11 +3717,22 @@ void BotAimAtEnemy(bot_state_t *bs) {
 		aim_skill = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_SKILL_BFG10K, 0, 1);
 	}
 
+	if (aim_skill > 0.95) {
+		// don't aim too early
+		reactiontime = 0.5 * trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_REACTIONTIME, 0, 1);
+
+		if (bs->enemysight_time > FloatTime() - reactiontime) {
+			return;
+		}
+
+		if (bs->teleport_time > FloatTime() - reactiontime) {
+			return;
+		}
+	}
+
 	if (aim_accuracy <= 0) {
 		aim_accuracy = 0.0001f;
 	}
-	// get the enemy entity information
-	BotEntityInfo(bs->enemy, &entinfo);
 	// if the enemy is invisible then shoot crappy most of the time
 	if (EntityIsInvisible(&entinfo)) {
 		if (random() > 0.1) {
@@ -4065,7 +4108,7 @@ void BotMapScripts(bot_state_t *bs) {
 
 		shootbutton = qfalse;
 		// if an enemy is below this bounding box then shoot the button
-		for (i = 0; i < maxclients && i < MAX_CLIENTS; i++) {
+		for (i = 0; i < level.maxclients; i++) {
 			if (i == bs->client) {
 				continue;
 			}
@@ -5464,6 +5507,27 @@ void BotCheckSnapshot(bot_state_t *bs) {
 
 /*
 =======================================================================================================================================
+BotCheckTeamScores
+=======================================================================================================================================
+*/
+void BotCheckTeamScores(bot_state_t *bs) {
+
+	switch (bs->cur_ps.persistant[PERS_TEAM]) {
+		case TEAM_RED:
+			bs->enemyteamscore = level.teamScores[TEAM_BLUE];
+			bs->ownteamscore = level.teamScores[TEAM_RED];
+			break;
+		case TEAM_BLUE:
+			bs->enemyteamscore = level.teamScores[TEAM_RED];
+			bs->ownteamscore = level.teamScores[TEAM_BLUE];
+			break;
+		default:
+			return;
+	}
+}
+
+/*
+=======================================================================================================================================
 BotCheckAir
 =======================================================================================================================================
 */
@@ -5642,6 +5706,8 @@ void BotDeathmatchAI(bot_state_t *bs, float thinktime) {
 		BotCheckSnapshot(bs);
 		// check for air
 		BotCheckAir(bs);
+		//check the team scores
+		BotCheckTeamScores(bs);
 	}
 	// check the console messages
 	BotCheckConsoleMessages(bs);
@@ -5804,7 +5870,6 @@ void BotSetupDeathmatchAI(void) {
 	char model[128];
 
 	gametype = trap_Cvar_VariableIntegerValue("g_gametype");
-	maxclients = trap_Cvar_VariableIntegerValue("sv_maxclients");
 
 	trap_Cvar_Register(&bot_rocketjump, "bot_rocketjump", "1", 0);
 	trap_Cvar_Register(&bot_grapple, "bot_grapple", "0", 0);

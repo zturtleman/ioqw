@@ -88,8 +88,6 @@ vmCvar_t g_obeliskRegenPeriod;
 vmCvar_t g_obeliskRegenAmount;
 vmCvar_t g_obeliskRespawnDelay;
 vmCvar_t g_cubeTimeout;
-vmCvar_t g_enableDust;
-vmCvar_t g_enableBreath;
 vmCvar_t g_proxMineTimeout;
 #ifdef MISSIONPACK
 vmCvar_t g_redteam;
@@ -145,10 +143,8 @@ static cvarTable_t gameCvarTable[] = {
 	{&g_obeliskHealth, "g_obeliskHealth", "2500", 0, 0, qfalse},
 	{&g_obeliskRegenPeriod, "g_obeliskRegenPeriod", "1", 0, 0, qfalse},
 	{&g_obeliskRegenAmount, "g_obeliskRegenAmount", "15", 0, 0, qfalse},
-	{&g_obeliskRespawnDelay, "g_obeliskRespawnDelay", "10", CVAR_SERVERINFO, 0, qfalse},
+	{&g_obeliskRespawnDelay, "g_obeliskRespawnDelay", "10", CVAR_SYSTEMINFO, 0, qfalse},
 	{&g_cubeTimeout, "g_cubeTimeout", "30", 0, 0, qfalse},
-	{&g_enableDust, "g_enableDust", "0", CVAR_SERVERINFO, 0, qtrue, qfalse},
-	{&g_enableBreath, "g_enableBreath", "0", CVAR_SERVERINFO, 0, qtrue, qfalse},
 	{&g_proxMineTimeout, "g_proxMineTimeout", "20000", 0, 0, qfalse},
 #ifdef MISSIONPACK
 	{&g_redteam, "g_redteam", "Stroggs", CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_USERINFO, 0, qtrue, qtrue},
@@ -504,7 +500,8 @@ void G_InitGame(int levelTime, int randomSeed, int restart) {
 	}
 
 	G_RemapTeamShaders();
-
+	// clear ready players from intermission
+	trap_SetConfigstring(CS_PLAYERS_READY, "");
 	trap_SetConfigstring(CS_INTERMISSION, "");
 }
 
@@ -1142,6 +1139,7 @@ void LogExit(const char *string) {
 	gclient_t *cl;
 #ifdef MISSIONPACK
 	qboolean won = qtrue;
+	team_t team = TEAM_RED;
 #endif
 	G_LogPrintf("Exit: %s\n", string);
 
@@ -1176,6 +1174,10 @@ void LogExit(const char *string) {
 
 		G_LogPrintf("score: %i  ping: %i  client: %i %s\n", cl->ps.persistant[PERS_SCORE], ping, level.sortedClients[i], cl->pers.netname);
 #ifdef MISSIONPACK
+		if (g_singlePlayer.integer && !(g_entities[cl - level.clients].r.svFlags & SVF_BOT)) {
+			team = cl->sess.sessionTeam;
+		}
+
 		if (g_singlePlayer.integer && g_gametype.integer < GT_TEAM) {
 			if (g_entities[cl - level.clients].r.svFlags & SVF_BOT && cl->ps.persistant[PERS_RANK] == 0) {
 				won = qfalse;
@@ -1186,7 +1188,11 @@ void LogExit(const char *string) {
 #ifdef MISSIONPACK
 	if (g_singlePlayer.integer) {
 		if (g_gametype.integer >= GT_TEAM) {
-			won = level.teamScores[TEAM_RED] > level.teamScores[TEAM_BLUE];
+			if (team == TEAM_RED) {
+				won = level.teamScores[TEAM_RED] > level.teamScores[TEAM_BLUE];
+			} else {
+				won = level.teamScores[TEAM_BLUE] > level.teamScores[TEAM_RED];
+			}
 		}
 
 		trap_Cmd_ExecuteText(EXEC_APPEND, (won) ? "spWin\n" : "spLose\n");
@@ -1207,7 +1213,7 @@ void CheckIntermissionExit(void) {
 	int ready, notReady, playerCount;
 	int i;
 	gclient_t *cl;
-	int readyMask;
+	clientList_t readyList;
 
 	if (g_gametype.integer == GT_SINGLE_PLAYER) {
 		return;
@@ -1215,8 +1221,9 @@ void CheckIntermissionExit(void) {
 	// see which players are ready
 	ready = 0;
 	notReady = 0;
-	readyMask = 0;
 	playerCount = 0;
+
+	Com_ClientListClear(&readyList);
 
 	for (i = 0; i < g_maxclients.integer; i++) {
 		cl = level.clients + i;
@@ -1234,23 +1241,13 @@ void CheckIntermissionExit(void) {
 		if (cl->readyToExit) {
 			ready++;
 
-			if (i < 16) {
-				readyMask |= 1 << i;
-			}
+			Com_ClientListAdd(&readyList, i);
 		} else {
 			notReady++;
 		}
 	}
-	// copy the readyMask to each player's stats so it can be displayed on the scoreboard
-	for (i = 0; i < g_maxclients.integer; i++) {
-		cl = level.clients + i;
-
-		if (cl->pers.connected != CON_CONNECTED) {
-			continue;
-		}
-
-		cl->ps.stats[STAT_CLIENTS_READY] = readyMask;
-	}
+	// update configstring so it can be displayed on the scoreboard
+	trap_SetConfigstring(CS_PLAYERS_READY, Com_ClientListString(&readyList));
 	// never exit in less than five seconds
 	if (level.time < level.intermissiontime + 5000) {
 		return;

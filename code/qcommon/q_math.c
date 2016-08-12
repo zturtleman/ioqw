@@ -1147,7 +1147,7 @@ The msvc acos doesn't always return a value between 0 and PI:
 
 int i;
 i = 1065353246;
-acos(*(float*) &i) == -1.#IND0
+acos(*(float *) &i) == -1.#IND0
 =======================================================================================================================================
 */
 float Q_acos(float c) {

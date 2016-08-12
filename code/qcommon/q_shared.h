@@ -30,7 +30,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define __Q_SHARED_H
 
 #ifdef STANDALONE
-#define PRODUCT_NAME					"quakewars"
+#define PRODUCT_NAME					"Quake Wars"
 #define BASEGAME						"foobar"
 #define CLIENT_WINDOW_TITLE				"Quake Wars"
 #define CLIENT_WINDOW_MIN_TITLE			"QW"
@@ -42,9 +42,8 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define GAMENAME_FOR_MASTER				"QuakeWars" // must NOT contain whitespace
 #define CINEMATICS_LOGO					"foologo.roq"
 #define CINEMATICS_INTRO				"intro.roq"
-// #define LEGACY_PROTOCOL // You probably don't need this for your standalone game
 #else
-#define PRODUCT_NAME					"quakewars"
+#define PRODUCT_NAME					"Quake Wars"
 #define BASEGAME						"Data"
 #define CLIENT_WINDOW_TITLE				"Quake Wars"
 #define CLIENT_WINDOW_MIN_TITLE			"QW"
@@ -56,7 +55,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define GAMENAME_FOR_MASTER				"QuakeWars"
 #define CINEMATICS_LOGO					"idlogo.RoQ"
 #define CINEMATICS_INTRO				"intro.RoQ"
-#define LEGACY_PROTOCOL
 #endif
 // Heartbeat for dpmaster protocol. You shouldn't change this unless you know what you're doing
 #define HEARTBEAT_FOR_MASTER		"DarkPlaces"
@@ -69,7 +67,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #ifndef PRODUCT_VERSION
 #define PRODUCT_VERSION					"1.00"
 #endif
-#define QW_VERSION CLIENT_WINDOW_TITLE	" " PRODUCT_VERSION
+#define QW_VERSION PRODUCT_NAME			" " PRODUCT_VERSION
 #define MAX_TEAMNAME 32
 #define MAX_MASTER_SERVERS 5	// number of supported master servers
 #define DEMOEXT "dm_"			// standard demo extension
@@ -259,7 +257,7 @@ typedef enum {
 #define PROP_HEIGHT 27
 #define PROP_SMALL_SIZE_SCALE 0.75
 #define BLINK_DIVISOR 200
-#define PULSE_DIVISOR 75
+#define PULSE_DIVISOR 75.0f
 
 #define UI_LEFT			0x00000000 // default
 #define UI_CENTER		0x00000001
@@ -723,6 +721,19 @@ int QDECL Com_sprintf(char *dest, int size, const char *fmt, ...) __attribute__(
 char *Com_SkipTokens(char *s, int numTokens, char *sep);
 char *Com_SkipCharset(char *s, char *sep);
 void Com_RandomBytes(byte *string, int len);
+
+typedef struct {
+	unsigned int hi;
+	unsigned int lo;
+} clientList_t;
+
+qboolean Com_ClientListContains(const clientList_t *list, int clientNum);
+void Com_ClientListAdd(clientList_t *list, int clientNum);
+void Com_ClientListRemove(clientList_t *list, int clientNum);
+void Com_ClientListClear(clientList_t *list);
+void Com_ClientListAll(clientList_t *list);
+char *Com_ClientListString(const clientList_t *list);
+void Com_ClientListParse(clientList_t *list, const char *s);
 // mode parm for FS_FOpenFile
 typedef enum {
 	FS_READ,

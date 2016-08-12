@@ -276,7 +276,12 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd) {
 	client = ent->client;
 
 	if (client->sess.spectatorState != SPECTATOR_FOLLOW) {
-		client->ps.pm_type = PM_SPECTATOR;
+		if (client->noclip) {
+			client->ps.pm_type = PM_NOCLIP;
+		} else {
+			client->ps.pm_type = PM_SPECTATOR;
+		}
+
 		client->ps.speed = 400; // faster than normal
 		// set up for pmove
 		memset(&pm, 0, sizeof(pm));
@@ -817,25 +822,22 @@ void ClientThink_Real(gentity_t *ent) {
 
 	VectorCopy(client->ps.origin, client->oldOrigin);
 #ifdef MISSIONPACK
-		if (level.intermissionQueued != 0 && g_singlePlayer.integer) {
-			if (level.time - level.intermissionQueued >= 1000) {
-				pm.cmd.buttons = 0;
-				pm.cmd.forwardmove = 0;
-				pm.cmd.rightmove = 0;
-				pm.cmd.upmove = 0;
+	if (level.intermissionQueued != 0 && g_singlePlayer.integer) {
+		if (level.time - level.intermissionQueued >= 1000) {
+			pm.cmd.buttons = 0;
+			pm.cmd.forwardmove = 0;
+			pm.cmd.rightmove = 0;
+			pm.cmd.upmove = 0;
 
-				if (level.time - level.intermissionQueued >= 2000 && level.time - level.intermissionQueued <= 2500) {
-					trap_Cmd_ExecuteText(EXEC_APPEND, "centerview\n");
-				}
-
-				ent->client->ps.pm_type = PM_SPINTERMISSION;
+			if (level.time - level.intermissionQueued >= 2000 && level.time - level.intermissionQueued <= 2500) {
+				trap_Cmd_ExecuteText(EXEC_APPEND, "centerview\n");
 			}
-		}
 
-		Pmove(&pm);
-#else
-		Pmove(&pm);
+			ent->client->ps.pm_type = PM_SPINTERMISSION;
+		}
+	}
 #endif
+	Pmove(&pm);
 	// save results of pmove
 	if (ent->client->ps.eventSequence != oldEventSequence) {
 		ent->eventTime = level.time;

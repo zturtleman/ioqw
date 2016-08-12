@@ -616,7 +616,7 @@ static void Controls_DrawKeyBinding(void *self) {
 	b1 = g_bindings[a->generic.id].bind1;
 
 	if (b1 == -1) {
-		strcpy(name,"???");
+		strcpy(name, "???");
 	} else {
 		trap_Key_KeynumToStringBuf(b1, name, 32);
 		Q_strupr(name);

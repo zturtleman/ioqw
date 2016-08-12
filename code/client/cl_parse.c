@@ -337,15 +337,8 @@ void CL_SystemInfoChanged(void) {
 	// in some cases, outdated cp commands might get sent with this news serverId
 	cl.serverId = atoi(Info_ValueForKey(systemInfo, "sv_serverid"));
 #ifdef USE_VOIP
-#ifdef LEGACY_PROTOCOL
-	if (clc.compat)
-		clc.voipEnabled = qfalse;
-	else
-#endif
-	{
-		s = Info_ValueForKey(systemInfo, "sv_voipProtocol");
-		clc.voipEnabled = !Q_stricmp(s, "opus");
-	}
+	s = Info_ValueForKey(systemInfo, "sv_voipProtocol");
+	clc.voipEnabled = !Q_stricmp(s, "opus");
 #endif
 	// don't set any vars when playing a demo
 	if (clc.demoplaying) {

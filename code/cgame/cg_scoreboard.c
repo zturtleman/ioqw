@@ -215,7 +215,7 @@ static void CG_DrawClientScore(int y, score_t *score, float *color, float fade, 
 
 	CG_DrawBigString(SB_SCORELINE_X + (SB_RATING_WIDTH / 2), y, string, fade);
 	// add the "ready" marker for intermission exiting
-	if (cg.snap->ps.stats[STAT_CLIENTS_READY] & (1 << score->client)) {
+	if (Com_ClientListContains(&cg.readyPlayers, score->client)) {
 		CG_DrawBigStringColor(iconx, y, "READY", color);
 	}
 }

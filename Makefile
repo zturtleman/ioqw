@@ -112,6 +112,11 @@ ifndef SERVERBIN
 SERVERBIN=quakewars-server
 endif
 
+ifndef APPBUNDLE
+# must manually change PRODUCT_NAME in make-macosx-app.sh
+APPBUNDLE=quakewars.app
+endif
+
 ifndef BASEGAME
 BASEGAME=Data
 endif
@@ -1315,7 +1320,7 @@ endif
 $(B).zip: $(TARGETS)
 ifeq ($(PLATFORM),darwin)
   ifdef ARCHIVE
-	@("./make-macosx-app.sh" release $(ARCH); if [ "$$?" -eq 0 ] && [ -d "$(B)/quakewars.app" ]; then rm -f $@; cd $(B) && zip --symlinks -r9 ../../$@ `find "quakewars.app" -print | sed -e "s!$(B)/!!g"`; else rm -f $@; cd $(B) && zip -r9 ../../$@ $(NAKED_TARGETS); fi)
+	@("./make-macosx-app.sh" release $(ARCH); if [ "$$?" -eq 0 ] && [ -d "$(B)/$(APPBUNDLE)" ]; then rm -f $@; cd $(B) && zip --symlinks -r9 ../../$@ `find "$(APPBUNDLE)" -print | sed -e "s!$(B)/!!g"`; else rm -f $@; cd $(B) && zip -r9 ../../$@ $(NAKED_TARGETS); fi)
   endif
 endif
 ifneq ($(PLATFORM),darwin)

@@ -143,7 +143,7 @@ void TeamMain_MenuInit(void) {
 	s_teammain.spectate.color = colorRed;
 
 	trap_GetConfigString(CS_SERVERINFO, info, MAX_INFO_STRING);
-	gametype = atoi(Info_ValueForKey(info,"g_gametype"));
+	gametype = atoi(Info_ValueForKey(info, "g_gametype"));
 	// set initial states
 	switch (gametype) {
 		case GT_SINGLE_PLAYER:

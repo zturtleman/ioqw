@@ -325,9 +325,6 @@ extern void PlayerSettings_Cache(void);
 // ui_preferences.c
 extern void UI_PreferencesMenu(void);
 extern void Preferences_Cache(void);
-// ui_specifyleague.c
-extern void UI_SpecifyLeagueMenu(void);
-extern void SpecifyLeague_Cache(void);
 // ui_specifyserver.c
 extern void UI_SpecifyServerMenu(void);
 extern void SpecifyServer_Cache(void);
@@ -352,9 +349,9 @@ extern void DriverInfo_Cache(void);
 // FIXME ripped from cg_local.h
 typedef struct {
 	int oldFrame;
-	int oldFrameTime;		// time when ->oldFrame was exactly on
+	int oldFrameTime;		// time when -> oldFrame was exactly on
 	int frame;
-	int frameTime;			// time when ->frame will be exactly on
+	int frameTime;			// time when -> frame will be exactly on
 	float backlerp;
 	float yawAngle;
 	qboolean yawing;
@@ -610,21 +607,4 @@ int UI_GetAwardLevel(int award);
 void UI_SPUnlock_f(void);
 void UI_SPUnlockMedals_f(void);
 void UI_InitGameinfo(void);
-// GRank
-
-// ui_rankings.c
-void Rankings_DrawText(void *self);
-void Rankings_DrawName(void *self);
-void Rankings_DrawPassword(void *self);
-void Rankings_Cache(void);
-void UI_RankingsMenu(void);
-// ui_login.c
-void Login_Cache(void);
-void UI_LoginMenu(void);
-// ui_signup.c
-void Signup_Cache(void);
-void UI_SignupMenu(void);
-// ui_rankstatus.c
-void RankStatus_Cache(void);
-void UI_RankStatusMenu(void);
 #endif

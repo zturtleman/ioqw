@@ -418,7 +418,7 @@ static void ArenaServers_UpdateMenu(void) {
 	} else {
 		// no servers found
 		if (g_arenaservers.refreshservers) {
-			strcpy(g_arenaservers.status.string,"Scanning For Servers.");
+			strcpy(g_arenaservers.status.string, "Scanning For Servers.");
 			g_arenaservers.statusbar.string = "Press SPACE to stop";
 			// disable controls during refresh
 			g_arenaservers.master.generic.flags |= QMF_GRAYED;
@@ -431,9 +431,9 @@ static void ArenaServers_UpdateMenu(void) {
 			g_arenaservers.go.generic.flags |= QMF_GRAYED;
 		} else {
 			if (g_arenaservers.numqueriedservers < 0) {
-				strcpy(g_arenaservers.status.string,"No Response From Master Server.");
+				strcpy(g_arenaservers.status.string, "No Response From Master Server.");
 			} else {
-				strcpy(g_arenaservers.status.string,"No Servers Found.");
+				strcpy(g_arenaservers.status.string, "No Servers Found.");
 			}
 			// update status bar
 			if (g_servertype >= UIAS_GLOBAL1 && g_servertype <= UIAS_GLOBAL5) {
@@ -1097,7 +1097,7 @@ int ArenaServers_SetType(int type) {
 		g_arenaservers.currentping = *g_arenaservers.numservers;
 		g_arenaservers.numqueriedservers = *g_arenaservers.numservers;
 		ArenaServers_UpdateMenu();
-		strcpy(g_arenaservers.status.string,"hit refresh to update");
+		strcpy(g_arenaservers.status.string, "hit refresh to update");
 	}
 
 	return type;

@@ -2399,7 +2399,7 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg) {
 			if (ver != com_protocol->integer) {
 #ifdef LEGACY_PROTOCOL
 				if (com_legacyprotocol->integer > 0) {
-					// Server is ioq3 but has a different protocol than we do. Fall back to idq3 protocol.
+					// Server is ioq3 but has a different protocol than we do. Fall back to legacy protocol.
 					clc.compat = qtrue;
 
 					Com_Printf(S_COLOR_YELLOW "Warning: Server reports protocol version %d, we have %d. Trying legacy protocol %d.\n", ver, com_protocol->integer, com_legacyprotocol->integer);
@@ -2414,23 +2414,10 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg) {
 		else {
 			clc.compat = qtrue;
 		}
-
-		if (clc.compat) {
-			if (!NET_CompareAdr(from, clc.serverAddress)) {
-				// This challenge response is not coming from the expected address.
-				// Check whether we have a matching client challenge to prevent connection hi-jacking.
-				if (!*c || challenge != clc.challenge) {
-					Com_DPrintf("Challenge response received from unexpected source. Ignored.\n");
-					return;
-				}
-			}
-		} else
 #endif
-		{
-			if (!*c || challenge != clc.challenge) {
-				Com_Printf("Bad challenge for challengeResponse. Ignored.\n");
-				return;
-			}
+		if (!*c || challenge != clc.challenge) {
+			Com_Printf("Bad challenge for challengeResponse. Ignored.\n");
+			return;
 		}
 		// start sending challenge response instead of challenge request packets
 		clc.challenge = atoi(Cmd_Argv(1));
@@ -2458,23 +2445,19 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg) {
 			Com_Printf("connectResponse from wrong address. Ignored.\n");
 			return;
 		}
-#ifdef LEGACY_PROTOCOL
-		if (!clc.compat)
-#endif
-		{
-			c = Cmd_Argv(1);
 
-			if (*c) {
-				challenge = atoi(c);
-			} else {
-				Com_Printf("Bad connectResponse received. Ignored.\n");
-				return;
-			}
+		c = Cmd_Argv(1);
 
-			if (challenge != clc.challenge) {
-				Com_Printf("ConnectResponse with bad challenge received. Ignored.\n");
-				return;
-			}
+		if (*c) {
+			challenge = atoi(c);
+		} else {
+			Com_Printf("Bad connectResponse received. Ignored.\n");
+			return;
+		}
+
+		if (challenge != clc.challenge) {
+			Com_Printf("ConnectResponse with bad challenge received. Ignored.\n");
+			return;
 		}
 #ifdef LEGACY_PROTOCOL
 		Netchan_Setup(NS_CLIENT, &clc.netchan, from, Cvar_VariableValue("net_qport"), clc.challenge, clc.compat);
@@ -3454,13 +3437,7 @@ void CL_ServerInfoPacket(netadr_t from, msg_t *msg) {
 	infoString = MSG_ReadString(msg);
 	// if this isn't the correct gamename, ignore it
 	gamename = Info_ValueForKey(infoString, "gamename");
-#ifdef LEGACY_PROTOCOL
-	// gamename is optional for legacy protocol
-	if (com_legacyprotocol->integer && !*gamename) {
-		gameMismatch = qfalse;
-	} else
-#endif
-		gameMismatch = !*gamename || strcmp(gamename, com_gamename->string) != 0;
+	gameMismatch = !*gamename || strcmp(gamename, com_gamename->string) != 0;
 
 	if (gameMismatch) {
 		Com_DPrintf("Game mismatch in info packet: %s\n", infoString);

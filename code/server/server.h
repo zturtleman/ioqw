@@ -59,6 +59,12 @@ typedef enum {
 	SS_GAME		// actively running
 } serverState_t;
 
+typedef struct configString_s {
+	char *s;
+	qboolean restricted; // if true, don't send to clientList
+	clientList_t clientList;
+} configString_t;
+
 typedef struct {
 	serverState_t state;
 	qboolean restarting;	// if true, send configstring changes during SS_LOADING
@@ -71,7 +77,7 @@ typedef struct {
 	int snapshotCounter;	// incremented for each snapshot built
 	int timeResidual;		// <= 1000 / sv_frame->value
 	int nextFrameTime;		// when time > nextFrameTime, process world
-	char *configstrings[MAX_CONFIGSTRINGS];
+	configString_t configstrings[MAX_CONFIGSTRINGS];
 	svEntity_t svEntities[MAX_GENTITIES];
 	char *entityParsePoint;	// used during game VM init
 	// the game virtual machine will update these on init and changes
@@ -106,9 +112,6 @@ typedef enum {
 typedef struct netchan_buffer_s {
 	msg_t msg;
 	byte msgBuffer[MAX_MSGLEN];
-#ifdef LEGACY_PROTOCOL
-	char clientCommandString[MAX_STRING_CHARS]; // valid command string for SV_Netchan_Encode
-#endif
 	struct netchan_buffer_s *next;
 } netchan_buffer_t;
 
@@ -278,6 +281,7 @@ int SV_RateMsec(client_t *client);
 // sv_init.c
 void SV_SetConfigstring(int index, const char *val);
 void SV_GetConfigstring(int index, char *buffer, int bufferSize);
+void SV_SetConfigstringRestrictions(int index, const clientList_t *clientList);
 void SV_UpdateConfigstrings(client_t *client);
 void SV_SetUserinfo(int index, const char *val);
 void SV_GetUserinfo(int index, char *buffer, int bufferSize);
@@ -293,7 +297,7 @@ void SV_FreeClient(client_t *client);
 void SV_DropClient(client_t *drop, const char *reason);
 void SV_ExecuteClientCommand(client_t *cl, const char *s, qboolean clientOK);
 void SV_ClientThink(client_t *cl, usercmd_t *cmd);
-int SV_WriteDownloadToClient(client_t *cl , msg_t *msg);
+int SV_WriteDownloadToClient(client_t *cl, msg_t *msg);
 int SV_SendDownloadMessages(void);
 int SV_SendQueuedMessages(void);
 // sv_ccmds.c
