@@ -71,7 +71,7 @@ typedef enum {
 	OP_LOAD4,
 	OP_STORE1,
 	OP_STORE2,
-	OP_STORE4, // *(stack[top-1]) = stack[top]
+	OP_STORE4, // *(stack[top - 1]) = stack[top]
 	OP_ARG,
 	OP_BLOCK_COPY,
 	OP_SEX8,
@@ -107,7 +107,7 @@ typedef struct vmSymbol_s {
 	struct vmSymbol_s *next;
 	int symValue;
 	int profileCount;
-	char symName[1];	// variable sized
+	char symName[1]; // variable sized
 } vmSymbol_t;
 
 #define VM_OFFSET_PROGRAM_STACK 0

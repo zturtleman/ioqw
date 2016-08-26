@@ -394,7 +394,7 @@ static void UI_SPPostgameMenu_MenuDraw(void) {
 	if (postgameMenuInfo.numClients <= 3) {
 		n = 0;
 	} else {
-		n = timer / 1500 % (postgameMenuInfo.numClients + 2);
+		n = timer / 1500 %(postgameMenuInfo.numClients + 2);
 	}
 
 	UI_SPPostgameMenu_MenuDrawScoreLine(n, 0);

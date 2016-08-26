@@ -770,8 +770,7 @@ qboolean Cvar_Command(void) {
 =======================================================================================================================================
 Cvar_Print_f
 
-Prints the contents of a cvar (preferred over Cvar_Command where cvar names
-and commands conflict).
+Prints the contents of a cvar (preferred over Cvar_Command where cvar names and commands conflict).
 =======================================================================================================================================
 */
 void Cvar_Print_f(void) {
@@ -797,8 +796,7 @@ void Cvar_Print_f(void) {
 =======================================================================================================================================
 Cvar_Toggle_f
 
-Toggles a cvar for easy single key binding, optionally through a list of given
-values.
+Toggles a cvar for easy single key binding, optionally through a list of given values.
 =======================================================================================================================================
 */
 void Cvar_Toggle_f(void) {
@@ -1227,7 +1225,7 @@ void Cvar_Restart(qboolean unsetVM) {
 			continue;
 		}
 
-		if (!(curvar->flags & (CVAR_ROM|CVAR_INIT|CVAR_NORESTART))) {
+		if (!(curvar->flags &(CVAR_ROM|CVAR_INIT|CVAR_NORESTART))) {
 			// Just reset the rest to their default values.
 			Cvar_Set2(curvar->name, curvar->resetString, qfalse);
 		}
@@ -1342,7 +1340,7 @@ void Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultVal
 	// There is code in Cvar_Get to prevent CVAR_ROM cvars being changed by the user. In other words CVAR_ARCHIVE and CVAR_ROM are
 	// mutually exclusive flags. Unfortunately some historical game code (including single player base game) sets both flags.
 	// We unset CVAR_ROM for such cvars.
-	if ((flags & (CVAR_ARCHIVE|CVAR_ROM)) == (CVAR_ARCHIVE|CVAR_ROM)) {
+	if ((flags &(CVAR_ARCHIVE|CVAR_ROM)) == (CVAR_ARCHIVE|CVAR_ROM)) {
 		Com_DPrintf(S_COLOR_YELLOW "WARNING: Unsetting CVAR_ROM cvar '%s', since it is also CVAR_ARCHIVE\n", varName);
 		flags &= ~CVAR_ROM;
 	}

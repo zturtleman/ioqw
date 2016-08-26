@@ -150,16 +150,15 @@ void COM_DefaultExtension(char *path, int maxSize, const char *extension) {
 =======================================================================================================================================
 */
 /*
-// can't just use function pointers, or dll linkage can
-// mess up when qcommon is included in multiple places
-static short (*_BigShort) (short l);
-static short (*_LittleShort) (short l);
-static int (*_BigLong) (int l);
-static int (*_LittleLong) (int l);
-static qint64 (*_BigLong64) (qint64 l);
-static qint64 (*_LittleLong64) (qint64 l);
-static float (*_BigFloat) (const float *l);
-static float (*_LittleFloat) (const float *l);
+// can't just use function pointers, or dll linkage can mess up when qcommon is included in multiple places
+static short (*_BigShort)(short l);
+static short (*_LittleShort)(short l);
+static int (*_BigLong)(int l);
+static int (*_LittleLong)(int l);
+static qint64 (*_BigLong64)(qint64 l);
+static qint64 (*_LittleLong64)(qint64 l);
+static float (*_BigFloat)(const float *l);
+static float (*_LittleFloat)(const float *l);
 
 short BigShort(short l){return _BigShort(l);}
 short LittleShort(short l) {return _LittleShort(l);}

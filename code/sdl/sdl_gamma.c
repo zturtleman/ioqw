@@ -64,8 +64,9 @@ void GLimp_SetGamma(unsigned char red[256], unsigned char green[256], unsigned c
 
 			for (j = 0; j < 3; j++) {
 				for (i = 0; i < 128; i++) {
-					if (table[j][i] > ((128 + i) << 8))
+					if (table[j][i] > ((128 + i) << 8)) {
 						table[j][i] = (128 + i) << 8;
+					}
 				}
 
 				if (table[j][127] > 254 << 8) {

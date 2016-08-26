@@ -44,6 +44,8 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define MAIN_BANNER_MODEL "models/mapobjects/banner/banner5.md3"
 #define MAIN_MENU_VERTICAL_SPACING 34
 
+vec4_t color_translucent = {1.0f, 1.0f, 1.0f, 0.2f};
+
 typedef struct {
 	menuframework_s menu;
 	menutext_s singleplayer;

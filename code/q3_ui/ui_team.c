@@ -159,11 +159,11 @@ void TeamMain_MenuInit(void) {
 			break;
 	}
 
-	Menu_AddItem(&s_teammain.menu, (void*)&s_teammain.frame);
-	Menu_AddItem(&s_teammain.menu, (void*)&s_teammain.joinred);
-	Menu_AddItem(&s_teammain.menu, (void*)&s_teammain.joinblue);
-	Menu_AddItem(&s_teammain.menu, (void*)&s_teammain.joingame);
-	Menu_AddItem(&s_teammain.menu, (void*)&s_teammain.spectate);
+	Menu_AddItem(&s_teammain.menu, (void *)&s_teammain.frame);
+	Menu_AddItem(&s_teammain.menu, (void *)&s_teammain.joinred);
+	Menu_AddItem(&s_teammain.menu, (void *)&s_teammain.joinblue);
+	Menu_AddItem(&s_teammain.menu, (void *)&s_teammain.joingame);
+	Menu_AddItem(&s_teammain.menu, (void *)&s_teammain.spectate);
 }
 
 /*

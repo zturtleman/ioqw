@@ -60,7 +60,6 @@ vec4_t text_color_status = {1.00f, 1.00f, 1.00f, 1.00f};	// bright white
 static void Action_Init(menuaction_s *a);
 static void Action_Draw(menuaction_s *a);
 // radio button widget
-static void RadioButton_Init(menuradiobutton_s *rb);
 static void RadioButton_Draw(menuradiobutton_s *rb);
 static sfxHandle_t RadioButton_Key(menuradiobutton_s *rb, int key);
 // slider widget
@@ -68,17 +67,14 @@ static void Slider_Init(menuslider_s *s);
 static sfxHandle_t Slider_Key(menuslider_s *s, int key);
 static void Slider_Draw(menuslider_s *s);
 // spin control widget
-static void SpinControl_Init(menulist_s *s);
 static void SpinControl_Draw(menulist_s *s);
 static sfxHandle_t SpinControl_Key(menulist_s *l, int key);
 // text widget
 static void Text_Init(menutext_s *b);
 static void Text_Draw(menutext_s *b);
 // scrolllist widget
-static void ScrollList_Init(menulist_s *l);
 sfxHandle_t ScrollList_Key(menulist_s *l, int key);
 // proportional text widget
-static void PText_Init(menutext_s *b);
 static void PText_Draw(menutext_s *b);
 // proportional banner text widget
 static void BText_Init(menutext_s *b);
@@ -162,7 +158,7 @@ static void BText_Draw(menutext_s *t) {
 PText_Init
 =======================================================================================================================================
 */
-static void PText_Init(menutext_s *t) {
+void PText_Init(menutext_s *t) {
 	int x;
 	int y;
 	int w;
@@ -395,7 +391,7 @@ static void Action_Draw(menuaction_s *a) {
 RadioButton_Init
 =======================================================================================================================================
 */
-static void RadioButton_Init(menuradiobutton_s *rb) {
+void RadioButton_Init(menuradiobutton_s *rb) {
 	int len;
 
 	// calculate bounds
@@ -646,7 +642,6 @@ static void Slider_Draw(menuslider_s *s) {
 	x = s->generic.x;
 	y = s->generic.y;
 	focus = (s->generic.parent->cursor == s->generic.menuPosition);
-
 	style = UI_SMALLFONT;
 
 	if (s->generic.flags & QMF_GRAYED) {
@@ -699,7 +694,7 @@ static void Slider_Draw(menuslider_s *s) {
 SpinControl_Init
 =======================================================================================================================================
 */
-static void SpinControl_Init(menulist_s *s) {
+void SpinControl_Init(menulist_s *s) {
 	int len;
 	int l;
 	const char *str;
@@ -782,7 +777,6 @@ static void SpinControl_Draw(menulist_s *s) {
 
 	x = s->generic.x;
 	y = s->generic.y;
-
 	style = UI_SMALLFONT;
 	focus = (s->generic.parent->cursor == s->generic.menuPosition);
 
@@ -813,7 +807,7 @@ static void SpinControl_Draw(menulist_s *s) {
 ScrollList_Init
 =======================================================================================================================================
 */
-static void ScrollList_Init(menulist_s *l) {
+void ScrollList_Init(menulist_s *l) {
 	int w;
 
 	l->oldvalue = 0;
@@ -1272,7 +1266,7 @@ Menu_SetCursor
 */
 void Menu_SetCursor(menuframework_s *m, int cursor) {
 
-	if (((menucommon_s *)(m->items[cursor]))->flags & (QMF_GRAYED|QMF_INACTIVE)) {
+	if (((menucommon_s *)(m->items[cursor]))->flags &(QMF_GRAYED|QMF_INACTIVE)) {
 		// cursor can't go there
 		return;
 	}
@@ -1314,7 +1308,7 @@ wrap:
 	while (m->cursor >= 0 && m->cursor < m->nitems) {
 		item = (menucommon_s *)m->items[m->cursor];
 
-		if ((item->flags & (QMF_GRAYED|QMF_MOUSEONLY|QMF_INACTIVE))) {
+		if ((item->flags &(QMF_GRAYED|QMF_MOUSEONLY|QMF_INACTIVE))) {
 			m->cursor += dir;
 		} else {
 			break;
@@ -1496,7 +1490,7 @@ sfxHandle_t Menu_DefaultKey(menuframework_s *m, int key) {
 	// route key stimulus to widget
 	item = Menu_ItemAtCursor(m);
 
-	if (item && !(item->flags & (QMF_GRAYED|QMF_INACTIVE))) {
+	if (item && !(item->flags &(QMF_GRAYED|QMF_INACTIVE))) {
 		switch (item->type) {
 			case MTYPE_SPINCONTROL:
 				sound = SpinControl_Key((menulist_s *)item, key);
@@ -1560,7 +1554,7 @@ sfxHandle_t Menu_DefaultKey(menuframework_s *m, int key) {
 		case K_MOUSE1:
 		case K_MOUSE3:
 			if (item) {
-				if ((item->flags & QMF_HASMOUSEFOCUS) && !(item->flags & (QMF_GRAYED|QMF_INACTIVE))) {
+				if ((item->flags & QMF_HASMOUSEFOCUS) && !(item->flags &(QMF_GRAYED|QMF_INACTIVE))) {
 					return (Menu_ActivateItem(m, item));
 				}
 			}
@@ -1589,7 +1583,7 @@ sfxHandle_t Menu_DefaultKey(menuframework_s *m, int key) {
 		case K_KP_ENTER:
 		case K_ENTER:
 			if (item) {
-				if (!(item->flags & (QMF_MOUSEONLY|QMF_GRAYED|QMF_INACTIVE))) {
+				if (!(item->flags &(QMF_MOUSEONLY|QMF_GRAYED|QMF_INACTIVE))) {
 					return (Menu_ActivateItem(m, item));
 				}
 			}

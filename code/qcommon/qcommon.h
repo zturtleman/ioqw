@@ -314,8 +314,14 @@ void *VM_ExplicitArgPtr(vm_t *vm, intptr_t intValue);
 
 #define VMA(x) VM_ArgPtr(args[x])
 
+/*
+=======================================================================================================================================
+_vmf
+=======================================================================================================================================
+*/
 static ID_INLINE float _vmf(intptr_t x) {
 	floatint_t fi;
+
 	fi.i = (int) x;
 	return fi.f;
 }
@@ -934,7 +940,7 @@ typedef struct {
 	node_t *tree;
 	node_t *lhead;
 	node_t *ltail;
-	node_t *loc[HMAX+1];
+	node_t *loc[HMAX + 1];
 	node_t **freelist;
 	node_t nodeList[768];
 	node_t *nodePtrs[768];

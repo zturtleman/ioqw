@@ -127,7 +127,7 @@ void UI_PushMenu(menuframework_s *menu) {
 	for (i = 0; i < menu->nitems; i++) {
 		item = (menucommon_s *)menu->items[i];
 
-		if (!(item->flags & (QMF_GRAYED|QMF_MOUSEONLY|QMF_INACTIVE))) {
+		if (!(item->flags &(QMF_GRAYED|QMF_MOUSEONLY|QMF_INACTIVE))) {
 			menu->cursor_prev = -1;
 			Menu_SetCursor(menu, i);
 			break;
@@ -528,6 +528,68 @@ float UI_ProportionalSizeScale(int style) {
 
 /*
 =======================================================================================================================================
+UI_DrawScaledProportionalString
+
+The use of float x,y allows greater positioning precision.
+We can now "compensate" for alignment issues arising from the virtual 640x480 screen resolution.
+Any function calling with int arguments will still exhibit previous behaviour.
+=======================================================================================================================================
+*/
+void UI_DrawScaledProportionalString(float x, float y, const char *str, int style, float sizeScale, vec4_t color) {
+	vec4_t drawcolor;
+	int width;
+
+	sizeScale *= UI_ProportionalSizeScale(style);
+
+	switch (style & UI_FORMATMASK) {
+		case UI_CENTER:
+			width = UI_ProportionalStringWidth(str) * sizeScale;
+			x -= width / 2;
+			break;
+		case UI_RIGHT:
+			width = UI_ProportionalStringWidth(str) * sizeScale;
+			x -= width;
+			break;
+		case UI_LEFT:
+		default:
+			break;
+	}
+
+	if (style & UI_DROPSHADOW) {
+		drawcolor[0] = drawcolor[1] = drawcolor[2] = 0;
+		drawcolor[3] = color[3];
+		UI_DrawProportionalString2(x + 2, y + 2, str, drawcolor, sizeScale, uis.charsetProp);
+	}
+
+	if (style & UI_INVERSE) {
+		drawcolor[0] = color[0] * 0.7;
+		drawcolor[1] = color[1] * 0.7;
+		drawcolor[2] = color[2] * 0.7;
+		drawcolor[3] = color[3];
+		UI_DrawProportionalString2(x, y, str, drawcolor, sizeScale, uis.charsetProp);
+		return;
+	}
+
+	if (style & UI_PULSE) {
+		drawcolor[0] = color[0] * 0.7;
+		drawcolor[1] = color[1] * 0.7;
+		drawcolor[2] = color[2] * 0.7;
+		drawcolor[3] = color[3];
+		UI_DrawProportionalString2(x, y, str, color, sizeScale, uis.charsetProp);
+
+		drawcolor[0] = color[0];
+		drawcolor[1] = color[1];
+		drawcolor[2] = color[2];
+		drawcolor[3] = 0.5 + 0.5 * sin(uis.realtime / PULSE_DIVISOR);
+		UI_DrawProportionalString2(x, y, str, drawcolor, sizeScale, uis.charsetPropGlow);
+		return;
+	}
+
+	UI_DrawProportionalString2(x, y, str, color, sizeScale, uis.charsetProp);
+}
+
+/*
+=======================================================================================================================================
 UI_DrawProportionalString
 =======================================================================================================================================
 */
@@ -752,6 +814,7 @@ void UI_DrawString(int x, int y, const char *str, int style, vec4_t color) {
 		lowlight[1] = 0.8 * color[1];
 		lowlight[2] = 0.8 * color[2];
 		lowlight[3] = 0.8 * color[3];
+
 		UI_LerpColor(color, lowlight, newcolor, 0.5 + 0.5 * sin(uis.realtime / PULSE_DIVISOR));
 		drawcolor = newcolor;
 	} else {
@@ -902,7 +965,7 @@ void UI_MouseEvent(int dx, int dy) {
 	for (i = 0; i < uis.activemenu->nitems; i++) {
 		m = (menucommon_s *)uis.activemenu->items[i];
 
-		if (m->flags & (QMF_GRAYED|QMF_INACTIVE)) {
+		if (m->flags &(QMF_GRAYED|QMF_INACTIVE)) {
 			continue;
 		}
 
@@ -988,7 +1051,7 @@ void UI_Cache_f(void) {
 	UI_SetupMenu_Cache();
 //	UI_LoadConfig_Cache();
 //	UI_SaveConfigMenu_Cache();
-	UI_BotSelectMenu_Cache();
+//	UI_BotSelectMenu_Cache();
 	UI_ModsMenu_Cache();
 
 }
@@ -1029,7 +1092,7 @@ qboolean UI_ConsoleCommand(int realTime) {
 	}
 
 	if (Q_stricmp(cmd, "ui_teamOrders") == 0) {
-		UI_TeamOrdersMenu_f();
+		UI_BotCommandMenu_f();
 		return qtrue;
 	}
 

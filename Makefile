@@ -2510,6 +2510,7 @@ Q3UIOBJ_ = \
   $(B)/$(BASEGAME)/ui/ui_credits.o \
   $(B)/$(BASEGAME)/ui/ui_demo2.o \
   $(B)/$(BASEGAME)/ui/ui_display.o \
+  $(B)/$(BASEGAME)/ui/ui_dynamicmenu.o \
   $(B)/$(BASEGAME)/ui/ui_gameinfo.o \
   $(B)/$(BASEGAME)/ui/ui_ingame.o \
   $(B)/$(BASEGAME)/ui/ui_loadconfig.o \
@@ -2534,7 +2535,15 @@ Q3UIOBJ_ = \
   $(B)/$(BASEGAME)/ui/ui_splevel.o \
   $(B)/$(BASEGAME)/ui/ui_sppostgame.o \
   $(B)/$(BASEGAME)/ui/ui_spskill.o \
-  $(B)/$(BASEGAME)/ui/ui_startserver.o \
+  $(B)/$(BASEGAME)/ui/ui_startserver_bot.o \
+  $(B)/$(BASEGAME)/ui/ui_startserver_botsel.o \
+  $(B)/$(BASEGAME)/ui/ui_startserver_common.o \
+  $(B)/$(BASEGAME)/ui/ui_startserver_custommaps.o \
+  $(B)/$(BASEGAME)/ui/ui_startserver_data.o \
+  $(B)/$(BASEGAME)/ui/ui_startserver_map.o \
+  $(B)/$(BASEGAME)/ui/ui_startserver_mapsel.o \
+  $(B)/$(BASEGAME)/ui/ui_startserver_script.o \
+  $(B)/$(BASEGAME)/ui/ui_startserver_server.o \
   $(B)/$(BASEGAME)/ui/ui_team.o \
   $(B)/$(BASEGAME)/ui/ui_teamorders.o \
   $(B)/$(BASEGAME)/ui/ui_video.o \

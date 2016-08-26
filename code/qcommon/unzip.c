@@ -945,8 +945,9 @@ local int unzlocal_CheckCurrentFileCoherencyHeader(s, piSizeVar, poffset_local_e
 	*poffset_local_extrafield = 0;
 	*psize_local_extrafield = 0;
 
-	if (ZSEEK(s->z_filefunc, s->filestream, s->cur_file_info_internal.offset_curfile + s->byte_before_the_zipfile, ZLIB_FILEFUNC_SEEK_SET) != 0)
+	if (ZSEEK(s->z_filefunc, s->filestream, s->cur_file_info_internal.offset_curfile + s->byte_before_the_zipfile, ZLIB_FILEFUNC_SEEK_SET) != 0) {
 		return UNZ_ERRNO;
+	}
 
 	if (err == UNZ_OK) {
 		if (unzlocal_getLong(&s->z_filefunc, s->filestream, &uMagic) != UNZ_OK) {

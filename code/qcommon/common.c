@@ -1035,7 +1035,7 @@ void *Z_Malloc(int size) {
 #endif
 	void *buf;
 
-	//Z_CheckHeap (); // DEBUG
+	//Z_CheckHeap(); // DEBUG
 #ifdef ZONE_DEBUG
 	buf = Z_TagMallocDebug(size, TAG_GENERAL, label, file, line);
 #else
@@ -1185,7 +1185,7 @@ memstatic_t numberstring[] = {
 =======================================================================================================================================
 CopyString
 
-NOTE: Never write over the memory CopyString returns because memory from a memstatic_t might be returned
+NOTE: Never write over the memory CopyString returns because memory from a memstatic_t might be returned.
 =======================================================================================================================================
 */
 char *CopyString(const char *in) {
@@ -3019,7 +3019,7 @@ void Com_Frame(void) {
 		extern int c_traces, c_brush_traces, c_patch_traces;
 		extern int c_pointcontents;
 
-		Com_Printf("%4i traces  (%ib %ip) %4i points\n", c_traces, c_brush_traces, c_patch_traces, c_pointcontents);
+		Com_Printf("%4i traces (%ib %ip) %4i points\n", c_traces, c_brush_traces, c_patch_traces, c_pointcontents);
 		c_traces = 0;
 		c_brush_traces = 0;
 		c_patch_traces = 0;

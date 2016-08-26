@@ -410,7 +410,7 @@ Returns -1 if not present.
 int Sys_FileTime(char *path) {
 	struct stat buf;
 
-	if (stat(path,&buf) == -1) {
+	if (stat(path, &buf) == -1) {
 		return -1;
 	}
 
@@ -581,7 +581,7 @@ int main(int argc, char **argv) {
 #ifndef DEDICATED
 	// SDL version check
 	// Compile time
-#if !SDL_VERSION_ATLEAST(MINSDL_MAJOR, MINSDL_MINOR, MINSDL_PATCH)
+#if !SDL_VERSION_ATLEAST (MINSDL_MAJOR, MINSDL_MINOR, MINSDL_PATCH)
 #error A more recent version of SDL is required
 #endif
 	// Run time

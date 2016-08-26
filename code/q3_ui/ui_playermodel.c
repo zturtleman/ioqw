@@ -115,7 +115,7 @@ static void PlayerModel_UpdateGrid(void) {
 
 	j = s_playermodel.modelpage * MAX_MODELSPERPAGE;
 
-	for (i = 0; i<PLAYERGRID_ROWS * PLAYERGRID_COLS; i++, j++) {
+	for (i = 0; i < PLAYERGRID_ROWS * PLAYERGRID_COLS; i++, j++) {
 		if (j < s_playermodel.nummodels) {
 			// model/skin portrait
 			s_playermodel.pics[i].generic.name = s_playermodel.modelnames[j];

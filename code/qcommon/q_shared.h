@@ -296,11 +296,11 @@ void *Hunk_Alloc(int size, ha_pref preference);
 #define CIN_shader	16
 
 /*
-==============================================================
+=======================================================================================================================================
 
-MATHLIB
+	MATHLIB
 
-==============================================================
+=======================================================================================================================================
 */
 
 typedef float vec_t;
@@ -321,8 +321,7 @@ typedef int fixed16_t;
 #endif
 #define NUMVERTEXNORMALS 162
 extern vec3_t bytedirs[NUMVERTEXNORMALS];
-// all drawing is done to a 640*480 virtual screen size
-// and will be automatically scaled to the real resolution
+// all drawing is done to a 640 * 480 virtual screen size and will be automatically scaled to the real resolution
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 
@@ -420,13 +419,13 @@ extern void (QDECL *Q_SnapVector)(vec3_t vec);
 		(*temp)[0] = round((*temp)[0]);\
 		(*temp)[1] = round((*temp)[1]);\
 		(*temp)[2] = round((*temp)[2]);\
-	} while(0)
+	} while (0)
 #endif
 /*
 // if your system does not have lrintf() and round() you can try this block. Please also open a bug report at bugzilla.icculus.org or write a mail to the ioq3 mailing list.
 #else
-#define Q_ftol(v) ((long) (v))
-#define Q_round(v) do { if((v) < 0) (v) -= 0.5f; else (v) += 0.5f; (v) = Q_ftol((v)); } while(0)
+#define Q_ftol(v) ((long)(v))
+#define Q_round(v) do { if ((v) < 0) (v) -= 0.5f; else (v) += 0.5f; (v) = Q_ftol((v)); } while (0)
 #define Q_SnapVector(vec) \
 	do\
 	{\
@@ -435,7 +434,7 @@ extern void (QDECL *Q_SnapVector)(vec3_t vec);
 		Q_round((*temp)[0]);\
 		Q_round((*temp)[1]);\
 		Q_round((*temp)[2]);\
-	} while(0)
+	} while (0)
 #endif
 */
 #if idppc
@@ -501,7 +500,7 @@ void ByteToDir(int b, vec3_t dir);
 typedef struct {
 	float v[3];
 } vec3struct_t;
-#define VectorCopy(a, b) (*(vec3struct_t *)b=*(vec3struct_t *)a)
+#define VectorCopy(a, b) (*(vec3struct_t *)b = *(vec3struct_t *)a)
 #endif
 #endif
 #define VectorClear(a) ((a)[0] = (a)[1] = (a)[2] = 0)
@@ -909,7 +908,7 @@ typedef struct cplane_s {
 	vec3_t normal;
 	float dist;
 	byte type;		// for fast side tests: 0, 1, 2 = axial, 3 = nonaxial
-	byte signbits;	// signx + (signy<<1) + (signz<<2), used as lookup during collision
+	byte signbits;	// signx + (signy << 1) + (signz << 2), used as lookup during collision
 	byte pad[2];
 } cplane_t;
 // a trace is returned when a box is swept through the world
@@ -923,7 +922,7 @@ typedef struct {
 	int contents;			// contents on other side of surface hit
 	int entityNum;			// entity the contacted sirface is a part of
 } trace_t;
-// trace->entityNum can also be 0 to (MAX_GENTITIES-1) or ENTITYNUM_NONE, ENTITYNUM_WORLD
+// trace->entityNum can also be 0 to (MAX_GENTITIES - 1) or ENTITYNUM_NONE, ENTITYNUM_WORLD
 
 // markfragments are returned by R_MarkFragments()
 typedef struct {

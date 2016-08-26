@@ -167,8 +167,9 @@ static void GLimp_DetectAvailableModes(void) {
 		// SDL can give the same resolution with different refresh rates.
 		// Only list resolution once.
 		for (j = 0; j < numModes; j++) {
-			if (mode.w == modes[j].w && mode.h == modes[j].h)
+			if (mode.w == modes[j].w && mode.h == modes[j].h) {
 				break;
+			}
 		}
 
 		if (j != numModes) {
@@ -258,7 +259,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder) {
 		ri.Printf(PRINT_ALL, "Cannot determine display aspect, assuming 1.333\n");
 	}
 
-	ri.Printf (PRINT_ALL, "...setting mode %d:", mode);
+	ri.Printf(PRINT_ALL, "...setting mode %d:", mode);
 
 	if (mode == -2) {
 		// use desktop video resolution
@@ -388,9 +389,9 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder) {
 			perChannelColorBits = 4;
 		}
 #ifdef __sgi // Fix for SGIs grabbing too many bits of color
-		if (perChannelColorBits == 4)
+		if (perChannelColorBits == 4) {
 			perChannelColorBits = 0; // Use minimum size for 16-bit color
-
+		}
 		// Need alpha or else SGIs choose 36+ bit RGB mode
 		SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 1);
 #endif
@@ -634,11 +635,11 @@ static void GLimp_InitExtensions(void) {
 	if (GLimp_HaveExtension("GL_EXT_compiled_vertex_array")) {
 		if (r_ext_compiled_vertex_array->value) {
 			ri.Printf(PRINT_ALL, "...using GL_EXT_compiled_vertex_array\n");
-			qglLockArraysEXT = (void (APIENTRY *)(GLint, GLint)) SDL_GL_GetProcAddress("glLockArraysEXT");
-			qglUnlockArraysEXT = (void (APIENTRY *)(void)) SDL_GL_GetProcAddress("glUnlockArraysEXT");
+			qglLockArraysEXT = (void (APIENTRY *)(GLint, GLint))SDL_GL_GetProcAddress("glLockArraysEXT");
+			qglUnlockArraysEXT = (void (APIENTRY *)(void))SDL_GL_GetProcAddress("glUnlockArraysEXT");
 
 			if (!qglLockArraysEXT || !qglUnlockArraysEXT) {
-				ri.Error (ERR_FATAL, "bad getprocaddress");
+				ri.Error(ERR_FATAL, "bad getprocaddress");
 			}
 		} else {
 			ri.Printf(PRINT_ALL, "...ignoring GL_EXT_compiled_vertex_array\n");

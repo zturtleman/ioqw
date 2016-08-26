@@ -138,6 +138,16 @@ vmCvar_t ui_server13;
 vmCvar_t ui_server14;
 vmCvar_t ui_server15;
 vmCvar_t ui_server16;
+// UI conventional cvars
+vmCvar_t ui_animsfx;
+vmCvar_t ui_mapicons;
+vmCvar_t ui_autoclosebotmenu;
+vmCvar_t ui_ingame_dynamicmenu;
+vmCvar_t ui_map_multisel;
+vmCvar_t ui_map_list;
+vmCvar_t ui_bot_multisel;
+vmCvar_t ui_bot_list;
+vmCvar_t ui_olditemmenu;
 vmCvar_t ui_ioq3;
 
 static cvarTable_t cvarTable[] = {
@@ -198,6 +208,15 @@ static cvarTable_t cvarTable[] = {
 	{&ui_server14, "server14", "", CVAR_ARCHIVE},
 	{&ui_server15, "server15", "", CVAR_ARCHIVE},
 	{&ui_server16, "server16", "", CVAR_ARCHIVE},
+	{&ui_map_multisel, "ui_map_multisel", "0", CVAR_ROM|CVAR_ARCHIVE},
+	{&ui_map_list, "ui_map_list", "0", CVAR_ROM|CVAR_ARCHIVE},
+	{&ui_bot_multisel, "ui_bot_multisel", "0", CVAR_ROM|CVAR_ARCHIVE},
+	{&ui_bot_list, "ui_bot_list", "0", CVAR_ROM|CVAR_ARCHIVE},
+	{&ui_ingame_dynamicmenu, "ui_ingame_dynamicmenu", "1", CVAR_ROM|CVAR_ARCHIVE},
+	{&ui_animsfx, "ui_s_animsfx", "1", CVAR_ROM|CVAR_ARCHIVE},
+	{&ui_mapicons, "ui_mapicons", "0", CVAR_ROM|CVAR_ARCHIVE},
+	{&ui_autoclosebotmenu, "ui_autoclosebotmenu", "0", CVAR_ROM|CVAR_ARCHIVE},
+	{&ui_olditemmenu, "ui_olditemmenu", "0", CVAR_ARCHIVE},
 	{&ui_ioq3, "ui_ioq3", "1", CVAR_ROM}
 };
 

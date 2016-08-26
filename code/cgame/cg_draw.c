@@ -1474,7 +1474,7 @@ void CG_AddLagometerFrameInfo(void) {
 	int offset;
 
 	offset = cg.time - cg.latestSnapshotTime;
-	lagometer.frameSamples[lagometer.frameCount & (LAG_SAMPLES - 1)] = offset;
+	lagometer.frameSamples[lagometer.frameCount &(LAG_SAMPLES - 1)] = offset;
 	lagometer.frameCount++;
 }
 

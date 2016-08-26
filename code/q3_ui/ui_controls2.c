@@ -109,15 +109,16 @@ typedef struct {
 #define ID_CHAT3		32
 #define ID_CHAT4		33
 #define ID_TOGGLEMENU	34
+#define ID_BOTMENU		35
 // all others
-#define ID_FREELOOK		35
-#define ID_INVERTMOUSE	36
-#define ID_ALWAYSRUN	37
-#define ID_AUTOSWITCH	38
-#define ID_MOUSESPEED	39
-#define ID_JOYENABLE	40
-#define ID_JOYTHRESHOLD	41
-#define ID_SMOOTHMOUSE	42
+#define ID_FREELOOK		36
+#define ID_INVERTMOUSE	37
+#define ID_ALWAYSRUN	38
+#define ID_AUTOSWITCH	39
+#define ID_MOUSESPEED	40
+#define ID_JOYENABLE	41
+#define ID_JOYTHRESHOLD	42
+#define ID_SMOOTHMOUSE	43
 
 #define ANIM_IDLE		0
 #define ANIM_RUN		1
@@ -199,6 +200,7 @@ typedef struct {
 	menuaction_s chat3;
 	menuaction_s chat4;
 	menuaction_s togglemenu;
+	menuaction_s botmenu;
 	menuradiobutton_s joyenable;
 	menuslider_s joythreshold;
 	int section;
@@ -215,6 +217,7 @@ typedef struct {
 } controls_t;
 
 static controls_t s_controls;
+
 static vec4_t controls_binding_color = {1.00f, 0.43f, 0.00f, 1.00f};
 
 static bind_t g_bindings[] = {
@@ -253,6 +256,7 @@ static bind_t g_bindings[] = {
 	{"messagemode3",	"chat-target",		ID_CHAT3,		ANIM_CHAT,		-1,				-1, -1, -1},
 	{"messagemode4",	"chat-attacker",	ID_CHAT4,		ANIM_CHAT,		-1,				-1, -1, -1},
 	{"togglemenu",		"toggle menu",		ID_TOGGLEMENU,	ANIM_IDLE,		K_ESCAPE,		-1, -1, -1},
+	{"ui_teamorders",	"bot command menu",	ID_BOTMENU,		ANIM_CHAT,		'b',			-1, -1, -1},
 	{(char *)NULL,		(char *)NULL,		0,				0,				-1,				-1, -1, -1},
 };
 
@@ -324,6 +328,7 @@ static menucommon_s *g_misc_controls[] = {
 	(menucommon_s *)&s_controls.chat3,
 	(menucommon_s *)&s_controls.chat4,
 	(menucommon_s *)&s_controls.togglemenu,
+	(menucommon_s *)&s_controls.botmenu,
 	NULL,
 };
 
@@ -1447,6 +1452,12 @@ static void Controls_MenuInit(void) {
 	s_controls.togglemenu.generic.ownerdraw = Controls_DrawKeyBinding;
 	s_controls.togglemenu.generic.id = ID_TOGGLEMENU;
 
+	s_controls.botmenu.generic.type = MTYPE_ACTION;
+	s_controls.botmenu.generic.flags = QMF_LEFT_JUSTIFY|QMF_PULSEIFFOCUS|QMF_GRAYED|QMF_HIDDEN;
+	s_controls.botmenu.generic.callback = Controls_ActionEvent;
+	s_controls.botmenu.generic.ownerdraw = Controls_DrawKeyBinding;
+	s_controls.botmenu.generic.id = ID_BOTMENU;
+
 	s_controls.joyenable.generic.type = MTYPE_RADIOBUTTON;
 	s_controls.joyenable.generic.flags = QMF_SMALLFONT;
 	s_controls.joyenable.generic.x = SCREEN_WIDTH / 2;
@@ -1530,6 +1541,7 @@ static void Controls_MenuInit(void) {
 	Menu_AddItem(&s_controls.menu, &s_controls.chat3);
 	Menu_AddItem(&s_controls.menu, &s_controls.chat4);
 	Menu_AddItem(&s_controls.menu, &s_controls.togglemenu);
+	Menu_AddItem(&s_controls.menu, &s_controls.botmenu);
 
 	Menu_AddItem(&s_controls.menu, &s_controls.back);
 

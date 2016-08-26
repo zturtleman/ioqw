@@ -22,8 +22,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 =======================================================================================================================================
 */
 
-// ui_players.c
-
 #include "ui_local.h"
 
 #define UI_TIMER_GESTURE 2300

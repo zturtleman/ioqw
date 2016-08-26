@@ -424,10 +424,12 @@ static long SVC_HashForAddress(netadr_t address) {
 
 	switch (address.type) {
 		case NA_IP:
-			ip = address.ip; size = 4;
+			ip = address.ip;
+			size = 4;
 			break;
 		case NA_IP6:
-			ip = address.ip6; size = 16;
+			ip = address.ip6;
+			size = 16;
 			break;
 		default:
 			break;

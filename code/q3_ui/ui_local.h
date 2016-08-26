@@ -32,6 +32,21 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "../client/keycodes.h"
 #include "../game/bg_public.h"
 
+// status bar text buffer
+#define MAX_STATUSBAR_TEXT 64
+#define STATUSBAR_FADETIME 1500
+// logo art, all are 128x32 but they view very well at 64x16
+// define NO_UI_MINILOGO to remove 
+#define UI_LOGO_POWERED "menu/ui_art/ui_powered"
+#define UI_LOGO_ASSISTED "menu/ui_art/ui_assisted"
+#define UI_LOGO_INCLUDE "menu/ui_art/ui_include"
+#define UI_LOGO_IMPROVED "menu/ui_art/ui_improved"
+#define UI_LOGO_USING "menu/ui_art/ui_using"
+#define UI_LOGO_NAME "menu/ui_art/ui_name"
+
+#define UI_LOGO_X 570
+#define UI_LOGO_Y 400
+
 typedef void (*voidfunc_f)(void);
 
 extern vmCvar_t ui_friendlyFire;
@@ -91,6 +106,7 @@ extern vmCvar_t ui_server13;
 extern vmCvar_t ui_server14;
 extern vmCvar_t ui_server15;
 extern vmCvar_t ui_server16;
+extern vmCvar_t ui_mapicons;
 extern vmCvar_t ui_ioq3;
 // ui_qmenu.c
 #define RCOLUMN_OFFSET (BIGCHAR_WIDTH)
@@ -99,7 +115,7 @@ extern vmCvar_t ui_ioq3;
 
 #define MAX_EDIT_LINE 256
 #define MAX_MENUDEPTH 8
-#define MAX_MENUITEMS 64
+#define MAX_MENUITEMS 96
 
 #define MTYPE_NULL			0
 #define MTYPE_SLIDER		1
@@ -263,15 +279,22 @@ extern vec4_t color_blue;
 extern vec4_t color_orange;
 extern vec4_t color_red;
 extern vec4_t color_dim;
+extern vec4_t color_translucent;
 extern vec4_t name_color;
 extern vec4_t list_color;
 extern vec4_t listbar_color;
+extern vec4_t pulse_color;
 extern vec4_t text_color_disabled;
 extern vec4_t text_color_normal;
 extern vec4_t text_color_highlight;
 extern char *ui_medalNames[];
 extern char *ui_medalPicNames[];
 extern char *ui_medalSounds[];
+
+extern void PText_Init(menutext_s *b);
+extern void ScrollList_Init(menulist_s *l);
+extern void RadioButton_Init(menuradiobutton_s *rb);
+extern void SpinControl_Init(menulist_s *s);
 // ui_mfield.c
 extern void MField_Clear(mfield_t *edit);
 extern void MField_KeyDownEvent(mfield_t *edit, int key);
@@ -288,8 +311,11 @@ extern void UI_UpdateCvars(void);
 // ui_credits.c
 extern void UI_CreditMenu(void);
 // ui_ingame.c
+extern int UI_CurrentPlayerTeam(void);
 extern void InGame_Cache(void);
 extern void UI_InGameMenu(void);
+extern void UI_DynamicMenuCache(void);
+extern void UI_BotCommandMenu_f(void);
 // ui_confirm.c
 extern void ConfirmMenu_Cache(void);
 extern void UI_ConfirmMenu(const char *question, void (*draw)(void), void (*action)(qboolean result));
@@ -338,6 +364,8 @@ extern void StartServer_Cache(void);
 extern void ServerOptions_Cache(void);
 extern void UI_BotSelectMenu(char *bot);
 extern void UI_BotSelectMenu_Cache(void);
+extern void UI_ServerPlayerIcon(const char *modelAndSkin, char *iconName, int iconNameMaxSize);
+extern const char *UI_DefaultIconFromGameType(int gametype);
 // ui_serverinfo.c
 extern void UI_ServerInfoMenu(void);
 extern void ServerInfo_Cache(void);
@@ -451,6 +479,7 @@ extern void UI_SetColor(const float *rgba);
 extern void UI_LerpColor(vec4_t a, vec4_t b, vec4_t c, float t);
 extern void UI_DrawBannerString(int x, int y, const char *str, int style, vec4_t color);
 extern float UI_ProportionalSizeScale(int style);
+extern void UI_DrawScaledProportionalString(float x, float y, const char *str, int style, float sizeScale, vec4_t color);
 extern void UI_DrawProportionalString(int x, int y, const char *str, int style, vec4_t color);
 extern void UI_DrawProportionalString_AutoWrapped(int x, int ystart, int xmax, int ystep, const char *str, int style, vec4_t color);
 extern int UI_ProportionalStringWidth(const char *str);
@@ -555,8 +584,14 @@ void trap_CIN_SetExtents(int handle, int x, int y, int w, int h);
 void UI_AddBots_Cache(void);
 void UI_AddBotsMenu(void);
 // ui_removebots.c
+enum {
+	RBM_KICKBOT,
+	RBM_CALLVOTEKICK,
+	RBM_CALLVOTELEADER
+};
+
 void UI_RemoveBots_Cache(void);
-void UI_RemoveBotsMenu(void);
+void UI_RemoveBotsMenu(int menutype);
 // ui_teamorders.c
 extern void UI_TeamOrdersMenu(void);
 extern void UI_TeamOrdersMenu_f(void);
@@ -594,6 +629,7 @@ int UI_GetNumSPArenas(void);
 int UI_GetNumSPTiers(void);
 char *UI_GetBotInfoByNumber(int num);
 char *UI_GetBotInfoByName(const char *name);
+int UI_GetBotNumByName(const char *name);
 int UI_GetNumBots(void);
 void UI_GetBestScore(int level, int *score, int *skill);
 void UI_SetBestScore(int level, int score);

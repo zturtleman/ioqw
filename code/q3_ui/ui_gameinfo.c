@@ -202,7 +202,7 @@ static void UI_LoadArenas(void) {
 	trap_Print(va("%i arenas parsed\n", ui_numArenas));
 
 	if (outOfMemory) {
-		trap_Print(S_COLOR_YELLOW"WARNING: not enough memory in pool to load all arenas\n");
+		trap_Print(S_COLOR_YELLOW "WARNING: not enough memory in pool to load all arenas\n");
 	}
 	// set initial numbers
 	for (n = 0; n < ui_numArenas; n++) {
@@ -356,7 +356,7 @@ static void UI_LoadBotsFromFile(char *filename) {
 	ui_numBots += UI_ParseInfos(buf, MAX_BOTS - ui_numBots, &ui_botInfos[ui_numBots]);
 
 	if (outOfMemory) {
-		trap_Print(S_COLOR_YELLOW"WARNING: not enough memory in pool to load all bots\n");
+		trap_Print(S_COLOR_YELLOW "WARNING: not enough memory in pool to load all bots\n");
 	}
 }
 
@@ -444,6 +444,41 @@ char *UI_GetBotInfoByName(const char *name) {
 	}
 
 	return NULL;
+}
+
+/*
+=======================================================================================================================================
+UI_GetBotNumByName
+=======================================================================================================================================
+*/
+int UI_GetBotNumByName(const char *name) {
+	int n;
+	char *value;
+
+	for (n = 0; n < ui_numBots; n++) {
+		value = Info_ValueForKey(ui_botInfos[n], "name");
+
+		if (!Q_stricmp(value, name)) {
+			return n;
+		}
+	}
+
+	return -1;
+}
+
+/*
+=======================================================================================================================================
+UI_GetBotNameByNumber
+=======================================================================================================================================
+*/
+char *UI_GetBotNameByNumber(int num) {
+	char *info = UI_GetBotInfoByNumber(num);
+
+	if (info) {
+		return Info_ValueForKey(info, "name");
+	}
+
+	return "Sarge";
 }
 
 // single player game info

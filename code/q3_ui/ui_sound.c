@@ -57,8 +57,8 @@ static const char *quality_items[] = {
 	"Low", "Medium", "High", NULL
 };
 
-#define UISND_SDL 0
-#define UISND_OPENAL 1
+#define UISND_SDL		0
+#define UISND_OPENAL	1
 
 static const char *soundSystem_items[] = {
 	"SDL", "OpenAL", NULL
