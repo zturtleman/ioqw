@@ -84,50 +84,54 @@ tryagain:
 		goto tryagain;
 	}
 
-	if (weaponNum == WP_MACHINEGUN || weaponNum == WP_GAUNTLET || weaponNum == WP_BFG) {
-		COM_StripExtension(item->world_model[0], path, sizeof(path));
-		Q_strcat(path, sizeof(path), "_barrel.md3");
-		pi->barrelModel = trap_R_RegisterModel(path);
-	}
+	COM_StripExtension(item->world_model[0], path, sizeof(path));
+	Q_strcat(path, sizeof(path), "_barrel.md3");
+	pi->barrelModel = trap_R_RegisterModel(path);
 
 	COM_StripExtension(item->world_model[0], path, sizeof(path));
 	Q_strcat(path, sizeof(path), "_flash.md3");
-
 	pi->flashModel = trap_R_RegisterModel(path);
 
 	switch (weaponNum) {
 		case WP_GAUNTLET:
-			MAKERGB(pi->flashDlightColor, 0.6f, 0.6f, 1);
+			MAKERGB(pi->flashDlightColor, 1.0f, 1.0f, 1.0f);
 			break;
 		case WP_MACHINEGUN:
-			MAKERGB(pi->flashDlightColor, 1, 1, 0);
+			MAKERGB(pi->flashDlightColor, 1.0f, 0.75f, 0);
+			break;
+		case WP_CHAINGUN:
+			MAKERGB(pi->flashDlightColor, 1.0f, 0.8f, 0.2f);
 			break;
 		case WP_SHOTGUN:
-			MAKERGB(pi->flashDlightColor, 1, 1, 0);
+			MAKERGB(pi->flashDlightColor, 1.0f, 0.7f, 0);
+			break;
+		case WP_NAILGUN:
+			MAKERGB(pi->flashDlightColor, 1, 0.7f, 0);
+			break;
+		case WP_PROX_LAUNCHER:
 			break;
 		case WP_GRENADE_LAUNCHER:
-			MAKERGB(pi->flashDlightColor, 1, 0.7f, 0.5f);
 			break;
 		case WP_ROCKET_LAUNCHER:
-			MAKERGB(pi->flashDlightColor, 1, 0.75f, 0);
+			MAKERGB(pi->flashDlightColor, 1.0f, 0.75f, 0);
 			break;
 		case WP_LIGHTNING:
-			MAKERGB(pi->flashDlightColor, 0.6f, 0.6f, 1);
+			MAKERGB(pi->flashDlightColor, 0.45f, 0.7f, 1.0f);
 			break;
 		case WP_RAILGUN:
-			MAKERGB(pi->flashDlightColor, 1, 0.5f, 0);
+			MAKERGB(pi->flashDlightColor, 1.0f, 0, 0.7f);
 			break;
 		case WP_PLASMAGUN:
-			MAKERGB(pi->flashDlightColor, 0.6f, 0.6f, 1);
+			MAKERGB(pi->flashDlightColor, 0.7f, 0.8f, 1.0f);
 			break;
 		case WP_BFG:
-			MAKERGB(pi->flashDlightColor, 1, 0.7f, 1);
+			MAKERGB(pi->flashDlightColor, 0.65f, 1.0f, 0.7f);
 			break;
 		case WP_GRAPPLING_HOOK:
-			MAKERGB(pi->flashDlightColor, 0.6f, 0.6f, 1);
+			MAKERGB(pi->flashDlightColor, 0.6f, 0.6f, 1.0f);
 			break;
 		default:
-			MAKERGB(pi->flashDlightColor, 1, 1, 1);
+			MAKERGB(pi->flashDlightColor, 0, 0, 0);
 			break;
 	}
 }
@@ -621,7 +625,7 @@ static void UI_PlayerFloatSprite(playerInfo_t *pi, vec3_t origin, qhandle_t shad
 
 	VectorCopy(origin, ent.origin);
 
-	ent.origin[2] += 48;
+	ent.origin[2] += 42;
 	ent.reType = RT_SPRITE;
 	ent.customShader = shader;
 	ent.radius = 10;
@@ -796,11 +800,7 @@ void UI_DrawPlayer(float x, float y, float w, float h, playerInfo_t *pi, int tim
 
 		gun.hModel = pi->weaponModel;
 
-		if (pi->currentWeapon == WP_RAILGUN) {
-			Byte4Copy(pi->c1RGBA, gun.shaderRGBA);
-		} else {
-			Byte4Copy(colorWhite, gun.shaderRGBA);
-		}
+		Byte4Copy(pi->c1RGBA, gun.shaderRGBA);
 
 		VectorCopy(origin, gun.lightingOrigin);
 
@@ -810,7 +810,7 @@ void UI_DrawPlayer(float x, float y, float w, float h, playerInfo_t *pi, int tim
 		trap_R_AddRefEntityToScene(&gun);
 	}
 	// add the spinning barrel
-	if (pi->realWeapon == WP_MACHINEGUN || pi->realWeapon == WP_GAUNTLET || pi->realWeapon == WP_BFG) {
+	if (pi->barrelModel) {
 		vec3_t angles;
 
 		memset(&barrel, 0, sizeof(barrel));
@@ -837,11 +837,7 @@ void UI_DrawPlayer(float x, float y, float w, float h, playerInfo_t *pi, int tim
 
 			flash.hModel = pi->flashModel;
 
-			if (pi->currentWeapon == WP_RAILGUN) {
-				Byte4Copy(pi->c1RGBA, flash.shaderRGBA);
-			} else {
-				Byte4Copy(colorWhite, flash.shaderRGBA);
-			}
+			Byte4Copy(pi->c1RGBA, flash.shaderRGBA);
 
 			VectorCopy(origin, flash.lightingOrigin);
 
@@ -857,7 +853,7 @@ void UI_DrawPlayer(float x, float y, float w, float h, playerInfo_t *pi, int tim
 	}
 	// add the chat icon
 	if (pi->chat) {
-		UI_PlayerFloatSprite(pi, origin, trap_R_RegisterShaderNoMip("sprites/balloon3"));
+		UI_PlayerFloatSprite(pi, torso.origin, trap_R_RegisterShaderNoMip("sprites/balloon3"));
 	}
 	// add an accent light
 	origin[0] -= 100; // + = behind, - = in front
@@ -936,14 +932,14 @@ static qboolean UI_ParseAnimationFile(const char *filename, animation_t *animati
 		prev = text_p; // so we can unget
 		token = COM_Parse(&text_p);
 
-		if (!token) {
+		if (!token[0]) {
 			break;
 		}
 
 		if (!Q_stricmp(token, "footsteps")) {
 			token = COM_Parse(&text_p);
 
-			if (!token) {
+			if (!token[0]) {
 				break;
 			}
 
@@ -952,7 +948,7 @@ static qboolean UI_ParseAnimationFile(const char *filename, animation_t *animati
 			for (i = 0; i < 3; i++) {
 				token = COM_Parse(&text_p);
 
-				if (!token) {
+				if (!token[0]) {
 					break;
 				}
 			}
@@ -961,10 +957,14 @@ static qboolean UI_ParseAnimationFile(const char *filename, animation_t *animati
 		} else if (!Q_stricmp(token, "sex")) {
 			token = COM_Parse(&text_p);
 
-			if (!token) {
+			if (!token[0]) {
 				break;
 			}
 
+			continue;
+		} else if (!Q_stricmp(token, "fixedlegs")) {
+			continue;
+		} else if (!Q_stricmp(token, "fixedtorso")) {
 			continue;
 		}
 		// if it is a number, start parsing animations
@@ -979,7 +979,18 @@ static qboolean UI_ParseAnimationFile(const char *filename, animation_t *animati
 	for (i = 0; i < MAX_ANIMATIONS; i++) {
 		token = COM_Parse(&text_p);
 
-		if (!token) {
+		if (!token[0]) {
+			if (i >= TORSO_GETFLAG && i <= TORSO_NEGATIVE) {
+				animations[i].firstFrame = animations[TORSO_GESTURE].firstFrame;
+				animations[i].frameLerp = animations[TORSO_GESTURE].frameLerp;
+				animations[i].initialLerp = animations[TORSO_GESTURE].initialLerp;
+				animations[i].loopFrames = animations[TORSO_GESTURE].loopFrames;
+				animations[i].numFrames = animations[TORSO_GESTURE].numFrames;
+				animations[i].reversed = qfalse;
+				animations[i].flipflop = qfalse;
+				continue;
+			}
+
 			break;
 		}
 
@@ -995,7 +1006,7 @@ static qboolean UI_ParseAnimationFile(const char *filename, animation_t *animati
 
 		token = COM_Parse(&text_p);
 
-		if (!token) {
+		if (!token[0]) {
 			break;
 		}
 
@@ -1003,7 +1014,7 @@ static qboolean UI_ParseAnimationFile(const char *filename, animation_t *animati
 
 		token = COM_Parse(&text_p);
 
-		if (!token) {
+		if (!token[0]) {
 			break;
 		}
 
@@ -1011,7 +1022,7 @@ static qboolean UI_ParseAnimationFile(const char *filename, animation_t *animati
 
 		token = COM_Parse(&text_p);
 
-		if (!token) {
+		if (!token[0]) {
 			break;
 		}
 
@@ -1130,39 +1141,85 @@ void UI_PlayerInfo_SetModel(playerInfo_t *pi, const char *model) {
 
 /*
 =======================================================================================================================================
+UI_ColorFromIndex
+=======================================================================================================================================
+*/
+void UI_ColorFromIndex(int val, vec3_t color) {
+
+	switch (val) {
+		case 1: // blue
+		case 2: // green
+		case 3: // cyan
+		case 4: // red
+		case 5: // magenta
+		case 6: // yellow
+		case 7: // white
+			VectorClear(color);
+
+			if (val & 1) {
+				color[2] = 1.0f;
+			}
+
+			if (val & 2) {
+				color[1] = 1.0f;
+			}
+
+			if (val & 4) {
+				color[0] = 1.0f;
+			}
+
+			break;
+		case 8: // orange
+			VectorSet(color, 1, 0.5f, 0);
+			break;
+		case 9: // lime
+			VectorSet(color, 0.5f, 1, 0);
+			break;
+		case 10: // vivid green
+			VectorSet(color, 0, 1, 0.5f);
+			break;
+		case 11: // light blue
+			VectorSet(color, 0, 0.5f, 1);
+			break;
+		case 12: // purple
+			VectorSet(color, 0.5f, 0, 1);
+			break;
+		case 13: // pink
+			VectorSet(color, 1, 0, 0.5f);
+			break;
+		default: // fall back to white
+			VectorSet(color, 1, 1, 1);
+			break;
+	}
+}
+
+/*
+=======================================================================================================================================
+UI_PlayerInfo_UpdateColor
+=======================================================================================================================================
+*/
+void UI_PlayerInfo_UpdateColor(playerInfo_t *pi) {
+
+	UI_ColorFromIndex(trap_Cvar_VariableIntegerValue("color1"), pi->color1);
+
+	pi->c1RGBA[0] = 255 * pi->color1[0];
+	pi->c1RGBA[1] = 255 * pi->color1[1];
+	pi->c1RGBA[2] = 255 * pi->color1[2];
+	pi->c1RGBA[3] = 255;
+}
+
+/*
+=======================================================================================================================================
 UI_PlayerInfo_SetInfo
 =======================================================================================================================================
 */
 void UI_PlayerInfo_SetInfo(playerInfo_t *pi, int legsAnim, int torsoAnim, vec3_t viewAngles, vec3_t moveAngles, weapon_t weaponNumber, qboolean chat) {
 	int currentAnim;
 	weapon_t weaponNum;
-	int c;
 
 	pi->chat = chat;
-	c = (int)trap_Cvar_VariableValue("color1");
 
-	VectorClear(pi->color1);
-
-	if (c < 1 || c > 7) {
-		VectorSet(pi->color1, 1, 1, 1);
-	} else {
-		if (c & 1) {
-			pi->color1[2] = 1.0f;
-		}
-
-		if (c & 2) {
-			pi->color1[1] = 1.0f;
-		}
-
-		if (c & 4) {
-			pi->color1[0] = 1.0f;
-		}
-	}
-
-	pi->c1RGBA[0] = 255 * pi->color1[0];
-	pi->c1RGBA[1] = 255 * pi->color1[1];
-	pi->c1RGBA[2] = 255 * pi->color1[2];
-	pi->c1RGBA[3] = 255;
+	UI_PlayerInfo_UpdateColor(pi);
 	// view angles
 	VectorCopy(viewAngles, pi->viewAngles);
 	// move angles

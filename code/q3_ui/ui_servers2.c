@@ -136,18 +136,14 @@ static const char *sortkey_items[] = {
 };
 
 static char *gamenames[] = {
+	"SP ", // single player
 	"DM ", // deathmatch
 	"1v1", // tournament
-	"SP ", // single player
 	"Team DM", // team deathmatch
 	"CTF", // capture the flag
 	"One Flag CTF", // one flag ctf
 	"OverLoad", // Overload
 	"Harvester", // Harvester
-	"Rocket Arena 3", // Rocket Arena 3
-	"Q3F", // Q3F
-	"Urban Terror", // Urban Terror
-	"OSP", // Orange Smoothie Productions
 	"???", // unknown
 	NULL
 };
@@ -343,6 +339,45 @@ int ArenaServers_SourceForLAN(void) {
 
 /*
 =======================================================================================================================================
+ArenaServers_GametypeForGames
+=======================================================================================================================================
+*/
+int ArenaServers_GametypeForGames(int games) {
+	int gametype;
+
+	switch (games) {
+		default:
+		case GAMES_ALL:
+			gametype = -1;
+			break;
+		case GAMES_FFA:
+			gametype = GT_FFA;
+			break;
+		case GAMES_TOURNEY:
+			gametype = GT_TOURNAMENT;
+			break;
+		case GAMES_TEAMPLAY:
+			gametype = GT_TEAM;
+			break;
+		case GAMES_CTF:
+			gametype = GT_CTF;
+			break;
+		case GAMES_1FCTF:
+			gametype = GT_1FCTF;
+			break;
+		case GAMES_OBELISK:
+			gametype = GT_OBELISK;
+			break;
+		case GAMES_HARVESTER:
+			gametype = GT_HARVESTER;
+			break;
+	}
+
+	return gametype;
+}
+
+/*
+=======================================================================================================================================
 ArenaServers_Go
 =======================================================================================================================================
 */
@@ -389,6 +424,7 @@ static void ArenaServers_UpdateMenu(void) {
 	servernode_t *servernodeptr;
 	table_t *tableptr;
 	char *pingColor;
+	int gametype;
 
 	if (g_arenaservers.numqueriedservers > 0) {
 		// servers found
@@ -476,48 +512,10 @@ static void ArenaServers_UpdateMenu(void) {
 			continue;
 		}
 
-		switch (g_gametype) {
-			case GAMES_ALL:
-				break;
-			case GAMES_FFA:
-				if (servernodeptr->gametype != GT_FFA) {
-					continue;
-				}
+		gametype = ArenaServers_GametypeForGames(g_gametype);
 
-				break;
-			case GAMES_TOURNEY:
-				if (servernodeptr->gametype != GT_TOURNAMENT) {
-					continue;
-				}
-
-				break;
-			case GAMES_TEAMPLAY:
-				if (servernodeptr->gametype != GT_TEAM) {
-					continue;
-				}
-
-				break;
-			case GAMES_CTF:
-				if (servernodeptr->gametype != GT_CTF) {
-					continue;
-				}
-
-			case GAMES_1FCTF:
-				if (servernodeptr->gametype != GT_1FCTF) {
-					continue;
-				}
-
-			case GAMES_OBELISK:
-				if (servernodeptr->gametype != GT_OBELISK) {
-					continue;
-				}
-
-			case GAMES_HARVESTER:
-				if (servernodeptr->gametype != GT_HARVESTER) {
-					continue;
-				}
-
-				break;
+		if (gametype != -1 && servernodeptr->gametype != gametype) {
+			continue;
 		}
 
 		if (servernodeptr->pingtime < servernodeptr->minPing) {
@@ -629,7 +627,6 @@ static void ArenaServers_Insert(char *adrstr, char *info, int pingtime) {
 	Q_strupr(servernodeptr->hostname);
 	Q_strncpyz(servernodeptr->mapname, Info_ValueForKey(info, "mapname"), MAX_MAPNAMELENGTH);
 	Q_CleanStr(servernodeptr->mapname);
-	Q_strupr(servernodeptr->mapname);
 
 	servernodeptr->numclients = atoi(Info_ValueForKey(info, "clients"));
 	servernodeptr->maxclients = atoi(Info_ValueForKey(info, "sv_maxclients"));
@@ -935,6 +932,7 @@ ArenaServers_StartRefresh
 */
 static void ArenaServers_StartRefresh(void) {
 	int i;
+	int gametype;
 	char myargs[32], protocol[32];
 
 	memset(g_arenaservers.serverlist, 0, g_arenaservers.maxservers * sizeof(table_t));
@@ -960,32 +958,12 @@ static void ArenaServers_StartRefresh(void) {
 	}
 
 	if (g_servertype >= UIAS_GLOBAL1 && g_servertype <= UIAS_GLOBAL5) {
-		switch (g_arenaservers.gametype.curvalue) {
-			default:
-			case GAMES_ALL:
-				myargs[0] = 0;
-				break;
-			case GAMES_FFA:
-				strcpy(myargs, " ffa");
-				break;
-			case GAMES_TEAMPLAY:
-				strcpy(myargs, " team");
-				break;
-			case GAMES_TOURNEY:
-				strcpy(myargs, " tourney");
-				break;
-			case GAMES_CTF:
-				strcpy(myargs, " ctf");
-				break;
-			case GAMES_1FCTF:
-				strcpy(myargs, " oneflag");
-				break;
-			case GAMES_OBELISK:
-				strcpy(myargs, " overload");
-				break;
-			case GAMES_HARVESTER:
-				strcpy(myargs, " harvester");
-				break;
+		gametype = ArenaServers_GametypeForGames(g_arenaservers.gametype.curvalue);
+		// add requested gametype to args for dpmaster protocol
+		if (gametype != -1) {
+			Com_sprintf(myargs, sizeof(myargs), " gametype=%i", gametype);
+		} else {
+			myargs[0] = '\0';
 		}
 
 		if (g_emptyservers) {

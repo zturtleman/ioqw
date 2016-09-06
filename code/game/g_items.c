@@ -162,6 +162,7 @@ Add_Ammo
 =======================================================================================================================================
 */
 void Add_Ammo(gentity_t *ent, int weapon, int count) {
+
 	ent->client->ps.ammo[weapon] += count;
 
 	if (ent->client->ps.ammo[weapon] > 200) {
@@ -476,7 +477,7 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace) {
 	ent->s.eFlags |= EF_NODRAW;
 	ent->r.contents = 0;
 	// A negative respawn times means to never respawn this item (but don't delete it).
-	// This is used by items that are respawned bythird party events such as ctf flags
+	// This is used by items that are respawned by third party events such as ctf flags
 	if (respawn <= 0) {
 		ent->nextthink = 0;
 		ent->think = 0;

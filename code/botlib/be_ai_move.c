@@ -2662,7 +2662,7 @@ int GrappleState(bot_movestate_t *ms, aas_reachability_t *reach) {
 	if (ms->moveflags & MFL_GRAPPLEPULL) {
 		return 2;
 	}
-	//if the grapple hook entity exists
+	// if the grapple hook entity exists
 	if (ms->moveflags & MFL_GRAPPLEEXISTS) {
 		return 1;
 	}

@@ -117,7 +117,7 @@ static void UI_Mods_LoadMods(void) {
 	s_mods.fs_gamePtr = s_mods.fs_game;
 	// always start off with base game
 	s_mods.list.numitems = 1;
-	s_mods.list.itemnames[0] = s_mods.descriptionList[0] = "Quake III Arena";
+	s_mods.list.itemnames[0] = s_mods.descriptionList[0] = "Quake Wars";
 	s_mods.fs_gameList[0] = "";
 
 	numdirs = trap_FS_GetFileList("$modlist", "", dirlist, sizeof(dirlist));

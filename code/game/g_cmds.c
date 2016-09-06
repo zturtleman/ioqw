@@ -596,7 +596,7 @@ void SetTeam(gentity_t *ent, const char *s) {
 	client->pers.teamState.state = TEAM_BEGIN;
 
 	if (oldTeam != TEAM_SPECTATOR) {
-		// Kill him (makes sure he loses flags, etc)
+		// Kill him (makes sure he loses flags, etc.)
 		ent->flags &= ~FL_GODMODE;
 		ent->client->ps.stats[STAT_HEALTH] = ent->health = 0;
 		PlayerDie(ent, ent, ent, 100000, MOD_SUICIDE_TEAM_CHANGE);
@@ -1651,6 +1651,7 @@ void Cmd_Stats_f(gentity_t *ent) {
 			n++;
 		}
 	}
+
 	//trap_SendServerCommand(ent - g_entities, va("print \"visited %d of %d areas\n\"", n, max));
 	trap_SendServerCommand(ent - g_entities, va("print \"%d%% level coverage\n\"", n * 100 / max));
 */

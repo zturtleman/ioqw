@@ -90,13 +90,13 @@ static vec4_t faded_color = {1.0, 1.0, 1.0, 1.0};
 static vec4_t shadow_color = {0.0, 0.0, 0.0, 1.0};
 
 static const char *maptype_icon[NUM_GAMETYPES] = {
-	"menu/medals/medal_frags",		// GT_FFA
-	"menu/medals/medal_gauntlet",	// GT_TOURNAMENT
-	"menu/medals/medal_victory",	// GT_TEAM
-	"icons/iconf_red",				// GT_CTF
-	"icons/iconf_blu",				// GT_1FCTF
-	"icons/iconf_neu",				// GT_OBELISK
-	"menu/medals/medal_victory1"	// GT_HARVESTER
+	"menu/art/gt1",	// GT_FFA
+	"menu/art/gt2",	// GT_TOURNAMENT
+	"menu/art/gt3",	// GT_TEAM
+	"menu/art/gt4",	// GT_CTF
+	"menu/art/gt5",	// GT_1FCTF
+	"menu/art/gt6",	// GT_OBELISK
+	"menu/art/gt7"	// GT_HARVESTER
 };
 
 /*
@@ -114,7 +114,7 @@ int GametypeBits(char *string) {
 	while (1) {
 		token = COM_ParseExt(&p, qfalse);
 
-		if (token[0] == 0) {
+		if(!token[0]) {
 			break;
 		}
 
@@ -707,7 +707,7 @@ void StartServer_LoadBotlessMaps(void) {
 	char mapname[MAPNAME_BUFFER];
 	fileHandle_t file;
 
-	StartServer_CreateMapType("NoBots","ui_icons/noammo");
+	StartServer_CreateMapType("NoBots", "ui_icons/noammo");
 
 	index = s_mapList.num_maptypes - 1;
 	s_mapList.noBotsIndex = index;

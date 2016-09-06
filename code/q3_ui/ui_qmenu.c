@@ -106,11 +106,11 @@ static void Text_Draw(menutext_s *t) {
 	buff[0] = '\0';
 	// possible label
 	if (t->generic.name) {
-		strcpy(buff, t->generic.name);
+		Q_strncpyz(buff, t->generic.name, sizeof(buff));
 	}
 	// possible value
 	if (t->string) {
-		strcat(buff, t->string);
+		Q_strcat(buff, sizeof(buff), t->string);
 	}
 
 	if (t->generic.flags & QMF_GRAYED) {
@@ -452,6 +452,7 @@ static void RadioButton_Draw(menuradiobutton_s *rb) {
 	float *color;
 	int style;
 	qboolean focus;
+	int picY;
 
 	x = rb->generic.x;
 	y = rb->generic.y;
@@ -478,12 +479,14 @@ static void RadioButton_Draw(menuradiobutton_s *rb) {
 	if (rb->generic.name) {
 		UI_DrawString(x - SMALLCHAR_WIDTH, y, rb->generic.name, UI_RIGHT|UI_SMALLFONT, color);
 	}
+	// center ratio button on box and move down 2 pixels at 16 pt size
+	picY = rb->generic.top + (rb->generic.bottom - rb->generic.top) / 2 - 16 / 2 + 2.0f * SMALLCHAR_HEIGHT / 16.0f;
 
 	if (!rb->curvalue) {
-		UI_DrawHandlePic(x + SMALLCHAR_WIDTH, y + 2, 16, 16, uis.rb_off);
+		UI_DrawHandlePic(x + SMALLCHAR_WIDTH, picY, 16, 16, uis.rb_off);
 		UI_DrawString(x + SMALLCHAR_WIDTH + 16, y, "off", style, color);
 	} else {
-		UI_DrawHandlePic(x + SMALLCHAR_WIDTH, y + 2, 16, 16, uis.rb_on);
+		UI_DrawHandlePic(x + SMALLCHAR_WIDTH, picY, 16, 16, uis.rb_on);
 		UI_DrawString(x + SMALLCHAR_WIDTH + 16, y, "on", style, color);
 	}
 }
@@ -1610,14 +1613,7 @@ void Menu_Cache(void) {
 	uis.rb_off = trap_R_RegisterShaderNoMip("menu/art/switch_off");
 
 	uis.whiteShader = trap_R_RegisterShaderNoMip("white");
-
-	if (uis.glconfig.hardwareType == GLHW_RAGEPRO) {
-		// the blend effect turns to shit with the normal
-		uis.menuBackShader = trap_R_RegisterShaderNoMip("menubackRagePro");
-	} else {
-		uis.menuBackShader = trap_R_RegisterShaderNoMip("menuback");
-	}
-
+	uis.menuBackShader = trap_R_RegisterShaderNoMip("menuback");
 	uis.menuBackNoLogoShader = trap_R_RegisterShaderNoMip("menubacknologo");
 
 	menu_in_sound = trap_S_RegisterSound("sound/misc/menu1.wav", qfalse);

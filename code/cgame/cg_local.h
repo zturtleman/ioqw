@@ -1107,6 +1107,7 @@ void CG_ResetPlayerEntity(centity_t *cent);
 void CG_AddRefEntityWithPowerups(refEntity_t *ent, entityState_t *state);
 void CG_NewClientInfo(int clientNum);
 sfxHandle_t CG_CustomSound(int clientNum, const char *soundName);
+void CG_ColorFromIndex(int val, vec3_t color);
 // cg_predict.c
 void CG_BuildSolidList(void);
 int CG_PointContents(const vec3_t point, int passEntityNum);

@@ -49,6 +49,7 @@ PASSFLOAT
 */
 int PASSFLOAT(float x) {
 	floatint_t fi;
+
 	fi.f = x;
 	return fi.i;
 }
@@ -758,6 +759,7 @@ trap_AAS_Time
 */
 float trap_AAS_Time(void) {
 	floatint_t fi;
+
 	fi.i = syscall(BOTLIB_AAS_TIME);
 	return fi.f;
 }
@@ -1174,6 +1176,7 @@ trap_Characteristic_Float
 */
 float trap_Characteristic_Float(int character, int index) {
 	floatint_t fi;
+
 	fi.i = syscall(BOTLIB_AI_CHARACTERISTIC_FLOAT, character, index);
 	return fi.f;
 }
@@ -1185,6 +1188,7 @@ trap_Characteristic_BFloat
 */
 float trap_Characteristic_BFloat(int character, int index, float min, float max) {
 	floatint_t fi;
+
 	fi.i = syscall(BOTLIB_AI_CHARACTERISTIC_BFLOAT, character, index, PASSFLOAT(min), PASSFLOAT(max));
 	return fi.f;
 }
@@ -1565,6 +1569,7 @@ trap_BotAvoidGoalTime
 */
 float trap_BotAvoidGoalTime(int goalstate, int number) {
 	floatint_t fi;
+
 	fi.i = syscall(BOTLIB_AI_AVOID_GOAL_TIME, goalstate, number);
 	return fi.f;
 }

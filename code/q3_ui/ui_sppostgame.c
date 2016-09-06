@@ -32,6 +32,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #include "ui_local.h"
 
+#define MAX_UI_AWARDS 6
 #define MAX_SCOREBOARD_CLIENTS 8
 #define AWARD_PRESENTATION_TIME 2000
 
@@ -64,9 +65,9 @@ typedef struct {
 	int numClients;
 	int won;
 	int numAwards;
-	int awardsEarned[6];
-	int awardsLevels[6];
-	qboolean playedSound[6];
+	int awardsEarned[MAX_UI_AWARDS];
+	int awardsLevels[MAX_UI_AWARDS];
+	qboolean playedSound[MAX_UI_AWARDS];
 	int lastTier;
 	sfxHandle_t winnerSound;
 } postgameMenuInfo_t;
@@ -74,7 +75,14 @@ typedef struct {
 static postgameMenuInfo_t postgameMenuInfo;
 static char arenainfo[MAX_INFO_VALUE];
 
-char *ui_medalNames[] = {"Accuracy", "Impressive", "Excellent", "Gauntlet", "Frags", "Perfect"};
+char *ui_medalNames[] = {
+	"Accuracy",
+	"Impressive",
+	"Excellent",
+	"Gauntlet",
+	"Frags",
+	"Perfect"
+};
 
 char *ui_medalPicNames[] = {
 	"menu/medals/medal_accuracy",
@@ -204,7 +212,7 @@ static sfxHandle_t UI_SPPostgameMenu_MenuKey(int key) {
 	return Menu_DefaultKey(&postgameMenuInfo.menu, key);
 }
 
-static int medalLocations[6] = {144, 448, 88, 504, 32, 560};
+static int medalLocations[MAX_UI_AWARDS] = {144, 448, 88, 504, 32, 560};
 
 /*
 =======================================================================================================================================
@@ -344,7 +352,6 @@ static void UI_SPPostgameMenu_MenuDraw(void) {
 		timer = uis.realtime - postgameMenuInfo.starttime;
 
 		if (timer >= (postgameMenuInfo.numAwards * AWARD_PRESENTATION_TIME)) {
-
 			if (timer < 5000) {
 				return;
 			}
@@ -420,7 +427,7 @@ void UI_SPPostgameMenu_Cache(void) {
 	trap_R_RegisterShaderNoMip(ART_NEXT0);
 	trap_R_RegisterShaderNoMip(ART_NEXT1);
 
-	for (n = 0; n < 6; n++) {
+	for (n = 0; n < MAX_UI_AWARDS; n++) {
 		trap_R_RegisterShaderNoMip(ui_medalPicNames[n]);
 		trap_S_RegisterSound(ui_medalSounds[n], qfalse);
 	}
@@ -520,7 +527,7 @@ void UI_SPPostgameMenu_f(void) {
 	int n;
 	int oldFrags, newFrags;
 	const char *arena;
-	int awardValues[6];
+	int awardValues[MAX_UI_AWARDS];
 	char map[MAX_QPATH];
 	char info[MAX_INFO_STRING];
 

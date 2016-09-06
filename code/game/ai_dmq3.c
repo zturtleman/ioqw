@@ -3113,7 +3113,6 @@ float BotEntityVisible(int viewer, vec3_t eye, vec3_t viewangles, float fov, int
 	aas_entityinfo_t entinfo;
 	vec3_t dir, entangles, start, end, middle;
 
-
 	BotEntityInfo(ent, &entinfo);
 
 	if (!entinfo.valid) {
@@ -3314,7 +3313,7 @@ int BotFindEnemy(bot_state_t *bs, int curenemy) {
 		if (EntityIsDead(&entinfo) || entinfo.number == bs->entitynum) {
 			continue;
 		}
-		//if the enemy is invisible
+		// if the enemy is invisible
 		if (EntityIsInvisible(&entinfo)) {
 			continue;
 		}
@@ -3333,7 +3332,7 @@ int BotFindEnemy(bot_state_t *bs, int curenemy) {
 		// calculate the distance towards the enemy
 		VectorSubtract(entinfo.origin, bs->origin, dir);
 		squaredist = VectorLengthSquared(dir);
-		//if this entity is not carrying a flag or cubes
+		// if this entity is not carrying a flag or cubes
 		if (!EntityCarriesFlag(&entinfo) && !EntityCarriesCubes(&entinfo)) {
 			// if this enemy is further away than the current one
 			if (curenemy >= 0 && squaredist > cursquaredist) {
@@ -4310,7 +4309,6 @@ int BotFuncButtonActivateGoal(bot_state_t *bs, int bspent, bot_activategoal_t *a
 			}
 			// calculate the goal origin
 			VectorMA(origin, -dist, movedir, goalorigin);
-
 			VectorCopy(goalorigin, start);
 			start[2] += 24;
 			VectorCopy(start, end);
@@ -5706,7 +5704,7 @@ void BotDeathmatchAI(bot_state_t *bs, float thinktime) {
 		BotCheckSnapshot(bs);
 		// check for air
 		BotCheckAir(bs);
-		//check the team scores
+		// check the team scores
 		BotCheckTeamScores(bs);
 	}
 	// check the console messages

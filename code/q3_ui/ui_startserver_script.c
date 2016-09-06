@@ -57,9 +57,9 @@ id Software at the address below.
 // game parameters we need to save in a block for later recovery. Strings begining with a * are gametype specific.
 // ui_dedicated is deliberately missing to allow script loading in both Skirmish and Multiplayer versions of the browser.
 static const char *saveparam_list[] = {
-	"ui_xp_config",
 	"ui_gametype",
-	"ui_pure",
+	"ui_publicServer",
+	"ui_pureServer",
 	"ui_inactivity",
 	"ui_allowmaxrate",
 	"ui_maxrate",
@@ -344,7 +344,7 @@ static qboolean StartServer_WriteServerParams(void) {
 	AddScript("\n// WriteServerParams()\n\n");
 
 	if (!s_serverexec.bot_generated) {
-		trap_Print(S_COLOR_RED"WriteServerParams called before WriteBotParams\n");
+		trap_Print(S_COLOR_RED "WriteServerParams called before WriteBotParams\n");
 		return qfalse;
 	}
 
@@ -354,13 +354,12 @@ static qboolean StartServer_WriteServerParams(void) {
 		AddScript(va("sv_hostname \"%s\"\n", s_scriptdata.server.hostname));
 	}
 
-	AddScript(va("sv_pure %i\n", s_scriptdata.server.pure));
+	AddScript(va("sv_public %i\n", s_scriptdata.server.publicServer));
+	AddScript(va("sv_pure %i\n", s_scriptdata.server.pureServer));
 
 	if (s_scriptdata.multiplayer) {
 		AddScript(va("dedicated %i\n", s_scriptdata.server.dedicatedServer));
 		AddScript(va("g_inactivity %i\n", s_scriptdata.server.inactivityTime));
-		// AQUIIIII
-		AddScript(va("xp_config %i\n", s_scriptdata.server.weaponsMode));
 		// LAN force rate
 		AddScript(va("sv_lanForceRate %i\n", s_scriptdata.server.lanForceRate));
 	}
@@ -1709,7 +1708,7 @@ qboolean StartServer_LoadFromConfig(const char *filename) {
 		// grab Cvar name
 		token = UI_Parse(&ptr);
 
-		if (!token) {
+		if (!token[0]) {
 			// should never happen, unless tampered with
 			StartServer_PrintMessage(va("Unexpected end of %s, possible corruption or tampering\n", filename));
 			return qtrue; // update anyway... fingers crossed
@@ -1746,7 +1745,7 @@ qboolean StartServer_LoadFromConfig(const char *filename) {
 			UI_SetSkirmishCvar(NULL, cvar, token);
 		}
 		// must get gametype before we can process "*cvarName" Cvars
-		if (!Q_stricmp(cvar,"ui_gametype")) {
+		if (!Q_stricmp(cvar, "ui_gametype")) {
 			gametype = (int)Com_Clamp(0, MAX_GAME_TYPE - 1, atoi(token));
 		}
 	} while (qtrue);

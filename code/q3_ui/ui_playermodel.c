@@ -317,7 +317,7 @@ static void PlayerModel_PicEvent(void *ptr, int event) {
 	if (pdest) {
 		// track the whole model/skin name
 		Q_strncpyz(s_playermodel.modelskin, buffptr, pdest - buffptr + 1);
-		strcat(s_playermodel.modelskin, pdest + 5);
+		Q_strcat(s_playermodel.modelskin, sizeof(s_playermodel.modelskin), pdest + 5);
 		// seperate the model name
 		maxlen = pdest - buffptr;
 
@@ -390,7 +390,7 @@ static void PlayerModel_BuildList(void) {
 	numdirs = trap_FS_GetFileList("models/players", "/", dirlist, 2048);
 	dirptr = dirlist;
 
-	for (i = 0; i<numdirs && s_playermodel.nummodels < MAX_PLAYERMODELS; i++, dirptr += dirlen + 1) {
+	for (i = 0; i < numdirs && s_playermodel.nummodels < MAX_PLAYERMODELS; i++, dirptr += dirlen + 1) {
 		dirlen = strlen(dirptr);
 
 		if (dirlen && dirptr[dirlen - 1] == '/') {
@@ -460,7 +460,7 @@ static void PlayerModel_SetMenuItems(void) {
 
 		if (pdest) {
 			Q_strncpyz(modelskin, buffptr, pdest - buffptr + 1);
-			strcat(modelskin, pdest + 5);
+			Q_strcat(modelskin, sizeof(modelskin), pdest + 5);
 		} else {
 			continue;
 		}

@@ -49,28 +49,30 @@ id Software at the address below.
 #include "ui_local.h"
 #include "ui_startserver_q3.h"
 
-#define ID_SERVER_GAMETYPE		300
-#define ID_SERVER_HOSTNAME		301
-#define ID_SERVER_WEAPONSMODE	302
-#define ID_SERVER_AUTOJOIN		305
-#define ID_SERVER_TEAMBALANCE	306
-#define ID_SERVER_PURE			307
-#define ID_SERVER_INACTIVITY	309
-#define ID_SERVER_SAVE			311
-#define ID_SERVER_LOAD			312
-#define ID_SERVER_SMOOTHCLIENTS	313
-#define ID_SERVER_MAXRATE		316
-#define ID_SERVER_ALLOWDOWNLOAD	317
-#define ID_SERVER_PASSWORD		318
-#define ID_SERVER_ALLOWPASS		319
-#define ID_SERVER_ALLOWVOTE		320
-#define ID_SERVER_ALLOWMAXRATE	321
-#define ID_SERVER_SYNCCLIENTS	323
-#define ID_SERVER_MINPING		324
-#define ID_SERVER_MAXPING		325
-#define ID_SERVER_ALLOWMINPING	326
-#define ID_SERVER_ALLOWMAXPING	327
-#define ID_SERVER_CONFIGBUG		328
+enum {
+	ID_SERVER_GAMETYPE,
+	ID_SERVER_HOSTNAME,
+	ID_SERVER_AUTOJOIN,
+	ID_SERVER_TEAMBALANCE,
+	ID_SERVER_PURE,
+	ID_SERVER_PUBLIC,
+	ID_SERVER_INACTIVITY,
+	ID_SERVER_SAVE,
+	ID_SERVER_LOAD,
+	ID_SERVER_SMOOTHCLIENTS,
+	ID_SERVER_MAXRATE,
+	ID_SERVER_ALLOWDOWNLOAD,
+	ID_SERVER_PASSWORD,
+	ID_SERVER_ALLOWPASS,
+	ID_SERVER_ALLOWVOTE,
+	ID_SERVER_ALLOWMAXRATE,
+	ID_SERVER_SYNCCLIENTS,
+	ID_SERVER_MINPING,
+	ID_SERVER_MAXPING,
+	ID_SERVER_ALLOWMINPING,
+	ID_SERVER_ALLOWMAXPING,
+	ID_SERVER_CONFIGBUG
+};
 
 #define SERVER_SAVE0 "menu/art/save_0"
 #define SERVER_SAVE1 "menu/art/save_1"
@@ -140,7 +142,6 @@ typedef struct servercontrols_s {
 	menuframework_s menu;
 	commoncontrols_t common;
 	menulist_s gameType;
-	menulist_s weaponsMode;
 	menubitmap_s gameTypeIcon;
 	radiobuttoncontrol_t radio[MAX_SERVER_RADIO_CONTROL];
 	textfieldcontrol_t field[MAX_SERVER_MFIELD_CONTROL];
@@ -158,23 +159,6 @@ typedef struct servercontrols_s {
 
 char temporal[50];
 
-static const char *weaponsMode_items[] = {
-	"All Weapons",
-	"CPMA",
-	"Default",
-	"Excessive1",
-	"Excessive2",
-	"Excessive3",
-	"Excessive4",
-	"Excessive5",
-	"Instagib",
-	0
-};
-
-static const char *weaponsMode_remap[] = {
-	"conf/allweapons.cfg", "conf/default.cfg"
-};
-
 servercontrols_t s_servercontrols;
 
 static controlinit_t InitControls[] = {
@@ -185,7 +169,7 @@ static controlinit_t InitControls[] = {
 	{SRVCTRL_BLANK, 0, SCRPOS_LEFT, NULL, NULL, 0, 0, NULL, 0, 0, NULL},
 	{SRVCTRL_RADIO, ID_SERVER_ALLOWVOTE, SCRPOS_LEFT, "Allow voting:", &s_scriptdata.server.allowvote, 0, 0, NULL, 0, 0, NULL},
 	{SRVCTRL_BLANK, 0, SCRPOS_LEFT, NULL, NULL, 0, 0, NULL, 0, 0, NULL},
-	{SRVCTRL_RADIO, ID_SERVER_ALLOWPASS, SCRPOS_LEFT, "Private server:", &s_scriptdata.server.allowpass, 0, 0, NULL, 0, 0, NULL},
+	{SRVCTRL_RADIO, ID_SERVER_ALLOWPASS, SCRPOS_LEFT, "Require password:", &s_scriptdata.server.allowpass, 0, 0, NULL, 0, 0, NULL},
 	{SRVCTRL_TEXTFIELD, ID_SERVER_PASSWORD, SCRPOS_LEFTOFFSET, "password:", NULL, 0, 0, s_scriptdata.server.password, 10, MAX_PASSWORD_LENGTH, NULL},
 	{SRVCTRL_RADIO, ID_SERVER_ALLOWMAXRATE, SCRPOS_LEFT, "Server maxrate:", &s_scriptdata.server.allowmaxrate, 0, 0, NULL, 0, 0, NULL},
 	{SRVCTRL_NUMFIELD, ID_SERVER_MAXRATE, SCRPOS_LEFTOFFSET, "bytes/s:", &s_scriptdata.server.maxrate, 0, 0, NULL, 6, 6, NULL},
@@ -198,8 +182,8 @@ static controlinit_t InitControls[] = {
 	// controls on right side of page
 	{SRVCTRL_BLANK, 0, SCRPOS_RIGHT, NULL, NULL, 0, 0, NULL, 0, 0, NULL},
 	{SRVCTRL_BLANK, 0, SCRPOS_RIGHT, NULL, NULL, 0, 0, NULL, 0, 0, NULL},
-	{SRVCTRL_BLANK, 0, SCRPOS_RIGHT, NULL, NULL, 0, 0, NULL, 0, 0, NULL},
-	{SRVCTRL_RADIO, ID_SERVER_PURE, SCRPOS_RIGHT, "Pure server:", &s_scriptdata.server.pure, 0, 0, NULL, 0, 0, NULL},
+	{SRVCTRL_RADIO, ID_SERVER_PUBLIC, SCRPOS_RIGHT, "Advertise on Internet:", &s_scriptdata.server.publicServer, 0, 0, NULL, 0, 0, NULL},
+	{SRVCTRL_RADIO, ID_SERVER_PURE, SCRPOS_RIGHT, "Pure server:", &s_scriptdata.server.pureServer, 0, 0, NULL, 0, 0, NULL},
 	{SRVCTRL_RADIO, ID_SERVER_SMOOTHCLIENTS, SCRPOS_RIGHT, "Smooth clients:", &s_scriptdata.server.smoothclients, 0, 0, NULL, 0, 0, NULL},
 	{SRVCTRL_RADIO, ID_SERVER_SYNCCLIENTS, SCRPOS_RIGHT, "Sync clients:", &s_scriptdata.server.syncClients, 0, 0, NULL, 0, 0, NULL},
 	{SRVCTRL_BLANK, 0, SCRPOS_RIGHT, NULL, NULL, 0, 0, NULL, 0, 0, NULL},
@@ -513,14 +497,6 @@ static void StartServer_ServerPage_Event(void *ptr, int event) {
 			StartServer_LoadScriptDataFromType(gametype_remap[s_servercontrols.gameType.curvalue]);
 			StartServer_ServerPage_InitControlsFromScript();
 			StartServer_ServerPage_UpdateInterface();
-			break;
-		case ID_SERVER_WEAPONSMODE:
-			if (event != QM_ACTIVATED) {
-				return;
-			}
-
-			trap_Cvar_Set("xp_config", weaponsMode_remap[s_servercontrols.weaponsMode.curvalue]);
-			trap_Cvar_SetValue("ui_xp_config", s_servercontrols.weaponsMode.curvalue);
 			break;
 		/*
 		case ID_SERVER_SAVE:
@@ -991,16 +967,6 @@ void StartServer_ServerPage_MenuInit(void) {
 	s_servercontrols.gameTypeIcon.width = 32;
 	s_servercontrols.gameTypeIcon.height = 32;
 
-	y += LINE_HEIGHT;
-	s_servercontrols.weaponsMode.generic.type = MTYPE_SPINCONTROL;
-	s_servercontrols.weaponsMode.generic.id = ID_SERVER_WEAPONSMODE;
-	s_servercontrols.weaponsMode.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
-	s_servercontrols.weaponsMode.generic.callback = StartServer_ServerPage_Event;
-	s_servercontrols.weaponsMode.generic.x = GAMETYPECOLUMN_X;
-	s_servercontrols.weaponsMode.generic.y = y;
-	s_servercontrols.weaponsMode.generic.name = "Weapons mode:";
-	s_servercontrols.weaponsMode.itemnames = weaponsMode_items;
-
 	s_servercontrols.num_radio = 0;
 	s_servercontrols.num_field = 0;
 	s_servercontrols.num_spin = 0;
@@ -1054,14 +1020,9 @@ void StartServer_ServerPage_MenuInit(void) {
 	s_servercontrols.loadScript.focuspic = SERVER_LOAD1;
 	*/
 	s_servercontrols.statusbar_height = 480 - 64 - LINE_HEIGHT;
-	// Iniciamos xp_config
-	s_servercontrols.weaponsMode.curvalue = trap_Cvar_VariableValue("ui_xp_config");
-
-	trap_Cvar_Set("xp_config", weaponsMode_remap[s_servercontrols.weaponsMode.curvalue]);
 	// register controls
 	Menu_AddItem(menuptr, &s_servercontrols.gameType);
 	Menu_AddItem(menuptr, &s_servercontrols.gameTypeIcon);
-	Menu_AddItem(menuptr, &s_servercontrols.weaponsMode);
 
 	for (i = 0; i < s_servercontrols.num_radio; i++) {
 		Menu_AddItem(menuptr, &s_servercontrols.radio[i].control);

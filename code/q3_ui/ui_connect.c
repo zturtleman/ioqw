@@ -197,7 +197,7 @@ void UI_DrawConnectScreen(qboolean overlay) {
 	//UI_DrawProportionalString(320, 96, "Press Esc to abort", UI_CENTER|UI_SMALLFONT|UI_DROPSHADOW, menu_text_color);
 	// display global MOTD at bottom
 	UI_DrawProportionalString(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 32, Info_ValueForKey(cstate.updateInfoString, "motd"), UI_CENTER|UI_SMALLFONT|UI_DROPSHADOW, menu_text_color);
-	// print any server info (server full, bad version, etc)
+	// print any server info (server full, bad version, etc.)
 	if (cstate.connState < CA_CONNECTED) {
 		UI_DrawProportionalString_AutoWrapped(320, 192, 630, 20, cstate.messageString, UI_CENTER|UI_SMALLFONT|UI_DROPSHADOW, menu_text_color);
 	}

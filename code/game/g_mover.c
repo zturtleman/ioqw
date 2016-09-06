@@ -386,7 +386,7 @@ qboolean G_MoverPush(gentity_t *pusher, vec3_t move, vec3_t amove, gentity_t **o
 			G_Damage(check, pusher, pusher, NULL, NULL, 99999, 0, MOD_CRUSH);
 			continue;
 		}
-		// save off the obstacle so we can call the block function (crush, etc)
+		// save off the obstacle so we can call the block function (crush, etc.)
 		*obstacle = check;
 		// move back any entities we already moved
 		// go backwards, so if the same entity was pushed twice, it goes back to the original position

@@ -308,7 +308,7 @@ static int MapSelect_MapIndex(const char *mapname) {
 	for (i = 0; i < s_mapselect.nummaps; i++) {
 		info = UI_GetArenaInfoByNumber(s_mapselect.index_maplist[i]);
 
-		if (Q_stricmp(mapname, Info_ValueForKey(info,"map")) == 0) {
+		if (Q_stricmp(mapname, Info_ValueForKey(info, "map")) == 0) {
 			return i;
 		}
 	}
@@ -774,7 +774,7 @@ static void MapSelect_FilterChanged(void) {
 
 	if (s_mapselect.currentmap >= 0) {
 		info = UI_GetArenaInfoByNumber(s_mapselect.index_maplist[s_mapselect.currentmap]);
-		Q_strncpyz(mapname, Info_ValueForKey(info,"map"), MAPNAME_BUFFER);
+		Q_strncpyz(mapname, Info_ValueForKey(info, "map"), MAPNAME_BUFFER);
 	} else {
 		mapname[0] = '\0';
 	}

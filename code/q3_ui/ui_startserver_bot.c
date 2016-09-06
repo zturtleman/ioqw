@@ -41,20 +41,22 @@ id Software at the address below.
 #include "ui_local.h"
 #include "ui_startserver_q3.h"
 
-#define ID_BOT_TYPE			100
-#define ID_BOT_BOTNUMBER	101
-#define ID_BOT_CHANGE		102
-#define ID_BOT_SLOTS		103
-#define ID_BOT_SKILL		104
-//#define ID_BOT_SKILLRANGE	105
-#define ID_BOT_SKILLBIAS	106
-#define ID_BOT_JOINAS		107
-#define ID_BOT_DELETESLOT	109
-#define ID_BOT_LEFTTEAM		110
-#define ID_BOT_RIGHTTEAM	111
-#define ID_BOT_GAMETYPE		112
-#define ID_BOT_SWAPARROWS	113
-#define ID_BOT_ACTION		114
+enum {
+	ID_BOT_TYPE,
+	ID_BOT_BOTNUMBER,
+	ID_BOT_CHANGE,
+	ID_BOT_SLOTS,
+	ID_BOT_SKILL,
+//	ID_BOT_SKILLRANGE,
+	ID_BOT_SKILLBIAS,
+	ID_BOT_JOINAS,
+	ID_BOT_DELETESLOT,
+	ID_BOT_LEFTTEAM,
+	ID_BOT_RIGHTTEAM,
+	ID_BOT_GAMETYPE,
+	ID_BOT_SWAPARROWS,
+	ID_BOT_ACTION
+};
 
 #define BOTSELECT_SWAPARROWS0 "menu/art/swaparrows_0"
 #define BOTSELECT_SWAPARROWS1 "menu/art/swaparrows_1"

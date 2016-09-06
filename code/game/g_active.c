@@ -54,7 +54,7 @@ void G_DamageFeedback(gentity_t *player) {
 	}
 	// send the information to the client
 
-	// world damage (falling, slime, etc) uses a special code to make the blend blob centered instead of positional
+	// world damage (falling, slime, etc.) uses a special code to make the blend blob centered instead of positional
 	if (client->damage_fromWorld) {
 		client->ps.damagePitch = 255;
 		client->ps.damageYaw = 255;

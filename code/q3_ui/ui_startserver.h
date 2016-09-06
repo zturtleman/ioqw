@@ -394,7 +394,6 @@ enum {
 
 typedef struct serverparameters_s {
 	char hostname[MAX_HOSTNAME_LENGTH];
-	char weaponsMode[MAX_PASSWORD_LENGTH];
 	int smoothclients;
 	int allowmaxrate;
 	int maxrate;
@@ -411,7 +410,8 @@ typedef struct serverparameters_s {
 	int minPing;
 	int allowMaxPing;
 	int maxPing;
-	int pure;
+	int publicServer;
+	int pureServer;
 	int preventConfigBug;
 	int dedicatedServer;
 	int inactivityTime;

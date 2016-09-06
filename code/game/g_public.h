@@ -64,7 +64,7 @@ typedef struct {
 	vec3_t absmin, absmax;	// derived from mins/maxs and origin + rotation
 	// currentOrigin will be used for all collision detection and world linking.
 	// it will not necessarily be the same as the trajectory evaluation for the current time, because each entity must be moved one at a
-	// time after time is advancedto avoid simultanious collision issues
+	// time after time is advanced to avoid simultanious collision issues
 	vec3_t currentOrigin;
 	vec3_t currentAngles;
 	// when a trace call is made and passEntityNum != ENTITYNUM_NONE, an ent will be excluded from testing if:

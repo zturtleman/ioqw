@@ -40,27 +40,19 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define MAX_INGAME_SCROLLS 6
 #define SCROLL_HEIGHT 16
 
-#define ID_SETUP		20
-#define ID_TEAM			21
-#define ID_LEAVEARENA	22
-#define ID_RESTART		23
-#define ID_QUIT			24
-#define ID_SERVERINFO	25
-#define ID_ADDBOTS		26
-#define ID_REMOVEBOTS	27
-#define ID_TEAMORDERS	28
-#define ID_RESUME		29
-#define ID_NEXTMAP		30
-
-#define ID_HUD0			40
-#define ID_HUD1			41
-#define ID_HUD2			42
-#define ID_HUD3			43
-#define ID_HUD4			44
-#define ID_HUD5			45
-#define ID_HUD6			46
-#define ID_HUD7			47
-#define ID_HUD8			48
+enum {
+	ID_SETUP,
+	ID_TEAM,
+	ID_LEAVEARENA,
+	ID_RESTART,
+	ID_QUIT,
+	ID_SERVERINFO,
+	ID_ADDBOTS,
+	ID_REMOVEBOTS,
+	ID_TEAMORDERS,
+	ID_RESUME,
+	ID_NEXTMAP
+};
 
 typedef struct {
 	menuframework_s menu;
@@ -496,7 +488,6 @@ enum {
 enum {
 	IGCV_MAP,
 	IGCV_GAMETYPE,
-	IGCV_WEAPONS,
 	IGCV_MISC,
 	IGCV_KICK,
 	IGCV_TEAMBALANCE,
@@ -523,7 +514,6 @@ enum {
 	IGS_MODEL,
 	IGS_CONTROLS,
 	IGS_OPTIONS,
-	IGS_HUD,
 	IGS_GRAPHICS,
 	IGS_DISPLAY,
 	IGS_SOUND,
@@ -594,28 +584,6 @@ static void IG_Unlagged_Event(int index) {
 			break;
 		case 1:
 			trap_Cmd_ExecuteText(EXEC_APPEND, va("callvote unlagged on\n"));
-			break;
-	}
-}
-
-/*
-=======================================================================================================================================
-IG_Physics_Event
-=======================================================================================================================================
-*/
-static void IG_Physics_Event(int index) {
-	int id;
-
-	id = DynamicMenu_IdAtIndex(index);
-
-	UI_ForceMenuOff();
-
-	switch (id) {
-		case 0:
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("callvote physics - bunnyhop\n"));
-			break;
-		case 7:
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("callvote physics bunnyhop\n"));
 			break;
 	}
 }
@@ -776,52 +744,6 @@ static void IG_CallVoteGameType_Event(int index) {
 
 /*
 =======================================================================================================================================
-IG_CallVoteWeapons_Event
-=======================================================================================================================================
-*/
-static void IG_Weapons_Event(int index) {
-	int id;
-
-	id = DynamicMenu_IdAtIndex(index);
-
-	UI_ForceMenuOff();
-
-	switch (id) {
-		case 0:
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("callvote conf allweapons\n"));
-			break;
-		case 1:
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("callvote conf cpma\n"));
-			break;
-		case 2:
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("callvote conf default\n"));
-			break;
-		case 3:
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("callvote conf excessive1\n"));
-			break;
-		case 4:
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("callvote conf excessive2\n"));
-			break;
-		case 5:
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("callvote conf excessive3\n"));
-			break;
-		case 6:
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("callvote conf excessive4\n"));
-			break;
-		case 7:
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("callvote conf excessive5\n"));
-			break;
-		case 8:
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("callvote conf instagib\n"));
-			break;
-		default:
-			Com_Printf("IG_CallVoteWeapons_Event: unknown selection(%i)", id);
-			return;
-	}
-}
-
-/*
-=======================================================================================================================================
 IG_CallVoteMaps_Event
 =======================================================================================================================================
 */
@@ -951,68 +873,6 @@ static void IG_Demos_Event(int index) {
 
 /*
 =======================================================================================================================================
-IG_Hud_Event
-=======================================================================================================================================
-*/
-static void IG_Hud_Event(int index) {
-	int id;
-	int depth;
-	char *tmp;
-	int selected;
-
-	id = DynamicMenu_IdAtIndex(index);
-
-	tmp = UI_Cvar_VariableString("xp_hud");
-
-	if (strcmp(tmp,"A") <= 0) {
-		selected = 40;
-	} else {
-		selected = 40 + tmp[3] - '0';
-	}
-
-	depth = DynamicMenu_Depth();
-
-	DynamicMenu_RemoveFlags(depth, selected, QMF_GRAYED);
-	DynamicMenu_SetFlags(depth, id, QMF_GRAYED);
-
-	InGameDynamic_Close();
-
-	switch (id) {
-		case ID_HUD0:
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("hud default"));
-			break;
-		case ID_HUD1:
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("hud hud1"));
-			break;
-		case ID_HUD2:
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("hud hud2"));
-			break;
-		case ID_HUD3:
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("hud hud3"));
-			break;
-		case ID_HUD4:
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("hud hud4"));
-			break;
-		case ID_HUD5:
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("hud hud5"));
-			break;
-		case ID_HUD6:
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("hud hud6"));
-			break;
-		case ID_HUD7:
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("hud hud7"));
-			break;
-		case ID_HUD8:
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("hud hud8"));
-			break;
-		default:
-			Com_Printf("IG_Hud_Event: unknown id(%i)", id);
-			return;
-	}
-}
-
-/*
-=======================================================================================================================================
 IG_TeamOrders_Event
 =======================================================================================================================================
 */
@@ -1044,17 +904,6 @@ static void IG_Start_Event(int index) {
 
 /*
 =======================================================================================================================================
-IG_Ready_Event
-=======================================================================================================================================
-*/
-static void IG_Ready_Event(int index) {
-
-	UI_ForceMenuOff();
-	trap_Cmd_ExecuteText(EXEC_APPEND, va("ready\n"));
-}
-
-/*
-=======================================================================================================================================
 IG_TimeLimit_SubMenu
 =======================================================================================================================================
 */
@@ -1077,7 +926,7 @@ static void IG_TimeLimit_SubMenu(void) {
 	depth = DynamicMenu_Depth();
 	tmp = DynamicMenu_ServerTimelimit();
 
-	if ((tmp == 0) ||(tmp == 5) ||(tmp == 10) ||(tmp == 15) ||(tmp == 20) ||(tmp == 25) ||(tmp == 30) ||(tmp == 45) ||(tmp == 60)) {
+	if ((tmp == 0) || (tmp == 5) || (tmp == 10) || (tmp == 15) || (tmp == 20) || (tmp == 25) || (tmp == 30) || (tmp == 45) || (tmp == 60)) {
 		DynamicMenu_SetFlags(depth, tmp, QMF_GRAYED);
 	}
 
@@ -1108,7 +957,7 @@ static void IG_RoundLimit_SubMenu(void) {
 	depth = DynamicMenu_Depth();
 	tmp = DynamicMenu_ServerRoundlimit();
 
-	if ((tmp == 0) ||(tmp == 3) ||(tmp == 5) ||(tmp == 7) ||(tmp == 9) ||(tmp == 11) ||(tmp == 13) ||(tmp == 15)) {
+	if ((tmp == 0) || (tmp == 3) || (tmp == 5) || (tmp == 7) || (tmp == 9) || (tmp == 11) || (tmp == 13) || (tmp == 15)) {
 		DynamicMenu_SetFlags(depth, tmp, QMF_GRAYED);
 	}
 
@@ -1127,22 +976,6 @@ static void IG_Unlagged_SubMenu(void) {
 
 	DynamicMenu_AddItem("Yes", 1, NULL, IG_Unlagged_Event);
 	DynamicMenu_AddItem("No", 0, NULL, IG_Unlagged_Event);
-
-	DynamicMenu_AddBackground(INGAME_FRAME);
-	DynamicMenu_FinishSubMenuInit();
-}
-
-/*
-=======================================================================================================================================
-IG_Physics_SubMenu
-=======================================================================================================================================
-*/
-static void IG_Physics_SubMenu(void) {
-
-	DynamicMenu_SubMenuInit();
-
-	DynamicMenu_AddItem(" + BunnyHop", 7, NULL, IG_Physics_Event);
-	DynamicMenu_AddItem(" - BunnyHop", 0, NULL, IG_Physics_Event);
 
 	DynamicMenu_AddBackground(INGAME_FRAME);
 	DynamicMenu_FinishSubMenuInit();
@@ -1172,7 +1005,7 @@ static void IG_FragLimit_SubMenu(void) {
 	depth = DynamicMenu_Depth();
 	tmp = DynamicMenu_ServerFraglimit();
 
-	if ((tmp == 0) ||(tmp == 10) ||(tmp == 15) ||(tmp == 20) ||(tmp == 30) ||(tmp == 40) ||(tmp == 50) ||(tmp == 75) ||(tmp == 100)) {
+	if ((tmp == 0) || (tmp == 10) || (tmp == 15) || (tmp == 20) || (tmp == 30) || (tmp == 40) || (tmp == 50) || (tmp == 75) || (tmp == 100)) {
 		DynamicMenu_SetFlags(depth, tmp, QMF_GRAYED);
 	}
 
@@ -1203,69 +1036,8 @@ static void IG_CaptureLimit_SubMenu(void) {
 	depth = DynamicMenu_Depth();
 	tmp = DynamicMenu_ServerCapturelimit();
 
-	if ((tmp == 0) ||(tmp == 1) ||(tmp == 2) ||(tmp == 4) ||(tmp == 6) ||(tmp == 8) ||(tmp == 10) ||(tmp == 12)) {
+	if ((tmp == 0) || (tmp == 1) || (tmp == 2) || (tmp == 4) || (tmp == 6) || (tmp == 8) || (tmp == 10) || (tmp == 12)) {
 		DynamicMenu_SetFlags(depth, tmp, QMF_GRAYED);
-	}
-
-	DynamicMenu_AddBackground(INGAME_FRAME);
-	DynamicMenu_FinishSubMenuInit();
-}
-
-/*
-=======================================================================================================================================
-IG_Weapons_SubMenu
-=======================================================================================================================================
-*/
-static void IG_CallVoteWeapons_SubMenu(void) {
-	int depth;
-	char *tmp;
-
-	DynamicMenu_SubMenuInit();
-
-	depth = DynamicMenu_Depth();
-	tmp = DynamicMenu_ServerWeapons();
-
-	DynamicMenu_AddIconItem("AllWeapons", 0, "menu/medals/medal_accuracy", NULL, IG_Weapons_Event);
-	DynamicMenu_AddIconItem("CPMA", 1, "menu/medals/medal_defend", NULL, IG_Weapons_Event);
-	DynamicMenu_AddIconItem("Default", 2, "icons/icon_ioquake3", NULL, IG_Weapons_Event);
-	DynamicMenu_AddIconItem("Excessive1", 3, "icons/icon_exce1", NULL, IG_Weapons_Event);
-	DynamicMenu_AddIconItem("Excessive2", 4, "icons/icon_exce2",NULL, IG_Weapons_Event);
-	DynamicMenu_AddIconItem("Excessive3", 5, "icons/icon_exce3",NULL, IG_Weapons_Event);
-	DynamicMenu_AddIconItem("Excessive4", 6, "icons/icon_exce4",NULL, IG_Weapons_Event);
-	DynamicMenu_AddIconItem("Excessive5", 7, "icons/icon_exce5",NULL, IG_Weapons_Event);
-	DynamicMenu_AddIconItem("Instagib", 8, "menu/medals/medal_impressive",NULL, IG_Weapons_Event);
-
-	switch (tmp[5] - 'a') {
-		case 0:// allweapons
-			DynamicMenu_SetFlags(depth, 0, QMF_GRAYED);
-			break;
-		case 2:// cpma
-			DynamicMenu_SetFlags(depth, 1, QMF_GRAYED);
-			break;
-		case 3:// default
-			DynamicMenu_SetFlags(depth, 2, QMF_GRAYED);
-			break;
-		case 4:// excessive
-			switch (tmp[14] - '0') {
-				case 1:
-					DynamicMenu_SetFlags(depth, 3, QMF_GRAYED);
-					break;
-				case 2:
-					DynamicMenu_SetFlags(depth, 4, QMF_GRAYED);
-					break;
-				case 3:
-					DynamicMenu_SetFlags(depth, 5, QMF_GRAYED);
-					break;
-				case 4:
-					DynamicMenu_SetFlags(depth, 6, QMF_GRAYED);
-					break;
-				case 5:
-					DynamicMenu_SetFlags(depth, 7, QMF_GRAYED);
-					break;
-			}
-		case 8:// instagib
-			DynamicMenu_SetFlags(depth, 8, QMF_GRAYED);
-			break;
 	}
 
 	DynamicMenu_AddBackground(INGAME_FRAME);
@@ -1297,43 +1069,6 @@ static void IG_Map_SubMenu(void) {
 
 /*
 =======================================================================================================================================
-IG_Hud_SubMenu
-=======================================================================================================================================
-*/
-static void IG_Hud_SubMenu(void) {
-	int depth;
-	char *tmp;
-	int selected;
-
-	tmp = UI_Cvar_VariableString("xp_hud");
-
-	if (strcmp(tmp,"A") <= 0) {
-		selected = 40;
-	} else {
-		selected = 40 + tmp[3] - '0';
-	}
-
-	DynamicMenu_SubMenuInit();
-
-	DynamicMenu_AddItem("hud0", ID_HUD0, NULL, IG_Hud_Event);
-	DynamicMenu_AddItem("hud1", ID_HUD1, NULL, IG_Hud_Event);
-	DynamicMenu_AddItem("hud2", ID_HUD2, NULL, IG_Hud_Event);
-	DynamicMenu_AddItem("hud3", ID_HUD3, NULL, IG_Hud_Event);
-	DynamicMenu_AddItem("hud4", ID_HUD4, NULL, IG_Hud_Event);
-	DynamicMenu_AddItem("hud5", ID_HUD5, NULL, IG_Hud_Event);
-	DynamicMenu_AddItem("hud6", ID_HUD6, NULL, IG_Hud_Event);
-	DynamicMenu_AddItem("hud7", ID_HUD7, NULL, IG_Hud_Event);
-	DynamicMenu_AddItem("hud8", ID_HUD8, NULL, IG_Hud_Event);
-
-	depth = DynamicMenu_Depth();
-
-	DynamicMenu_SetFlags(depth, selected, QMF_GRAYED);
-	DynamicMenu_AddBackground(INGAME_FRAME);
-	DynamicMenu_FinishSubMenuInit();
-}
-
-/*
-=======================================================================================================================================
 IG_CallVoteMisc_SubMenu
 =======================================================================================================================================
 */
@@ -1352,7 +1087,6 @@ static void IG_CallVoteMisc_SubMenu(void) {
 	}
 
 	DynamicMenu_AddItem("RoundLimit", 0, IG_RoundLimit_SubMenu, NULL);
-	DynamicMenu_AddItem("Physics", 0, IG_Physics_SubMenu, NULL);
 	DynamicMenu_AddItem("Unlagged", 0, IG_Unlagged_SubMenu, NULL);
 
 	DynamicMenu_AddBackground(INGAME_FRAME);
@@ -1423,7 +1157,6 @@ static void IG_CallVote_SubMenu(void) {
 	depth = DynamicMenu_Depth();
 
 	DynamicMenu_AddItem("Gametype", IGCV_GAMETYPE, IG_CallVoteGameType_SubMenu, NULL);
-	DynamicMenu_AddItem("Weapons", IGCV_WEAPONS, IG_CallVoteWeapons_SubMenu, NULL);
 	DynamicMenu_AddItem("Maps", 0, IG_CallVoteMaps_SubMenu, NULL);
 	DynamicMenu_AddItem("Misc", 0, IG_CallVoteMisc_SubMenu, NULL);
 	// DynamicMenu_AddItem("Map", IGCV_MAP, NULL, IG_CallVote_Event);
@@ -1516,26 +1249,17 @@ static void IG_Setup_SubMenu(void) {
 	DynamicMenu_AddItem("Model", IGS_MODEL, NULL, IG_Setup_Event);
 	DynamicMenu_AddItem("Controls", IGS_CONTROLS, NULL, IG_Setup_Event);
 	DynamicMenu_AddItem("System", IGS_OPTIONS, NULL, IG_Setup_Event);
-	DynamicMenu_AddItem("Hud", IGS_HUD, IG_Hud_SubMenu, NULL);
-	DynamicMenu_AddItem("Load / Save", IGS_LOADSAVE, NULL, IG_Setup_Event);
-/*DynamicMenu_AddItem("Graphics", IGS_GRAPHICS, NULL, IG_Setup_Event);
+	DynamicMenu_AddItem("Load/Save", IGS_LOADSAVE, NULL, IG_Setup_Event);
+	/*
+	DynamicMenu_AddItem("Graphics", IGS_GRAPHICS, NULL, IG_Setup_Event);
 	DynamicMenu_AddItem("Display", IGS_DISPLAY, NULL, IG_Setup_Event);
 	DynamicMenu_AddItem("Sound", IGS_SOUND, NULL, IG_Setup_Event);
 	DynamicMenu_AddItem("Network", IGS_NETWORK, NULL, IG_Setup_Event);
 	DynamicMenu_AddItem("Map", IGS_MAP, IG_Map_SubMenu, NULL);
-	DynamicMenu_AddItem("Bots", IGS_BOTS, IG_AddBot_SubMenu, NULL);*/
-
+	DynamicMenu_AddItem("Bots", IGS_BOTS, IG_AddBot_SubMenu, NULL);
+	*/
 	DynamicMenu_AddBackground(INGAME_FRAME);
 	DynamicMenu_FinishSubMenuInit();
-}
-
-/*
-=======================================================================================================================================
-IG_Close_Event
-=======================================================================================================================================
-*/
-static void IG_Close_Event(int index) {
-	UI_ForceMenuOff();
 }
 
 /*
@@ -1547,7 +1271,6 @@ static void IG_Exit_SubMenu(void) {
 
 	DynamicMenu_SubMenuInit();
 
-	// DynamicMenu_AddItem("Return to game", IGM_CLOSE, NULL, IG_Close_Event);
 	DynamicMenu_AddItem("Main Menu", ID_LEAVEARENA, NULL, IG_UseOldInGame_Event);
 	DynamicMenu_AddItem("Quit", ID_QUIT, NULL, IG_UseOldInGame_Event);
 
@@ -1569,7 +1292,6 @@ static void IG_Start_SubMenu(void) {
 	DynamicMenu_SubMenuInit();
 
 	depth = DynamicMenu_Depth();
-	// DynamicMenu_AddIconItem("Ready!", DM_READY, "menu/medals/medal_excellent", NULL, IG_Ready_Event);
 
 	if (gametype < GT_TEAM) {
 		DynamicMenu_AddIconItem("Join Game", DM_START_GAME, "menu/medals/medal_gauntlet", NULL, IG_Start_Event);
@@ -1611,7 +1333,7 @@ static void InGameDynamic_InitPrimaryMenu(void) {
 	localserver = trap_Cvar_VariableValue("sv_running");
 
 	DynamicMenu_SubMenuInit();
-	// DynamicMenu_AddItem("Close!", IGM_CLOSE, NULL, IG_Close_Event);
+
 	DynamicMenu_AddItem("Start", IGM_START, IG_Start_SubMenu, NULL);
 
 	if (gametype != GT_SINGLE_PLAYER) {
@@ -1626,7 +1348,7 @@ static void InGameDynamic_InitPrimaryMenu(void) {
 		DynamicMenu_AddItem("Map", IGM_MAP, IG_Map_SubMenu, NULL);
 	}
 	// bot manipulation
-	if (!(!localserver || !trap_Cvar_VariableValue("bot_enable") ||(gametype == GT_SINGLE_PLAYER))) {
+	if (!(!localserver || !trap_Cvar_VariableValue("bot_enable") || (gametype == GT_SINGLE_PLAYER))) {
 		DynamicMenu_AddItem("Bots", IGM_BOTS, IG_AddBot_SubMenu, NULL);
 	}
 
@@ -1704,7 +1426,7 @@ void UI_InGameMenu(void) {
 /*
 =======================================================================================================================================
 
-INGAME DYNAMIC BOT COMMAND MENU
+	INGAME DYNAMIC BOT COMMAND MENU
 
 =======================================================================================================================================
 */
@@ -1775,9 +1497,7 @@ void BotCommand_MenuClose(void) {
 =======================================================================================================================================
 DM_BotPlayerTarget_Event
 
-Issues a command to a bot that needs a target
-Assumes index is the object, parent is the command,
-and parent of parent is the bot
+Issues a command to a bot that needs a target. Assumes index is the object, parent is the command, and parent of parent is the bot.
 =======================================================================================================================================
 */
 static void DM_BotPlayerTarget_Event(int index) {
@@ -2090,21 +1810,21 @@ static void DM_CommandList_SubMenu(void) {
 
 	DynamicMenu_SubMenuInit();
 
-	DynamicMenu_AddItem("Report", BC_REPORT,(createHandler)NULL, DM_BotCommand_Event);
-	DynamicMenu_AddItem("Help", BC_HELP, DM_TeamList_SubMenu,(eventHandler)NULL);
+	DynamicMenu_AddItem("Report", BC_REPORT, (createHandler)NULL, DM_BotCommand_Event);
+	DynamicMenu_AddItem("Help", BC_HELP, DM_TeamList_SubMenu, (eventHandler)NULL);
 
 	if (botcommandmenu_gametype == GT_CTF) {
-		DynamicMenu_AddItem("Capture Flag", BC_GETFLAG,(createHandler)NULL, DM_BotCommand_Event);
-		DynamicMenu_AddItem("Defend Base", BC_DEFENDBASE,(createHandler)NULL, DM_BotCommand_Event);
+		DynamicMenu_AddItem("Capture Flag", BC_GETFLAG, (createHandler)NULL, DM_BotCommand_Event);
+		DynamicMenu_AddItem("Defend Base", BC_DEFENDBASE, (createHandler)NULL, DM_BotCommand_Event);
 	}
 
-	DynamicMenu_AddItem("Follow", BC_FOLLOW, DM_TeamList_SubMenu,(eventHandler)NULL);
-	DynamicMenu_AddItem("Get", BC_GET, DM_ItemList_SubMenu,(eventHandler)NULL);
-	DynamicMenu_AddItem("Patrol", BC_PATROL, DM_ItemPatrol_SubMenu,(eventHandler)NULL);
-	DynamicMenu_AddItem("Camp", BC_CAMP, DM_CampItemList_SubMenu,(eventHandler)NULL);
-	DynamicMenu_AddItem("Hunt", BC_HUNT, DM_EnemyList_SubMenu,(eventHandler)NULL);
-	DynamicMenu_AddItem("Point + ", BC_POINT,(createHandler)NULL, DM_BotCommand_Event);
-	DynamicMenu_AddItem("Dismiss", BC_DISMISS,(createHandler)NULL, DM_BotCommand_Event);
+	DynamicMenu_AddItem("Follow", BC_FOLLOW, DM_TeamList_SubMenu, (eventHandler)NULL);
+	DynamicMenu_AddItem("Get", BC_GET, DM_ItemList_SubMenu, (eventHandler)NULL);
+	DynamicMenu_AddItem("Patrol", BC_PATROL, DM_ItemPatrol_SubMenu, (eventHandler)NULL);
+	DynamicMenu_AddItem("Camp", BC_CAMP, DM_CampItemList_SubMenu, (eventHandler)NULL);
+	DynamicMenu_AddItem("Hunt", BC_HUNT, DM_EnemyList_SubMenu, (eventHandler)NULL);
+	DynamicMenu_AddItem("Point + ", BC_POINT, (createHandler)NULL, DM_BotCommand_Event);
+	DynamicMenu_AddItem("Dismiss", BC_DISMISS, (createHandler)NULL, DM_BotCommand_Event);
 
 	DynamicMenu_AddBackground(INGAME_FRAME);
 	DynamicMenu_FinishSubMenuInit();
@@ -2128,8 +1848,8 @@ static void BotCommand_InitPrimaryMenu(void) {
 		DynamicMenu_AddItem("My task?", COM_MYTASK, NULL, DM_Command_Event);
 	}
 
-	DynamicMenu_AddItem("Lead", COM_IAMLEADER,(createHandler)NULL, DM_Command_Event);
-	DynamicMenu_AddItem("Resign", COM_QUITLEADER,(createHandler)NULL, DM_Command_Event);
+	DynamicMenu_AddItem("Lead", COM_IAMLEADER, (createHandler)NULL, DM_Command_Event);
+	DynamicMenu_AddItem("Resign", COM_QUITLEADER, (createHandler)NULL, DM_Command_Event);
 
 	DynamicMenu_AddBackground(INGAME_FRAME);
 	DynamicMenu_FinishSubMenuInit();

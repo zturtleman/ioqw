@@ -1453,7 +1453,6 @@ void Bot1FCTFOrders_TeamHasFlag(bot_state_t *bs) {
 					}
 				} else {
 					for (i = 0; i < attackers; i++) {
-
 						if (teammates[numteammates - i - 1] == bs->flagcarrier) {
 							continue;
 						}

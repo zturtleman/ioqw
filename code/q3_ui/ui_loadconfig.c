@@ -221,8 +221,6 @@ static void LoadConfig_MenuInit(void) {
 			configname[len - 4] = '\0';
 		}
 
-		Q_strupr(configname);
-
 		configname += len + 1;
 	}
 

@@ -316,7 +316,7 @@ static void UI_RemoveBotsMenu_Init(int action) {
 	removeBotsMenuInfo.menu.fullscreen = qfalse;
 	removeBotsMenuInfo.menu.wrapAround = qtrue;
 	removeBotsMenuInfo.menu.draw = RemoveBots_MenuDraw;
-	removeBotsMenuInfo.gametype = atoi(Info_ValueForKey(info,"g_gametype"));
+	removeBotsMenuInfo.gametype = atoi(Info_ValueForKey(info, "g_gametype"));
 	removeBotsMenuInfo.action = action;
 
 	UI_RemoveBots_Cache();

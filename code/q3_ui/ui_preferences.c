@@ -39,18 +39,21 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #define PREFERENCES_X_POS 360
 
-#define ID_CROSSHAIR		127
-#define ID_SIMPLEITEMS		128
-#define ID_HIGHQUALITYSKY	129
-#define ID_EJECTINGBRASS	130
-#define ID_WALLMARKS		131
-#define ID_DYNAMICLIGHTS	132
-#define ID_IDENTIFYTARGET	133
-#define ID_SYNCEVERYFRAME	134
-#define ID_FORCEMODEL		135
-#define ID_DRAWTEAMOVERLAY	136
-#define ID_ALLOWDOWNLOAD	137
-#define ID_BACK				138
+enum {
+	ID_CROSSHAIR,
+	ID_SIMPLEITEMS,
+	ID_HIGHQUALITYSKY,
+	ID_EJECTINGBRASS,
+	ID_WALLMARKS,
+	ID_DYNAMICLIGHTS,
+	ID_IDENTIFYTARGET,
+	ID_SYNCEVERYFRAME,
+	ID_FORCEMODEL,
+	ID_DRAWTEAMOVERLAY,
+	ID_ALLOWDOWNLOAD,
+	ID_NUM_ITEMS,
+	ID_BACK
+};
 
 #define NUM_CROSSHAIRS 10
 
@@ -244,7 +247,7 @@ static void Preferences_MenuInit(void) {
 	s_preferences.framer.width = 256;
 	s_preferences.framer.height = 334;
 
-	y = 144;
+	y = (SCREEN_HEIGHT - ID_NUM_ITEMS * (BIGCHAR_HEIGHT + 2) - (2 + 4)) / 2;
 	s_preferences.crosshair.generic.type = MTYPE_SPINCONTROL;
 	s_preferences.crosshair.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT|QMF_NODEFAULTINIT|QMF_OWNERDRAW;
 	s_preferences.crosshair.generic.x = PREFERENCES_X_POS;
@@ -268,7 +271,7 @@ static void Preferences_MenuInit(void) {
 	s_preferences.simpleitems.generic.x = PREFERENCES_X_POS;
 	s_preferences.simpleitems.generic.y = y;
 
-	y += BIGCHAR_HEIGHT;
+	y += BIGCHAR_HEIGHT + 2;
 	s_preferences.wallmarks.generic.type = MTYPE_RADIOBUTTON;
 	s_preferences.wallmarks.generic.name = "Marks on Walls:";
 	s_preferences.wallmarks.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;

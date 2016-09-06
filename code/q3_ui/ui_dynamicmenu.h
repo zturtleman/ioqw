@@ -71,7 +71,6 @@ int DynamicMenu_ServerTimelimit(void);
 int DynamicMenu_ServerFraglimit(void);
 int DynamicMenu_ServerRoundlimit(void);
 int DynamicMenu_ServerCapturelimit(void);
-char *DynamicMenu_ServerWeapons(void);
 // information about the menu structure
 
 // general

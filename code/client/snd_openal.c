@@ -2372,7 +2372,7 @@ qboolean S_AL_Init(soundInterface_t *si) {
 	// Initialize sources, buffers, music
 	S_AL_BufferInit();
 	S_AL_SrcInit();
-	// Set up OpenAL parameters (doppler, etc)
+	// Set up OpenAL parameters (doppler, etc.)
 	qalDistanceModel(AL_INVERSE_DISTANCE_CLAMPED);
 	qalDopplerFactor(s_alDopplerFactor->value);
 	qalSpeedOfSound(s_alDopplerSpeed->value);

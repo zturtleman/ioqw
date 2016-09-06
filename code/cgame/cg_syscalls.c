@@ -49,6 +49,7 @@ PASSFLOAT
 */
 int PASSFLOAT(float x) {
 	floatint_t fi;
+
 	fi.f = x;
 	return fi.i;
 }
@@ -134,6 +135,7 @@ trap_Cvar_VariableValue
 */
 float trap_Cvar_VariableValue(const char *var_name) {
 	floatint_t fi;
+
 	fi.i = syscall(CG_CVAR_VARIABLE_VALUE, var_name);
 	return fi.f;
 }

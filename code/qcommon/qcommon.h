@@ -740,7 +740,7 @@ typedef enum {
 server vm
 server clipmap
 ---mark---
-renderer initialization (shaders, etc)
+renderer initialization (shaders, etc.)
 UI vm
 cgame vm
 renderer map

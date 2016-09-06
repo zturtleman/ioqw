@@ -130,14 +130,14 @@ static qboolean CG_ParseAnimationFile(const char *filename, clientInfo_t *ci) {
 		prev = text_p; // so we can unget
 		token = COM_Parse(&text_p);
 
-		if (!token) {
+		if (!token[0]) {
 			break;
 		}
 
 		if (!Q_stricmp(token, "footsteps")) {
 			token = COM_Parse(&text_p);
 
-			if (!token) {
+			if (!token[0]) {
 				break;
 			}
 
@@ -160,7 +160,7 @@ static qboolean CG_ParseAnimationFile(const char *filename, clientInfo_t *ci) {
 			for (i = 0; i < 3; i++) {
 				token = COM_Parse(&text_p);
 
-				if (!token) {
+				if (!token[0]) {
 					break;
 				}
 
@@ -171,7 +171,7 @@ static qboolean CG_ParseAnimationFile(const char *filename, clientInfo_t *ci) {
 		} else if (!Q_stricmp(token, "sex")) {
 			token = COM_Parse(&text_p);
 
-			if (!token) {
+			if (!token[0]) {
 				break;
 			}
 
@@ -203,7 +203,7 @@ static qboolean CG_ParseAnimationFile(const char *filename, clientInfo_t *ci) {
 	for (i = 0; i < MAX_ANIMATIONS; i++) {
 		token = COM_Parse(&text_p);
 
-		if (!*token) {
+		if (!token[0]) {
 			if (i >= TORSO_GETFLAG && i <= TORSO_NEGATIVE) {
 				animations[i].firstFrame = animations[TORSO_GESTURE].firstFrame;
 				animations[i].frameLerp = animations[TORSO_GESTURE].frameLerp;
@@ -230,7 +230,7 @@ static qboolean CG_ParseAnimationFile(const char *filename, clientInfo_t *ci) {
 
 		token = COM_Parse(&text_p);
 
-		if (!*token) {
+		if (!token[0]) {
 			break;
 		}
 
@@ -245,14 +245,14 @@ static qboolean CG_ParseAnimationFile(const char *filename, clientInfo_t *ci) {
 
 		token = COM_Parse(&text_p);
 
-		if (!*token) {
+		if (!token[0]) {
 			break;
 		}
 
 		animations[i].loopFrames = atoi(token);
 		token = COM_Parse(&text_p);
 
-		if (!*token) {
+		if (!token[0]) {
 			break;
 		}
 
@@ -653,25 +653,62 @@ CG_ColorFromString
 static void CG_ColorFromString(const char *v, vec3_t color) {
 	int val;
 
-	VectorClear(color);
-
 	val = atoi(v);
 
-	if (val < 1 || val > 7) {
-		VectorSet(color, 1, 1, 1);
-		return;
-	}
+	CG_ColorFromIndex(val, color);
+}
 
-	if (val & 1) {
-		color[2] = 1.0f;
-	}
+/*
+=======================================================================================================================================
+CG_ColorFromIndex
+=======================================================================================================================================
+*/
+void CG_ColorFromIndex(int val, vec3_t color) {
 
-	if (val & 2) {
-		color[1] = 1.0f;
-	}
+	switch (val) {
+		case 1: // blue
+		case 2: // green
+		case 3: // cyan
+		case 4: // red
+		case 5: // magenta
+		case 6: // yellow
+		case 7: // white
+			VectorClear(color);
 
-	if (val & 4) {
-		color[0] = 1.0f;
+			if (val & 1) {
+				color[2] = 1.0f;
+			}
+
+			if (val & 2) {
+				color[1] = 1.0f;
+			}
+
+			if (val & 4) {
+				color[0] = 1.0f;
+			}
+
+			break;
+		case 8: // orange
+			VectorSet(color, 1, 0.5f, 0);
+			break;
+		case 9: // lime
+			VectorSet(color, 0.5f, 1, 0);
+			break;
+		case 10: // vivid green
+			VectorSet(color, 0, 1, 0.5f);
+			break;
+		case 11: // light blue
+			VectorSet(color, 0, 0.5f, 1);
+			break;
+		case 12: // purple
+			VectorSet(color, 0.5f, 0, 1);
+			break;
+		case 13: // pink
+			VectorSet(color, 1, 0, 0.5f);
+			break;
+		default: // fall back to white
+			VectorSet(color, 1, 1, 1);
+			break;
 	}
 }
 
@@ -1862,20 +1899,13 @@ CG_PlayerFloatSprite
 Float a sprite over the player's head.
 =======================================================================================================================================
 */
-static void CG_PlayerFloatSprite(centity_t *cent, qhandle_t shader) {
-	int rf;
+static void CG_PlayerFloatSprite(vec3_t origin, int rf, qhandle_t shader) {
 	refEntity_t ent;
-
-	if (cent->currentState.number == cg.snap->ps.clientNum && !cg.renderingThirdPerson) {
-		rf = RF_THIRD_PERSON; // only show in mirrors
-	} else {
-		rf = 0;
-	}
 
 	memset(&ent, 0, sizeof(ent));
 
-	VectorCopy(cent->lerpOrigin, ent.origin);
-	ent.origin[2] += 48;
+	VectorCopy(origin, ent.origin);
+
 	ent.reType = RT_SPRITE;
 	ent.customShader = shader;
 	ent.radius = 10;
@@ -1894,16 +1924,33 @@ CG_PlayerSprites
 Float sprites over the player's head.
 =======================================================================================================================================
 */
-static void CG_PlayerSprites(centity_t *cent) {
-	int team;
+static void CG_PlayerSprites(centity_t *cent, const refEntity_t *parent) {
+	int friendFlags, thirdPersonFlags, team;
+	vec3_t origin;
+
+	VectorCopy(parent->origin, origin);
+	origin[2] += 42;
+
+	if (cent->currentState.number == cg.snap->ps.clientNum) {
+		// current player's team sprite should only be shown in mirrors
+		friendFlags = RF_THIRD_PERSON;
+
+		if (!cg.renderingThirdPerson) {
+			thirdPersonFlags = RF_THIRD_PERSON;
+		} else {
+			thirdPersonFlags = 0;
+		}
+	} else {
+		friendFlags = thirdPersonFlags = 0;
+	}
 
 	if (cent->currentState.eFlags & EF_CONNECTION) {
-		CG_PlayerFloatSprite(cent, cgs.media.connectionShader);
+		CG_PlayerFloatSprite(origin, thirdPersonFlags, cgs.media.connectionShader);
 		return;
 	}
 
 	if (cent->currentState.eFlags & EF_TALK) {
-		CG_PlayerFloatSprite(cent, cgs.media.balloonShader);
+		CG_PlayerFloatSprite(origin, thirdPersonFlags, cgs.media.balloonShader);
 		return;
 	}
 
@@ -1912,9 +1959,9 @@ static void CG_PlayerSprites(centity_t *cent) {
 	if (!(cent->currentState.eFlags & EF_DEAD) && cg.snap->ps.persistant[PERS_TEAM] == team && cgs.gametype >= GT_TEAM) {
 		if (cg_drawFriend.integer) {
 			if (team == TEAM_BLUE) {
-				CG_PlayerFloatSprite(cent, cgs.media.blueFriendShader);
+				CG_PlayerFloatSprite(origin, friendFlags, cgs.media.blueFriendShader);
 			} else {
-				CG_PlayerFloatSprite(cent, cgs.media.redFriendShader);
+				CG_PlayerFloatSprite(origin, friendFlags, cgs.media.redFriendShader);
 			}
 		}
 
@@ -2218,8 +2265,6 @@ void CG_Player(centity_t *cent) {
 	CG_PlayerAngles(cent, legs.axis, torso.axis, head.axis);
 	// get the animation state (after rotation, to allow feet shuffle)
 	CG_PlayerAnimation(cent, &legs.oldframe, &legs.frame, &legs.backlerp, &torso.oldframe, &torso.frame, &torso.backlerp);
-	// add the talk baloon or disconnect icon
-	CG_PlayerSprites(cent);
 
 	if (cent->currentState.number != clientNum) {
 		CG_Corpse(cent, clientNum, &bodySinkOffset, &shadowAlpha);
@@ -2453,7 +2498,6 @@ void CG_Player(centity_t *cent) {
 	}
 
 	if ((cent->currentState.powerups & (1 << PW_INVULNERABILITY)) || cg.time - ci->invulnerabilityStopTime < 250) {
-
 		memcpy(&powerup, &torso, sizeof(torso));
 		powerup.hModel = cgs.media.invulnerabilityPowerupModel;
 		powerup.customSkin = 0;
@@ -2475,6 +2519,8 @@ void CG_Player(centity_t *cent) {
 		trap_R_AddRefEntityToScene(&powerup);
 	}
 #endif // MISSIONPACK
+	// add the talk baloon or disconnect icon
+	CG_PlayerSprites(cent, &torso);
 	// add the head
 	head.hModel = ci->headModel;
 
@@ -2508,6 +2554,7 @@ A player just came into view or teleported, so reset all animation info.
 =======================================================================================================================================
 */
 void CG_ResetPlayerEntity(centity_t *cent) {
+
 	cent->errorTime = -99999; // guarantee no error decay added
 
 	CG_ClearLerpFrame(&cgs.clientinfo[cent->currentState.clientNum], &cent->pe.legs, cent->currentState.legsAnim);

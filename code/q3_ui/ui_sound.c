@@ -54,14 +54,20 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define DEFAULT_SDL_SND_SPEED 48000
 
 static const char *quality_items[] = {
-	"Low", "Medium", "High", NULL
+	"Low (11k)",
+	"Medium (22k)",
+	"High (44.1k)",
+	"Very High (48k)",
+	NULL
 };
 
 #define UISND_SDL		0
 #define UISND_OPENAL	1
 
 static const char *soundSystem_items[] = {
-	"SDL", "OpenAL", NULL
+	"SDL",
+	"OpenAL",
+	NULL
 };
 
 typedef struct {

@@ -119,7 +119,7 @@ void CG_DamageFeedback(int yawByte, int pitchByte, int damage) {
 	if (kick > 10) {
 		kick = 10;
 	}
-	// if yaw and pitch are both 255, make the damage always centered (falling, etc)
+	// if yaw and pitch are both 255, make the damage always centered (falling, etc.)
 	if (yawByte == 255 && pitchByte == 255) {
 		cg.damageX = 0;
 		cg.damageY = 0;
