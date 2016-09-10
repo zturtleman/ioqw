@@ -994,12 +994,10 @@ void CG_NewClientInfo(int clientNum) {
 	// team leader
 	v = Info_ValueForKey(configstring, "tl");
 	newInfo.teamLeader = atoi(v);
-
-	v = Info_ValueForKey(configstring, "g_redteam");
-	Q_strncpyz(newInfo.redTeam, v, MAX_TEAMNAME);
-
-	v = Info_ValueForKey(configstring, "g_blueteam");
-	Q_strncpyz(newInfo.blueTeam, v, MAX_TEAMNAME);
+#ifdef MISSIONPACK
+	Q_strncpyz(newInfo.redTeam, cg_redTeamName.string, MAX_TEAMNAME);
+	Q_strncpyz(newInfo.blueTeam, cg_blueTeamName.string, MAX_TEAMNAME);
+#endif
 	// model
 	v = Info_ValueForKey(configstring, "model");
 

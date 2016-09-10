@@ -444,6 +444,9 @@ typedef struct animation_s {
 // flip the togglebit every time an animation changes so a restart of the same anim can be detected
 #define ANIM_TOGGLEBIT 128
 
+#define DEFAULT_REDTEAM_NAME "Pagans"
+#define DEFAULT_BLUETEAM_NAME "Stroggs"
+
 typedef enum {
 	TEAM_RED,
 	TEAM_BLUE,

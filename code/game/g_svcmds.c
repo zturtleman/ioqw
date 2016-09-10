@@ -491,6 +491,7 @@ struct svcmd {
 	{"abort_podium", qfalse, Svcmd_AbortPodium_f},
 	{"addbot", qfalse, Svcmd_AddBot_f},
 	{"addip", qfalse, Svcmd_AddIP_f},
+	{"botlist", qfalse, Svcmd_BotList_f},
 	{"botreport", qfalse, Svcmd_BotTeamplayReport_f},
 	{"entityList", qfalse, Svcmd_EntityList_f},
 	{"forceteam", qfalse, Svcmd_ForceTeam_f},

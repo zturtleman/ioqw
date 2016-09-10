@@ -33,7 +33,8 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 displayContextDef_t cgDC;
 #endif
 int forceModelModificationCount = -1;
-
+int redTeamNameModificationCount = -1;
+int blueTeamNameModificationCount = -1;
 void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum);
 void CG_Shutdown(void);
 static char *CG_VoIPString(void);
@@ -279,8 +280,8 @@ static cvarTable_t cvarTable[] = {
 	{&cg_enableBreath, "cg_enableBreath", "0", 0},
 	{&cg_obeliskRespawnDelay, "g_obeliskRespawnDelay", "10", CVAR_SYSTEMINFO},
 #ifdef MISSIONPACK
-	{&cg_redTeamName, "g_redteam", DEFAULT_REDTEAM_NAME, CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_USERINFO},
-	{&cg_blueTeamName, "g_blueteam", DEFAULT_BLUETEAM_NAME, CVAR_ARCHIVE|CVAR_SERVERINFO|CVAR_USERINFO},
+	{&cg_redTeamName, "g_redteam", DEFAULT_REDTEAM_NAME, CVAR_ARCHIVE|CVAR_SYSTEMINFO},
+	{&cg_blueTeamName, "g_blueteam", DEFAULT_BLUETEAM_NAME, CVAR_ARCHIVE|CVAR_SYSTEMINFO},
 	{&cg_currentSelectedPlayer, "cg_currentSelectedPlayer", "0", CVAR_ARCHIVE},
 	{&cg_currentSelectedPlayerName, "cg_currentSelectedPlayerName", "", CVAR_ARCHIVE},
 	{&cg_recordSPDemo, "ui_recordSPDemo", "0", CVAR_ARCHIVE},
@@ -329,7 +330,10 @@ void CG_RegisterCvars(void) {
 	cgs.localServer = atoi(var);
 
 	forceModelModificationCount = cg_forceModel.modificationCount;
-
+#ifdef MISSIONPACK
+	redTeamNameModificationCount = cg_redTeamName.modificationCount;
+	blueTeamNameModificationCount = cg_blueTeamName.modificationCount;
+#endif
 	trap_Cvar_Register(NULL, "model", DEFAULT_MODEL, CVAR_USERINFO|CVAR_ARCHIVE);
 	trap_Cvar_Register(NULL, "headmodel", DEFAULT_MODEL, CVAR_USERINFO|CVAR_ARCHIVE);
 	trap_Cvar_Register(NULL, "team_model", DEFAULT_TEAM_MODEL, CVAR_USERINFO|CVAR_ARCHIVE);
@@ -381,9 +385,18 @@ void CG_UpdateCvars(void) {
 			trap_Cvar_SetValue("teamoverlay", 0);
 		}
 	}
-	// if force model changed
-	if (forceModelModificationCount != cg_forceModel.modificationCount) {
+	// if force model or a team name changed
+	if (forceModelModificationCount != cg_forceModel.modificationCount
+#ifdef MISSIONPACK
+		|| redTeamNameModificationCount != cg_redTeamName.modificationCount || blueTeamNameModificationCount != cg_blueTeamName.modificationCount
+#endif
+		) {
+
 		forceModelModificationCount = cg_forceModel.modificationCount;
+#ifdef MISSIONPACK
+		redTeamNameModificationCount = cg_redTeamName.modificationCount;
+		blueTeamNameModificationCount = cg_blueTeamName.modificationCount;
+#endif
 		CG_ForceModelChange();
 	}
 }

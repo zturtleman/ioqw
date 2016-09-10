@@ -74,8 +74,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define DEFAULT_MODEL "james"
 #define DEFAULT_TEAM_MODEL "james"
 #define DEFAULT_TEAM_HEAD "*james"
-#define DEFAULT_REDTEAM_NAME "Stroggs"
-#define DEFAULT_BLUETEAM_NAME "Pagans"
 
 typedef enum {
 	FOOTSTEP_NORMAL,
@@ -831,8 +829,6 @@ typedef struct {
 	int timelimit;
 	int maxclients;
 	char mapname[MAX_QPATH];
-	char redTeam[MAX_QPATH];
-	char blueTeam[MAX_QPATH];
 	int voteTime;
 	int voteYes;
 	int voteNo;
