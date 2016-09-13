@@ -402,8 +402,7 @@ static qboolean CL_CheckFileSize(int bytesToAdd) {
 
 	// newFileSize = Current file size | What we want to add | The index | The index size
 	newFileSize = afd.fileSize + bytesToAdd + (afd.numIndices * 16) + 4;
-	// I assume all the operating systems
-	// we target can handle a 2GB file
+	// I assume all the operating systems we target can handle a 2GB file
 	if (newFileSize > INT_MAX) {
 		// Close the current file...
 		CL_CloseAVI();

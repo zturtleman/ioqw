@@ -1278,7 +1278,7 @@ define_t *PC_DefineFromString(char *string) {
 	// create a new source
 	Com_Memset(&src, 0, sizeof(source_t));
 
-	strncpy(src.filename, "*extern", MAX_PATH);
+	strncpy(src.filename, "*extern", sizeof(src.filename) - 1);
 	src.scriptstack = script;
 #if DEFINEHASHING
 	src.definehash = GetClearedMemory(DEFINEHASHSIZE * sizeof(define_t *));

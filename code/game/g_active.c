@@ -989,7 +989,7 @@ void SpectatorClientEndFrame(gentity_t *ent) {
 =======================================================================================================================================
 ClientEndFrame
 
-Called at the end of each server frame for each connected client. A fast client will have multiple ClientThink for each ClientEdFrame,
+Called at the end of each server frame for each connected client. A fast client will have multiple ClientThink for each ClientEndFrame,
 while a slow client may have multiple ClientEndFrame between ClientThink.
 =======================================================================================================================================
 */

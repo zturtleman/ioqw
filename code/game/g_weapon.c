@@ -136,26 +136,6 @@ qboolean CheckGauntletAttack(gentity_t *ent) {
 =======================================================================================================================================
 */
 
-/*
-=======================================================================================================================================
-SnapVectorTowards
-
-Round a vector to integers for more efficient network transmission, but make sure that it rounds towards a given point rather than
-blindly truncating. This prevents it from truncating into a wall.
-=======================================================================================================================================
-*/
-void SnapVectorTowards(vec3_t v, vec3_t to) {
-	int i;
-
-	for (i = 0; i < 3; i++) {
-		if (to[i] <= v[i]) {
-			v[i] = floor(v[i]);
-		} else {
-			v[i] = ceil(v[i]);
-		}
-	}
-}
-
 #define CHAINGUN_SPREAD 600
 #define CHAINGUN_DAMAGE 7
 #define MACHINEGUN_SPREAD 200
@@ -788,8 +768,15 @@ Weapon_HookThink
 */
 void Weapon_HookThink(gentity_t *ent) {
 
-	if (ent->enemy) {
+	ent->nextthink = level.time + FRAMETIME;
+
+	if (ent->enemy && ent->enemy->client) {
 		vec3_t v, oldorigin;
+
+		if (ent->enemy->client->ps.pm_type == PM_DEAD) {
+			Weapon_HookFree(ent);
+			return;
+		}
 
 		VectorCopy(ent->r.currentOrigin, oldorigin);
 

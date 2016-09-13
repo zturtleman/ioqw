@@ -368,18 +368,19 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace) {
 			G_AddEvent(nent, EV_MISSILE_HIT, DirToByte(trace->plane.normal));
 
 			nent->s.otherEntityNum = other->s.number;
-			ent->enemy = other;
 
 			v[0] = other->r.currentOrigin[0] + (other->r.mins[0] + other->r.maxs[0]) * 0.5;
 			v[1] = other->r.currentOrigin[1] + (other->r.mins[1] + other->r.maxs[1]) * 0.5;
 			v[2] = other->r.currentOrigin[2] + (other->r.mins[2] + other->r.maxs[2]) * 0.5;
-
-			SnapVectorTowards(v, ent->s.pos.trBase); // save net bandwidth
 		} else {
 			VectorCopy(trace->endpos, v);
 			G_AddEvent(nent, EV_MISSILE_MISS, DirToByte(trace->plane.normal));
-			ent->enemy = NULL;
 		}
+
+		nent->s.weapon = ent->s.weapon;
+
+		ent->enemy = other;
+		ent->s.groundEntityNum = other->s.number;
 
 		SnapVectorTowards(v, ent->s.pos.trBase); // save net bandwidth
 
@@ -810,6 +811,8 @@ gentity_t *fire_grapple(gentity_t *self, vec3_t start, vec3_t dir) {
 	} else {
 		hook->s.team = TEAM_FREE;
 	}
+
+	vectoangles(dir, hook->s.angles);
 
 	return hook;
 }

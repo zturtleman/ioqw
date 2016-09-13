@@ -25,19 +25,14 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "client.h"
 
 // key up events are sent even if in console mode
-
 field_t historyEditLines[COMMAND_HISTORY];
-
 int nextHistoryLine; // the last line in the history buffer, not masked
 int historyLine; // the line being displayed from history buffer will be <= nextHistoryLine
-
 field_t g_consoleField;
 field_t chatField;
-
 qboolean chat_team;
 int chat_playerNum;
 qboolean key_overstrikeMode;
-
 int anykeydown;
 qkey_t keys[MAX_KEYS];
 
@@ -45,7 +40,6 @@ typedef struct {
 	char *name;
 	int keynum;
 } keyname_t;
-
 // names not in this list can either be lowercase ascii, or '0xnn' hex sequences
 keyname_t keynames[] = {
 	{"TAB", K_TAB},
@@ -318,8 +312,7 @@ keyname_t keynames[] = {
 =======================================================================================================================================
 Field_VariableSizeDraw
 
-Handles horizontal scrolling and cursor blinking.
-x, y, and width are in pixels.
+Handles horizontal scrolling and cursor blinking. x, y, and width are in pixels.
 =======================================================================================================================================
 */
 void Field_VariableSizeDraw(field_t *edit, int x, int y, int width, int size, qboolean showCursor, qboolean noColorEscape) {
@@ -788,7 +781,6 @@ Key_StringToKeynum
 
 Returns a key number to be used to index keys[] by looking at the given string.
 Single ascii characters return themselves, while the K_* names are matched up.
-
 0x11 will be interpreted as raw hex, which will allow new controlers to be configured even if they don't have defined names.
 =======================================================================================================================================
 */

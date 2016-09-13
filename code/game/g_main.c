@@ -1412,7 +1412,7 @@ Once a frame, check for changes in tournament player state.
 */
 void CheckTournament(void) {
 
-	// check because we run 3 game frames before calling Connect and/or ClientBegin for clients on a map_restart
+	// check because we run 3 game frames before calling ClientConnect and/or ClientBegin for clients on a map_restart
 	if (level.numPlayingClients == 0) {
 		return;
 	}

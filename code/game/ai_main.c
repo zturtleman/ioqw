@@ -359,7 +359,6 @@ void Svcmd_BotTeamplayReport_f(void) {
 	}
 }
 
-
 /*
 =======================================================================================================================================
 BotSetInfoConfigString
@@ -1085,9 +1084,9 @@ int BotAI(int client, float thinktime) {
 		RemoveColorEscapeSequences(args);
 
 		if (!Q_stricmp(buf, "cp ")) {
-			{ /*CenterPrintf*/ }
+			/*CenterPrintf*/
 		} else if (!Q_stricmp(buf, "cs")) {
-			{ /*ConfigStringModified*/ }
+			/*ConfigStringModified*/
 		} else if (!Q_stricmp(buf, "print")) {
 			// remove first and last quote from the chat message
 			memmove(args, args + 1, strlen(args));
@@ -1301,7 +1300,7 @@ int BotAISetupClient(int client, struct bot_settings_s *settings, qboolean resta
 	if (bot_interbreed) {
 		trap_BotMutateGoalFuzzyLogic(bs->gs, 1);
 	}
-	// if we kept the bot client
+	// if we kept the bot state
 	if (restart) {
 		BotReadSessionData(bs);
 	}
@@ -1824,7 +1823,6 @@ BotAIShutdown
 =======================================================================================================================================
 */
 int BotAIShutdown(int restart) {
-
 	int i;
 
 	// if the game is restarted for a tournament

@@ -604,6 +604,7 @@ void BG_TouchJumpPad(playerState_t *ps, entityState_t *jumppad);
 void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, qboolean snap);
 void BG_PlayerStateToEntityStateExtraPolate(playerState_t *ps, entityState_t *s, int time, qboolean snap);
 qboolean BG_PlayerTouchesItem(playerState_t *ps, entityState_t *item, int atTime);
+void SnapVectorTowards(vec3_t v, vec3_t to);
 
 #define ARENAS_PER_TIER 4
 

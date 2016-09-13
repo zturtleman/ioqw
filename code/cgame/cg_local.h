@@ -128,6 +128,8 @@ typedef struct {
 	float barrelAngle;
 	int barrelTime;
 	qboolean barrelSpinning;
+	// third person gun flash origin
+	vec3_t flashOrigin;
 } playerEntity_t;
 
 #define MAX_CG_SKIN_SURFACES 32
@@ -403,6 +405,8 @@ typedef struct {
 	int fraglimitWarnings;
 	qboolean mapRestart;			// set on a map restart to set back the weapon
 	qboolean renderingThirdPerson;	// during deaths, chasecams, etc
+	// first person gun flash origin
+	vec3_t flashOrigin;
 	// prediction state
 	qboolean hyperspace;			// true if prediction has hit a trigger_teleport
 	playerState_t predictedPlayerState;
