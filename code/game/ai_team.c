@@ -36,9 +36,9 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "ai_dmq3.h"
 #include "ai_chat.h"
 #include "ai_cmd.h"
+#include "ai_vcmd.h"
 #include "ai_dmnet.h"
 #include "ai_team.h"
-#include "ai_vcmd.h"
 #include "match.h"
 // ctf task preferences for a client
 typedef struct bot_ctftaskpreference_s {

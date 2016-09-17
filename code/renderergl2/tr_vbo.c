@@ -250,9 +250,7 @@ vao_t *R_CreateVao2(const char *name, int numVertexes, srfVert_t *verts, int num
 	// since these vertex attributes are never altered, interleave them
 	vao->attribs[ATTR_INDEX_POSITION      ].enabled = 1;
 	vao->attribs[ATTR_INDEX_NORMAL        ].enabled = 1;
-#ifdef USE_VERT_TANGENT_SPACE
 	vao->attribs[ATTR_INDEX_TANGENT       ].enabled = 1;
-#endif
 	vao->attribs[ATTR_INDEX_TEXCOORD      ].enabled = 1;
 	vao->attribs[ATTR_INDEX_LIGHTCOORD    ].enabled = 1;
 	vao->attribs[ATTR_INDEX_COLOR         ].enabled = 1;
@@ -284,9 +282,7 @@ vao_t *R_CreateVao2(const char *name, int numVertexes, srfVert_t *verts, int num
 
 	vao->attribs[ATTR_INDEX_POSITION      ].offset = 0;        dataSize  = sizeof(verts[0].xyz);
 	vao->attribs[ATTR_INDEX_NORMAL        ].offset = dataSize; dataSize += sizeof(verts[0].normal);
-#ifdef USE_VERT_TANGENT_SPACE
 	vao->attribs[ATTR_INDEX_TANGENT       ].offset = dataSize; dataSize += sizeof(verts[0].tangent);
-#endif
 	vao->attribs[ATTR_INDEX_TEXCOORD      ].offset = dataSize; dataSize += glRefConfig.packedTexcoordDataSize;
 	vao->attribs[ATTR_INDEX_LIGHTCOORD    ].offset = dataSize; dataSize += glRefConfig.packedTexcoordDataSize;
 	vao->attribs[ATTR_INDEX_COLOR         ].offset = dataSize; dataSize += glRefConfig.packedColorDataSize;
@@ -323,11 +319,9 @@ vao_t *R_CreateVao2(const char *name, int numVertexes, srfVert_t *verts, int num
 		memcpy(data + dataOfs, &verts[i].normal, sizeof(verts[i].normal));
 		dataOfs += sizeof(verts[i].normal);
 
-#ifdef USE_VERT_TANGENT_SPACE
 		// tangent
 		memcpy(data + dataOfs, &verts[i].tangent, sizeof(verts[i].tangent));
 		dataOfs += sizeof(verts[i].tangent);
-#endif
 
 		// texcoords
 		dataOfs += R_VaoPackTexCoord(data + dataOfs, verts[i].st);
@@ -471,9 +465,7 @@ void R_InitVaos(void)
 
 	vertexesSize  = sizeof(tess.xyz[0]);
 	vertexesSize += sizeof(tess.normal[0]);
-#ifdef USE_VERT_TANGENT_SPACE
 	vertexesSize += sizeof(tess.tangent[0]);
-#endif
 	vertexesSize += sizeof(tess.vertexColors[0]);
 	vertexesSize += sizeof(tess.texCoords[0][0]) * 2;
 	vertexesSize += sizeof(tess.lightdir[0]);
@@ -487,9 +479,7 @@ void R_InitVaos(void)
 
 	tess.vao->attribs[ATTR_INDEX_POSITION      ].enabled = 1;
 	tess.vao->attribs[ATTR_INDEX_NORMAL        ].enabled = 1;
-#ifdef USE_VERT_TANGENT_SPACE
 	tess.vao->attribs[ATTR_INDEX_TANGENT       ].enabled = 1;
-#endif
 	tess.vao->attribs[ATTR_INDEX_TEXCOORD      ].enabled = 1;
 	tess.vao->attribs[ATTR_INDEX_LIGHTCOORD    ].enabled = 1;
 	tess.vao->attribs[ATTR_INDEX_COLOR         ].enabled = 1;
@@ -521,9 +511,7 @@ void R_InitVaos(void)
 
 	tess.vao->attribs[ATTR_INDEX_POSITION      ].offset = offset; offset += sizeof(tess.xyz[0])              * SHADER_MAX_VERTEXES;
 	tess.vao->attribs[ATTR_INDEX_NORMAL        ].offset = offset; offset += sizeof(tess.normal[0])           * SHADER_MAX_VERTEXES;
-#ifdef USE_VERT_TANGENT_SPACE
 	tess.vao->attribs[ATTR_INDEX_TANGENT       ].offset = offset; offset += sizeof(tess.tangent[0])          * SHADER_MAX_VERTEXES;
-#endif
 	// these next two are actually interleaved
 	tess.vao->attribs[ATTR_INDEX_TEXCOORD      ].offset = offset; 
 	tess.vao->attribs[ATTR_INDEX_LIGHTCOORD    ].offset = offset + sizeof(tess.texCoords[0][0]);
@@ -534,9 +522,7 @@ void R_InitVaos(void)
 
 	tess.vao->attribs[ATTR_INDEX_POSITION      ].stride = sizeof(tess.xyz[0]);
 	tess.vao->attribs[ATTR_INDEX_NORMAL        ].stride = sizeof(tess.normal[0]);
-#ifdef USE_VERT_TANGENT_SPACE
 	tess.vao->attribs[ATTR_INDEX_TANGENT       ].stride = sizeof(tess.tangent[0]);
-#endif
 	tess.vao->attribs[ATTR_INDEX_COLOR         ].stride = sizeof(tess.vertexColors[0]);
 	tess.vao->attribs[ATTR_INDEX_TEXCOORD      ].stride = sizeof(tess.texCoords[0][0]) * 2;
 	tess.vao->attribs[ATTR_INDEX_LIGHTCOORD    ].stride = sizeof(tess.texCoords[0][0]) * 2;
@@ -545,9 +531,7 @@ void R_InitVaos(void)
 	tess.attribPointers[ATTR_INDEX_POSITION]       = tess.xyz;
 	tess.attribPointers[ATTR_INDEX_TEXCOORD]       = tess.texCoords;
 	tess.attribPointers[ATTR_INDEX_NORMAL]         = tess.normal;
-#ifdef USE_VERT_TANGENT_SPACE
 	tess.attribPointers[ATTR_INDEX_TANGENT]        = tess.tangent;
-#endif
 	tess.attribPointers[ATTR_INDEX_COLOR]          = tess.vertexColors;
 	tess.attribPointers[ATTR_INDEX_LIGHTDIRECTION] = tess.lightdir;
 

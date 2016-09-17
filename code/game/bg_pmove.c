@@ -781,9 +781,12 @@ static void PM_WalkMove(void) {
 	vel = VectorLength(pm->ps->velocity);
 	// slide along the ground plane
 	PM_ClipVelocity(pm->ps->velocity, pml.groundTrace.plane.normal, pm->ps->velocity, OVERCLIP);
-	// don't decrease velocity when going up or down a slope
-	VectorNormalize(pm->ps->velocity);
-	VectorScale(pm->ps->velocity, vel, pm->ps->velocity);
+
+	if (VectorLength(pm->ps->velocity) > 1) {
+		// don't decrease velocity when going up or down a slope
+		VectorNormalize(pm->ps->velocity);
+		VectorScale(pm->ps->velocity, vel, pm->ps->velocity);
+	}
 	// don't do anything if standing still
 	if (!pm->ps->velocity[0] && !pm->ps->velocity[1]) {
 		return;
@@ -1736,8 +1739,6 @@ void PM_UpdateViewAngles(playerState_t *ps, const usercmd_t *cmd) {
 PmoveSingle
 =======================================================================================================================================
 */
-void trap_SnapVector(float *v);
-
 void PmoveSingle(pmove_t *pmove) {
 	pm = pmove;
 
