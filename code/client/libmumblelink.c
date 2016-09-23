@@ -39,7 +39,7 @@ redistribute it freely, subject to the following restrictions:
 #include <stdio.h>
 #include "libmumblelink.h"
 #ifndef MIN
-#define MIN(a, b) ((a) < (b) ? (a) : (b))
+#define MIN (a, b) ((a) < (b) ? (a) : (b))
 #endif
 
 typedef struct {

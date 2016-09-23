@@ -212,6 +212,7 @@ S_OggOpus_CodecOpenStream
 */
 snd_stream_t *S_OggOpus_CodecOpenStream(const char *filename) {
 	snd_stream_t *stream;
+
 	// Opus codec control structure
 	OggOpusFile *of;
 	// some variables used to get informations about the file

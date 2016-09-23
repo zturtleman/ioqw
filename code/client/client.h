@@ -85,33 +85,33 @@ typedef struct {
 extern int g_console_field_width;
 
 typedef struct {
-	int timeoutcount; // it requires several frames in a timeout condition to disconnect, preventing debugging breaks from causing immediate disconnects on continue
-	clSnapshot_t snap; // latest received from server
-	int serverTime; // may be paused during play
-	int oldServerTime; // to prevent time from flowing bakcwards
-	int oldFrameServerTime; // to check tournament restarts
-	int serverTimeDelta; // cl.serverTime = cls.realtime + cl.serverTimeDelta, this value changes as net lag varies
-	qboolean extrapolatedSnapshot; // set if any cgame frame has been forced to extrapolate, cleared when CL_AdjustTimeDelta looks at it
-	qboolean newSnapshots; // set on parse of any valid packet
-	gameState_t gameState; // configstrings
-	char mapname[MAX_QPATH]; // extracted from CS_SERVERINFO
-	int parseEntitiesNum; // index (not anded off) into cl_parse_entities[]
-	int mouseDx[2], mouseDy[2]; // added to by mouse events
+	int timeoutcount;				// it requires several frames in a timeout condition to disconnect, preventing debugging breaks from causing immediate disconnects on continue
+	clSnapshot_t snap;				// latest received from server
+	int serverTime;					// may be paused during play
+	int oldServerTime;				// to prevent time from flowing bakcwards
+	int oldFrameServerTime;			// to check tournament restarts
+	int serverTimeDelta;			// cl.serverTime = cls.realtime + cl.serverTimeDelta, this value changes as net lag varies
+	qboolean extrapolatedSnapshot;	// set if any cgame frame has been forced to extrapolate, cleared when CL_AdjustTimeDelta looks at it
+	qboolean newSnapshots;			// set on parse of any valid packet
+	gameState_t gameState;			// configstrings
+	char mapname[MAX_QPATH];		// extracted from CS_SERVERINFO
+	int parseEntitiesNum;			// index (not anded off) into cl_parse_entities[]
+	int mouseDx[2], mouseDy[2];		// added to by mouse events
 	int mouseIndex;
 	int joystickAxis[MAX_JOYSTICK_AXIS]; // set by joystick events
 	// cgame communicates a few values to the client system
-	int cgameUserCmdValue; // current weapon to add to usercmd_t
+	int cgameUserCmdValue;			// current weapon to add to usercmd_t
 	float cgameSensitivity;
 	// cmds[cmdNumber] is the predicted command, [cmdNumber-1] is the last
 	// properly generated command
-	usercmd_t cmds[CMD_BACKUP]; // each message will send several old cmds
+	usercmd_t cmds[CMD_BACKUP];		// each message will send several old cmds
 	int cmdNumber; // incremented each frame, because multiple frames may need to be packed into a single packet
-	outPacket_t outPackets[PACKET_BACKUP]; // information about each packet we have sent out
+	outPacket_t outPackets[PACKET_BACKUP];	// information about each packet we have sent out
 	// the client maintains its own idea of view angles, which are sent to the server each frame. It is cleared to 0 upon entering each
 	// level. The server sends a delta each frame which is added to the locally tracked view angles to account for standing on rotating
 	// objects, and teleport direction changes
 	vec3_t viewangles;
-	int serverId; // included in each client message so the server can tell if it is for a prior map_restart
+	int serverId;					// included in each client message so the server can tell if it is for a prior map_restart
 	// big stuff at end of structure so most offsets are 15 bits or less
 	clSnapshot_t snapshots[PACKET_BACKUP];
 	entityState_t entityBaselines[MAX_GENTITIES]; // for delta compression when not in previous frame

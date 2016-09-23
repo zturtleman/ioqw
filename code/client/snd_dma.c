@@ -379,8 +379,7 @@ void S_DefaultSound(sfx_t *sfx) {
 =======================================================================================================================================
 S_Base_DisableSounds
 
-Disables sounds until the next S_BeginRegistration.
-This is called when the hunk is cleared and the sounds are no longer valid.
+Disables sounds until the next S_BeginRegistration. This is called when the hunk is cleared and the sounds are no longer valid.
 =======================================================================================================================================
 */
 void S_Base_DisableSounds(void) {
@@ -593,8 +592,7 @@ static qboolean S_Base_HearingThroughEntity(int entityNum, vec3_t origin) {
 =======================================================================================================================================
 S_Base_StartSoundEx
 
-Validates the parms and ques the sound up.
-If origin is NULL, the sound will be dynamically sourced from the entity.
+Validates the parms and ques the sound up. If origin is NULL, the sound will be dynamically sourced from the entity.
 Entchannel 0 will never override a playing sound.
 =======================================================================================================================================
 */
@@ -653,6 +651,7 @@ static void S_Base_StartSoundEx(vec3_t origin, int entityNum, int entchannel, sf
 //				if (Cvar_VariableValue("cg_showmiss")) {
 //					Com_Printf("double sound start\n");
 //				}
+
 				return;
 			}
 
@@ -958,8 +957,7 @@ void S_Base_AddRealLoopingSound(int entityNum, const vec3_t origin, const vec3_t
 =======================================================================================================================================
 S_AddLoopSounds
 
-Spatialize all of the looping sounds.
-All sounds are on the same cycle, so any duplicates can just sum up the channel multipliers.
+Spatialize all of the looping sounds. All sounds are on the same cycle, so any duplicates can just sum up the channel multipliers.
 =======================================================================================================================================
 */
 void S_AddLoopSounds(void) {
@@ -1115,7 +1113,7 @@ void S_Base_RawSamples(int stream, int samples, int rate, int width, int s_chann
 
 	scale = (float)rate / dma.speed;
 
-//Com_Printf("%i < %i < %i\n", s_soundtime, s_paintedtime, s_rawend[stream]);
+	//Com_Printf("%i < %i < %i\n", s_soundtime, s_paintedtime, s_rawend[stream]);
 
 	if (s_channels == 2 && width == 2) {
 		if (scale == 1.0) { // optimized case
