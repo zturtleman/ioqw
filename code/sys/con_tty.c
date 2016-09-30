@@ -116,7 +116,7 @@ static void CON_Hide(void) {
 			return;
 		}
 
-		if (TTY_con.cursor>0) {
+		if (TTY_con.cursor > 0) {
 			for (i = 0; i < TTY_con.cursor; i++) {
 				CON_Back();
 			}
@@ -143,7 +143,7 @@ static void CON_Show(void) {
 	if (ttycon_on) {
 		int i;
 
-		assert(ttycon_hide>0);
+		assert(ttycon_hide > 0);
 		ttycon_hide--;
 
 		if (ttycon_hide == 0) {
@@ -200,7 +200,7 @@ void Hist_Add(field_t *field) {
 
 	ttyEditLines[0] = *field;
 
-	if (hist_count<CON_HISTORY) {
+	if (hist_count < CON_HISTORY) {
 		hist_count++;
 	}
 
@@ -256,7 +256,7 @@ field_t *Hist_Next(void) {
 =======================================================================================================================================
 CON_SigCont
 
-Reinitialize console input after receiving SIGCONT, as on Linux the terminal seems to lose all set attributes if user did CTRL+Z and
+Reinitialize console input after receiving SIGCONT, as on Linux the terminal seems to lose all set attributes if user did CTRL + Z and
 then does fg again.
 =======================================================================================================================================
 */

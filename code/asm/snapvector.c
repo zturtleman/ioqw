@@ -29,7 +29,9 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "qasm-inline.h"
 #include "../qcommon/q_shared.h"
 
-static unsigned char ssemask[16] __attribute__((aligned(16))) = {"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x00\x00\x00\x00"};
+static unsigned char ssemask[16] __attribute__((aligned(16))) = {
+	"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x00\x00\x00\x00"
+};
 
 /*
 =======================================================================================================================================

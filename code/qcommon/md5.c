@@ -321,7 +321,7 @@ char *Com_MD5File(const char *fn, int length, const char *prefix, int prefix_len
 
 		total += r;
 
-		MD5Update(&md5 , buffer, r);
+		MD5Update(&md5, buffer, r);
 
 		if (r < sizeof(buffer) || total >= length) {
 			break;

@@ -118,7 +118,7 @@ void MSG_ReportChangeVectors_f(void);
 #define MAX_RELIABLE_COMMANDS 64 // max string commands buffered for restransmit
 
 typedef enum {
-	NA_BAD = 0,	// an address lookup failed
+	NA_BAD = 0, // an address lookup failed
 	NA_BOT,
 	NA_LOOPBACK,
 	NA_BROADCAST,
@@ -322,7 +322,7 @@ _vmf
 static ID_INLINE float _vmf(intptr_t x) {
 	floatint_t fi;
 
-	fi.i = (int) x;
+	fi.i = (int)x;
 	return fi.f;
 }
 
@@ -473,7 +473,7 @@ extern int cvar_modifiedFlags;
 
 	FILESYSTEM
 
-	No stdio calls should be used by any part of the game, because we need to deal with all sorts of directory and seperator char issues.
+	No stdio calls should be used by any part of the game, because we need to deal with all sorts of directory and separator char issues.
 
 =======================================================================================================================================
 */

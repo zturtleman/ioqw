@@ -265,7 +265,7 @@ static void UI_CalcPostGameStats( void ) {
 
 	newInfo.time = (time - trap_Cvar_VariableValue("ui_matchStartTime")) / 1000;
 	adjustedTime = uiInfo.mapList[ui_currentMap.integer].timeToBeat[game];
-	if (newInfo.time < adjustedTime) { 
+	if (newInfo.time < adjustedTime) {
 		newInfo.timeBonus = (adjustedTime - newInfo.time) * 10;
 	} else {
 		newInfo.timeBonus = 0;

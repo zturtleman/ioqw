@@ -696,13 +696,13 @@ int RaySphereIntersections(vec3_t origin, float radius, vec3_t point, vec3_t dir
 	d = b * b - 4 * c;
 
 	if (d > 0) {
-		t = (- b + sqrt(d)) / 2;
+		t = (-b + sqrt(d)) / 2;
 		VectorMA(point, t, dir, intersections[0]);
-		t = (- b - sqrt(d)) / 2;
+		t = (-b - sqrt(d)) / 2;
 		VectorMA(point, t, dir, intersections[1]);
 		return 2;
 	} else if (d == 0) {
-		t = (- b) / 2;
+		t = (-b) / 2;
 		VectorMA(point, t, dir, intersections[0]);
 		return 1;
 	}

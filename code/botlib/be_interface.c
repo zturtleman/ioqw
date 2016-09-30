@@ -517,13 +517,14 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 //		botimport.Print(PRT_MESSAGE, "travel time to goal = %d\n", AAS_AreaTravelTimeToGoalArea(area, origin, botlibglobals.goalareanum, TFL_DEFAULT));
 //		botimport.Print(PRT_MESSAGE, "test rj from 703 to 716\n");
 //		AAS_Reachability_WeaponJump(703, 716);
-//	}*/
+//	}
+	/*
+	face = AAS_AreaGroundFace(newarea, parm2);
 
-/*	face = AAS_AreaGroundFace(newarea, parm2);
 	if (face) {
 		AAS_ShowFace(face - aasworld.faces);
-	}*/
-	/*
+	}
+
 	AAS_ClearShownDebugLines();
 	AAS_ShowArea(newarea, parm0 & BUTTON_USE);
 	AAS_ShowReachableAreas(area);

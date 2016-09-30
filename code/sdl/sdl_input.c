@@ -1004,7 +1004,7 @@ static void IN_JoyMove(void) {
 
 			for (i = 0; i < total; i++) {
 				Sint16 axis = SDL_JoystickGetAxis(stick, i);
-				float f = ((float) abs(axis)) / 32767.0f;
+				float f = ((float)abs(axis)) / 32767.0f;
 
 				if (f < in_joystickThreshold->value) {
 					axis = 0;
@@ -1022,7 +1022,7 @@ static void IN_JoyMove(void) {
 
 			for (i = 0; i < total; i++) {
 				Sint16 axis = SDL_JoystickGetAxis(stick, i);
-				float f = ((float) axis) / 32767.0f;
+				float f = ((float)axis) / 32767.0f;
 
 				if (f < -in_joystickThreshold->value) {
 					axes |= (1 << (i * 2));

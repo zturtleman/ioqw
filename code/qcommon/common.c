@@ -390,7 +390,7 @@ void Com_ParseCommandLine(char *commandLine) {
 			inq = !inq;
 		}
 		// look for a + separating character
-		// if commandLine came from a file, we might have real line seperators
+		// if commandLine came from a file, we might have real line separators
 		if ((*commandLine == '+' && !inq) || *commandLine == '\n' || *commandLine == '\r') {
 			if (com_numConsoleLines == MAX_CONSOLE_LINES) {
 				return;
@@ -786,7 +786,7 @@ typedef struct memblock_s {
 typedef struct {
 	int size; // total bytes malloced, including header
 	int used; // total bytes used
-	memblock_t blocklist; // start / end cap for linked list
+	memblock_t blocklist; // start/end cap for linked list
 	memblock_t *rover;
 } memzone_t;
 // main zone for all "dynamic" memory allocation
@@ -2309,7 +2309,7 @@ A way to force a bus error for development reasons.
 =======================================================================================================================================
 */
 static void Com_Crash_f(void) {
-	*(volatile int *) 0 = 0x12345678;
+	*(volatile int *)0 = 0x12345678;
 }
 
 /*
@@ -2499,7 +2499,7 @@ Seed the random number generator, if possible with an OS supplied random seed.
 static void Com_InitRand(void) {
 	unsigned int seed;
 
-	if (Sys_RandomBytes((byte *) &seed, sizeof(seed))) {
+	if (Sys_RandomBytes((byte *)&seed, sizeof(seed))) {
 		srand(seed);
 	} else {
 		srand(time(NULL));
@@ -2515,7 +2515,7 @@ void Com_Init(char *commandLine) {
 	char *s;
 	int qport;
 
-	Com_Printf("%s %s %s\n", QW_VERSION, PLATFORM_STRING, __DATE__);
+	Com_Printf("%s %s %s\n", QW_VERSION, PLATFORM_STRING, PRODUCT_DATE);
 
 	if (setjmp(abortframe)) {
 		Sys_Error("Error during initialization");
@@ -2615,7 +2615,7 @@ void Com_Init(char *commandLine) {
 #ifdef CINEMATICS_INTRO
 	com_introPlayed = Cvar_Get("com_introplayed", "0", CVAR_ARCHIVE);
 #endif
-	s = va("%s %s %s", QW_VERSION, PLATFORM_STRING, __DATE__);
+	s = va("%s %s %s", QW_VERSION, PLATFORM_STRING, PRODUCT_DATE);
 	com_version = Cvar_Get("version", s, CVAR_ROM|CVAR_SERVERINFO);
 	com_gamename = Cvar_Get("com_gamename", GAMENAME_FOR_MASTER, CVAR_SERVERINFO|CVAR_INIT);
 	com_protocol = Cvar_Get("com_protocol", va("%i", PROTOCOL_VERSION), CVAR_SERVERINFO|CVAR_INIT);

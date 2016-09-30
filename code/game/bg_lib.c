@@ -682,7 +682,7 @@ void create_acostable(void) {
 			fprintf(fp, "\n");
 		}
 
-		a = acos((float) -1 + i / 512);
+		a = acos((float) - 1 + i / 512);
 		fprintf(fp, "%1.8f,", a);
 	}
 

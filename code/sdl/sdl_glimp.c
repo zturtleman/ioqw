@@ -614,7 +614,7 @@ static void GLimp_InitExtensions(void) {
 			if (qglActiveTextureARB) {
 				GLint glint = 0;
 				qglGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &glint);
-				glConfig.numTextureUnits = (int) glint;
+				glConfig.numTextureUnits = (int)glint;
 
 				if (glConfig.numTextureUnits > 1) {
 					ri.Printf(PRINT_ALL, "...using GL_ARB_multitexture\n");

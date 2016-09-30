@@ -678,7 +678,7 @@ void Window_Paint(Window *w, float fadeAmount, float fadeClamp, float fadeCycle)
     // full
     // HACK HACK HACK
     if (w->style == WINDOW_STYLE_TEAMCOLOR) {
-      if (color[0] > 0) { 
+      if (color[0] > 0) {
         // red
         color[0] = 1;
         color[1] = color[2] = .5;

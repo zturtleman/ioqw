@@ -860,8 +860,7 @@ extern int ZEXPORT unzLocateFile(file, szFileName, iCaseSensitivity)
 */
 
 /*
-typedef struct unz_file_pos_s
-{
+typedef struct unz_file_pos_s {
 	uLong pos_in_zip_directory; // offset in file
 	uLong num_of_file; // # of file
 } unz_file_pos;
@@ -1044,7 +1043,6 @@ extern int ZEXPORT unzOpenCurrentFile3(file, method, level, raw, password)
 		return UNZ_PARAMERROR;
 	}
 #endif
-
 	if (file == NULL) {
 		return UNZ_PARAMERROR;
 	}
@@ -1268,7 +1266,6 @@ extern int ZEXPORT unzReadCurrentFile(file, buf, len)
 				}
 			}
 #endif
-
 			pfile_in_zip_read_info->pos_in_zipfile += uReadThis;
 			pfile_in_zip_read_info->rest_read_compressed -= uReadThis;
 			pfile_in_zip_read_info->stream.next_in = (Bytef *)pfile_in_zip_read_info->read_buffer;

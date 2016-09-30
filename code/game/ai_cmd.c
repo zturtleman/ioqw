@@ -470,7 +470,7 @@ int BotAddressedToBot(bot_state_t *bs, bot_match_t *match) {
 		// if this message wasn't directed solely to this bot
 		if (!trap_BotFindMatch(match->string, &tellmatch, MTCONTEXT_REPLYCHAT) || tellmatch.type != MSG_CHATTELL) {
 			// make sure not everyone reacts to this message
-			if (random() > (float) 1.0 / (NumPlayersOnSameTeam(bs) - 1)) {
+			if (random() > (float)1.0 / (NumPlayersOnSameTeam(bs) - 1)) {
 				return qfalse;
 			}
 		}

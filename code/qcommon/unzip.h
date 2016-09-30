@@ -257,9 +257,9 @@ extern "C" {
 	  This is the local-header version of the extra field (sometimes, there is
 	    more info in the local-header version than in the central-header)
 
-	  if buf==NULL, it return the size of the local extra field
+	  if buf == NULL, it return the size of the local extra field
 
-	  if buf!=NULL, len is the size of the buffer, the extra header is copied in
+	  if buf != NULL, len is the size of the buffer, the extra header is copied in
 	    buf.
 	  the return value is the number of bytes copied in buf, or (if <0)
 	    the error code

@@ -93,7 +93,7 @@ int SV_Netchan_TransmitNextFragment(client_t *client) {
 =======================================================================================================================================
 SV_Netchan_Transmit
 
-https:// zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=462
+https://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=462
 If there are some unsent fragments (which may happen if the snapshots and the gamestate are fragmenting, and collide on send for
 instance) then buffer them and make sure they get sent in correct order.
 =======================================================================================================================================

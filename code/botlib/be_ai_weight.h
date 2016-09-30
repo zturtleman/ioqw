@@ -28,7 +28,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #define WT_BALANCE 1
 #define MAX_WEIGHTS 128
-// fuzzy seperator
+// fuzzy separator
 typedef struct fuzzyseperator_s {
 	int index;
 	int value;

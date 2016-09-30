@@ -1224,7 +1224,7 @@ redump:
 	cinTable[currentHandle].roqF1 = (signed char)framedata[6];
 
 	if (cinTable[currentHandle].RoQFrameSize > 65536 || cinTable[currentHandle].roq_id == 0x1084) {
-		Com_DPrintf("roq_size>65536||roq_id==0x1084\n");
+		Com_DPrintf("roq_size > 65536 || roq_id == 0x1084\n");
 		cinTable[currentHandle].status = FMV_EOF;
 
 		if (cinTable[currentHandle].looping) {

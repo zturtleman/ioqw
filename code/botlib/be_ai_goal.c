@@ -1723,7 +1723,10 @@ int BotItemGoalInVisButNotVisible(int viewer, vec3_t eye, vec3_t viewangles, bot
 		// if the entity data isn't valid
 		AAS_EntityInfo(goal->entitynum, &entinfo);
 		// NOTE: for some wacko reason entities are sometimes not updated
-		//if (!entinfo.valid) return qtrue;
+		//if (!entinfo.valid) {
+		//	return qtrue;
+		//}
+
 		if (entinfo.ltime < AAS_Time() - 0.5) {
 			return qtrue;
 		}

@@ -67,6 +67,9 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #ifndef PRODUCT_VERSION
 #define PRODUCT_VERSION					"1.00"
 #endif
+#ifndef PRODUCT_DATE
+#define PRODUCT_DATE __DATE__
+#endif
 #define QW_VERSION PRODUCT_NAME			" " PRODUCT_VERSION
 #define MAX_TEAMNAME 32
 #define MAX_MASTER_SERVERS 5	// number of supported master servers

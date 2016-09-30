@@ -1307,7 +1307,7 @@ void UI_Refresh(int realtime) {
 #ifndef NDEBUG
 	if (uis.debug) {
 		// cursor coordinates
-		UI_DrawString(0, 0, va("(%d,%d)", uis.cursorx, uis.cursory), UI_LEFT|UI_SMALLFONT, colorRed);
+		UI_DrawString(0, 0, va("(%d, %d)", uis.cursorx, uis.cursory), UI_LEFT|UI_SMALLFONT, colorRed);
 	}
 #endif
 	// delay playing the enter sound until after the menu has been drawn, to avoid delay while caching images

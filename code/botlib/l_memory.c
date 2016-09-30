@@ -206,7 +206,7 @@ memoryblock_t *BlockFromPointer(void *ptr, char *str) {
 
 	if (!ptr) {
 #ifdef MEMDEBUG
-		//char *crash = (char *) NULL;
+		//char *crash = (char *)NULL;
 		//crash[0] = 1;
 		botimport.Print(PRT_FATAL, "%s: NULL pointer\n", str);
 #endif // MEMDEBUG
