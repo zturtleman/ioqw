@@ -24,7 +24,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #ifndef __UI_SHARED_H
 #define __UI_SHARED_H
 
-
 #include "../qcommon/q_shared.h"
 #include "../renderercommon/tr_types.h"
 #include "../client/keycodes.h"
@@ -61,9 +60,9 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define WINDOW_WRAPPED				0x00040000	// manually wrap text
 #define WINDOW_AUTOWRAPPED			0x00080000	// auto wrap text
 #define WINDOW_FORCED					0x00100000	// forced open
-#define WINDOW_POPUP					0x00200000	// popup
-#define WINDOW_BACKCOLORSET		0x00400000	// backcolor was explicitly set 
-#define WINDOW_TIMEDVISIBLE		0x00800000	// visibility timing ( NOT implemented )
+#define WINDOW_POPUP			0x00200000 // popup
+#define WINDOW_BACKCOLORSET		0x00400000 // backcolor was explicitly set
+#define WINDOW_TIMEDVISIBLE		0x00800000 // visibility timing(NOT implemented)
 
 
 // CGAME cursor type bits
@@ -74,10 +73,9 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #ifdef CGAME
 #define STRING_POOL_SIZE 128*1024
 #else
-#define STRING_POOL_SIZE 384*1024
+#define STRING_POOL_SIZE 384 * 1024
 #endif
 #define MAX_STRING_HANDLES 4096
-
 #define MAX_SCRIPT_ARGS 12
 #define MAX_EDITFIELD 256
 
@@ -136,10 +134,10 @@ typedef struct {
   int ownerDraw;									// ownerDraw style
 	int ownerDrawFlags;							// show flags for ownerdraw items
   float borderSize;               // 
-  int flags;                      // visible, focus, mouseover, cursor
-  Rectangle rectEffects;          // for various effects
-  Rectangle rectEffects2;         // for various effects
-  int offsetTime;                 // time based value for various effects
+	int flags;					// visible, focus, mouseover, cursor
+	Rectangle rectEffects;		// for various effects
+	Rectangle rectEffects2;		// for various effects
+	int offsetTime;				// time based value for various effects
   int nextTime;                   // time next effect should cycle
   vec4_t foreColor;               // text color
   vec4_t backColor;               // border color
@@ -159,13 +157,13 @@ typedef struct {
 // FIXME: combine flags into bitfields to save space
 // FIXME: consolidate all of the common stuff in one structure for menus and items
 // THINKABOUTME: is there any compelling reason not to have items contain items
-// and do away with a menu per say.. major issue is not being able to dynamically allocate 
-// and destroy stuff.. Another point to consider is adding an alloc free call for vm's and have 
+// and do away with a menu per say.. major issue is not being able to dynamically allocate
+// and destroy stuff.. Another point to consider is adding an alloc free call for vm's and have
 // the engine just allocate the pool for it based on a cvar
 // many of the vars are re-used for different item types, as such they are not always named appropriately
 // the benefits of c++ in DOOM will greatly help crap like this
 // FIXME: need to put a type ptr that points to specific type info per type
-// 
+
 #define MAX_LB_COLUMNS 16
 
 typedef struct columnInfo_s {
@@ -268,9 +266,9 @@ typedef struct {
   const char *onESC;								// run when the menu is closed
 	const char *soundName;						// background loop sound for menu
 
-  vec4_t focusColor;								// focus color for items
-  vec4_t disableColor;							// focus color for items
-  itemDef_t *items[MAX_MENUITEMS];	// items this menu contains   
+	vec4_t focusColor;					// focus color for items
+	vec4_t disableColor;				// focus color for items
+	itemDef_t *items[MAX_MENUITEMS];	// items this menu contains
 } menuDef_t;
 
 typedef struct {

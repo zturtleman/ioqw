@@ -592,7 +592,11 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 /*
 	// trace the line to find the hit point
 	trace = AAS_TraceClientBBox(eye, end, PRESENCE_NORMAL, 1);
-	if (!line[0]) line[0] = botimport.DebugLineCreate();
+
+	if (!line[0]) {
+		line[0] = botimport.DebugLineCreate();
+	}
+
 	botimport.DebugLineShow(line[0], eye, trace.endpos, LINECOLOR_BLUE);
 
 	AAS_ClearShownDebugLines();

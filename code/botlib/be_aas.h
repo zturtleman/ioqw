@@ -53,7 +53,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define TFL_SLIME			0x00200000 // travel through slime
 #define TFL_LAVA			0x00400000 // travel through lava
 #define TFL_DONOTENTER		0x00800000 // travel through donotenter area
-#define TFL_FUNCBOB			0x01000000 // func_bobbing
+#define TFL_FUNCBOB			0x01000000 // func bobbing
 #define TFL_FLIGHT			0x02000000 // flight
 #define TFL_BRIDGE			0x04000000 // move over a bridge
 #define TFL_NOTTEAM1		0x08000000 // not team 1

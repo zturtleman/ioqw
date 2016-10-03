@@ -53,8 +53,8 @@ void trap_Error(const char *string)
 	exit(1);
 }
 
-int trap_Milliseconds( void ) {
-	return syscall( UI_MILLISECONDS ); 
+int trap_Milliseconds(void) {
+	return syscall(UI_MILLISECONDS);
 }
 
 void trap_SnapVector( float *v ) {
@@ -85,8 +85,8 @@ void trap_Cvar_SetValue( const char *var_name, float value ) {
 	syscall( UI_CVAR_SET_VALUE, var_name, PASSFLOAT( value ) );
 }
 
-void trap_Cvar_Reset( const char *name ) {
-	syscall( UI_CVAR_RESET, name );
+void trap_Cvar_Reset(const char *name) {
+	syscall(UI_CVAR_RESET, name);
 }
 
 float trap_Cvar_VariableValue( const char *var_name ) {

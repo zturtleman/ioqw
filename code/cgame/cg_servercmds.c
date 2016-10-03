@@ -118,7 +118,7 @@ static void CG_ParseScores(void) {
 =======================================================================================================================================
 CG_ParseTeamInfo
 
-Format: "tinfo" team numstrings string(there are numstrings strings).
+Format: "tinfo" team numstrings string (there are numstrings strings).
 
 Each string is "clientNum location health armor weapon powerups".
 =======================================================================================================================================

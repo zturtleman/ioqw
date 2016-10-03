@@ -908,7 +908,7 @@ void Sys_PlatformExit(void) {
 =======================================================================================================================================
 Sys_SetEnv
 
-set/unset environment variables (empty value removes it).
+Set/unset environment variables (empty value removes it).
 =======================================================================================================================================
 */
 void Sys_SetEnv(const char *name, const char *value) {

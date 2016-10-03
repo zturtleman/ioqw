@@ -1815,8 +1815,7 @@ float AAS_ClosestEdgePoints(vec3_t v1, vec3_t v2, vec3_t v3, vec3_t v4, aas_plan
 
 		founddist = qtrue;
 	}
-	// if no shortest distance was found the shortest distance
-	// is between one of the vertexes of edge1 and one of edge2
+	// if no shortest distance was found the shortest distance is between one of the vertexes of edge1 and one of edge2
 	if (!founddist) {
 		dist = VectorDistance(v1, v3);
 

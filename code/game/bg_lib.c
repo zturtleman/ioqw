@@ -1571,7 +1571,7 @@ unsigned int _hextoi(const char **stringPtr) {
 
 //============================================================================
 
-/* 
+/*
  * New implementation by Patrick Powell and others for vsnprintf.
  * Supports length checking in strings.
 */
@@ -1613,9 +1613,9 @@ unsigned int _hextoi(const char **stringPtr) {
  *    original. Also, there is now a builtin-test, just compile with:
  *           gcc -DTEST_SNPRINTF -o snprintf snprintf.c -lm
  *    and run snprintf for results.
- * 
+ *
  *  Thomas Roessler <roessler@guug.de> 01/27/98 for mutt 0.89i
- *    The PGP code was using unsigned hexadecimal formats. 
+ *    The PGP code was using unsigned hexadecimal formats.
  *    Unfortunately, unsigned formats simply didn't work.
  *
  *  Michael Elkins <me@cs.hmc.edu> 03/05/98 for mutt 0.90.8

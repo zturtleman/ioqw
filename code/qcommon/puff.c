@@ -194,7 +194,7 @@ local int32_t stored(struct state *s) {
  */
 struct huffman {
 	int16_t *count; // number of symbols of each length
-	int16_t *symbol; // canonically ordered symbols 
+	int16_t *symbol; // canonically ordered symbols
 };
 
 /*

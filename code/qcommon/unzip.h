@@ -140,7 +140,7 @@ extern "C" {
 	/*
 	  Get the global comment string of the ZipFile, in the szComment buffer.
 	  uSizeBuf is the size of the szComment buffer.
-	  return the number of byte copied or an error code <0
+	  return the number of byte copied or an error code < 0
 	*/
 
 	/***************************************************************************/
@@ -184,14 +184,14 @@ extern "C" {
 	extern int ZEXPORT unzGetCurrentFileInfo OF((unzFile file, unz_file_info *pfile_info, char *szFileName, uLong fileNameBufferSize, void *extraField, uLong extraFieldBufferSize, char *szComment, uLong commentBufferSize));
 	/*
 	  Get Info about the current file
-	  if pfile_info!=NULL, the *pfile_info structure will contain somes info about
+	  if pfile_info != NULL, the *pfile_info structure will contain somes info about
 	        the current file
-	  if szFileName!=NULL, the filemane string will be copied in szFileName
+	  if szFileName != NULL, the filemane string will be copied in szFileName
 	            (fileNameBufferSize is the size of the buffer)
-	  if extraField!=NULL, the extra field information will be copied in extraField
+	  if extraField != NULL, the extra field information will be copied in extraField
 	            (extraFieldBufferSize is the size of the buffer).
 	            This is the Central-header version of the extra field
-	  if szComment!=NULL, the comment string of the file will be copied in szComment
+	  if szComment != NULL, the comment string of the file will be copied in szComment
 	            (commentBufferSize is the size of the buffer)
 	*/
 
@@ -240,7 +240,7 @@ extern "C" {
 
 	  return the number of byte copied if somes bytes are copied
 	  return 0 if the end of file was reached
-	  return <0 with error code if there is an error
+	  return < 0 with error code if there is an error
 	    (UNZ_ERRNO for IO error, or zLib error for uncompress error)
 	*/
 	extern z_off_t ZEXPORT unztell OF((unzFile file));
@@ -261,7 +261,7 @@ extern "C" {
 
 	  if buf != NULL, len is the size of the buffer, the extra header is copied in
 	    buf.
-	  the return value is the number of bytes copied in buf, or (if <0)
+	  the return value is the number of bytes copied in buf, or (if < 0)
 	    the error code
 	*/
 
@@ -273,6 +273,5 @@ extern "C" {
 	extern int ZEXPORT unzSetOffset(unzFile file, uLong pos);
 	#ifdef __cplusplus
 }
-
 #endif
 #endif /* _unz_H */

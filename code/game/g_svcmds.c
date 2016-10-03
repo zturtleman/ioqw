@@ -32,7 +32,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 =======================================================================================================================================
 
 	PACKET FILTERING
- 
+
 You can add or remove addresses from the filter list with:
 addip <ip>
 removeip <ip>

@@ -880,5 +880,5 @@ static const struct powerpc_opcode powerpc_opcodes[] = {
 	{"frsp", XRC(63, 12, 0), XRA_MASK, COM, {FRT, FRB}},
 	{"fctiwz", XRC(63, 15, 0), XRA_MASK, PPCCOM, {FRT, FRB}},
 	{"fsub", A(63, 20, 0), AFRC_MASK, PPCCOM, {FRT, FRA, FRB}},
-	{"fneg", XRC(63, 40, 0), XRA_MASK, COM, {FRT, FRB}}, 
+	{"fneg", XRC(63, 40, 0), XRA_MASK, COM, {FRT, FRB}},
 };

@@ -579,6 +579,7 @@ void AAS_DrawArrow(vec3_t start, vec3_t end, int linecolor, int arrowcolor) {
 
 	VectorSubtract(end, start, dir);
 	VectorNormalize(dir);
+
 	dot = DotProduct(dir, up);
 
 	if (dot > 0.99 || dot < -0.99) {

@@ -139,7 +139,7 @@ static void ServerInfo_MenuDraw(void) {
 			break;
 		}
 
-		Q_strcat(key, MAX_INFO_KEY, ":"); 
+		Q_strcat(key, MAX_INFO_KEY, ":");
 
 		UI_DrawString(SCREEN_WIDTH * 0.50 - 8, y, key, UI_RIGHT|UI_SMALLFONT, color_red);
 		UI_DrawString(SCREEN_WIDTH * 0.50 + 8, y, value, UI_LEFT|UI_SMALLFONT, text_color_normal);

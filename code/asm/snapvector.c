@@ -54,7 +54,6 @@ void qsnapvectorsse(vec3_t vec) {
 		: "r" (ssemask), "r" (vec)
 		: "memory", "%xmm0", "%xmm1", "%xmm2"
 	);
-	
 }
 
 #define QROUNDX87(src) \

@@ -743,7 +743,7 @@ static void CG_LoadClientInfo(int clientNum, clientInfo_t *ci) {
 
 	if (!CG_RegisterClientModelname(ci, ci->modelName, ci->skinName, ci->headModelName, ci->headSkinName, teamname)) {
 		if (cg_buildScript.integer) {
-			CG_Error("CG_RegisterClientModelname( %s, %s, %s, %s %s ) failed", ci->modelName, ci->skinName, ci->headModelName, ci->headSkinName, teamname);
+			CG_Error("CG_RegisterClientModelname(%s, %s, %s, %s %s) failed", ci->modelName, ci->skinName, ci->headModelName, ci->headSkinName, teamname);
 		}
 		// fall back to default team name
 		if (cgs.gametype >= GT_TEAM) {
