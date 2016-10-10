@@ -140,7 +140,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define ID_INLINE inline
 #define PATH_SEP '/'
 #if !defined(ARCH_STRING)
-# error ARCH_STRING should be defined by the Makefile
+#error ARCH_STRING should be defined by the Makefile
 #endif
 #if defined __x86_64__
 #undef idx64

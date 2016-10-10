@@ -574,7 +574,7 @@ static sentity_t entityList[MAX_GENTITIES];
 S_AL_SanitiseVector
 =======================================================================================================================================
 */
-#define S_AL_SanitiseVector(v) _S_AL_SanitiseVector(v,__LINE__)
+#define S_AL_SanitiseVector(v) _S_AL_SanitiseVector(v, __LINE__)
 static void _S_AL_SanitiseVector(vec3_t v, int line) {
 
 	if (Q_isnan(v[0]) || Q_isnan(v[1]) || Q_isnan(v[2])) {

@@ -247,7 +247,7 @@ local int strcmpcasenosensitive_internal(fileName1, fileName2)
 		}
 	}
 }
-#ifdef  CASESENSITIVITYDEFAULT_NO
+#ifdef CASESENSITIVITYDEFAULT_NO
 #define CASESENSITIVITYDEFAULTVALUE 2
 #else
 #define CASESENSITIVITYDEFAULTVALUE 1
@@ -927,13 +927,13 @@ local int unzlocal_CheckCurrentFileCoherencyHeader OF((
 	unz_s *s,
 	uInt *piSizeVar,
 	uLong *poffset_local_extrafield,
-	uInt  *psize_local_extrafield));
+	uInt *psize_local_extrafield));
 
 local int unzlocal_CheckCurrentFileCoherencyHeader(s, piSizeVar, poffset_local_extrafield, psize_local_extrafield)
 	unz_s *s;
 	uInt *piSizeVar;
 	uLong *poffset_local_extrafield;
-	uInt  *psize_local_extrafield;
+	uInt *psize_local_extrafield;
 {
 	uLong uMagic, uData, uFlags;
 	uLong size_filename;

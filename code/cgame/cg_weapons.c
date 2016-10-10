@@ -1619,8 +1619,7 @@ static void CG_LightningBolt(centity_t *cent, vec3_t origin) {
 	CG_Trace(&trace, muzzlePoint, vec3_origin, vec3_origin, endPoint, cent->currentState.number, MASK_SHOT);
 	// this is the endpoint
 	VectorCopy(trace.endpos, beam.oldorigin);
-	// use the provided origin, even though it may be slightly
-	// different than the muzzle origin
+	// use the provided origin, even though it may be slightly different than the muzzle origin
 	VectorCopy(origin, beam.origin);
 
 	beam.reType = RT_LIGHTNING;

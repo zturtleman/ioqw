@@ -150,7 +150,7 @@ static inline void *PPC_Malloc(size_t size) {
 #if ELF64
 /*
  * Official Procedure Descriptor
- *  we need to prepare one for generated code if we want to call it
+ * we need to prepare one for generated code if we want to call it
  * as function
  */
 typedef struct {

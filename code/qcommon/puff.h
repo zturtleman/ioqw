@@ -5,7 +5,7 @@ This is a modified version of Mark Adlers work, see below for the original copyr
 
 Copyright (C) 2002, 2003 Mark Adler, all rights reserved, version 1.7, 3 Mar 2002.
 
-This software is provided 'as-is', without any express or implied warranty.  In no event will the author be held liable for any damages
+This software is provided 'as-is', without any express or implied warranty. In no event will the author be held liable for any damages
 arising from the use of this software.
 
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and

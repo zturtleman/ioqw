@@ -291,7 +291,7 @@ void trap_GetClientState( uiClientState_t *state ) {
 	syscall( UI_GETCLIENTSTATE, state );
 }
 
-int trap_GetConfigString( int index, char* buff, int buffsize ) {
+int trap_GetConfigString( int index, char *buff, int buffsize ) {
 	return syscall( UI_GETCONFIGSTRING, index, buff, buffsize );
 }
 

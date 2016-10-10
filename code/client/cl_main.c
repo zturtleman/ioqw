@@ -1359,6 +1359,8 @@ void CL_Disconnect(qboolean showMainMenu) {
 		for (i = 0; i < MAX_CLIENTS; i++) {
 			opus_decoder_destroy(clc.opusDecoder[i]);
 		}
+
+		clc.voipCodecInitialized = qfalse;
 	}
 
 	Cmd_RemoveCommand("voip");
@@ -1768,8 +1770,7 @@ CL_Vid_Restart_f
 
 Restart the video subsystem
 
-we also have to reload the UI and CGame because the renderer doesn't know what
-graphics to reload.
+We also have to reload the UI and CGame because the renderer doesn't know what graphics to reload.
 =======================================================================================================================================
 */
 void CL_Vid_Restart_f(void) {

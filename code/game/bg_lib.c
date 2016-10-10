@@ -1587,7 +1587,7 @@ unsigned int _hextoi(const char **stringPtr) {
  * Original:
  * Patrick Powell Tue Apr 11 09:48:21 PDT 1995
  * A bombproof version of doprnt (dopr) included.
- * Sigh.  This sort of thing is always nasty do deal with. Note that
+ * Sigh. This sort of thing is always nasty do deal with. Note that
  * the version here does not include floating point...
  *
  * snprintf() is used instead of sprintf() as it does limit checks
@@ -1641,7 +1641,7 @@ unsigned int _hextoi(const char **stringPtr) {
  *
  ****************************************************************************/
 
-// BDR 2002-01-13  %e and %g were being ignored. Now do something, if not necessarily correctly
+// BDR 2002-01-13 %e and %g were being ignored. Now do something, if not necessarily correctly
 
 #if (SIZEOF_LONG_DOUBLE > 0)
 // #ifdef HAVE_LONG_DOUBLE

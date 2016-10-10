@@ -104,7 +104,7 @@ typedef struct {
 	char *entityString;
 	int numAreas;
 	cArea_t *areas;
-	int *areaPortals;		// [numAreas*numAreas] reference counts
+	int *areaPortals;		// [numAreas * numAreas] reference counts
 	int numSurfaces;
 	cPatch_t **surfaces;	// non-patches will be NULL
 	int floodvalid;

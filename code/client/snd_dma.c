@@ -570,12 +570,9 @@ static qboolean S_Base_HearingThroughEntity(int entityNum, vec3_t origin) {
 	}
 
 	if (listener_number == entityNum) {
-		// This is an outrageous hack to detect
-		// whether or not the player is rendering in third person or not. We can't
-		// ask the renderer because the renderer has no notion of entities and we
-		// can't ask cgame since that would involve changing the API and hence mod
-		// compatibility. I don't think there is any way around this, but I'll leave
-		// the FIXME just in case anyone has a bright idea.
+		// This is an outrageous hack to detect whether or not the player is rendering in third person or not. We can't ask the renderer
+		// because the renderer has no notion of entities and we can't ask cgame since that would involve changing the API and hence mod
+		// compatibility. I don't think there is any way around this, but I'll leave the FIXME just in case anyone has a bright idea.
 		distanceSq = DistanceSquared(sorigin, listener_origin);
 
 		if (distanceSq > THIRD_PERSON_THRESHOLD_SQ) {

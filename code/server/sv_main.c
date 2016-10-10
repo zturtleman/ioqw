@@ -177,7 +177,7 @@ void SV_AddServerCommand(client_t *client, const char *cmd) {
 =======================================================================================================================================
 SV_SendServerCommand
 
-Sends a reliable command string to be interpreted by  the client game module:
+Sends a reliable command string to be interpreted by the client game module:
 "cp", "print", "chat", etc.
 A NULL client will broadcast to all clients.
 =======================================================================================================================================
@@ -994,7 +994,7 @@ static void SV_CalcPings(void) {
 =======================================================================================================================================
 SV_CheckTimeouts
 
-If a packet has not been received from a client for timeout->integer  seconds, drop the conneciton. Server time is used instead of
+If a packet has not been received from a client for timeout->integer seconds, drop the conneciton. Server time is used instead of
 realtime to avoid dropping the local client while debugging.
 
 When a client is normally dropped, the client_t goes into a zombie state for a few seconds to make sure any final reliable message gets

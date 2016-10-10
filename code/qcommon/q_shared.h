@@ -98,7 +98,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #pragma warning(disable : 4220) // varargs matches remaining parameters
 //#pragma intrinsic(memset, memcpy)
 #endif
-//Ignore __attribute__ on non-gcc platforms
+// Ignore __attribute__ on non-gcc platforms
 #ifndef __GNUC__
 #ifndef __attribute__
 #define __attribute__(x)
@@ -211,21 +211,21 @@ typedef int clipHandle_t;
 #define ROLL	2 // fall over
 // the game guarantees that no string from the network will ever
 // exceed MAX_STRING_CHARS
-#define MAX_STRING_CHARS	1024 // max length of a string passed to Cmd_TokenizeString
-#define MAX_STRING_TOKENS	1024 // max tokens resulting from Cmd_TokenizeString
-#define MAX_TOKEN_CHARS		1024 // max length of an individual token
-#define MAX_INFO_STRING		1024
-#define MAX_INFO_KEY		1024
-#define MAX_INFO_VALUE		1024
-#define BIG_INFO_STRING		8192 // used for system info key only
-#define BIG_INFO_KEY		8192
-#define BIG_INFO_VALUE		8192
+#define MAX_STRING_CHARS 1024 // max length of a string passed to Cmd_TokenizeString
+#define MAX_STRING_TOKENS 1024 // max tokens resulting from Cmd_TokenizeString
+#define MAX_TOKEN_CHARS 1024 // max length of an individual token
+#define MAX_INFO_STRING 1024
+#define MAX_INFO_KEY 1024
+#define MAX_INFO_VALUE 1024
+#define BIG_INFO_STRING 8192 // used for system info key only
+#define BIG_INFO_KEY 8192
+#define BIG_INFO_VALUE 8192
 
-#define MAX_QPATH	64 // max length of a quake game pathname
+#define MAX_QPATH 64 // max length of a quake game pathname
 #ifdef PATH_MAX
-#define MAX_OSPATH	PATH_MAX
+#define MAX_OSPATH PATH_MAX
 #else
-#define MAX_OSPATH	256 // max length of a filesystem pathname
+#define MAX_OSPATH 256 // max length of a filesystem pathname
 #endif
 #define MAX_NAME_LENGTH 32 // max length of a client name
 #define MAX_SAY_TEXT 150
@@ -237,7 +237,7 @@ typedef enum {
 } cbufExec_t;
 // these aren't needed by any of the VMs. put in another header?
 #define MAX_MAP_AREA_BYTES 32 // bit vector of area visibility
-// print levels from renderer (FIXME: set up for game / cgame?)
+// print levels from renderer (FIXME: set up for game/cgame?)
 typedef enum {
 	PRINT_ALL,
 	PRINT_DEVELOPER, // only print when "developer 1"
@@ -245,7 +245,7 @@ typedef enum {
 	PRINT_ERROR
 } printParm_t;
 #ifdef ERR_FATAL
-#undef ERR_FATAL		// this is be defined in malloc.h
+#undef ERR_FATAL // this is be defined in malloc.h
 #endif
 // parameters to the main Error routine
 typedef enum {
@@ -899,10 +899,10 @@ typedef struct {
 #include "surfaceflags.h" // shared with the q3map utility
 // plane types are used to speed some tests
 // 0-2 are axial planes
-#define PLANE_X			0
-#define PLANE_Y			1
-#define PLANE_Z			2
-#define PLANE_NON_AXIAL	3
+#define PLANE_X				0
+#define PLANE_Y				1
+#define PLANE_Z				2
+#define PLANE_NON_AXIAL		3
 
 #define PlaneTypeForNormal(x) (x[0] == 1.0 ? PLANE_X : (x[1] == 1.0 ? PLANE_Y : (x[2] == 1.0 ? PLANE_Z : PLANE_NON_AXIAL)))
 // plane_t structure
@@ -972,19 +972,19 @@ typedef enum {
 #define SNAPFLAG_NOT_ACTIVE		2 // snapshot used during connection and for zombies
 #define SNAPFLAG_SERVERCOUNT	4 // toggled every map_restart so transitions can be detected
 // per-level limits
-#define MAX_CLIENTS		64 // absolute limit
-#define MAX_LOCATIONS	64
+#define MAX_CLIENTS 64 // absolute limit
+#define MAX_LOCATIONS 64
 
 #define GENTITYNUM_BITS 10 // don't need to send any more
 #define MAX_GENTITIES (1 << GENTITYNUM_BITS)
 // entitynums are communicated with GENTITY_BITS, so any reserved values that are going to be communcated over the net need to also be in this range
-#define ENTITYNUM_NONE			(MAX_GENTITIES - 1)
-#define ENTITYNUM_WORLD			(MAX_GENTITIES - 2)
-#define ENTITYNUM_MAX_NORMAL	(MAX_GENTITIES - 2)
+#define ENTITYNUM_NONE (MAX_GENTITIES - 1)
+#define ENTITYNUM_WORLD (MAX_GENTITIES - 2)
+#define ENTITYNUM_MAX_NORMAL (MAX_GENTITIES - 2)
 
-#define MAX_MODELS			256 // these are sent over the net as 8 bits
-#define MAX_SOUNDS			256 // so they cannot be blindly increased
-#define MAX_CONFIGSTRINGS	1024
+#define MAX_MODELS 256 // these are sent over the net as 8 bits
+#define MAX_SOUNDS 256 // so they cannot be blindly increased
+#define MAX_CONFIGSTRINGS 1024
 // these are the only configstrings that the system reserves, all the other ones are strictly for servergame to clientgame communication
 #define CS_SERVERINFO 0 // an info string with all the serverinfo cvars
 #define CS_SYSTEMINFO 1 // an info string for server system to client system configuration (timescale, etc.)
@@ -998,11 +998,11 @@ typedef struct {
 	int dataCount;
 } gameState_t;
 // bit field limits
-#define MAX_STATS		16
-#define MAX_PERSISTANT	16
-#define MAX_POWERUPS	16
-#define MAX_WEAPONS		16
-#define MAX_PS_EVENTS	2
+#define MAX_STATS 16
+#define MAX_PERSISTANT 16
+#define MAX_POWERUPS 16
+#define MAX_WEAPONS 16
+#define MAX_PS_EVENTS 2
 
 #define PS_PMOVEFRAMECOUNTBITS 6
 // playerState_t is the information needed by both the client and server to predict player motion and actions
@@ -1177,7 +1177,7 @@ typedef struct {
 	char name[MAX_QPATH];
 } fontInfo_t;
 
-#define Square(x) ((x)*(x))
+#define Square(x) ((x) * (x))
 // real time
 typedef struct qtime_s {
 	int tm_sec;		// seconds after the minute - [0, 59]

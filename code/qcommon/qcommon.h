@@ -513,6 +513,7 @@ qboolean FS_CompareZipChecksum(const char *zipfile);
 int FS_LoadStack(void);
 int FS_GetFileList(const char *path, const char *extension, char *listbuf, int bufsize);
 int FS_GetModList(char *listbuf, int bufsize);
+void FS_GetModDescription(const char *modDir, char *description, int descriptionLen);
 fileHandle_t FS_FOpenFileWrite(const char *qpath);
 fileHandle_t FS_FOpenFileAppend(const char *filename);
 fileHandle_t FS_FCreateOpenPipeFile(const char *filename);
@@ -634,7 +635,7 @@ typedef enum {
 	CF_ALTIVEC = 1 << 7
 } cpuFeatures_t;
 // centralized and cleaned, that's the max string you can send to a Com_Printf / Com_DPrintf (above gets truncated)
-#define MAXPRINTMSG	4096
+#define MAXPRINTMSG 4096
 
 typedef enum {
 	// SE_NONE must be zero
@@ -918,7 +919,9 @@ typedef enum {
 } dialogType_t;
 
 dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *title);
-qboolean Sys_WritePIDFile(void);
+
+void Sys_RemovePIDFile(const char *gamedir);
+void Sys_InitPIDFile(const char *gamedir);
 // This is based on the Adaptive Huffman algorithm described in Sayood's Data Compression book.
 // The ranks are not actually stored, but implicitly defined by the location of a node within a doubly-linked list
 #define NYT HMAX // NYT = Not Yet Transmitted
