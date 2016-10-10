@@ -114,7 +114,7 @@ int com_frameNumber;
 qboolean com_errorEntered = qfalse;
 qboolean com_fullyInitialized = qfalse;
 qboolean com_gameRestarting = qfalse;
-qqboolean com_gameClientRestarting = qfalse;
+qboolean com_gameClientRestarting = qfalse;
 
 char com_errorMessage[MAXPRINTMSG];
 
