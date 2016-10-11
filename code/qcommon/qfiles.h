@@ -60,7 +60,7 @@ typedef struct {
 	int dataLength;
 	int litLength; // (dataLength - litLength) should be byteswapped on load
 	int bssLength; // zero filled memory appended to datalength
-	//!!! below here is VM_MAGIC_VER2 !!!
+	// !!! below here is VM_MAGIC_VER2 !!!
 	int jtrgLength; // number of jump table targets
 } vmHeader_t;
 
