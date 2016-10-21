@@ -38,7 +38,7 @@ static intptr_t(QDECL *syscall)(intptr_t arg, ...) = (intptr_t(QDECL *)(intptr_t
 dllEntry
 =======================================================================================================================================
 */
-Q_EXPORT void dllEntry(intptr_t(QDECL *syscallptr)(intptr_t arg,...)) {
+Q_EXPORT void dllEntry(intptr_t(QDECL *syscallptr)(intptr_t arg, ...)) {
 	syscall = syscallptr;
 }
 

@@ -265,11 +265,11 @@ void UI_ServerInfoMenu(void) {
 		s_serverinfo.numlines = 16;
 	}
 
-	Menu_AddItem(&s_serverinfo.menu, (void*)&s_serverinfo.banner);
-	Menu_AddItem(&s_serverinfo.menu, (void*)&s_serverinfo.framel);
-	Menu_AddItem(&s_serverinfo.menu, (void*)&s_serverinfo.framer);
-	Menu_AddItem(&s_serverinfo.menu, (void*)&s_serverinfo.add);
-	Menu_AddItem(&s_serverinfo.menu, (void*)&s_serverinfo.back);
+	Menu_AddItem(&s_serverinfo.menu, (void *)&s_serverinfo.banner);
+	Menu_AddItem(&s_serverinfo.menu, (void *)&s_serverinfo.framel);
+	Menu_AddItem(&s_serverinfo.menu, (void *)&s_serverinfo.framer);
+	Menu_AddItem(&s_serverinfo.menu, (void *)&s_serverinfo.add);
+	Menu_AddItem(&s_serverinfo.menu, (void *)&s_serverinfo.back);
 
 	UI_PushMenu(&s_serverinfo.menu);
 }

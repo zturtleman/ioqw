@@ -108,7 +108,6 @@ typedef struct {
 #ifndef NOUNCRYPT
 #include "crypt.h"
 #endif
-
 /* ===========================================================================
 	 Read a byte from a gz_stream; update next_in and avail_in. Return EOF
    for end of file.
@@ -282,7 +281,6 @@ extern int ZEXPORT unzStringFileNameCompare(fileName1, fileName2, iCaseSensitivi
 #ifndef BUFREADCOMMENT
 #define BUFREADCOMMENT (0x400)
 #endif
-
 /*
   Locate the Central directory of a zipfile (at the end, just before the global comment)
 */

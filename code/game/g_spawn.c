@@ -438,7 +438,7 @@ char *G_AddSpawnVarToken(const char *string) {
 =======================================================================================================================================
 G_ParseSpawnVars
 
-Parses a brace bounded set of key / value pairs out of the level's entity strings into level.spawnVars[].
+Parses a brace bounded set of key/value pairs out of the level's entity strings into level.spawnVars[].
 
 This does not actually spawn an entity.
 =======================================================================================================================================
@@ -458,7 +458,7 @@ qboolean G_ParseSpawnVars(void) {
 	if (com_token[0] != '{') {
 		G_Error("G_ParseSpawnVars: found %s when expecting {", com_token);
 	}
-	// go through all the key / value pairs
+	// go through all the key/value pairs
 	while (1) {
 		// parse key
 		if (!trap_GetEntityToken(keyname, sizeof(keyname))) {

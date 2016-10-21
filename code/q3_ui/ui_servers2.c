@@ -1404,25 +1404,25 @@ static void ArenaServers_MenuInit(void) {
 	g_arenaservers.go.height = 64;
 	g_arenaservers.go.focuspic = ART_CONNECT1;
 
-	Menu_AddItem(&g_arenaservers.menu, (void*)&g_arenaservers.banner);
-	Menu_AddItem(&g_arenaservers.menu, (void*)&g_arenaservers.master);
-	Menu_AddItem(&g_arenaservers.menu, (void*)&g_arenaservers.gametype);
-	Menu_AddItem(&g_arenaservers.menu, (void*)&g_arenaservers.sortkey);
-	Menu_AddItem(&g_arenaservers.menu, (void*)&g_arenaservers.showfull);
-	Menu_AddItem(&g_arenaservers.menu, (void*)&g_arenaservers.showempty);
-	Menu_AddItem(&g_arenaservers.menu, (void*)&g_arenaservers.mappic);
-	Menu_AddItem(&g_arenaservers.menu, (void*)&g_arenaservers.status);
-	Menu_AddItem(&g_arenaservers.menu, (void*)&g_arenaservers.statusbar);
-	Menu_AddItem(&g_arenaservers.menu, (void*)&g_arenaservers.arrows);
-	Menu_AddItem(&g_arenaservers.menu, (void*)&g_arenaservers.up);
-	Menu_AddItem(&g_arenaservers.menu, (void*)&g_arenaservers.down);
-	Menu_AddItem(&g_arenaservers.menu, (void*)&g_arenaservers.list);
-	Menu_AddItem(&g_arenaservers.menu, (void*)&g_arenaservers.remove);
-	Menu_AddItem(&g_arenaservers.menu, (void*)&g_arenaservers.back);
-	Menu_AddItem(&g_arenaservers.menu, (void*)&g_arenaservers.specify);
-	Menu_AddItem(&g_arenaservers.menu, (void*)&g_arenaservers.refresh);
-	Menu_AddItem(&g_arenaservers.menu, (void*)&g_arenaservers.create);
-	Menu_AddItem(&g_arenaservers.menu, (void*)&g_arenaservers.go);
+	Menu_AddItem(&g_arenaservers.menu, (void *)&g_arenaservers.banner);
+	Menu_AddItem(&g_arenaservers.menu, (void *)&g_arenaservers.master);
+	Menu_AddItem(&g_arenaservers.menu, (void *)&g_arenaservers.gametype);
+	Menu_AddItem(&g_arenaservers.menu, (void *)&g_arenaservers.sortkey);
+	Menu_AddItem(&g_arenaservers.menu, (void *)&g_arenaservers.showfull);
+	Menu_AddItem(&g_arenaservers.menu, (void *)&g_arenaservers.showempty);
+	Menu_AddItem(&g_arenaservers.menu, (void *)&g_arenaservers.mappic);
+	Menu_AddItem(&g_arenaservers.menu, (void *)&g_arenaservers.status);
+	Menu_AddItem(&g_arenaservers.menu, (void *)&g_arenaservers.statusbar);
+	Menu_AddItem(&g_arenaservers.menu, (void *)&g_arenaservers.arrows);
+	Menu_AddItem(&g_arenaservers.menu, (void *)&g_arenaservers.up);
+	Menu_AddItem(&g_arenaservers.menu, (void *)&g_arenaservers.down);
+	Menu_AddItem(&g_arenaservers.menu, (void *)&g_arenaservers.list);
+	Menu_AddItem(&g_arenaservers.menu, (void *)&g_arenaservers.remove);
+	Menu_AddItem(&g_arenaservers.menu, (void *)&g_arenaservers.back);
+	Menu_AddItem(&g_arenaservers.menu, (void *)&g_arenaservers.specify);
+	Menu_AddItem(&g_arenaservers.menu, (void *)&g_arenaservers.refresh);
+	Menu_AddItem(&g_arenaservers.menu, (void *)&g_arenaservers.create);
+	Menu_AddItem(&g_arenaservers.menu, (void *)&g_arenaservers.go);
 
 	ArenaServers_LoadFavorites();
 

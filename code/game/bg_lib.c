@@ -1569,8 +1569,6 @@ unsigned int _hextoi(const char **stringPtr) {
 	return value;
 }
 
-//============================================================================
-
 /*
  * New implementation by Patrick Powell and others for vsnprintf.
  * Supports length checking in strings.

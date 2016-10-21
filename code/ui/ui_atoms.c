@@ -232,10 +232,9 @@ static void UI_CalcPostGameStats( void ) {
 	postGameInfo_t newInfo;
 	qboolean newHigh = qfalse;
 
-	trap_GetConfigString( CS_SERVERINFO, info, sizeof(info) );
-	Q_strncpyz( map, Info_ValueForKey( info, "mapname" ), sizeof(map) );
+	trap_GetConfigString(CS_SERVERINFO, info, sizeof(info));
+	Q_strncpyz(map, Info_ValueForKey(info, "mapname"), sizeof(map));
 	game = atoi(Info_ValueForKey(info, "g_gametype"));
-
 	// compose file name
 	Com_sprintf(fileName, MAX_QPATH, "games/%s_%i.game", map, game);
 	// see if we have one already

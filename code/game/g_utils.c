@@ -561,9 +561,8 @@ void G_KillBox(gentity_t *ent) {
 =======================================================================================================================================
 G_AddPredictableEvent
 
-Use for non-pmove events that would also be predicted on the client side:
-jumppads and item pickups.
-Adds an event+parm and twiddles the event counter.
+Use for non-pmove events that would also be predicted on the client side: jumppads and item pickups.
+Adds an event + parm and twiddles the event counter.
 =======================================================================================================================================
 */
 void G_AddPredictableEvent(gentity_t *ent, int event, int eventParm) {
@@ -579,7 +578,7 @@ void G_AddPredictableEvent(gentity_t *ent, int event, int eventParm) {
 =======================================================================================================================================
 G_AddEvent
 
-Adds an event+parm and twiddles the event counter.
+Adds an event + parm and twiddles the event counter.
 =======================================================================================================================================
 */
 void G_AddEvent(gentity_t *ent, int event, int eventParm) {

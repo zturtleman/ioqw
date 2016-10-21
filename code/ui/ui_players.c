@@ -96,11 +96,12 @@ tryagain:
 		pi->barrelModel = trap_R_RegisterModel( path );
 	}
 
-	COM_StripExtension( item->world_model[0], path, sizeof(path) );
-	Q_strcat( path, sizeof(path), "_flash.md3" );
-	pi->flashModel = trap_R_RegisterModel( path );
+	COM_StripExtension(item->world_model[0], path, sizeof(path));
+	Q_strcat(path, sizeof(path), "_flash.md3");
 
-	switch( weaponNum ) {
+	pi->flashModel = trap_R_RegisterModel(path);
+
+	switch (weaponNum) {
 	case WP_GAUNTLET:
 		MAKERGB( pi->flashDlightColor, 0.6f, 0.6f, 1 );
 		break;
@@ -648,7 +649,8 @@ static void UI_PlayerFloatSprite( playerInfo_t *pi, vec3_t origin, qhandle_t sha
 	ent.customShader = shader;
 	ent.radius = 10;
 	ent.renderfx = 0;
-	trap_R_AddRefEntityToScene( &ent );
+
+	trap_R_AddRefEntityToScene(&ent);
 }
 
 
@@ -778,13 +780,14 @@ void UI_DrawPlayer( float x, float y, float w, float h, playerInfo_t *pi, int ti
 	legs.hModel = pi->legsModel;
 	legs.customSkin = pi->legsSkin;
 
-	VectorCopy( origin, legs.origin );
+	VectorCopy(origin, legs.origin);
+	VectorCopy(origin, legs.lightingOrigin);
 
-	VectorCopy( origin, legs.lightingOrigin );
 	legs.renderfx = renderfx;
-	VectorCopy (legs.origin, legs.oldorigin);
 
-	trap_R_AddRefEntityToScene( &legs );
+	VectorCopy(legs.origin, legs.oldorigin);
+
+	trap_R_AddRefEntityToScene(&legs);
 
 	if (!legs.hModel) {
 		return;
@@ -828,32 +831,38 @@ void UI_DrawPlayer( float x, float y, float w, float h, playerInfo_t *pi, int ti
 	//
 	// add the gun
 	//
-	if ( pi->currentWeapon != WP_NONE ) {
-		memset( &gun, 0, sizeof(gun) );
+	if (pi->currentWeapon != WP_NONE) {
+		memset(&gun, 0, sizeof(gun));
+
 		gun.hModel = pi->weaponModel;
-		VectorCopy( origin, gun.lightingOrigin );
-		UI_PositionEntityOnTag( &gun, &torso, pi->torsoModel, "tag_weapon");
+		VectorCopy(origin, gun.lightingOrigin);
+
+		UI_PositionEntityOnTag(&gun, &torso, pi->torsoModel, "tag_weapon");
+
 		gun.renderfx = renderfx;
-		trap_R_AddRefEntityToScene( &gun );
+		trap_R_AddRefEntityToScene(&gun);
 	}
 
 	//
 	// add the spinning barrel
 	//
 	if ( pi->realWeapon == WP_MACHINEGUN || pi->realWeapon == WP_GAUNTLET || pi->realWeapon == WP_BFG ) {
-		vec3_t	angles;
+		vec3_t angles;
 
-		memset( &barrel, 0, sizeof(barrel) );
-		VectorCopy( origin, barrel.lightingOrigin );
+		memset(&barrel, 0, sizeof(barrel));
+
+		VectorCopy(origin, barrel.lightingOrigin);
+
 		barrel.renderfx = renderfx;
-
 		barrel.hModel = pi->barrelModel;
+
 		angles[YAW] = 0;
 		angles[PITCH] = 0;
-		angles[ROLL] = UI_MachinegunSpinAngle( pi );
-		AnglesToAxis( angles, barrel.axis );
+		angles[ROLL] = UI_MachinegunSpinAngle(pi);
 
-		UI_PositionRotatedEntityOnTag( &barrel, &gun, pi->weaponModel, "tag_barrel");
+		AnglesToAxis(angles, barrel.axis);
+
+		UI_PositionRotatedEntityOnTag(&barrel, &gun, pi->weaponModel, "tag_barrel");
 
 		trap_R_AddRefEntityToScene( &barrel );
 	}
@@ -861,14 +870,17 @@ void UI_DrawPlayer( float x, float y, float w, float h, playerInfo_t *pi, int ti
 	//
 	// add muzzle flash
 	//
-	if ( dp_realtime <= pi->muzzleFlashTime ) {
-		if ( pi->flashModel ) {
-			memset( &flash, 0, sizeof(flash) );
+	if (dp_realtime <= pi->muzzleFlashTime) {
+		if (pi->flashModel) {
+			memset(&flash, 0, sizeof(flash));
+
 			flash.hModel = pi->flashModel;
-			VectorCopy( origin, flash.lightingOrigin );
-			UI_PositionEntityOnTag( &flash, &gun, pi->weaponModel, "tag_flash");
+			VectorCopy(origin, flash.lightingOrigin);
+
+			UI_PositionEntityOnTag(&flash, &gun, pi->weaponModel, "tag_flash");
+
 			flash.renderfx = renderfx;
-			trap_R_AddRefEntityToScene( &flash );
+			trap_R_AddRefEntityToScene(&flash);
 		}
 
 		// make a dlight for the flash
@@ -1183,9 +1195,9 @@ qboolean UI_RegisterClientModelname( playerInfo_t *pi, const char *modelSkinName
 	}
 
 	// load cmodels before models so filecache works
+	Com_sprintf(filename, sizeof(filename), "models/players/%s/lower.md3", modelName);
 
-	Com_sprintf( filename, sizeof( filename ), "models/players/%s/lower.md3", modelName );
-	pi->legsModel = trap_R_RegisterModel( filename );
+	pi->legsModel = trap_R_RegisterModel(filename);
 	if ( !pi->legsModel ) {
 		Com_sprintf( filename, sizeof( filename ), "models/players/characters/%s/lower.md3", modelName );
 		pi->legsModel = trap_R_RegisterModel( filename );
@@ -1281,17 +1293,19 @@ void UI_PlayerInfo_SetInfo( playerInfo_t *pi, int legsAnim, int torsoAnim, vec3_
 	// move angles
 	VectorCopy( moveAngles, pi->moveAngles );
 
-	if ( pi->newModel ) {
+	if (pi->newModel) {
 		pi->newModel = qfalse;
-
 		jumpHeight = 0;
 		pi->pendingLegsAnim = 0;
-		UI_ForceLegsAnim( pi, legsAnim );
+
+		UI_ForceLegsAnim(pi, legsAnim);
+
 		pi->legs.yawAngle = viewAngles[YAW];
 		pi->legs.yawing = qfalse;
-
 		pi->pendingTorsoAnim = 0;
-		UI_ForceTorsoAnim( pi, torsoAnim );
+
+		UI_ForceTorsoAnim(pi, torsoAnim);
+
 		pi->torso.yawAngle = viewAngles[YAW];
 		pi->torso.yawing = qfalse;
 
@@ -1301,7 +1315,8 @@ void UI_PlayerInfo_SetInfo( playerInfo_t *pi, int legsAnim, int torsoAnim, vec3_
 			pi->lastWeapon = weaponNumber;
 			pi->pendingWeapon = WP_NUM_WEAPONS;
 			pi->weaponTimer = 0;
-			UI_PlayerInfo_SetWeapon( pi, pi->weapon );
+
+			UI_PlayerInfo_SetWeapon(pi, pi->weapon);
 		}
 
 		return;
@@ -1322,15 +1337,17 @@ void UI_PlayerInfo_SetInfo( playerInfo_t *pi, int legsAnim, int torsoAnim, vec3_
 	if ( torsoAnim == BOTH_DEATH1 || legsAnim == BOTH_DEATH1 ) {
 		torsoAnim = legsAnim = BOTH_DEATH1;
 		pi->weapon = pi->currentWeapon = WP_NONE;
-		UI_PlayerInfo_SetWeapon( pi, pi->weapon );
+
+		UI_PlayerInfo_SetWeapon(pi, pi->weapon);
 
 		jumpHeight = 0;
 		pi->pendingLegsAnim = 0;
-		UI_ForceLegsAnim( pi, legsAnim );
+
+		UI_ForceLegsAnim(pi, legsAnim);
 
 		pi->pendingTorsoAnim = 0;
-		UI_ForceTorsoAnim( pi, torsoAnim );
 
+		UI_ForceTorsoAnim(pi, torsoAnim);
 		return;
 	}
 
@@ -1342,7 +1359,8 @@ void UI_PlayerInfo_SetInfo( playerInfo_t *pi, int legsAnim, int torsoAnim, vec3_
 	else if ( legsAnim != currentAnim ) {
 		jumpHeight = 0;
 		pi->pendingLegsAnim = 0;
-		UI_ForceLegsAnim( pi, legsAnim );
+
+		UI_ForceLegsAnim(pi, legsAnim);
 	}
 
 	// torso animation
@@ -1376,6 +1394,7 @@ void UI_PlayerInfo_SetInfo( playerInfo_t *pi, int legsAnim, int torsoAnim, vec3_
 	}
 	else if ( torsoAnim != currentAnim ) {
 		pi->pendingTorsoAnim = 0;
-		UI_ForceTorsoAnim( pi, torsoAnim );
+
+		UI_ForceTorsoAnim(pi, torsoAnim);
 	}
 }

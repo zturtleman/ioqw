@@ -45,7 +45,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define ID_SCREENSIZE	15
 #define ID_BACK			16
 
-
 typedef struct {
 	menuframework_s menu;
 	menutext_s banner;

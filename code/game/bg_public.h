@@ -150,7 +150,7 @@ typedef enum {
 #define MAXTOUCH 32
 
 typedef struct {
-	// state (in / out)
+	// state (in/out)
 	playerState_t *ps;
 	// command (in)
 	usercmd_t cmd;
@@ -193,7 +193,7 @@ typedef enum {
 	STAT_PERSISTANT_POWERUP,
 	STAT_HOLDABLE_ITEM,
 	STAT_DEAD_YAW,		// look this direction when dead (FIXME: get rid of?)
-	STAT_MAX_HEALTH		// health / armor limit, changable by handicap
+	STAT_MAX_HEALTH		// health/armor limit, changable by handicap
 } statIndex_t;
 
 /**************************************************************************************************************************************

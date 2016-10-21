@@ -25,7 +25,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 /*
 =======================================================================
 
-USER INTERFACE MAIN
+	USER INTERFACE MAIN
 
 =======================================================================
 */
@@ -38,10 +38,18 @@ USER INTERFACE MAIN
 uiInfo_t uiInfo;
 
 static const char *MonthAbbrev[] = {
-	"Jan","Feb","Mar",
-	"Apr","May","Jun",
-	"Jul","Aug","Sep",
-	"Oct","Nov","Dec"
+	"Jan",
+	"Feb",
+	"Mar",
+	"Apr",
+	"May",
+	"Jun",
+	"Jul",
+	"Aug",
+	"Sep",
+	"Oct",
+	"Nov",
+	"Dec"
 };
 
 
@@ -1035,7 +1043,29 @@ int UI_SourceForLAN(void) {
 }
 
 
-static const char *handicapValues[] = {"None","95","90","85","80","75","70","65","60","55","50","45","40","35","30","25","20","15","10","5",NULL};
+static const char *handicapValues[] = {
+	"None",
+	"95",
+	"90",
+	"85",
+	"80",
+	"75",
+	"70",
+	"65",
+	"60",
+	"55",
+	"50",
+	"45",
+	"40",
+	"35",
+	"30",
+	"25",
+	"20",
+	"15",
+	"10",
+	"5",
+	NULL
+};
 #ifndef MISSIONPACK
 static int numHandicaps = ARRAY_LEN(handicapValues);
 #endif

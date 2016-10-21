@@ -101,7 +101,7 @@ void *UI_Alloc( int size ) {
 		if (DC->Print) {
 			DC->Print("UI_Alloc: Failure. Out of memory!\n");
 		}
-    //DC->trap_Print(S_COLOR_YELLOW"WARNING: UI Out of Memory!\n");
+		//DC->trap_Print(S_COLOR_YELLOW "WARNING: UI Out of Memory!\n");
 		return NULL;
 	}
 

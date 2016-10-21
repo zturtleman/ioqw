@@ -299,7 +299,7 @@ typedef struct {
 #define MAX_MAP_DRAW_SURFS		0x20000
 #define MAX_MAP_DRAW_VERTS		0x80000
 #define MAX_MAP_DRAW_INDEXES	0x80000
-// key / value pair sizes in the entities lump
+// key/value pair sizes in the entities lump
 #define MAX_KEY 32
 #define MAX_VALUE 1024
 // the editor uses these predefined yaw angles to orient entities up or down

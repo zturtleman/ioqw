@@ -692,8 +692,7 @@ void UI_DrawProportionalString_AutoWrapped(int x, int y, int xmax, int ystep, co
 
 			if (c_bcp == '\0') {
 				// that was the last word
-				// we could start a new loop, but that wouldn't be much use
-				// even if the word is too long, we would overflow it (see above)
+				// we could start a new loop, but that wouldn't be much use´even if the word is too long, we would overflow it (see above)
 				// so just print it now if needed
 				s2++;
 
@@ -1053,7 +1052,6 @@ void UI_Cache_f(void) {
 //	UI_SaveConfigMenu_Cache();
 //	UI_BotSelectMenu_Cache();
 	UI_ModsMenu_Cache();
-
 }
 
 /*

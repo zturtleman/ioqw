@@ -67,7 +67,6 @@ static inline void *PPC_Malloc(size_t size) {
 #define PPC_Malloc Z_Malloc
 #define PPC_Free Z_Free
 #endif
-
 /*
  * optimizations:
  * - hole: bubble optimization (OP_CONST + instruction)
@@ -84,7 +83,6 @@ static inline void *PPC_Malloc(size_t size) {
 #define OPTIMIZE_COPY 0
 #define OPTIMIZE_MASK 0
 #endif
-
 /*
  * SUPPORTED TARGETS:
  * - Linux 32 bits
@@ -302,7 +300,6 @@ typedef struct VM_Data {
 	((void *)&(((structName *)NULL)->field) - NULL)
 #define VM_Data_Offset(field) OFFSET(vm_data_t, field)
 #endif
-
 /*
 =======================================================================================================================================
 VM_AsmCall

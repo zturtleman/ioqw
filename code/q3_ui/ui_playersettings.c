@@ -77,6 +77,7 @@ typedef struct {
 } playersettings_t;
 
 static playersettings_t s_playersettings;
+
 static int gamecodetoui[NUM_COLOR_EFFECTS] = {8, 4, 6, 0, 10, 2, 12, 1, 3, 5, 7, 9, 11};
 static int uitogamecode[NUM_COLOR_EFFECTS] = {4, 8, 6, 9, 2, 10, 3, 11, 1, 12, 5, 13, 7};
 

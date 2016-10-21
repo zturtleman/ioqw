@@ -226,7 +226,7 @@ struct gclient_s {
 	qboolean fireHeld;		// used for hook
 	gentity_t *hook;		// grapple hook if out
 	int switchTeamTime;		// time the player switched teams
-	// timeResidual is used to handle events that happen every second like health / armor countdowns and regeneration
+	// timeResidual is used to handle events that happen every second like health/armor countdowns and regeneration
 	int timeResidual;
 	gentity_t *persistantPowerup;
 	int ammoTimes[WP_NUM_WEAPONS];
@@ -281,7 +281,7 @@ typedef struct {
 	// spawn variables
 	qboolean spawning;				// the G_Spawn*() functions are valid
 	int numSpawnVars;
-	char *spawnVars[MAX_SPAWN_VARS][2];	// key / value pairs
+	char *spawnVars[MAX_SPAWN_VARS][2];	// key/value pairs
 	int numSpawnVarChars;
 	char spawnVarChars[MAX_SPAWN_VARS_CHARS];
 	// intermission state

@@ -358,13 +358,13 @@ typedef struct {
 	int (*getKey)( const char *binding, int startKey );
 	void (*executeText)(int exec_when, const char *text );	
 	void (*Error)(int level, const char *error, ...) __attribute__ ((noreturn, format (printf, 2, 3)));
-	void (*Print)(const char *msg, ...) __attribute__ ((format (printf, 1, 2)));
+	void (*Print)(const char *msg, ...) __attribute__((format(printf, 1, 2)));
 	void (*Pause)(qboolean b);
-	int (*ownerDrawWidth)(int ownerDraw, float scale);
+	int(*ownerDrawWidth)(int ownerDraw, float scale);
 	sfxHandle_t (*registerSound)(const char *name, qboolean compressed);
-	void (*startBackgroundTrack)( const char *intro, const char *loop);
-	void (*stopBackgroundTrack)( void );
-	int (*playCinematic)(const char *name, float x, float y, float w, float h);
+	void (*startBackgroundTrack)(const char *intro, const char *loop);
+	void (*stopBackgroundTrack)(void);
+	int(*playCinematic)(const char *name, float x, float y, float w, float h);
 	void (*stopCinematic)(int handle);
 	void (*drawCinematic)(int handle, float x, float y, float w, float h);
 	void (*runCinematicFrame)(int handle);
