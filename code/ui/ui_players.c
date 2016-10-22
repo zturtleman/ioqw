@@ -266,8 +266,8 @@ static void UI_LegsSequencing( playerInfo_t *pi ) {
 	currentAnim = pi->legsAnim & ~ANIM_TOGGLEBIT;
 
 	if ( pi->legsAnimationTimer > 0 ) {
-		if ( currentAnim == LEGS_JUMP ) {
-			jumpHeight = JUMP_HEIGHT * sin( M_PI * ( UI_TIMER_JUMP - pi->legsAnimationTimer ) / UI_TIMER_JUMP );
+		if (currentAnim == LEGS_JUMP) {
+			jumpHeight = JUMP_HEIGHT * sin(M_PI * (UI_TIMER_JUMP - pi->legsAnimationTimer) / UI_TIMER_JUMP);
 		}
 		return;
 	}
@@ -643,7 +643,8 @@ static void UI_PlayerFloatSprite( playerInfo_t *pi, vec3_t origin, qhandle_t sha
 	refEntity_t		ent;
 
 	memset( &ent, 0, sizeof( ent ) );
-	VectorCopy( origin, ent.origin );
+	VectorCopy(origin, ent.origin);
+
 	ent.origin[2] += 48;
 	ent.reType = RT_SPRITE;
 	ent.customShader = shader;
@@ -756,7 +757,7 @@ void UI_DrawPlayer( float x, float y, float w, float h, playerInfo_t *pi, int ti
 	refdef.fov_y *= ( 360 / (float)M_PI );
 
 	// calculate distance so the player nearly fills the box
-	len = 0.7 *(maxs[2] - mins[2]);
+	len = 0.7 * (maxs[2] - mins[2]);
 	origin[0] = len / tan(DEG2RAD(refdef.fov_x) * 0.5);
 	origin[1] = 0.5 * (mins[1] + maxs[1]);
 	origin[2] = -0.5 * (mins[2] + maxs[2]);
@@ -1381,7 +1382,7 @@ void UI_PlayerInfo_SetInfo( playerInfo_t *pi, int legsAnim, int torsoAnim, vec3_
 			torsoAnim = TORSO_ATTACK;
 		}
 		pi->muzzleFlashTime = dp_realtime + UI_TIMER_MUZZLE_FLASH;
-		//FIXME play firing sound here
+		// FIXME play firing sound here
 	}
 
 	currentAnim = pi->torsoAnim & ~ANIM_TOGGLEBIT;

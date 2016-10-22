@@ -45,10 +45,9 @@ typedef struct scrollInfo_s {
 } scrollInfo_t;
 
 static scrollInfo_t scrollInfo;
-
-static void (*captureFunc) (void *p) = 0;
+static void (*captureFunc)(void *p) = 0;
 static void *captureData = NULL;
-static itemDef_t *itemCapture = NULL;   // item that has the mouse captured ( if any )
+static itemDef_t *itemCapture = NULL; // item that has the mouse captured(if any)
 
 displayContextDef_t *DC = NULL;
 
@@ -77,16 +76,13 @@ qboolean Item_Bind_HandleKey(itemDef_t *item, int key, qboolean down);
 itemDef_t *Menu_SetPrevCursorItem(menuDef_t *menu);
 itemDef_t *Menu_SetNextCursorItem(menuDef_t *menu);
 static qboolean Menu_OverActiveItem(menuDef_t *menu, float x, float y);
-
 #ifdef CGAME
-#define MEM_POOL_SIZE  128 * 1024
+#define MEM_POOL_SIZE 128 * 1024
 #else
-#define MEM_POOL_SIZE  1024 * 1024
+#define MEM_POOL_SIZE 1024 * 1024
 #endif
-
-static char		memoryPool[MEM_POOL_SIZE];
-static int		allocPoint, outOfMemory;
-
+static char memoryPool[MEM_POOL_SIZE];
+static int allocPoint, outOfMemory;
 
 /*
 ===============
@@ -2380,7 +2376,7 @@ qboolean Item_Slider_HandleKey(itemDef_t *item, int key, qboolean down) {
 					value = work / width;
 					value *= (editDef->maxVal - editDef->minVal);
 					// vm fuckage
-					// value = (((float)(DC->cursorx - x)/ SLIDER_WIDTH) * (editDef->maxVal - editDef->minVal));
+					// value = (((float)(DC->cursorx - x) / SLIDER_WIDTH) * (editDef->maxVal - editDef->minVal));
 					value += editDef->minVal;
 					DC->setCVar(item->cvar, va("%f", value));
 					return qtrue;
@@ -2392,7 +2388,7 @@ qboolean Item_Slider_HandleKey(itemDef_t *item, int key, qboolean down) {
 				editFieldDef_t *editDef = item->typeData;
 				if (editDef) {
 					// 20 is number of steps
-					value = DC->getCVarValue(item->cvar) + (((editDef->maxVal - editDef->minVal)/20) * select);
+					value = DC->getCVarValue(item->cvar) + (((editDef->maxVal - editDef->minVal) / 20) * select);
 
 					if (value < editDef->minVal)
 						value = editDef->minVal;
@@ -2461,14 +2457,14 @@ qboolean Item_HandleKey(itemDef_t *item, int key, qboolean down) {
 			return Item_Bind_HandleKey(item, key, down);
       break;
     case ITEM_TYPE_SLIDER:
-      return Item_Slider_HandleKey(item, key, down);
-      break;
-    //case ITEM_TYPE_IMAGE:
-    //  Item_Image_Paint(item);
-    //  break;
-    default:
-      return qfalse;
-      break;
+			return Item_Slider_HandleKey(item, key, down);
+			break;
+		//case ITEM_TYPE_IMAGE:
+		//	Item_Image_Paint(item);
+		//	break;
+		default:
+			return qfalse;
+			break;
   }
 
   //return qfalse;
@@ -2737,8 +2733,9 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down) {
 		case K_ESCAPE:
 			if (!g_waitingForKey && menu->onESC) {
 				itemDef_t it;
-		    it.parent = menu;
-		    Item_RunScript(&it, menu->onESC);
+
+				it.parent = menu;
+				Item_RunScript(&it, menu->onESC);
 			}
 			break;
 		case K_TAB:
@@ -2863,13 +2860,13 @@ void Item_TextColor(itemDef_t *item, vec4_t *newColor) {
 	if (item->window.flags & WINDOW_HASFOCUS) {
 		lowLight[0] = 0.8 * parent->focusColor[0]; 
 		lowLight[1] = 0.8 * parent->focusColor[1]; 
-		lowLight[2] = 0.8 * parent->focusColor[2]; 
-		lowLight[3] = 0.8 * parent->focusColor[3]; 
-		LerpColor(parent->focusColor,lowLight,*newColor,0.5+0.5*sin(DC->realTime / PULSE_DIVISOR));
-	} else if (item->textStyle == ITEM_TEXTSTYLE_BLINK && !((DC->realTime/BLINK_DIVISOR) & 1)) {
-		lowLight[0] = 0.8 * item->window.foreColor[0]; 
-		lowLight[1] = 0.8 * item->window.foreColor[1]; 
-		lowLight[2] = 0.8 * item->window.foreColor[2]; 
+		lowLight[2] = 0.8 * parent->focusColor[2];
+		lowLight[3] = 0.8 * parent->focusColor[3];
+		LerpColor(parent->focusColor, lowLight, *newColor, 0.5 + 0.5 * sin(DC->realTime / PULSE_DIVISOR));
+	} else if (item->textStyle == ITEM_TEXTSTYLE_BLINK && !((DC->realTime / BLINK_DIVISOR) & 1)) {
+		lowLight[0] = 0.8 * item->window.foreColor[0];
+		lowLight[1] = 0.8 * item->window.foreColor[1];
+		lowLight[2] = 0.8 * item->window.foreColor[2];
 		lowLight[3] = 0.8 * item->window.foreColor[3]; 
 		LerpColor(item->window.foreColor,lowLight,*newColor,0.5+0.5*sin(DC->realTime / PULSE_DIVISOR));
 	} else {
@@ -3040,7 +3037,7 @@ void Item_Text_Paint(itemDef_t *item) {
 
 	Item_TextColor(item, &color);
 
-	//FIXME: this is a fucking mess
+	// FIXME: this is a fucking mess
 /*
 	adjust = 0;
 	if (item->textStyle == ITEM_TEXTSTYLE_OUTLINED || item->textStyle == ITEM_TEXTSTYLE_OUTLINESHADOWED) {
@@ -3338,13 +3335,14 @@ void Controls_SetConfig(qboolean restart)
 		}
 	}
 
-	//if ( s_controls.invertmouse.curvalue )
-	//	DC->setCVar("m_pitch", va("%f),-fabs( DC->getCVarValue( "m_pitch" ) ) );
-	//else
-	//	trap_Cvar_SetValue( "m_pitch", fabs( trap_Cvar_VariableValue( "m_pitch" ) ) );
+	//if (s_controls.invertmouse.curvalue) {
+	//	DC->setCVar("m_pitch", va("%f), -fabs(DC->getCVarValue("m_pitch")));
+	//} else {
+	//	trap_Cvar_SetValue("m_pitch", fabs(trap_Cvar_VariableValue("m_pitch")));
+	//}
 
-	//trap_Cvar_SetValue( "m_filter", s_controls.smoothmouse.curvalue );
-	//trap_Cvar_SetValue( "cl_run", s_controls.alwaysrun.curvalue );
+	//trap_Cvar_SetValue("m_filter", s_controls.smoothmouse.curvalue);
+	//trap_Cvar_SetValue("cl_run", s_controls.alwaysrun.curvalue);
 	//trap_Cvar_SetValue( "cg_autoswitch", s_controls.autoswitch.curvalue );
 	//trap_Cvar_SetValue( "sensitivity", s_controls.sensitivity.curvalue );
 	//trap_Cvar_SetValue( "in_joystick", s_controls.joyenable.curvalue );
@@ -3612,9 +3610,10 @@ void Item_Model_Paint(itemDef_t *item) {
 	// setup the refdef
 	memset( &refdef, 0, sizeof( refdef ) );
 	refdef.rdflags = RDF_NOWORLDMODEL;
-	AxisClear( refdef.viewaxis );
-	x = item->window.rect.x+1;
-	y = item->window.rect.y+1;
+	AxisClear(refdef.viewaxis);
+
+	x = item->window.rect.x + 1;
+	y = item->window.rect.y + 1;
 	w = item->window.rect.w-2;
 	h = item->window.rect.h-2;
 
@@ -3866,13 +3865,13 @@ void Item_OwnerDraw_Paint(itemDef_t *item) {
 		if (item->window.flags & WINDOW_HASFOCUS) {
 			lowLight[0] = 0.8 * parent->focusColor[0]; 
 			lowLight[1] = 0.8 * parent->focusColor[1]; 
-			lowLight[2] = 0.8 * parent->focusColor[2]; 
-			lowLight[3] = 0.8 * parent->focusColor[3]; 
-			LerpColor(parent->focusColor,lowLight,color,0.5+0.5*sin(DC->realTime / PULSE_DIVISOR));
-		} else if (item->textStyle == ITEM_TEXTSTYLE_BLINK && !((DC->realTime/BLINK_DIVISOR) & 1)) {
-			lowLight[0] = 0.8 * item->window.foreColor[0]; 
-			lowLight[1] = 0.8 * item->window.foreColor[1]; 
-			lowLight[2] = 0.8 * item->window.foreColor[2]; 
+			lowLight[2] = 0.8 * parent->focusColor[2];
+			lowLight[3] = 0.8 * parent->focusColor[3];
+			LerpColor(parent->focusColor, lowLight, color, 0.5 + 0.5 * sin(DC->realTime / PULSE_DIVISOR));
+		} else if (item->textStyle == ITEM_TEXTSTYLE_BLINK && !((DC->realTime / BLINK_DIVISOR) & 1)) {
+			lowLight[0] = 0.8 * item->window.foreColor[0];
+			lowLight[1] = 0.8 * item->window.foreColor[1];
+			lowLight[2] = 0.8 * item->window.foreColor[2];
 			lowLight[3] = 0.8 * item->window.foreColor[3]; 
 			LerpColor(item->window.foreColor,lowLight,color,0.5+0.5*sin(DC->realTime / PULSE_DIVISOR));
 		}
@@ -4067,14 +4066,14 @@ void Item_Paint(itemDef_t *item) {
     case ITEM_TYPE_COMBO:
       break;
     case ITEM_TYPE_LISTBOX:
-      Item_ListBox_Paint(item);
-      break;
-    //case ITEM_TYPE_IMAGE:
-    //  Item_Image_Paint(item);
-    //  break;
-    case ITEM_TYPE_MODEL:
-      Item_Model_Paint(item);
-      break;
+			Item_ListBox_Paint(item);
+			break;
+		//case ITEM_TYPE_IMAGE:
+		//	Item_Image_Paint(item);
+		//	break;
+		case ITEM_TYPE_MODEL:
+			Item_Model_Paint(item);
+			break;
     case ITEM_TYPE_YESNO:
       Item_YesNo_Paint(item);
       break;
@@ -5112,7 +5111,6 @@ qboolean ItemParse_hideCvar( itemDef_t *item, int handle ) {
 	}
 	return qfalse;
 }
-
 
 keywordHash_t itemParseKeywords[] = {
 	{"name", ItemParse_name, NULL},

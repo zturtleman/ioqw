@@ -48,21 +48,20 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 // "hi _rpeople_ _v0_ entered the game"
 
 // match piece types
-#define MT_VARIABLE 1 // variable match piece
-#define MT_STRING 2 // string match piece
+#define MT_VARIABLE	1 // variable match piece
+#define MT_STRING	2 // string match piece
 // reply chat key flags
-#define RCKFL_AND			1	// key must be present
-#define RCKFL_NOT			2	// key must be absent
-#define RCKFL_NAME			4	// name of bot must be present
-#define RCKFL_STRING		8	// key is a string
-#define RCKFL_VARIABLES		16	// key is a match template
-#define RCKFL_BOTNAMES		32	// key is a series of botnames
-#define RCKFL_GENDERFEMALE	64	// bot must be female
-#define RCKFL_GENDERMALE	128	// bot must be male
-#define RCKFL_GENDERLESS	256	// bot must be genderless
+#define RCKFL_AND			  1 // key must be present
+#define RCKFL_NOT			  2 // key must be absent
+#define RCKFL_NAME			  4 // name of bot must be present
+#define RCKFL_STRING		  8 // key is a string
+#define RCKFL_VARIABLES		 16 // key is a match template
+#define RCKFL_BOTNAMES		 32 // key is a series of botnames
+#define RCKFL_GENDERFEMALE	 64 // bot must be female
+#define RCKFL_GENDERMALE	128 // bot must be male
+#define RCKFL_GENDERLESS	256 // bot must be genderless
 // time to ignore a chat message after using it
 #define CHATMESSAGE_RECENTTIME 20
-
 // the actuall chat messages
 typedef struct bot_chatmessage_s {
 	char *chatmessage; // chat message string

@@ -47,9 +47,9 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 // interpolation requires 3 slots per-character plus 2 default character slots, and account for handle 0 being a dummy
 #define MAX_BOT_CHARACTERS (3 * MAX_CLIENTS + 2 + 1)
 
-#define CT_INTEGER 1
-#define CT_FLOAT 2
-#define CT_STRING 3
+#define CT_INTEGER	1
+#define CT_FLOAT	2
+#define CT_STRING	3
 // characteristic value
 union cvalue {
 	int integer;
@@ -58,8 +58,8 @@ union cvalue {
 };
 // a characteristic
 typedef struct bot_characteristic_s {
-	char type; // characteristic type
-	union cvalue value; // characteristic value
+	char type;			// characteristic type
+	union cvalue value;	// characteristic value
 } bot_characteristic_t;
 // a bot character
 typedef struct bot_character_s {

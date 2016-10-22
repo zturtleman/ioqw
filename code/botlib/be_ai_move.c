@@ -83,10 +83,10 @@ typedef struct bot_movestate_s {
 #define PREDICTIONTIME_JUMP 3 // in seconds
 #define PREDICTIONTIME_MOVE 2 // in seconds
 
-#define MODELTYPE_FUNC_PLAT 1
-#define MODELTYPE_FUNC_BOB 2
-#define MODELTYPE_FUNC_DOOR 3
-#define MODELTYPE_FUNC_STATIC 4
+#define MODELTYPE_FUNC_PLAT		1
+#define MODELTYPE_FUNC_BOB		2
+#define MODELTYPE_FUNC_DOOR		3
+#define MODELTYPE_FUNC_STATIC	4
 
 libvar_t *sv_maxstep;
 libvar_t *sv_maxbarrier;
@@ -379,6 +379,12 @@ int BotReachabilityArea(vec3_t origin, int client) {
 
 	return BotFuzzyPointReachabilityArea(origin);
 }
+
+/*
+=======================================================================================================================================
+BotReachabilityArea
+=======================================================================================================================================
+*/
 /*
 int BotReachabilityArea(vec3_t origin, int testground) {
 	int firstareanum, i, j, x, y, z;
@@ -1258,7 +1264,9 @@ int BotWalkInDirection(bot_movestate_t *ms, vec3_t dir, float speed, int type) {
 			cmdframes = 2;
 			stopevent = SE_HITGROUNDDAMAGE|SE_ENTERWATER|SE_ENTERSLIME|SE_ENTERLAVA;
 		}
+
 		//AAS_ClearShownDebugLines();
+
 		VectorCopy(ms->origin, origin);
 		origin[2] += 0.5;
 		AAS_PredictClientMovement(&move, ms->entitynum, origin, presencetype, qtrue, velocity, cmdmove, cmdframes, maxframes, 0.1f, stopevent, 0, qfalse); // qtrue
@@ -1943,6 +1951,11 @@ bot_moveresult_t BotTravel_Jump(bot_movestate_t *ms, aas_reachability_t *reach) 
 	return result;
 }
 */
+/*
+=======================================================================================================================================
+BotTravel_Jump
+=======================================================================================================================================
+*/
 bot_moveresult_t BotTravel_Jump(bot_movestate_t *ms, aas_reachability_t *reach) {
 	vec3_t hordir, dir1, dir2, start, end, runstart;
 //	vec3_t runstart, dir1, dir2, hordir;
@@ -2536,7 +2549,7 @@ bot_moveresult_t BotTravel_FuncBobbing(bot_movestate_t *ms, aas_reachability_t *
 			result.flags |= MOVERESULT_WAITING;
 			return result;
 		}
-		// get direction and distance to func_bob bottom center
+		// get direction and distance to func_bobbing bottom center
 		MoverBottomCenter(reach, bottomcenter);
 		VectorSubtract(bottomcenter, ms->origin, dir2);
 
@@ -2852,6 +2865,7 @@ bot_moveresult_t BotTravel_RocketJump(bot_movestate_t *ms, aas_reachability_t *r
 	bot_moveresult_t_cleared(result);
 
 	//botimport.Print(PRT_MESSAGE, "BotTravel_RocketJump: bah\n");
+
 	hordir[0] = reach->start[0] - ms->origin[0];
 	hordir[1] = reach->start[1] - ms->origin[1];
 	hordir[2] = 0;
@@ -2912,6 +2926,7 @@ bot_moveresult_t BotTravel_BFGJump(bot_movestate_t *ms, aas_reachability_t *reac
 	bot_moveresult_t_cleared(result);
 
 	//botimport.Print(PRT_MESSAGE, "BotTravel_BFGJump: bah\n");
+
 	hordir[0] = reach->start[0] - ms->origin[0];
 	hordir[1] = reach->start[1] - ms->origin[1];
 	hordir[2] = 0;
@@ -3460,6 +3475,7 @@ void BotMoveToGoal(bot_moveresult_t *result, int movestate, bot_goal_t *goal, in
 		} else {
 			result->failure = qtrue;
 			result->flags |= resultflags;
+
 			Com_Memset(&reach, 0, sizeof(aas_reachability_t));
 		}
 #ifdef DEBUG

@@ -66,12 +66,11 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 
 // CGAME cursor type bits
-#define CURSOR_NONE					0x00000001
-#define CURSOR_ARROW				0x00000002
-#define CURSOR_SIZER				0x00000004
-
+#define CURSOR_NONE		0x00000001
+#define CURSOR_ARROW	0x00000002
+#define CURSOR_SIZER	0x00000004
 #ifdef CGAME
-#define STRING_POOL_SIZE 128*1024
+#define STRING_POOL_SIZE 128 * 1024
 #else
 #define STRING_POOL_SIZE 384 * 1024
 #endif
@@ -120,10 +119,9 @@ typedef struct {
 } rectDef_t;
 
 typedef rectDef_t Rectangle;
-
 // FIXME: do something to separate text vs window stuff
 typedef struct {
-  Rectangle rect;                 // client coord rectangle
+	Rectangle rect;				// client coord rectangle
   Rectangle rectClient;           // screen coord rectangle
   const char *name;               //
   const char *group;              // if it belongs to a group
@@ -220,11 +218,11 @@ typedef struct modelDef_s {
 #define CVAR_HIDE			0x00000008
 
 typedef struct itemDef_s {
-  Window window;                 // common positional, border, style, layout info
-  Rectangle textRect;            // rectangle the text ( if any ) consumes     
-  int type;                      // text, button, radiobutton, checkbox, textfield, listbox, combo
-  int alignment;                 // left center right
-  int textalignment;             // ( optional ) alignment for text within rect based on text width
+	Window window;				// common positional, border, style, layout info
+	Rectangle textRect;			// rectangle the text (if any) consumes
+	int type;					// text, button, radiobutton, checkbox, textfield, listbox, combo
+	int alignment;				// left center right
+	int textalignment;			// (optional) alignment for text within rect based on text width
   float textalignx;              // ( optional ) text alignment x coord
   float textaligny;              // ( optional ) text alignment x coord
   float textscale;               // scale percentage from 72pts
@@ -320,51 +318,51 @@ typedef struct {
 typedef struct {
   qhandle_t (*registerShaderNoMip) (const char *p);
   void (*setColor) (const vec4_t v);
-  void (*drawHandlePic) (float x, float y, float w, float h, qhandle_t asset);
-  void (*drawStretchPic) (float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader );
-  void (*drawText) (float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit, int style );
-  int (*textWidth) (const char *text, float scale, int limit);
-  int (*textHeight) (const char *text, float scale, int limit);
-  qhandle_t (*registerModel) (const char *p);
-  void (*modelBounds) (qhandle_t model, vec3_t min, vec3_t max);
-  void (*fillRect) ( float x, float y, float w, float h, const vec4_t color);
+	void (*drawHandlePic)(float x, float y, float w, float h, qhandle_t asset);
+	void (*drawStretchPic)(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader);
+	void (*drawText)(float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit, int style);
+	int (*textWidth)(const char *text, float scale, int limit);
+	int (*textHeight)(const char *text, float scale, int limit);
+	qhandle_t(*registerModel)(const char *p);
+	void (*modelBounds)(qhandle_t model, vec3_t min, vec3_t max);
+	void (*fillRect)(float x, float y, float w, float h, const vec4_t color);
   void (*drawRect) ( float x, float y, float w, float h, float size, const vec4_t color);
   void (*drawSides) (float x, float y, float w, float h, float size);
   void (*drawTopBottom) (float x, float y, float w, float h, float size);
   void (*clearScene) ( void );
   void (*addRefEntityToScene) (const refEntity_t *re );
-  void (*renderScene) ( const refdef_t *fd );
-  void (*registerFont) (const char *pFontname, int pointSize, fontInfo_t *font);
-  void (*ownerDrawItem) (float x, float y, float w, float h, float text_x, float text_y, int ownerDraw, int ownerDrawFlags, int align, float special, float scale, vec4_t color, qhandle_t shader, int textStyle);
-	float (*getValue) (int ownerDraw);
-	qboolean (*ownerDrawVisible) (int flags);
-  void (*runScript)(char **p);
-  void (*getTeamColor)(vec4_t *color);
-  void (*getCVarString)(const char *cvar, char *buffer, int bufsize);
-  float (*getCVarValue)(const char *cvar);
-  void (*setCVar)(const char *cvar, const char *value);
-  void (*drawTextWithCursor)(float x, float y, float scale, vec4_t color, const char *text, int cursorPos, char cursor, int limit, int style);
-  void (*setOverstrikeMode)(qboolean b);
-  qboolean (*getOverstrikeMode)( void );
-  void (*startLocalSound)( sfxHandle_t sfx, int channelNum );
-  qboolean (*ownerDrawHandleKey)(int ownerDraw, int flags, float *special, int key);
-  int (*feederCount)(float feederID);
-  const char *(*feederItemText)(float feederID, int index, int column, qhandle_t *handle);
-  qhandle_t (*feederItemImage)(float feederID, int index);
-  void (*feederSelection)(float feederID, int index);
+	void (*renderScene)(const refdef_t *fd);
+	void (*registerFont)(const char *pFontname, int pointSize, fontInfo_t *font);
+	void (*ownerDrawItem)(float x, float y, float w, float h, float text_x, float text_y, int ownerDraw, int ownerDrawFlags, int align, float special, float scale, vec4_t color, qhandle_t shader, int textStyle);
+	float (*getValue)(int ownerDraw);
+	qboolean (*ownerDrawVisible)(int flags);
+	void (*runScript)(char **p);
+	void (*getTeamColor)(vec4_t *color);
+	void (*getCVarString)(const char *cvar, char *buffer, int bufsize);
+	float (*getCVarValue)(const char *cvar);
+	void (*setCVar)(const char *cvar, const char *value);
+	void (*drawTextWithCursor)(float x, float y, float scale, vec4_t color, const char *text, int cursorPos, char cursor, int limit, int style);
+	void (*setOverstrikeMode)(qboolean b);
+	qboolean (*getOverstrikeMode)(void);
+	void (*startLocalSound)(sfxHandle_t sfx, int channelNum);
+	qboolean (*ownerDrawHandleKey)(int ownerDraw, int flags, float *special, int key);
+	int (*feederCount)(float feederID);
+	const char *(*feederItemText)(float feederID, int index, int column, qhandle_t *handle);
+	qhandle_t (*feederItemImage)(float feederID, int index);
+	void (*feederSelection)(float feederID, int index);
 	void (*keynumToStringBuf)( int keynum, char *buf, int buflen );
 	void (*getBindingBuf)( int keynum, char *buf, int buflen );
 	void (*setBinding)( int keynum, const char *binding );
 	int (*getKey)( const char *binding, int startKey );
 	void (*executeText)(int exec_when, const char *text );	
-	void (*Error)(int level, const char *error, ...) __attribute__ ((noreturn, format (printf, 2, 3)));
+	void (*Error)(int level, const char *error, ...) __attribute__((noreturn, format(printf, 2, 3)));
 	void (*Print)(const char *msg, ...) __attribute__((format(printf, 1, 2)));
 	void (*Pause)(qboolean b);
-	int(*ownerDrawWidth)(int ownerDraw, float scale);
+	int (*ownerDrawWidth)(int ownerDraw, float scale);
 	sfxHandle_t (*registerSound)(const char *name, qboolean compressed);
 	void (*startBackgroundTrack)(const char *intro, const char *loop);
 	void (*stopBackgroundTrack)(void);
-	int(*playCinematic)(const char *name, float x, float y, float w, float h);
+	int (*playCinematic)(const char *name, float x, float y, float w, float h);
 	void (*stopCinematic)(int handle);
 	void (*drawCinematic)(int handle, float x, float y, float w, float h);
 	void (*runCinematicFrame)(int handle);
