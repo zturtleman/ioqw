@@ -87,11 +87,11 @@ void BotRecordNodeSwitch(bot_state_t *bs, char *node, char *str, char *s) {
 
 	ClientName(bs->client, netname, sizeof(netname));
 	Com_sprintf(nodeswitch[numnodeswitches], 144, "%s at %2.1f entered %s: %s from %s\n", netname, FloatTime(), node, str, s);
-
-	if (bot_shownodechanges.integer) {
+#ifdef DEBUG
+	if (0) {
 		BotAI_Print(PRT_MESSAGE, "%s", nodeswitch[numnodeswitches]);
 	}
-
+#endif // DEBUG
 	numnodeswitches++;
 }
 

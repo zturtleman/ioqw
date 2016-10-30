@@ -93,6 +93,7 @@ vmCvar_t g_proxMineTimeout;
 vmCvar_t g_redteam;
 vmCvar_t g_blueteam;
 #endif
+
 static cvarTable_t gameCvarTable[] = {
 	// don't override the cheat state set by the system
 	{&g_cheats, "sv_cheats", "", 0, 0, qfalse},

@@ -608,7 +608,7 @@ void Console_Key(int key) {
 				return; // empty lines just scroll the console without adding to history
 			} else {
 				if (con_autochat->integer) {
-					Cbuf_AddText("cmd say");
+					Cbuf_AddText("cmd say ");
 				}
 
 				Cbuf_AddText(g_consoleField.buffer);

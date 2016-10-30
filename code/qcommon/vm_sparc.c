@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 2009 David S. Miller <davem@davemloft.net>
+Copyright (C) 2009 David S. Miller <davem@davemloft.net>.
 
 This file is part of Spearmint Source Code.
 
@@ -60,15 +60,15 @@ struct sparc_opcode {
 	unsigned int opcode;
 	unsigned int mask;
 	unsigned char args[4];
-#define ARG_NONE 0
-#define ARG_RS1 1
-#define ARG_RS2 2
-#define ARG_RD 3
-#define ARG_SIMM13 4
-#define ARG_DISP30 5
-#define ARG_IMM22 6
-#define ARG_DISP22 7
-#define ARG_SWTRAP 8
+	#define ARG_NONE	0
+	#define ARG_RS1		1
+	#define ARG_RS2		2
+	#define ARG_RD		3
+	#define ARG_SIMM13	4
+	#define ARG_DISP30	5
+	#define ARG_IMM22	6
+	#define ARG_DISP22	7
+	#define ARG_SWTRAP	8
 };
 
 #define ARG_RS1_RS2_RD {ARG_RS1, ARG_RS2, ARG_RD}
@@ -424,23 +424,23 @@ static void sparc_disassemble(unsigned int insn) {
  * - returned register type
  * - required register(s) type
  */
-#define opImm0 0x0000 // no immediate
-#define opImm1 0x0001 // 1 byte immadiate value after opcode
-#define opImm4 0x0002 // 4 bytes immediate value after opcode
+#define opImm0		0x0000 // no immediate
+#define opImm1		0x0001 // 1 byte immadiate value after opcode
+#define opImm4		0x0002 // 4 bytes immediate value after opcode
 
-#define opRet0 0x0000 // returns nothing
-#define opRetI 0x0004 // returns integer
-#define opRetF 0x0008 // returns float
-#define opRetIF (opRetI|opRetF) // returns integer or float
+#define opRet0		0x0000 // returns nothing
+#define opRetI		0x0004 // returns integer
+#define opRetF		0x0008 // returns float
+#define opRetIF		(opRetI|opRetF) // returns integer or float
 
-#define opArg0 0x0000 // requires nothing
-#define opArgI 0x0010 // requires integer(s)
-#define opArgF 0x0020 // requires float(s)
-#define opArgIF (opArgI|opArgF) // requires integer or float
+#define opArg0		0x0000 // requires nothing
+#define opArgI		0x0010 // requires integer(s)
+#define opArgF		0x0020 // requires float(s)
+#define opArgIF		(opArgI|opArgF) // requires integer or float
 
-#define opArg2I 0x0040 // requires second argument, integer
-#define opArg2F 0x0080 // requires second argument, float
-#define opArg2IF (opArg2I|opArg2F) // requires second argument, integer or float
+#define opArg2I		0x0040 // requires second argument, integer
+#define opArg2F		0x0080 // requires second argument, float
+#define opArg2IF	(opArg2I|opArg2F) // requires second argument, integer or float
 
 static const unsigned char vm_opInfo[256] = {
 	[OP_UNDEF] = opImm0,
@@ -508,19 +508,66 @@ static const unsigned char vm_opInfo[256] = {
 };
 
 static const char *opnames[256] = {
-	"OP_UNDEF", "OP_IGNORE", "OP_BREAK", "OP_ENTER", "OP_LEAVE", "OP_CALL",
-	"OP_PUSH", "OP_POP", "OP_CONST", "OP_LOCAL", "OP_JUMP",
-	"OP_EQ", "OP_NE", "OP_LTI", "OP_LEI", "OP_GTI", "OP_GEI",
-	"OP_LTU", "OP_LEU", "OP_GTU", "OP_GEU", "OP_EQF", "OP_NEF",
-	"OP_LTF", "OP_LEF", "OP_GTF", "OP_GEF",
-	"OP_LOAD1", "OP_LOAD2", "OP_LOAD4", "OP_STORE1", "OP_STORE2",
-	"OP_STORE4", "OP_ARG", "OP_BLOCK_COPY",
-	"OP_SEX8", "OP_SEX16",
-	"OP_NEGI", "OP_ADD", "OP_SUB", "OP_DIVI", "OP_DIVU",
-	"OP_MODI", "OP_MODU", "OP_MULI", "OP_MULU", "OP_BAND",
-	"OP_BOR", "OP_BXOR", "OP_BCOM", "OP_LSH", "OP_RSHI", "OP_RSHU",
-	"OP_NEGF", "OP_ADDF", "OP_SUBF", "OP_DIVF", "OP_MULF",
-	"OP_CVIF", "OP_CVFI",
+	"OP_UNDEF",
+	"OP_IGNORE",
+	"OP_BREAK",
+	"OP_ENTER",
+	"OP_LEAVE",
+	"OP_CALL",
+	"OP_PUSH",
+	"OP_POP",
+	"OP_CONST",
+	"OP_LOCAL",
+	"OP_JUMP",
+	"OP_EQ",
+	"OP_NE",
+	"OP_LTI",
+	"OP_LEI",
+	"OP_GTI",
+	"OP_GEI",
+	"OP_LTU",
+	"OP_LEU",
+	"OP_GTU",
+	"OP_GEU",
+	"OP_EQF",
+	"OP_NEF",
+	"OP_LTF",
+	"OP_LEF",
+	"OP_GTF",
+	"OP_GEF",
+	"OP_LOAD1",
+	"OP_LOAD2",
+	"OP_LOAD4",
+	"OP_STORE1",
+	"OP_STORE2",
+	"OP_STORE4",
+	"OP_ARG",
+	"OP_BLOCK_COPY",
+	"OP_SEX8",
+	"OP_SEX16",
+	"OP_NEGI",
+	"OP_ADD",
+	"OP_SUB",
+	"OP_DIVI",
+	"OP_DIVU",
+	"OP_MODI",
+	"OP_MODU",
+	"OP_MULI",
+	"OP_MULU",
+	"OP_BAND",
+	"OP_BOR",
+	"OP_BXOR",
+	"OP_BCOM",
+	"OP_LSH",
+	"OP_RSHI",
+	"OP_RSHU",
+	"OP_NEGF",
+	"OP_ADDF",
+	"OP_SUBF",
+	"OP_DIVF",
+	"OP_MULF",
+	"OP_CVIF",
+	"OP_CVFI",
 };
 
 /*
@@ -610,16 +657,16 @@ struct func_info {
 	struct src_insn *cached_const;
 	int stack_space;
 	int gpr_pos;
-#define rFIRST(fp) ((fp)->gpr_pos - 1)
-#define rSECOND(fp) ((fp)->gpr_pos - 2)
-#define POP_GPR(fp) ((fp)->gpr_pos--)
-#define PUSH_GPR(fp) ((fp)->gpr_pos++)
+	#define rFIRST(fp) ((fp)->gpr_pos - 1)
+	#define rSECOND(fp) ((fp)->gpr_pos - 2)
+	#define POP_GPR(fp) ((fp)->gpr_pos--)
+	#define PUSH_GPR(fp) ((fp)->gpr_pos++)
 	int fpr_pos;
-#define fFIRST(fp) ((fp)->fpr_pos - 1)
-#define fSECOND(fp) ((fp)->fpr_pos - 2)
-#define POP_FPR(fp) ((fp)->fpr_pos--)
-#define PUSH_FPR(fp) ((fp)->fpr_pos++)
-#define INSN_BUF_SIZE 50
+	#define fFIRST(fp) ((fp)->fpr_pos - 1)
+	#define fSECOND(fp) ((fp)->fpr_pos - 2)
+	#define POP_FPR(fp) ((fp)->fpr_pos--)
+	#define PUSH_FPR(fp) ((fp)->fpr_pos++)
+	#define INSN_BUF_SIZE 50
 	unsigned int insn_buf[INSN_BUF_SIZE];
 	int insn_index;
 	int saved_icount;

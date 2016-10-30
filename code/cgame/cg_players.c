@@ -1214,7 +1214,7 @@ static void CG_RunLerpFrame(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation,
 		}
 
 		f = (lf->frameTime - lf->animationTime) / anim->frameLerp;
-		f *= speedScale; // adjust for scout, etc
+		f *= speedScale; // adjust for scout, etc.
 
 		numFrames = anim->numFrames;
 

@@ -520,7 +520,7 @@ void SP_worldspawn(void) {
 	trap_Cvar_Set("g_gravity", s);
 #if 0 // ZTM: Currently game doesn't need the tracemap
 	level.mapcoordsValid = qfalse;
-	// top left / bottom right
+	// top left/bottom right
 	if (G_SpawnVector2D("mapcoordsmins", "-128 128", level.mapcoordsMins) && G_SpawnVector2D("mapcoordsmaxs", "128 -128", level.mapcoordsMaxs)) {
 		level.mapcoordsValid = qtrue;
 	}

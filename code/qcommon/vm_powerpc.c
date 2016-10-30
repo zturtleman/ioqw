@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 2008 Przemyslaw Iskra <sparky@pld-linux.org>
+Copyright (C) 2008 Przemyslaw Iskra <sparky@pld-linux.org>.
 
 This file is part of Spearmint Source Code.
 
@@ -62,6 +62,7 @@ static inline void *PPC_Malloc(size_t size) {
 
 	return mem;
 }
+
 #define PPC_Free free
 #else
 #define PPC_Malloc Z_Malloc
@@ -73,7 +74,6 @@ static inline void *PPC_Malloc(size_t size) {
  * - copy: inline OP_BLOCK_COPY for lengths under 16/32 bytes
  * - mask: use rlwinm instruction as dataMask
  */
-
 #ifdef __OPTIMIZE__
 #define OPTIMIZE_HOLE 1
 #define OPTIMIZE_COPY 1
@@ -163,23 +163,23 @@ typedef struct {
  * - returned register type
  * - required register(s) type
  */
-#define opImm0 0x0000 // no immediate
-#define opImm1 0x0001 // 1 byte immadiate value after opcode
-#define opImm4 0x0002 // 4 bytes immediate value after opcode
+#define opImm0		0x0000 // no immediate
+#define opImm1		0x0001 // 1 byte immadiate value after opcode
+#define opImm4		0x0002 // 4 bytes immediate value after opcode
 
-#define opRet0 0x0000 // returns nothing
-#define opRetI 0x0004 // returns integer
-#define opRetF 0x0008 // returns float
-#define opRetIF (opRetI|opRetF) // returns integer or float
+#define opRet0		0x0000 // returns nothing
+#define opRetI		0x0004 // returns integer
+#define opRetF		0x0008 // returns float
+#define opRetIF		(opRetI|opRetF) // returns integer or float
 
-#define opArg0 0x0000 // requires nothing
-#define opArgI 0x0010 // requires integer(s)
-#define opArgF 0x0020 // requires float(s)
-#define opArgIF (opArgI|opArgF) // requires integer or float
+#define opArg0		0x0000 // requires nothing
+#define opArgI		0x0010 // requires integer(s)
+#define opArgF		0x0020 // requires float(s)
+#define opArgIF		(opArgI|opArgF) // requires integer or float
 
-#define opArg2I 0x0040 // requires second argument, integer
-#define opArg2F 0x0080 // requires second argument, float
-#define opArg2IF (opArg2I|opArg2F) // requires second argument, integer or float
+#define opArg2I		0x0040 // requires second argument, integer
+#define opArg2F		0x0080 // requires second argument, float
+#define opArg2IF	(opArg2I|opArg2F) // requires second argument, integer or float
 
 static const unsigned char vm_opInfo[256] = {
 	[OP_UNDEF] = opImm0,
@@ -247,6 +247,7 @@ static const unsigned char vm_opInfo[256] = {
 };
 // source instruction data
 typedef struct source_instruction_s source_instruction_t;
+
 struct source_instruction_s {
 	// opcode
 	unsigned long int op;
@@ -386,7 +387,6 @@ static unsigned long int di_count = 0;
 // actual instructions, just used to check how long the jump is going
 // to be and whether it is positive or negative
 static dest_instruction_t **di_pointers = NULL;
-
 // output instructions which does not come from source code
 // use false i_count value
 #define FALSE_ICOUNT 0xffffffff
@@ -694,16 +694,13 @@ static void PPC_CompileInit(void) {
 // temporary registers, not on the opstack
 #define rTEMP(x) (gpr_list[gpr_pos + x])
 #define rTMP rTEMP(0)
-
 #define fFIRST (fpr_list[fpr_pos - 1])
 #define fSECOND (fpr_list[fpr_pos - 2])
 #define fTEMP(x) (fpr_list[fpr_pos + x])
 #define fTMP fTEMP(0)
-
 // register types
 #define rTYPE_STATIC 0x01
 #define rTYPE_FLOAT 0x02
-
 // what type should this opcode return
 #define RET_INT (!(i_now->regR & rTYPE_FLOAT))
 #define RET_FLOAT (i_now->regR & rTYPE_FLOAT)

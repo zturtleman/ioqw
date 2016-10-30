@@ -76,7 +76,9 @@ static void CG_TransitionEntity(centity_t *cent) {
 =======================================================================================================================================
 CG_SetInitialSnapshot
 
-This will only happen on the very first snapshot. All other times will use CG_TransitionSnapshot instead.
+This will only happen on the very first snapshot, or on tourney restarts. All other times will use CG_TransitionSnapshot instead.
+
+FIXME: Also called by map_restart?
 =======================================================================================================================================
 */
 void CG_SetInitialSnapshot(snapshot_t *snap) {

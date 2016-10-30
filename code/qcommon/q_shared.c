@@ -570,7 +570,7 @@ char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks, char delimiter) {
 				data++;
 			}
 		// skip /* */ comments
-		} else if (c=='/' && data[1] == '*') {
+		} else if (c == '/' && data[1] == '*') {
 			data += 2;
 
 			while (*data && (*data != '*' || data[1] != '/')) {
@@ -597,7 +597,7 @@ char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks, char delimiter) {
 		while (1) {
 			c = *data++;
 
-			if (c=='\"' || !c) {
+			if (c == '\"' || !c) {
 				com_token[len] = 0;
 				*data_p = (char *)data;
 				return com_token;

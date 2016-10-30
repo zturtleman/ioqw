@@ -41,7 +41,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 // TTimo https://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=551
 #define SVF_CLIENTMASK			0x00000002 // send to limited list of clients
 #define SVF_BOT					0x00000008 // set if the entity is a bot
-#define SVF_BROADCAST			0x00000020 // send to all connected players (r.cullDistance will still be checked)
+#define SVF_BROADCAST			0x00000020 // send to all connected clients (r.cullDistance will still be checked)
 #define SVF_PORTAL				0x00000040 // merge a second pvs at origin2 into snapshots
 #define SVF_USE_CURRENT_ORIGIN	0x00000080 // entity->r.currentOrigin instead of entity->s.origin for link position (missiles and movers)
 #define SVF_SINGLECLIENT		0x00000100 // only send to a single client (entityShared_t->singleClient)

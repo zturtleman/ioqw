@@ -1,25 +1,23 @@
 /*
-=======================================================================================================================================
-Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
+===========================================================================
+Copyright (C) 1999-2005 Id Software, Inc.
 
-This file is part of Spearmint Source Code.
+This file is part of Quake III Arena source code.
 
-Spearmint Source Code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
+Quake III Arena source code is free software; you can redistribute it
+and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the License,
+or (at your option) any later version.
 
-Spearmint Source Code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+Quake III Arena source code is distributed in the hope that it will be
+useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with Spearmint Source Code.
-If not, see <http://www.gnu.org/licenses/>.
-
-In addition, Spearmint Source Code is also subject to certain additional terms. You should have received a copy of these additional
-terms immediately following the terms and conditions of the GNU General Public License. If not, please request a copy in writing from
-id Software at the address below.
-
-If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o
-ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
-=======================================================================================================================================
+You should have received a copy of the GNU General Public License
+along with Quake III Arena source code; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+===========================================================================
 */
 #include "tr_local.h"
 
@@ -2253,10 +2251,22 @@ static void CollapseStagesToLightall(shaderStage_t *diffuse,
 			image_t *normalImg;
 			imgFlags_t normalFlags = (diffuseImg->flags & ~(IMGFLAG_GENNORMALMAP | IMGFLAG_SRGB)) | IMGFLAG_NOLIGHTSCALE;
 
+			// try a normalheight image first
 			COM_StripExtension(diffuseImg->imgName, normalName, MAX_QPATH);
-			Q_strcat(normalName, MAX_QPATH, "_n");
+			Q_strcat(normalName, MAX_QPATH, "_nh");
 
-			normalImg = R_FindImageFile(normalName, IMGTYPE_NORMAL, normalFlags);
+			normalImg = R_FindImageFile(normalName, IMGTYPE_NORMALHEIGHT, normalFlags);
+
+			if (normalImg)
+			{
+				parallax = qtrue;
+			}
+			else
+			{
+				// try a normal image ("_n" suffix)
+				normalName[strlen(normalName) - 1] = '\0';
+				normalImg = R_FindImageFile(normalName, IMGTYPE_NORMAL, normalFlags);
+			}
 
 			if (normalImg)
 			{

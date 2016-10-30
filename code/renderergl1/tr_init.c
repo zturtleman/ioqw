@@ -1,25 +1,23 @@
 /*
-=======================================================================================================================================
-Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
+===========================================================================
+Copyright (C) 1999-2005 Id Software, Inc.
 
-This file is part of Spearmint Source Code.
+This file is part of Quake III Arena source code.
 
-Spearmint Source Code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
+Quake III Arena source code is free software; you can redistribute it
+and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the License,
+or (at your option) any later version.
 
-Spearmint Source Code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+Quake III Arena source code is distributed in the hope that it will be
+useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with Spearmint Source Code.
-If not, see <http://www.gnu.org/licenses/>.
-
-In addition, Spearmint Source Code is also subject to certain additional terms. You should have received a copy of these additional
-terms immediately following the terms and conditions of the GNU General Public License. If not, please request a copy in writing from
-id Software at the address below.
-
-If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o
-ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
-=======================================================================================================================================
+You should have received a copy of the GNU General Public License
+along with Quake III Arena source code; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+===========================================================================
 */
 // tr_init.c -- functions that are not called every frame
 
@@ -1007,23 +1005,23 @@ void R_Register( void )
 	r_ext_texture_env_add = ri.Cvar_Get( "r_ext_texture_env_add", "1", CVAR_ARCHIVE | CVAR_LATCH);
 
 	r_ext_texture_filter_anisotropic = ri.Cvar_Get( "r_ext_texture_filter_anisotropic",
-			"0", CVAR_ARCHIVE | CVAR_LATCH );
-	r_ext_max_anisotropy = ri.Cvar_Get( "r_ext_max_anisotropy", "2", CVAR_ARCHIVE | CVAR_LATCH );
+			"1", CVAR_ARCHIVE | CVAR_LATCH );
+	r_ext_max_anisotropy = ri.Cvar_Get( "r_ext_max_anisotropy", "16", CVAR_ARCHIVE | CVAR_LATCH );
 
-	r_picmip = ri.Cvar_Get ("r_picmip", "1", CVAR_ARCHIVE | CVAR_LATCH );
+	r_picmip = ri.Cvar_Get ("r_picmip", "0", CVAR_ARCHIVE | CVAR_LATCH );
 	r_roundImagesDown = ri.Cvar_Get ("r_roundImagesDown", "1", CVAR_ARCHIVE | CVAR_LATCH );
 	r_colorMipLevels = ri.Cvar_Get ("r_colorMipLevels", "0", CVAR_LATCH );
 	ri.Cvar_CheckRange( r_picmip, 0, 16, qtrue );
 	r_detailTextures = ri.Cvar_Get( "r_detailtextures", "1", CVAR_ARCHIVE | CVAR_LATCH );
-	r_texturebits = ri.Cvar_Get( "r_texturebits", "0", CVAR_ARCHIVE | CVAR_LATCH );
-	r_colorbits = ri.Cvar_Get( "r_colorbits", "0", CVAR_ARCHIVE | CVAR_LATCH );
+	r_texturebits = ri.Cvar_Get( "r_texturebits", "32", CVAR_ARCHIVE | CVAR_LATCH );
+	r_colorbits = ri.Cvar_Get( "r_colorbits", "32", CVAR_ARCHIVE | CVAR_LATCH );
 	r_stencilbits = ri.Cvar_Get( "r_stencilbits", "8", CVAR_ARCHIVE | CVAR_LATCH );
-	r_depthbits = ri.Cvar_Get( "r_depthbits", "0", CVAR_ARCHIVE | CVAR_LATCH );
-	r_ext_multisample = ri.Cvar_Get( "r_ext_multisample", "0", CVAR_ARCHIVE | CVAR_LATCH );
+	r_depthbits = ri.Cvar_Get( "r_depthbits", "24", CVAR_ARCHIVE | CVAR_LATCH );
+	r_ext_multisample = ri.Cvar_Get( "r_ext_multisample", "4", CVAR_ARCHIVE | CVAR_LATCH );
 	ri.Cvar_CheckRange( r_ext_multisample, 0, 4, qtrue );
 	r_overBrightBits = ri.Cvar_Get ("r_overBrightBits", "1", CVAR_ARCHIVE | CVAR_LATCH );
 	r_ignorehwgamma = ri.Cvar_Get( "r_ignorehwgamma", "0", CVAR_ARCHIVE | CVAR_LATCH);
-	r_mode = ri.Cvar_Get( "r_mode", "3", CVAR_ARCHIVE | CVAR_LATCH );
+	r_mode = ri.Cvar_Get( "r_mode", "-2", CVAR_ARCHIVE | CVAR_LATCH );
 	r_fullscreen = ri.Cvar_Get( "r_fullscreen", "1", CVAR_ARCHIVE );
 	r_noborder = ri.Cvar_Get("r_noborder", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_customwidth = ri.Cvar_Get( "r_customwidth", "1600", CVAR_ARCHIVE | CVAR_LATCH );
@@ -1031,7 +1029,7 @@ void R_Register( void )
 	r_simpleMipMaps = ri.Cvar_Get( "r_simpleMipMaps", "1", CVAR_ARCHIVE | CVAR_LATCH );
 	r_vertexLight = ri.Cvar_Get( "r_vertexLight", "0", CVAR_ARCHIVE | CVAR_LATCH );
 	r_uiFullScreen = ri.Cvar_Get( "r_uifullscreen", "0", 0);
-	r_subdivisions = ri.Cvar_Get ("r_subdivisions", "4", CVAR_ARCHIVE | CVAR_LATCH);
+	r_subdivisions = ri.Cvar_Get ("r_subdivisions", "2", CVAR_ARCHIVE | CVAR_LATCH);
 	r_stereoEnabled = ri.Cvar_Get( "r_stereoEnabled", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_ignoreFastPath = ri.Cvar_Get( "r_ignoreFastPath", "1", CVAR_ARCHIVE | CVAR_LATCH );
 	r_greyscale = ri.Cvar_Get("r_greyscale", "0", CVAR_ARCHIVE | CVAR_LATCH);
@@ -1050,9 +1048,9 @@ void R_Register( void )
 	//
 	// archived variables that can change at any time
 	//
-	r_lodCurveError = ri.Cvar_Get( "r_lodCurveError", "250", CVAR_ARCHIVE|CVAR_CHEAT );
+	r_lodCurveError = ri.Cvar_Get( "r_lodCurveError", "1250", CVAR_ARCHIVE|CVAR_CHEAT );
 	r_lodbias = ri.Cvar_Get( "r_lodbias", "0", CVAR_ARCHIVE );
-	r_flares = ri.Cvar_Get ("r_flares", "0", CVAR_ARCHIVE );
+	r_flares = ri.Cvar_Get ("r_flares", "1", CVAR_ARCHIVE );
 	r_znear = ri.Cvar_Get( "r_znear", "4", CVAR_CHEAT );
 	ri.Cvar_CheckRange( r_znear, 0.001f, 200, qfalse );
 	r_zproj = ri.Cvar_Get( "r_zproj", "64", CVAR_ARCHIVE );
@@ -1060,12 +1058,12 @@ void R_Register( void )
 	r_ignoreGLErrors = ri.Cvar_Get( "r_ignoreGLErrors", "1", CVAR_ARCHIVE );
 	r_fastsky = ri.Cvar_Get( "r_fastsky", "0", CVAR_ARCHIVE );
 	r_inGameVideo = ri.Cvar_Get( "r_inGameVideo", "1", CVAR_ARCHIVE );
-	r_drawSun = ri.Cvar_Get( "r_drawSun", "0", CVAR_ARCHIVE );
+	r_drawSun = ri.Cvar_Get( "r_drawSun", "1", CVAR_ARCHIVE );
 	r_dynamiclight = ri.Cvar_Get( "r_dynamiclight", "1", CVAR_ARCHIVE );
 	r_dlightBacks = ri.Cvar_Get( "r_dlightBacks", "1", CVAR_ARCHIVE );
-	r_finish = ri.Cvar_Get ("r_finish", "0", CVAR_ARCHIVE);
-	r_textureMode = ri.Cvar_Get( "r_textureMode", "GL_LINEAR_MIPMAP_NEAREST", CVAR_ARCHIVE );
-	r_swapInterval = ri.Cvar_Get( "r_swapInterval", "0",
+	r_finish = ri.Cvar_Get ("r_finish", "1", CVAR_ARCHIVE);
+	r_textureMode = ri.Cvar_Get( "r_textureMode", "GL_LINEAR_MIPMAP_LINEAR", CVAR_ARCHIVE );
+	r_swapInterval = ri.Cvar_Get( "r_swapInterval", "1",
 					CVAR_ARCHIVE | CVAR_LATCH );
 	r_gamma = ri.Cvar_Get( "r_gamma", "1", CVAR_ARCHIVE );
 	r_facePlaneCull = ri.Cvar_Get ("r_facePlaneCull", "1", CVAR_ARCHIVE );
@@ -1120,13 +1118,13 @@ void R_Register( void )
 	r_shownormals = ri.Cvar_Get ("r_shownormals", "0", CVAR_CHEAT);
 	r_clear = ri.Cvar_Get ("r_clear", "0", CVAR_CHEAT);
 	r_offsetFactor = ri.Cvar_Get( "r_offsetfactor", "-1", CVAR_CHEAT );
-	r_offsetUnits = ri.Cvar_Get( "r_offsetunits", "-2", CVAR_CHEAT );
+	r_offsetUnits = ri.Cvar_Get( "r_offsetunits", "-8", CVAR_CHEAT );
 	r_drawBuffer = ri.Cvar_Get( "r_drawBuffer", "GL_BACK", CVAR_CHEAT );
 	r_lockpvs = ri.Cvar_Get ("r_lockpvs", "0", CVAR_CHEAT);
 	r_noportals = ri.Cvar_Get ("r_noportals", "0", CVAR_CHEAT);
 	r_shadows = ri.Cvar_Get( "cg_shadows", "1", 0 );
 
-	r_marksOnTriangleMeshes = ri.Cvar_Get("r_marksOnTriangleMeshes", "0", CVAR_ARCHIVE);
+	r_marksOnTriangleMeshes = ri.Cvar_Get("r_marksOnTriangleMeshes", "1", CVAR_ARCHIVE);
 
 	r_aviMotionJpegQuality = ri.Cvar_Get("r_aviMotionJpegQuality", "90", CVAR_ARCHIVE);
 	r_screenshotJpegQuality = ri.Cvar_Get("r_screenshotJpegQuality", "90", CVAR_ARCHIVE);

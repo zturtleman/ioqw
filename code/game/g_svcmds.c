@@ -473,16 +473,7 @@ Svcmd_ListIPs_f
 void Svcmd_ListIPs_f(void) {
 	trap_Cmd_ExecuteText(EXEC_NOW, "g_banIPs\n");
 }
-#if 0
-/*
-=======================================================================================================================================
-Svcmd_Say_f
-=======================================================================================================================================
-*/
-void Svcmd_Say_f(void) {
-	trap_SendServerCommand(-1, va("print \"server: %s\n\"", ConcatArgs(1)));
-}
-#endif
+
 struct svcmd {
 	char *cmd;
 	qboolean dedicated;
@@ -492,13 +483,11 @@ struct svcmd {
 	{"addbot", qfalse, Svcmd_AddBot_f},
 	{"addip", qfalse, Svcmd_AddIP_f},
 	{"botlist", qfalse, Svcmd_BotList_f},
-	{"botreport", qfalse, Svcmd_BotTeamplayReport_f},
-	{"entityList", qfalse, Svcmd_EntityList_f},
+	{"entitylist", qfalse, Svcmd_EntityList_f},
 	{"forceteam", qfalse, Svcmd_ForceTeam_f},
 	{"game_memory", qfalse, Svcmd_GameMem_f},
 	{"listip", qfalse, Svcmd_ListIPs_f},
 	{"removeip", qfalse, Svcmd_RemoveIP_f},
-	//{"say", qtrue, Svcmd_Say_f},
 };
 
 const size_t numSvCmds = ARRAY_LEN(svcmds);

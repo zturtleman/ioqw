@@ -273,6 +273,8 @@ static int fs_serverReferencedPaks[MAX_SEARCH_PATHS]; // checksums
 static char *fs_serverReferencedPakNames[MAX_SEARCH_PATHS]; // pk3 names
 // last valid game folder used
 char lastValidBase[MAX_OSPATH];
+char lastValidComBaseGame[MAX_OSPATH];
+char lastValidFsBaseGame[MAX_OSPATH];
 char lastValidGame[MAX_OSPATH];
 #ifdef FS_MISSING
 FILE *missingFiles = NULL;
@@ -2253,7 +2255,7 @@ static int FS_AddFileToList(char *name, char *list[MAX_FOUND_FILES], int nfiles)
 
 	for (i = 0; i < nfiles; i++) {
 		if (!Q_stricmp(name, list[i])) {
-			return nfiles; // allready in list
+			return nfiles; // already in list
 		}
 	}
 
@@ -3901,6 +3903,8 @@ void FS_InitFilesystem(void) {
 	}
 
 	Q_strncpyz(lastValidBase, fs_basepath->string, sizeof(lastValidBase));
+	Q_strncpyz(lastValidComBaseGame, com_basegame->string, sizeof(lastValidComBaseGame));
+	Q_strncpyz(lastValidFsBaseGame, fs_basegame->string, sizeof(lastValidFsBaseGame));
 	Q_strncpyz(lastValidGame, fs_gamedirvar->string, sizeof(lastValidGame));
 }
 
@@ -3910,6 +3914,7 @@ FS_Restart
 =======================================================================================================================================
 */
 void FS_Restart(int checksumFeed) {
+	const char *lastGameDir;
 
 	// free anything we currently have loaded
 	FS_Shutdown(qfalse);
@@ -3929,8 +3934,12 @@ void FS_Restart(int checksumFeed) {
 		if (lastValidBase[0]) {
 			FS_PureServerSetLoadedPaks("", "");
 			Cvar_Set("fs_basepath", lastValidBase);
+			Cvar_Set("com_basegame", lastValidComBaseGame);
+			Cvar_Set("fs_basegame", lastValidFsBaseGame);
 			Cvar_Set("fs_game", lastValidGame);
 			lastValidBase[0] = '\0';
+			lastValidComBaseGame[0] = '\0';
+			lastValidFsBaseGame[0] = '\0';
 			lastValidGame[0] = '\0';
 			FS_Restart(checksumFeed);
 			Com_Error(ERR_DROP, "Invalid game folder");
@@ -3940,9 +3949,11 @@ void FS_Restart(int checksumFeed) {
 		Com_Error(ERR_FATAL, "Couldn't load default.cfg");
 	}
 
-	if (Q_stricmp(fs_gamedirvar->string, lastValidGame)) {
-		Sys_RemovePIDFile(lastValidGame);
-		Sys_InitPIDFile(fs_gamedirvar->string);
+	lastGameDir = (lastValidGame[0]) ? lastValidGame : lastValidComBaseGame;
+
+	if (Q_stricmp(FS_GetCurrentGameDir(), lastGameDir)) {
+		Sys_RemovePIDFile(lastGameDir);
+		Sys_InitPIDFile(FS_GetCurrentGameDir());
 		// skip the qwconfig.cfg if "safe" is on the command line
 		if (!Com_SafeMode()) {
 			Cbuf_AddText("exec " QWCONFIG_CFG "\n");
@@ -3950,6 +3961,8 @@ void FS_Restart(int checksumFeed) {
 	}
 
 	Q_strncpyz(lastValidBase, fs_basepath->string, sizeof(lastValidBase));
+	Q_strncpyz(lastValidComBaseGame, com_basegame->string, sizeof(lastValidComBaseGame));
+	Q_strncpyz(lastValidFsBaseGame, fs_basegame->string, sizeof(lastValidFsBaseGame));
 	Q_strncpyz(lastValidGame, fs_gamedirvar->string, sizeof(lastValidGame));
 }
 

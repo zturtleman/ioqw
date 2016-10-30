@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright (C) 2008 Przemyslaw Iskra <sparky@pld-linux.org>
+Copyright (C) 2008 Przemyslaw Iskra <sparky@pld-linux.org>.
 
 This file is part of Spearmint Source Code.
 

@@ -315,6 +315,7 @@ void QDECL Com_Error(int code, const char *fmt, ...) {
 		VM_Forced_Unload_Done();
 		// make sure we can get at our local stuff
 		FS_PureServerSetLoadedPaks("", "");
+
 		com_errorEntered = qfalse;
 		longjmp(abortframe, -1);
 	} else if (code == ERR_DROP) {
@@ -330,6 +331,7 @@ void QDECL Com_Error(int code, const char *fmt, ...) {
 		CL_FlushMemory();
 		VM_Forced_Unload_Done();
 		FS_PureServerSetLoadedPaks("", "");
+
 		com_errorEntered = qfalse;
 		longjmp(abortframe, -1);
 	} else {
@@ -2591,10 +2593,11 @@ void Com_Init(char *commandLine) {
 	Com_StartupVariable(NULL);
 	// get dedicated here for proper hunk megs initialization
 #ifdef DEDICATED
-	com_dedicated = Cvar_Get("dedicated", "1", CVAR_ROM);
+	com_dedicated = Cvar_Get("dedicated", "1", CVAR_INIT);
+	Cvar_CheckRange(com_dedicated, 1, 2, qtrue);
 #else
 	com_dedicated = Cvar_Get("dedicated", "0", CVAR_LATCH);
-	Cvar_CheckRange(com_dedicated, 0, 1, qtrue);
+	Cvar_CheckRange(com_dedicated, 0, 2, qtrue);
 #endif
 	// allocate the stack based hunk allocator
 	Com_InitHunkMemory();

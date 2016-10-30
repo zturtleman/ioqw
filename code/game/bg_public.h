@@ -674,7 +674,6 @@ int cmdcmp(const void *a, const void *b);
 #define VOICECHAT_KILLGAUNTLET		"kill_gauntlet"		// I just killed you with the gauntlet
 #define VOICECHAT_TRASH				"trash"				// lots of trash talk
 
-
 /*
 =======================================================================================================================================
 

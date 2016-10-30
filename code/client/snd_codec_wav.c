@@ -1,7 +1,7 @@
 /*
 =======================================================================================================================================
 Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
-Copyright (C) 2005 Stuart Dalton (badcdev@gmail.com)
+Copyright (C) 2005 Stuart Dalton (badcdev@gmail.com).
 
 This file is part of Spearmint Source Code.
 

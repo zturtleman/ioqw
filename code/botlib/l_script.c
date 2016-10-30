@@ -43,7 +43,6 @@ typedef enum {
 	qfalse,
 	qtrue
 } qboolean;
-
 #endif // SCREWUP
 #ifdef BOTLIB
 // include files for usage in the bot library
@@ -1041,14 +1040,18 @@ int PS_ExpectTokenType(script_t *script, int type, int subtype, token_t *token) 
 
 			if (subtype & TT_DECIMAL) {
 				strcpy(str, "decimal");
-			} else if (subtype & TT_HEX) {
+			}
+
+			if (subtype & TT_HEX) {
 				strcpy(str, "hex");
-			} else if (subtype & TT_OCTAL) {
+			}
+
+			if (subtype & TT_OCTAL) {
 				strcpy(str, "octal");
-			} else if (subtype & TT_BINARY) {
+			}
+
+			if (subtype & TT_BINARY) {
 				strcpy(str, "binary");
-			} else {
-				strcpy(str, "unknown");
 			}
 
 			if (subtype & TT_LONG) {

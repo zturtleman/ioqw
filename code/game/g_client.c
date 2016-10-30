@@ -405,7 +405,7 @@ void CopyToBodyQue(gentity_t *ent) {
 
 	body = level.bodyQue[level.bodyQueIndex];
 	body->s = ent->s;
-	body->s.eFlags = EF_DEAD; // clear EF_TALK, etc
+	body->s.eFlags = EF_DEAD; // clear EF_TALK, etc.
 
 	if (ent->s.eFlags & EF_KAMIKAZE) {
 		body->s.eFlags |= EF_KAMIKAZE;

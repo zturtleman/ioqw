@@ -64,6 +64,8 @@ vmCvar_t bot_challenge;
 vmCvar_t bot_predictobstacles;
 vmCvar_t g_spSkill;
 
+extern vmCvar_t bot_developer;
+
 vec3_t lastteleport_origin; // last teleport event origin
 float lastteleport_time; // last teleport event time
 int max_bspmodelindex; // maximum BSP model index
@@ -803,8 +805,9 @@ void BotCTFSeekGoals(bot_state_t *bs) {
 	}
 
 	bs->owndecision_time = FloatTime() + 5;
-
+#ifdef DEBUG
 	BotPrintTeamGoal(bs);
+#endif // DEBUG
 }
 
 /*
@@ -1038,8 +1041,9 @@ void Bot1FCTFSeekGoals(bot_state_t *bs) {
 	}
 
 	bs->owndecision_time = FloatTime() + 5;
-
+#ifdef DEBUG
 	BotPrintTeamGoal(bs);
+#endif // DEBUG
 }
 
 /*

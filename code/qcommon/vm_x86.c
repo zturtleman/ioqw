@@ -36,7 +36,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include <sys/mman.h> // for PROT_ stuff
 // need this on NX enabled systems (i386 with PAE kernel or noexec32=on x86_64)
 #define VM_X86_MMAP
-
 // workaround for systems that use the old MAP_ANON macro
 #ifndef MAP_ANONYMOUS
 #define MAP_ANONYMOUS MAP_ANON
