@@ -881,7 +881,7 @@ UI_SetActiveMenu
 void UI_SetActiveMenu(uiMenuCommand_t menu) {
 
 	// this should be the ONLY way the menu system is brought up
-	// enusure minumum menu data is cached
+	// enusure minimum menu data is cached
 	Menu_Cache();
 
 	switch (menu) {

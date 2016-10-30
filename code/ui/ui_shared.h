@@ -85,6 +85,14 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define ART_FX_TEAL "menu/art/fx_teal"
 #define ART_FX_WHITE "menu/art/fx_white"
 #define ART_FX_YELLOW "menu/art/fx_yel"
+#define ART_FX_ORANGE "menu/art/fx_orange"
+#define ART_FX_LIME "menu/art/fx_lime"
+#define ART_FX_VIVIDGREEN "menu/art/fx_vividgreen"
+#define ART_FX_LIGHTBLUE "menu/art/fx_lightblue"
+#define ART_FX_PURPLE "menu/art/fx_purple"
+#define ART_FX_PINK "menu/art/fx_pink"
+
+#define NUM_COLOR_EFFECTS 13
 
 #define ASSET_GRADIENTBAR "ui/assets/gradientbar2.tga"
 #define ASSET_SCROLLBAR "ui/assets/scrollbar.tga"
@@ -301,7 +309,7 @@ typedef struct {
 	qboolean fontRegistered;
 	// player settings
 	qhandle_t fxBasePic;
-	qhandle_t fxPic[7];
+	qhandle_t fxPic[NUM_COLOR_EFFECTS];
 	qhandle_t crosshairShader[NUM_CROSSHAIRS];
 } cachedAssets_t;
 
@@ -348,6 +356,7 @@ typedef struct {
 	void (*keynumToStringBuf)(int keynum, char *buf, int buflen);
 	void (*getBindingBuf)(int keynum, char *buf, int buflen);
 	void (*setBinding)(int keynum, const char *binding);
+	int (*getKey)(const char *binding, int startKey);
 	void (*executeText)(int exec_when, const char *text);
 	void (*Error)(int level, const char *error, ...) __attribute__((noreturn, format(printf, 2, 3)));
 	void (*Print)(const char *msg, ...) __attribute__((format(printf, 1, 2)));
@@ -429,9 +438,4 @@ qboolean UI_OutOfMemory(void);
 void Controls_GetConfig(void);
 void Controls_SetConfig(qboolean restart);
 void Controls_SetDefaults(void);
-int trap_PC_AddGlobalDefine(char *define);
-int trap_PC_LoadSource(const char *filename);
-int trap_PC_FreeSource(int handle);
-int trap_PC_ReadToken(int handle, pc_token_t *pc_token);
-int trap_PC_SourceFileAndLine(int handle, char *filename, int *line);
 #endif

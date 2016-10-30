@@ -29,6 +29,9 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 // because games can change separately from the main system version, we need a second version that must match between game and cgame
 
 #define GAME_VERSION BASEGAME "-1"
+#define DEFAULT_MODEL "james"
+#define DEFAULT_TEAM_MODEL "james"
+#define DEFAULT_TEAM_HEAD "*james"
 #define DEFAULT_GRAVITY 800
 #define GIB_HEALTH -40
 #define ARMOR_PROTECTION 0.66

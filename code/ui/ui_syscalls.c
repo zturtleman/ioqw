@@ -84,6 +84,33 @@ int trap_Milliseconds(void) {
 
 /*
 =======================================================================================================================================
+trap_SnapVector
+=======================================================================================================================================
+*/
+void trap_SnapVector(float *v) {
+	syscall(UI_SNAPVECTOR, v);
+}
+
+/*
+=======================================================================================================================================
+trap_AddCommand
+=======================================================================================================================================
+*/
+void trap_AddCommand(const char *cmdName) {
+	syscall(UI_ADDCOMMAND, cmdName);
+}
+
+/*
+=======================================================================================================================================
+trap_RemoveCommand
+=======================================================================================================================================
+*/
+void trap_RemoveCommand(const char *cmdName) {
+	syscall(UI_REMOVECOMMAND, cmdName);
+}
+
+/*
+=======================================================================================================================================
 trap_Cvar_Register
 =======================================================================================================================================
 */
@@ -111,32 +138,11 @@ void trap_Cvar_Set(const char *var_name, const char *value) {
 
 /*
 =======================================================================================================================================
-trap_Cvar_VariableValue
-=======================================================================================================================================
-*/
-float trap_Cvar_VariableValue(const char *var_name) {
-	floatint_t fi;
-
-	fi.i = syscall(UI_CVAR_VARIABLEVALUE, var_name);
-	return fi.f;
-}
-
-/*
-=======================================================================================================================================
-trap_Cvar_VariableStringBuffer
-=======================================================================================================================================
-*/
-void trap_Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize) {
-	syscall(UI_CVAR_VARIABLESTRINGBUFFER, var_name, buffer, bufsize);
-}
-
-/*
-=======================================================================================================================================
 trap_Cvar_SetValue
 =======================================================================================================================================
 */
 void trap_Cvar_SetValue(const char *var_name, float value) {
-	syscall(UI_CVAR_SETVALUE, var_name, PASSFLOAT(value));
+	syscall(UI_CVAR_SET_VALUE, var_name, PASSFLOAT(value));
 }
 
 /*
@@ -150,11 +156,41 @@ void trap_Cvar_Reset(const char *name) {
 
 /*
 =======================================================================================================================================
-trap_Cvar_Create
+trap_Cvar_VariableValue
 =======================================================================================================================================
 */
-void trap_Cvar_Create(const char *var_name, const char *var_value, int flags) {
-	syscall(UI_CVAR_CREATE, var_name, var_value, flags);
+float trap_Cvar_VariableValue(const char *var_name) {
+	floatint_t fi;
+
+	fi.i = syscall(UI_CVAR_VARIABLE_VALUE, var_name);
+	return fi.f;
+}
+
+/*
+=======================================================================================================================================
+trap_Cvar_VariableIntegerValue
+=======================================================================================================================================
+*/
+int trap_Cvar_VariableIntegerValue(const char *var_name) {
+	return syscall(UI_CVAR_VARIABLE_INTEGER_VALUE, var_name);
+}
+
+/*
+=======================================================================================================================================
+trap_Cvar_VariableStringBuffer
+=======================================================================================================================================
+*/
+void trap_Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize) {
+	syscall(UI_CVAR_VARIABLE_STRING_BUFFER, var_name, buffer, bufsize);
+}
+
+/*
+=======================================================================================================================================
+trap_Cvar_LatchedVariableStringBuffer
+=======================================================================================================================================
+*/
+void trap_Cvar_LatchedVariableStringBuffer(const char *var_name, char *buffer, int bufsize) {
+	syscall(UI_CVAR_LATCHED_VARIABLE_STRING_BUFFER, var_name, buffer, bufsize);
 }
 
 /*
@@ -163,7 +199,7 @@ trap_Cvar_InfoStringBuffer
 =======================================================================================================================================
 */
 void trap_Cvar_InfoStringBuffer(int bit, char *buffer, int bufsize) {
-	syscall(UI_CVAR_INFOSTRINGBUFFER, bit, buffer, bufsize);
+	syscall(UI_CVAR_INFO_STRING_BUFFER, bit, buffer, bufsize);
 }
 
 /*
@@ -182,6 +218,15 @@ trap_Argv
 */
 void trap_Argv(int n, char *buffer, int bufferLength) {
 	syscall(UI_ARGV, n, buffer, bufferLength);
+}
+
+/*
+=======================================================================================================================================
+trap_Args
+=======================================================================================================================================
+*/
+void trap_Args(char *buffer, int bufferLength) {
+	syscall(UI_ARGS, buffer, bufferLength);
 }
 
 /*
@@ -207,7 +252,7 @@ int trap_FS_FOpenFile(const char *qpath, fileHandle_t *f, fsMode_t mode) {
 trap_FS_Read
 =======================================================================================================================================
 */
-void trap_FS_Read(void *buffer, int len, fileHandle_t f) {
+int trap_FS_Read(void *buffer, int len, fileHandle_t f) {
 	syscall(UI_FS_READ, buffer, len, f);
 }
 
@@ -216,8 +261,17 @@ void trap_FS_Read(void *buffer, int len, fileHandle_t f) {
 trap_FS_Write
 =======================================================================================================================================
 */
-void trap_FS_Write(const void *buffer, int len, fileHandle_t f) {
+int trap_FS_Write(const void *buffer, int len, fileHandle_t f) {
 	syscall(UI_FS_WRITE, buffer, len, f);
+}
+
+/*
+=======================================================================================================================================
+trap_FS_Seek
+=======================================================================================================================================
+*/
+int trap_FS_Seek(fileHandle_t f, long offset, int origin) {
+	return syscall(UI_FS_SEEK, f, offset, origin);
 }
 
 /*
@@ -240,11 +294,20 @@ int trap_FS_GetFileList(const char *path, const char *extension, char *listbuf, 
 
 /*
 =======================================================================================================================================
-trap_FS_Seek
+trap_FS_Delete
 =======================================================================================================================================
 */
-int trap_FS_Seek(fileHandle_t f, long offset, int origin) {
-	return syscall(UI_FS_SEEK, f, offset, origin);
+int trap_FS_Delete(const char *path) {
+	return syscall(UI_FS_DELETE, path);
+}
+
+/*
+=======================================================================================================================================
+trap_FS_Rename
+=======================================================================================================================================
+*/
+int trap_FS_Rename(const char *from, const char *to) {
+	return syscall(UI_FS_RENAME, from, to);
 }
 
 /*
@@ -267,11 +330,11 @@ qhandle_t trap_R_RegisterSkin(const char *name) {
 
 /*
 =======================================================================================================================================
-trap_R_RegisterFont
+trap_R_RegisterShader
 =======================================================================================================================================
 */
-void trap_R_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font) {
-	syscall(UI_R_REGISTERFONT, fontName, pointSize, font);
+qhandle_t trap_R_RegisterShader(const char *name) {
+	return syscall(UI_R_REGISTERSHADER, name);
 }
 
 /*
@@ -281,6 +344,15 @@ trap_R_RegisterShaderNoMip
 */
 qhandle_t trap_R_RegisterShaderNoMip(const char *name) {
 	return syscall(UI_R_REGISTERSHADERNOMIP, name);
+}
+
+/*
+=======================================================================================================================================
+trap_R_RegisterFont
+=======================================================================================================================================
+*/
+void trap_R_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font) {
+	syscall(UI_R_REGISTERFONT, fontName, pointSize, font);
 }
 
 /*
@@ -339,6 +411,14 @@ void trap_R_SetColor(const float *rgba) {
 
 /*
 =======================================================================================================================================
+trap_R_SetClipRegion
+=======================================================================================================================================
+*/
+void trap_R_SetClipRegion(const float *region) {
+	syscall(UI_R_SETCLIPREGION, region);
+}
+/*
+=======================================================================================================================================
 trap_R_DrawStretchPic
 =======================================================================================================================================
 */
@@ -366,11 +446,29 @@ void trap_UpdateScreen(void) {
 
 /*
 =======================================================================================================================================
-trap_CM_LerpTag
+trap_R_LerpTag
 =======================================================================================================================================
 */
-int trap_CM_LerpTag(orientation_t *tag, clipHandle_t mod, int startFrame, int endFrame, float frac, const char *tagName) {
-	return syscall(UI_CM_LERPTAG, tag, mod, startFrame, endFrame, PASSFLOAT(frac), tagName);
+int trap_R_LerpTag(orientation_t *tag, clipHandle_t mod, int startFrame, int endFrame, float frac, const char *tagName) {
+	return syscall(UI_R_LERPTAG, tag, mod, startFrame, endFrame, PASSFLOAT(frac), tagName);
+}
+
+/*
+=======================================================================================================================================
+trap_R_RemapShader
+=======================================================================================================================================
+*/
+void trap_R_RemapShader(const char *oldShader, const char *newShader, const char *timeOffset) {
+	syscall(UI_R_REMAP_SHADER, oldShader, newShader, timeOffset);
+}
+
+/*
+=======================================================================================================================================
+trap_S_RegisterSound
+=======================================================================================================================================
+*/
+sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed) {
+	return syscall(UI_S_REGISTERSOUND, sample, compressed);
 }
 
 /*
@@ -384,11 +482,11 @@ void trap_S_StartLocalSound(sfxHandle_t sfx, int channelNum) {
 
 /*
 =======================================================================================================================================
-trap_S_RegisterSound
+trap_S_SoundDuration
 =======================================================================================================================================
 */
-sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed) {
-	return syscall(UI_S_REGISTERSOUND, sample, compressed);
+int trap_S_SoundDuration(sfxHandle_t handle) {
+	return syscall(UI_S_SOUNDDURATION, handle);
 }
 
 /*
@@ -474,20 +572,20 @@ void trap_Key_SetCatcher(int catcher) {
 
 /*
 =======================================================================================================================================
+trap_Key_GetKey
+=======================================================================================================================================
+*/
+int trap_Key_GetKey(const char *binding, int startKey) {
+	return syscall(UI_KEY_GETKEY, binding, startKey);
+}
+
+/*
+=======================================================================================================================================
 trap_GetClipboardData
 =======================================================================================================================================
 */
 void trap_GetClipboardData(char *buf, int bufsize) {
 	syscall(UI_GETCLIPBOARDDATA, buf, bufsize);
-}
-
-/*
-=======================================================================================================================================
-trap_GetClientState
-=======================================================================================================================================
-*/
-void trap_GetClientState(uiClientState_t *state) {
-	syscall(UI_GETCLIENTSTATE, state);
 }
 
 /*
@@ -501,11 +599,56 @@ void trap_GetGlconfig(glconfig_t *glconfig) {
 
 /*
 =======================================================================================================================================
+trap_GetClientState
+=======================================================================================================================================
+*/
+void trap_GetClientState(uiClientState_t *state) {
+	syscall(UI_GETCLIENTSTATE, state);
+}
+
+/*
+=======================================================================================================================================
 trap_GetConfigString
 =======================================================================================================================================
 */
 int trap_GetConfigString(int index, char *buff, int buffsize) {
 	return syscall(UI_GETCONFIGSTRING, index, buff, buffsize);
+}
+
+/*
+=======================================================================================================================================
+trap_LAN_GetPingQueueCount
+=======================================================================================================================================
+*/
+int trap_LAN_GetPingQueueCount(void) {
+	return syscall(UI_LAN_GETPINGQUEUECOUNT);
+}
+
+/*
+=======================================================================================================================================
+trap_LAN_ClearPing
+=======================================================================================================================================
+*/
+void trap_LAN_ClearPing(int n) {
+	syscall(UI_LAN_CLEARPING, n);
+}
+
+/*
+=======================================================================================================================================
+trap_LAN_GetPing
+=======================================================================================================================================
+*/
+void trap_LAN_GetPing(int n, char *buf, int buflen, int *pingtime) {
+	syscall(UI_LAN_GETPING, n, buf, buflen, pingtime);
+}
+
+/*
+=======================================================================================================================================
+trap_LAN_GetPingInfo
+=======================================================================================================================================
+*/
+void trap_LAN_GetPingInfo(int n, char *buf, int buflen) {
+	syscall(UI_LAN_GETPINGINFO, n, buf, buflen);
 }
 
 /*
@@ -546,15 +689,6 @@ int trap_LAN_GetServerPing(int source, int n) {
 
 /*
 =======================================================================================================================================
-trap_LAN_GetPingQueueCount
-=======================================================================================================================================
-*/
-int trap_LAN_GetPingQueueCount(void) {
-	return syscall(UI_LAN_GETPINGQUEUECOUNT);
-}
-
-/*
-=======================================================================================================================================
 trap_LAN_ServerStatus
 =======================================================================================================================================
 */
@@ -587,33 +721,6 @@ trap_LAN_ResetPings
 */
 void trap_LAN_ResetPings(int n) {
 	syscall(UI_LAN_RESETPINGS, n);
-}
-
-/*
-=======================================================================================================================================
-trap_LAN_ClearPing
-=======================================================================================================================================
-*/
-void trap_LAN_ClearPing(int n) {
-	syscall(UI_LAN_CLEARPING, n);
-}
-
-/*
-=======================================================================================================================================
-trap_LAN_GetPing
-=======================================================================================================================================
-*/
-void trap_LAN_GetPing(int n, char *buf, int buflen, int *pingtime) {
-	syscall(UI_LAN_GETPING, n, buf, buflen, pingtime);
-}
-
-/*
-=======================================================================================================================================
-trap_LAN_GetPingInfo
-=======================================================================================================================================
-*/
-void trap_LAN_GetPingInfo(int n, char *buf, int buflen) {
-	syscall(UI_LAN_GETPINGINFO, n, buf, buflen);
 }
 
 /*
@@ -690,6 +797,15 @@ int trap_PC_AddGlobalDefine(char *define) {
 
 /*
 =======================================================================================================================================
+trap_PC_RemoveAllGlobalDefines
+=======================================================================================================================================
+*/
+void trap_PC_RemoveAllGlobalDefines(void) {
+	syscall(UI_PC_REMOVE_ALL_GLOBAL_DEFINES);
+}
+
+/*
+=======================================================================================================================================
 trap_PC_LoadSource
 =======================================================================================================================================
 */
@@ -713,6 +829,15 @@ trap_PC_ReadToken
 */
 int trap_PC_ReadToken(int handle, pc_token_t *pc_token) {
 	return syscall(UI_PC_READ_TOKEN, handle, pc_token);
+}
+
+/*
+=======================================================================================================================================
+trap_PC_UnreadToken
+=======================================================================================================================================
+*/
+void trap_PC_UnreadToken(int handle) {
+	syscall(UI_PC_UNREAD_TOKEN, handle);
 }
 
 /*
@@ -805,13 +930,4 @@ Allows you to resize the animation dynamically.
 */
 void trap_CIN_SetExtents(int handle, int x, int y, int w, int h) {
 	syscall(UI_CIN_SETEXTENTS, handle, x, y, w, h);
-}
-
-/*
-=======================================================================================================================================
-trap_R_RemapShader
-=======================================================================================================================================
-*/
-void trap_R_RemapShader(const char *oldShader, const char *newShader, const char *timeOffset) {
-	syscall(UI_R_REMAP_SHADER, oldShader, newShader, timeOffset);
 }

@@ -85,50 +85,54 @@ tryagain:
 		goto tryagain;
 	}
 
-	if (weaponNum == WP_MACHINEGUN || weaponNum == WP_GAUNTLET || weaponNum == WP_BFG) {
-		COM_StripExtension(item->world_model[0], path, sizeof(path));
-		Q_strcat(path, sizeof(path), "_barrel.md3");
-		pi->barrelModel = trap_R_RegisterModel(path);
-	}
+	COM_StripExtension(item->world_model[0], path, sizeof(path));
+	Q_strcat(path, sizeof(path), "_barrel.md3");
+	pi->barrelModel = trap_R_RegisterModel(path);
 
 	COM_StripExtension(item->world_model[0], path, sizeof(path));
 	Q_strcat(path, sizeof(path), "_flash.md3");
-
 	pi->flashModel = trap_R_RegisterModel(path);
 
 	switch (weaponNum) {
 		case WP_GAUNTLET:
-			MAKERGB(pi->flashDlightColor, 0.6f, 0.6f, 1);
+			MAKERGB(pi->flashDlightColor, 1.0f, 1.0f, 1.0f);
 			break;
 		case WP_MACHINEGUN:
-			MAKERGB(pi->flashDlightColor, 1, 1, 0);
+			MAKERGB(pi->flashDlightColor, 1.0f, 0.75f, 0);
+			break;
+		case WP_CHAINGUN:
+			MAKERGB(pi->flashDlightColor, 1.0f, 0.8f, 0.2f);
 			break;
 		case WP_SHOTGUN:
-			MAKERGB(pi->flashDlightColor, 1, 1, 0);
+			MAKERGB(pi->flashDlightColor, 1.0f, 0.7f, 0);
+			break;
+		case WP_NAILGUN:
+			MAKERGB(pi->flashDlightColor, 1, 0.7f, 0);
+			break;
+		case WP_PROX_LAUNCHER:
 			break;
 		case WP_GRENADE_LAUNCHER:
-			MAKERGB(pi->flashDlightColor, 1, 0.7f, 0.5f);
 			break;
 		case WP_ROCKET_LAUNCHER:
-			MAKERGB(pi->flashDlightColor, 1, 0.75f, 0);
+			MAKERGB(pi->flashDlightColor, 1.0f, 0.75f, 0);
 			break;
 		case WP_LIGHTNING:
-			MAKERGB(pi->flashDlightColor, 0.6f, 0.6f, 1);
+			MAKERGB(pi->flashDlightColor, 0.45f, 0.7f, 1.0f);
 			break;
 		case WP_RAILGUN:
-			MAKERGB(pi->flashDlightColor, 1, 0.5f, 0);
+			MAKERGB(pi->flashDlightColor, 1.0f, 0, 0.7f);
 			break;
 		case WP_PLASMAGUN:
-			MAKERGB(pi->flashDlightColor, 0.6f, 0.6f, 1);
+			MAKERGB(pi->flashDlightColor, 0.7f, 0.8f, 1.0f);
 			break;
 		case WP_BFG:
-			MAKERGB(pi->flashDlightColor, 1, 0.7f, 1);
+			MAKERGB(pi->flashDlightColor, 0.65f, 1.0f, 0.7f);
 			break;
 		case WP_GRAPPLING_HOOK:
-			MAKERGB(pi->flashDlightColor, 0.6f, 0.6f, 1);
+			MAKERGB(pi->flashDlightColor, 0.6f, 0.6f, 1.0f);
 			break;
 		default:
-			MAKERGB(pi->flashDlightColor, 1, 1, 1);
+			MAKERGB(pi->flashDlightColor, 0, 0, 0);
 			break;
 	}
 }
@@ -275,12 +279,13 @@ static void UI_LegsSequencing(playerInfo_t *pi) {
 UI_PositionEntityOnTag
 =======================================================================================================================================
 */
-static void UI_PositionEntityOnTag(refEntity_t *entity, const refEntity_t *parent, clipHandle_t parentModel, char *tagName) {
+static qboolean UI_PositionEntityOnTag(refEntity_t *entity, const refEntity_t *parent, clipHandle_t parentModel, char *tagName) {
 	int i;
 	orientation_t lerped;
-
+	qboolean returnValue;
+	
 	// lerp the tag
-	trap_CM_LerpTag(&lerped, parentModel, parent->oldframe, parent->frame, 1.0 - parent->backlerp, tagName);
+	returnValue = trap_R_LerpTag(&lerped, parentModel, parent->oldframe, parent->frame, 1.0 - parent->backlerp, tagName);
 	// FIXME: allow origin offsets along tag?
 	VectorCopy(parent->origin, entity->origin);
 
@@ -290,6 +295,8 @@ static void UI_PositionEntityOnTag(refEntity_t *entity, const refEntity_t *paren
 	// cast away const because of compiler problems
 	MatrixMultiply(lerped.axis, ((refEntity_t *)parent)->axis, entity->axis);
 	entity->backlerp = parent->backlerp;
+
+	return returnValue;
 }
 
 /*
@@ -297,13 +304,14 @@ static void UI_PositionEntityOnTag(refEntity_t *entity, const refEntity_t *paren
 UI_PositionRotatedEntityOnTag
 =======================================================================================================================================
 */
-static void UI_PositionRotatedEntityOnTag(refEntity_t *entity, const refEntity_t *parent, clipHandle_t parentModel, char *tagName) {
+static qboolean UI_PositionRotatedEntityOnTag(refEntity_t *entity, const refEntity_t *parent, clipHandle_t parentModel, char *tagName) {
 	int i;
 	orientation_t lerped;
 	vec3_t tempAxis[3];
+	qboolean returnValue;
 
 	// lerp the tag
-	trap_CM_LerpTag(&lerped, parentModel, parent->oldframe, parent->frame, 1.0 - parent->backlerp, tagName);
+	returnValue = trap_R_LerpTag(&lerped, parentModel, parent->oldframe, parent->frame, 1.0 - parent->backlerp, tagName);
 	// FIXME: allow origin offsets along tag?
 	VectorCopy(parent->origin, entity->origin);
 
@@ -313,6 +321,8 @@ static void UI_PositionRotatedEntityOnTag(refEntity_t *entity, const refEntity_t
 	// cast away const because of compiler problems
 	MatrixMultiply(entity->axis, lerped.axis, tempAxis);
 	MatrixMultiply(tempAxis, ((refEntity_t *)parent)->axis, entity->axis);
+
+	return returnValue;
 }
 
 /*
@@ -807,7 +817,7 @@ void UI_DrawPlayer(float x, float y, float w, float h, playerInfo_t *pi, int tim
 		trap_R_AddRefEntityToScene(&gun);
 	}
 	// add the spinning barrel
-	if (pi->realWeapon == WP_MACHINEGUN || pi->realWeapon == WP_GAUNTLET || pi->realWeapon == WP_BFG) {
+	if (pi->barrelModel) {
 		vec3_t angles;
 
 		memset(&barrel, 0, sizeof(barrel));

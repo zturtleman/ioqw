@@ -117,8 +117,8 @@ static char *netnames[] = {
 static char quake3worldMessage[] = "Visit www.quake3world.com - News, Community, Events, Files";
 #endif
 
-static int gamecodetoui[] = {4, 2, 3, 0, 5, 1, 6};
-static int uitogamecode[] = {4, 6, 2, 3, 1, 5, 7};
+static int gamecodetoui[NUM_COLOR_EFFECTS] = {8, 4, 6, 0, 10, 2, 12, 1, 3, 5, 7, 9, 11};
+static int uitogamecode[NUM_COLOR_EFFECTS] = {4, 8, 6, 9, 2, 10, 3, 11, 1, 12, 5, 13, 7};
 
 static void UI_StartServerRefresh(qboolean full);
 static void UI_StopServerRefresh(void);
@@ -233,6 +233,33 @@ void AssetCache(void) {
 	}
 
 	uiInfo.newHighScoreSound = trap_S_RegisterSound("sound/feedback/voc_newhighscore.wav", qfalse);
+}
+
+/*
+=======================================================================================================================================
+UI_SetClipRegion
+=======================================================================================================================================
+*/
+void UI_SetClipRegion(float x, float y, float w, float h) {
+	vec4_t clip;
+
+	UI_AdjustFrom640(&x, &y, &w, &h);
+
+	clip[0] = x;
+	clip[1] = y;
+	clip[2] = x + w;
+	clip[3] = y + h;
+
+	trap_R_SetClipRegion(clip);
+}
+
+/*
+=======================================================================================================================================
+UI_ClearClipRegion
+=======================================================================================================================================
+*/
+void UI_ClearClipRegion(void) {
+	trap_R_SetClipRegion(NULL);
 }
 
 /*
@@ -549,71 +576,6 @@ void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const cha
 			yadj = useScale * glyph2->top;
 
 			Text_PaintChar(x, y - yadj, glyph2->imageWidth, glyph2->imageHeight, useScale, glyph2->s, glyph2->t, glyph2->s2, glyph2->t2, glyph2->glyph);
-		}
-
-		trap_R_SetColor(NULL);
-	}
-}
-
-/*
-=======================================================================================================================================
-Text_Paint_Limit
-=======================================================================================================================================
-*/
-static void Text_Paint_Limit(float *maxX, float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit) {
-	int len, count;
-	vec4_t newColor;
-	glyphInfo_t *glyph;
-
-	if (text) {
-		const char *s = text;
-		float max = *maxX;
-		float useScale;
-		fontInfo_t *font = &uiInfo.uiDC.Assets.textFont;
-
-		if (scale <= ui_smallFont.value) {
-			font = &uiInfo.uiDC.Assets.smallFont;
-		} else if (scale > ui_bigFont.value) {
-			font = &uiInfo.uiDC.Assets.bigFont;
-		}
-
-		useScale = scale * font->glyphScale;
-
-		trap_R_SetColor(color);
-
-		len = strlen(text);
-
-		if (limit > 0 && len > limit) {
-			len = limit;
-		}
-
-		count = 0;
-
-		while (s && *s && count < len) {
-			glyph = &font->glyphs[*s & 255];
-
-			if (Q_IsColorString(s)) {
-				memcpy(newColor, g_color_table[ColorIndex(*(s + 1))], sizeof(newColor));
-
-				newColor[3] = color[3];
-				trap_R_SetColor(newColor);
-				s += 2;
-				continue;
-			} else {
-				float yadj = useScale * glyph->top;
-
-				if (Text_Width(s, scale, 1) + x > max) {
-					*maxX = 0;
-					break;
-				}
-
-				Text_PaintChar(x, y - yadj, glyph->imageWidth, glyph->imageHeight, useScale, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
-
-				x += (glyph->xSkip * useScale) + adjust;
-				*maxX = x;
-				count++;
-				s++;
-			}
 		}
 
 		trap_R_SetColor(NULL);
@@ -1435,8 +1397,10 @@ UI_DrawEffects
 =======================================================================================================================================
 */
 static void UI_DrawEffects(rectDef_t *rect, float scale, vec4_t color) {
+	float xOffset = 128.0f / (NUM_COLOR_EFFECTS + 1);
+
 	UI_DrawHandlePic(rect->x, rect->y - 14, 128, 8, uiInfo.uiDC.Assets.fxBasePic);
-	UI_DrawHandlePic(rect->x + uiInfo.effectsColor * 16 + 8, rect->y - 16, 16, 12, uiInfo.uiDC.Assets.fxPic[uiInfo.effectsColor]);
+	UI_DrawHandlePic(rect->x + uiInfo.effectsColor * xOffset + xOffset * 0.5f, rect->y - 16, 16, 12, uiInfo.uiDC.Assets.fxPic[uiInfo.effectsColor]);
 }
 
 /*
@@ -2369,76 +2333,32 @@ static void UI_DrawServerRefreshDate(rectDef_t *rect, float scale, vec4_t color,
 	}
 }
 
+#define MOTD_PIXELS_PER_SECOND 30.0f
 /*
 =======================================================================================================================================
 UI_DrawServerMOTD
 =======================================================================================================================================
 */
 static void UI_DrawServerMOTD(rectDef_t *rect, float scale, vec4_t color) {
+	char *text = uiInfo.serverStatus.motd;
+	float textWidth = MAX(rect->w, Text_Width(text, scale, 0));
+	int now = uiInfo.uiDC.realTime;
+	int delta = now - uiInfo.serverStatus.motdTime;
 
-	if (uiInfo.serverStatus.motdLen) {
-		float maxX;
+	UI_SetClipRegion(rect->x, rect->y, rect->w, rect->h);
 
-		if (uiInfo.serverStatus.motdWidth == -1) {
-			uiInfo.serverStatus.motdWidth = 0;
-			uiInfo.serverStatus.motdPaintX = rect->x + 1;
-			uiInfo.serverStatus.motdPaintX2 = -1;
-		}
+	Text_Paint(rect->x - uiInfo.serverStatus.motdOffset, rect->y + rect->h - 3, scale, color, text, 0, 0, 0);
+	Text_Paint(rect->x + textWidth - uiInfo.serverStatus.motdOffset, rect->y + rect->h - 3, scale, color, text, 0, 0, 0);
 
-		if (uiInfo.serverStatus.motdOffset > uiInfo.serverStatus.motdLen) {
-			uiInfo.serverStatus.motdOffset = 0;
-			uiInfo.serverStatus.motdPaintX = rect->x + 1;
-			uiInfo.serverStatus.motdPaintX2 = -1;
-		}
+	UI_ClearClipRegion();
 
-		if (uiInfo.uiDC.realTime > uiInfo.serverStatus.motdTime) {
-			uiInfo.serverStatus.motdTime = uiInfo.uiDC.realTime + 10;
+	uiInfo.serverStatus.motdOffset += (delta / 1000.0f) * MOTD_PIXELS_PER_SECOND;
 
-			if (uiInfo.serverStatus.motdPaintX <= rect->x + 2) {
-				if (uiInfo.serverStatus.motdOffset < uiInfo.serverStatus.motdLen) {
-					uiInfo.serverStatus.motdPaintX += Text_Width(&uiInfo.serverStatus.motd[uiInfo.serverStatus.motdOffset], scale, 1) - 1;
-					uiInfo.serverStatus.motdOffset++;
-				} else {
-					uiInfo.serverStatus.motdOffset = 0;
-
-					if (uiInfo.serverStatus.motdPaintX2 >= 0) {
-						uiInfo.serverStatus.motdPaintX = uiInfo.serverStatus.motdPaintX2;
-					} else {
-						uiInfo.serverStatus.motdPaintX = rect->x + rect->w - 2;
-					}
-
-					uiInfo.serverStatus.motdPaintX2 = -1;
-				}
-			} else {
-				//serverStatus.motdPaintX--;
-				uiInfo.serverStatus.motdPaintX -= 2;
-
-				if (uiInfo.serverStatus.motdPaintX2 >= 0) {
-					//serverStatus.motdPaintX2--;
-					uiInfo.serverStatus.motdPaintX2 -= 2;
-				}
-			}
-		}
-
-		maxX = rect->x + rect->w - 2;
-
-		Text_Paint_Limit(&maxX, uiInfo.serverStatus.motdPaintX, rect->y + rect->h - 3, scale, color, &uiInfo.serverStatus.motd[uiInfo.serverStatus.motdOffset], 0, 0);
-
-		if (uiInfo.serverStatus.motdPaintX2 >= 0) {
-			float maxX2 = rect->x + rect->w - 2;
-
-			Text_Paint_Limit(&maxX2, uiInfo.serverStatus.motdPaintX2, rect->y + rect->h - 3, scale, color, uiInfo.serverStatus.motd, 0, uiInfo.serverStatus.motdOffset);
-		}
-
-		if (uiInfo.serverStatus.motdOffset && maxX > 0) {
-			// if we have an offset(we are skipping the first part of the string) and we fit the string
-			if (uiInfo.serverStatus.motdPaintX2 == -1) {
-				uiInfo.serverStatus.motdPaintX2 = rect->x + rect->w - 2;
-			}
-		} else {
-			uiInfo.serverStatus.motdPaintX2 = -1;
-		}
+	while (uiInfo.serverStatus.motdOffset > textWidth) {
+		uiInfo.serverStatus.motdOffset -= textWidth;
 	}
+
+	uiInfo.serverStatus.motdTime = now;
 }
 
 /*
@@ -2862,10 +2782,10 @@ static qboolean UI_Effects_HandleKey(int flags, float *special, int key) {
 	if (select != 0) {
 		uiInfo.effectsColor += select;
 
-		if (uiInfo.effectsColor > 6) {
+		if (uiInfo.effectsColor > NUM_COLOR_EFFECTS - 1) {
 			uiInfo.effectsColor = 0;
 		} else if (uiInfo.effectsColor < 0) {
-			uiInfo.effectsColor = 6;
+			uiInfo.effectsColor = NUM_COLOR_EFFECTS - 1;
 		}
 
 		trap_Cvar_SetValue("color1", uitogamecode[uiInfo.effectsColor]);
@@ -3747,7 +3667,7 @@ static void UI_StartSkirmish(qboolean next) {
 	}
 
 	if (g >= GT_TEAM) {
-		trap_Cmd_ExecuteText(EXEC_APPEND, "wait 5; team Red\n");
+		trap_Cvar_Set("teampref", "red");
 	}
 }
 
@@ -4099,7 +4019,6 @@ static void UI_RunMenuScript(char **args) {
 			UI_StartSkirmish(qfalse);
 		} else if (Q_stricmp(name, "closeingame") == 0) {
 			trap_Key_SetCatcher(trap_Key_GetCatcher() & ~KEYCATCH_UI);
-			trap_Key_ClearStates();
 			trap_Cvar_SetValue("cl_paused", 0);
 			Menus_CloseAll();
 		} else if (Q_stricmp(name, "voteMap") == 0) {
@@ -4209,7 +4128,6 @@ static void UI_RunMenuScript(char **args) {
 				}
 
 				trap_Key_SetCatcher(trap_Key_GetCatcher() & ~KEYCATCH_UI);
-				trap_Key_ClearStates();
 				trap_Cvar_SetValue("cl_paused", 0);
 				Menus_CloseAll();
 			}
@@ -4225,7 +4143,6 @@ static void UI_RunMenuScript(char **args) {
 				}
 
 				trap_Key_SetCatcher(trap_Key_GetCatcher() & ~KEYCATCH_UI);
-				trap_Key_ClearStates();
 				trap_Cvar_SetValue("cl_paused", 0);
 				Menus_CloseAll();
 			}
@@ -4242,7 +4159,6 @@ static void UI_RunMenuScript(char **args) {
 				}
 
 				trap_Key_SetCatcher(trap_Key_GetCatcher() & ~KEYCATCH_UI);
-				trap_Key_ClearStates();
 				trap_Cvar_SetValue("cl_paused", 0);
 				Menus_CloseAll();
 			}
@@ -4494,12 +4410,6 @@ static void UI_BuildServerDisplayList(int force) {
 
 	if (len == 0) {
 		strcpy(uiInfo.serverStatus.motd, "Welcome to Team Arena!");
-		len = strlen(uiInfo.serverStatus.motd);
-	}
-
-	if (len != uiInfo.serverStatus.motdLen) {
-		uiInfo.serverStatus.motdLen = len;
-		uiInfo.serverStatus.motdWidth = -1;
 	}
 
 	lanSource = UI_SourceForLAN();
@@ -5785,7 +5695,6 @@ static void UI_Pause(qboolean b) {
 	} else {
 		// unpause the game and clear the ui keycatcher
 		trap_Key_SetCatcher(trap_Key_GetCatcher() & ~KEYCATCH_UI);
-		trap_Key_ClearStates();
 		trap_Cvar_SetValue("cl_paused", 0);
 	}
 }
@@ -5996,6 +5905,7 @@ void _UI_Init(qboolean inGameLoad) {
 	uiInfo.uiDC.setBinding = &trap_Key_SetBinding;
 	uiInfo.uiDC.getBindingBuf = &trap_Key_GetBindingBuf;
 	uiInfo.uiDC.keynumToStringBuf = &trap_Key_KeynumToStringBuf;
+	uiInfo.uiDC.getKey = &trap_Key_GetKey;
 	uiInfo.uiDC.executeText = &trap_Cmd_ExecuteText;
 	uiInfo.uiDC.Error = &Com_Error;
 	uiInfo.uiDC.Print = &Com_Printf;
@@ -6067,7 +5977,7 @@ void _UI_Init(qboolean inGameLoad) {
 	}
 
 	trap_Cvar_Register(NULL, "debug_protocol", "", 0);
-	trap_Cvar_SetValue("ui_actualNetGameType", va("%d", ui_netGameType.integer);
+	trap_Cvar_SetValue("ui_actualNetGameType", ui_netGameType.integer);
 }
 
 /*
@@ -6088,7 +5998,6 @@ void _UI_KeyEvent(int key, qboolean down) {
 			}
 		} else {
 			trap_Key_SetCatcher(trap_Key_GetCatcher() & ~KEYCATCH_UI);
-			trap_Key_ClearStates();
 			trap_Cvar_SetValue("cl_paused", 0);
 		}
 	}
@@ -6161,7 +6070,6 @@ void _UI_SetActiveMenu(uiMenuCommand_t menu) {
 		switch (menu) {
 			case UIMENU_NONE:
 				trap_Key_SetCatcher(trap_Key_GetCatcher() & ~KEYCATCH_UI);
-				trap_Key_ClearStates();
 				trap_Cvar_SetValue("cl_paused", 0);
 				Menus_CloseAll();
 				return;
@@ -6673,10 +6581,10 @@ static cvarTable_t cvarTable[] = {
 	{&ui_new, "ui_new", "0", CVAR_TEMP},
 	{&ui_debug, "ui_debug", "0", CVAR_TEMP},
 	{&ui_initialized, "ui_initialized", "0", CVAR_TEMP},
-	{&ui_teamName, "ui_teamName", "Pagans", CVAR_ARCHIVE},
-	{&ui_opponentName, "ui_opponentName", "Stroggs", CVAR_ARCHIVE},
-	{&ui_redteam, "ui_redteam", "Pagans", CVAR_ARCHIVE},
-	{&ui_blueteam, "ui_blueteam", "Stroggs", CVAR_ARCHIVE},
+	{&ui_teamName, "ui_teamName", DEFAULT_REDTEAM_NAME, CVAR_ARCHIVE},
+	{&ui_opponentName, "ui_opponentName", DEFAULT_BLUETEAM_NAME, CVAR_ARCHIVE},
+	{&ui_redteam, "ui_redteam", DEFAULT_REDTEAM_NAME, CVAR_ARCHIVE},
+	{&ui_blueteam, "ui_blueteam", DEFAULT_BLUETEAM_NAME, CVAR_ARCHIVE},
 	{&ui_dedicated, "ui_dedicated", "0", CVAR_ARCHIVE},
 	{&ui_gameType, "ui_gametype", "3", CVAR_ARCHIVE},
 	{&ui_joinGameType, "ui_joinGametype", "0", CVAR_ARCHIVE},
@@ -6708,7 +6616,7 @@ static cvarTable_t cvarTable[] = {
 	{&ui_lastServerRefresh_4, "ui_lastServerRefresh_4", "", CVAR_ARCHIVE},
 	{&ui_lastServerRefresh_5, "ui_lastServerRefresh_5", "", CVAR_ARCHIVE},
 	{&ui_lastServerRefresh_6, "ui_lastServerRefresh_6", "", CVAR_ARCHIVE},
-	{&ui_singlePlayerActive, "ui_singlePlayerActive", "0", 0},
+	{&ui_singlePlayerActive, "ui_singlePlayerActive", "0", CVAR_SYSTEMINFO|CVAR_ROM},
 	{&ui_scoreAccuracy, "ui_scoreAccuracy", "0", CVAR_ARCHIVE},
 	{&ui_scoreImpressives, "ui_scoreImpressives", "0", CVAR_ARCHIVE},
 	{&ui_scoreExcellents, "ui_scoreExcellents", "0", CVAR_ARCHIVE},
@@ -6728,7 +6636,7 @@ static cvarTable_t cvarTable[] = {
 	{&ui_captureLimit, "ui_captureLimit", "5", 0},
 	{&ui_smallFont, "ui_smallFont", "0.25", CVAR_ARCHIVE},
 	{&ui_bigFont, "ui_bigFont", "0.4", CVAR_ARCHIVE},
-	{&ui_findPlayer, "ui_findPlayer", "Sarge", CVAR_ARCHIVE},
+	{&ui_findPlayer, "ui_findPlayer", DEFAULT_MODEL, CVAR_ARCHIVE},
 	{&ui_Q3Model, "ui_q3model", "0", CVAR_ARCHIVE},
 	{&ui_hudFiles, "cg_hudFiles", "ui/hud.txt", CVAR_ARCHIVE},
 	{&ui_recordSPDemo, "ui_recordSPDemo", "0", CVAR_ARCHIVE},

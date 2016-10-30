@@ -871,7 +871,7 @@ void Svcmd_BotList_f(void) {
 		strcpy(model, Info_ValueForKey(g_botInfos[i], "model"));
 
 		if (!*model) {
-			strcpy(model, "visor/default");
+			strcpy(model, DEFAULT_MODEL);
 		}
 
 		strcpy(aifile, Info_ValueForKey(g_botInfos[i], "aifile"));

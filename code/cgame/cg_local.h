@@ -71,9 +71,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define NUM_CROSSHAIRS 10
 #define TEAM_OVERLAY_MAXNAME_WIDTH 12
 #define TEAM_OVERLAY_MAXLOCATION_WIDTH 16
-#define DEFAULT_MODEL "james"
-#define DEFAULT_TEAM_MODEL "james"
-#define DEFAULT_TEAM_HEAD "*james"
 
 typedef enum {
 	FOOTSTEP_NORMAL,

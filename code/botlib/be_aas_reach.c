@@ -3280,7 +3280,7 @@ aas_lreachability_t *AAS_FindFaceReachabilities(vec3_t *facepoints, int numpoint
 
 	for (i = 1; i < aasworld.numareas; i++) {
 		area = &aasworld.areas[i];
-		// get the shortest distance between one of the func_bob start edges and one of the face edges of area1
+		// get the shortest distance between one of the func_bobbing start edges and one of the face edges of area1
 		bestdist = 999999;
 
 		for (j = 0; j < area->numfaces; j++) {
