@@ -82,18 +82,6 @@ static const char *netSources[] = {
 
 static const int numNetSources = ARRAY_LEN(netSources);
 
-static const serverFilter_t serverFilters[] = {
-	{"All", ""},
-	{"Quake 3 Arena", ""},
-	{"Team Arena", BASETA},
-	{"Rocket Arena", "arena"},
-	{"Alliance", "alliance20"},
-	{"Weapons Factory Arena", "wfa"},
-	{"OSP", "osp"},
-};
-
-static const int numServerFilters = ARRAY_LEN(serverFilters);
-
 static const char *teamArenaGameTypes[] = {
 	"FFA",
 	"TOURNAMENT",
@@ -213,12 +201,18 @@ void AssetCache(void) {
 	uiInfo.uiDC.Assets.gradientBar = trap_R_RegisterShaderNoMip(ASSET_GRADIENTBAR);
 	uiInfo.uiDC.Assets.fxBasePic = trap_R_RegisterShaderNoMip(ART_FX_BASE);
 	uiInfo.uiDC.Assets.fxPic[0] = trap_R_RegisterShaderNoMip(ART_FX_RED);
-	uiInfo.uiDC.Assets.fxPic[1] = trap_R_RegisterShaderNoMip(ART_FX_YELLOW);
-	uiInfo.uiDC.Assets.fxPic[2] = trap_R_RegisterShaderNoMip(ART_FX_GREEN);
-	uiInfo.uiDC.Assets.fxPic[3] = trap_R_RegisterShaderNoMip(ART_FX_TEAL);
-	uiInfo.uiDC.Assets.fxPic[4] = trap_R_RegisterShaderNoMip(ART_FX_BLUE);
-	uiInfo.uiDC.Assets.fxPic[5] = trap_R_RegisterShaderNoMip(ART_FX_CYAN);
-	uiInfo.uiDC.Assets.fxPic[6] = trap_R_RegisterShaderNoMip(ART_FX_WHITE);
+	uiInfo.uiDC.Assets.fxPic[1] = trap_R_RegisterShaderNoMip(ART_FX_ORANGE);
+	uiInfo.uiDC.Assets.fxPic[2] = trap_R_RegisterShaderNoMip(ART_FX_YELLOW);
+	uiInfo.uiDC.Assets.fxPic[3] = trap_R_RegisterShaderNoMip(ART_FX_LIME);
+	uiInfo.uiDC.Assets.fxPic[4] = trap_R_RegisterShaderNoMip(ART_FX_GREEN);
+	uiInfo.uiDC.Assets.fxPic[5] = trap_R_RegisterShaderNoMip(ART_FX_VIVIDGREEN);
+	uiInfo.uiDC.Assets.fxPic[6] = trap_R_RegisterShaderNoMip(ART_FX_TEAL);
+	uiInfo.uiDC.Assets.fxPic[7] = trap_R_RegisterShaderNoMip(ART_FX_LIGHTBLUE);
+	uiInfo.uiDC.Assets.fxPic[8] = trap_R_RegisterShaderNoMip(ART_FX_BLUE);
+	uiInfo.uiDC.Assets.fxPic[9] = trap_R_RegisterShaderNoMip(ART_FX_PURPLE);
+	uiInfo.uiDC.Assets.fxPic[10] = trap_R_RegisterShaderNoMip(ART_FX_CYAN);
+	uiInfo.uiDC.Assets.fxPic[11] = trap_R_RegisterShaderNoMip(ART_FX_PINK);
+	uiInfo.uiDC.Assets.fxPic[12] = trap_R_RegisterShaderNoMip(ART_FX_WHITE);
 	uiInfo.uiDC.Assets.scrollBar = trap_R_RegisterShaderNoMip(ASSET_SCROLLBAR);
 	uiInfo.uiDC.Assets.scrollBarArrowDown = trap_R_RegisterShaderNoMip(ASSET_SCROLLBAR_ARROWDOWN);
 	uiInfo.uiDC.Assets.scrollBarArrowUp = trap_R_RegisterShaderNoMip(ASSET_SCROLLBAR_ARROWUP);
@@ -1112,6 +1106,35 @@ int UI_SourceForLAN(void) {
 	}
 }
 
+/*
+=======================================================================================================================================
+UI_FilterDescription
+=======================================================================================================================================
+*/
+const char *UI_FilterDescription(int value) {
+
+	if (value <= 0 || value > uiInfo.modCount) {
+		return "All";
+	}
+
+	return uiInfo.modList[value - 1].modDescr;
+}
+
+/*
+=======================================================================================================================================
+UI_FilterDir
+=======================================================================================================================================
+*/
+const char *UI_FilterDir(int value) {
+
+	if (value <= 0 || value > uiInfo.modCount) {
+		return "";
+	}
+
+	return uiInfo.modList[value - 1].modName;
+}
+
+
 static const char *handicapValues[] = {
 	"None",
 	"95",
@@ -1398,9 +1421,28 @@ UI_DrawEffects
 */
 static void UI_DrawEffects(rectDef_t *rect, float scale, vec4_t color) {
 	float xOffset = 128.0f / (NUM_COLOR_EFFECTS + 1);
+	qhandle_t colorShader;
 
 	UI_DrawHandlePic(rect->x, rect->y - 14, 128, 8, uiInfo.uiDC.Assets.fxBasePic);
-	UI_DrawHandlePic(rect->x + uiInfo.effectsColor * xOffset + xOffset * 0.5f, rect->y - 16, 16, 12, uiInfo.uiDC.Assets.fxPic[uiInfo.effectsColor]);
+
+	colorShader = uiInfo.uiDC.Assets.fxPic[uiInfo.effectsColor];
+
+	if (!colorShader) {
+		vec4_t picColor;
+
+		colorShader = uiInfo.uiDC.Assets.fxPic[NUM_COLOR_EFFECTS - 1]; // white
+
+		if (!colorShader) {
+			colorShader = uiInfo.uiDC.whiteShader;
+		}
+
+		UI_ColorFromIndex(uitogamecode[uiInfo.effectsColor], picColor);
+		picColor[3] = 1;
+		trap_R_SetColor(picColor);
+	}
+
+	UI_DrawHandlePic(rect->x + uiInfo.effectsColor * xOffset + xOffset * 0.5f, rect->y - 16, 16, 12, colorShader);
+	trap_R_SetColor(NULL);
 }
 
 /*
@@ -1604,11 +1646,7 @@ UI_DrawNetFilter
 */
 static void UI_DrawNetFilter(rectDef_t *rect, float scale, vec4_t color, int textStyle) {
 
-	if (ui_serverFilterType.integer < 0 || ui_serverFilterType.integer >= numServerFilters) {
-		ui_serverFilterType.integer = 0;
-	}
-
-	Text_Paint(rect->x, rect->y, scale, color, va("Filter: %s", serverFilters[ui_serverFilterType.integer].description), 0, 0, textStyle);
+	Text_Paint(rect->x, rect->y, scale, color, va("Filter: %s", UI_FilterDescription(ui_serverFilterType.integer)), 0, 0, textStyle);
 }
 
 /*
@@ -2128,11 +2166,7 @@ static int UI_OwnerDrawWidth(int ownerDraw, float scale) {
 			s = va("Source: %s", netSources[ui_netSource.integer]);
 			break;
 		case UI_NETFILTER:
-			if (ui_serverFilterType.integer < 0 || ui_serverFilterType.integer >= numServerFilters) {
-				ui_serverFilterType.integer = 0;
-			}
-
-			s = va("Filter: %s", serverFilters[ui_serverFilterType.integer].description);
+			s = va("Filter: %s", UI_FilterDescription(ui_serverFilterType.integer));
 			break;
 		case UI_TIER:
 			break;
@@ -3081,10 +3115,10 @@ static qboolean UI_NetFilter_HandleKey(int flags, float *special, int key) {
 	if (select != 0) {
 		ui_serverFilterType.integer += select;
 
-		if (ui_serverFilterType.integer >= numServerFilters) {
+		if (ui_serverFilterType.integer > uiInfo.modCount) {
 			ui_serverFilterType.integer = 0;
 		} else if (ui_serverFilterType.integer < 0) {
-			ui_serverFilterType.integer = numServerFilters - 1;
+			ui_serverFilterType.integer = uiInfo.modCount;
 		}
 
 		UI_BuildServerDisplayList(qtrue);
@@ -3495,7 +3529,6 @@ static void UI_LoadMovies(void) {
 				moviename[len - 4] = '\0';
 			}
 
-			Q_strupr(moviename);
 			uiInfo.movieList[i] = String_Alloc(moviename);
 			moviename += len + 1;
 		}
@@ -3962,6 +3995,7 @@ static void UI_RunMenuScript(char **args) {
 
 			UI_BuildServerDisplayList(qtrue);
 			UI_FeederSelection(FEEDER_SERVERS, 0);
+			UI_LoadMods();
 		} else if (Q_stricmp(name, "ServerStatus") == 0) {
 			trap_LAN_GetServerAddressString(UI_SourceForLAN(), uiInfo.serverStatus.displayServers[uiInfo.serverStatus.currentServer], uiInfo.serverStatusAddress, sizeof(uiInfo.serverStatusAddress));
 			UI_BuildServerStatus(qtrue);
@@ -4479,7 +4513,7 @@ static void UI_BuildServerDisplayList(int force) {
 			}
 
 			if (ui_serverFilterType.integer > 0) {
-				if (Q_stricmp(Info_ValueForKey(info, "game"), serverFilters[ui_serverFilterType.integer].basedir) != 0) {
+				if (Q_stricmp(Info_ValueForKey(info, "game"), UI_FilterDir(ui_serverFilterType.integer)) != 0) {
 					trap_LAN_MarkServerVisible(lanSource, i, qfalse);
 					continue;
 				}
