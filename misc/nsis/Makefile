@@ -4,6 +4,9 @@ endif
 ifndef RELEASE
 RELEASE=0
 endif
+ifndef PLATFORM
+PLATFORM=mingw32
+endif
 ifndef ARCH
 ARCH=x86
 endif
@@ -60,7 +63,7 @@ endif
 all: quakewars-$(VERSION)-$(RELEASE).$(ARCH).exe
 
 quakewars.$(ARCH).nsi: quakewars.nsi.in
-	sed 's/XXXVERSIONXXX/$(VERSION)/;s/XXXRELEASEXXX/$(RELEASE)/;s/x86/$(ARCH)/g;s/SDL2.dll/$(SDLDLL)/' < $< > $@
+	sed 's/XXXVERSIONXXX/$(VERSION)/;s/XXXRELEASEXXX/$(RELEASE)/;s/mingw32/$(PLATFORM)/g;s/x86/$(ARCH)/g;s/SDL2.dll/$(SDLDLL)/g' < $< > $@
 
 quakewars-$(VERSION)-$(RELEASE).$(ARCH).exe: quakewars.$(ARCH).nsi
 	makensis $(DEFINES) quakewars.$(ARCH).nsi
