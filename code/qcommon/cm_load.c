@@ -758,6 +758,33 @@ char *CM_EntityString(void) {
 
 /*
 =======================================================================================================================================
+CM_GetEntityToken
+=======================================================================================================================================
+*/
+qboolean CM_GetEntityToken(int *parseOffset, char *token, int size) {
+	const char *s;
+	char *parsePoint = cm.entityString;
+
+	if (!cm.entityString || *parseOffset < 0 || *parseOffset >= cm.numEntityChars) {
+		return qfalse;
+	}
+
+	parsePoint = cm.entityString + *parseOffset;
+
+	s = COM_Parse(&parsePoint);
+	Q_strncpyz(token, s, size);
+
+	if (!parsePoint && !s[0]) {
+		*parseOffset = 0;
+		return qfalse;
+	} else {
+		*parseOffset = parsePoint - cm.entityString;
+		return qtrue;
+	}
+}
+
+/*
+=======================================================================================================================================
 CM_LeafCluster
 =======================================================================================================================================
 */

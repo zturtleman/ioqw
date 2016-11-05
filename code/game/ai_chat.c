@@ -445,7 +445,7 @@ int BotValidChatPosition(bot_state_t *bs) {
 	trap_AAS_PresenceTypeBoundingBox(PRESENCE_CROUCH, mins, maxs);
 	BotAI_Trace(&trace, start, mins, maxs, end, bs->client, MASK_SOLID);
 
-	if (trace.ent != ENTITYNUM_WORLD) {
+	if (trace.entityNum != ENTITYNUM_WORLD) {
 		return qfalse;
 	}
 	// the bot is in a position where it can chat

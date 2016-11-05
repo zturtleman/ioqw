@@ -198,28 +198,7 @@ BotImport_Trace
 =======================================================================================================================================
 */
 static void BotImport_Trace(bsp_trace_t *bsptrace, vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, int passent, int contentmask) {
-	trace_t trace;
-
-	SV_Trace(&trace, start, mins, maxs, end, passent, contentmask, qfalse);
-	// copy the trace information
-	bsptrace->allsolid = trace.allsolid;
-	bsptrace->startsolid = trace.startsolid;
-	bsptrace->fraction = trace.fraction;
-
-	VectorCopy(trace.endpos, bsptrace->endpos);
-
-	bsptrace->plane.dist = trace.plane.dist;
-
-	VectorCopy(trace.plane.normal, bsptrace->plane.normal);
-
-	bsptrace->plane.signbits = trace.plane.signbits;
-	bsptrace->plane.type = trace.plane.type;
-	bsptrace->surface.value = 0;
-	bsptrace->surface.flags = trace.surfaceFlags;
-	bsptrace->ent = trace.entityNum;
-	bsptrace->exp_dist = 0;
-	bsptrace->sidenum = 0;
-	bsptrace->contents = 0;
+	SV_Trace(bsptrace, start, mins, maxs, end, passent, contentmask, qfalse);
 }
 
 /*
@@ -228,28 +207,7 @@ BotImport_EntityTrace
 =======================================================================================================================================
 */
 static void BotImport_EntityTrace(bsp_trace_t *bsptrace, vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, int entnum, int contentmask) {
-	trace_t trace;
-
-	SV_ClipToEntity(&trace, start, mins, maxs, end, entnum, contentmask, qfalse);
-	// copy the trace information
-	bsptrace->allsolid = trace.allsolid;
-	bsptrace->startsolid = trace.startsolid;
-	bsptrace->fraction = trace.fraction;
-
-	VectorCopy(trace.endpos, bsptrace->endpos);
-
-	bsptrace->plane.dist = trace.plane.dist;
-
-	VectorCopy(trace.plane.normal, bsptrace->plane.normal);
-
-	bsptrace->plane.signbits = trace.plane.signbits;
-	bsptrace->plane.type = trace.plane.type;
-	bsptrace->surface.value = 0;
-	bsptrace->surface.flags = trace.surfaceFlags;
-	bsptrace->ent = trace.entityNum;
-	bsptrace->exp_dist = 0;
-	bsptrace->sidenum = 0;
-	bsptrace->contents = 0;
+	SV_ClipToEntity(bsptrace, start, mins, maxs, end, entnum, contentmask, qfalse);
 }
 
 /*
@@ -272,11 +230,11 @@ static int BotImport_inPVS(vec3_t p1, vec3_t p2) {
 
 /*
 =======================================================================================================================================
-BotImport_BSPEntityData
+BotImport_GetEntityToken
 =======================================================================================================================================
 */
-static char *BotImport_BSPEntityData(void) {
-	return CM_EntityString();
+qboolean BotImport_GetEntityToken(int *offset, char *buffer, int size) {
+	return CM_GetEntityToken(offset, buffer, size);
 }
 
 /*
@@ -594,12 +552,13 @@ void SV_BotInitBotLib(void) {
 	bot_maxdebugpolys = Cvar_VariableIntegerValue("bot_maxdebugpolys");
 	debugpolygons = Z_Malloc(sizeof(bot_debugpoly_t) * bot_maxdebugpolys);
 
+	botlib_import.MilliSeconds = Sys_Milliseconds;
 	botlib_import.Print = BotImport_Print;
 	botlib_import.Trace = BotImport_Trace;
 	botlib_import.EntityTrace = BotImport_EntityTrace;
 	botlib_import.PointContents = BotImport_PointContents;
 	botlib_import.inPVS = BotImport_inPVS;
-	botlib_import.BSPEntityData = BotImport_BSPEntityData;
+	botlib_import.GetEntityToken = BotImport_GetEntityToken;
 	botlib_import.BSPModelMinsMaxsOrigin = BotImport_BSPModelMinsMaxsOrigin;
 	botlib_import.BotClientCommand = BotClientCommand;
 	// memory management

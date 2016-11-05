@@ -27,7 +27,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 **************************************************************************************************************************************/
 
 #include "../qcommon/q_shared.h"
-#include "l_memory.h"
 #include "l_log.h"
 #include "l_libvar.h"
 #include "l_script.h"
@@ -63,15 +62,6 @@ int botlibsetup = qfalse;
 
 =======================================================================================================================================
 */
-
-/*
-=======================================================================================================================================
-Sys_MilliSeconds
-=======================================================================================================================================
-*/
-int Sys_MilliSeconds(void) {
-	return clock() * 1000 / CLOCKS_PER_SEC;
-}
 
 /*
 =======================================================================================================================================
@@ -250,7 +240,7 @@ int Export_BotLibShutdown(void) {
 Export_BotLibVarSet
 =======================================================================================================================================
 */
-int Export_BotLibVarSet(char *var_name, char *value) {
+int Export_BotLibVarSet(const char *var_name, const char *value) {
 
 	LibVarSet(var_name, value);
 	return BLERR_NOERROR;
@@ -261,7 +251,7 @@ int Export_BotLibVarSet(char *var_name, char *value) {
 Export_BotLibVarGet
 =======================================================================================================================================
 */
-int Export_BotLibVarGet(char *var_name, char *value, int size) {
+int Export_BotLibVarGet(const char *var_name, char *value, int size) {
 	char *varvalue;
 
 	varvalue = LibVarGetString(var_name);
@@ -291,7 +281,7 @@ Export_BotLibLoadMap
 */
 int Export_BotLibLoadMap(const char *mapname) {
 #ifdef DEBUG
-	int starttime = Sys_MilliSeconds();
+	int starttime = botimport.MilliSeconds();
 #endif
 	int errnum;
 
@@ -312,7 +302,7 @@ int Export_BotLibLoadMap(const char *mapname) {
 
 	botimport.Print(PRT_MESSAGE, "-------------------------------------\n");
 #ifdef DEBUG
-	botimport.Print(PRT_MESSAGE, "map loaded in %d msec\n", Sys_MilliSeconds() - starttime);
+	botimport.Print(PRT_MESSAGE, "map loaded in %d msec\n", botimport.MilliSeconds() - starttime);
 #endif
 	return BLERR_NOERROR;
 }
@@ -340,7 +330,7 @@ int Export_BotLibUpdateEntity(int ent, bot_entitystate_t *state) {
 BotExportTest
 =======================================================================================================================================
 */
-void AAS_TestMovementPrediction(int entnum, vec3_t origin, vec3_t dir);
+void AAS_TestMovementPrediction(int entnum, vec3_t origin, vec3_t dir, int contentmask);
 void ElevatorBottomCenter(aas_reachability_t *reach, vec3_t bottomcenter);
 int BotGetReachabilityToGoal(vec3_t origin, int areanum, int lastgoalareanum, int lastareanum, int *avoidreach, float *avoidreachtimes, int *avoidreachtries, bot_goal_t *goal, int travelflags, struct bot_avoidspot_s *avoidspots, int numavoidspots, int *flags);
 int AAS_PointLight(vec3_t origin, int *red, int *green, int *blue);
@@ -460,7 +450,7 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 		VectorCopy(origin, end);
 		end[2] += 5;
 		numareas = AAS_TraceAreas(origin, end, areas, NULL, 10);
-		AAS_TraceClientBBox(origin, end, PRESENCE_CROUCH, -1);
+		AAS_TraceClientBBox(origin, end, PRESENCE_CROUCH, -1, BOTMASK_SOLID);
 		botimport.Print(PRT_MESSAGE, "num areas = %d, area = %d\n", numareas, areas[0]);
 		*/
 		/*
@@ -586,10 +576,10 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 	// get the end point for the line to be traced
 //	VectorMA(eye, 800, forward, end);
 
-//	AAS_TestMovementPrediction(1, parm2, forward);
+//	AAS_TestMovementPrediction(1, parm2, forward, BOTMASK_SOLID);
 /*
 	// trace the line to find the hit point
-	trace = AAS_TraceClientBBox(eye, end, PRESENCE_NORMAL, 1);
+	trace = AAS_TraceClientBBox(eye, end, PRESENCE_NORMAL, 1, BOTMASK_SOLID);
 
 	if (!line[0]) {
 		line[0] = botimport.DebugLineCreate();
@@ -609,7 +599,7 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 
 	for (i = 0; i < 2000; i++) {
 		AAS_Trace2(eye, mins, maxs, end, 1, MASK_PLAYERSOLID);
-//		AAS_TraceClientBBox(eye, end, PRESENCE_NORMAL, 1);
+//		AAS_TraceClientBBox(eye, end, PRESENCE_NORMAL, 1, BOTMASK_SOLID);
 	}
 
 	end_time = clock();

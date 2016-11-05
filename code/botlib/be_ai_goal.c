@@ -635,7 +635,7 @@ void BotInitLevelItems(void) {
 		}
 		// if not a stationary item
 		if (!(spawnflags & 1)) {
-			if (!AAS_DropToFloor(origin, ic->iteminfo[i].mins, ic->iteminfo[i].maxs)) {
+			if (!AAS_DropToFloor(origin, ic->iteminfo[i].mins, ic->iteminfo[i].maxs, 0, CONTENTS_SOLID)) {
 				botimport.Print(PRT_MESSAGE, "%s in solid at (%1.1f %1.1f %1.1f)\n", classname, origin[0], origin[1], origin[2]);
 			}
 		}

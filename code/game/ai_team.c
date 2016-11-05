@@ -72,10 +72,10 @@ BotNumTeamMates
 =======================================================================================================================================
 */
 int BotNumTeamMates(bot_state_t *bs) {
-	int i, numplayers;
+	int i, numteammates;
 	char buf[MAX_INFO_STRING];
 
-	numplayers = 0;
+	numteammates = 0;
 
 	for (i = 0; i < level.maxclients; i++) {
 		trap_GetConfigstring(CS_PLAYERS + i, buf, sizeof(buf));
@@ -89,11 +89,11 @@ int BotNumTeamMates(bot_state_t *bs) {
 		}
 
 		if (BotSameTeam(bs, i)) {
-			numplayers++;
+			numteammates++;
 		}
 	}
 
-	return numplayers;
+	return numteammates;
 }
 
 /*

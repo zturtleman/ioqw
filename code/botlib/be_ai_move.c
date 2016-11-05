@@ -337,13 +337,13 @@ int BotReachabilityArea(vec3_t origin, int client) {
 	VectorMA(origin, -3, up, end);
 	bsptrace = AAS_Trace(origin, mins, maxs, end, client, CONTENTS_SOLID|CONTENTS_PLAYERCLIP);
 
-	if (!bsptrace.startsolid && bsptrace.fraction < 1 && bsptrace.ent != ENTITYNUM_NONE) {
+	if (!bsptrace.startsolid && bsptrace.fraction < 1 && bsptrace.entityNum != ENTITYNUM_NONE) {
 		// if standing on the world the bot should be in a valid area
-		if (bsptrace.ent == ENTITYNUM_WORLD) {
+		if (bsptrace.entityNum == ENTITYNUM_WORLD) {
 			return BotFuzzyPointReachabilityArea(origin);
 		}
 
-		modelnum = AAS_EntityModelindex(bsptrace.ent);
+		modelnum = AAS_EntityModelindex(bsptrace.entityNum);
 		modeltype = modeltypes[modelnum];
 		// if standing on a func_plat or func_bobbing then the bot is assumed to be in the area the reachability points to
 		if (modeltype == MODELTYPE_FUNC_PLAT || modeltype == MODELTYPE_FUNC_BOB) {
@@ -368,7 +368,7 @@ int BotReachabilityArea(vec3_t origin, int client) {
 		VectorCopy(origin, org);
 		VectorCopy(org, end);
 		end[2] -= 800;
-		trace = AAS_TraceClientBBox(org, end, PRESENCE_CROUCH, -1);
+		trace = AAS_TraceClientBBox(org, end, PRESENCE_CROUCH, -1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP);
 
 		if (!trace.startsolid) {
 			VectorCopy(trace.endpos, org);
@@ -401,7 +401,7 @@ int BotReachabilityArea(vec3_t origin, int testground) {
 		if (i > 0) {
 			VectorCopy(origin, end);
 			end[2] -= 800;
-			trace = AAS_TraceClientBBox(origin, end, PRESENCE_CROUCH, -1);
+			trace = AAS_TraceClientBBox(origin, end, PRESENCE_CROUCH, -1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP);
 
 			if (!trace.startsolid) {
 				VectorCopy(trace.endpos, org);
@@ -500,7 +500,7 @@ int BotOnMover(vec3_t origin, int entnum, aas_reachability_t *reach) {
 
 	if (!trace.startsolid && !trace.allsolid) {
 		// NOTE: the reachability face number is the model number of the elevator
-		if (trace.ent != ENTITYNUM_NONE && AAS_EntityModelNum(trace.ent) == modelnum) {
+		if (trace.entityNum != ENTITYNUM_NONE && AAS_EntityModelNum(trace.entityNum) == modelnum) {
 			return qtrue;
 		}
 	}
@@ -590,8 +590,8 @@ int BotOnTopOfEntity(bot_movestate_t *ms) {
 	VectorMA(ms->origin, -3, up, end);
 	trace = AAS_Trace(ms->origin, mins, maxs, end, ms->entitynum, CONTENTS_SOLID|CONTENTS_PLAYERCLIP);
 
-	if (!trace.startsolid && (trace.ent != ENTITYNUM_WORLD && trace.ent != ENTITYNUM_NONE)) {
-		return trace.ent;
+	if (!trace.startsolid && (trace.entityNum != ENTITYNUM_WORLD && trace.entityNum != ENTITYNUM_NONE)) {
+		return trace.entityNum;
 	}
 
 	return -1;
@@ -1097,7 +1097,7 @@ float BotGapDistance(vec3_t origin, vec3_t hordir, int entnum) {
 		VectorCopy(origin, start);
 		VectorCopy(origin, end);
 		end[2] -= 60;
-		trace = AAS_TraceClientBBox(start, end, PRESENCE_CROUCH, entnum);
+		trace = AAS_TraceClientBBox(start, end, PRESENCE_CROUCH, entnum, CONTENTS_SOLID|CONTENTS_PLAYERCLIP);
 
 		if (trace.fraction >= 1) {
 			return 1;
@@ -1111,7 +1111,7 @@ float BotGapDistance(vec3_t origin, vec3_t hordir, int entnum) {
 		start[2] = startz + 24;
 		VectorCopy(start, end);
 		end[2] -= 48 + sv_maxbarrier->value;
-		trace = AAS_TraceClientBBox(start, end, PRESENCE_CROUCH, entnum);
+		trace = AAS_TraceClientBBox(start, end, PRESENCE_CROUCH, entnum, CONTENTS_SOLID|CONTENTS_PLAYERCLIP);
 		// if solid is found the bot can't walk any further and fall into a gap
 		if (!trace.startsolid) {
 			// if it is a gap
@@ -1146,7 +1146,7 @@ int BotCheckBarrierJump(bot_movestate_t *ms, vec3_t dir, float speed) {
 	VectorCopy(ms->origin, end);
 	end[2] += sv_maxbarrier->value;
 	// trace right up
-	trace = AAS_TraceClientBBox(ms->origin, end, PRESENCE_NORMAL, ms->entitynum);
+	trace = AAS_TraceClientBBox(ms->origin, end, PRESENCE_NORMAL, ms->entitynum, CONTENTS_SOLID|CONTENTS_PLAYERCLIP);
 	// this shouldn't happen... but we check anyway
 	if (trace.startsolid) {
 		return qfalse;
@@ -1164,7 +1164,7 @@ int BotCheckBarrierJump(bot_movestate_t *ms, vec3_t dir, float speed) {
 	VectorCopy(trace.endpos, start);
 	end[2] = trace.endpos[2];
 	// trace from previous trace end pos horizontally in the move direction
-	trace = AAS_TraceClientBBox(start, end, PRESENCE_NORMAL, ms->entitynum);
+	trace = AAS_TraceClientBBox(start, end, PRESENCE_NORMAL, ms->entitynum, CONTENTS_SOLID|CONTENTS_PLAYERCLIP);
 	// again this shouldn't happen
 	if (trace.startsolid) {
 		return qfalse;
@@ -1174,7 +1174,7 @@ int BotCheckBarrierJump(bot_movestate_t *ms, vec3_t dir, float speed) {
 	VectorCopy(trace.endpos, end);
 	end[2] = ms->origin[2];
 	// trace down from the previous trace end pos
-	trace = AAS_TraceClientBBox(start, end, PRESENCE_NORMAL, ms->entitynum);
+	trace = AAS_TraceClientBBox(start, end, PRESENCE_NORMAL, ms->entitynum, CONTENTS_SOLID|CONTENTS_PLAYERCLIP);
 	// if solid
 	if (trace.startsolid) {
 		return qfalse;
@@ -1220,7 +1220,7 @@ int BotWalkInDirection(bot_movestate_t *ms, vec3_t dir, float speed, int type) {
 	aas_clientmove_t move;
 	float dist;
 
-	if (AAS_OnGround(ms->origin, ms->presencetype, ms->entitynum)) {
+	if (AAS_OnGround(ms->origin, ms->presencetype, ms->entitynum, CONTENTS_SOLID|CONTENTS_PLAYERCLIP)) {
 		ms->moveflags |= MFL_ONGROUND;
 	}
 	// if the bot is on the ground
@@ -1269,7 +1269,7 @@ int BotWalkInDirection(bot_movestate_t *ms, vec3_t dir, float speed, int type) {
 
 		VectorCopy(ms->origin, origin);
 		origin[2] += 0.5;
-		AAS_PredictClientMovement(&move, ms->entitynum, origin, presencetype, qtrue, velocity, cmdmove, cmdframes, maxframes, 0.1f, stopevent, 0, qfalse); // qtrue
+		AAS_PredictClientMovement(&move, ms->entitynum, origin, presencetype, qtrue, velocity, cmdmove, cmdframes, maxframes, 0.1f, stopevent, 0, qfalse, BOTMASK_SOLID);
 		// if prediction time wasn't enough to fully predict the movement
 		if (move.frames >= maxframes && (type & MOVE_JUMP)) {
 			//botimport.Print(PRT_MESSAGE, "client %d: max prediction frames\n", ms->client);
@@ -1399,9 +1399,9 @@ void BotCheckBlocked(bot_movestate_t *ms, vec3_t dir, int checkbottom, bot_mover
 	VectorMA(ms->origin, 3, dir, end);
 	trace = AAS_Trace(ms->origin, mins, maxs, end, ms->entitynum, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BODY);
 	// if not started in solid and not hitting the world entity
-	if (!trace.startsolid && (trace.ent != ENTITYNUM_WORLD && trace.ent != ENTITYNUM_NONE)) {
+	if (!trace.startsolid && (trace.entityNum != ENTITYNUM_WORLD && trace.entityNum != ENTITYNUM_NONE)) {
 		result->blocked = qtrue;
-		result->blockentity = trace.ent;
+		result->blockentity = trace.entityNum;
 #ifdef DEBUG
 		//botimport.Print(PRT_MESSAGE, "%d: BotCheckBlocked: I'm blocked\n", ms->client);
 #endif // DEBUG
@@ -1412,9 +1412,9 @@ void BotCheckBlocked(bot_movestate_t *ms, vec3_t dir, int checkbottom, bot_mover
 		VectorMA(ms->origin, -3, up, end);
 		trace = AAS_Trace(ms->origin, mins, maxs, end, ms->entitynum, CONTENTS_SOLID|CONTENTS_PLAYERCLIP);
 
-		if (!trace.startsolid && (trace.ent != ENTITYNUM_WORLD && trace.ent != ENTITYNUM_NONE)) {
+		if (!trace.startsolid && (trace.entityNum != ENTITYNUM_WORLD && trace.entityNum != ENTITYNUM_NONE)) {
 			result->blocked = qtrue;
-			result->blockentity = trace.ent;
+			result->blockentity = trace.entityNum;
 			result->flags |= MOVERESULT_ONTOPOFOBSTACLE;
 #ifdef DEBUG
 			//botimport.Print(PRT_MESSAGE, "%d: BotCheckBlocked: I'm blocked\n", ms->client);
@@ -1963,7 +1963,7 @@ bot_moveresult_t BotTravel_Jump(bot_movestate_t *ms, aas_reachability_t *reach) 
 	float dist1, dist2, speed;
 	bot_moveresult_t_cleared(result);
 
-	AAS_JumpReachRunStart(reach, runstart);
+	AAS_JumpReachRunStart(reach, runstart, CONTENTS_SOLID|CONTENTS_PLAYERCLIP);
 
 	hordir[0] = runstart[0] - reach->start[0];
 	hordir[1] = runstart[1] - reach->start[1];
@@ -3200,7 +3200,7 @@ void BotMoveToGoal(bot_moveresult_t *result, int movestate, bot_goal_t *goal, in
 	ms->moveflags &= ~(MFL_SWIMMING|MFL_AGAINSTLADDER);
 	// set some of the move flags
 	// NOTE: the MFL_ONGROUND flag is also set in the higher AI
-	if (AAS_OnGround(ms->origin, ms->presencetype, ms->entitynum)) {
+	if (AAS_OnGround(ms->origin, ms->presencetype, ms->entitynum, CONTENTS_SOLID|CONTENTS_PLAYERCLIP)) {
 		ms->moveflags |= MFL_ONGROUND;
 	}
 

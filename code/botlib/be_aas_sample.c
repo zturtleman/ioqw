@@ -28,9 +28,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #include "../qcommon/q_shared.h"
 #include "l_memory.h"
-#include "l_script.h"
-#include "l_precomp.h"
-#include "l_struct.h"
 #ifndef BSPC
 #include "l_libvar.h"
 #endif
@@ -434,7 +431,7 @@ vec_t AAS_BoxOriginDistanceFromPlane(vec3_t normal, vec3_t mins, vec3_t maxs, in
 AAS_AreaEntityCollision
 =======================================================================================================================================
 */
-qboolean AAS_AreaEntityCollision(int areanum, vec3_t start, vec3_t end, int presencetype, int passent, aas_trace_t *trace) {
+qboolean AAS_AreaEntityCollision(int areanum, vec3_t start, vec3_t end, int presencetype, int passent, int contentmask, aas_trace_t *trace) {
 	int collision;
 	vec3_t boxmins, boxmaxs;
 	aas_link_t *link;
@@ -453,17 +450,21 @@ qboolean AAS_AreaEntityCollision(int areanum, vec3_t start, vec3_t end, int pres
 			continue;
 		}
 
-		if (AAS_EntityCollision(link->entnum, start, boxmins, boxmaxs, end, CONTENTS_SOLID|CONTENTS_PLAYERCLIP, &bsptrace)) {
+		if (AAS_EntityCollision(link->entnum, start, boxmins, boxmaxs, end, contentmask, &bsptrace)) {
 			collision = qtrue;
 		}
 	}
 
 	if (collision) {
 		trace->startsolid = bsptrace.startsolid;
-		trace->ent = bsptrace.ent;
+		trace->ent = bsptrace.entityNum;
 		VectorCopy(bsptrace.endpos, trace->endpos);
 		trace->area = 0;
 		trace->planenum = 0;
+		VectorCopy(bsptrace.plane.normal, trace->plane.normal);
+		trace->plane.dist = bsptrace.plane.dist;
+		// ZTM: FIXME: Are AAS plane type and BSP plane type the same values?
+		trace->plane.type = bsptrace.plane.type;
 		return qtrue;
 	}
 
@@ -477,7 +478,7 @@ AAS_TraceClientBBox
 Recursive subdivision of the line by the BSP tree.
 =======================================================================================================================================
 */
-aas_trace_t AAS_TraceClientBBox(vec3_t start, vec3_t end, int presencetype, int passent) {
+aas_trace_t AAS_TraceClientBBox(vec3_t start, vec3_t end, int presencetype, int passent, int contentmask) {
 	int side, nodenum, tmpplanenum;
 	float front, back, frac;
 	vec3_t cur_start, cur_end, cur_mid, v1, v2;
@@ -518,6 +519,7 @@ aas_trace_t AAS_TraceClientBBox(vec3_t start, vec3_t end, int presencetype, int 
 			trace.ent = 0;
 			trace.area = 0;
 			trace.planenum = 0;
+			trace.plane = aasworld.planes[trace.planenum];
 			return trace;
 		}
 		// number of the current node to test the line against
@@ -559,10 +561,11 @@ aas_trace_t AAS_TraceClientBBox(vec3_t start, vec3_t end, int presencetype, int 
 					trace.planenum ^= 1;
 				}
 
+				trace.plane = aasworld.planes[trace.planenum];
 				return trace;
 			} else {
 				if (passent >= 0) {
-					if (AAS_AreaEntityCollision(-nodenum, tstack_p->start, tstack_p->end, presencetype, passent, &trace)) {
+					if (AAS_AreaEntityCollision(-nodenum, tstack_p->start, tstack_p->end, presencetype, passent, contentmask, &trace)) {
 						if (!trace.startsolid) {
 							VectorSubtract(end, start, v1);
 							VectorSubtract(trace.endpos, start, v2);
@@ -605,6 +608,7 @@ aas_trace_t AAS_TraceClientBBox(vec3_t start, vec3_t end, int presencetype, int 
 				trace.planenum ^= 1;
 			}
 
+			trace.plane = aasworld.planes[trace.planenum];
 			return trace;
 		}
 #ifdef AAS_SAMPLE_DEBUG
@@ -727,8 +731,8 @@ aas_trace_t AAS_TraceClientBBox(vec3_t start, vec3_t end, int presencetype, int 
 			}
 		}
 	}
-
-//	return trace;
+	// this point is unreachable
+	return trace;
 }
 
 /*
@@ -915,8 +919,8 @@ int AAS_TraceAreas(vec3_t start, vec3_t end, int *areas, vec3_t *points, int max
 			}
 		}
 	}
-
-//	return numareas;
+	// this point is unreachable
+	return numareas;
 }
 
 /*

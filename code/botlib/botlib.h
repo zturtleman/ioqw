@@ -105,30 +105,8 @@ typedef struct bot_input_s {
 	int actionflags;	// one of the ACTION_? flags
 	int weapon;			// weapon to use
 } bot_input_t;
-#ifndef BSPTRACE
-#define BSPTRACE
-// bsp_trace_t hit surface
-typedef struct bsp_surface_s {
-	char name[16];
-	int flags;
-	int value;
-} bsp_surface_t;
-// remove the bsp_trace_s structure definition l8r on
-// a trace is returned when a box is swept through the world
-typedef struct bsp_trace_s {
-	qboolean allsolid;		// if true, plane is not valid
-	qboolean startsolid;	// if true, the initial point was in a solid area
-	float fraction;			// time completed, 1.0 = didn't hit anything
-	vec3_t endpos;			// final position
-	cplane_t plane;			// surface normal at impact
-	float exp_dist;			// expanded plane distance
-	int sidenum;			// number of the brush side hit
-	bsp_surface_t surface;	// the hit point surface
-	int contents;			// contents on other side of surface hit
-	int ent;				// number of entity hit
-} bsp_trace_t;
-#endif // BSPTRACE
-//entity state
+typedef trace_t bsp_trace_t;
+// entity state
 typedef struct bot_entitystate_s {
 	int type;			// entity type
 	int flags;			// entity flags
@@ -151,6 +129,8 @@ typedef struct bot_entitystate_s {
 } bot_entitystate_t;
 // bot AI library exported functions
 typedef struct botlib_import_s {
+	// get time for measuring time lapse
+	int (*MilliSeconds)(void);
 	// print messages from the bot library
 	void (QDECL *Print)(int type, char *fmt, ...) __attribute__((format(printf, 2, 3)));
 	// trace a bbox through the world
@@ -162,7 +142,7 @@ typedef struct botlib_import_s {
 	// check if the point is in potential visible sight
 	int (*inPVS)(vec3_t p1, vec3_t p2);
 	// retrieve the BSP entity data lump
-	char *(*BSPEntityData)(void);
+	qboolean (*GetEntityToken)(int *offset, char *token, int tokenSize);
 	void (*BSPModelMinsMaxsOrigin)(int modelnum, vec3_t angles, vec3_t mins, vec3_t maxs, vec3_t origin);
 	// send a bot client command
 	void (*BotClientCommand)(int client, char *command);
@@ -232,7 +212,7 @@ typedef struct aas_export_s {
 	// be_aas_move.c
 	//--------------------------------------------
 	int (*AAS_Swimming)(vec3_t origin);
-	int (*AAS_PredictClientMovement)(struct aas_clientmove_s *move, int entnum, vec3_t origin, int presencetype, int onground, vec3_t velocity, vec3_t cmdmove, int cmdframes, int maxframes, float frametime, int stopevent, int stopareanum, int visualize);
+	int (*AAS_PredictClientMovement)(struct aas_clientmove_s *move, int entnum, vec3_t origin, int presencetype, int onground, vec3_t velocity, vec3_t cmdmove, int cmdframes, int maxframes, float frametime, int stopevent, int stopareanum, int visualize, int contentmask);
 } aas_export_t;
 
 typedef struct ea_export_s {
@@ -372,9 +352,9 @@ typedef struct botlib_export_s {
 	// shutdown the bot library, returns BLERR_
 	int (*BotLibShutdown)(void);
 	// sets a library variable returns BLERR_
-	int (*BotLibVarSet)(char *var_name, char *value);
+	int (*BotLibVarSet)(const char *var_name, const char *value);
 	// gets a library variable returns BLERR_
-	int (*BotLibVarGet)(char *var_name, char *value, int size);
+	int (*BotLibVarGet)(const char *var_name, char *value, int size);
 	// sets a C-like define returns BLERR_
 	int (*PC_AddGlobalDefine)(char *string);
 	void (*PC_RemoveAllGlobalDefines)(void);

@@ -27,14 +27,10 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 **************************************************************************************************************************************/
 
 #include "../qcommon/q_shared.h"
-#include "l_utils.h"
 #include "l_memory.h"
 #include "l_log.h"
 #include "l_crc.h"
 #include "l_libvar.h"
-#include "l_script.h"
-#include "l_precomp.h"
-#include "l_struct.h"
 #include "aasfile.h"
 #include "botlib.h"
 #include "be_aas.h"
@@ -424,7 +420,7 @@ void AAS_CreateReversedReachability(void) {
 #ifdef DEBUG
 	int starttime;
 
-	starttime = Sys_MilliSeconds();
+	starttime = botimport.MilliSeconds();
 #endif
 	// free reversed links that have already been created
 	if (aasworld.reversedreachability) {
@@ -458,7 +454,7 @@ void AAS_CreateReversedReachability(void) {
 		}
 	}
 #ifdef DEBUG
-	botimport.Print(PRT_MESSAGE, "reversed reachability %d msec\n", Sys_MilliSeconds() - starttime);
+	botimport.Print(PRT_MESSAGE, "reversed reachability %d msec\n", botimport.MilliSeconds() - starttime);
 #endif
 }
 
@@ -510,7 +506,7 @@ void AAS_CalculateAreaTravelTimes(void) {
 #ifdef DEBUG
 	int starttime;
 
-	starttime = Sys_MilliSeconds();
+	starttime = botimport.MilliSeconds();
 #endif
 	// if there are still area travel times, free the memory
 	if (aasworld.areatraveltimes) {
@@ -552,7 +548,7 @@ void AAS_CalculateAreaTravelTimes(void) {
 		}
 	}
 #ifdef DEBUG
-	botimport.Print(PRT_MESSAGE, "area travel times %d msec\n", Sys_MilliSeconds() - starttime);
+	botimport.Print(PRT_MESSAGE, "area travel times %d msec\n", botimport.MilliSeconds() - starttime);
 #endif
 }
 
@@ -2047,7 +2043,7 @@ int AAS_NextModelReachability(int num, int modelnum) {
 AAS_RandomGoalArea
 =======================================================================================================================================
 */
-int AAS_RandomGoalArea(int areanum, int travelflags, int *goalareanum, vec3_t goalorigin) {
+int AAS_RandomGoalArea(int areanum, int travelflags, int contentmask, int *goalareanum, vec3_t goalorigin) {
 	int i, n, t;
 	vec3_t start, end;
 	aas_trace_t trace;
@@ -2087,7 +2083,7 @@ int AAS_RandomGoalArea(int areanum, int travelflags, int *goalareanum, vec3_t go
 
 				VectorCopy(start, end);
 				end[2] -= 300;
-				trace = AAS_TraceClientBBox(start, end, PRESENCE_CROUCH, -1);
+				trace = AAS_TraceClientBBox(start, end, PRESENCE_CROUCH, -1, contentmask);
 
 				if (!trace.startsolid && trace.fraction < 1 && AAS_PointAreaNum(trace.endpos) == n) {
 					if (AAS_AreaGroundFaceArea(n) > 300) {

@@ -1614,6 +1614,7 @@ androbot = {
 "Grunt";
 "Hossman";
 "Sarge";
+"Klansman";
 "Fritzkrieg";
 }
 
@@ -1624,6 +1625,7 @@ neuterbot = {
 botnames = {
 "Xaero";
 "Xaerena";
+"Klansman";
 "Sorlag";
 "Major";
 "Ranger";
@@ -2685,7 +2687,7 @@ level_title = { // the titles of the game maps
 "Space CTF";
 }
 
-liquidmeasures = { // Uriel's dramatic measurements of liquid
+liquidmeasures = { // Klansman's dramatic measurements of liquid
 "gallons";
 "litres";
 "swirling rivers";

@@ -28,11 +28,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #include "../qcommon/q_shared.h"
 #include "l_memory.h"
-#include "l_script.h"
-#include "l_precomp.h"
-#include "l_struct.h"
 #include "l_log.h"
-#include "l_memory.h"
 #include "l_libvar.h"
 #include "aasfile.h"
 #include "botlib.h"
@@ -1381,7 +1377,7 @@ void AAS_AddTeleporterPortals(void) {
 			destorigin[2] += 24; // just for q2e1m2, the dork has put the telepads in the ground
 			VectorCopy(destorigin, end);
 			end[2] -= 100;
-			trace = AAS_TraceClientBBox(destorigin, end, PRESENCE_CROUCH, -1);
+			trace = AAS_TraceClientBBox(destorigin, end, PRESENCE_CROUCH, -1, BOTMASK_SOLID);
 
 			if (trace.startsolid) {
 				botimport.Print(PRT_ERROR, "teleporter destination (%s) in solid\n", target);

@@ -24,8 +24,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 // debugging on
 #define AAS_DEBUG
-#define MAX_CLIENTS 64
-#define MAX_MODELS 256 // these are sent over the net as 8 bits
 #define DF_AASENTNUMBER(x) (x - aasworld.entities)
 #define DF_NUMBERAASENT(x) (&aasworld.entities[x])
 #define DF_AASENTCLIENT(x) (x - aasworld.entities - 1)
