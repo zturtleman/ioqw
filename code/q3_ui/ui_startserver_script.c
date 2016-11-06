@@ -116,9 +116,6 @@ static const char *saveparam_list[] = {
 	"*AutoJoin",
 	"*TeamBalance",
 	"*TeamSwapped",
-	"*AutoJoin",
-	"*TeamBalance",
-	"*TeamSwapped",
 	"*fraglimit",
 	"*capturelimit",
 	"*timelimit",
@@ -265,7 +262,7 @@ static void StartServer_PrintMessage(const char *error) {
 		return;
 	}
 
-	trap_Print(va(S_COLOR_RED"StartServer: %s", error));
+	trap_Print(va(S_COLOR_RED "StartServer: %s", error));
 	Q_strncpyz(lasterror_text, error, MAX_STATUSBAR_TEXT);
 }
 
@@ -324,7 +321,7 @@ static qboolean StartServer_InitServerExec(void) {
 	s_serverexec.num_bots_in_slots = index;
 
 	if (s_scriptdata.bot.typeSelect == BOTTYPE_SELECTARENASCRIPT && s_serverexec.num_bots_in_slots == 0) {
-		trap_Print(S_COLOR_RED"InitServerExec: Not enough bots for game type\n");
+		trap_Print(S_COLOR_RED "InitServerExec: Not enough bots for game type\n");
 		return qfalse;
 	}
 
@@ -1160,7 +1157,7 @@ static qboolean StartServer_WriteBotParams(void) {
 	AddScript("\n// WriteBotParams()\n\n");
 
 	if (!s_serverexec.map_generated) {
-		trap_Print(S_COLOR_RED"WriteBotParams called before WriteMapParams\n");
+		trap_Print(S_COLOR_RED "WriteBotParams called before WriteMapParams\n");
 		return qfalse;
 	}
 	// build list from selected bots

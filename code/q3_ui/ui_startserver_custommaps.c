@@ -227,7 +227,7 @@ UI_DefaultIconFromGameType
 const char *UI_DefaultIconFromGameType(int gametype) {
 
 	if (gametype < 0 || gametype > NUM_GAMETYPES) {
-		trap_Print(va(S_COLOR_RED"Unknown gametype icon: %i\n", gametype));
+		trap_Print(va(S_COLOR_RED "Unknown gametype icon: %i\n", gametype));
 		return NULL;
 	}
 
