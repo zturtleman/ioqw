@@ -41,15 +41,15 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "be_interface.h"
 #include "be_ai_char.h"
 
+#define CT_INTEGER	1
+#define CT_FLOAT	2
+#define CT_STRING	3
+
 #define DEFAULT_CHARACTER "bots/default_c.c"
 
 #define MAX_CHARACTERISTICS 55
 // interpolation requires 3 slots per-character plus 2 default character slots, and account for handle 0 being a dummy
 #define MAX_BOT_CHARACTERS (3 * MAX_CLIENTS + 2 + 1)
-
-#define CT_INTEGER	1
-#define CT_FLOAT	2
-#define CT_STRING	3
 // characteristic value
 union cvalue {
 	int integer;

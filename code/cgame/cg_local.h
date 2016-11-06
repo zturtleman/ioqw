@@ -848,8 +848,8 @@ typedef struct {
 	qhandle_t gameModels[MAX_MODELS];
 	sfxHandle_t gameSounds[MAX_SOUNDS];
 	int numInlineModels;
-	qhandle_t inlineDrawModel[MAX_MODELS];
-	vec3_t inlineModelMidpoints[MAX_MODELS];
+	qhandle_t inlineDrawModel[MAX_SUBMODELS];
+	vec3_t inlineModelMidpoints[MAX_SUBMODELS];
 	clientInfo_t clientinfo[MAX_CLIENTS];
 	// teamchat width is *3 because of embedded color codes
 	char teamChatMsgs[TEAMCHAT_HEIGHT][TEAMCHAT_WIDTH * 3 + 1];

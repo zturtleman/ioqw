@@ -27,29 +27,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 **************************************************************************************************************************************/
 
 #include "cm_local.h"
-#ifdef BSPC
-#include "../bspc/l_qfiles.h"
 
-/*
-=======================================================================================================================================
-SetPlaneSignbits
-=======================================================================================================================================
-*/
-void SetPlaneSignbits(cplane_t *out) {
-	int bits, j;
-
-	// for fast box on planeside test
-	bits = 0;
-
-	for (j = 0; j < 3; j++) {
-		if (out->normal[j] < 0) {
-			bits |= 1 << j;
-		}
-	}
-
-	out->signbits = bits;
-}
-#endif // BSPC
 // to allow boxes to be treated as brush models, we allocate some extra indexes along with those needed by the map
 #define BOX_BRUSHES 1
 #define BOX_SIDES 6
@@ -142,10 +120,6 @@ void CMod_LoadSubmodels(lump_t *l) {
 
 	cm.cmodels = Hunk_Alloc(count * sizeof(*cm.cmodels), h_high);
 	cm.numSubModels = count;
-
-	if (count > MAX_SUBMODELS) {
-		Com_Error(ERR_DROP, "MAX_SUBMODELS exceeded");
-	}
 
 	for (i = 0; i < count; i++, in++) {
 		out = &cm.cmodels[i];
@@ -707,11 +681,7 @@ cmodel_t *CM_ClipHandleToModel(clipHandle_t handle) {
 		return &box_model;
 	}
 
-	if (handle < MAX_SUBMODELS) {
-		Com_Error(ERR_DROP, "CM_ClipHandleToModel: bad handle %i < %i < %i", cm.numSubModels, handle, MAX_SUBMODELS);
-	}
-
-	Com_Error(ERR_DROP, "CM_ClipHandleToModel: bad handle %i", handle + MAX_SUBMODELS);
+	Com_Error(ERR_DROP, "CM_ClipHandleToModel: bad handle %i(max %d)", handle, cm.numSubModels);
 	return NULL;
 }
 

@@ -140,20 +140,6 @@ void FreeSource(source_t *source);
 void QDECL SourceError(source_t *source, char *str, ...) __attribute__((format(printf, 2, 3)));
 // print a source warning
 void QDECL SourceWarning(source_t *source, char *str, ...) __attribute__((format(printf, 2, 3)));
-#ifdef BSPC
-// some of BSPC source does include qcommon/q_shared.h and some does not
-// we define pc_token_s pc_token_t if needed (yes, it's ugly)
-#ifndef __Q_SHARED_H
-#define MAX_TOKENLENGTH 1024
-typedef struct pc_token_s {
-	int type;
-	int subtype;
-	int intvalue;
-	float floatvalue;
-	char string[MAX_TOKENLENGTH];
-} pc_token_t;
-#endif // !_Q_SHARED_H
-#endif // BSPC
 int PC_LoadSourceHandle(const char *filename);
 int PC_FreeSourceHandle(int handle);
 int PC_ReadTokenHandle(int handle, pc_token_t *pc_token);
