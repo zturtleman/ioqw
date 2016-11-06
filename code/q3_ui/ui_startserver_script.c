@@ -680,6 +680,13 @@ static void StartServer_WriteSelectedBotParams(void) {
 		right = PLAYER_SLOTS_PERCOL;
 
 		do {
+// Tobias FIXME:
+// For some wacko reason this piece of code causes a weird bug!
+// The bug: As soon as both teams aren't equal (bot count) some bots won't enter the game.
+//		   e.g.: If there is only one bot on the blue team and four bots on the red team, only two bots will join the red team (because of the one bot and the human on the blue team).
+//		   The funny thing is, without this piece of code the bug will NOT occur, but I have absolutely no idea for what this piece of code is there! So I will disable this part of code for the moment.
+// NOTE: This bug occurs even with the original UI Enhanced 1.3 mod, and also with Q3 Excessive, and UIE for OpenArena!
+/*
 			// find first free left bot
 			for (; left < PLAYER_SLOTS_PERCOL; left++) {
 				if (s_scriptdata.bot.slotType[left] != SLOTTYPE_BOT) {
@@ -704,7 +711,8 @@ static void StartServer_WriteSelectedBotParams(void) {
 
 				break;
 			}
-
+*/
+// Tobias end
 			if (left < PLAYER_SLOTS_PERCOL) {
 				if (custom) {
 					skillrange = &s_scriptdata.bot.skill[left];
