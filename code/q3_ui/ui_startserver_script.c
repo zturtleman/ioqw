@@ -58,7 +58,7 @@ id Software at the address below.
 // ui_dedicated is deliberately missing to allow script loading in both Skirmish and Multiplayer versions of the browser.
 static const char *saveparam_list[] = {
 	"ui_gametype",
-	"ui_publicServer",
+//	"ui_publicServer",
 	"ui_pureServer",
 	"ui_inactivity",
 	"ui_allowmaxrate",
@@ -354,7 +354,7 @@ static qboolean StartServer_WriteServerParams(void) {
 		AddScript(va("sv_hostname \"%s\"\n", s_scriptdata.server.hostname));
 	}
 
-	AddScript(va("sv_public %i\n", s_scriptdata.server.publicServer));
+//	AddScript(va("sv_public %i\n", s_scriptdata.server.publicServer));
 	AddScript(va("sv_pure %i\n", s_scriptdata.server.pureServer));
 
 	if (s_scriptdata.multiplayer) {

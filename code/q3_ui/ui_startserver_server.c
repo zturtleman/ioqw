@@ -55,7 +55,7 @@ enum {
 	ID_SERVER_AUTOJOIN,
 	ID_SERVER_TEAMBALANCE,
 	ID_SERVER_PURE,
-	ID_SERVER_PUBLIC,
+//	ID_SERVER_PUBLIC,
 	ID_SERVER_INACTIVITY,
 	ID_SERVER_SAVE,
 	ID_SERVER_LOAD,
@@ -182,7 +182,7 @@ static controlinit_t InitControls[] = {
 	// controls on right side of page
 	{SRVCTRL_BLANK, 0, SCRPOS_RIGHT, NULL, NULL, 0, 0, NULL, 0, 0, NULL},
 	{SRVCTRL_BLANK, 0, SCRPOS_RIGHT, NULL, NULL, 0, 0, NULL, 0, 0, NULL},
-	{SRVCTRL_RADIO, ID_SERVER_PUBLIC, SCRPOS_RIGHT, "Advertise on Internet:", &s_scriptdata.server.publicServer, 0, 0, NULL, 0, 0, NULL},
+//	{SRVCTRL_RADIO, ID_SERVER_PUBLIC, SCRPOS_RIGHT, "Advertise on Internet:", &s_scriptdata.server.publicServer, 0, 0, NULL, 0, 0, NULL},
 	{SRVCTRL_RADIO, ID_SERVER_PURE, SCRPOS_RIGHT, "Pure server:", &s_scriptdata.server.pureServer, 0, 0, NULL, 0, 0, NULL},
 	{SRVCTRL_RADIO, ID_SERVER_SMOOTHCLIENTS, SCRPOS_RIGHT, "Smooth clients:", &s_scriptdata.server.smoothclients, 0, 0, NULL, 0, 0, NULL},
 	{SRVCTRL_RADIO, ID_SERVER_SYNCCLIENTS, SCRPOS_RIGHT, "Sync clients:", &s_scriptdata.server.syncClients, 0, 0, NULL, 0, 0, NULL},
