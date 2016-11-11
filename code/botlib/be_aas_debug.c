@@ -603,7 +603,6 @@ void AAS_ShowReachability(aas_reachability_t *reach) {
 	vec3_t dir, cmdmove, velocity;
 	float speed, zvel;
 	aas_clientmove_t move;
-	int contentmask = BOTMASK_SOLID; // ZTM: FIXME: Get contentmask from Game VM!
 
 	AAS_ShowAreaPolygons(reach->areanum, 5, qtrue);
 	//AAS_ShowArea(reach->areanum, qtrue);
@@ -620,14 +619,14 @@ void AAS_ShowReachability(aas_reachability_t *reach) {
 		VectorClear(cmdmove);
 		cmdmove[2] = aassettings.phys_jumpvel;
 
-		AAS_PredictClientMovement(&move, -1, reach->start, PRESENCE_NORMAL, qtrue, velocity, cmdmove, 3, 30, 0.1f, SE_HITGROUND|SE_ENTERWATER|SE_ENTERSLIME|SE_ENTERLAVA|SE_HITGROUNDDAMAGE, 0, qtrue, contentmask);
+		AAS_PredictClientMovement(&move, -1, reach->start, PRESENCE_NORMAL, qtrue, velocity, cmdmove, 3, 30, 0.1f, SE_HITGROUND|SE_ENTERWATER|SE_ENTERSLIME|SE_ENTERLAVA|SE_HITGROUNDDAMAGE, 0, qtrue, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 
 		if ((reach->traveltype & TRAVELTYPE_MASK) == TRAVEL_JUMP) {
-			AAS_JumpReachRunStart(reach, dir, contentmask);
+			AAS_JumpReachRunStart(reach, dir, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 			AAS_DrawCross(dir, 4, LINECOLOR_BLUE);
 		}
 	} else if ((reach->traveltype & TRAVELTYPE_MASK) == TRAVEL_ROCKETJUMP) {
-		zvel = AAS_RocketJumpZVelocity(reach->start, contentmask);
+		zvel = AAS_RocketJumpZVelocity(reach->start, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 		AAS_HorizontalVelocityForJump(zvel, reach->start, reach->end, &speed);
 		VectorSubtract(reach->end, reach->start, dir);
 		dir[2] = 0;
@@ -636,7 +635,7 @@ void AAS_ShowReachability(aas_reachability_t *reach) {
 		VectorScale(dir, speed, cmdmove);
 		VectorSet(velocity, 0, 0, zvel);
 
-		AAS_PredictClientMovement(&move, -1, reach->start, PRESENCE_NORMAL, qtrue, velocity, cmdmove, 30, 30, 0.1f, SE_ENTERWATER|SE_ENTERSLIME|SE_ENTERLAVA|SE_HITGROUNDDAMAGE|SE_TOUCHJUMPPAD|SE_HITGROUNDAREA, reach->areanum, qtrue, contentmask);
+		AAS_PredictClientMovement(&move, -1, reach->start, PRESENCE_NORMAL, qtrue, velocity, cmdmove, 30, 30, 0.1f, SE_ENTERWATER|SE_ENTERSLIME|SE_ENTERLAVA|SE_HITGROUNDDAMAGE|SE_TOUCHJUMPPAD|SE_HITGROUNDAREA, reach->areanum, qtrue, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 	} else if ((reach->traveltype & TRAVELTYPE_MASK) == TRAVEL_JUMPPAD) {
 		VectorSet(cmdmove, 0, 0, 0);
 		VectorSubtract(reach->end, reach->start, dir);
@@ -648,7 +647,7 @@ void AAS_ShowReachability(aas_reachability_t *reach) {
 		// NOTE: the facenum is the Z velocity
 		velocity[2] = reach->facenum;
 
-		AAS_PredictClientMovement(&move, -1, reach->start, PRESENCE_NORMAL, qtrue, velocity, cmdmove, 30, 30, 0.1f, SE_ENTERWATER|SE_ENTERSLIME|SE_ENTERLAVA|SE_HITGROUNDDAMAGE|SE_TOUCHJUMPPAD|SE_HITGROUNDAREA, reach->areanum, qtrue, contentmask);
+		AAS_PredictClientMovement(&move, -1, reach->start, PRESENCE_NORMAL, qtrue, velocity, cmdmove, 30, 30, 0.1f, SE_ENTERWATER|SE_ENTERSLIME|SE_ENTERLAVA|SE_HITGROUNDDAMAGE|SE_TOUCHJUMPPAD|SE_HITGROUNDAREA, reach->areanum, qtrue, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 	}
 }
 

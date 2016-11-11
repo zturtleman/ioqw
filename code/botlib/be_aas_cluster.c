@@ -1377,7 +1377,7 @@ void AAS_AddTeleporterPortals(void) {
 			destorigin[2] += 24; // just for q2e1m2, the dork has put the telepads in the ground
 			VectorCopy(destorigin, end);
 			end[2] -= 100;
-			trace = AAS_TraceClientBBox(destorigin, end, PRESENCE_CROUCH, -1, BOTMASK_SOLID);
+			trace = AAS_TraceClientBBox(destorigin, end, PRESENCE_CROUCH, -1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 
 			if (trace.startsolid) {
 				botimport.Print(PRT_ERROR, "teleporter destination (%s) in solid\n", target);

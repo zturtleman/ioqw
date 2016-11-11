@@ -229,7 +229,7 @@ int AAS_GetJumpPadInfo(int ent, vec3_t areastart, vec3_t absmins, vec3_t absmaxs
 	VectorCopy(origin, teststart);
 
 	teststart[2] += 64;
-	trace = AAS_TraceClientBBox(teststart, origin, PRESENCE_CROUCH, -1, BOTMASK_SOLID);
+	trace = AAS_TraceClientBBox(teststart, origin, PRESENCE_CROUCH, -1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 
 	if (trace.startsolid) {
 		botimport.Print(PRT_MESSAGE, "trigger_push start solid\n");
@@ -334,7 +334,7 @@ int AAS_BestReachableFromJumpPadArea(vec3_t origin, vec3_t mins, vec3_t maxs) {
 
 		Com_Memset(&move, 0, sizeof(aas_clientmove_t));
 
-		AAS_ClientMovementHitBBox(&move, -1, areastart, PRESENCE_NORMAL, qfalse, velocity, cmdmove, 0, 30, 0.1f, bboxmins, bboxmaxs, bot_visualizejumppads, BOTMASK_SOLID);
+		AAS_ClientMovementHitBBox(&move, -1, areastart, PRESENCE_NORMAL, qfalse, velocity, cmdmove, 0, 30, 0.1f, bboxmins, bboxmaxs, bot_visualizejumppads, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 
 		if (move.frames < 30) {
 			bestareanum = 0;
@@ -403,7 +403,7 @@ int AAS_BestReachableArea(vec3_t origin, vec3_t mins, vec3_t maxs, vec3_t goalor
 		VectorCopy(start, end);
 		start[2] += 0.25;
 		end[2] -= 50;
-		trace = AAS_TraceClientBBox(start, end, PRESENCE_CROUCH, -1, BOTMASK_SOLID);
+		trace = AAS_TraceClientBBox(start, end, PRESENCE_CROUCH, -1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 
 		if (!trace.startsolid) {
 			areanum = AAS_PointAreaNum(trace.endpos);
@@ -1572,7 +1572,7 @@ int AAS_Reachability_Step_Barrier_WaterJump_WalkOffLedge(int area1num, int area2
 				start[2] = ground_beststart[2];
 				VectorCopy(ground_bestend, end);
 				end[2] += 4;
-				trace = AAS_TraceClientBBox(start, end, PRESENCE_NORMAL, -1, BOTMASK_SOLID);
+				trace = AAS_TraceClientBBox(start, end, PRESENCE_NORMAL, -1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 				// if no solids were found
 				if (!trace.startsolid && trace.fraction >= 1.0) {
 					// the trace end point must be in the goal area
@@ -2255,7 +2255,7 @@ int AAS_Reachability_Jump(int area1num, int area2num) {
 		VectorMA(beststart, 1, dir, teststart);
 		VectorCopy(teststart, testend);
 		testend[2] -= 100;
-		trace = AAS_TraceClientBBox(teststart, testend, PRESENCE_NORMAL, -1, BOTMASK_SOLID);
+		trace = AAS_TraceClientBBox(teststart, testend, PRESENCE_NORMAL, -1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 
 		if (trace.startsolid) {
 			return qfalse;
@@ -2277,7 +2277,7 @@ int AAS_Reachability_Jump(int area1num, int area2num) {
 		VectorMA(bestend, -1, dir, teststart);
 		VectorCopy(teststart, testend);
 		testend[2] -= 100;
-		trace = AAS_TraceClientBBox(teststart, testend, PRESENCE_NORMAL, -1, BOTMASK_SOLID);
+		trace = AAS_TraceClientBBox(teststart, testend, PRESENCE_NORMAL, -1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 
 		if (trace.startsolid) {
 			return qfalse;
@@ -2329,7 +2329,7 @@ int AAS_Reachability_Jump(int area1num, int area2num) {
 			VectorNormalize(dir);
 			VectorScale(dir, speed, velocity);
 
-			AAS_PredictClientMovement(&move, -1, beststart, PRESENCE_NORMAL, qtrue, velocity, cmdmove, 3, 30, 0.1f, stopevent, 0, qfalse, BOTMASK_SOLID);
+			AAS_PredictClientMovement(&move, -1, beststart, PRESENCE_NORMAL, qtrue, velocity, cmdmove, 3, 30, 0.1f, stopevent, 0, qfalse, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 			// if prediction time wasn't enough to fully predict the movement
 			if (move.frames >= 30) {
 				return qfalse;
@@ -2633,7 +2633,7 @@ int AAS_Reachability_Ladder(int area1num, int area2num) {
 			start[2] += 5;
 			end[2] -= 100;
 			// trace without entity collision
-			trace = AAS_TraceClientBBox(start, end, PRESENCE_NORMAL, -1, BOTMASK_SOLID);
+			trace = AAS_TraceClientBBox(start, end, PRESENCE_NORMAL, -1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 #ifdef REACH_DEBUG
 			if (trace.startsolid) {
 				Log_Write("trace from area %d started in solid\r\n", area1num);
@@ -2719,7 +2719,7 @@ int AAS_Reachability_Ladder(int area1num, int area2num) {
 					start[2] += 5;
 					end[2] -= 100;
 					// trace without entity collision
-					trace = AAS_TraceClientBBox(start, end, PRESENCE_NORMAL, -1, BOTMASK_SOLID);
+					trace = AAS_TraceClientBBox(start, end, PRESENCE_NORMAL, -1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 
 					if (trace.startsolid) {
 						break;
@@ -2905,7 +2905,7 @@ void AAS_Reachability_Teleport(void) {
 		if (!AAS_AreaTeleporter(area2num) && !AAS_AreaJumpPad(area2num)) {
 			VectorCopy(destorigin, end);
 			end[2] -= 64;
-			trace = AAS_TraceClientBBox(destorigin, end, PRESENCE_CROUCH, -1, BOTMASK_SOLID);
+			trace = AAS_TraceClientBBox(destorigin, end, PRESENCE_CROUCH, -1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 
 			if (trace.startsolid) {
 				botimport.Print(PRT_ERROR, "teleporter destination (%s) in solid\n", target);
@@ -2930,7 +2930,7 @@ void AAS_Reachability_Teleport(void) {
 				}
 
 				VectorClear(cmdmove);
-				AAS_PredictClientMovement(&move, -1, destorigin, PRESENCE_NORMAL, qfalse, velocity, cmdmove, 0, 30, 0.1f, SE_HITGROUND|SE_ENTERWATER|SE_ENTERSLIME|SE_ENTERLAVA|SE_HITGROUNDDAMAGE|SE_TOUCHJUMPPAD|SE_TOUCHTELEPORTER, 0, qfalse, BOTMASK_SOLID);
+				AAS_PredictClientMovement(&move, -1, destorigin, PRESENCE_NORMAL, qfalse, velocity, cmdmove, 0, 30, 0.1f, SE_HITGROUND|SE_ENTERWATER|SE_ENTERSLIME|SE_ENTERLAVA|SE_HITGROUNDDAMAGE|SE_TOUCHJUMPPAD|SE_TOUCHTELEPORTER, 0, qfalse, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 				area2num = AAS_PointAreaNum(move.endpos);
 
 				if (move.stopevent & (SE_ENTERSLIME|SE_ENTERLAVA)) {
@@ -3173,7 +3173,7 @@ void AAS_Reachability_Elevator(void) {
 									start[2] += 32;
 									VectorCopy(toporg, end);
 									end[2] += 1;
-									trace = AAS_TraceClientBBox(start, end, PRESENCE_CROUCH, -1, BOTMASK_SOLID);
+									trace = AAS_TraceClientBBox(start, end, PRESENCE_CROUCH, -1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 
 									if (trace.fraction >= 1) {
 										break;
@@ -3541,12 +3541,12 @@ void AAS_Reachability_FuncBobbing(void) {
 			// create reachabilities from start to end
 			for (startreach = firststartreach; startreach; startreach = nextstartreach) {
 				nextstartreach = startreach->next;
-				//trace = AAS_TraceClientBBox(startreach->start, move_start_top, PRESENCE_NORMAL, -1, BOTMASK_SOLID);
+				//trace = AAS_TraceClientBBox(startreach->start, move_start_top, PRESENCE_NORMAL, -1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 				//if (trace.fraction < 1) continue;
 
 				for (endreach = firstendreach; endreach; endreach = nextendreach) {
 					nextendreach = endreach->next;
-					//trace = AAS_TraceClientBBox(endreach->end, move_end_top, PRESENCE_NORMAL, -1, BOTMASK_SOLID);
+					//trace = AAS_TraceClientBBox(endreach->end, move_end_top, PRESENCE_NORMAL, -1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 					//if (trace.fraction < 1) continue;
 					Log_Write("funcbob reach from area %d to %d\n", startreach->areanum, endreach->areanum);
 
@@ -3700,7 +3700,7 @@ void AAS_Reachability_JumpPad(void) {
 		// get the start areas
 		VectorCopy(origin, teststart);
 		teststart[2] += 64;
-		trace = AAS_TraceClientBBox(teststart, origin, PRESENCE_CROUCH, -1, BOTMASK_SOLID);
+		trace = AAS_TraceClientBBox(teststart, origin, PRESENCE_CROUCH, -1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 
 		if (trace.startsolid) {
 			botimport.Print(PRT_MESSAGE, "trigger_push start solid\n");
@@ -3780,7 +3780,7 @@ void AAS_Reachability_JumpPad(void) {
 			area2num = 0;
 
 			for (i = 0; i < 20; i++) {
-				AAS_PredictClientMovement(&move, -1, areastart, PRESENCE_NORMAL, qfalse, velocity, cmdmove, 0, 30, 0.1f, SE_HITGROUND|SE_ENTERWATER|SE_ENTERSLIME|SE_ENTERLAVA|SE_HITGROUNDDAMAGE|SE_TOUCHJUMPPAD|SE_TOUCHTELEPORTER, 0, bot_visualizejumppads, BOTMASK_SOLID);
+				AAS_PredictClientMovement(&move, -1, areastart, PRESENCE_NORMAL, qfalse, velocity, cmdmove, 0, 30, 0.1f, SE_HITGROUND|SE_ENTERWATER|SE_ENTERSLIME|SE_ENTERLAVA|SE_HITGROUNDDAMAGE|SE_TOUCHJUMPPAD|SE_TOUCHTELEPORTER, 0, bot_visualizejumppads, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 				area2num = move.endarea;
 
 				for (link = areas; link; link = link->next_area) {
@@ -3901,7 +3901,7 @@ void AAS_Reachability_JumpPad(void) {
 						// get command movement
 						VectorScale(dir, speed, cmdmove);
 
-						AAS_PredictClientMovement(&move, -1, areastart, PRESENCE_NORMAL, qfalse, velocity, cmdmove, 30, 30, 0.1f, SE_ENTERWATER|SE_ENTERSLIME|SE_ENTERLAVA|SE_HITGROUNDDAMAGE|SE_TOUCHJUMPPAD|SE_TOUCHTELEPORTER|SE_HITGROUNDAREA, area2num, visualize, BOTMASK_SOLID);
+						AAS_PredictClientMovement(&move, -1, areastart, PRESENCE_NORMAL, qfalse, velocity, cmdmove, 30, 30, 0.1f, SE_ENTERWATER|SE_ENTERSLIME|SE_ENTERLAVA|SE_HITGROUNDDAMAGE|SE_TOUCHJUMPPAD|SE_TOUCHTELEPORTER|SE_HITGROUNDAREA, area2num, visualize, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 						// if prediction time wasn't enough to fully predict the movement
 						// don't enter slime or lava and don't fall from too high
 						if (move.frames < 30 && !(move.stopevent & (SE_ENTERSLIME|SE_ENTERLAVA|SE_HITGROUNDDAMAGE)) && (move.stopevent & (SE_HITGROUNDAREA|SE_TOUCHJUMPPAD|SE_TOUCHTELEPORTER))) {
@@ -4004,7 +4004,7 @@ int AAS_Reachability_Grapple(int area1num, int area2num) {
 
 		VectorCopy(start, end);
 		end[2] -= 1000;
-		trace = AAS_TraceClientBBox(start, end, PRESENCE_CROUCH, -1, BOTMASK_SOLID);
+		trace = AAS_TraceClientBBox(start, end, PRESENCE_CROUCH, -1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 
 		if (trace.startsolid) {
 			return qfalse;
@@ -4075,7 +4075,7 @@ int AAS_Reachability_Grapple(int area1num, int area2num) {
 		VectorNormalize(dir);
 		VectorMA(areastart, 4, dir, start);
 		VectorCopy(bsptrace.endpos, end);
-		trace = AAS_TraceClientBBox(start, end, PRESENCE_NORMAL, -1, BOTMASK_SOLID);
+		trace = AAS_TraceClientBBox(start, end, PRESENCE_NORMAL, -1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 		VectorSubtract(trace.endpos, facecenter, dir);
 
 		if (VectorLength(dir) > 24) {
@@ -4085,7 +4085,7 @@ int AAS_Reachability_Grapple(int area1num, int area2num) {
 		VectorCopy(trace.endpos, start);
 		VectorCopy(trace.endpos, end);
 		end[2] -= AAS_FallDamageDistance();
-		trace = AAS_TraceClientBBox(start, end, PRESENCE_NORMAL, -1, BOTMASK_SOLID);
+		trace = AAS_TraceClientBBox(start, end, PRESENCE_NORMAL, -1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 
 		if (trace.fraction >= 1) {
 			continue;
@@ -4261,7 +4261,7 @@ int AAS_Reachability_WeaponJump(int area1num, int area2num) {
 
 	VectorCopy(start, end);
 	end[2] -= 1000;
-	trace = AAS_TraceClientBBox(start, end, PRESENCE_CROUCH, -1, BOTMASK_SOLID);
+	trace = AAS_TraceClientBBox(start, end, PRESENCE_CROUCH, -1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 
 	if (trace.startsolid) {
 		return qfalse;
@@ -4309,7 +4309,7 @@ int AAS_Reachability_WeaponJump(int area1num, int area2num) {
 					velocity[2] = zvel;
 					VectorSet(cmdmove, 0, 0, 0);
 					*/
-					AAS_PredictClientMovement(&move, -1, areastart, PRESENCE_NORMAL, qtrue, velocity, cmdmove, 30, 30, 0.1f, SE_ENTERWATER|SE_ENTERSLIME|SE_ENTERLAVA|SE_HITGROUNDDAMAGE|SE_TOUCHJUMPPAD|SE_HITGROUND|SE_HITGROUNDAREA, area2num, visualize, BOTMASK_SOLID);
+					AAS_PredictClientMovement(&move, -1, areastart, PRESENCE_NORMAL, qtrue, velocity, cmdmove, 30, 30, 0.1f, SE_ENTERWATER|SE_ENTERSLIME|SE_ENTERLAVA|SE_HITGROUNDDAMAGE|SE_TOUCHJUMPPAD|SE_HITGROUND|SE_HITGROUNDAREA, area2num, visualize, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 					// if prediction time wasn't enough to fully predict the movement
 					// don't enter slime or lava and don't fall from too high
 					if (move.frames < 30 && !(move.stopevent & (SE_ENTERSLIME|SE_ENTERLAVA|SE_HITGROUNDDAMAGE)) && (move.stopevent & (SE_HITGROUNDAREA|SE_TOUCHJUMPPAD))) {
@@ -4463,7 +4463,7 @@ void AAS_Reachability_WalkOffLedge(int areanum) {
 						VectorMA(mid, 8, dir, mid);
 						VectorCopy(mid, testend);
 						testend[2] -= 1000;
-						trace = AAS_TraceClientBBox(mid, testend, PRESENCE_CROUCH, -1, BOTMASK_SOLID);
+						trace = AAS_TraceClientBBox(mid, testend, PRESENCE_CROUCH, -1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 
 						if (trace.startsolid) {
 							//Log_Write("area %d: trace.startsolid\r\n", areanum);

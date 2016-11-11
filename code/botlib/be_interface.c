@@ -450,7 +450,7 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 		VectorCopy(origin, end);
 		end[2] += 5;
 		numareas = AAS_TraceAreas(origin, end, areas, NULL, 10);
-		AAS_TraceClientBBox(origin, end, PRESENCE_CROUCH, -1, BOTMASK_SOLID);
+		AAS_TraceClientBBox(origin, end, PRESENCE_CROUCH, -1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 		botimport.Print(PRT_MESSAGE, "num areas = %d, area = %d\n", numareas, areas[0]);
 		*/
 		/*
@@ -576,10 +576,10 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 	// get the end point for the line to be traced
 //	VectorMA(eye, 800, forward, end);
 
-//	AAS_TestMovementPrediction(1, parm2, forward, BOTMASK_SOLID);
+//	AAS_TestMovementPrediction(1, parm2, forward, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 /*
 	// trace the line to find the hit point
-	trace = AAS_TraceClientBBox(eye, end, PRESENCE_NORMAL, 1, BOTMASK_SOLID);
+	trace = AAS_TraceClientBBox(eye, end, PRESENCE_NORMAL, 1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 
 	if (!line[0]) {
 		line[0] = botimport.DebugLineCreate();
@@ -599,7 +599,7 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 
 	for (i = 0; i < 2000; i++) {
 		AAS_Trace2(eye, mins, maxs, end, 1, MASK_PLAYERSOLID);
-//		AAS_TraceClientBBox(eye, end, PRESENCE_NORMAL, 1, BOTMASK_SOLID);
+//		AAS_TraceClientBBox(eye, end, PRESENCE_NORMAL, 1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 	}
 
 	end_time = clock();

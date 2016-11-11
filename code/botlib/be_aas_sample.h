@@ -47,7 +47,6 @@ int AAS_PointPresenceType(vec3_t point);
 // returns the result of the trace of a client bbox
 aas_trace_t AAS_TraceClientBBox(vec3_t start, vec3_t end, int presencetype, int passent, int contentmask);
 //AAS_TraceClientBBox contentmask for AAS generation
-#define BOTMASK_SOLID (CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP)
 // stores the areas the trace went through and returns the number of passed areas
 int AAS_TraceAreas(vec3_t start, vec3_t end, int *areas, vec3_t *points, int maxareas);
 // returns the areas the bounding box is in
