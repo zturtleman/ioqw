@@ -32,6 +32,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "../botlib/be_ai_goal.h"
 #include "../botlib/be_ai_move.h"
 #include "../botlib/be_ai_weap.h"
+#include "../botlib/be_ai_weight.h"
 #include "ai_main.h"
 #include "ai_dmq3.h"
 #include "ai_chat.h"
@@ -43,6 +44,8 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "inv.h" // indexes into the inventory
 #include "syn.h" // synonyms
 #include "match.h" // string matching types and vars
+// for the voice chats
+#include "bg_local.h"
 
 typedef struct voiceCommand_s {
 	char *cmd;
@@ -326,7 +329,7 @@ void BotVoiceChat_FollowMe(bot_state_t *bs, int client, int mode) {
 	bs->teamgoal_time = FloatTime() + TEAM_ACCOMPANY_TIME;
 	// set the ltg type
 	bs->ltgtype = LTG_TEAMACCOMPANY;
-	bs->formation_dist = 3.5 * 32; // 3.5 meter
+	bs->formation_dist = 128;
 	bs->arrive_time = 0;
 
 	BotSetTeamStatus(bs);

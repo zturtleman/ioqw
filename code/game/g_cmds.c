@@ -23,6 +23,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 */
 
 #include "g_local.h"
+#include "bg_local.h" // for the voice chats
 
 /*
 =======================================================================================================================================

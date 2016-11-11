@@ -36,6 +36,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "ai_dmq3.h"
 #include "ai_chat.h"
 #include "ai_cmd.h"
+#include "ai_vcmd.h"
 #include "ai_dmnet.h"
 #include "ai_team.h"
 // data file headers
@@ -43,6 +44,8 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "inv.h" // indexes into the inventory
 #include "syn.h" // synonyms
 #include "match.h" // string matching types and vars
+// for the voice chats
+#include "bg_local.h"
 
 int numnodeswitches;
 char nodeswitch[MAX_NODESWITCHES + 1][144];

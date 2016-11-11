@@ -36,12 +36,15 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "ai_dmq3.h"
 #include "ai_chat.h"
 #include "ai_cmd.h"
+#include "ai_vcmd.h"
 #include "ai_dmnet.h"
 #include "ai_team.h"
 #include "chars.h" // characteristics
 #include "inv.h" // indexes into the inventory
 #include "syn.h" // synonyms
 #include "match.h" // string matching types and vars
+// for the voice chats
+#include "bg_local.h"
 
 int notleader[MAX_CLIENTS];
 #ifdef DEBUG
@@ -643,7 +646,7 @@ void BotMatch_HelpAccompany(bot_state_t *bs, bot_match_t *match) {
 			bs->teamgoal_time = FloatTime() + TEAM_ACCOMPANY_TIME;
 		}
 
-		bs->formation_dist = 3.5 * 32; // 3.5 meter
+		bs->formation_dist = 128;
 		bs->arrive_time = 0;
 
 		BotSetTeamStatus(bs);
@@ -1360,7 +1363,7 @@ void BotMatch_FormationSpace(bot_state_t *bs, bot_match_t *match) {
 	}
 	// check if the formation intervening space is valid
 	if (space < 48 || space > 500) {
-		space = 100;
+		space = 128;
 	}
 
 	bs->formation_dist = space;

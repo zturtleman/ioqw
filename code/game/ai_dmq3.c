@@ -36,12 +36,15 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "ai_dmq3.h"
 #include "ai_chat.h"
 #include "ai_cmd.h"
+#include "ai_vcmd.h"
 #include "ai_dmnet.h"
 #include "ai_team.h"
 #include "chars.h" // characteristics
 #include "inv.h" // indexes into the inventory
 #include "syn.h" // synonyms
 #include "match.h" // string matching types and vars
+// for the voice chats
+#include "bg_local.h" // sos001205 - for q3_ui also
 // from aasfile.h
 #define AREACONTENTS_MOVER 1024
 #define AREACONTENTS_MODELNUMSHIFT 24
@@ -633,7 +636,7 @@ void BotCTFSeekGoals(bot_state_t *bs) {
 					// get the team goal time
 					bs->teamgoal_time = FloatTime() + TEAM_ACCOMPANY_TIME;
 					bs->ltgtype = LTG_TEAMACCOMPANY;
-					bs->formation_dist = 3.5 * 32; // 3.5 meter
+					bs->formation_dist = 128;
 					BotSetTeamStatus(bs);
 					bs->owndecision_time = FloatTime() + 5;
 				}
@@ -699,7 +702,7 @@ void BotCTFSeekGoals(bot_state_t *bs) {
 					// get the team goal time
 					bs->teamgoal_time = FloatTime() + TEAM_ACCOMPANY_TIME;
 					bs->ltgtype = LTG_TEAMACCOMPANY;
-					bs->formation_dist = 3.5 * 32; // 3.5 meter
+					bs->formation_dist = 128;
 
 					BotSetTeamStatus(bs);
 					bs->owndecision_time = FloatTime() + 5;
@@ -895,7 +898,7 @@ void Bot1FCTFSeekGoals(bot_state_t *bs) {
 					// get the team goal time
 					bs->teamgoal_time = FloatTime() + TEAM_ACCOMPANY_TIME;
 					bs->ltgtype = LTG_TEAMACCOMPANY;
-					bs->formation_dist = 3.5 * 32; // 3.5 meter
+					bs->formation_dist = 128;
 					BotSetTeamStatus(bs);
 					bs->owndecision_time = FloatTime() + 5;
 					return;
@@ -1277,7 +1280,7 @@ void BotHarvesterSeekGoals(bot_state_t *bs) {
 			// get the team goal time
 			bs->teamgoal_time = FloatTime() + TEAM_ACCOMPANY_TIME;
 			bs->ltgtype = LTG_TEAMACCOMPANY;
-			bs->formation_dist = 3.5 * 32; // 3.5 meter
+			bs->formation_dist = 128;
 			BotSetTeamStatus(bs);
 			return;
 		}
@@ -4884,17 +4887,25 @@ void BotPrintActivateGoalInfo(bot_state_t *bs, bot_activategoal_t *activategoal,
 BotRandomMove
 =======================================================================================================================================
 */
-void BotRandomMove(bot_state_t *bs, bot_moveresult_t *moveresult) {
+void BotRandomMove(bot_state_t *bs, bot_moveresult_t *moveresult, float speed) {
 	vec3_t dir, angles;
+	int i;
 
 	angles[0] = 0;
 	angles[1] = random() * 360;
 	angles[2] = 0;
-	AngleVectors(angles, dir, NULL, NULL);
 
-	trap_BotMoveInDirection(bs->ms, dir, 400, MOVE_WALK);
+	for (i = 0; i < 8; i++) {
+		AngleVectors(angles, dir, NULL, NULL);
 
-	moveresult->failure = qfalse;
+		if (trap_BotMoveInDirection(bs->ms, dir, speed, MOVE_WALK)) {
+			break;
+		}
+
+		angles[1] = ((int)angles[1] + 45) % 360;
+	}
+
+	moveresult->failure = (i == 8);
 	VectorCopy(dir, moveresult->movedir);
 }
 
@@ -4912,6 +4923,7 @@ void BotAIBlocked(bot_state_t *bs, bot_moveresult_t *moveresult, int activate) {
 #ifdef OBSTACLEDEBUG
 	char netname[MAX_NETNAME];
 #endif
+	float speed;
 	int movetype, bspent;
 	vec3_t hordir, sideward, angles, up = {0, 0, 1};
 	gentity_t *ent;
@@ -4923,10 +4935,12 @@ void BotAIBlocked(bot_state_t *bs, bot_moveresult_t *moveresult, int activate) {
 		bs->notblocked_time = FloatTime();
 		return;
 	}
+
+	speed = 400;
 	// if stuck in a solid area
 	if (moveresult->type == RESULTTYPE_INSOLIDAREA) {
 		// move in a random direction in the hope to get out
-		BotRandomMove(bs, moveresult);
+		BotRandomMove(bs, moveresult, speed);
 		return;
 	}
 #ifdef OBSTACLEDEBUG
@@ -5008,16 +5022,16 @@ void BotAIBlocked(bot_state_t *bs, bot_moveresult_t *moveresult, int activate) {
 		VectorNegate(sideward, sideward);
 	}
 	// try to crouch straight forward?
-	if (movetype != MOVE_CROUCH || !trap_BotMoveInDirection(bs->ms, hordir, 400, movetype)) {
+	if (/*movetype != MOVE_CROUCH || */!trap_BotMoveInDirection(bs->ms, hordir, speed, movetype)) {
 		// perform the movement
-		if (!trap_BotMoveInDirection(bs->ms, sideward, 400, movetype)) {
+		if (!trap_BotMoveInDirection(bs->ms, sideward, speed, movetype)) {
 			// flip the avoid direction flag
 			bs->flags ^= BFL_AVOIDRIGHT;
 			// flip the direction
 			// VectorNegate(sideward, sideward);
 			VectorMA(sideward, -1, hordir, sideward);
 			// move in the other direction
-			trap_BotMoveInDirection(bs->ms, sideward, 400, movetype);
+			trap_BotMoveInDirection(bs->ms, sideward, speed, movetype);
 		}
 	}
 
@@ -5049,13 +5063,13 @@ int BotAIPredictObstacles(bot_state_t *bs, bot_goal_t *goal) {
 		return qfalse;
 	}
 	// always predict when the goal change or at regular intervals
-	if (bs->predictobstacles_goalareanum == goal->areanum && bs->predictobstacles_time > FloatTime() - 6) {
+	if (bs->predictobstacles_goalareanum == goal->areanum && bs->predictobstacles_time > FloatTime() - 0.5) {
 		return qfalse;
 	}
 
 	bs->predictobstacles_goalareanum = goal->areanum;
 	bs->predictobstacles_time = FloatTime();
-	// predict at most 100 areas or 10 seconds ahead
+	// predict at most 100 areas or 1 second ahead
 	trap_AAS_PredictRoute(&route, bs->areanum, bs->origin, goal->areanum, bs->tfl, 100, 1000, RSE_USETRAVELTYPE|RSE_ENTERCONTENTS, AREACONTENTS_MOVER, TFL_BRIDGE, 0);
 	// if bot has to travel through an area with a mover
 	if (route.stopevent & RSE_ENTERCONTENTS) {

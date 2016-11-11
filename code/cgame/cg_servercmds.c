@@ -28,6 +28,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 **************************************************************************************************************************************/
 
 #include "cg_local.h"
+#include "../game/bg_local.h" // for the voice chats
 
 typedef struct {
 	const char *order;

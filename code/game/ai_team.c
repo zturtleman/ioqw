@@ -32,6 +32,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "../botlib/be_ai_goal.h"
 #include "../botlib/be_ai_move.h"
 #include "../botlib/be_ai_weap.h"
+#include "../botlib/be_ai_weight.h"
 #include "ai_main.h"
 #include "ai_dmq3.h"
 #include "ai_chat.h"
@@ -39,7 +40,12 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "ai_vcmd.h"
 #include "ai_dmnet.h"
 #include "ai_team.h"
-#include "match.h"
+#include "chars.h" // characteristics
+#include "inv.h" // indexes into the inventory
+#include "syn.h" // synonyms
+#include "match.h" // string matching types and vars
+// for the voice chats
+#include "bg_local.h"
 // ctf task preferences for a client
 typedef struct bot_ctftaskpreference_s {
 	char name[36];
