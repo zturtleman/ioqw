@@ -50,7 +50,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define AREACONTENTS_MODELNUMSHIFT 24
 #define AREACONTENTS_MAXMODELNUM 0xFF
 #define AREACONTENTS_MODELNUM (AREACONTENTS_MAXMODELNUM << AREACONTENTS_MODELNUMSHIFT)
-#define IDEAL_ATTACKDIST 140
+
 #define MAX_WAYPOINTS 128
 
 bot_waypoint_t botai_waypoints[MAX_WAYPOINTS];
@@ -64,6 +64,7 @@ vmCvar_t bot_fastchat;
 vmCvar_t bot_nochat;
 vmCvar_t bot_testrchat;
 vmCvar_t bot_challenge;
+vmCvar_t bot_visualrange;
 vmCvar_t bot_predictobstacles;
 vmCvar_t g_spSkill;
 
@@ -239,6 +240,34 @@ EntityIsShooting
 qboolean EntityIsShooting(aas_entityinfo_t *entinfo) {
 
 	if (entinfo->flags & EF_FIRING) {
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
+/*
+=======================================================================================================================================
+EntityIsAnObelisk
+=======================================================================================================================================
+*/
+int EntityIsAnObelisk(bot_state_t *bs) {
+
+	if (bs->enemy >= MAX_CLIENTS && (bs->enemy == redobelisk.entitynum || bs->enemy == blueobelisk.entitynum)) {
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
+/*
+=======================================================================================================================================
+EntityIsAlreadyMined
+=======================================================================================================================================
+*/
+int EntityIsAlreadyMined(aas_entityinfo_t *entinfo) {
+
+	if (entinfo->flags & EF_TICKING) {
 		return qtrue;
 	}
 
@@ -755,7 +784,7 @@ void BotCTFSeekGoals(bot_state_t *bs) {
 		return;
 	}
 	// if the bot has enough aggression to decide what to do
-	if (BotAggression(bs) < 50) {
+	if (!BotAggression(bs)) {
 		return;
 	}
 	// set the time to send a message to the team mates
@@ -993,7 +1022,7 @@ void Bot1FCTFSeekGoals(bot_state_t *bs) {
 		return;
 	}
 	// if the bot has enough aggression to decide what to do
-	if (BotAggression(bs) < 50) {
+	if (!BotAggression(bs)) {
 		return;
 	}
 	// set the time to send a message to the team mates
@@ -1102,7 +1131,7 @@ void BotObeliskSeekGoals(bot_state_t *bs) {
 		return;
 	}
 	// if the bot has enough aggression to decide what to do
-	if (BotAggression(bs) < 50) {
+	if (!BotAggression(bs)) {
 		return;
 	}
 	// set the time to send a message to the team mates
@@ -1248,7 +1277,7 @@ void BotHarvesterSeekGoals(bot_state_t *bs) {
 		return;
 	}
 	// if the bot has enough aggression to decide what to do
-	if (BotAggression(bs) < 50) {
+	if (!BotAggression(bs)) {
 		return;
 	}
 	// set the time to send a message to the team mates
@@ -1870,6 +1899,7 @@ void BotUpdateBattleInventory(bot_state_t *bs, int enemy) {
 	bs->inventory[ENEMY_HEIGHT] = (int)dir[2];
 	dir[2] = 0;
 	bs->inventory[ENEMY_HORIZONTAL_DIST] = (int)VectorLength(dir);
+	bs->inventory[ENTITY_IS_AN_OBELISK] = (int)EntityIsAnObelisk(bs);
 	// FIXME: add num visible enemies and num visible team mates to the inventory
 }
 
@@ -2383,60 +2413,147 @@ qboolean BotCanCamp(bot_state_t *bs) {
 BotAggression
 =======================================================================================================================================
 */
-float BotAggression(bot_state_t *bs) {
+qboolean BotAggression(bot_state_t *bs) {
+	float aggression, selfpreservation;
+	aas_entityinfo_t entinfo;
 
-	// if the bot has quad
-	if (bs->inventory[INVENTORY_QUAD]) {
-		// if the bot is not holding the gauntlet or the enemy is really nearby
-		if (bs->weaponnum != WP_GAUNTLET || bs->inventory[ENEMY_HORIZONTAL_DIST] < 80) {
-			return 70;
-		}
-	}
-	// if the enemy is located way higher than the bot
+	aggression = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AGGRESSION, 0, 1);
+	selfpreservation = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_SELFPRESERVATION, 0, 1);
+	// if the enemy is located way higher than the bot.
 	if (bs->inventory[ENEMY_HEIGHT] > 200) {
-		return 0;
+		return qfalse;
 	}
-	// if the bot is very low on health
-	if (bs->inventory[INVENTORY_HEALTH] < 60) {
-		return 0;
+	// if the bot currently use the grenadelauncher.
+	if (bs->weaponnum == WP_GRENADE_LAUNCHER) {
+		return qfalse;
 	}
-	// if the bot is low on health
-	if (bs->inventory[INVENTORY_HEALTH] < 80) {
-		// if the bot has insufficient armor
-		if (bs->inventory[INVENTORY_ARMOR] < 40) {
-			return 0;
+	// if the bot currently use the proxylauncher.
+	if (bs->weaponnum == WP_PROX_LAUNCHER) {
+		return qfalse;
+	}
+	// current enemy.
+	if (bs->enemy >= 0) {
+		BotEntityInfo(bs->enemy, &entinfo);
+
+		if (entinfo.valid) {
+			// if the enemy currently use the gauntlet.
+			if (entinfo.weapon == WP_GAUNTLET) {
+				return qtrue;
+			}
+			// if the bot currently uses the gauntlet too.
+			if (bs->weaponnum == WP_GAUNTLET) {
+				// if attacking an obelisk
+				if (bs->enemy >= MAX_CLIENTS && (bs->enemy == redobelisk.entitynum || bs->enemy == blueobelisk.entitynum)) {
+					return qfalse;
+				}
+				// if the enemy is located higher than the bot can jump on.
+				if (bs->inventory[ENEMY_HEIGHT] > 42) {
+					return qfalse;
+				}
+				// if the enemy is really near.
+				if (bs->inventory[ENEMY_HORIZONTAL_DIST] < 100) {
+					return qtrue;
+				}
+				// an extremely aggressive bot will less likely retreat.
+				if (aggression > 0.9) {
+					return qtrue;
+				}
+				// if the enemy is far away, check if we can attack the enemy from behind.
+				if (bs->inventory[ENEMY_HORIZONTAL_DIST] > 200) {
+					vec3_t dir, angles;
+					VectorSubtract(bs->origin, entinfo.origin, dir);
+					vectoangles(dir, angles);
+					// if not in the enemy's field of vision, attack!
+					if (!InFieldOfVision(entinfo.angles, 180, angles)) {
+						return qtrue;
+					}
+				}
+				// otherwise a bot, currently using the gauntlet, should retreat!
+				return qfalse;
+			}
+			// an extremely aggressive bot will less likely retreat.
+			if (aggression > 0.9 && bs->inventory[ENEMY_HORIZONTAL_DIST] < 200) {
+				return qtrue;
+			}
+			// if the enemy currently use the BFG.
+			if (entinfo.weapon == WP_BFG) {
+				return qfalse;
+			}
+			// if the enemy currently use the grenadelauncher.
+			if (entinfo.weapon == WP_GRENADE_LAUNCHER) {
+				return qfalse;
+			}
+			// if the enemy has the quad damage.
+			if (entinfo.powerups & (1 << PW_QUAD)) {
+				return qfalse;
+			}
+			// if the bot is out for revenge.
+			if (bs->enemy == bs->revenge_enemy && bs->revenge_kills > 0) {
+				return qtrue;
+			}
 		}
 	}
-	// if the bot can use the bfg
-	if (bs->inventory[INVENTORY_BFG10K] > 0 && bs->inventory[INVENTORY_BFGAMMO] > 7) {
-		return 100;
+	// if the bot has the quad damage powerup.
+	if (bs->inventory[INVENTORY_QUAD]) {
+		return qtrue;
 	}
-	// if the bot can use the railgun
-	if (bs->inventory[INVENTORY_RAILGUN] > 0 && bs->inventory[INVENTORY_SLUGS] > 5) {
-		return 95;
+	// if the bot has the invisibility powerup.
+	if (bs->inventory[INVENTORY_INVISIBILITY]) {
+		return qtrue;
 	}
-	// if the bot can use the lightning gun
-	if (bs->inventory[INVENTORY_LIGHTNING] > 0 && bs->inventory[INVENTORY_LIGHTNINGAMMO] > 50) {
-		return 90;
+	// if the bot has the regeneration powerup.
+	if (bs->inventory[INVENTORY_REGEN]) {
+		return qtrue;
 	}
-	// if the bot can use the rocketlauncher
+	//if the bot is very low on health.
+	if (bs->inventory[INVENTORY_HEALTH] < 100 * selfpreservation) {
+		return qfalse;
+	}
+	//if the bot is low on health.
+	if (bs->inventory[INVENTORY_HEALTH] < 100 * selfpreservation + 20) {
+		//if the bot has insufficient armor.
+		if (bs->inventory[INVENTORY_ARMOR] < 40) {
+			return qfalse;
+		}
+	}
+	// if the bot has the ammoregen powerup.
+	if (bs->inventory[INVENTORY_AMMOREGEN]) {
+		return qtrue;
+	}
+	// if the bot can use the chaingun.
+	if (bs->inventory[INVENTORY_CHAINGUN] > 0 && bs->inventory[INVENTORY_BELT] > 50) {
+		return qtrue;
+	}
+	// if the bot can use the nailgun.
+	if (bs->inventory[INVENTORY_NAILGUN] > 0 && bs->inventory[INVENTORY_NAILS] > 5) {
+		return qtrue;
+	}
+	// if the bot can use the shotgun.
+	if (bs->inventory[INVENTORY_SHOTGUN] > 0 && bs->inventory[INVENTORY_SHELLS] > 5) {
+		return qtrue;
+	}
+	// if the bot can use the rocketlauncher.
 	if (bs->inventory[INVENTORY_ROCKETLAUNCHER] > 0 && bs->inventory[INVENTORY_ROCKETS] > 5) {
-		return 90;
+		return qtrue;
 	}
-	// if the bot can use the plasmagun
+	// if the bot can use the lightning gun.
+	if (bs->inventory[INVENTORY_LIGHTNING] > 0 && bs->inventory[INVENTORY_LIGHTNINGAMMO] > 50) {
+		return qtrue;
+	}
+	// if the bot can use the railgun.
+	if (bs->inventory[INVENTORY_RAILGUN] > 0 && bs->inventory[INVENTORY_SLUGS] > 3) {
+		return qtrue;
+	}
+	// if the bot can use the plasmagun.
 	if (bs->inventory[INVENTORY_PLASMAGUN] > 0 && bs->inventory[INVENTORY_CELLS] > 40) {
-		return 85;
+		return qtrue;
 	}
-	// if the bot can use the grenade launcher
-	if (bs->inventory[INVENTORY_GRENADELAUNCHER] > 0 && bs->inventory[INVENTORY_GRENADES] > 10) {
-		return 80;
+	// if the bot can use the bfg.
+	if (bs->inventory[INVENTORY_BFG10K] > 0 && bs->inventory[INVENTORY_BFGAMMO] > 5) {
+		return qtrue;
 	}
-	// if the bot can use the shotgun
-	if (bs->inventory[INVENTORY_SHOTGUN] > 0 && bs->inventory[INVENTORY_SHELLS] > 10) {
-		return 50;
-	}
-	// otherwise the bot is not feeling too good
-	return 0;
+	// otherwise the bot is not feeling too good.
+	return qfalse;
 }
 
 /*
@@ -2519,7 +2636,7 @@ int BotWantsToRetreat(bot_state_t *bs) {
 		return qtrue;
 	}
 
-	if (BotAggression(bs) < 50) {
+	if (!BotAggression(bs)) {
 		return qtrue;
 	}
 
@@ -2580,7 +2697,7 @@ int BotWantsToChase(bot_state_t *bs) {
 		return qfalse;
 	}
 
-	if (BotAggression(bs) > 50) {
+	if (BotAggression(bs)) {
 		return qtrue;
 	}
 
@@ -2818,6 +2935,150 @@ void BotGoForPowerups(bot_state_t *bs) {
 
 /*
 =======================================================================================================================================
+BotGetEntityEventSoundCoefficient
+
+Return a value for how loud events are.
+
+FIXME: Why can't we use 'BotCheckEvents'? When using 'BotCheckEvents' all "event only entity" events aren't working.
+FIXME: Why are closing doors not heard?
+
+NOTE: Another approach of a similar function is 'BotGetEntitySurfaceSoundCoefficient' from ET (wasn't used there).
+	  Surfaceparms was planned to be taken into account in ET, should we do this?
+=======================================================================================================================================
+*/
+int BotGetEntityEventSoundCoefficient(const gentity_t* ent) {
+
+	if (ent->s.eType < ET_EVENTS) {
+		switch (ent->s.eType) {
+			case ET_PLAYER:
+				if (ent->s.eFlags & EF_FIRING) {
+					return 1000;
+				}
+
+				break;
+			case ET_MOVER:
+				// FIXME: why are closing doors not heard?
+				break;
+			case ET_MISSILE:
+				switch (ent->s.weapon) {
+					case WP_ROCKET_LAUNCHER:
+					case WP_PLASMAGUN:
+					case WP_GRENADE_LAUNCHER:
+					case WP_NAILGUN:
+					case WP_BFG:
+						return 1000;
+						break;
+				}
+
+				break;
+			default:
+				switch (ent->s.event & ~EV_EVENT_BITS) {
+					case EV_KAMIKAZE:
+						return 10000;
+						break;
+					// explosions are really loud (and important to inspect).
+					case EV_MISSILE_MISS:
+						return 5000;
+						break;
+					// bullet impacts should attract the bot to inspect (if the shooter isn't seen or heard).
+					case EV_BULLET_HIT_WALL:
+						return 500;
+						break;
+				}
+
+				return 0;
+				break;
+		}
+	}
+
+	if (ent->eventTime < level.time - 1000) {
+		return 0;
+	}
+
+	return 500;
+}
+
+/*
+=======================================================================================================================================
+BotHasRoamGoal
+=======================================================================================================================================
+*/
+qboolean BotHasRoamGoal(bot_state_t *bs, vec3_t goal) {
+	gentity_t* ent;
+	int i, audibility_range;
+	float dist, weight, total_weight;
+	vec3_t bestorg, angles, dir;
+	qboolean found;
+ 
+	found = qfalse;
+	total_weight = 0;
+
+	for (i = 0; i < level.num_entities; i++) {
+		ent = &g_entities[i];
+
+		if (!ent->inuse) {
+			continue;
+		}
+
+		if (!ent->r.linked) {
+			continue;
+		}
+
+		if (i == bs->client) {
+			continue;
+		}
+		// get the audibility range
+		audibility_range = BotGetEntityEventSoundCoefficient(ent);
+
+		if (audibility_range < 1) {
+			continue;
+		}
+
+		VectorAdd(ent->r.absmin, ent->r.absmax, bestorg);
+		VectorScale(bestorg, 0.5, bestorg);
+		VectorSubtract(bestorg, bs->origin, dir);
+		// get the distance
+		dist = VectorLengthSquared(dir);
+		// outside audibility range
+		if (dist > Square(audibility_range)) {
+			continue;
+		}
+
+		vectoangles(dir, angles);
+		// check if the goal is already in the field of vision
+		if (InFieldOfVision(bs->viewangles, 90, angles)) {
+			continue;
+		}
+
+		if (!trap_InPVSIgnorePortals(bs->origin, g_entities[i].s.pos.trBase)) {
+			continue;
+		}
+
+		weight = 1.0 / (dist + 100);
+		total_weight += weight;
+
+		if (random() <= weight / total_weight) {
+			vectoangles(dir, bs->ideal_viewangles);
+			VectorCopy(bestorg, goal);
+			found = qtrue;
+		}
+	}
+	// look at the entity
+	if (found) {
+		bs->roamgoal_time = FloatTime() + 1 + 2 * random();
+		return qtrue;
+	}
+
+	if (bs->roamgoal_time > FloatTime()) {
+		audibility_range = 0; // Tobias: Is this needed?
+		return qfalse;
+	}
+
+	return qfalse;
+}
+
+/*
+=======================================================================================================================================
 BotRoamGoal
 =======================================================================================================================================
 */
@@ -2888,14 +3149,14 @@ BotAttackMove
 =======================================================================================================================================
 */
 bot_moveresult_t BotAttackMove(bot_state_t *bs, int tfl) {
-	int movetype, i, attackentity;
-	float attack_skill, jumper, croucher, dist, strafechange_time;
-	float attack_dist, attack_range;
+	int movetype, i, attackentity, attack_dist, attack_range;
+	float attack_skill, jumper, croucher, dist, selfpreservation, strafechange_time;
 	vec3_t forward, backward, sideward, start, hordir, up = {0, 0, 1};
 	aas_entityinfo_t entinfo;
 	bot_moveresult_t moveresult;
 	bot_goal_t goal;
 	bsp_trace_t bsptrace;
+	weaponinfo_t wi;
 
 	attackentity = bs->enemy;
 
@@ -2918,6 +3179,7 @@ bot_moveresult_t BotAttackMove(bot_state_t *bs, int tfl) {
 	attack_skill = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_ATTACK_SKILL, 0, 1);
 	jumper = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_JUMPER, 0, 1);
 	croucher = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_CROUCHER, 0, 1);
+	selfpreservation = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_SELFPRESERVATION, 0, 1);
 	// if the bot is really stupid
 	if (attack_skill < 0.2) {
 		return moveresult;
@@ -2962,13 +3224,36 @@ bot_moveresult_t BotAttackMove(bot_state_t *bs, int tfl) {
 			bs->attackjump_time = FloatTime() + 1;
 		}
 	}
-
-	if (bs->cur_ps.weapon == WP_GAUNTLET) {
+	// get the weapon information
+	trap_BotGetWeaponInfo(bs->ws, bs->weaponnum, &wi);
+	// close combat weapons
+	if (wi.numprojectiles == 0) {
 		attack_dist = 0;
 		attack_range = 0;
+	// current weapon lightning gun
+	} else if (bs->cur_ps.weapon == WP_LIGHTNING) {
+		attack_dist = 0.75 * LIGHTNING_RANGE;
+		attack_range = 0.25 * LIGHTNING_RANGE;
+	// current weapon grenadelauncher
+	} else if (bs->cur_ps.weapon == WP_GRENADE_LAUNCHER) {
+		attack_dist = 500;
+		attack_range = 150;
+	// if the enemy uses a weapon with splash damage, go closer
+	} else if ((wi.proj.damagetype & DAMAGETYPE_RADIAL) && wi.proj.radius > 80 && dist < 200 && selfpreservation < 0.5 && movetype != MOVE_CROUCH) {
+		attack_dist = 0;
+		attack_range = 0;
+	// if the enemy uses lightning gun, stay away
+	} else if (entinfo.weapon == WP_LIGHTNING && bs->cur_ps.weapon != WP_LIGHTNING) {
+		attack_dist = LIGHTNING_RANGE + 200;
+		attack_range = 100;
+	// attacking obelisks
+	} else if (bs->enemy >= MAX_CLIENTS && (bs->enemy == redobelisk.entitynum || bs->enemy == blueobelisk.entitynum)) {
+		attack_dist = 300;
+		attack_range = 150;
+	// use the bots individual prefered attack distances
 	} else {
-		attack_dist = IDEAL_ATTACKDIST;
-		attack_range = 40;
+		attack_dist = trap_Characteristic_BInteger(bs->character, CHARACTERISTIC_ATTACK_DISTANCE, 0, 1000);
+		attack_range = trap_Characteristic_BInteger(bs->character, CHARACTERISTIC_ATTACK_RANGE, 0, 1000);
 	}
 	// if the bot is stupid
 	if (attack_skill <= 0.4) {
@@ -3069,7 +3354,7 @@ int BotSameTeam(bot_state_t *bs, int entnum) {
 InFieldOfVision
 =======================================================================================================================================
 */
-qboolean InFieldOfVision(vec3_t viewangles, float fov, vec3_t angles) {
+qboolean InFieldOfVision(vec3_t viewangles, int fov, vec3_t angles) {
 	int i;
 	float diff, angle;
 
@@ -3109,8 +3394,8 @@ BotEntityVisible
 Returns visibility in the range [0, 1] taking fog and water surfaces into account.
 =======================================================================================================================================
 */
-float BotEntityVisible(int viewer, vec3_t eye, vec3_t viewangles, float fov, int ent) {
-	int i, contents_mask, passent, hitent, infog, inwater, otherinfog, pc;
+float BotEntityVisible(int viewer, vec3_t eye, vec3_t viewangles, int fov, int ent) {
+	int visdist, i, contents_mask, passent, hitent, infog, inwater, otherinfog, pc;
 	float squaredfogdist, waterfactor, vis, bestvis;
 	bsp_trace_t trace;
 	aas_entityinfo_t entinfo;
@@ -3128,8 +3413,17 @@ float BotEntityVisible(int viewer, vec3_t eye, vec3_t viewangles, float fov, int
 	// check if entity is within field of vision
 	VectorSubtract(middle, eye, dir);
 	vectoangles(dir, entangles);
+	visdist = bot_visualrange.value;
+
+	if (VectorLength(dir) > visdist) {
+		return 0;
+	}
 
 	if (!InFieldOfVision(viewangles, fov, entangles)) {
+		return 0;
+	}
+
+	if (EntityIsInvisible(&entinfo) && VectorLength(dir) > 300) {
 		return 0;
 	}
 
@@ -3228,14 +3522,15 @@ BotFindEnemy
 =======================================================================================================================================
 */
 int BotFindEnemy(bot_state_t *bs, int curenemy) {
-	int i, healthdecrease;
-	float f, alertness, easyfragger, vis;
+	int i, f, healthdecrease;
+	float /*alertness, */aggression, easyfragger, vis;
 	float squaredist, cursquaredist;
 	aas_entityinfo_t entinfo, curenemyinfo, curbotinfo;
 	vec3_t dir, angles;
 
-	alertness = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_ALERTNESS, 0, 1);
+//	alertness = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_ALERTNESS, 0, 1);
 	easyfragger = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_EASY_FRAGGER, 0, 1);
+	aggression = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AGGRESSION, 0, 1);
 	// check if the health decreased
 	healthdecrease = bs->lasthealth > bs->inventory[INVENTORY_HEALTH];
 	// remember the current health value
@@ -3255,9 +3550,15 @@ int BotFindEnemy(bot_state_t *bs, int curenemy) {
 		if (curenemy == bs->revenge_enemy && bs->revenge_kills > 0) {
 			return qfalse;
 		}
-
-		VectorSubtract(curenemyinfo.origin, bs->origin, dir);
-		cursquaredist = VectorLengthSquared(dir);
+		// less aggressive bots will immediatly stop firing if the enemy is dead.
+		if (EntityIsDead(&curenemyinfo) && aggression < 0.2) {
+			bs->enemy = -1;
+			curenemy = -1;
+			cursquaredist = 0;
+		} else {
+			VectorSubtract(curenemyinfo.origin, bs->origin, dir);
+			cursquaredist = VectorLengthSquared(dir);
+		}
 	} else {
 		cursquaredist = 0;
 	}
@@ -3317,8 +3618,8 @@ int BotFindEnemy(bot_state_t *bs, int curenemy) {
 		if (EntityIsDead(&entinfo) || entinfo.number == bs->entitynum) {
 			continue;
 		}
-		// if the enemy is invisible
-		if (EntityIsInvisible(&entinfo)) {
+		//ignore invisible, mined and burning enemies if already fighting
+		if (bs->enemy >= 0 && (EntityIsInvisible(&entinfo) || EntityIsAlreadyMined(&entinfo))) {
 			continue;
 		}
 		// if not an easy fragger don't shoot at chatting players
@@ -3338,20 +3639,26 @@ int BotFindEnemy(bot_state_t *bs, int curenemy) {
 		squaredist = VectorLengthSquared(dir);
 		// if this entity is not carrying a flag or cubes
 		if (!EntityCarriesFlag(&entinfo) && !EntityCarriesCubes(&entinfo)) {
+			// prefer targets near the goal
+			if (curenemy >= 0 && BotAggression(bs) && bs->ltgtype != 0 && 1.5 * DistanceSquared(entinfo.origin, bs->teamgoal.origin) > DistanceSquared(curenemyinfo.origin, bs->teamgoal.origin)) {
+				continue;
+			}
 			// if this enemy is further away than the current one
 			if (curenemy >= 0 && squaredist > cursquaredist) {
 				continue;
 			}
 		}
+/*
 		// if the bot has no
 		if (squaredist > Square(900.0 + alertness * 4000.0)) {
 			continue;
 		}
+*/
 		// if the bot's health decreased or the enemy is shooting
 		if (curenemy < 0 && (healthdecrease || EntityIsShooting(&entinfo))) {
 			f = 360;
 		} else {
-			f = 160;
+			f = trap_Characteristic_BInteger(bs->character, CHARACTERISTIC_FOV, 0, 360);
 		}
 		// check if the enemy is visible
 		vis = BotEntityVisible(bs->entitynum, bs->eye, bs->viewangles, f, i);
@@ -3695,34 +4002,56 @@ void BotAimAtEnemy(bot_state_t *bs) {
 
 	aim_skill = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_SKILL, 0, 1);
 	aim_accuracy = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_ACCURACY, 0, 1);
+	reactiontime = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_REACTIONTIME, 0, 1);
 	// get the weapon information
 	trap_BotGetWeaponInfo(bs->ws, bs->weaponnum, &wi);
-	// get the weapon specific aim accuracy and or aim skill
-	if (wi.number == WP_MACHINEGUN) {
-		aim_accuracy = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_ACCURACY_MACHINEGUN, 0, 1);
-	} else if (wi.number == WP_SHOTGUN) {
-		aim_accuracy = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_ACCURACY_SHOTGUN, 0, 1);
-	} else if (wi.number == WP_GRENADE_LAUNCHER) {
-		aim_accuracy = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_ACCURACY_GRENADELAUNCHER, 0, 1);
-		aim_skill = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_SKILL_GRENADELAUNCHER, 0, 1);
-	} else if (wi.number == WP_ROCKET_LAUNCHER) {
-		aim_accuracy = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_ACCURACY_ROCKETLAUNCHER, 0, 1);
-		aim_skill = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_SKILL_ROCKETLAUNCHER, 0, 1);
-	} else if (wi.number == WP_LIGHTNING) {
-		aim_accuracy = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_ACCURACY_LIGHTNING, 0, 1);
-	} else if (wi.number == WP_RAILGUN) {
-		aim_accuracy = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_ACCURACY_RAILGUN, 0, 1);
-	} else if (wi.number == WP_PLASMAGUN) {
-		aim_accuracy = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_ACCURACY_PLASMAGUN, 0, 1);
-		aim_skill = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_SKILL_PLASMAGUN, 0, 1);
-	} else if (wi.number == WP_BFG) {
-		aim_accuracy = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_ACCURACY_BFG10K, 0, 1);
-		aim_skill = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_SKILL_BFG10K, 0, 1);
+	//get the weapon specific aim accuracy and or aim skill
+	switch (wi.number) {
+		case WP_MACHINEGUN:
+			aim_accuracy = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_ACCURACY_MACHINEGUN, 0, 1);
+			break;
+		case WP_CHAINGUN:
+			aim_accuracy = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_ACCURACY_CHAINGUN, 0, 1);
+			break;
+		case WP_SHOTGUN:
+			aim_accuracy = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_ACCURACY_SHOTGUN, 0, 1);
+			break;
+		case WP_NAILGUN:
+			aim_accuracy = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_ACCURACY_NAILGUN, 0, 1);
+			aim_skill = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_SKILL_NAILGUN, 0, 1);
+			break;
+		case WP_PROX_LAUNCHER:
+			aim_accuracy = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_ACCURACY_PROXLAUNCHER, 0, 1);
+			break;
+		case WP_GRENADE_LAUNCHER:
+			aim_accuracy = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_ACCURACY_GRENADELAUNCHER, 0, 1);
+			aim_skill = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_SKILL_GRENADELAUNCHER, 0, 1);
+			break;
+		case WP_ROCKET_LAUNCHER:
+			aim_accuracy = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_ACCURACY_ROCKETLAUNCHER, 0, 1);
+			aim_skill = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_SKILL_ROCKETLAUNCHER, 0, 1);
+			break;
+		case WP_LIGHTNING:
+			aim_accuracy = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_ACCURACY_LIGHTNING, 0, 1);
+			break;
+		case WP_RAILGUN:
+			aim_accuracy = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_ACCURACY_RAILGUN, 0, 1);
+			break;
+		case WP_PLASMAGUN:
+			aim_accuracy = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_ACCURACY_PLASMAGUN, 0, 1);
+			aim_skill = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_SKILL_PLASMAGUN, 0, 1);
+			break;
+		case WP_BFG:
+			aim_accuracy = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_ACCURACY_BFG10K, 0, 1);
+			aim_skill = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_SKILL_BFG10K, 0, 1);
+			break;
+		default:
+			break;
 	}
 
 	if (aim_skill > 0.95) {
 		// don't aim too early
-		reactiontime = 0.5 * trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_REACTIONTIME, 0, 1);
+		reactiontime *= 0.5;
 
 		if (bs->enemysight_time > FloatTime() - reactiontime) {
 			return;
@@ -3730,16 +4059,6 @@ void BotAimAtEnemy(bot_state_t *bs) {
 
 		if (bs->teleport_time > FloatTime() - reactiontime) {
 			return;
-		}
-	}
-
-	if (aim_accuracy <= 0) {
-		aim_accuracy = 0.0001f;
-	}
-	// if the enemy is invisible then shoot crappy most of the time
-	if (EntityIsInvisible(&entinfo)) {
-		if (random() > 0.1) {
-			aim_accuracy *= 0.4f;
 		}
 	}
 
@@ -3762,6 +4081,47 @@ void BotAimAtEnemy(bot_state_t *bs) {
 				aim_accuracy *= 0.7f;
 			}
 		}
+	}
+	//if the enemy is invisible then shoot crappy most of the time
+	if (EntityIsInvisible(&entinfo)) {
+		if (random() > 0.1) {
+			aim_accuracy *= 0.4f;
+		}
+	}
+	// keep a minimum accuracy
+	if (aim_accuracy <= 0) {
+		aim_accuracy = 0.0001f;
+	}
+	// if the bot is standing still
+	if (VectorLength(bs->cur_ps.velocity) <= 0) {
+		aim_accuracy += 0.2;
+	}
+	// if the bot is crouching
+	if (bs->cur_ps.pm_flags & PMF_DUCKED) {
+		aim_accuracy += 0.1;
+	}
+	// Tobias NOTE: add prone ~ + 0.2;
+	// if the enemy is standing still
+	f = VectorLength(bs->enemyvelocity);
+
+	if (f > 200) {
+		f = 200;
+	}
+
+	aim_accuracy += 0.2 * (0.5 - (f / 200.0));
+	// if the bot needs some time to react on the enemy, aiming gets better with time.
+	if (reactiontime > 1.75) {
+		f = FloatTime() - bs->enemysight_time;
+
+		if (f > 2.0) {
+			f = 2.0;
+		}
+
+		aim_accuracy += 0.2 * f / 2.0;
+	}
+	// set some maximum accuracy
+	if (aim_accuracy > 1.0) {
+		aim_accuracy = 1.0;
 	}
 	// check visibility of enemy
 	enemyvisible = BotEntityVisible(bs->entitynum, bs->eye, bs->viewangles, 360, bs->enemy);
@@ -3891,6 +4251,71 @@ void BotAimAtEnemy(bot_state_t *bs) {
 			}
 		}
 	}
+/*
+		(o = botai trace line)
+		(* = projectile travel line)   
+                                                                                        o  <---- topOfArc[2] trace
+                                                                                  o
+                                                                            o
+                                                                       o                *  <---- grenade arc is always below trace!
+                                                                  o   *
+                                                             o *
+                                                        o*
+                                                   o * 
+                                               o *
+                                          o   *
+                                     o     *
+            trace start ---->  o        *
+                                      *
+                             __|__  *
+                           |      *
+                           |     * |
+                           |    *  |
+        projectile start --|-> *   |
+                           |       |
+                           |       |
+                           |       |
+                           |       |
+NOTE: 1. We can't trace a parabola. That's why we trace a bit above the real arc of travel in straight line. If the projectile will hit some overhead ledge, the bot will fire the projectile straight ahead!
+NOTE: 2. wi.proj.gravity, was never set in the botfiles, it MUST be set to make this work properly (an alternate would be to completely do all this without the need of weaponinfo). Without modified botfiles everything works as normally.
+NOTE: 3. wi.proj.gravity is a simple configurable (pseudo)multiplier, this seems to be the fastest way to compute 100% accurate ballistics (e.g: projectile speed 700 -> gravity 0.3, projectile speed 10000 -> gravity 0.04, etc.).
+NOTE: 4. It doesn't really make sense to use DEFAULT_GRAVITY or g_gravity (projectiles are not influenced by g_gravity at all in Q3a).
+NOTE: 5. Although my method of computing the ballistics looks like magic, it is the simplest and fastest way I could think of (correct but slow math: -> https://en.wikipedia.org/wiki/Parabola)
+         Computing the ballistics this way takes configurable projectile speed, configurable projectile gravity, dynamic enemy height and dynamic enemy distance into account.
+NOTE: 6. This code becomes more precise the faster the projectile moves. Grenades are too slow in Q3a, even grandma can throw apples farther! Fix this: average H-Gren.: bolt speed 1300, = ~60 meters. (gravity 0.35)
+
+WARNING 1: Accuracy is nearly 100% even with very fast projectiled weapons (e.g.: speed 20000 etc.), this means bots will always hit their opponents, even with a bow (eventually decrease the bots individual aim_accuracy), otherwise it is very likely you become shot down by an arrow without knowing :)
+WARNING 2: Bots will also throw grenades through windows even from distance, so be careful!
+*/
+	if (wi.proj.gravity > 0) {
+		vec3_t middleOfArc, topOfArc;
+		// direction towards the enemy.
+		VectorSubtract(bestorigin, bs->origin, dir);
+		// distance towards the enemy.
+		dist = VectorNormalize(dir);
+		// get the start point shooting from, for safety sake take overhead ledges into account (so we trace along the highest point of the arc, from start to middle).
+		VectorCopy(bs->origin, start);
+		start[2] += bs->cur_ps.viewheight + 20;
+		// half the distance will be the middle of the projectile arc (highest point the projectile will travel).
+		VectorMA(start, dist * 0.5, dir, middleOfArc);
+		VectorCopy(middleOfArc, topOfArc);
+		topOfArc[2] += (dist * wi.proj.gravity) + (bs->inventory[ENEMY_HEIGHT] > 0 ? bs->inventory[ENEMY_HEIGHT] * 0.1 : 0);
+		// trace from start to middle, check if the projectile will be blocked by something.
+		BotAI_Trace(&trace, start, mins, maxs, topOfArc, entinfo.number, MASK_SHOT);
+		// if the projectile will not be blocked.
+		if (trace.fraction >= 1) {
+			// get the end point (the projectiles impact point), for safety sake take overhead ledges into account (so we trace along the highest point of the arc, from middle to end).
+			VectorCopy(entinfo.origin, end);
+			end[2] += 20;
+			// trace from middle to end, check if the projectile will be blocked by something.
+			BotAI_Trace(&trace, topOfArc, mins, maxs, end, entinfo.number, MASK_SHOT);
+			// if the projectile will not be blocked.
+			if (trace.fraction >= 1) {
+				// take projectile speed, gravity and enemy height into account.
+				bestorigin[2] += (dist * dist / wi.speed * wi.proj.gravity) + (bs->inventory[ENEMY_HEIGHT] > 0 ? bs->inventory[ENEMY_HEIGHT] * 0.1 : 0);
+			}
+		}
+	}
 
 	if (enemyvisible) {
 		BotAI_Trace(&trace, bs->eye, NULL, NULL, bestorigin, bs->entitynum, MASK_SHOT);
@@ -3948,8 +4373,8 @@ BotCheckAttack
 =======================================================================================================================================
 */
 void BotCheckAttack(bot_state_t *bs) {
-	float points, reactiontime, fov, firethrottle;
-	int attackentity;
+	float points, reactiontime, firethrottle;
+	int attackentity, fov;
 	bsp_trace_t bsptrace;
 	//float selfpreservation;
 	vec3_t forward, right, start, end, dir, angles;
@@ -3973,6 +4398,14 @@ void BotCheckAttack(bot_state_t *bs) {
 	}
 
 	reactiontime = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_REACTIONTIME, 0, 1);
+	// if the enemy is invisible
+	if (EntityIsInvisible(&entinfo)) {
+		reactiontime += 1.5f;
+		// limit the reactiontime
+		if (reactiontime > 2.5f) {
+			reactiontime = 2.5f;
+		}
+	}
 
 	if (bs->enemysight_time > FloatTime() - reactiontime) {
 		return;
@@ -4936,7 +5369,11 @@ void BotAIBlocked(bot_state_t *bs, bot_moveresult_t *moveresult, int activate) {
 		return;
 	}
 
-	speed = 400;
+	if (!BotWantsToWalk(bs)) {
+		speed = 400;
+	} else {
+		speed = 200;
+	}
 	// if stuck in a solid area
 	if (moveresult->type == RESULTTYPE_INSOLIDAREA) {
 		// move in a random direction in the hope to get out
@@ -5017,27 +5454,28 @@ void BotAIBlocked(bot_state_t *bs, bot_moveresult_t *moveresult, int activate) {
 	//if (bsptrace.fraction >= 1) movetype = MOVE_CROUCH;
 	// get the sideward vector
 	CrossProduct(hordir, up, sideward);
-
+	// flip the direction
 	if (bs->flags & BFL_AVOIDRIGHT) {
 		VectorNegate(sideward, sideward);
 	}
 	// try to crouch straight forward?
 	if (/*movetype != MOVE_CROUCH || */!trap_BotMoveInDirection(bs->ms, hordir, speed, movetype)) {
-		// perform the movement
+		// try to move to the right
 		if (!trap_BotMoveInDirection(bs->ms, sideward, speed, movetype)) {
 			// flip the avoid direction flag
 			bs->flags ^= BFL_AVOIDRIGHT;
 			// flip the direction
-			// VectorNegate(sideward, sideward);
-			VectorMA(sideward, -1, hordir, sideward);
-			// move in the other direction
-			trap_BotMoveInDirection(bs->ms, sideward, speed, movetype);
+			VectorNegate(sideward, sideward);
+			// try to move to the left
+			if (!trap_BotMoveInDirection(bs->ms, sideward, speed, movetype)) {
+				// move in a random direction in the hope to get out
+				BotRandomMove(bs, moveresult, speed);
+			}
 		}
 	}
 
-	if (bs->notblocked_time < FloatTime() - 0.4) {
+	if (!activate) {
 		// just reset goals and hope the bot will go into another direction?
-		// is this still needed??
 		if (bs->ainode == AINode_Seek_NBG) {
 			bs->nbg_time = 0;
 		} else if (bs->ainode == AINode_Seek_LTG) {
@@ -5906,6 +6344,7 @@ void BotSetupDeathmatchAI(void) {
 	trap_Cvar_Register(&bot_nochat, "bot_nochat", "0", 0);
 	trap_Cvar_Register(&bot_testrchat, "bot_testrchat", "0", 0);
 	trap_Cvar_Register(&bot_challenge, "bot_challenge", "0", 0);
+	trap_Cvar_Register(&bot_visualrange, "bot_visualrange", "100000", 0);
 	trap_Cvar_Register(&bot_predictobstacles, "bot_predictobstacles", "1", 0);
 	trap_Cvar_Register(&g_spSkill, "g_spSkill", "3", 0);
 

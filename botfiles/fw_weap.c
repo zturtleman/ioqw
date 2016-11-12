@@ -47,7 +47,7 @@ weight "Machinegun"
 				case 1: return 0;
 				default:
 				{
-					switch(ENEMY_IS_NOT_A_PLAYER)
+					switch(ENTITY_IS_AN_OBELISK)
 					{
 						case 1: return W_MACHINEGUN;
 						default:
@@ -77,7 +77,7 @@ weight "Chaingun"
 				case 1: return 0;
 				default:
 				{
-					switch(ENEMY_IS_NOT_A_PLAYER)
+					switch(ENTITY_IS_AN_OBELISK)
 					{
 						case 1: return W_CHAINGUN;
 						default:
@@ -107,7 +107,7 @@ weight "Shotgun"
 				case 1: return 0;
 				default:
 				{
-					switch(ENEMY_IS_NOT_A_PLAYER)
+					switch(ENTITY_IS_AN_OBELISK)
 					{
 						case 1:
 						{
@@ -144,7 +144,7 @@ weight "Nailgun"
 				case 1: return 0;
 				default:
 				{
-					switch(ENEMY_IS_NOT_A_PLAYER)
+					switch(ENTITY_IS_AN_OBELISK)
 					{
 						case 1: return W_NAILGUN;
 						default:
@@ -221,7 +221,7 @@ weight "Rocket Launcher"
 				case 1: return 0;
 				default:
 				{
-					switch(ENEMY_IS_NOT_A_PLAYER)
+					switch(ENTITY_IS_AN_OBELISK)
 					{
 						case 1: return W_ROCKETLAUNCHER;
 						default:
@@ -251,7 +251,7 @@ weight "Lightning Gun"
 				case 1: return 0;
 				default:
 				{
-					switch(ENEMY_IS_NOT_A_PLAYER)
+					switch(ENTITY_IS_AN_OBELISK)
 					{
 						case 1:
 						{
@@ -288,7 +288,7 @@ weight "Railgun"
 				case 1: return 0;
 				default:
 				{
-					switch(ENEMY_IS_NOT_A_PLAYER)
+					switch(ENTITY_IS_AN_OBELISK)
 					{
 						case 1:
 						{
@@ -326,7 +326,7 @@ weight "Plasma Gun"
 				case 1: return 0;
 				default:
 				{
-					switch(ENEMY_IS_NOT_A_PLAYER)
+					switch(ENTITY_IS_AN_OBELISK)
 					{
 						case 1: return W_PLASMAGUN;
 						default:
@@ -356,7 +356,7 @@ weight "BFG10K"
 				case 1: return 0;
 				default:
 				{
-					switch(ENEMY_IS_NOT_A_PLAYER)
+					switch(ENTITY_IS_AN_OBELISK)
 					{
 						case 1: return W_BFG10K;
 						default:

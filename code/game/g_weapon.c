@@ -392,11 +392,6 @@ Weapon_Proxlauncher_Fire
 void Weapon_Proxlauncher_Fire(gentity_t *ent) {
 	gentity_t *m;
 
-	// extra vertical velocity
-	forward[2] += 0.2f;
-
-	VectorNormalize(forward);
-
 	m = fire_prox(ent, muzzle, forward);
 	m->damage *= s_quadFactor;
 	m->splashDamage *= s_quadFactor;
@@ -419,11 +414,6 @@ Weapon_Grenadelauncher_Fire
 */
 void Weapon_Grenadelauncher_Fire(gentity_t *ent) {
 	gentity_t *m;
-
-	// extra vertical velocity
-	forward[2] += 0.2f;
-
-	VectorNormalize(forward);
 
 	m = fire_grenade(ent, muzzle, forward);
 	m->damage *= s_quadFactor;

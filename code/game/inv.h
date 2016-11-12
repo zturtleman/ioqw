@@ -76,8 +76,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define NUM_VISIBLE_ENEMIES			101
 #define ENEMY_HORIZONTAL_DIST		102
 #define ENEMY_HEIGHT				103
-#define ENEMY_IS_INVULNERABLE		104
-#define ENEMY_IS_NOT_A_PLAYER		105
+#define ENTITY_IS_AN_OBELISK		104
 // item numbers (make sure they are in sync with bg_itemlist in bg_misc.c)
 #define MODELINDEX_HEALTHSMALL		1
 #define MODELINDEX_HEALTH			2
