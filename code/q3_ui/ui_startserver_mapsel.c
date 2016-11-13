@@ -130,7 +130,7 @@ typedef struct mapselect_s {
 	int page;
 	// index into index_maplist[]
 	// -1 no selection
-	// otherwise >= 0 and  < nummaps
+	// otherwise >= 0 and < nummaps
 	int currentmap;
 	int index; // index of map to change
 	qboolean nomaps;
@@ -144,7 +144,7 @@ typedef struct mapselect_s {
 	int mapsecondline[MAX_MAPS_LIST];
 	int bottomrow_y;
 	// index into index_maplist[]
-	// valid values always between >= 0 and  < nummaps
+	// valid values always between >= 0 and < nummaps
 	int multiselect[MAX_NUMMAPS];
 	int num_multisel;
 } mapselect_t;
@@ -951,6 +951,9 @@ static void MapSelect_DrawMapPic(void *self) {
 	vec4_t tempcolor;
 	float *color;
 
+	n = 0;
+	multi = 0;
+	hasfocus = 0;
 	b = (menubitmap_s *)self;
 
 	if (b->focuspic && !b->focusshader) {

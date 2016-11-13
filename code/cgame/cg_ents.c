@@ -246,7 +246,7 @@ static void CG_Item(centity_t *cent) {
 	}
 	// items bob up and down continuously
 	scale = 0.005 + cent->currentState.number * 0.00001;
-	cent->lerpOrigin[2] += 4 + cos((cg.time + 1000) * scale) * 4;
+	cent->lerpOrigin[2] += 4 + cos((cg.time + 1000) * scale) * 2;
 
 	memset(&ent, 0, sizeof(ent));
 	// autorotate at one of two speeds
@@ -265,7 +265,7 @@ static void CG_Item(centity_t *cent) {
 		cent->lerpOrigin[0] -= wi->weaponMidpoint[0] * ent.axis[0][0] + wi->weaponMidpoint[1] * ent.axis[1][0] + wi->weaponMidpoint[2] * ent.axis[2][0];
 		cent->lerpOrigin[1] -= wi->weaponMidpoint[0] * ent.axis[0][1] + wi->weaponMidpoint[1] * ent.axis[1][1] + wi->weaponMidpoint[2] * ent.axis[2][1];
 		cent->lerpOrigin[2] -= wi->weaponMidpoint[0] * ent.axis[0][2] + wi->weaponMidpoint[1] * ent.axis[1][2] + wi->weaponMidpoint[2] * ent.axis[2][2];
-		cent->lerpOrigin[2] += 8; // an extra height boost
+		cent->lerpOrigin[2] += 12; // an extra height boost
 	}
 
 	if (item->giType == IT_WEAPON) {
