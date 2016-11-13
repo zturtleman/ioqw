@@ -3182,6 +3182,8 @@ bot_moveresult_t BotAttackMove(bot_state_t *bs, int tfl) {
 	selfpreservation = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_SELFPRESERVATION, 0, 1);
 	// if the bot is really stupid
 	if (attack_skill < 0.2) {
+		// check blocked teammates
+		BotCheckBlockedTeammates(bs);
 		return moveresult;
 	}
 	// initialize the movement state
@@ -3880,6 +3882,45 @@ void BotVisibleTeamMatesAndEnemies(bot_state_t *bs, int *teammates, int *enemies
 
 /*
 =======================================================================================================================================
+BotCountTeamMates
+
+Counts all teammates inside a specific range, regardless if they are visible or not.
+=======================================================================================================================================
+*/
+int BotCountTeamMates(bot_state_t *bs, float range) {
+	int teammates, i;
+	aas_entityinfo_t entinfo;
+	vec3_t dir;
+
+	teammates = 0;
+
+	for (i = 0; i < level.maxclients; i++) {
+		if (i == bs->client) {
+			continue;
+		}
+
+		BotEntityInfo(i, &entinfo);
+		// if this player is active
+		if (!entinfo.valid) {
+			continue;
+		}
+		// if not within range
+		VectorSubtract(entinfo.origin, bs->origin, dir);
+
+		if (VectorLengthSquared(dir) > Square(range)) {
+			continue;
+		}
+		// if on the same team
+		if (BotSameTeam(bs, i)) {
+			teammates++;
+		}
+	}
+
+	return teammates;
+}
+
+/*
+=======================================================================================================================================
 BotTeamCubeCarrierVisible
 =======================================================================================================================================
 */
@@ -4253,7 +4294,7 @@ void BotAimAtEnemy(bot_state_t *bs) {
 	}
 /*
 		(o = botai trace line)
-		(* = projectile travel line)   
+		(* = projectile travel line)
                                                                                         o  <---- topOfArc[2] trace
                                                                                   o
                                                                             o
@@ -5344,6 +5385,118 @@ void BotRandomMove(bot_state_t *bs, bot_moveresult_t *moveresult, float speed) {
 
 /*
 =======================================================================================================================================
+BotCheckBlockedTeammates
+=======================================================================================================================================
+*/
+void BotCheckBlockedTeammates(bot_state_t *bs) {
+	bot_moveresult_t moveresult;
+	int movetype, i;
+	aas_entityinfo_t entinfo;
+	gentity_t *ent;
+	float mindist, speed;
+	vec3_t mins, maxs, end, v1, sideward, up = {0, 0, 1}, blocked_movedir;
+	bsp_trace_t trace;
+
+	if (g_gametype.integer < GT_TEAM) {
+		return;
+	}
+
+	if (BotCTFCarryingFlag(bs)) {
+		return;
+	}
+
+	if (Bot1FCTFCarryingFlag(bs)) {
+		return;
+	}
+
+	if (BotHarvesterCarryingCubes(bs)) {
+		return;
+	}
+	// initialize the movement state
+	BotSetupForMovement(bs);
+
+	for (i = 0; i < level.maxclients; i++) {
+		if (i == bs->client) {
+			continue;
+		}
+		// if on the same team
+		if (!BotSameTeam(bs, i)) {
+			continue;
+		}
+		// get entity information of the teammate
+		BotEntityInfo(i, &entinfo);
+		// if this teammate is active
+		if (!entinfo.valid) {
+			continue;
+		}
+		// if the teammate isn't dead and the teammate isn't the bot self
+		if (EntityIsDead(&entinfo) || entinfo.number == bs->entitynum) {
+			continue;
+		}
+		// set some movement parameters
+		movetype = MOVE_WALK;
+		mindist = 8;
+		speed = 200;
+
+		ent = &g_entities[i];
+		// human players and facing teammates need more space
+		if ((!(ent->r.svFlags & SVF_BOT)) || BotEntityVisible(bs->entitynum, bs->eye, bs->viewangles, 90, i)) {
+			mindist = 32;
+		}
+		// teammates with an important item needs even more space, and stay away from dangerous teammates (mined/burning players).
+		if (EntityCarriesFlag(&entinfo) || EntityCarriesCubes(&entinfo) || bs->inventory[INVENTORY_SCOUT] || (entinfo.flags & EF_TICKING)) {
+			mindist = 128;
+			speed = 400;
+		}
+		// safety check, don't force to reach the goal
+		if (mindist >= bs->formation_dist) {
+			bs->formation_dist *= 2;
+		}
+		// calculate the direction towards the teammate
+		v1[2] = 0;
+		VectorSubtract(entinfo.origin, bs->origin, v1);
+		VectorNormalize(v1);
+		// now check if the teammate is blocked, increase the distance accordingly
+		trap_AAS_PresenceTypeBoundingBox(PRESENCE_NORMAL, mins, maxs);
+		VectorMA(bs->origin, mindist, v1, end);
+		BotAI_Trace(&trace, bs->origin, mins, maxs, end, bs->entitynum, CONTENTS_BODY);
+		// if the teammate is too close (blocked)
+		if (trace.entityNum == i && (trace.startsolid || trace.fraction < 1.0)) {
+			// stop crouching to gain speed
+			bs->attackcrouch_time = FloatTime() - 1;
+			// look into the direction of the blocked teammate
+			vectoangles(v1, bs->ideal_viewangles);
+			// get the sideward vector
+			CrossProduct(up, v1, sideward);
+			// get the direction the blocked player is moving
+			blocked_movedir[2] = 0;
+			VectorCopy(ent->client->ps.velocity, blocked_movedir);
+			// the blocked player is moving to his left side, so move to his right side (and vice versa)
+			if (DotProduct(blocked_movedir, sideward) > -50.0f) {
+				// flip the direction
+				VectorNegate(sideward, sideward);
+			}
+			// also go backwards a little
+			VectorMA(sideward, -1, v1, sideward);
+			// move sidwards
+			if (!trap_BotMoveInDirection(bs->ms, sideward, speed, movetype)) {
+				// flip the direction
+				VectorNegate(sideward, sideward);
+				// move in the other direction
+				if (!trap_BotMoveInDirection(bs->ms, sideward, speed, movetype)) {
+					// try to step back
+					if (!trap_BotMoveInDirection(bs->ms, v1, speed, movetype)) {
+						// move in a random direction in the hope to get out
+						BotRandomMove(bs, &moveresult, speed);
+					}
+				}
+			}
+		}
+	}
+}
+
+/*
+=======================================================================================================================================
 BotAIBlocked
 
 Very basic handling of bots being blocked by other entities.
@@ -5358,10 +5511,11 @@ void BotAIBlocked(bot_state_t *bs, bot_moveresult_t *moveresult, int activate) {
 #endif
 	float speed;
 	int movetype, bspent;
-	vec3_t hordir, sideward, angles, up = {0, 0, 1};
+	vec3_t mins, maxs, end, v1, v2, hordir, sideward, angles, up = {0, 0, 1};
 	gentity_t *ent;
 	aas_entityinfo_t entinfo;
 	bot_activategoal_t activategoal;
+	bsp_trace_t trace;
 
 	// if the bot is not blocked by anything
 	if (!moveresult->blocked) {
@@ -5387,14 +5541,33 @@ void BotAIBlocked(bot_state_t *bs, bot_moveresult_t *moveresult, int activate) {
 	BotEntityInfo(moveresult->blockentity, &entinfo);
 
 	ent = &g_entities[moveresult->blockentity];
+
+	VectorSubtract(entinfo.origin, bs->origin, v2);
+	VectorNormalize(v2);
+	// if blocked by a player
+	if (ent->client) {
+		VectorNormalize2(ent->client->ps.velocity, v1);
+		// if the blocking entity is moving away from us or if it is an enemy
+		if (DotProduct(v1, v2) > 0.0 || !BotSameTeam(bs, moveresult->blockentity)) {
+			trap_AAS_PresenceTypeBoundingBox(PRESENCE_NORMAL, mins, maxs);
+			VectorMA(bs->origin, 24, v2, end);
+			BotAI_Trace(&trace, bs->origin, mins, maxs, end, bs->entitynum, CONTENTS_BODY);
+			// if nothing is hit
+			if (trace.fraction >= 1.0) {
+				return;
+			}
+		}
+
+		// always try right side first
+		bs->flags &= ~BFL_AVOIDRIGHT;
 	// if blocked by a bsp model
-	if (entinfo.modelindex > 0 && entinfo.modelindex <= max_bspmodelindex) {
+	} else if (entinfo.modelindex > 0 && entinfo.modelindex <= max_bspmodelindex) {
 		// a closed door without a targetname will operate automatically
 		if (!strcmp(ent->classname, "func_door") && (ent->moverState == MOVER_POS1)) {
 			// if no targetname and not a shootable door
 			if (!ent->targetname && !ent->health) {
 #ifdef OBSTACLEDEBUG
-				BotAI_Print(PRT_MESSAGE, "%s: Blocked by model %d (Door), but ignoring!\n", netname, entinfo.modelindex);
+				BotAI_Print(PRT_MESSAGE, "%s: Blocked by model %d (Door), ignoring!\n", netname, entinfo.modelindex);
 #endif // OBSTACLEDEBUG
 				return;
 			}
@@ -5402,7 +5575,7 @@ void BotAIBlocked(bot_state_t *bs, bot_moveresult_t *moveresult, int activate) {
 		// buttons will operate on contact
 		if (!strcmp(ent->classname, "func_button") && (ent->moverState == MOVER_POS1)) {
 #ifdef OBSTACLEDEBUG
-			BotAI_Print(PRT_MESSAGE, "%s: Blocked by model %d (Button), but ignoring!\n", netname, entinfo.modelindex);
+			BotAI_Print(PRT_MESSAGE, "%s: Blocked by model %d (Button), ignoring!\n", netname, entinfo.modelindex);
 #endif // OBSTACLEDEBUG
 			return;
 		}
