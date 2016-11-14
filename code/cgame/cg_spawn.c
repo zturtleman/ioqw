@@ -308,7 +308,7 @@ qboolean CG_ParseSpawnVars(void) {
 	}
 
 	if (com_token[0] != '{') {
-		CG_Error("CG_ParseSpawnVars: found %s when expecting {",com_token);
+		CG_Error("CG_ParseSpawnVars: found %s when expecting {", com_token);
 	}
 	// go through all the key / value pairs
 	while (1) {

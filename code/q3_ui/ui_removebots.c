@@ -259,11 +259,11 @@ static void UI_RemoveBotsMenu_GetBots(void) {
 			if (!isBot) {
 				continue;
 			}
-		} else if(removeBotsMenuInfo.action == RBM_CALLVOTEKICK) {
+		} else if (removeBotsMenuInfo.action == RBM_CALLVOTEKICK) {
 			if (isBot) {
 				continue;
 			}
-		} else if(removeBotsMenuInfo.action == RBM_CALLVOTELEADER) {
+		} else if (removeBotsMenuInfo.action == RBM_CALLVOTELEADER) {
 			if (team != playerTeam) {
 				continue;
 			}
@@ -334,7 +334,7 @@ static void UI_RemoveBotsMenu_Init(int action) {
 
 	if (action == RBM_CALLVOTEKICK) {
 		removeBotsMenuInfo.banner.string = "CALLVOTE KICK";
-	} else if(action == RBM_CALLVOTELEADER) {
+	} else if (action == RBM_CALLVOTELEADER) {
 		removeBotsMenuInfo.banner.string = "CALLVOTE TEAM LEADER";
 	} else {
 		removeBotsMenuInfo.banner.string = "REMOVE BOTS";
@@ -400,7 +400,7 @@ static void UI_RemoveBotsMenu_Init(int action) {
 	if (action == RBM_CALLVOTEKICK) {
 		removeBotsMenuInfo.deleteBot.generic.name = ART_KICK0;
 		removeBotsMenuInfo.deleteBot.focuspic = ART_KICK1;
-	} else if(action == RBM_CALLVOTELEADER) {
+	} else if (action == RBM_CALLVOTELEADER) {
 		removeBotsMenuInfo.deleteBot.generic.name = ART_VOTE0;
 		removeBotsMenuInfo.deleteBot.focuspic = ART_VOTE1;
 	} else {

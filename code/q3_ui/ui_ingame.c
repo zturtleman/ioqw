@@ -329,7 +329,7 @@ void InGame_MenuInit(void) {
 
 	if (!(gametype >= GT_TEAM)) {
 		s_ingame.teamorders.generic.flags |= QMF_GRAYED;
-	} else if(UI_CurrentPlayerTeam() == TEAM_SPECTATOR) {
+	} else if (UI_CurrentPlayerTeam() == TEAM_SPECTATOR) {
 		s_ingame.teamorders.generic.flags |= QMF_GRAYED;
 	}
 

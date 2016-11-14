@@ -444,7 +444,7 @@ static int S_Base_SoundDuration(sfxHandle_t handle) {
 		return 0;
 	}
 
-	return s_knownSfx[ handle ].duration;
+	return s_knownSfx[handle].duration;
 }
 
 /*

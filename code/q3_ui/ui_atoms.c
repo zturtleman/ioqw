@@ -530,7 +530,7 @@ float UI_ProportionalSizeScale(int style) {
 =======================================================================================================================================
 UI_DrawScaledProportionalString
 
-The use of float x,y allows greater positioning precision.
+The use of float x, y allows greater positioning precision.
 We can now "compensate" for alignment issues arising from the virtual 640x480 screen resolution.
 Any function calling with int arguments will still exhibit previous behaviour.
 =======================================================================================================================================

@@ -114,7 +114,7 @@ int GametypeBits(char *string) {
 	while (1) {
 		token = COM_ParseExt(&p, qfalse);
 
-		if(!token[0]) {
+		if (!token[0]) {
 			break;
 		}
 

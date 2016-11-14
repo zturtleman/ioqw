@@ -83,7 +83,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define CHARACTERISTIC_CROUCHER						19 // float [0, 1]
 // tendency to jump
 #define CHARACTERISTIC_JUMPER						20 // float [0, 1]
-//tendency to walk
+// tendency to walk
 #define CHARACTERISTIC_WALKER						21 //float [0, 1]
 // tendency to jump using a weapon
 #define CHARACTERISTIC_WEAPONJUMPING				22 // float [0, 1]

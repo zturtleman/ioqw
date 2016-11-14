@@ -167,7 +167,7 @@ void AddTeamScore(vec3_t origin, int team, int score) {
 	otherTeam = OtherTeam(team);
 
 	if (level.teamScores[team] + score == level.teamScores[otherTeam]) {
-		//teams are tied sound
+		// teams are tied sound
 		eventParm = GTS_TEAMS_ARE_TIED;
 	} else if (level.teamScores[team] >= level.teamScores[otherTeam] && level.teamScores[team] + score < level.teamScores[otherTeam]) {
 		// other team took the lead sound (negative score)

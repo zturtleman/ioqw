@@ -317,7 +317,7 @@ int BotGetItemLongTermGoal(bot_state_t *bs, int tfl, bot_goal_t *goal) {
 			// reset the avoid goals and the avoid reach
 			trap_BotResetAvoidGoals(bs->gs);
 			trap_BotResetAvoidReach(bs->ms);
-			//check blocked teammates
+			// check blocked teammates
 			BotCheckBlockedTeammates(bs);
 		}
 		// get the goal at the top of the stack
@@ -651,7 +651,7 @@ int BotGetLongTermGoal(bot_state_t *bs, int tfl, int retreat, bot_goal_t *goal) 
 
 				bs->arrive_time = FloatTime();
 			}
-			//look strategically around for enemies
+			// look strategically around for enemies
 			if (!BotHasRoamGoal(bs, target)) {
 				if (random() < bs->thinktime * 0.8) {
 					BotRoamGoal(bs, target);

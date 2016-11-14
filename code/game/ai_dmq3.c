@@ -2505,13 +2505,13 @@ qboolean BotAggression(bot_state_t *bs) {
 	if (bs->inventory[INVENTORY_REGEN]) {
 		return qtrue;
 	}
-	//if the bot is very low on health.
+	// if the bot is very low on health.
 	if (bs->inventory[INVENTORY_HEALTH] < 100 * selfpreservation) {
 		return qfalse;
 	}
-	//if the bot is low on health.
+	// if the bot is low on health.
 	if (bs->inventory[INVENTORY_HEALTH] < 100 * selfpreservation + 20) {
-		//if the bot has insufficient armor.
+		// if the bot has insufficient armor.
 		if (bs->inventory[INVENTORY_ARMOR] < 40) {
 			return qfalse;
 		}
@@ -3620,7 +3620,7 @@ int BotFindEnemy(bot_state_t *bs, int curenemy) {
 		if (EntityIsDead(&entinfo) || entinfo.number == bs->entitynum) {
 			continue;
 		}
-		//ignore invisible, mined and burning enemies if already fighting
+		// ignore invisible, mined and burning enemies if already fighting
 		if (bs->enemy >= 0 && (EntityIsInvisible(&entinfo) || EntityIsAlreadyMined(&entinfo))) {
 			continue;
 		}
@@ -4046,7 +4046,7 @@ void BotAimAtEnemy(bot_state_t *bs) {
 	reactiontime = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_REACTIONTIME, 0, 1);
 	// get the weapon information
 	trap_BotGetWeaponInfo(bs->ws, bs->weaponnum, &wi);
-	//get the weapon specific aim accuracy and or aim skill
+	// get the weapon specific aim accuracy and or aim skill
 	switch (wi.number) {
 		case WP_MACHINEGUN:
 			aim_accuracy = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_ACCURACY_MACHINEGUN, 0, 1);
@@ -4123,7 +4123,7 @@ void BotAimAtEnemy(bot_state_t *bs) {
 			}
 		}
 	}
-	//if the enemy is invisible then shoot crappy most of the time
+	// if the enemy is invisible then shoot crappy most of the time
 	if (EntityIsInvisible(&entinfo)) {
 		if (random() > 0.1) {
 			aim_accuracy *= 0.4f;
