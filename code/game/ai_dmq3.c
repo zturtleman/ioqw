@@ -1550,7 +1550,7 @@ char *EasyClientName(int client, char *buf, int size) {
 	for (ptr = strstr(name, " "); ptr; ptr = strstr(name, " ")) {
 		memmove(ptr, ptr + 1, strlen(ptr + 1) + 1);
 	}
-	// check for [x] and]x[clan names
+	// check for [x] and ]x[ clan names
 	str1 = strstr(name, "[");
 	str2 = strstr(name, "]");
 
