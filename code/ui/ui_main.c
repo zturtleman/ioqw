@@ -4027,7 +4027,7 @@ static void UI_RunMenuScript(char **args) {
 			trap_Cvar_SetValue("ui_singlePlayerActive", 0);
 			trap_Cmd_ExecuteText(EXEC_NOW, "quit");
 		} else if (Q_stricmp(name, "Controls") == 0) {
-			trap_Cvar_SetValue("cl_paused", 1); 
+			trap_Cvar_SetValue("cl_paused", 1);
 			trap_Key_SetCatcher(KEYCATCH_UI);
 			Menus_CloseAll();
 			Menus_ActivateByName("setup_menu2");

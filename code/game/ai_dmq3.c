@@ -3009,7 +3009,7 @@ qboolean BotHasRoamGoal(bot_state_t *bs, vec3_t goal) {
 	float dist, weight, total_weight;
 	vec3_t bestorg, angles, dir;
 	qboolean found;
- 
+
 	found = qfalse;
 	total_weight = 0;
 
@@ -5557,7 +5557,6 @@ void BotAIBlocked(bot_state_t *bs, bot_moveresult_t *moveresult, int activate) {
 				return;
 			}
 		}
-
 		// always try right side first
 		bs->flags &= ~BFL_AVOIDRIGHT;
 	// if blocked by a bsp model

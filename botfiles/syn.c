@@ -27,7 +27,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 CONTEXT_NEARBYITEM
 {
 	// health
-	[("Mega Health", 0), ("MH", 0)] 
+	[("Mega Health", 0), ("MH", 0)]
 	// armor
 	[("Armor", 0), ("Yellow Armor", 0), ("Armour", 0), ("Yellow Armour", 0), ("YA", 0)]
 	[("Heavy Armor", 0), ("Red Armor", 0), ("Heavy Armour", 0), ("Red Armour", 0), ("RA", 0)]

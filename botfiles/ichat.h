@@ -412,7 +412,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #define KILL_INSULT16 \
 	"Merry Christmas ",0,"!";\
-	"Ever hear of the golden rule ",0,"?";\ 
+	"Ever hear of the golden rule ",0,"?";\
 	"Memento Mori, Baby!";
 
 #define KILL_INSULT17 \

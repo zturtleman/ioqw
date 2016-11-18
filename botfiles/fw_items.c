@@ -251,7 +251,7 @@ weight "weapon_machinegun"
 						default: return balance(5, 3, 7);
 					}
 				}
-				default: 
+				default:
 				{
 					switch(INVENTORY_BULLETS)
 					{
