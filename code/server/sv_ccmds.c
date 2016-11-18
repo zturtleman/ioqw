@@ -201,6 +201,20 @@ static void SV_Map_f(void) {
 	}
 }
 
+void MSG_PrioritiseEntitystateFields(void);
+void MSG_PrioritisePlayerStateFields(void);
+
+/*
+=======================================================================================================================================
+SV_FieldInfo_f
+=======================================================================================================================================
+*/
+static void SV_FieldInfo_f(void) {
+
+	MSG_PrioritiseEntitystateFields();
+	MSG_PrioritisePlayerStateFields();
+}
+
 /*
 =======================================================================================================================================
 SV_MapRestart_f
@@ -1333,6 +1347,7 @@ void SV_AddOperatorCommands(void) {
 	Cmd_AddCommand("systeminfo", SV_Systeminfo_f);
 	Cmd_AddCommand("dumpuser", SV_DumpUser_f);
 	Cmd_AddCommand("map_restart", SV_MapRestart_f);
+	Cmd_AddCommand("fieldinfo", SV_FieldInfo_f);
 	Cmd_AddCommand("sectorlist", SV_SectorList_f);
 	Cmd_AddCommand("map", SV_Map_f);
 	Cmd_SetCommandCompletionFunc("map", SV_CompleteMapName);

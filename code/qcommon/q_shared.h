@@ -692,6 +692,9 @@ char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks, char delimiter);
 int COM_Compress(char *data_p);
 void COM_ParseError(char *format, ...) __attribute__((format(printf, 1, 2)));
 void COM_ParseWarning(char *format, ...) __attribute__((format(printf, 1, 2)));
+qboolean COM_BitCheck(const int array[], int bitNum);
+void COM_BitSet(int array[], int bitNum);
+void COM_BitClear(int array[], int bitNum);
 //int COM_ParseInfos(char *buf, int max, char infos[][MAX_INFO_STRING]);
 #define MAX_TOKENLENGTH 1024
 #ifndef TT_STRING
@@ -980,12 +983,12 @@ typedef enum {
 #define ENTITYNUM_NONE (MAX_GENTITIES - 1)
 #define ENTITYNUM_WORLD (MAX_GENTITIES - 2)
 #define ENTITYNUM_MAX_NORMAL (MAX_GENTITIES - 2)
-#define	MODELINDEX_BITS 10
+#define MODELINDEX_BITS 10
 // these are networked using the modelindex and/or modelindex2 field, must fit in MODELINDEX_BITS
-#define	MAX_SUBMODELS 1024	// max bsp models, q3map2 limits to 1024 via MAX_MAP_MODELS
-#define	MAX_ITEMS 256		// max item types
-#define	MAX_MODELS 256		// max model filenames set by game VM
-#define	MAX_SOUNDS 256		// this is sent over the net as 8 bits (in eventParm), so they cannot be blindly increased
+#define MAX_SUBMODELS 1024 // max bsp models, q3map2 limits to 1024 via MAX_MAP_MODELS
+#define MAX_ITEMS 256 // max item types
+#define MAX_MODELS 256 // max model filenames set by game VM
+#define MAX_SOUNDS 256 // this is sent over the net as 8 bits (in eventParm), so they cannot be blindly increased
 #define MAX_CONFIGSTRINGS 1024
 // these are the only configstrings that the system reserves, all the other ones are strictly for servergame to clientgame communication
 #define CS_SERVERINFO 0 // an info string with all the serverinfo cvars
@@ -999,12 +1002,23 @@ typedef struct {
 	char stringData[MAX_GAMESTATE_CHARS];
 	int dataCount;
 } gameState_t;
+
+typedef enum {
+	AISTATE_RELAXED,
+	AISTATE_QUERY,
+	AISTATE_ALERT,
+	AISTATE_COMBAT,
+	MAX_AISTATES
+} aistateEnum_t;
 // bit field limits
 #define MAX_STATS 16
 #define MAX_PERSISTANT 16
+#define MAX_HOLDABLE 16
 #define MAX_POWERUPS 16
-#define MAX_WEAPONS 16
+#define MAX_WEAPONS 64
+
 #define MAX_PS_EVENTS 2
+#define MAX_EVENTS 4 // max events per frame before we drop events
 
 #define PS_PMOVEFRAMECOUNTBITS 6
 // playerState_t is the information needed by both the client and server to predict player motion and actions
@@ -1022,6 +1036,8 @@ typedef struct playerState_s {
 	vec3_t origin;
 	vec3_t velocity;
 	int weaponTime;
+	int weaponDelay;		// for weapons that don't fire immediately when 'fire' is hit (grenades, chainguns, ...)
+	int grenadeTimeLeft;	// for delayed grenade throwing. This is set to a #define for grenade
 	int gravity;
 	int speed;
 	int delta_angles[3];	// add to command angles to get view direction, changed by spawns, rotating objects, and teleporters
@@ -1034,15 +1050,25 @@ typedef struct playerState_s {
 	vec3_t grapplePoint;	// location of grapple to pull towards if PMF_GRAPPLE_PULL
 	int eFlags;				// copied to entityState_t->eFlags
 	int eventSequence;		// pmove generated events
-	int events[MAX_PS_EVENTS];
-	int eventParms[MAX_PS_EVENTS];
+	int events[MAX_EVENTS];
+	int eventParms[MAX_EVENTS];
 	int externalEvent;		// events set on player from another source
 	int externalEventParm;
 	int clientNum;			// ranges from 0 to MAX_CLIENTS-1
+	// weapon info
 	int weapon;				// copied to entityState_t->weapon
 	int weaponstate;
 	vec3_t viewangles;		// for fixed views
 	int viewheight;
+	// view locking for mg42
+	int viewlocked;
+	int viewlocked_entNum;
+	float friction;
+	int nextWeapon;
+	// burning effect is required for view blending effect
+	int onFireStart;
+	int serverCursorHint;	// what type of cursor hint the server is dictating
+	int serverCursorHintVal;	// a value (0-255) associated with the above
 	// damage feedback
 	int damageEvent;		// when it changes, latch the other parms
 	int damageYaw;
@@ -1052,6 +1078,9 @@ typedef struct playerState_s {
 	int persistant[MAX_PERSISTANT];	// stats that aren't cleared on death
 	int powerups[MAX_POWERUPS];		// level.time that the powerup runs out
 	int ammo[MAX_WEAPONS];
+	int ammoclip[MAX_WEAPONS];		// ammo in clip
+	int holdable[MAX_HOLDABLE];
+	int weapons[MAX_WEAPONS / (sizeof(int) * 8)]; // 64 bits for weapons held
 	int tokens;				// harvester skulls
 	int loopSound;
 	int jumppad_ent;		// jumppad entity hit this frame
@@ -1060,6 +1089,14 @@ typedef struct playerState_s {
 	int pmove_framecount;
 	int jumppad_frame;
 	int entityEventSequence;
+	int weapAnim;			// mask off ANIM_TOGGLEBIT, DOES get send over the network!
+	// seems like heat and aimspread could be tied together somehow, however, they (appear to) change at different rates and I can't currently see how to optimize this to one server->client transmission "weapstatus" value.
+	int weapHeat[MAX_WEAPONS];	// some weapons can overheat. This tracks (server-side) how hot each weapon currently is.
+	int curWeapHeat;		// value for the currently selected weapon (for transmission to client). DOES get send over the network!
+	int aimSpreadScale;		// 0 - 255 increases with angular movement. DOES get send over the network!
+	int identifyClient;
+	int identifyClientHealth;
+	aistateEnum_t aiState;
 } playerState_t;
 // usercmd_t->button bits, many of which are generated by the client system, so they aren't game/cgame only definitions
 #define BUTTON_ATTACK		   1
@@ -1079,10 +1116,14 @@ typedef struct playerState_s {
 // usercmd_t is sent to the server each client frame
 typedef struct usercmd_s {
 	int serverTime;
+	byte buttons;
+	byte wbuttons;
+	byte weapon;
+	byte flags;
 	int angles[3];
-	int buttons;
-	byte weapon; // weapon
 	signed char forwardmove, rightmove, upmove;
+	// this can be any entity, and it's used as an array index, so make sure it's unsigned
+	byte identClient;
 } usercmd_t;
 // if entityState->solid == SOLID_BMODEL, modelindex is an inline model number
 #define SOLID_BMODEL 0xffffff
@@ -1122,6 +1163,7 @@ typedef struct entityState_s {
 	int otherEntityNum2;
 	int groundEntityNum; // ENTITYNUM_NONE = in air
 	int constantLight;	// r + (g << 8) + (b << 16) + (intensity << 24)
+	int dl_intensity;	// used for coronas
 	int loopSound;		// constantly loop this sound
 	int modelindex;
 	int modelindex2;
@@ -1130,13 +1172,25 @@ typedef struct entityState_s {
 	int solid;			// for client side prediction, trap_linkentity sets this properly
 	int event;			// impulse events -- muzzle flashes, footsteps, etc
 	int eventParm;
+	int eventSequence;	// pmove generated events
+	int events[MAX_EVENTS];
+	int eventParms[MAX_EVENTS];
 	int team;
 	// for players
 	int powerups;		// bit flags
 	int weapon;			// determines weapon and flash model, etc
 	int legsAnim;		// mask off ANIM_TOGGLEBIT
 	int torsoAnim;		// mask off ANIM_TOGGLEBIT
+	int density;		// for particle effects
+	int onFireStart;
+	int onFireEnd;
+	int nextWeapon;
+	int effect1Time;
+	int effect2Time;
+	int effect3Time;
 	int tokens;			// harvester skulls
+	int animMovetype;	// clients can't derive movetype of other clients for anim scripting system
+	aistateEnum_t aiState;
 } entityState_t;
 
 typedef enum {

@@ -192,7 +192,6 @@ void Pmove(pmove_t *pmove);
 typedef enum {
 	STAT_HEALTH,
 	STAT_ARMOR,
-	STAT_WEAPONS,		// 16 bit fields
 	STAT_PERSISTANT_POWERUP,
 	STAT_HOLDABLE_ITEM,
 	STAT_DEAD_YAW,		// look this direction when dead (FIXME: get rid of?)

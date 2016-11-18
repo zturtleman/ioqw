@@ -39,7 +39,7 @@ int pcount[256];
 =======================================================================================================================================
 */
 
-int oldsize = 0;
+static int oldsize = 0;
 
 void MSG_initHuffman(void);
 
@@ -128,7 +128,7 @@ MSG_Copy
 void MSG_Copy(msg_t *buf, byte *data, int length, msg_t *src) {
 
 	if (length < src->cursize) {
-		Com_Error(ERR_DROP, "MSG_Copy: can't copy into a smaller msg_t buffer");
+		Com_Error(ERR_DROP, "MSG_Copy: can't copy %d into a smaller %d msg_t buffer", src->cursize, length);
 	}
 
 	Com_Memcpy(buf, src, sizeof(msg_t));
@@ -158,7 +158,7 @@ void MSG_WriteBits(msg_t *msg, int value, int bits) {
 
 	oldsize += bits;
 	// this isn't an exact overflow check, but close enough
-	if (msg->maxsize - msg->cursize < 4) {
+	if (msg->maxsize - msg->cursize < 32) {
 		msg->overflowed = qtrue;
 		return;
 	}
@@ -172,22 +172,35 @@ void MSG_WriteBits(msg_t *msg, int value, int bits) {
 	}
 
 	if (msg->oob) {
-		if (bits == 8) {
-			msg->data[msg->cursize] = value;
-			msg->cursize += 1;
-			msg->bit += 8;
-		} else if (bits == 16) {
-			short temp = value;
+		switch (bits) {
+			case 8:
+				msg->data[msg->cursize] = value;
+				msg->cursize += 1;
+				msg->bit += 8;
+				break;
+			case 16:
+			{
+				unsigned short *sp = (unsigned short *)&msg->data[msg->cursize];
 
-			CopyLittleShort(&msg->data[msg->cursize], &temp);
-			msg->cursize += 2;
-			msg->bit += 16;
-		} else if (bits == 32) {
-			CopyLittleLong(&msg->data[msg->cursize], &value);
-			msg->cursize += 4;
-			msg->bit += 32;
-		} else {
-			Com_Error(ERR_DROP, "can't write %d bits", bits);
+				*sp = LittleShort(value);
+				msg->cursize += 2;
+				msg->bit += 16;
+			}
+
+			break;
+			case 32:
+			{
+				unsigned int *ip = (unsigned int *)&msg->data[msg->cursize];
+
+				*ip = LittleLong(value);
+				msg->cursize += 4;
+				msg->bit += 32;
+			}
+
+			break;
+			default:
+				Com_Error(ERR_DROP, "MSG_WriteBits: can't read %d bits", bits);
+				break;
 		}
 	} else {
 		value &= (0xffffffff >> (32 - bits));
@@ -237,23 +250,35 @@ int MSG_ReadBits(msg_t *msg, int bits) {
 	}
 
 	if (msg->oob) {
-		if (bits == 8) {
-			value = msg->data[msg->readcount];
-			msg->readcount += 1;
-			msg->bit += 8;
-		} else if (bits == 16) {
-			short temp;
+		switch (bits) {
+			case 8:
+				value = msg->data[msg->readcount];
+				msg->readcount += 1;
+				msg->bit += 8;
+				break;
+			case 16:
+			{
+				unsigned short *sp = (unsigned short *)&msg->data[msg->readcount];
 
-			CopyLittleShort(&temp, &msg->data[msg->readcount]);
-			value = temp;
-			msg->readcount += 2;
-			msg->bit += 16;
-		} else if (bits == 32) {
-			CopyLittleLong(&value, &msg->data[msg->readcount]);
-			msg->readcount += 4;
-			msg->bit += 32;
-		} else {
-			Com_Error(ERR_DROP, "can't read %d bits", bits);
+				value = LittleShort(*sp);
+				msg->readcount += 2;
+				msg->bit += 16;
+			}
+
+			break;
+			case 32:
+			{
+				unsigned int *ip = (unsigned int *)&msg->data[msg->readcount];
+
+				value = LittleLong(*ip);
+				msg->readcount += 4;
+				msg->bit += 32;
+			}
+
+			break;
+			default:
+				Com_Error(ERR_DROP, "MSG_ReadBits: can't read %d bits", bits);
+				break;
 		}
 	} else {
 		nbits = 0;
@@ -370,10 +395,14 @@ MSG_WriteFloat
 =======================================================================================================================================
 */
 void MSG_WriteFloat(msg_t *sb, float f) {
-	floatint_t dat;
+	union {
+		float f;
+		int l;
+	} dat;
 
 	dat.f = f;
-	MSG_WriteBits(sb, dat.i, 32);
+
+	MSG_WriteBits(sb, dat.l, 32);
 }
 
 /*
@@ -392,7 +421,7 @@ void MSG_WriteString(msg_t *sb, const char *s) {
 		l = strlen(s);
 
 		if (l >= MAX_STRING_CHARS) {
-			Com_Printf("MSG_WriteString: MAX_STRING_CHARS");
+			Com_Printf("MSG_WriteString: MAX_STRING_CHARS size reached\n");
 			MSG_WriteData(sb, "", 1);
 			return;
 		}
@@ -425,7 +454,7 @@ void MSG_WriteBigString(msg_t *sb, const char *s) {
 		l = strlen(s);
 
 		if (l >= BIG_INFO_STRING) {
-			Com_Printf("MSG_WriteString: BIG_INFO_STRING");
+			Com_Printf("MSG_WriteString: BIG_INFO_STRING size reached\n");
 			MSG_WriteData(sb, "", 1);
 			return;
 		}
@@ -506,24 +535,6 @@ int MSG_ReadByte(msg_t *msg) {
 
 /*
 =======================================================================================================================================
-MSG_LookaheadByte
-=======================================================================================================================================
-*/
-int MSG_LookaheadByte(msg_t *msg) {
-	const int bloc = Huff_getBloc();
-	const int readcount = msg->readcount;
-	const int bit = msg->bit;
-	int c = MSG_ReadByte(msg);
-
-	Huff_setBloc(bloc);
-
-	msg->readcount = readcount;
-	msg->bit = bit;
-	return c;
-}
-
-/*
-=======================================================================================================================================
 MSG_ReadShort
 =======================================================================================================================================
 */
@@ -562,9 +573,13 @@ MSG_ReadFloat
 =======================================================================================================================================
 */
 float MSG_ReadFloat(msg_t *msg) {
-	floatint_t dat;
+	union {
+		byte b[4];
+		float f;
+		int l;
+	} dat;
 
-	dat.i = MSG_ReadBits(msg, 32);
+	dat.l = MSG_ReadBits(msg, 32);
 
 	if (msg->readcount > msg->cursize) {
 		dat.f = -1;
@@ -910,7 +925,7 @@ void MSG_WriteDeltaUsercmdKey(msg_t *msg, int key, usercmd_t *from, usercmd_t *t
 		MSG_WriteBits(msg, to->serverTime, 32);
 	}
 
-	if (from->angles[0] == to->angles[0] && from->angles[1] == to->angles[1] && from->angles[2] == to->angles[2] && from->forwardmove == to->forwardmove && from->rightmove == to->rightmove && from->upmove == to->upmove && from->buttons == to->buttons && from->weapon == to->weapon) {
+	if (from->angles[0] == to->angles[0] && from->angles[1] == to->angles[1] && from->angles[2] == to->angles[2] && from->forwardmove == to->forwardmove && from->rightmove == to->rightmove && from->upmove == to->upmove && from->buttons == to->buttons && from->wbuttons == to->wbuttons && from->weapon == to->weapon && from->flags == to->flags && from->identClient == to->identClient) {
 		MSG_WriteBits(msg, 0, 1); // no change
 		oldsize += 7;
 		return;
@@ -924,8 +939,11 @@ void MSG_WriteDeltaUsercmdKey(msg_t *msg, int key, usercmd_t *from, usercmd_t *t
 	MSG_WriteDeltaKey(msg, key, from->forwardmove, to->forwardmove, 8);
 	MSG_WriteDeltaKey(msg, key, from->rightmove, to->rightmove, 8);
 	MSG_WriteDeltaKey(msg, key, from->upmove, to->upmove, 8);
-	MSG_WriteDeltaKey(msg, key, from->buttons, to->buttons, 16);
+	MSG_WriteDeltaKey(msg, key, from->buttons, to->buttons, 8);
+	MSG_WriteDeltaKey(msg, key, from->wbuttons, to->wbuttons, 8);
 	MSG_WriteDeltaKey(msg, key, from->weapon, to->weapon, 8);
+	MSG_WriteDeltaKey(msg, key, from->flags, to->flags, 8);
+	MSG_WriteDeltaKey(msg, key, from->identClient, to->identClient, 8);
 }
 
 /*
@@ -947,7 +965,7 @@ void MSG_ReadDeltaUsercmdKey(msg_t *msg, int key, usercmd_t *from, usercmd_t *to
 		to->angles[1] = MSG_ReadDeltaKey(msg, key, from->angles[1], 16);
 		to->angles[2] = MSG_ReadDeltaKey(msg, key, from->angles[2], 16);
 		to->forwardmove = MSG_ReadDeltaKey(msg, key, from->forwardmove, 8);
-
+		// disallow moves of -128 (speedhack)
 		if (to->forwardmove == -128) {
 			to->forwardmove = -127;
 		}
@@ -964,8 +982,11 @@ void MSG_ReadDeltaUsercmdKey(msg_t *msg, int key, usercmd_t *from, usercmd_t *to
 			to->upmove = -127;
 		}
 
-		to->buttons = MSG_ReadDeltaKey(msg, key, from->buttons, 16);
+		to->buttons = MSG_ReadDeltaKey(msg, key, from->buttons, 8);
+		to->wbuttons = MSG_ReadDeltaKey(msg, key, from->wbuttons, 8);
 		to->weapon = MSG_ReadDeltaKey(msg, key, from->weapon, 8);
+		to->flags = MSG_ReadDeltaKey(msg, key, from->flags, 8);
+		to->identClient = MSG_ReadDeltaKey(msg, key, from->identClient, 8);
 	} else {
 		to->angles[0] = from->angles[0];
 		to->angles[1] = from->angles[1];
@@ -974,7 +995,10 @@ void MSG_ReadDeltaUsercmdKey(msg_t *msg, int key, usercmd_t *from, usercmd_t *to
 		to->rightmove = from->rightmove;
 		to->upmove = from->upmove;
 		to->buttons = from->buttons;
+		to->wbuttons = from->wbuttons;
 		to->weapon = from->weapon;
+		to->flags = from->flags;
+		to->identClient = from->identClient;
 	}
 }
 
@@ -1007,65 +1031,131 @@ typedef struct {
 	char *name;
 	int offset;
 	int bits; // 0 = float
+	int used;
 } netField_t;
 
 // using the stringizing operator to save typing...
 #define NETF(x) #x, (size_t)&((entityState_t *)0)->x
 
 netField_t entityStateFields[] = {
+	{NETF(eType), 8},
+	{NETF(eFlags), 32},
+	{NETF(pos.trType), 8},
 	{NETF(pos.trTime), 32},
+	{NETF(pos.trDuration), 32},
 	{NETF(pos.trBase[0]), 0},
 	{NETF(pos.trBase[1]), 0},
+	{NETF(pos.trBase[2]), 0},
 	{NETF(pos.trDelta[0]), 0},
 	{NETF(pos.trDelta[1]), 0},
-	{NETF(pos.trBase[2]), 0},
-	{NETF(apos.trBase[1]), 0},
 	{NETF(pos.trDelta[2]), 0},
-	{NETF(apos.trBase[0]), 0},
-	{NETF(event), 10},
-	{NETF(angles2[1]), 0},
-	{NETF(eType), 8},
-	{NETF(torsoAnim), 8},
-	{NETF(eventParm), 8},
-	{NETF(legsAnim), 8},
-	{NETF(groundEntityNum), GENTITYNUM_BITS},
-	{NETF(pos.trType), 8},
-	{NETF(eFlags), 32},
-	{NETF(otherEntityNum), GENTITYNUM_BITS},
-	{NETF(weapon), 8},
-	{NETF(clientNum), 8},
-	{NETF(angles[1]), 0},
-	{NETF(pos.trDuration), 32},
 	{NETF(apos.trType), 8},
-	{NETF(origin[0]), 0},
-	{NETF(origin[1]), 0},
-	{NETF(origin[2]), 0},
-	{NETF(solid), 24},
-	{NETF(powerups), MAX_POWERUPS},
-	{NETF(modelindex), MODELINDEX_BITS},
-	{NETF(otherEntityNum2), GENTITYNUM_BITS},
-	{NETF(loopSound), 8},
-	{NETF(tokens), 8},
-	{NETF(team), 8},
-	{NETF(origin2[2]), 0},
-	{NETF(origin2[0]), 0},
-	{NETF(origin2[1]), 0},
-	{NETF(modelindex2), MODELINDEX_BITS}, 
-	{NETF(angles[0]), 0},
-	{NETF(time), 32},
 	{NETF(apos.trTime), 32},
 	{NETF(apos.trDuration), 32},
+	{NETF(apos.trBase[0]), 0},
+	{NETF(apos.trBase[1]), 0},
 	{NETF(apos.trBase[2]), 0},
 	{NETF(apos.trDelta[0]), 0},
 	{NETF(apos.trDelta[1]), 0},
 	{NETF(apos.trDelta[2]), 0},
+	{NETF(time), 32},
 	{NETF(time2), 32},
+	{NETF(origin[0]), 0},
+	{NETF(origin[1]), 0},
+	{NETF(origin[2]), 0},
+	{NETF(origin2[0]), 0},
+	{NETF(origin2[1]), 0},
+	{NETF(origin2[2]), 0},
+	{NETF(angles[0]), 0},
+	{NETF(angles[1]), 0},
 	{NETF(angles[2]), 0},
 	{NETF(angles2[0]), 0},
+	{NETF(angles2[1]), 0},
 	{NETF(angles2[2]), 0},
+	{NETF(otherEntityNum), GENTITYNUM_BITS},
+	{NETF(otherEntityNum2), GENTITYNUM_BITS},
+	{NETF(groundEntityNum), GENTITYNUM_BITS},
+	{NETF(loopSound), 8},
 	{NETF(constantLight), 32},
-	{NETF(frame), 16}
+	{NETF(dl_intensity), 32}, // longer now to carry the corona colors
+	{NETF(modelindex), MODELINDEX_BITS},
+	{NETF(modelindex2), MODELINDEX_BITS},
+	{NETF(frame), 16},
+	{NETF(clientNum), 8},
+	{NETF(solid), 24},
+	{NETF(event), 10},
+	{NETF(eventParm), 8},
+	{NETF(eventSequence), 8}, // warning: need to modify cg_event.c at "// check the sequencial list" if you change this
+	{NETF(events[0]), 8},
+	{NETF(events[1]), 8},
+	{NETF(events[2]), 8},
+	{NETF(events[3]), 8},
+	{NETF(eventParms[0]), 8},
+	{NETF(eventParms[1]), 8},
+	{NETF(eventParms[2]), 8},
+	{NETF(eventParms[3]), 8},
+	{NETF(powerups), MAX_POWERUPS},
+	{NETF(weapon), 8},
+	{NETF(torsoAnim), 8},
+	{NETF(legsAnim), 8},
+	{NETF(density), 10},
+	{NETF(onFireStart), 32},
+	{NETF(onFireEnd), 32},
+	{NETF(nextWeapon), 8},
+	{NETF(effect1Time), 32},
+	{NETF(effect2Time), 32},
+	{NETF(effect3Time), 32},
+	{NETF(animMovetype), 4},
+	{NETF(aiState), 2},
+	{NETF(tokens), 8},
+	{NETF(team), 8}
 };
+
+/*
+=======================================================================================================================================
+qsort_entitystatefields
+=======================================================================================================================================
+*/
+static int QDECL qsort_entitystatefields(const void *a, const void *b) {
+	int aa = *((int *)a);
+	int bb = *((int *)b);
+
+	if (entityStateFields[aa].used > entityStateFields[bb].used) {
+		return -1;
+	}
+
+	if (entityStateFields[bb].used > entityStateFields[aa].used) {
+		return 1;
+	}
+
+	return 0;
+}
+
+/*
+=======================================================================================================================================
+MSG_PrioritiseEntitystateFields
+=======================================================================================================================================
+*/
+void MSG_PrioritiseEntitystateFields(void) {
+	int fieldorders[sizeof(entityStateFields) / sizeof(entityStateFields[0])];
+	int numfields = sizeof(entityStateFields) / sizeof(entityStateFields[0]);
+	int i;
+
+	for (i = 0; i < numfields; i++) {
+		fieldorders[i] = i;
+	}
+
+	qsort(fieldorders, numfields, sizeof(int), qsort_entitystatefields);
+
+	Com_Printf("Entitystate fields in order of priority\n");
+	Com_Printf("netField_t entityStateFields[] = {\n");
+
+	for (i = 0; i < numfields; i++) {
+		Com_Printf("{ NETF (%s), %i },\n", entityStateFields[fieldorders[i]].name, entityStateFields[fieldorders[i]].bits);
+	}
+
+	Com_Printf("};\n");
+}
 
 // if (int)f == f and (int)f + (1 << (FLOAT_INT_BITS - 1)) < (1 << FLOAT_INT_BITS)
 // the float will be sent with FLOAT_INT_BITS, otherwise all 32 bits will be sent
@@ -1089,7 +1179,7 @@ void MSG_WriteDeltaEntity(msg_t *msg, struct entityState_s *from, struct entityS
 	float fullFloat;
 	int *fromF, *toF;
 
-	numFields = ARRAY_LEN(entityStateFields);
+	numFields = sizeof(entityStateFields) / sizeof(entityStateFields[0]);
 	// all fields should be 32 bits to avoid any compiler packing issues
 	// the "number" field is not part of the field list
 	// if this assert fails, someone added a field to the entityState_t
@@ -1118,6 +1208,7 @@ void MSG_WriteDeltaEntity(msg_t *msg, struct entityState_s *from, struct entityS
 
 		if (*fromF != *toF) {
 			lc = i + 1;
+			field->used++;
 		}
 	}
 
@@ -1205,7 +1296,7 @@ void MSG_ReadDeltaEntity(msg_t *msg, entityState_t *from, entityState_t *to, int
 	int startBit, endBit;
 
 	if (number < 0 || number >= MAX_GENTITIES) {
-		Com_Error(ERR_DROP, "Bad delta entity number: %i", number);
+		Com_Error(ERR_DROP, "MSG_ReadDeltaEntity: Bad delta entity number: %i", number);
 	}
 
 	if (msg->bit == 0) {
@@ -1231,7 +1322,7 @@ void MSG_ReadDeltaEntity(msg_t *msg, entityState_t *from, entityState_t *to, int
 		return;
 	}
 
-	numFields = ARRAY_LEN(entityStateFields);
+	numFields = sizeof(entityStateFields) / sizeof(entityStateFields[0]);
 	lc = MSG_ReadByte(msg);
 
 	if (lc > numFields || lc < 0) {
@@ -1326,54 +1417,121 @@ void MSG_ReadDeltaEntity(msg_t *msg, entityState_t *from, entityState_t *to, int
 
 netField_t playerStateFields[] = {
 	{PSF(commandTime), 32},
+	{PSF(pm_type), 8},
+	{PSF(bobCycle), 8},
+	{PSF(pm_flags), 16},
+	{PSF(pm_time), -16},
 	{PSF(origin[0]), 0},
 	{PSF(origin[1]), 0},
-	{PSF(bobCycle), 8},
+	{PSF(origin[2]), 0},
 	{PSF(velocity[0]), 0},
 	{PSF(velocity[1]), 0},
-	{PSF(viewangles[1]), 0},
-	{PSF(viewangles[0]), 0},
-	{PSF(weaponTime), -16},
-	{PSF(origin[2]), 0},
 	{PSF(velocity[2]), 0},
-	{PSF(legsTimer), 8},
-	{PSF(pm_time), -16},
-	{PSF(eventSequence), 16},
-	{PSF(torsoAnim), 8},
-	{PSF(movementDir), 4},
-	{PSF(events[0]), 8},
-	{PSF(legsAnim), 8},
-	{PSF(events[1]), 8},
-	{PSF(pm_flags), 16},
-	{PSF(groundEntityNum), GENTITYNUM_BITS},
-	{PSF(weaponstate), 4},
-	{PSF(eFlags), 32},
-	{PSF(externalEvent), 10},
+	{PSF(weaponTime), -16},
+	{PSF(weaponDelay), -16},
+	{PSF(grenadeTimeLeft), -16},
 	{PSF(gravity), 16},
 	{PSF(speed), 16},
+	{PSF(delta_angles[0]), 16},
 	{PSF(delta_angles[1]), 16},
-	{PSF(externalEventParm), 8},
-	{PSF(viewheight), -8},
+	{PSF(delta_angles[2]), 16},
+	{PSF(groundEntityNum), GENTITYNUM_BITS},
+	{PSF(legsTimer), 8},
+	{PSF(torsoTimer), 12},
+	{PSF(legsAnim), 8},
+	{PSF(torsoAnim), 8},
+	{PSF(movementDir), 4},
+	{PSF(eFlags), 32},
+	{PSF(eventSequence), 16},
+	{PSF(events[0]), 8},
+	{PSF(events[1]), 8},
+	{PSF(events[2]), 8},
+	{PSF(events[3]), 8},
+	{PSF(eventParms[0]), 8},
+	{PSF(eventParms[1]), 8},
+	{PSF(eventParms[2]), 8},
+	{PSF(eventParms[3]), 8},
+	{PSF(clientNum), 8},
+	{PSF(weapons[0]), 32},
+	{PSF(weapons[1]), 32},
+	{PSF(weapon), 7},
+	{PSF(weaponstate), 4},
+	{PSF(weapAnim), 10},
+	{PSF(viewangles[0]), 0},
+	{PSF(viewangles[1]), 0},
+	{PSF(viewangles[2]), 0},
 	{PSF(damageEvent), 8},
 	{PSF(damageYaw), 8},
 	{PSF(damagePitch), 8},
 	{PSF(damageCount), 8},
+	{PSF(friction), 0},
+	{PSF(viewlocked), 8},
+	{PSF(viewlocked_entNum), 16},
+	{PSF(nextWeapon), 8},
+	{PSF(onFireStart), 32},
+	{PSF(curWeapHeat), 8},
+	{PSF(aimSpreadScale), 8},
+	{PSF(serverCursorHint), 8},
+	{PSF(serverCursorHintVal), 8},
+	{PSF(identifyClient), 8},
+	{PSF(identifyClientHealth), 8},
+	{PSF(aiState), 2},
+	{PSF(externalEvent), 10},
+	{PSF(externalEventParm), 8},
+	{PSF(viewheight), -8},
 	{PSF(tokens), 8},
-	{PSF(pm_type), 8},
-	{PSF(delta_angles[0]), 16},
-	{PSF(delta_angles[2]), 16},
-	{PSF(torsoTimer), 12},
-	{PSF(eventParms[0]), 8},
-	{PSF(eventParms[1]), 8},
-	{PSF(clientNum), 8},
-	{PSF(weapon), 5},
-	{PSF(viewangles[2]), 0},
+	{PSF(jumppad_ent), GENTITYNUM_BITS},
+	{PSF(loopSound), 16},
 	{PSF(grapplePoint[0]), 0},
 	{PSF(grapplePoint[1]), 0},
-	{PSF(grapplePoint[2]), 0},
-	{PSF(jumppad_ent), GENTITYNUM_BITS},
-	{PSF(loopSound), 16}
+	{PSF(grapplePoint[2]), 0}
 };
+
+/*
+=======================================================================================================================================
+qsort_playerstatefields
+=======================================================================================================================================
+*/
+static int QDECL qsort_playerstatefields(const void *a, const void *b) {
+	int aa = *((int *)a);
+	int bb = *((int *)b);
+
+	if (playerStateFields[aa].used > playerStateFields[bb].used) {
+		return -1;
+	}
+
+	if (playerStateFields[bb].used > playerStateFields[aa].used) {
+		return 1;
+	}
+
+	return 0;
+}
+
+/*
+=======================================================================================================================================
+MSG_PrioritisePlayerStateFields
+=======================================================================================================================================
+*/
+void MSG_PrioritisePlayerStateFields(void) {
+	int fieldorders[sizeof(playerStateFields) / sizeof(playerStateFields[0])];
+	int numfields = sizeof(playerStateFields) / sizeof(playerStateFields[0]);
+	int i;
+
+	for (i = 0; i < numfields; i++) {
+		fieldorders[i] = i;
+	}
+
+	qsort(fieldorders, numfields, sizeof(int), qsort_playerstatefields);
+
+	Com_Printf("Playerstate fields in order of priority\n");
+	Com_Printf("netField_t playerStateFields[] = {\n");
+
+	for (i = 0; i < numfields; i++) {
+		Com_Printf("{ PSF(%s), %i },\n", playerStateFields[fieldorders[i]].name, playerStateFields[fieldorders[i]].bits);
+	}
+
+	Com_Printf("};\n");
+}
 
 /*
 =======================================================================================================================================
@@ -1381,24 +1539,41 @@ MSG_WriteDeltaPlayerstate
 =======================================================================================================================================
 */
 void MSG_WriteDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct playerState_s *to) {
-	int i;
+	int i, j, lc;
 	playerState_t dummy;
 	int statsbits;
 	int persistantbits;
-	int ammobits;
+	int ammobits[4];
+	int clipbits;
 	int powerupbits;
+	int holdablebits;
 	int numFields;
 	netField_t *field;
 	int *fromF, *toF;
 	float fullFloat;
-	int trunc, lc;
+	int trunc;
+	int startBit, endBit;
+	int print;
 
 	if (!from) {
 		from = &dummy;
 		Com_Memset(&dummy, 0, sizeof(dummy));
 	}
 
-	numFields = ARRAY_LEN(playerStateFields);
+	if (msg->bit == 0) {
+		startBit = msg->cursize * 8 - GENTITYNUM_BITS;
+	} else {
+		startBit = (msg->cursize - 1) * 8 + msg->bit - GENTITYNUM_BITS;
+	}
+	// shownet 2/3 will interleave with other printed info, -2 will just print the delta records
+	if (cl_shownet && (cl_shownet->integer >= 2 || cl_shownet->integer == -2)) {
+		print = 1;
+		Com_Printf("W|%3i: playerstate ", msg->cursize);
+	} else {
+		print = 0;
+	}
+
+	numFields = sizeof(playerStateFields) / sizeof(playerStateFields[0]);
 
 	lc = 0;
 
@@ -1408,6 +1583,7 @@ void MSG_WriteDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct pl
 
 		if (*fromF != *toF) {
 			lc = i + 1;
+			field->used++;
 		}
 	}
 
@@ -1463,11 +1639,11 @@ void MSG_WriteDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct pl
 		}
 	}
 
-	ammobits = 0;
+	holdablebits = 0;
 
-	for (i = 0; i < MAX_WEAPONS; i++) {
-		if (to->ammo[i] != from->ammo[i]) {
-			ammobits |= 1 << i;
+	for (i = 0; i < MAX_HOLDABLE; i++) {
+		if (to->holdable[i] != from->holdable[i]) {
+			holdablebits |= 1 << i;
 		}
 	}
 
@@ -1479,64 +1655,135 @@ void MSG_WriteDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct pl
 		}
 	}
 
-	if (!statsbits && !persistantbits && !ammobits && !powerupbits) {
-		MSG_WriteBits(msg, 0, 1); // no change
+	if (statsbits || persistantbits || holdablebits || powerupbits) {
+		MSG_WriteBits(msg, 1, 1); // something changed
+
+		if (statsbits) {
+			MSG_WriteBits(msg, 1, 1); // changed
+			MSG_WriteShort(msg, statsbits);
+
+			for (i = 0; i < MAX_STATS; i++) {
+				if (statsbits & (1 << i)) {
+					MSG_WriteShort(msg, to->stats[i]);
+				}
+			}
+		} else {
+			MSG_WriteBits(msg, 0, 1); // no change to stats
+		}
+
+		if (persistantbits) {
+			MSG_WriteBits(msg, 1, 1); // changed
+			MSG_WriteShort(msg, persistantbits);
+
+			for (i = 0; i < MAX_PERSISTANT; i++) {
+				if (persistantbits & (1 << i)) {
+					MSG_WriteShort(msg, to->persistant[i]);
+				}
+			}
+		} else {
+			MSG_WriteBits(msg, 0, 1); // no change to persistant
+		}
+
+		if (holdablebits) {
+			MSG_WriteBits(msg, 1, 1); // changed
+			MSG_WriteShort(msg, holdablebits);
+
+			for (i = 0; i < MAX_HOLDABLE; i++) {
+				if (holdablebits & (1 << i)) {
+					MSG_WriteShort(msg, to->holdable[i]);
+				}
+			}
+		} else {
+			MSG_WriteBits(msg, 0, 1); // no change to holdables
+		}
+
+		if (powerupbits) {
+			MSG_WriteBits(msg, 1, 1); // changed
+			MSG_WriteShort(msg, powerupbits);
+
+			for (i = 0; i < MAX_POWERUPS; i++) {
+				if (powerupbits & (1 << i)) {
+					MSG_WriteLong(msg, to->powerups[i]);
+				}
+			}
+		} else {
+			MSG_WriteBits(msg, 0, 1); // no change to powerups
+		}
+	} else {
+		MSG_WriteBits(msg, 0, 1); // no change to any
 		oldsize += 4;
-		return;
 	}
+	// Split this into two groups using shorts so it wouldn't have to use a long every time ammo changed for any weap.
+	// This seemed like a much friendlier option than making it read/write a long for any ammo change.
 
-	MSG_WriteBits(msg, 1, 1); // changed
+	// j == 0 : weaps 0-15
+	// j == 1 : weaps 16-31
+	// j == 2 : weaps 32-47 // now up to 64 (but still pretty net-friendly)
+	// j == 3 : weaps 48-63
 
-	if (statsbits) {
+	// ammo stored
+	for (j = 0; j < 4; j++) { // modified for 64 weaps
+		ammobits[j] = 0;
+
+		for (i = 0; i < 16; i++) {
+			if (to->ammo[i + (j * 16)] != from->ammo[i + (j * 16)]) {
+				ammobits[j] |= 1 << i;
+			}
+		}
+	}
+	// also encapsulated ammo changes into one check. Clip values will change frequently, but ammo will not (only when you get ammo/reload rather than each shot).
+	if (ammobits[0] || ammobits[1] || ammobits[2] || ammobits[3]) { // if any were set...
 		MSG_WriteBits(msg, 1, 1); // changed
-		MSG_WriteBits(msg, statsbits, MAX_STATS);
 
-		for (i = 0; i < MAX_STATS; i++) {
-			if (statsbits & (1 << i)) {
-				MSG_WriteShort(msg, to->stats[i]);
+		for (j = 0; j < 4; j++) {
+			if (ammobits[j]) {
+				MSG_WriteBits(msg, 1, 1); // changed
+				MSG_WriteShort(msg, ammobits[j]);
+
+				for (i = 0; i < 16; i++) {
+					if (ammobits[j] & (1 << i)) {
+						MSG_WriteShort(msg, to->ammo[i + (j * 16)]);
+					}
+				}
+			} else {
+				MSG_WriteBits(msg, 0, 1); // no change
 			}
 		}
 	} else {
 		MSG_WriteBits(msg, 0, 1); // no change
 	}
+	// ammo in clip
+	for (j = 0; j < 4; j++) { // modified for 64 weaps
+		clipbits = 0;
 
-	if (persistantbits) {
-		MSG_WriteBits(msg, 1, 1); // changed
-		MSG_WriteBits(msg, persistantbits, MAX_PERSISTANT);
-
-		for (i = 0; i < MAX_PERSISTANT; i++) {
-			if (persistantbits & (1 << i)) {
-				MSG_WriteShort(msg, to->persistant[i]);
+		for (i = 0; i < 16; i++) {
+			if (to->ammoclip[i + (j * 16)] != from->ammoclip[i + (j * 16)]) {
+				clipbits |= 1 << i;
 			}
 		}
-	} else {
-		MSG_WriteBits(msg, 0, 1); // no change
+
+		if (clipbits) {
+			MSG_WriteBits(msg, 1, 1); // changed
+			MSG_WriteShort(msg, clipbits);
+
+			for (i = 0; i < 16; i++) {
+				if (clipbits & (1 << i)) {
+					MSG_WriteShort(msg, to->ammoclip[i + (j * 16)]);
+				}
+			}
+		} else {
+			MSG_WriteBits(msg, 0, 1); // no change
+		}
 	}
 
-	if (ammobits) {
-		MSG_WriteBits(msg, 1, 1); // changed
-		MSG_WriteBits(msg, ammobits, MAX_WEAPONS);
-
-		for (i = 0; i < MAX_WEAPONS; i++) {
-			if (ammobits & (1 << i)) {
-				MSG_WriteShort(msg, to->ammo[i]);
-			}
+	if (print) {
+		if (msg->bit == 0) {
+			endBit = msg->cursize * 8 - GENTITYNUM_BITS;
+		} else {
+			endBit = (msg->cursize - 1) * 8 + msg->bit - GENTITYNUM_BITS;
 		}
-	} else {
-		MSG_WriteBits(msg, 0, 1); // no change
-	}
 
-	if (powerupbits) {
-		MSG_WriteBits(msg, 1, 1); // changed
-		MSG_WriteBits(msg, powerupbits, MAX_POWERUPS);
-
-		for (i = 0; i < MAX_POWERUPS; i++) {
-			if (powerupbits & (1 << i)) {
-				MSG_WriteLong(msg, to->powerups[i]);
-			}
-		}
-	} else {
-		MSG_WriteBits(msg, 0, 1); // no change
+		Com_Printf(" (%i bits)\n", endBit - startBit);
 	}
 }
 
@@ -1546,7 +1793,7 @@ MSG_ReadDeltaPlayerstate
 =======================================================================================================================================
 */
 void MSG_ReadDeltaPlayerstate(msg_t *msg, playerState_t *from, playerState_t *to) {
-	int i, lc;
+	int i, j, lc;
 	int bits;
 	netField_t *field;
 	int numFields;
@@ -1576,7 +1823,7 @@ void MSG_ReadDeltaPlayerstate(msg_t *msg, playerState_t *from, playerState_t *to
 		print = 0;
 	}
 
-	numFields = ARRAY_LEN(playerStateFields);
+	numFields = sizeof(playerStateFields) / sizeof(playerStateFields[0]);
 	lc = MSG_ReadByte(msg);
 
 	if (lc > numFields || lc < 0) {
@@ -1629,13 +1876,13 @@ void MSG_ReadDeltaPlayerstate(msg_t *msg, playerState_t *from, playerState_t *to
 		*toF = *fromF;
 	}
 	// read the arrays
-	if (MSG_ReadBits(msg, 1)) {
+	if (MSG_ReadBits(msg, 1)) { // one general bit tells if any of this infrequently changing stuff has changed
 		// parse stats
 		if (MSG_ReadBits(msg, 1)) {
 			LOG("PS_STATS");
-			bits = MSG_ReadBits(msg, MAX_STATS);
+			bits = MSG_ReadShort(msg);
 
-			for (i = 0; i < MAX_STATS; i++) {
+			for (i = 0 ; i < MAX_STATS ; i++) {
 				if (bits & (1 << i)) {
 					to->stats[i] = MSG_ReadShort(msg);
 				}
@@ -1644,33 +1891,71 @@ void MSG_ReadDeltaPlayerstate(msg_t *msg, playerState_t *from, playerState_t *to
 		// parse persistant stats
 		if (MSG_ReadBits(msg, 1)) {
 			LOG("PS_PERSISTANT");
-			bits = MSG_ReadBits(msg, MAX_PERSISTANT);
+			bits = MSG_ReadShort(msg);
 
-			for (i = 0; i < MAX_PERSISTANT; i++) {
+			for (i = 0 ; i < MAX_PERSISTANT ; i++) {
 				if (bits & (1 << i)) {
 					to->persistant[i] = MSG_ReadShort(msg);
 				}
 			}
 		}
-		// parse ammo
+		// parse holdable stats
 		if (MSG_ReadBits(msg, 1)) {
-			LOG("PS_AMMO");
-			bits = MSG_ReadBits(msg, MAX_WEAPONS);
+			LOG("PS_HOLDABLE");
+			bits = MSG_ReadShort(msg);
 
-			for (i = 0; i < MAX_WEAPONS; i++) {
+			for (i = 0 ; i < MAX_HOLDABLE ; i++) {
 				if (bits & (1 << i)) {
-					to->ammo[i] = MSG_ReadShort(msg);
+					to->holdable[i] = MSG_ReadShort(msg);
 				}
 			}
 		}
 		// parse powerups
 		if (MSG_ReadBits(msg, 1)) {
 			LOG("PS_POWERUPS");
-			bits = MSG_ReadBits(msg, MAX_POWERUPS);
+			bits = MSG_ReadShort(msg);
 
-			for (i = 0; i < MAX_POWERUPS; i++) {
+			for (i = 0 ; i < MAX_POWERUPS ; i++) {
 				if (bits & (1 << i)) {
 					to->powerups[i] = MSG_ReadLong(msg);
+				}
+			}
+		}
+	}
+	// Split this into two groups using shorts so it wouldn't have to use a long every time ammo changed for any weap.
+	// This seemed like a much friendlier option than making it read/write a long for any ammo change.
+
+	// parse ammo
+
+	// j == 0 : weaps 0-15
+	// j == 1 : weaps 16-31
+	// j == 2 : weaps 32-47 // now up to 64 (but still pretty net-friendly).
+	// j == 3 : weaps 48-63
+
+	// ammo stored
+	if (MSG_ReadBits(msg, 1)) { // check for any ammo change (0-63)
+		for (j = 0; j < 4; j++) {
+			if (MSG_ReadBits(msg, 1)) {
+				LOG("PS_AMMO");
+				bits = MSG_ReadShort(msg);
+
+				for (i = 0 ; i < 16 ; i++) {
+					if (bits & (1 << i)) {
+						to->ammo[i + (j * 16)] = MSG_ReadShort(msg);
+					}
+				}
+			}
+		}
+	}
+	// ammo in clip
+	for (j = 0; j < 4; j++) {
+		if (MSG_ReadBits(msg, 1)) {
+			LOG("PS_AMMOCLIP");
+			bits = MSG_ReadShort(msg);
+
+			for (i = 0 ; i < 16 ; i++) {
+				if (bits & (1 << i)) {
+					to->ammoclip[i + (j * 16)] = MSG_ReadShort(msg);
 				}
 			}
 		}
@@ -1686,7 +1971,7 @@ void MSG_ReadDeltaPlayerstate(msg_t *msg, playerState_t *from, playerState_t *to
 		Com_Printf(" (%i bits)\n", endBit - startBit);
 	}
 }
-
+// Predefined set of nodes for Huffman compression
 int msg_hData[256] = {
 	250315,	// 0
 	41193,	// 1
@@ -1965,48 +2250,3 @@ void MSG_initHuffman(void) {
 		}
 	}
 }
-
-/*
-=======================================================================================================================================
-MSG_NUinitHuffman
-=======================================================================================================================================
-*/
-/*
-void MSG_NUinitHuffman() {
-	byte *data;
-	int size, i, ch;
-	int array[256];
-
-	msgInit = qtrue;
-
-	Huff_Init(&msgHuff);
-	// load it in
-	size = FS_ReadFile("netchan/netchan.bin", (void **)&data);
-
-	for (i = 0; i < 256; i++) {
-		array[i] = 0;
-	}
-
-	for (i = 0; i < size; i++) {
-		ch = data[i];
-		Huff_addRef(&msgHuff.compressor, ch); // Do update
-		Huff_addRef(&msgHuff.decompressor, ch); // Do update
-		array[ch]++;
-	}
-
-	Com_Printf("msg_hData {\n");
-
-	for (i = 0; i < 256; i++) {
-		if (array[i] == 0) {
-			Huff_addRef(&msgHuff.compressor, i); // Do update
-			Huff_addRef(&msgHuff.decompressor, i); // Do update
-		}
-
-		Com_Printf("%d, // %d\n", array[i], i);
-	}
-
-	Com_Printf("};\n");
-	FS_FreeFile(data);
-	Cbuf_AddText("condump dump.txt\n");
-}
-*/

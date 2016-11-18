@@ -1829,19 +1829,19 @@ void BotUpdateInventory(bot_state_t *bs) {
 	// armor
 	bs->inventory[INVENTORY_ARMOR] = bs->cur_ps.stats[STAT_ARMOR];
 	// weapons
-	bs->inventory[INVENTORY_GAUNTLET] = (bs->cur_ps.stats[STAT_WEAPONS] & (1 << WP_GAUNTLET)) != 0;
-	bs->inventory[INVENTORY_MACHINEGUN] = (bs->cur_ps.stats[STAT_WEAPONS] & (1 << WP_MACHINEGUN)) != 0;
-	bs->inventory[INVENTORY_CHAINGUN] = (bs->cur_ps.stats[STAT_WEAPONS] & (1 << WP_CHAINGUN)) != 0;
-	bs->inventory[INVENTORY_SHOTGUN] = (bs->cur_ps.stats[STAT_WEAPONS] & (1 << WP_SHOTGUN)) != 0;
-	bs->inventory[INVENTORY_NAILGUN] = (bs->cur_ps.stats[STAT_WEAPONS] & (1 << WP_NAILGUN)) != 0;
-	bs->inventory[INVENTORY_PROXLAUNCHER] = (bs->cur_ps.stats[STAT_WEAPONS] & (1 << WP_PROX_LAUNCHER)) != 0;
-	bs->inventory[INVENTORY_GRENADELAUNCHER] = (bs->cur_ps.stats[STAT_WEAPONS] & (1 << WP_GRENADE_LAUNCHER)) != 0;
-	bs->inventory[INVENTORY_ROCKETLAUNCHER] = (bs->cur_ps.stats[STAT_WEAPONS] & (1 << WP_ROCKET_LAUNCHER)) != 0;
-	bs->inventory[INVENTORY_LIGHTNING] = (bs->cur_ps.stats[STAT_WEAPONS] & (1 << WP_LIGHTNING)) != 0;
-	bs->inventory[INVENTORY_RAILGUN] = (bs->cur_ps.stats[STAT_WEAPONS] & (1 << WP_RAILGUN)) != 0;
-	bs->inventory[INVENTORY_PLASMAGUN] = (bs->cur_ps.stats[STAT_WEAPONS] & (1 << WP_PLASMAGUN)) != 0;
-	bs->inventory[INVENTORY_BFG10K] = (bs->cur_ps.stats[STAT_WEAPONS] & (1 << WP_BFG)) != 0;
-	bs->inventory[INVENTORY_GRAPPLINGHOOK] = (bs->cur_ps.stats[STAT_WEAPONS] & (1 << WP_GRAPPLING_HOOK)) != 0;
+	bs->inventory[INVENTORY_GAUNTLET] = COM_BitCheck(bs->cur_ps.weapons, (WP_GAUNTLET));
+	bs->inventory[INVENTORY_MACHINEGUN] = COM_BitCheck(bs->cur_ps.weapons, (WP_MACHINEGUN));
+	bs->inventory[INVENTORY_CHAINGUN] = COM_BitCheck(bs->cur_ps.weapons, (WP_CHAINGUN));
+	bs->inventory[INVENTORY_SHOTGUN] = COM_BitCheck(bs->cur_ps.weapons, (WP_SHOTGUN));
+	bs->inventory[INVENTORY_NAILGUN] = COM_BitCheck(bs->cur_ps.weapons, (WP_NAILGUN));
+	bs->inventory[INVENTORY_PROXLAUNCHER] = COM_BitCheck(bs->cur_ps.weapons, (WP_PROX_LAUNCHER));
+	bs->inventory[INVENTORY_GRENADELAUNCHER] = COM_BitCheck(bs->cur_ps.weapons, (WP_GRENADE_LAUNCHER));
+	bs->inventory[INVENTORY_ROCKETLAUNCHER] = COM_BitCheck(bs->cur_ps.weapons, (WP_ROCKET_LAUNCHER));
+	bs->inventory[INVENTORY_LIGHTNING] = COM_BitCheck(bs->cur_ps.weapons, (WP_LIGHTNING));
+	bs->inventory[INVENTORY_RAILGUN] = COM_BitCheck(bs->cur_ps.weapons, (WP_RAILGUN));
+	bs->inventory[INVENTORY_PLASMAGUN] = COM_BitCheck(bs->cur_ps.weapons, (WP_PLASMAGUN));
+	bs->inventory[INVENTORY_BFG10K] = COM_BitCheck(bs->cur_ps.weapons, (WP_BFG));
+	bs->inventory[INVENTORY_GRAPPLINGHOOK] = COM_BitCheck(bs->cur_ps.weapons, (WP_GRAPPLING_HOOK));
 	// ammo
 	bs->inventory[INVENTORY_BULLETS] = bs->cur_ps.ammo[WP_MACHINEGUN];
 	bs->inventory[INVENTORY_BELT] = bs->cur_ps.ammo[WP_CHAINGUN];

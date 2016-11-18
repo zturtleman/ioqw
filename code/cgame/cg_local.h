@@ -522,6 +522,8 @@ typedef struct {
 	refEntity_t testModelEntity;
 	char testModelName[MAX_QPATH];
 	qboolean testGun;
+	float bar_offset; // offset calculation for middle bar
+	int bar_count; //number of items displayed in the bar
 } cg_t;
 
 /**************************************************************************************************************************************
