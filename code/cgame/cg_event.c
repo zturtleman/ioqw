@@ -311,11 +311,6 @@ static void CG_Obituary(entityState_t *ent) {
 				message = "tried to invade";
 				message2 = "'s personal space";
 				break;
-#ifdef MISSIONPACK
-			case MOD_JUICED:
-				message = "was juiced by";
-				break;
-#endif
 			case MOD_GRAPPLE:
 				message = "was caught by";
 				break;
@@ -366,11 +361,6 @@ static void CG_UseItem(centity_t *cent) {
 			break;
 		case HI_KAMIKAZE:
 			break;
-#ifdef MISSIONPACK
-		case HI_INVULNERABILITY:
-			trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.useInvulnerabilitySound);
-			break;
-#endif
 	}
 }
 
@@ -1098,14 +1088,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			CG_ScorePlum(cent->currentState.otherEntityNum, cent->lerpOrigin, cent->currentState.time);
 			break;
 #ifdef MISSIONPACK
-		case EV_INVUL_IMPACT:
-			DEBUGNAME("EV_INVUL_IMPACT");
-			CG_InvulnerabilityImpact(cent->lerpOrigin, cent->currentState.angles);
-			break;
-		case EV_JUICED:
-			DEBUGNAME("EV_JUICED");
-			CG_InvulnerabilityJuiced(cent->lerpOrigin);
-			break;
 		case EV_LIGHTNINGBOLT:
 			DEBUGNAME("EV_LIGHTNINGBOLT");
 			CG_LightningBoltBeam(es->origin2, es->pos.trBase);

@@ -2227,9 +2227,7 @@ void CG_Player(centity_t *cent) {
 	refEntity_t powerup;
 	float angle;
 	vec3_t dir, angles;
-#ifdef MISSIONPACK
-	float c;
-#endif
+
 	// the client number is stored in clientNum. It can't be derived from the entity number, because a single client may have
 	// multiple corpses on the level using the same clientinfo
 	clientNum = cent->currentState.clientNum;
@@ -2484,39 +2482,6 @@ void CG_Player(centity_t *cent) {
 		powerup.customSkin = 0;
 		trap_R_AddRefEntityToScene(&powerup);
 	}
-#ifdef MISSIONPACK
-	if (cent->currentState.powerups & (1 << PW_INVULNERABILITY)) {
-		if (!ci->invulnerabilityStartTime) {
-			ci->invulnerabilityStartTime = cg.time;
-		}
-
-		ci->invulnerabilityStopTime = cg.time;
-	} else {
-		ci->invulnerabilityStartTime = 0;
-	}
-
-	if ((cent->currentState.powerups & (1 << PW_INVULNERABILITY)) || cg.time - ci->invulnerabilityStopTime < 250) {
-		memcpy(&powerup, &torso, sizeof(torso));
-		powerup.hModel = cgs.media.invulnerabilityPowerupModel;
-		powerup.customSkin = 0;
-		// always draw
-		powerup.renderfx &= ~RF_THIRD_PERSON;
-		VectorCopy(cent->lerpOrigin, powerup.origin);
-
-		if (cg.time - ci->invulnerabilityStartTime < 250) {
-			c = (float)(cg.time - ci->invulnerabilityStartTime) / 250;
-		} else if (cg.time - ci->invulnerabilityStopTime < 250) {
-			c = (float)(250 - (cg.time - ci->invulnerabilityStopTime)) / 250;
-		} else {
-			c = 1;
-		}
-
-		VectorSet(powerup.axis[0], c, 0, 0);
-		VectorSet(powerup.axis[1], 0, c, 0);
-		VectorSet(powerup.axis[2], 0, 0, c);
-		trap_R_AddRefEntityToScene(&powerup);
-	}
-#endif // MISSIONPACK
 	// add the talk baloon or disconnect icon
 	CG_PlayerSprites(cent, &torso);
 	// add the head

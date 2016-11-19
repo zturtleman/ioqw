@@ -129,10 +129,7 @@ static itemList_t dm_itemList[] = {
 	{"Railgun", "rg", "weapon_railgun", qfalse, "uie_icons/iconw_railgun", 0},
 	{"Plasmagun", "pg", "weapon_plasmagun", qfalse, "uie_icons/iconw_plasma", 0},
 	{"BFG10K", "bfg", "weapon_bfg", qfalse, "uie_icons/iconw_bfg", 0},
-
 	{"Kamikaze", "kam", "holdable_kamikaze", qfalse, "uie_icons/kamikaze", 0},
-	{"Invulnerability", "ivl", "holdable_invulnerability", qfalse, "uie_icons/invulnerability", 0},
-
 	{"Quad Damage", "quad", "item_quad", qfalse, "uie_icons/quad", 0},
 	{"Invisibility", "invis", "item_invis", qfalse, "uie_icons/invis", 0},
 	{"Regeneration", "regen", "item_regen", qfalse, "uie_icons/regen", 0},

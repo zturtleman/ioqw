@@ -312,10 +312,6 @@ char *BotWeaponNameForMeansOfDeath(int mod) {
 			return "BFG10K";
 		case MOD_KAMIKAZE:
 			return "Kamikaze";
-#ifdef MISSIONPACK
-		case MOD_JUICED:
-			return "Prox mine";
-#endif
 		case MOD_GRAPPLE:
 			return "Grapple";
 		default:

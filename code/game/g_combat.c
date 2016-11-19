@@ -308,9 +308,6 @@ char *modNames[] = {
 	"MOD_TARGET_LASER",
 	"MOD_SUICIDE",
 	"MOD_SUICIDE_TEAM_CHANGE",
-#ifdef MISSIONPACK
-	"MOD_JUICED",
-#endif
 	"MOD_GRAPPLE",
 	"MOD_UNKNOWN"
 };
@@ -678,84 +675,6 @@ int CheckArmor(gentity_t *ent, int damage, int dflags) {
 
 /*
 =======================================================================================================================================
-RaySphereIntersections
-=======================================================================================================================================
-*/
-int RaySphereIntersections(vec3_t origin, float radius, vec3_t point, vec3_t dir, vec3_t intersections[2]) {
-	float b, c, d, t;
-
-	//	| origin - (point + t * dir)|= radius
-	//	a = dir[0] ^ 2 + dir[1] ^ 2 + dir[2] ^ 2;
-	//	b = 2 * (dir[0] * (point[0] - origin[0]) + dir[1] * (point[1] - origin[1]) + dir[2] * (point[2] - origin[2]));
-	//	c = (point[0] - origin[0]) ^ 2 + (point[1] - origin[1]) ^ 2 + (point[2] - origin[2]) ^ 2 - radius ^ 2;
-	// normalize dir so a = 1
-	VectorNormalize(dir);
-
-	b = 2 * (dir[0] * (point[0] - origin[0]) + dir[1] * (point[1] - origin[1]) + dir[2] * (point[2] - origin[2]));
-	c = (point[0] - origin[0]) * (point[0] - origin[0]) + (point[1] - origin[1]) * (point[1] - origin[1]) + (point[2] - origin[2]) * (point[2] - origin[2]) - radius * radius;
-	d = b * b - 4 * c;
-
-	if (d > 0) {
-		t = (-b + sqrt(d)) / 2;
-		VectorMA(point, t, dir, intersections[0]);
-		t = (-b - sqrt(d)) / 2;
-		VectorMA(point, t, dir, intersections[1]);
-		return 2;
-	} else if (d == 0) {
-		t = (-b) / 2;
-		VectorMA(point, t, dir, intersections[0]);
-		return 1;
-	}
-
-	return 0;
-}
-#ifdef MISSIONPACK
-/*
-=======================================================================================================================================
-G_InvulnerabilityEffect
-=======================================================================================================================================
-*/
-int G_InvulnerabilityEffect(gentity_t *targ, vec3_t dir, vec3_t point, vec3_t impactpoint, vec3_t bouncedir) {
-	gentity_t *impact;
-	vec3_t intersections[2], vec;
-	int n;
-
-	if (!targ->client) {
-		return qfalse;
-	}
-
-	VectorCopy(dir, vec);
-	VectorInverse(vec);
-	// sphere model radius = 42 units
-	n = RaySphereIntersections(targ->client->ps.origin, 42, point, vec, intersections);
-
-	if (n > 0) {
-		impact = G_TempEntity(targ->client->ps.origin, EV_INVUL_IMPACT);
-		VectorSubtract(intersections[0], targ->client->ps.origin, vec);
-		vectoangles(vec, impact->s.angles);
-		impact->s.angles[0] += 90;
-
-		if (impact->s.angles[0] > 360) {
-			impact->s.angles[0] -= 360;
-		}
-
-		if (impactpoint) {
-			VectorCopy(intersections[0], impactpoint);
-		}
-
-		if (bouncedir) {
-			VectorCopy(vec, bouncedir);
-			VectorNormalize(bouncedir);
-		}
-
-		return qtrue;
-	} else {
-		return qfalse;
-	}
-}
-#endif
-/*
-=======================================================================================================================================
 G_Damage
 
 targ:		Entity that is being damaged.
@@ -785,9 +704,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	int asave;
 	int knockback;
 	int max;
-#ifdef MISSIONPACK
-	vec3_t bouncedir, impactpoint;
-#endif
+
 	if (!targ->takedamage) {
 		return;
 	}
@@ -795,17 +712,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	if (level.intermissionQueued) {
 		return;
 	}
-#ifdef MISSIONPACK
-	if (targ->client && mod != MOD_JUICED) {
-		if (targ->client->invulnerabilityTime > level.time) {
-			if (dir && point) {
-				G_InvulnerabilityEffect(targ, dir, point, impactpoint, bouncedir);
-			}
 
-			return;
-		}
-	}
-#endif
 	if (!inflictor) {
 		inflictor = &g_entities[ENTITYNUM_WORLD];
 	}

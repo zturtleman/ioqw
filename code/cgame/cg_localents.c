@@ -631,39 +631,6 @@ void CG_AddKamikaze(localEntity_t *le) {
 #ifdef MISSIONPACK
 /*
 =======================================================================================================================================
-CG_AddInvulnerabilityImpact
-=======================================================================================================================================
-*/
-void CG_AddInvulnerabilityImpact(localEntity_t *le) {
-	trap_R_AddRefEntityToScene(&le->refEntity);
-}
-
-/*
-=======================================================================================================================================
-CG_AddInvulnerabilityJuiced
-=======================================================================================================================================
-*/
-void CG_AddInvulnerabilityJuiced(localEntity_t *le) {
-	int t;
-
-	t = cg.time - le->startTime;
-
-	if (t > 3000) {
-		le->refEntity.axis[0][0] = (float)1.0 + 0.3 * (t - 3000) / 2000;
-		le->refEntity.axis[1][1] = (float)1.0 + 0.3 * (t - 3000) / 2000;
-		le->refEntity.axis[2][2] = (float)0.7 + 0.3 * (2000 - (t - 3000)) / 2000;
-	}
-
-	if (t > 5000) {
-		le->endTime = 0;
-		CG_GibPlayer(le->refEntity.origin);
-	} else {
-		trap_R_AddRefEntityToScene(&le->refEntity);
-	}
-}
-
-/*
-=======================================================================================================================================
 CG_AddRefEntity
 =======================================================================================================================================
 */
@@ -818,12 +785,6 @@ void CG_AddLocalEntities(void) {
 				CG_AddScorePlum(le);
 				break;
 #ifdef MISSIONPACK
-			case LE_INVULIMPACT:
-				CG_AddInvulnerabilityImpact(le);
-				break;
-			case LE_INVULJUICED:
-				CG_AddInvulnerabilityJuiced(le);
-				break;
 			case LE_SHOWREFENTITY:
 				CG_AddRefEntity(le);
 				break;

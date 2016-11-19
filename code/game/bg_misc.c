@@ -524,21 +524,6 @@ gitem_t bg_itemlist[] = {
 		HI_KAMIKAZE,
 /* sounds */ "sound/items/kamikazerespawn.wav"
 	},
-#ifdef MISSIONPACK
-/*QUAKED holdable_invulnerability (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
-*/
-	{
-		"holdable_invulnerability",
-		"sound/items/holdable.wav",
-		{"models/powerups/holdable/invulnerability.md3", NULL, NULL, NULL},
-/* icon */		"icons/invulnerability",
-/* pickup */	"Invulnerability",
-		60,
-		IT_HOLDABLE,
-		HI_INVULNERABILITY,
-/* sounds */ ""
-	},
-#endif
 	//
 	// POWERUP ITEMS
 	//
@@ -1162,9 +1147,7 @@ char *eventnames[] = {
 	"EV_USE_ITEM3",
 	"EV_SCOREPLUM",				// score plum
 #ifdef MISSIONPACK
-	"EV_INVUL_IMPACT",			// invulnerability sphere impact
-	"EV_JUICED",				// invulnerability juiced effect
-	"EV_LIGHTNINGBOLT",			// lightning bolt bounced of invulnerability sphere
+	"EV_LIGHTNINGBOLT",
 #endif
 	"EV_DEBUG_LINE"
 };

@@ -149,9 +149,6 @@ Bullet_Fire
 void Bullet_Fire(gentity_t *ent, float spread, int damage, int mod) {
 	trace_t tr;
 	vec3_t end;
-#ifdef MISSIONPACK
-	vec3_t impactpoint, bouncedir;
-#endif
 	float r;
 	float u;
 	gentity_t *tent;
@@ -196,25 +193,7 @@ void Bullet_Fire(gentity_t *ent, float spread, int damage, int mod) {
 		tent->s.otherEntityNum = ent->s.number;
 
 		if (traceEnt->takedamage) {
-#ifdef MISSIONPACK
-			if (traceEnt->client && traceEnt->client->invulnerabilityTime > level.time) {
-				if (G_InvulnerabilityEffect(traceEnt, forward, tr.endpos, impactpoint, bouncedir)) {
-					G_BounceProjectile(muzzle, impactpoint, bouncedir, end);
-					VectorCopy(impactpoint, muzzle);
-					// the player can hit him/herself with the bounced rail
-					passent = ENTITYNUM_NONE;
-				} else {
-					VectorCopy(tr.endpos, muzzle);
-					passent = traceEnt->s.number;
-				}
-
-				continue;
-			} else {
-#endif
-				G_Damage(traceEnt, ent, ent, forward, tr.endpos, damage, 0, mod);
-#ifdef MISSIONPACK
-			}
-#endif
+			G_Damage(traceEnt, ent, ent, forward, tr.endpos, damage, 0, mod);
 		}
 
 		break;
@@ -241,9 +220,6 @@ qboolean ShotgunPellet(vec3_t start, vec3_t end, gentity_t *ent) {
 	trace_t tr;
 	int damage, i, passent;
 	gentity_t *traceEnt;
-#ifdef MISSIONPACK
-	vec3_t impactpoint, bouncedir;
-#endif
 	vec3_t tr_start, tr_end;
 
 	passent = ent->s.number;
@@ -261,33 +237,12 @@ qboolean ShotgunPellet(vec3_t start, vec3_t end, gentity_t *ent) {
 
 		if (traceEnt->takedamage) {
 			damage = DEFAULT_SHOTGUN_DAMAGE * s_quadFactor;
-#ifdef MISSIONPACK
-			if (traceEnt->client && traceEnt->client->invulnerabilityTime > level.time) {
-				if (G_InvulnerabilityEffect(traceEnt, forward, tr.endpos, impactpoint, bouncedir)) {
-					G_BounceProjectile(tr_start, impactpoint, bouncedir, tr_end);
-					VectorCopy(impactpoint, tr_start);
-					// the player can hit him/herself with the bounced rail
-					passent = ENTITYNUM_NONE;
-				} else {
-					VectorCopy(tr.endpos, tr_start);
-					passent = traceEnt->s.number;
-				}
 
-				continue;
-			} else {
-				G_Damage(traceEnt, ent, ent, forward, tr.endpos, damage, 0, MOD_SHOTGUN);
-
-				if (LogAccuracyHit(traceEnt, ent)) {
-					return qtrue;
-				}
-			}
-#else
 			G_Damage(traceEnt, ent, ent, forward, tr.endpos, damage, 0, MOD_SHOTGUN);
 
 			if (LogAccuracyHit(traceEnt, ent)) {
 				return qtrue;
 			}
-#endif
 		}
 
 		return qfalse;
@@ -461,9 +416,6 @@ Weapon_Lightning_Fire
 void Weapon_Lightning_Fire(gentity_t *ent) {
 	trace_t tr;
 	vec3_t end;
-#ifdef MISSIONPACK
-	vec3_t impactpoint, bouncedir;
-#endif
 	gentity_t *traceEnt, *tent;
 	int damage, i, passent;
 
@@ -473,18 +425,7 @@ void Weapon_Lightning_Fire(gentity_t *ent) {
 	for (i = 0; i < 10; i++) {
 		VectorMA(muzzle, LIGHTNING_RANGE, forward, end);
 		trap_Trace(&tr, muzzle, NULL, NULL, end, passent, MASK_SHOT);
-#ifdef MISSIONPACK
-		// if not the first trace (the lightning bounced of an invulnerability sphere)
-		if (i) {
-			// add bounced off lightning bolt temp entity
-			// the first lightning bolt is a cgame only visual
-			tent = G_TempEntity(muzzle, EV_LIGHTNINGBOLT);
 
-			VectorCopy(tr.endpos, end);
-			SnapVector(end);
-			VectorCopy(end, tent->s.origin2);
-		}
-#endif
 		if (tr.entityNum == ENTITYNUM_NONE) {
 			return;
 		}
@@ -492,27 +433,7 @@ void Weapon_Lightning_Fire(gentity_t *ent) {
 		traceEnt = &g_entities[tr.entityNum];
 
 		if (traceEnt->takedamage) {
-#ifdef MISSIONPACK
-			if (traceEnt->client && traceEnt->client->invulnerabilityTime > level.time) {
-				if (G_InvulnerabilityEffect(traceEnt, forward, tr.endpos, impactpoint, bouncedir)) {
-					G_BounceProjectile(muzzle, impactpoint, bouncedir, end);
-					VectorCopy(impactpoint, muzzle);
-					VectorSubtract(end, impactpoint, forward);
-					VectorNormalize(forward);
-					// the player can hit him/herself with the bounced lightning
-					passent = ENTITYNUM_NONE;
-				} else {
-					VectorCopy(tr.endpos, muzzle);
-					passent = traceEnt->s.number;
-				}
-
-				continue;
-			} else {
-				G_Damage(traceEnt, ent, ent, forward, tr.endpos, damage, 0, MOD_LIGHTNING);
-			}
-#else
 			G_Damage(traceEnt, ent, ent, forward, tr.endpos, damage, 0, MOD_LIGHTNING);
-#endif
 		}
 
 		if (traceEnt->takedamage && traceEnt->client) {
@@ -549,9 +470,6 @@ Weapon_Railgun_Fire
 #define MAX_RAIL_HITS 4
 void Weapon_Railgun_Fire(gentity_t *ent) {
 	vec3_t end;
-#ifdef MISSIONPACK
-	vec3_t impactpoint, bouncedir;
-#endif
 	trace_t trace;
 	gentity_t *tent;
 	gentity_t *traceEnt;
@@ -580,42 +498,11 @@ void Weapon_Railgun_Fire(gentity_t *ent) {
 		traceEnt = &g_entities[trace.entityNum];
 
 		if (traceEnt->takedamage) {
-#ifdef MISSIONPACK
-			if (traceEnt->client && traceEnt->client->invulnerabilityTime > level.time) {
-				if (G_InvulnerabilityEffect(traceEnt, forward, trace.endpos, impactpoint, bouncedir)) {
-					G_BounceProjectile(muzzle, impactpoint, bouncedir, end);
-					// snap the endpos to integers to save net bandwidth, but nudged towards the line
-					SnapVectorTowards(trace.endpos, muzzle);
-					// send railgun beam effect
-					tent = G_TempEntity(trace.endpos, EV_RAILTRAIL);
-					// set player number for custom colors on the railtrail
-					tent->s.clientNum = ent->s.clientNum;
-
-					VectorCopy(muzzle, tent->s.origin2);
-					// move origin a bit to come closer to the drawn gun muzzle
-					VectorMA(tent->s.origin2, 4, right, tent->s.origin2);
-					VectorMA(tent->s.origin2, -1, up, tent->s.origin2);
-
-					tent->s.eventParm = 255; // don't make the explosion at the end
-
-					VectorCopy(impactpoint, muzzle);
-					// the player can hit him/herself with the bounced rail
-					passent = ENTITYNUM_NONE;
-				}
-			} else {
-				if (LogAccuracyHit(traceEnt, ent)) {
-					hits++;
-				}
-
-				G_Damage(traceEnt, ent, ent, forward, trace.endpos, damage, 0, MOD_RAILGUN);
-			}
-#else
 			if (LogAccuracyHit(traceEnt, ent)) {
 				hits++;
 			}
 
 			G_Damage(traceEnt, ent, ent, forward, trace.endpos, damage, 0, MOD_RAILGUN);
-#endif
 		}
 
 		if (trace.contents & CONTENTS_SOLID) {

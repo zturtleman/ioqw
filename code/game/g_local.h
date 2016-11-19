@@ -230,9 +230,6 @@ struct gclient_s {
 	int timeResidual;
 	gentity_t *persistantPowerup;
 	int ammoTimes[WP_NUM_WEAPONS];
-#ifdef MISSIONPACK
-	int invulnerabilityTime;
-#endif
 	char *areabits;
 };
 // this structure is cleared as each map is entered
@@ -352,7 +349,6 @@ const char *BuildShaderStateConfig(void);
 qboolean CanDamage(gentity_t *targ, vec3_t origin);
 void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t dir, vec3_t point, int damage, int dflags, int mod);
 qboolean G_RadiusDamage(vec3_t origin, gentity_t *attacker, float damage, float radius, gentity_t *ignore, int mod);
-int G_InvulnerabilityEffect(gentity_t *targ, vec3_t dir, vec3_t point, vec3_t impactpoint, vec3_t bouncedir);
 void BodyDie(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int meansOfDeath);
 void TossClientItems(gentity_t *self);
 void TossClientPersistantPowerups(gentity_t *self);
@@ -361,8 +357,8 @@ void TossClientCubes(gentity_t *self);
 #define DAMAGE_RADIUS				0x00000001 // damage was indirect
 #define DAMAGE_NO_ARMOR				0x00000002 // armour does not protect from this damage
 #define DAMAGE_NO_KNOCKBACK			0x00000004 // do not affect velocity, just view angles
-#define DAMAGE_NO_PROTECTION		0x00000008 // armor, shields, invulnerability, and godmode have no effect
-#define DAMAGE_NO_TEAM_PROTECTION	0x00000010 // armor, shields, invulnerability, and godmode have no effect
+#define DAMAGE_NO_PROTECTION		0x00000008 // armor, shields, and godmode have no effect
+#define DAMAGE_NO_TEAM_PROTECTION	0x00000010 // armor, shields, and godmode have no effect
 // g_missile.c
 void G_RunMissile(gentity_t *ent);
 gentity_t *fire_nail(gentity_t *self, vec3_t start, vec3_t forward, vec3_t right, vec3_t up);

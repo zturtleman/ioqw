@@ -190,9 +190,7 @@ typedef enum {
 	LE_MOVE_SCALE_FADE,
 	LE_SCOREPLUM
 #ifdef MISSIONPACK
-	, LE_INVULIMPACT,
-	LE_INVULJUICED,
-	LE_SHOWREFENTITY
+	, LE_SHOWREFENTITY
 #endif
 } leType_t;
 
@@ -281,8 +279,6 @@ typedef struct {
 	int teamTask;			// task in teamplay (offence/defence)
 	qboolean teamLeader;	// true when this is a team leader
 	int powerups;			// so can display quad/flag status
-	int invulnerabilityStartTime;
-	int invulnerabilityStopTime;
 	int breathPuffTime;
 	// when clientinfo is changed, the loading of models/skins/sounds can be deferred until you are dead, to prevent hitches in gameplay
 	char modelName[MAX_QPATH];
@@ -646,10 +642,7 @@ typedef struct {
 	qhandle_t ammoRegenPowerupModel;
 	qhandle_t dustPuffShader;
 #ifdef MISSIONPACK
-	qhandle_t invulnerabilityImpactModel;
-	qhandle_t invulnerabilityJuicedModel;
 	qhandle_t heartShader;
-	qhandle_t invulnerabilityPowerupModel;
 #endif
 	// scoreboard headers
 	qhandle_t scoreboardName;
@@ -689,11 +682,6 @@ typedef struct {
 	sfxHandle_t obeliskHitSound3;
 	sfxHandle_t obeliskRespawnSound;
 #ifdef MISSIONPACK
-	sfxHandle_t useInvulnerabilitySound;
-	sfxHandle_t invulnerabilityImpactSound1;
-	sfxHandle_t invulnerabilityImpactSound2;
-	sfxHandle_t invulnerabilityImpactSound3;
-	sfxHandle_t invulnerabilityJuicedSound;
 	sfxHandle_t winnerSound;
 	sfxHandle_t loserSound;
 #endif
@@ -1157,8 +1145,6 @@ void CG_KamikazeEffect(vec3_t org);
 void CG_ObeliskExplode(vec3_t org, int entityNum);
 void CG_ObeliskPain(vec3_t org);
 #ifdef MISSIONPACK
-void CG_InvulnerabilityImpact(vec3_t org, vec3_t angles);
-void CG_InvulnerabilityJuiced(vec3_t org);
 void CG_LightningBoltBeam(vec3_t start, vec3_t end);
 #endif
 void CG_ScorePlum(int client, vec3_t org, int score);

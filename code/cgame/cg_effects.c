@@ -288,77 +288,7 @@ void CG_ObeliskPain(vec3_t org) {
 
 	trap_S_StartSound(org, ENTITYNUM_NONE, CHAN_BODY, sfx);
 }
-#ifdef MISSIONPACK
-/*
-=======================================================================================================================================
-CG_InvulnerabilityImpact
-=======================================================================================================================================
-*/
-void CG_InvulnerabilityImpact(vec3_t org, vec3_t angles) {
-	localEntity_t *le;
-	refEntity_t *re;
-	int r;
-	sfxHandle_t sfx;
 
-	le = CG_AllocLocalEntity();
-	le->leFlags = 0;
-	le->leType = LE_INVULIMPACT;
-	le->startTime = cg.time;
-	le->endTime = cg.time + 1000;
-	le->lifeRate = 1.0 / (le->endTime - le->startTime);
-	le->color[0] = le->color[1] = le->color[2] = le->color[3] = 1.0;
-
-	re = &le->refEntity;
-	re->reType = RT_MODEL;
-	re->shaderTime = cg.time / 1000.0f;
-	re->hModel = cgs.media.invulnerabilityImpactModel;
-
-	VectorCopy(org, re->origin);
-	AnglesToAxis(angles, re->axis);
-
-	r = rand() & 3;
-
-	if (r < 2) {
-		sfx = cgs.media.invulnerabilityImpactSound1;
-	} else if (r == 2) {
-		sfx = cgs.media.invulnerabilityImpactSound2;
-	} else {
-		sfx = cgs.media.invulnerabilityImpactSound3;
-	}
-
-	trap_S_StartSound(org, ENTITYNUM_NONE, CHAN_BODY, sfx);
-}
-
-/*
-=======================================================================================================================================
-CG_InvulnerabilityJuiced
-=======================================================================================================================================
-*/
-void CG_InvulnerabilityJuiced(vec3_t org) {
-	localEntity_t *le;
-	refEntity_t *re;
-	vec3_t angles;
-
-	le = CG_AllocLocalEntity();
-	le->leFlags = 0;
-	le->leType = LE_INVULJUICED;
-	le->startTime = cg.time;
-	le->endTime = cg.time + 10000;
-	le->lifeRate = 1.0 / (le->endTime - le->startTime);
-	le->color[0] = le->color[1] = le->color[2] = le->color[3] = 1.0;
-
-	re = &le->refEntity;
-	re->reType = RT_MODEL;
-	re->shaderTime = cg.time / 1000.0f;
-	re->hModel = cgs.media.invulnerabilityJuicedModel;
-
-	VectorCopy(org, re->origin);
-	VectorClear(angles);
-	AnglesToAxis(angles, re->axis);
-
-	trap_S_StartSound(org, ENTITYNUM_NONE, CHAN_BODY, cgs.media.invulnerabilityJuicedSound);
-}
-#endif
 /*
 =======================================================================================================================================
 CG_ScorePlum

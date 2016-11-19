@@ -557,83 +557,14 @@ void ClientEvents(gentity_t *ent, int oldEventSequence) {
 				G_Damage(ent, NULL, NULL, NULL, NULL, damage, 0, MOD_FALLING);
 				break;
 			case EV_USE_ITEM1: // kamikaze
-#ifdef MISSIONPACK
-				// make sure the invulnerability is off
-				ent->client->invulnerabilityTime = 0;
-#endif
 				// start the kamikaze
 				G_StartKamikaze(ent);
 				break;
-#ifdef MISSIONPACK
-			case EV_USE_ITEM2: // invulnerability
-				ent->client->invulnerabilityTime = level.time + 10000;
-				break;
-#endif
 			default:
 				break;
 		}
 	}
 }
-#ifdef MISSIONPACK
-/*
-=======================================================================================================================================
-StuckInOtherClient
-=======================================================================================================================================
-*/
-static int StuckInOtherClient(gentity_t *ent) {
-	int i;
-	gentity_t *ent2;
-
-	ent2 = &g_entities[0];
-
-	for (i = 0; i < MAX_CLIENTS; i++, ent2++) {
-		if (ent2 == ent) {
-			continue;
-		}
-
-		if (!ent2->inuse) {
-			continue;
-		}
-
-		if (!ent2->client) {
-			continue;
-		}
-
-		if (ent2->health <= 0) {
-			continue;
-		}
-
-		if (ent2->r.absmin[0] > ent->r.absmax[0]) {
-			continue;
-		}
-
-		if (ent2->r.absmin[1] > ent->r.absmax[1]) {
-			continue;
-		}
-
-		if (ent2->r.absmin[2] > ent->r.absmax[2]) {
-			continue;
-		}
-
-		if (ent2->r.absmax[0] < ent->r.absmin[0]) {
-			continue;
-		}
-
-		if (ent2->r.absmax[1] < ent->r.absmin[1]) {
-			continue;
-		}
-
-		if (ent2->r.absmax[2] < ent->r.absmin[2]) {
-			continue;
-		}
-
-		return qtrue;
-	}
-
-	return qfalse;
-}
-#endif
-void BotTestSolid(vec3_t origin);
 
 /*
 =======================================================================================================================================
@@ -776,32 +707,7 @@ void ClientThink_Real(gentity_t *ent) {
 		ent->flags &= ~FL_FORCE_GESTURE;
 		ent->client->pers.cmd.buttons |= BUTTON_GESTURE;
 	}
-#ifdef MISSIONPACK
-	// check for invulnerability expansion before doing the Pmove
-	if (client->ps.powerups[PW_INVULNERABILITY]) {
-		if (!(client->ps.pm_flags & PMF_INVULEXPAND)) {
-			vec3_t mins = {-42, -42, -42};
-			vec3_t maxs = {42, 42, 42};
-			vec3_t oldmins, oldmaxs;
 
-			VectorCopy(ent->r.mins, oldmins);
-			VectorCopy(ent->r.maxs, oldmaxs);
-			// expand
-			VectorCopy(mins, ent->r.mins);
-			VectorCopy(maxs, ent->r.maxs);
-			trap_LinkEntity(ent);
-			// check if this would get anyone stuck in this player
-			if (!StuckInOtherClient(ent)) {
-				// set flag so the expanded size will be set in PM_CheckDuck
-				client->ps.pm_flags |= PMF_INVULEXPAND;
-			}
-			// set back
-			VectorCopy(oldmins, ent->r.mins);
-			VectorCopy(oldmaxs, ent->r.maxs);
-			trap_LinkEntity(ent);
-		}
-	}
-#endif
 	pm.ps = &client->ps;
 	pm.cmd = *ucmd;
 
@@ -1022,11 +928,6 @@ void ClientEndFrame(gentity_t *ent) {
 	if (bg_itemlist[ent->client->ps.stats[STAT_PERSISTANT_POWERUP]].giTag == PW_SCOUT) {
 		ent->client->ps.powerups[PW_SCOUT] = level.time;
 	}
-#ifdef MISSIONPACK
-	if (ent->client->invulnerabilityTime > level.time) {
-		ent->client->ps.powerups[PW_INVULNERABILITY] = level.time;
-	}
-#endif
 	// save network bandwidth
 #if 0
 	if (!g_synchronousClients->integer && ent->client->ps.pm_type == PM_NORMAL) {

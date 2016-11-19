@@ -147,7 +147,6 @@ typedef enum {
 #define PMF_GRAPPLE_PULL	 2048 // pull towards grapple location
 #define PMF_FOLLOW			 4096 // spectate following another player
 #define PMF_SCOREBOARD		 8192 // spectate as a scoreboard
-#define PMF_INVULEXPAND		16384 // invulnerability sphere set to full size
 #define PMF_ALL_TIMES (PMF_TIME_WATERJUMP|PMF_TIME_LAND|PMF_TIME_KNOCKBACK)
 
 #define MAXTOUCH 32
@@ -250,7 +249,6 @@ typedef enum {
 	PW_GUARD,
 	PW_DOUBLER,
 	PW_SCOUT,
-	PW_INVULNERABILITY,
 	PW_REDFLAG,
 	PW_BLUEFLAG,
 	PW_NEUTRALFLAG,
@@ -260,7 +258,6 @@ typedef enum {
 typedef enum {
 	HI_NONE,
 	HI_KAMIKAZE,
-	HI_INVULNERABILITY,
 	HI_NUM_HOLDABLE
 } holdable_t;
 
@@ -362,9 +359,7 @@ typedef enum {
 	EV_USE_ITEM3,
 	EV_SCOREPLUM,			// score plum
 #ifdef MISSIONPACK
-	EV_INVUL_IMPACT,		// invulnerability sphere impact
-	EV_JUICED,				// invulnerability juiced effect
-	EV_LIGHTNINGBOLT,		// lightning bolt bounced of invulnerability sphere
+	EV_LIGHTNINGBOLT,
 #endif
 	EV_DEBUG_LINE
 } entity_event_t;
@@ -500,9 +495,6 @@ typedef enum {
 	MOD_TARGET_LASER,
 	MOD_SUICIDE,
 	MOD_SUICIDE_TEAM_CHANGE,
-#ifdef MISSIONPACK
-	MOD_JUICED,
-#endif
 	MOD_GRAPPLE,
 	MOD_UNKNOWN
 } meansOfDeath_t;

@@ -160,7 +160,6 @@ itemnode_t server_itemlist[ITEM_COUNT] = {
 	{ITEMGROUP_ARMOR, ITEM_ARMORBODY, "item_armor_body", "ar"},
 	// holdable items
 	{ITEMGROUP_HOLDABLE, ITEM_KAMIKAZE, "holdable_kamikaze", "kam"},
-	{ITEMGROUP_HOLDABLE, ITEM_INVULNERABILITY, "holdable_invulnerability", "ivl"},
 	// powerups
 	{ITEMGROUP_POWERUPS, ITEM_QUAD, "item_quad", "quad"},
 	{ITEMGROUP_POWERUPS, ITEM_INVIS, "item_invis", "inv"},

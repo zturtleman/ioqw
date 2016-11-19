@@ -1735,16 +1735,12 @@ void BotCheckItemPickup(bot_state_t *bs, int *oldinventory) {
 	}
 
 	offence = -1;
-	// go into offence if picked up the kamikaze or invulnerability
+	// go into offence if picked up the kamikaze
 	if (!oldinventory[INVENTORY_KAMIKAZE] && bs->inventory[INVENTORY_KAMIKAZE] >= 1) {
 		offence = qtrue;
 	}
-
-	if (!oldinventory[INVENTORY_INVULNERABILITY] && bs->inventory[INVENTORY_INVULNERABILITY] >= 1) {
-		offence = qtrue;
-	}
-	// if not already wearing the kamikaze or invulnerability
-	if (!bs->inventory[INVENTORY_KAMIKAZE] && !bs->inventory[INVENTORY_INVULNERABILITY]) {
+	// if not already wearing the kamikaze
+	if (!bs->inventory[INVENTORY_KAMIKAZE]) {
 		if (!oldinventory[INVENTORY_SCOUT] && bs->inventory[INVENTORY_SCOUT] >= 1) {
 			offence = qtrue;
 		}
@@ -1856,9 +1852,6 @@ void BotUpdateInventory(bot_state_t *bs) {
 	bs->inventory[INVENTORY_BFGAMMO] = bs->cur_ps.ammo[WP_BFG];
 	// holdables
 	bs->inventory[INVENTORY_KAMIKAZE] = bs->cur_ps.stats[STAT_HOLDABLE_ITEM] == MODELINDEX_KAMIKAZE;
-#ifdef MISSIONPACK
-	bs->inventory[INVENTORY_INVULNERABILITY] = bs->cur_ps.stats[STAT_HOLDABLE_ITEM] == MODELINDEX_INVULNERABILITY;
-#endif
 	// powerups
 	bs->inventory[INVENTORY_QUAD] = bs->cur_ps.powerups[PW_QUAD] != 0;
 	bs->inventory[INVENTORY_INVISIBILITY] = bs->cur_ps.powerups[PW_INVIS] != 0;
@@ -2041,163 +2034,14 @@ void BotUseKamikaze(bot_state_t *bs) {
 		return;
 	}
 }
-#ifdef MISSIONPACK
-/*
-=======================================================================================================================================
-BotUseInvulnerability
-=======================================================================================================================================
-*/
-void BotUseInvulnerability(bot_state_t *bs) {
-	int c;
-	vec3_t dir, target;
-	bot_goal_t *goal;
-	bsp_trace_t trace;
 
-	// if the bot has no invulnerability
-	if (bs->inventory[INVENTORY_INVULNERABILITY] <= 0) {
-		return;
-	}
-
-	if (bs->invulnerability_time > FloatTime()) {
-		return;
-	}
-
-	bs->invulnerability_time = FloatTime() + 0.2;
-
-	if (gametype == GT_CTF) {
-		// never use kamikaze if the team flag carrier is visible
-		if (BotCTFCarryingFlag(bs)) {
-			return;
-		}
-
-		c = BotEnemyFlagCarrierVisible(bs);
-
-		if (c >= 0) {
-			return;
-		}
-		// if near enemy flag and the flag is visible
-		switch (BotTeam(bs)) {
-			case TEAM_RED:
-				goal = &ctf_blueflag;
-				break;
-			default:
-				goal = &ctf_redflag;
-				break;
-		}
-		// if the obelisk is visible
-		VectorCopy(goal->origin, target);
-		target[2] += 1;
-		VectorSubtract(bs->origin, target, dir);
-
-		if (VectorLengthSquared(dir) < Square(200)) {
-			BotAI_Trace(&trace, bs->eye, NULL, NULL, target, bs->client, CONTENTS_SOLID);
-
-			if (trace.fraction >= 1 || trace.entityNum == goal->entitynum) {
-				trap_EA_Use(bs->client);
-				return;
-			}
-		}
-	} else if (gametype == GT_1FCTF) {
-		// never use kamikaze if the team flag carrier is visible
-		if (Bot1FCTFCarryingFlag(bs)) {
-			return;
-		}
-
-		c = BotEnemyFlagCarrierVisible(bs);
-
-		if (c >= 0) {
-			return;
-		}
-		// if near enemy flag and the flag is visible
-		switch (BotTeam(bs)) {
-			case TEAM_RED:
-				goal = &ctf_blueflag;
-				break;
-			default:
-				goal = &ctf_redflag;
-				break;
-		}
-		// if the obelisk is visible
-		VectorCopy(goal->origin, target);
-		target[2] += 1;
-		VectorSubtract(bs->origin, target, dir);
-
-		if (VectorLengthSquared(dir) < Square(200)) {
-			BotAI_Trace(&trace, bs->eye, NULL, NULL, target, bs->client, CONTENTS_SOLID);
-
-			if (trace.fraction >= 1 || trace.entityNum == goal->entitynum) {
-				trap_EA_Use(bs->client);
-				return;
-			}
-		}
-	} else if (gametype == GT_OBELISK) {
-		switch (BotTeam(bs)) {
-			case TEAM_RED:
-				goal = &blueobelisk;
-				break;
-			default:
-				goal = &redobelisk;
-				break;
-		}
-		// if the obelisk is visible
-		VectorCopy(goal->origin, target);
-		target[2] += 1;
-		VectorSubtract(bs->origin, target, dir);
-
-		if (VectorLengthSquared(dir) < Square(300)) {
-			BotAI_Trace(&trace, bs->eye, NULL, NULL, target, bs->client, CONTENTS_SOLID);
-
-			if (trace.fraction >= 1 || trace.entityNum == goal->entitynum) {
-				trap_EA_Use(bs->client);
-				return;
-			}
-		}
-	} else if (gametype == GT_HARVESTER) {
-		if (BotHarvesterCarryingCubes(bs)) {
-			return;
-		}
-
-		c = BotEnemyCubeCarrierVisible(bs);
-
-		if (c >= 0) {
-			return;
-		}
-		// if near enemy base and enemy base is visible
-		switch (BotTeam(bs)) {
-			case TEAM_RED:
-				goal = &blueobelisk;
-				break;
-			default:
-				goal = &redobelisk;
-				break;
-		}
-		// if the obelisk is visible
-		VectorCopy(goal->origin, target);
-		target[2] += 1;
-		VectorSubtract(bs->origin, target, dir);
-
-		if (VectorLengthSquared(dir) < Square(200)) {
-			BotAI_Trace(&trace, bs->eye, NULL, NULL, target, bs->client, CONTENTS_SOLID);
-
-			if (trace.fraction >= 1 || trace.entityNum == goal->entitynum) {
-				trap_EA_Use(bs->client);
-				return;
-			}
-		}
-	}
-}
-#endif
 /*
 =======================================================================================================================================
 BotBattleUseItems
 =======================================================================================================================================
 */
 void BotBattleUseItems(bot_state_t *bs) {
-
 	BotUseKamikaze(bs);
-#ifdef MISSIONPACK
-	BotUseInvulnerability(bs);
-#endif
 }
 
 /*

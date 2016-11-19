@@ -545,22 +545,7 @@ static void PM_WaterMove(void) {
 
 	PM_SlideMove(qfalse);
 }
-#ifdef MISSIONPACK
-/*
-=======================================================================================================================================
-PM_InvulnerabilityMove
 
-Only with the invulnerability powerup.
-=======================================================================================================================================
-*/
-static void PM_InvulnerabilityMove(void) {
-
-	pm->cmd.forwardmove = 0;
-	pm->cmd.rightmove = 0;
-	pm->cmd.upmove = 0;
-	VectorClear(pm->ps->velocity);
-}
-#endif
 /*
 =======================================================================================================================================
 PM_FlyMove
@@ -1216,23 +1201,6 @@ Sets mins, maxs, and pm->ps->viewheight.
 static void PM_CheckDuck(void) {
 	trace_t trace;
 
-	if (pm->ps->powerups[PW_INVULNERABILITY]) {
-		if (pm->ps->pm_flags & PMF_INVULEXPAND) {
-			// invulnerability sphere has a 42 units radius
-			VectorSet(pm->mins, -42, -42, -42);
-			VectorSet(pm->maxs, 42, 42, 42);
-		} else {
-			VectorSet(pm->mins, -15, -15, MINS_Z);
-			VectorSet(pm->maxs, 15, 15, 16);
-		}
-
-		pm->ps->pm_flags |= PMF_DUCKED;
-		pm->ps->viewheight = CROUCH_VIEWHEIGHT;
-		return;
-	}
-
-	pm->ps->pm_flags &= ~PMF_INVULEXPAND;
-
 	pm->mins[0] = -15;
 	pm->mins[1] = -15;
 
@@ -1284,9 +1252,6 @@ static void PM_Footsteps(void) {
 	pm->xyspeed = sqrt(pm->ps->velocity[0] * pm->ps->velocity[0] + pm->ps->velocity[1] * pm->ps->velocity[1]);
 
 	if (pm->ps->groundEntityNum == ENTITYNUM_NONE) {
-		if (pm->ps->powerups[PW_INVULNERABILITY]) {
-			PM_ContinueLegsAnim(LEGS_IDLECR);
-		}
 		// airborne leaves position in cycle intact, but doesn't advance
 		if (pm->waterlevel > 1) {
 			PM_ContinueLegsAnim(LEGS_SWIM);
@@ -1855,11 +1820,7 @@ void PmoveSingle(pmove_t *pmove) {
 	}
 
 	PM_DropTimers();
-#ifdef MISSIONPACK
-	if (pm->ps->powerups[PW_INVULNERABILITY]) {
-		PM_InvulnerabilityMove();
-	} else
-#endif
+
 	if (pm->ps->pm_flags & PMF_GRAPPLE_PULL) {
 		PM_GrappleMove();
 		// We can wiggle a bit

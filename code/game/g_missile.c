@@ -202,21 +202,13 @@ static void ProximityMine_ExplodeOnPlayer(gentity_t *mine) {
 
 	player = mine->enemy;
 	player->client->ps.eFlags &= ~EF_TICKING;
-#ifdef MISSIONPACK
-	if (player->client->invulnerabilityTime > level.time) {
-		G_Damage(player, mine->parent, mine->parent, vec3_origin, mine->s.origin, 1000, DAMAGE_NO_KNOCKBACK, MOD_JUICED);
-		player->client->invulnerabilityTime = 0;
-		G_TempEntity(player->client->ps.origin, EV_JUICED);
-	} else {
-#endif
-		G_SetOrigin(mine, player->s.pos.trBase);
-		// make sure the explosion gets to the client
-		mine->r.svFlags &= ~SVF_NOCLIENT;
-		mine->splashMethodOfDeath = MOD_PROXIMITY_MINE;
-		G_ExplodeMissile(mine);
-#ifdef MISSIONPACK
-	}
-#endif
+
+	G_SetOrigin(mine, player->s.pos.trBase);
+	// make sure the explosion gets to the client
+	mine->r.svFlags &= ~SVF_NOCLIENT;
+	mine->splashMethodOfDeath = MOD_PROXIMITY_MINE;
+
+	G_ExplodeMissile(mine);
 }
 
 /*
@@ -251,15 +243,7 @@ static void ProximityMine_Player(gentity_t *mine, gentity_t *player) {
 
 	mine->enemy = player;
 	mine->think = ProximityMine_ExplodeOnPlayer;
-#ifdef MISSIONPACK
-	if (player->client->invulnerabilityTime > level.time) {
-		mine->nextthink = level.time + 2 * 1000;
-	} else {
-#endif
-		mine->nextthink = level.time + 10 * 1000;
-#ifdef MISSIONPACK
-	}
-#endif
+	mine->nextthink = level.time + 10 * 1000;
 }
 
 /*
@@ -270,10 +254,7 @@ G_MissileImpact
 void G_MissileImpact(gentity_t *ent, trace_t *trace) {
 	gentity_t *other;
 	qboolean hitClient = qfalse;
-#ifdef MISSIONPACK
-	vec3_t forward, impactpoint, bouncedir;
-	int eFlags;
-#endif
+
 	other = &g_entities[trace->entityNum];
 	// check for bounce
 	if (!other->takedamage && (ent->s.eFlags & (EF_BOUNCE|EF_BOUNCE_HALF))) {
@@ -281,27 +262,6 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace) {
 		G_AddEvent(ent, EV_GRENADE_BOUNCE, 0);
 		return;
 	}
-#ifdef MISSIONPACK
-	if (other->takedamage) {
-		if (ent->s.weapon != WP_PROX_LAUNCHER) {
-			if (other->client && other->client->invulnerabilityTime > level.time) {
-				VectorCopy(ent->s.pos.trDelta, forward);
-				VectorNormalize(forward);
-
-				if (G_InvulnerabilityEffect(other, forward, ent->s.pos.trBase, impactpoint, bouncedir)) {
-					VectorCopy(bouncedir, trace->plane.normal);
-					eFlags = ent->s.eFlags & EF_BOUNCE_HALF;
-					ent->s.eFlags &= ~EF_BOUNCE_HALF;
-					G_BounceMissile(ent, trace);
-					ent->s.eFlags |= eFlags;
-				}
-
-				ent->target_ent = other;
-				return;
-			}
-		}
-	}
-#endif
 	// impact damage
 	if (other->takedamage) {
 		// FIXME: wrong damage direction?
@@ -444,7 +404,7 @@ void G_RunMissile(gentity_t *ent) {
 
 	// get current position
 	BG_EvaluateTrajectory(&ent->s.pos, level.time, origin);
-	// if this missile bounced off an invulnerability sphere
+	// if this missile bounced off
 	if (ent->target_ent) {
 		passent = ent->target_ent->s.number;
 	// prox mines that left the owner bbox will attach to anything, even the owner
