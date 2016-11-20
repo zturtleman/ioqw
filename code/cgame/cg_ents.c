@@ -457,55 +457,6 @@ static void CG_Missile(centity_t *cent) {
 
 /*
 =======================================================================================================================================
-CG_Grapple
-
-This is called when the grapple is sitting up against the wall.
-=======================================================================================================================================
-*/
-static void CG_Grapple(centity_t *cent) {
-	refEntity_t ent;
-	entityState_t *s1;
-	const weaponInfo_t *weapon;
-
-	s1 = &cent->currentState;
-
-	if (s1->weapon >= WP_NUM_WEAPONS) {
-		s1->weapon = 0;
-	}
-
-	weapon = &cg_weapons[s1->weapon];
-	// calculate the axis
-	VectorCopy(s1->angles, cent->lerpAngles);
-#if 0 // FIXME add grapple pull sound here..?
-	// add missile sound
-	if (weapon->missileSound) {
-		trap_S_AddLoopingSound(cent->currentState.number, cent->lerpOrigin, vec3_origin, weapon->missileSound);
-	}
-#endif
-	// Will draw cable if needed
-	CG_GrappleTrail(cent, weapon);
-
-	if (s1->groundEntityNum < MAX_CLIENTS) {
-		// don't draw hook at center of player hook is attached to
-		return;
-	}
-	// create the render entity
-	memset(&ent, 0, sizeof(ent));
-
-	VectorCopy(cent->lerpOrigin, ent.origin);
-	VectorCopy(cent->lerpOrigin, ent.oldorigin);
-	// flicker between two skins
-	ent.skinNum = cg.clientFrame & 1;
-	ent.hModel = weapon->missileModel;
-	ent.renderfx = RF_NOSHADOW;
-
-	AnglesToAxis(cent->lerpAngles, ent.axis);
-
-	trap_R_AddRefEntityToScene(&ent);
-}
-
-/*
-=======================================================================================================================================
 CG_Mover
 =======================================================================================================================================
 */
@@ -892,9 +843,6 @@ static void CG_AddCEntity(centity_t *cent) {
 		case ET_TELEPORT_TRIGGER:
 		case ET_PUSH_TRIGGER:
 		case ET_INVISIBLE:
-			break;
-		case ET_GRAPPLE:
-			CG_Grapple(cent);
 			break;
 		default:
 			CG_Error("Bad entity type: %i", cent->currentState.eType);

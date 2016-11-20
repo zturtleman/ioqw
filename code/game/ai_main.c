@@ -1534,7 +1534,6 @@ int BotAIStartFrame(int time) {
 	G_CheckBotSpawn();
 
 	trap_Cvar_Update(&bot_rocketjump);
-	trap_Cvar_Update(&bot_grapple);
 	trap_Cvar_Update(&bot_fastchat);
 	trap_Cvar_Update(&bot_nochat);
 	trap_Cvar_Update(&bot_testrchat);
@@ -1629,7 +1628,7 @@ int BotAIStartFrame(int time) {
 				continue;
 			}
 			// do not update missiles
-			if (ent->s.eType == ET_MISSILE && ent->s.weapon != WP_GRAPPLING_HOOK) {
+			if (ent->s.eType == ET_MISSILE) {
 				trap_BotLibUpdateEntity(i, NULL);
 				continue;
 			}

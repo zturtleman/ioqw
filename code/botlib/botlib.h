@@ -413,7 +413,6 @@ name:						default:	module(s):		description:
 "rs_teleport"				"50"		be_aas_move.c
 "rs_barrierjump"			"100"		be_aas_move.c
 "rs_startcrouch"			"300"		be_aas_move.c
-"rs_startgrapple"			"500"		be_aas_move.c
 "rs_startwalkoffledge"		"70"		be_aas_move.c
 "rs_startjump"				"300"		be_aas_move.c
 "rs_rocketjump"				"500"		be_aas_move.c
@@ -440,11 +439,6 @@ name:						default:	module(s):		description:
 "droppedweight"				"1000"		be_ai_goal.c	additional dropped item weight
 "weapindex_rocketlauncher"	"8"			be_ai_move.c	rl weapon index for rocket jumping
 "weapindex_bfg10k"			"12"		be_ai_move.c	bfg weapon index for bfg jumping
-"weapindex_grapple"			"13"		be_ai_move.c	grapple weapon index for grappling
-"entitytypemissile"			"3"			be_ai_move.c	ET_MISSILE
-"offhandgrapple"			"0"			be_ai_move.c	enable off hand grapple hook
-"cmd_grappleon"				"grappleon"	be_ai_move.c	command to activate off hand grapple
-"cmd_grappleoff"			"grappleoff"be_ai_move.c	command to deactivate off hand grapple
 "itemconfig"				"items.c"	be_ai_goal.c	item configuration file
 "weaponconfig"				"weapons.c"	be_ai_weap.c	weapon configuration file
 "synfile"					"syn.c"		be_ai_chat.c	file with synonyms

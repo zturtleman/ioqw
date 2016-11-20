@@ -105,7 +105,6 @@ enum {
 	ID_WEAPON10,
 	ID_WEAPON11,
 	ID_WEAPON12,
-	ID_WEAPON13,
 	ID_ATTACK,
 	ID_WEAPPREV,
 	ID_WEAPNEXT,
@@ -152,7 +151,6 @@ enum {
 	ANIM_WEAPON10,
 	ANIM_WEAPON11,
 	ANIM_WEAPON12,
-	ANIM_WEAPON13,
 	ANIM_ATTACK,
 	ANIM_GESTURE,
 	ANIM_DIE,
@@ -191,7 +189,6 @@ typedef struct {
 	menuaction_s railgun;
 	menuaction_s plasma;
 	menuaction_s bfg;
-	menuaction_s grapple;
 	menuaction_s attack;
 	menuaction_s prevweapon;
 	menuaction_s nextweapon;
@@ -266,7 +263,6 @@ static bind_t g_bindings[] = {
 	{"weapon 10",		"railgun",			ID_WEAPON10,	ANIM_WEAPON10,	-1,				-1, -1, -1},
 	{"weapon 11",		"plasma gun",		ID_WEAPON11,	ANIM_WEAPON11,	-1,				-1, -1, -1},
 	{"weapon 12",		"BFG",				ID_WEAPON12,	ANIM_WEAPON12,	-1,				-1, -1, -1},
-	{"weapon 13",		"grappling hook",	ID_WEAPON13,	ANIM_WEAPON13,	-1,				-1, -1, -1},
 	{"+attack",			"attack",			ID_ATTACK,		ANIM_ATTACK,	K_CTRL,			-1, -1, -1},
 	{"weapprev",		"prev weapon",		ID_WEAPPREV,	ANIM_IDLE,		'[',			-1, -1, -1},
 	{"weapnext",		"next weapon",		ID_WEAPNEXT,	ANIM_IDLE,		']',			-1, -1, -1},
@@ -324,7 +320,6 @@ static menucommon_s *g_weapons_controls[] = {
 	(menucommon_s *)&s_controls.railgun,
 	(menucommon_s *)&s_controls.plasma,
 	(menucommon_s *)&s_controls.bfg,
-	(menucommon_s *)&s_controls.grapple,
 	NULL,
 };
 
@@ -524,9 +519,6 @@ static void Controls_UpdateModel(int anim) {
 			break;
 		case ANIM_WEAPON12:
 			s_controls.playerWeapon = WP_BFG;
-			break;
-		case ANIM_WEAPON13:
-			s_controls.playerWeapon = WP_GRAPPLING_HOOK;
 			break;
 		case ANIM_ATTACK:
 			s_controls.playerTorso = TORSO_ATTACK;
@@ -1357,12 +1349,6 @@ static void Controls_MenuInit(void) {
 	s_controls.bfg.generic.ownerdraw = Controls_DrawKeyBinding;
 	s_controls.bfg.generic.id = ID_WEAPON12;
 
-	s_controls.grapple.generic.type = MTYPE_ACTION;
-	s_controls.grapple.generic.flags = QMF_LEFT_JUSTIFY|QMF_PULSEIFFOCUS|QMF_GRAYED|QMF_HIDDEN;
-	s_controls.grapple.generic.callback = Controls_ActionEvent;
-	s_controls.grapple.generic.ownerdraw = Controls_DrawKeyBinding;
-	s_controls.grapple.generic.id = ID_WEAPON13;
-
 	s_controls.attack.generic.type = MTYPE_ACTION;
 	s_controls.attack.generic.flags = QMF_LEFT_JUSTIFY|QMF_PULSEIFFOCUS|QMF_GRAYED|QMF_HIDDEN;
 	s_controls.attack.generic.callback = Controls_ActionEvent;
@@ -1592,7 +1578,6 @@ static void Controls_MenuInit(void) {
 	Menu_AddItem(&s_controls.menu, &s_controls.railgun);
 	Menu_AddItem(&s_controls.menu, &s_controls.plasma);
 	Menu_AddItem(&s_controls.menu, &s_controls.bfg);
-	Menu_AddItem(&s_controls.menu, &s_controls.grapple);
 
 	Menu_AddItem(&s_controls.menu, &s_controls.showscores);
 	Menu_AddItem(&s_controls.menu, &s_controls.useitem);

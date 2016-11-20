@@ -591,42 +591,6 @@ void CG_RailTrail(clientInfo_t *ci, vec3_t start, vec3_t end) {
 }
 
 /*
-=======================================================================================================================================
-CG_GrappleTrail
-=======================================================================================================================================
-*/
-void CG_GrappleTrail(centity_t *ent, const weaponInfo_t *wi) {
-	vec3_t origin;
-	refEntity_t beam;
-
-	VectorCopy(ent->lerpOrigin, origin);
-
-	ent->trailTime = cg.time;
-
-	memset(&beam, 0, sizeof(beam));
-
-	if (!cg.renderingThirdPerson && cg.snap->ps.clientNum == ent->currentState.otherEntityNum) {
-		VectorCopy(cg.flashOrigin, beam.origin);
-	} else {
-		VectorCopy(cg_entities[ent->currentState.otherEntityNum].pe.flashOrigin, beam.origin);
-	}
-
-	VectorCopy(origin, beam.oldorigin);
-
-	beam.reType = RT_LIGHTNING;
-	beam.customShader = cgs.media.lightningShader;
-
-	AxisClear(beam.axis);
-
-	beam.shaderRGBA[0] = 0xff;
-	beam.shaderRGBA[1] = 0xff;
-	beam.shaderRGBA[2] = 0xff;
-	beam.shaderRGBA[3] = 0xff;
-
-	trap_R_AddRefEntityToScene(&beam);
-}
-
-/*
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 	BRASS
@@ -1360,16 +1324,6 @@ void CG_RegisterWeapon(int weaponNum) {
 			weaponInfo->missileModel = trap_R_RegisterModel("models/weaphits/bfg.md3");
 			weaponInfo->missileSound = trap_S_RegisterSound("sound/weapons/rocket/rockfly.wav", qfalse);
 			break;
-		case WP_GRAPPLING_HOOK:
-			MAKERGB(weaponInfo->flashDlightColor, 0.6f, 0.6f, 1.0f);
-			weaponInfo->missileModel = trap_R_RegisterModel("models/ammo/rocket/rocket.md3");
-			weaponInfo->missileTrailFunc = CG_GrappleTrail;
-			weaponInfo->missileDlight = 200;
-			MAKERGB(weaponInfo->missileDlightColor, 1, 0.75f, 0);
-			weaponInfo->readySound = trap_S_RegisterSound("sound/weapons/melee/fsthum.wav", qfalse);
-			weaponInfo->firingSound = trap_S_RegisterSound("sound/weapons/melee/fstrun.wav", qfalse);
-			cgs.media.lightningShader = trap_R_RegisterShader("lightningBoltNew");
-			break;
 		default:
 			MAKERGB(weaponInfo->flashDlightColor, 0, 0, 0);
 			weaponInfo->flashSound[0] = trap_S_RegisterSound("sound/weapons/rocket/rocklf1a.wav", qfalse);
@@ -1845,7 +1799,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent,
 		VectorCopy(flash.origin, nonPredictedCent->pe.flashOrigin);
 	}
 	// add the flash
-	if ((weaponNum == WP_GAUNTLET || weaponNum == WP_LIGHTNING || weaponNum == WP_GRAPPLING_HOOK) && (nonPredictedCent->currentState.eFlags & EF_FIRING)) {
+	if ((weaponNum == WP_GAUNTLET || weaponNum == WP_LIGHTNING) && (nonPredictedCent->currentState.eFlags & EF_FIRING)) {
 		// continuous flash
 	} else {
 		// impulse flash

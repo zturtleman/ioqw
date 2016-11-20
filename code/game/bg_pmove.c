@@ -629,42 +629,8 @@ static void PM_AirMove(void) {
 	if (pml.groundPlane) {
 		PM_ClipVelocity(pm->ps->velocity, pml.groundTrace.plane.normal, pm->ps->velocity, OVERCLIP);
 	}
-#if 0
-	// If we are on the grapple, try stair-stepping
-	// this allows a player to use the grapple to pull himself over a ledge
-	if (pm->ps->pm_flags & PMF_GRAPPLE_PULL) {
-		PM_StepSlideMove(qtrue);
-	} else {
-		PM_SlideMove(qtrue);
-	}
-#endif
+
 	PM_StepSlideMove(qtrue);
-}
-
-/*
-=======================================================================================================================================
-PM_GrappleMove
-=======================================================================================================================================
-*/
-static void PM_GrappleMove(void) {
-	vec3_t vel, v;
-	float vlen;
-
-	VectorScale(pml.forward, -16, v);
-	VectorAdd(pm->ps->grapplePoint, v, v);
-	VectorSubtract(v, pm->ps->origin, vel);
-	vlen = VectorLength(vel);
-	VectorNormalize(vel);
-
-	if (vlen <= 100) {
-		VectorScale(vel, 10 * vlen, vel);
-	} else {
-		VectorScale(vel, 800, vel);
-	}
-
-	VectorCopy(vel, pm->ps->velocity);
-
-	pml.groundPlane = qfalse;
 }
 
 /*
@@ -1574,9 +1540,6 @@ static void PM_Weapon(void) {
 		case WP_BFG:
 			addTime = 200;
 			break;
-		case WP_GRAPPLING_HOOK:
-			addTime = 400;
-			break;
 	}
 
 	pm->ps->weaponTime += addTime;
@@ -1821,11 +1784,7 @@ void PmoveSingle(pmove_t *pmove) {
 
 	PM_DropTimers();
 
-	if (pm->ps->pm_flags & PMF_GRAPPLE_PULL) {
-		PM_GrappleMove();
-		// We can wiggle a bit
-		PM_AirMove();
-	} else if (pm->ps->pm_flags & PMF_TIME_WATERJUMP) {
+	if (pm->ps->pm_flags & PMF_TIME_WATERJUMP) {
 		PM_WaterJumpMove();
 	} else if (pm->waterlevel > 1) {
 		// swimming

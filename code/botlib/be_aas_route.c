@@ -130,7 +130,6 @@ void AAS_InitTravelFlagFromType(void) {
 	aasworld.travelflagfortype[TRAVEL_ELEVATOR] = TFL_ELEVATOR;
 	aasworld.travelflagfortype[TRAVEL_ROCKETJUMP] = TFL_ROCKETJUMP;
 	aasworld.travelflagfortype[TRAVEL_BFGJUMP] = TFL_BFGJUMP;
-	aasworld.travelflagfortype[TRAVEL_GRAPPLEHOOK] = TFL_GRAPPLEHOOK;
 	aasworld.travelflagfortype[TRAVEL_DOUBLEJUMP] = TFL_DOUBLEJUMP;
 	aasworld.travelflagfortype[TRAVEL_RAMPJUMP] = TFL_RAMPJUMP;
 	aasworld.travelflagfortype[TRAVEL_STRAFEJUMP] = TFL_STRAFEJUMP;
@@ -1174,9 +1173,6 @@ void AAS_InitReachabilityAreas(void) {
 				VectorCopy(reach->end, start);
 				start[2] = reach->start[2];
 				numareas = AAS_TraceAreas(start, reach->end, areas, NULL, MAX_REACHABILITYPASSAREAS);
-				break;
-			case TRAVEL_GRAPPLEHOOK:
-				numareas = AAS_TraceAreas(reach->start, reach->end, areas, NULL, MAX_REACHABILITYPASSAREAS);
 				break;
 			// trace arch
 			case TRAVEL_JUMP:

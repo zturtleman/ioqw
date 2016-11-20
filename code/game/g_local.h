@@ -224,7 +224,6 @@ struct gclient_s {
 	int airOutTime;
 	int lastKillTime;		// for multiple kill rewards
 	qboolean fireHeld;		// used for hook
-	gentity_t *hook;		// grapple hook if out
 	int switchTeamTime;		// time the player switched teams
 	// timeResidual is used to handle events that happen every second like health/armor countdowns and regeneration
 	int timeResidual;
@@ -367,7 +366,6 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t aimdir);
 gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir);
 gentity_t *fire_plasma(gentity_t *self, vec3_t start, vec3_t aimdir);
 gentity_t *fire_bfg(gentity_t *self, vec3_t start, vec3_t dir);
-gentity_t *fire_grapple(gentity_t *self, vec3_t start, vec3_t dir);
 // g_mover.c
 void G_RunMover(gentity_t *ent);
 void Touch_DoorTrigger(gentity_t *ent, gentity_t *other, trace_t *trace);
@@ -379,8 +377,6 @@ void TeleportPlayer(gentity_t *player, vec3_t origin, vec3_t angles);
 qboolean LogAccuracyHit(gentity_t *target, gentity_t *attacker);
 void CalcMuzzlePoint(gentity_t *ent, vec3_t forward, vec3_t right, vec3_t up, vec3_t muzzlePoint);
 qboolean CheckGauntletAttack(gentity_t *ent);
-void Weapon_HookFree(gentity_t *ent);
-void Weapon_HookThink(gentity_t *ent);
 // g_client.c
 int TeamCount(int ignoreClientNum, team_t team);
 int TeamLeader(int team);

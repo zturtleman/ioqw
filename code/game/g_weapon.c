@@ -605,71 +605,6 @@ void Weapon_BFG_Fire(gentity_t *ent) {
 
 /*
 =======================================================================================================================================
-
-	GRAPPLING HOOK
-
-=======================================================================================================================================
-*/
-
-/*
-=======================================================================================================================================
-Weapon_GrapplingHook_Fire
-=======================================================================================================================================
-*/
-void Weapon_GrapplingHook_Fire(gentity_t *ent) {
-
-	if (!ent->client->fireHeld && !ent->client->hook) {
-		fire_grapple(ent, muzzle, forward);
-	}
-
-	ent->client->fireHeld = qtrue;
-}
-
-/*
-=======================================================================================================================================
-Weapon_HookFree
-=======================================================================================================================================
-*/
-void Weapon_HookFree(gentity_t *ent) {
-
-	ent->parent->client->hook = NULL;
-	ent->parent->client->ps.pm_flags &= ~PMF_GRAPPLE_PULL;
-
-	G_FreeEntity(ent);
-}
-
-/*
-=======================================================================================================================================
-Weapon_HookThink
-=======================================================================================================================================
-*/
-void Weapon_HookThink(gentity_t *ent) {
-
-	ent->nextthink = level.time + FRAMETIME;
-
-	if (ent->enemy && ent->enemy->client) {
-		vec3_t v, oldorigin;
-
-		if (ent->enemy->client->ps.pm_type == PM_DEAD) {
-			Weapon_HookFree(ent);
-			return;
-		}
-
-		VectorCopy(ent->r.currentOrigin, oldorigin);
-
-		v[0] = ent->enemy->r.currentOrigin[0] + (ent->enemy->r.mins[0] + ent->enemy->r.maxs[0]) * 0.5;
-		v[1] = ent->enemy->r.currentOrigin[1] + (ent->enemy->r.mins[1] + ent->enemy->r.maxs[1]) * 0.5;
-		v[2] = ent->enemy->r.currentOrigin[2] + (ent->enemy->r.mins[2] + ent->enemy->r.maxs[2]) * 0.5;
-
-		SnapVectorTowards(v, oldorigin); // save net bandwidth
-		G_SetOrigin(ent, v);
-	}
-
-	VectorCopy(ent->r.currentOrigin, ent->parent->client->ps.grapplePoint);
-}
-
-/*
-=======================================================================================================================================
 LogAccuracyHit
 =======================================================================================================================================
 */
@@ -750,8 +685,8 @@ void FireWeapon(gentity_t *ent) {
 	if (ent->client->persistantPowerup && ent->client->persistantPowerup->item && ent->client->persistantPowerup->item->giTag == PW_DOUBLER) {
 		s_quadFactor *= 2;
 	}
-	// track shots taken for accuracy tracking. Grapple is not a weapon and gauntlet is just not tracked
-	if (ent->s.weapon != WP_GRAPPLING_HOOK && ent->s.weapon != WP_GAUNTLET) {
+	// track shots taken for accuracy tracking. Gauntlet is just not tracked
+	if (ent->s.weapon != WP_GAUNTLET) {
 		if (ent->s.weapon == WP_NAILGUN) {
 			ent->client->accuracy_shots += NUM_NAILSHOTS;
 		} else {
@@ -804,9 +739,6 @@ void FireWeapon(gentity_t *ent) {
 			break;
 		case WP_BFG:
 			Weapon_BFG_Fire(ent);
-			break;
-		case WP_GRAPPLING_HOOK:
-			Weapon_GrapplingHook_Fire(ent);
 			break;
 		default:
 			// FIXME: G_Error("Bad ent->s.weapon");

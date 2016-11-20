@@ -98,7 +98,6 @@ void AAS_InitSettings(void) {
 	aassettings.rs_teleport = LibVarValue("rs_teleport", "50");
 	aassettings.rs_barrierjump = LibVarValue("rs_barrierjump", "100");
 	aassettings.rs_startcrouch = LibVarValue("rs_startcrouch", "300");
-	aassettings.rs_startgrapple = LibVarValue("rs_startgrapple", "500");
 	aassettings.rs_startwalkoffledge = LibVarValue("rs_startwalkoffledge", "70");
 	aassettings.rs_startjump = LibVarValue("rs_startjump", "300");
 	aassettings.rs_rocketjump = LibVarValue("rs_rocketjump", "500");
@@ -514,7 +513,6 @@ AAS_ClientMovementPrediction
 
 Predicts the movement. Assumes regular bounding box sizes.
 NOTE: out of water jumping is not included.
-NOTE: grappling hook is not included.
 
 Parameter:	origin			: origin to start with.
 			presencetype	: presence type to start with.

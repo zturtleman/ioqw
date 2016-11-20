@@ -181,7 +181,6 @@ void BotMapScripts(bot_state_t *bs);
 extern int gametype;	// game type
 extern int maxclients;	// maximum number of clients
 
-extern vmCvar_t bot_grapple;
 extern vmCvar_t bot_rocketjump;
 extern vmCvar_t bot_fastchat;
 extern vmCvar_t bot_nochat;

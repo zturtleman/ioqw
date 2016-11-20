@@ -64,15 +64,12 @@ int reach_ladder;		// climb or descent a ladder
 int reach_teleport;		// teleport
 int reach_elevator;		// use an elevator
 int reach_funcbob;		// use a func bob
-int reach_grapple;		// grapple hook
 int reach_doublejump;	// double jump
 int reach_rampjump;		// ramp jump
 int reach_strafejump;	// strafe jump (just normal jump but further)
 int reach_rocketjump;	// rocket jump
 int reach_bfgjump;		// bfg jump
 int reach_jumppad;		// jump pads
-// if true grapple reachabilities are skipped
-int calcgrapplereach;
 // linked reachability
 typedef struct aas_lreachability_s {
 	int areanum;					// number of the reachable area
@@ -3959,200 +3956,6 @@ void AAS_Reachability_JumpPad(void) {
 
 /*
 =======================================================================================================================================
-AAS_Reachability_Grapple
-
-Never point at ground faces always a higher and pretty far area.
-=======================================================================================================================================
-*/
-int AAS_Reachability_Grapple(int area1num, int area2num) {
-	int face2num, i, j, areanum, numareas, areas[20];
-	float mingrappleangle, z, hordist;
-	bsp_trace_t bsptrace;
-	aas_trace_t trace;
-	aas_face_t *face2;
-	aas_area_t *area1, *area2;
-	aas_lreachability_t *lreach;
-	vec3_t areastart = {0, 0, 0}, facecenter, start, end, dir, down = {0, 0, -1};
-	vec_t *v;
-
-	// only grapple when on the ground or swimming
-	if (!AAS_AreaGrounded(area1num) && !AAS_AreaSwim(area1num)) {
-		return qfalse;
-	}
-	// don't grapple from a crouch area
-	if (!(AAS_AreaPresenceType(area1num) & PRESENCE_NORMAL)) {
-		return qfalse;
-	}
-	// NOTE: disabled area swim it doesn't work right
-	if (AAS_AreaSwim(area1num)) {
-		return qfalse;
-	}
-
-	area1 = &aasworld.areas[area1num];
-	area2 = &aasworld.areas[area2num];
-	// don't grapple towards way lower areas
-	if (area2->maxs[2] < area1->mins[2]) {
-		return qfalse;
-	}
-
-	VectorCopy(aasworld.areas[area1num].center, start);
-	// if not a swim area
-	if (!AAS_AreaSwim(area1num)) {
-		if (!AAS_PointAreaNum(start)) {
-			Log_Write("area %d center %f %f %f in solid?\r\n", area1num, start[0], start[1], start[2]);
-		}
-
-		VectorCopy(start, end);
-		end[2] -= 1000;
-		trace = AAS_TraceClientBBox(start, end, PRESENCE_CROUCH, -1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
-
-		if (trace.startsolid) {
-			return qfalse;
-		}
-
-		VectorCopy(trace.endpos, areastart);
-	} else {
-		if (!(AAS_PointContents(start) & (CONTENTS_LAVA|CONTENTS_SLIME|CONTENTS_WATER))) {
-			return qfalse;
-		}
-	}
-	// start is now the start point
-	for (i = 0; i < area2->numfaces; i++) {
-		face2num = aasworld.faceindex[area2->firstface + i];
-		face2 = &aasworld.faces[abs(face2num)];
-		// if it is not a solid face
-		if (!(face2->faceflags & FACE_SOLID)) {
-			continue;
-		}
-		// direction towards the first vertex of the face
-		v = aasworld.vertexes[aasworld.edges[abs(aasworld.edgeindex[face2->firstedge])].v[0]];
-		VectorSubtract(v, areastart, dir);
-		// if the face plane is facing away
-		if (DotProduct(aasworld.planes[face2->planenum].normal, dir) > 0) {
-			continue;
-		}
-		// get the center of the face
-		AAS_FaceCenter(face2num, facecenter);
-		// only go higher up with the grapple
-		if (facecenter[2] < areastart[2] + 64) {
-			continue;
-		}
-		// only use vertical faces or downward facing faces
-		if (DotProduct(aasworld.planes[face2->planenum].normal, down) < 0) {
-			continue;
-		}
-		// direction towards the face center
-		VectorSubtract(facecenter, areastart, dir);
-
-		z = dir[2];
-		dir[2] = 0;
-		hordist = VectorLength(dir);
-
-		if (!hordist) {
-			continue;
-		}
-		// if too far
-		if (hordist > 2000) {
-			continue;
-		}
-		// check the minimal angle of the movement
-		mingrappleangle = 15; // 15 degrees
-
-		if (z / hordist < tan(2 * M_PI * mingrappleangle / 360)) {
-			continue;
-		}
-
-		VectorCopy(facecenter, start);
-		VectorMA(facecenter, -500, aasworld.planes[face2->planenum].normal, end);
-
-		bsptrace = AAS_Trace(start, NULL, NULL, end, 0, CONTENTS_SOLID);
-		// the grapple won't stick to the sky and the grapple point should be near the AAS wall
-		if ((bsptrace.surfaceFlags & SURF_SKY) || (bsptrace.fraction * 500 > 32)) {
-			continue;
-		}
-		// trace a full bounding box from the area center on the ground to the center of the face
-		VectorSubtract(facecenter, areastart, dir);
-		VectorNormalize(dir);
-		VectorMA(areastart, 4, dir, start);
-		VectorCopy(bsptrace.endpos, end);
-		trace = AAS_TraceClientBBox(start, end, PRESENCE_NORMAL, -1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
-		VectorSubtract(trace.endpos, facecenter, dir);
-
-		if (VectorLength(dir) > 24) {
-			continue;
-		}
-
-		VectorCopy(trace.endpos, start);
-		VectorCopy(trace.endpos, end);
-		end[2] -= AAS_FallDamageDistance();
-		trace = AAS_TraceClientBBox(start, end, PRESENCE_NORMAL, -1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
-
-		if (trace.fraction >= 1) {
-			continue;
-		}
-		// area to end in
-		areanum = AAS_PointAreaNum(trace.endpos);
-		// if not in lava or slime
-		if (aasworld.areasettings[areanum].contents & (AREACONTENTS_SLIME|AREACONTENTS_LAVA)) {
-			continue;
-		}
-		// do not go the the source area
-		if (areanum == area1num) {
-			continue;
-		}
-		// don't create reachabilities if they already exist
-		if (AAS_ReachabilityExists(area1num, areanum)) {
-			continue;
-		}
-		// only end in areas we can stand
-		if (!AAS_AreaGrounded(areanum)) {
-			continue;
-		}
-		// never go through cluster portals!!
-		numareas = AAS_TraceAreas(areastart, bsptrace.endpos, areas, NULL, 20);
-
-		if (numareas >= 20) {
-			continue;
-		}
-
-		for (j = 0; j < numareas; j++) {
-			if (aasworld.areasettings[areas[j]].contents & AREACONTENTS_CLUSTERPORTAL) {
-				break;
-			}
-		}
-
-		if (j < numareas) {
-			continue;
-		}
-		// create a new reachability link
-		lreach = AAS_AllocReachability();
-
-		if (!lreach) {
-			return qfalse;
-		}
-
-		lreach->areanum = areanum;
-		lreach->facenum = face2num;
-		lreach->edgenum = 0;
-
-		VectorCopy(areastart, lreach->start);
-		//VectorCopy(facecenter, lreach->end);
-		VectorCopy(bsptrace.endpos, lreach->end);
-
-		lreach->traveltype = TRAVEL_GRAPPLEHOOK;
-		VectorSubtract(lreach->end, lreach->start, dir);
-		lreach->traveltime = aassettings.rs_startgrapple + VectorLength(dir) * 0.25;
-		lreach->next = areareachability[area1num];
-		areareachability[area1num] = lreach;
-
-		reach_grapple++;
-	}
-
-	return qfalse;
-}
-
-/*
-=======================================================================================================================================
 AAS_SetWeaponJumpAreaFlags
 =======================================================================================================================================
 */
@@ -4596,7 +4399,6 @@ AAS_ContinueInitReachability
  TRAVEL_WATERJUMP	100%
  TRAVEL_TELEPORT	100%
  TRAVEL_ELEVATOR	100%
- TRAVEL_GRAPPLEHOOK	100%
  TRAVEL_DOUBLEJUMP	  0%
  TRAVEL_RAMPJUMP	  0%
  TRAVEL_STRAFEJUMP	  0%
@@ -4686,10 +4488,6 @@ int AAS_ContinueInitReachability(float time) {
 			if (AAS_ReachabilityExists(i, j)) {
 				continue;
 			}
-			// check for a grapple hook reachability
-			if (calcgrapplereach) {
-				AAS_Reachability_Grapple(i, j);
-			}
 			// check for a weapon jump reachability
 			AAS_Reachability_WeaponJump(i, j);
 		}
@@ -4739,7 +4537,6 @@ int AAS_ContinueInitReachability(float time) {
 		botimport.Print(PRT_MESSAGE, "%6d reach teleport\n", reach_teleport);
 		botimport.Print(PRT_MESSAGE, "%6d reach funcbob\n", reach_funcbob);
 		botimport.Print(PRT_MESSAGE, "%6d reach elevator\n", reach_elevator);
-		botimport.Print(PRT_MESSAGE, "%6d reach grapple\n", reach_grapple);
 		botimport.Print(PRT_MESSAGE, "%6d reach rocketjump\n", reach_rocketjump);
 		botimport.Print(PRT_MESSAGE, "%6d reach jumppad\n", reach_jumppad);
 #endif
@@ -4783,9 +4580,7 @@ void AAS_InitReachability(void) {
 		return;
 #endif // BSPC
 	}
-#ifndef BSPC
-	calcgrapplereach = LibVarGetValue("grapplereach");
-#endif
+
 	aasworld.savefile = qtrue;
 	// start with area 1 because area zero is a dummy
 	aasworld.numreachabilityareas = 1;

@@ -317,52 +317,6 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace) {
 		trap_LinkEntity(ent);
 		return;
 	}
-
-	if (!strcmp(ent->classname, "hook")) {
-		gentity_t *nent;
-		vec3_t v;
-
-		nent = G_Spawn();
-
-		if (other->takedamage && other->client) {
-			G_AddEvent(nent, EV_MISSILE_HIT, DirToByte(trace->plane.normal));
-
-			nent->s.otherEntityNum = other->s.number;
-
-			v[0] = other->r.currentOrigin[0] + (other->r.mins[0] + other->r.maxs[0]) * 0.5;
-			v[1] = other->r.currentOrigin[1] + (other->r.mins[1] + other->r.maxs[1]) * 0.5;
-			v[2] = other->r.currentOrigin[2] + (other->r.mins[2] + other->r.maxs[2]) * 0.5;
-		} else {
-			VectorCopy(trace->endpos, v);
-			G_AddEvent(nent, EV_MISSILE_MISS, DirToByte(trace->plane.normal));
-		}
-
-		nent->s.weapon = ent->s.weapon;
-
-		ent->enemy = other;
-		ent->s.groundEntityNum = other->s.number;
-
-		SnapVectorTowards(v, ent->s.pos.trBase); // save net bandwidth
-
-		nent->freeAfterEvent = qtrue;
-		// change over to a normal entity right at the point of impact
-		nent->s.eType = ET_GENERAL;
-
-		ent->s.eType = ET_GRAPPLE;
-
-		G_SetOrigin(ent, v);
-		G_SetOrigin(nent, v);
-
-		ent->think = Weapon_HookThink;
-		ent->nextthink = level.time + FRAMETIME;
-		ent->parent->client->ps.pm_flags |= PMF_GRAPPLE_PULL;
-
-		VectorCopy(ent->r.currentOrigin, ent->parent->client->ps.grapplePoint);
-
-		trap_LinkEntity(ent);
-		trap_LinkEntity(nent);
-		return;
-	}
 	// is it cheaper in bandwidth to just remove this ent and create a new one, rather than changing the missile into the explosion?
 	if (other->takedamage && other->client) {
 		G_AddEvent(ent, EV_MISSILE_HIT, DirToByte(trace->plane.normal));
@@ -430,11 +384,6 @@ void G_RunMissile(gentity_t *ent) {
 	if (tr.fraction != 1) {
 		// never explode or bounce on sky
 		if (tr.surfaceFlags & SURF_NOIMPACT) {
-			// If grapple, reset owner
-			if (ent->parent && ent->parent->client && ent->parent->client->hook == ent) {
-				ent->parent->client->hook = NULL;
-			}
-
 			G_FreeEntity(ent);
 			return;
 		}
@@ -732,47 +681,4 @@ gentity_t *fire_bfg(gentity_t *self, vec3_t start, vec3_t dir) {
 	}
 
 	return bolt;
-}
-
-/*
-=======================================================================================================================================
-fire_grapple
-=======================================================================================================================================
-*/
-gentity_t *fire_grapple(gentity_t *self, vec3_t start, vec3_t dir) {
-	gentity_t *hook;
-
-	VectorNormalize(dir);
-
-	hook = G_Spawn();
-	hook->classname = "hook";
-	hook->nextthink = level.time + 10000;
-	hook->think = Weapon_HookFree;
-	hook->s.eType = ET_MISSILE;
-	hook->r.svFlags = SVF_USE_CURRENT_ORIGIN;
-	hook->s.weapon = WP_GRAPPLING_HOOK;
-	hook->r.ownerNum = self->s.number;
-	hook->methodOfDeath = MOD_GRAPPLE;
-	hook->clipmask = MASK_SHOT;
-	hook->parent = self;
-	hook->target_ent = NULL;
-	hook->s.pos.trType = TR_LINEAR;
-	hook->s.pos.trTime = level.time - MISSILE_PRESTEP_TIME; // move a bit on the very first frame
-	hook->s.otherEntityNum = self->s.number; // use to match beam in client
-
-	VectorCopy(start, hook->s.pos.trBase);
-	VectorScale(dir, 800, hook->s.pos.trDelta);
-	SnapVector(hook->s.pos.trDelta); // save net bandwidth
-	VectorCopy(start, hook->r.currentOrigin);
-
-	if (self->client) {
-		self->client->hook = hook;
-		hook->s.team = self->client->sess.sessionTeam;
-	} else {
-		hook->s.team = TEAM_FREE;
-	}
-
-	vectoangles(dir, hook->s.angles);
-
-	return hook;
 }

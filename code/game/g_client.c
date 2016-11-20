@@ -1044,6 +1044,7 @@ void ClientSpawn(gentity_t *ent) {
 	VectorCopy(playerMaxs, ent->r.maxs);
 
 	client->ps.clientNum = index;
+
 	COM_BitSet(client->ps.weapons, WP_MACHINEGUN);
 
 	if (g_gametype.integer == GT_TEAM) {
@@ -1053,8 +1054,8 @@ void ClientSpawn(gentity_t *ent) {
 	}
 
 	COM_BitSet(client->ps.weapons, WP_GAUNTLET);
+
 	client->ps.ammo[WP_GAUNTLET] = -1;
-	client->ps.ammo[WP_GRAPPLING_HOOK] = -1;
 	// health will count down towards max_health
 	ent->health = client->ps.stats[STAT_HEALTH] = client->ps.stats[STAT_MAX_HEALTH] + 25;
 
@@ -1064,6 +1065,7 @@ void ClientSpawn(gentity_t *ent) {
 	client->ps.pm_flags |= PMF_RESPAWNED;
 
 	trap_GetUsercmd(client - level.clients, &ent->client->pers.cmd);
+
 	SetClientViewAngle(ent, spawn_angles);
 	// don't allow full run speed for a bit
 	client->ps.pm_flags |= PMF_TIME_KNOCKBACK;

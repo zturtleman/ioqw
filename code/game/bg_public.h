@@ -134,19 +134,18 @@ typedef enum {
 	WEAPON_DROPPING,
 	WEAPON_FIRING
 } weaponstate_t;
-// pmove->pm_flags
-#define PMF_DUCKED				1
-#define PMF_JUMP_HELD			2
-#define PMF_BACKWARDS_JUMP		8 // go into backwards land
-#define PMF_BACKWARDS_RUN	   16 // coast down to backwards run
-#define PMF_TIME_LAND		   32 // pm_time is time before rejump
-#define PMF_TIME_KNOCKBACK	   64 // pm_time is an air-accelerate only time
-#define PMF_TIME_WATERJUMP	  256 // pm_time is waterjump
-#define PMF_RESPAWNED		  512 // clear after attack and jump buttons come up
-#define PMF_USE_ITEM_HELD	 1024
-#define PMF_GRAPPLE_PULL	 2048 // pull towards grapple location
-#define PMF_FOLLOW			 4096 // spectate following another player
-#define PMF_SCOREBOARD		 8192 // spectate as a scoreboard
+// pmove->pm_flags (sent as max 16 bits in msg.c)
+#define PMF_DUCKED			   1
+#define PMF_JUMP_HELD		   2
+#define PMF_BACKWARDS_JUMP	   4 // go into backwards land
+#define PMF_BACKWARDS_RUN	   8 // coast down to backwards run
+#define PMF_TIME_LAND		  16 // pm_time is time before rejump
+#define PMF_TIME_KNOCKBACK	  32 // pm_time is an air-accelerate only time
+#define PMF_TIME_WATERJUMP	  64 // pm_time is waterjump
+#define PMF_RESPAWNED		 128 // clear after attack and jump buttons come up
+#define PMF_USE_ITEM_HELD	 256
+#define PMF_FOLLOW			 512 // spectate following another player
+#define PMF_SCOREBOARD		1024 // spectate as a scoreboard
 #define PMF_ALL_TIMES (PMF_TIME_WATERJUMP|PMF_TIME_LAND|PMF_TIME_KNOCKBACK)
 
 #define MAXTOUCH 32
@@ -275,7 +274,6 @@ typedef enum {
 	WP_RAILGUN,
 	WP_PLASMAGUN,
 	WP_BFG,
-	WP_GRAPPLING_HOOK,
 	WP_NUM_WEAPONS
 } weapon_t;
 // reward sounds (stored in ps->persistant[PERS_PLAYEREVENTS])
@@ -495,7 +493,6 @@ typedef enum {
 	MOD_TARGET_LASER,
 	MOD_SUICIDE,
 	MOD_SUICIDE_TEAM_CHANGE,
-	MOD_GRAPPLE,
 	MOD_UNKNOWN
 } meansOfDeath_t;
 // gitem_t->type
@@ -587,7 +584,6 @@ typedef enum {
 	ET_TELEPORT_TRIGGER,
 	ET_PUSH_TRIGGER,
 	ET_INVISIBLE,
-	ET_GRAPPLE, // grapple hooked on wall
 	ET_EVENTS // any of the EV_* events can be added freestanding by setting eType to ET_EVENTS + eventNum this avoids having to set eFlags and eventNum
 } entityType_t;
 

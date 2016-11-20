@@ -86,7 +86,7 @@ void TossClientItems(gentity_t *self) {
 	weapon = self->s.weapon;
 	// make a special check to see if they are changing to a new weapon that isn't the mg or gauntlet. Without this, a client can pick
 	// up a weapon, be killed, and not drop the weapon because their weapon change hasn't completed yet and they are still holding the MG.
-	if (weapon == WP_MACHINEGUN || weapon == WP_GRAPPLING_HOOK) {
+	if (weapon == WP_MACHINEGUN || weapon == WP_GAUNTLET) { // Tobias: wtf?
 		if (self->client->ps.weaponstate == WEAPON_DROPPING) {
 			weapon = self->client->pers.cmd.weapon;
 		}
@@ -96,7 +96,7 @@ void TossClientItems(gentity_t *self) {
 		}
 	}
 
-	if (weapon > WP_MACHINEGUN && weapon != WP_GRAPPLING_HOOK && self->client->ps.ammo[weapon]) {
+	if (weapon > WP_MACHINEGUN && self->client->ps.ammo[weapon]) { // Tobias: be careful here!
 		// find the item type for this weapon
 		item = BG_FindItemForWeapon(weapon);
 		// spawn the item
@@ -308,7 +308,6 @@ char *modNames[] = {
 	"MOD_TARGET_LASER",
 	"MOD_SUICIDE",
 	"MOD_SUICIDE_TEAM_CHANGE",
-	"MOD_GRAPPLE",
 	"MOD_UNKNOWN"
 };
 
@@ -449,10 +448,6 @@ void PlayerDie(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int d
 	CheckAlmostCapture(self, attacker);
 	// check for a player that almost brought in cubes
 	CheckAlmostScored(self, attacker);
-
-	if (self->client && self->client->hook) {
-		Weapon_HookFree(self->client->hook);
-	}
 
 	if ((self->client->ps.eFlags & EF_TICKING) && self->activator) {
 		self->client->ps.eFlags &= ~EF_TICKING;

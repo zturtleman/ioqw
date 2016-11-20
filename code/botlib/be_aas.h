@@ -45,21 +45,20 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define TFL_ELEVATOR		0x00000800 // elevator
 #define TFL_ROCKETJUMP		0x00001000 // rocket jumping
 #define TFL_BFGJUMP			0x00002000 // bfg jumping
-#define TFL_GRAPPLEHOOK		0x00004000 // grappling hook
-#define TFL_DOUBLEJUMP		0x00008000 // double jump
-#define TFL_RAMPJUMP		0x00010000 // ramp jump
-#define TFL_STRAFEJUMP		0x00020000 // strafe jump
-#define TFL_JUMPPAD			0x00040000 // jump pad
-#define TFL_AIR				0x00080000 // travel through air
-#define TFL_WATER			0x00100000 // travel through water
-#define TFL_SLIME			0x00200000 // travel through slime
-#define TFL_LAVA			0x00400000 // travel through lava
-#define TFL_DONOTENTER		0x00800000 // travel through donotenter area
-#define TFL_FUNCBOB			0x01000000 // func bobbing
-#define TFL_FLIGHT			0x02000000 // flight
-#define TFL_BRIDGE			0x04000000 // move over a bridge
-#define TFL_NOTTEAM1		0x08000000 // not team 1
-#define TFL_NOTTEAM2		0x10000000 // not team 2
+#define TFL_DOUBLEJUMP		0x00004000 // double jump
+#define TFL_RAMPJUMP		0x00008000 // ramp jump
+#define TFL_STRAFEJUMP		0x00010000 // strafe jump
+#define TFL_JUMPPAD			0x00020000 // jump pad
+#define TFL_AIR				0x00040000 // travel through air
+#define TFL_WATER			0x00080000 // travel through water
+#define TFL_SLIME			0x00100000 // travel through slime
+#define TFL_LAVA			0x00200000 // travel through lava
+#define TFL_DONOTENTER		0x00400000 // travel through donotenter area
+#define TFL_FUNCBOB			0x00800000 // func bobbing
+#define TFL_FLIGHT			0x01000000 // flight
+#define TFL_BRIDGE			0x02000000 // move over a bridge
+#define TFL_NOTTEAM1		0x04000000 // not team 1
+#define TFL_NOTTEAM2		0x08000000 // not team 2
 // default travel flags
 #define TFL_DEFAULT TFL_WALK|TFL_CROUCH|TFL_BARRIERJUMP|\
 	TFL_JUMP|TFL_LADDER|\

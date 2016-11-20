@@ -30,21 +30,16 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define MOVE_WALK		 1
 #define MOVE_CROUCH		 2
 #define MOVE_JUMP		 4
-#define MOVE_GRAPPLE	 8
-#define MOVE_ROCKETJUMP	16
-#define MOVE_BFGJUMP	32
+#define MOVE_ROCKETJUMP	 8
+#define MOVE_BFGJUMP	16
 // move flags
-#define MFL_BARRIERJUMP		   1 // bot is performing a barrier jump
-#define MFL_ONGROUND		   2 // bot is in the ground
-#define MFL_SWIMMING		   4 // bot is swimming
-#define MFL_AGAINSTLADDER	   8 // bot is against a ladder
-#define MFL_WATERJUMP		  16 // bot is waterjumping
-#define MFL_TELEPORTED		  32 // bot is being teleported
-#define MFL_GRAPPLEPULL		  64 // bot is being pulled by the grapple
-#define MFL_GRAPPLEEXISTS	 128 // bot grappling hook entity exists
-#define MFL_ACTIVEGRAPPLE	 256 // bot is using the grapple hook
-#define MFL_GRAPPLERESET	 512 // bot has reset the grapple
-#define MFL_WALK			1024 // bot should walk slowly
+#define MFL_BARRIERJUMP		 1 // bot is performing a barrier jump
+#define MFL_ONGROUND		 2 // bot is in the ground
+#define MFL_SWIMMING		 4 // bot is swimming
+#define MFL_AGAINSTLADDER	 8 // bot is against a ladder
+#define MFL_WATERJUMP		16 // bot is waterjumping
+#define MFL_TELEPORTED		32 // bot is being teleported
+#define MFL_WALK			64 // bot should walk slowly
 // move result flags
 #define MOVERESULT_MOVEMENTVIEW			  1 // bot uses view for movement
 #define MOVERESULT_SWIMVIEW				  2 // bot uses view for swimming
@@ -65,8 +60,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 // restult types
 #define RESULTTYPE_ELEVATORUP			1 // elevator is up
 #define RESULTTYPE_WAITFORFUNCBOBBING	2 // waiting for func_bobbing to arrive
-#define RESULTTYPE_BADGRAPPLEPATH		4 // grapple path is obstructed
-#define RESULTTYPE_INSOLIDAREA			8 // stuck in solid area, this is bad
+#define RESULTTYPE_INSOLIDAREA			4 // stuck in solid area, this is bad
 // structure used to initialize the movement state
 // the or_moveflags MFL_ONGROUND, MFL_TELEPORTED and MFL_WATERJUMP come from the playerstate
 typedef struct bot_initmove_s {

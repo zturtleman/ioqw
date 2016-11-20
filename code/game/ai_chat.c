@@ -312,8 +312,6 @@ char *BotWeaponNameForMeansOfDeath(int mod) {
 			return "BFG10K";
 		case MOD_KAMIKAZE:
 			return "Kamikaze";
-		case MOD_GRAPPLE:
-			return "Grapple";
 		default:
 			return "[unknown weapon]";
 	}

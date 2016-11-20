@@ -58,7 +58,6 @@ bot_waypoint_t *botai_freewaypoints;
 // NOTE: not using a cvars which can be updated because the game should be reloaded anyway
 int gametype; // game type
 
-vmCvar_t bot_grapple;
 vmCvar_t bot_rocketjump;
 vmCvar_t bot_fastchat;
 vmCvar_t bot_nochat;
@@ -1698,14 +1697,6 @@ void BotSetupForMovement(bot_state_t *bs) {
 	if ((bs->cur_ps.pm_flags & PMF_TIME_WATERJUMP) && (bs->cur_ps.pm_time > 0)) {
 		initmove.or_moveflags |= MFL_WATERJUMP;
 	}
-	// set the grapple pull flag
-	if (bs->cur_ps.pm_flags & PMF_GRAPPLE_PULL) {
-		initmove.or_moveflags |= MFL_GRAPPLEPULL;
-	}
-	// set the grapple exists flag
-	if (g_entities[bs->entitynum].client->hook) {
-		initmove.or_moveflags |= MFL_GRAPPLEEXISTS;
-	}
 	// set presence type
 	if (bs->cur_ps.pm_flags & PMF_DUCKED) {
 		initmove.presencetype = PRESENCE_CROUCH;
@@ -1837,7 +1828,6 @@ void BotUpdateInventory(bot_state_t *bs) {
 	bs->inventory[INVENTORY_RAILGUN] = COM_BitCheck(bs->cur_ps.weapons, (WP_RAILGUN));
 	bs->inventory[INVENTORY_PLASMAGUN] = COM_BitCheck(bs->cur_ps.weapons, (WP_PLASMAGUN));
 	bs->inventory[INVENTORY_BFG10K] = COM_BitCheck(bs->cur_ps.weapons, (WP_BFG));
-	bs->inventory[INVENTORY_GRAPPLINGHOOK] = COM_BitCheck(bs->cur_ps.weapons, (WP_GRAPPLING_HOOK));
 	// ammo
 	bs->inventory[INVENTORY_BULLETS] = bs->cur_ps.ammo[WP_MACHINEGUN];
 	bs->inventory[INVENTORY_BELT] = bs->cur_ps.ammo[WP_CHAINGUN];
@@ -6355,7 +6345,6 @@ void BotSetupDeathmatchAI(void) {
 	gametype = trap_Cvar_VariableIntegerValue("g_gametype");
 
 	trap_Cvar_Register(&bot_rocketjump, "bot_rocketjump", "1", 0);
-	trap_Cvar_Register(&bot_grapple, "bot_grapple", "0", 0);
 	trap_Cvar_Register(&bot_fastchat, "bot_fastchat", "0", 0);
 	trap_Cvar_Register(&bot_nochat, "bot_nochat", "0", 0);
 	trap_Cvar_Register(&bot_testrchat, "bot_testrchat", "0", 0);

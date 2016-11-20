@@ -690,10 +690,6 @@ void ClientThink_Real(gentity_t *ent) {
 	if (bg_itemlist[client->ps.stats[STAT_PERSISTANT_POWERUP]].giTag == PW_SCOUT) {
 		client->ps.speed *= 1.3;
 	}
-	// Let go of the hook if we aren't firing
-	if (client->ps.weapon == WP_GRAPPLING_HOOK && client->hook && !(ucmd->buttons & BUTTON_ATTACK)) {
-		Weapon_HookFree(client->hook);
-	}
 	// set up for pmove
 	oldEventSequence = client->ps.eventSequence;
 
