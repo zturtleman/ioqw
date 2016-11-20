@@ -59,6 +59,28 @@ weaponinfo
 }
 
 //===========================================================================
+// Handgun
+//===========================================================================
+projectileinfo
+{
+	name			"handgunbullet"
+	gravity			0.0
+	damage			5
+	damagetype		DAMAGETYPE_IMPACT
+}
+
+weaponinfo
+{
+	name			"Handgun"
+	number			WEAPONINDEX_HANDGUN
+	projectile		"handgunbullet"
+	numprojectiles	1
+	hspread			1
+	vspread			1
+	speed			0
+}
+
+//===========================================================================
 // Machinegun
 //===========================================================================
 projectileinfo
@@ -81,6 +103,28 @@ weaponinfo
 }
 
 //===========================================================================
+// Heavy Machinegun
+//===========================================================================
+projectileinfo
+{
+	name			"hmgbullet"
+	gravity			0.0
+	damage			7
+	damagetype		DAMAGETYPE_IMPACT
+}
+
+weaponinfo
+{
+	name			"Heavy Machinegun"
+	number			WEAPONINDEX_HEAVY_MACHINEGUN
+	projectile		"hmgbullet"
+	numprojectiles	1
+	hspread			1
+	vspread			1
+	speed			0
+}
+
+//===========================================================================
 // Chaingun
 //===========================================================================
 projectileinfo
@@ -88,7 +132,7 @@ projectileinfo
 	name			"chaingunbullet"
 	gravity			0.0
 	damage			7
-	damagetype		$evalint(DAMAGETYPE_IMPACT)
+	damagetype		DAMAGETYPE_IMPACT
 }
 
 weaponinfo
@@ -147,6 +191,28 @@ weaponinfo
 }
 
 //===========================================================================
+// Phosphorgun
+//===========================================================================
+projectileinfo
+{
+	name			"capsule"
+	gravity			0.0
+	damage			10
+	damagetype		DAMAGETYPE_IMPACT
+}
+
+weaponinfo
+{
+	name			"Phosphorgun"
+	number			WEAPONINDEX_PHOSPHORGUN
+	projectile		"capsule"
+	numprojectiles	10
+	hspread			1
+	vspread			1
+	speed			0
+}
+
+//===========================================================================
 // Prox Launcher
 //===========================================================================
 projectileinfo
@@ -174,45 +240,45 @@ weaponinfo
 projectileinfo
 {
 	name			"grenade"
-	gravity			0.45 //0.35
+	gravity			0.45 // 0.35
 	damage			120
 	radius			160
-	damagetype		$evalint(DAMAGETYPE_IMPACT|DAMAGETYPE_RADIAL)
+	damagetype		$evalint(DAMAGETYPE_IMPACT|DAMAGETYPE_RADIAL) // DAMAGETYPE_RADIA only?
 }
 
 weaponinfo
 {
 	name			"Grenade Launcher"
-	number			WEAPONINDEX_GRENADE_LAUNCHER
+	number			WEAPONINDEX_GRENADELAUNCHER
 	projectile		"grenade"
 	numprojectiles	1
 	hspread			0
 	vspread			0
-	speed			700 //1300
+	speed			700 // 1300
 }
 
 //===========================================================================
 // Napalm Launcher
 //===========================================================================
-//projectileinfo
-//{
-//	name			"napalm"
-//	gravity			0.04 // speed: 10000 !!!!!!!!!!!!
-//	damage			120
-//	radius			160
-//	damagetype		$evalint(DAMAGETYPE_IMPACT|DAMAGETYPE_RADIAL)
-//}
+projectileinfo
+{
+	name			"napalm"
+	gravity			0.04 // speed: 10000 !!!!!!!!!!!!
+	damage			120
+	radius			160
+	damagetype		$evalint(DAMAGETYPE_IMPACT|DAMAGETYPE_RADIAL) // DAMAGETYPE_RADIA only?
+}
 
-//weaponinfo
-//{
-//	name			"Napalm Launcher"
-//	number			WEAPONINDEX_NAPALM_LAUNCHER
-//	projectile		"napalm"
-//	numprojectiles	1
-//	hspread			0
-//	vspread			0
-//	speed			10000 // gravity: 0.04 !!!!!!!!!!!!
-//}
+weaponinfo
+{
+	name			"Napalm Launcher"
+	number			WEAPONINDEX_NAPALMLAUNCHER
+	projectile		"napalm"
+	numprojectiles	1
+	hspread			0
+	vspread			0
+	speed			10000 // gravity: 0.04 !!!!!!!!!!!!
+}
 
 //===========================================================================
 // Rocket Launcher
@@ -229,7 +295,7 @@ projectileinfo
 weaponinfo
 {
 	name			"Rocket Launcher"
-	number			WEAPONINDEX_ROCKET_LAUNCHER
+	number			WEAPONINDEX_ROCKETLAUNCHER
 	projectile		"rocket"
 	numprojectiles	1
 	hspread			0
@@ -325,4 +391,27 @@ weaponinfo
 	hspread			0
 	vspread			0
 	speed			2000
+}
+
+//===========================================================================
+// Missile Launcher
+//===========================================================================
+projectileinfo
+{
+	name			"missileexplosion"
+	gravity			0.0
+	damage			500
+	radius			500
+	damagetype		$evalint(DAMAGETYPE_IMPACT|DAMAGETYPE_RADIAL)
+}
+
+weaponinfo
+{
+	name			"Missile Launcher"
+	number			WEAPONINDEX_MISSILELAUNCHER
+	projectile		"missileexplosion"
+	numprojectiles	1
+	hspread			0
+	vspread			0
+	speed			5000
 }

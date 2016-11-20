@@ -1519,13 +1519,13 @@ static void PM_Weapon(void) {
 		case WP_NAILGUN:
 			addTime = 1000;
 			break;
-		case WP_PROX_LAUNCHER:
+		case WP_PROXLAUNCHER:
 			addTime = 800;
 			break;
-		case WP_GRENADE_LAUNCHER:
+		case WP_GRENADELAUNCHER:
 			addTime = 800;
 			break;
-		case WP_ROCKET_LAUNCHER:
+		case WP_ROCKETLAUNCHER:
 			addTime = 800;
 			break;
 		case WP_LIGHTNING:

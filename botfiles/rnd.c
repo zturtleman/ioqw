@@ -1349,18 +1349,23 @@ language = {
 
 weapon = {
 	"Gauntlet";
+	"Handgun";
 	"Machinegun";
+	"Heavy Machinegun";
 	"Chaingun";
 	"Shotgun";
 	"Nailgun";
+	"Phosphorgun";
 	"Proxlauncher";
 	"Grenadelauncher";
+	"Napalmlauncher";
 	"Rocketlauncher";
 	"Lightninggun";
 	"Railgun";
 	"Plasmagun";
 	"BFG";
 	"BFG 10K";
+	"Missilelauncher";
 }
 
 ponder = {

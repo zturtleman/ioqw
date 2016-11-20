@@ -446,8 +446,8 @@ name:						default:	module(s):		description:
 "matchfile"					"match.c"	be_ai_chat.c	file with match strings
 "nochat"					"0"			be_ai_chat.c	disable chats
 "max_messages"				"1024"		be_ai_chat.c	console message heap size
-"max_weaponinfo"			"32"		be_ai_weap.c	maximum number of weapon info
-"max_projectileinfo"		"32"		be_ai_weap.c	maximum number of projectile info
+"max_weaponinfo"			"64"		be_ai_weap.c	maximum number of weapon info
+"max_projectileinfo"		"64"		be_ai_weap.c	maximum number of projectile info
 "max_iteminfo"				"256"		be_ai_goal.c	maximum number of item info
 "max_levelitems"			"256"		be_ai_goal.c	maximum number of level items
 */

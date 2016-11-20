@@ -108,11 +108,11 @@ tryagain:
 		case WP_NAILGUN:
 			MAKERGB(pi->flashDlightColor, 1, 0.7f, 0);
 			break;
-		case WP_PROX_LAUNCHER:
+		case WP_PROXLAUNCHER:
 			break;
-		case WP_GRENADE_LAUNCHER:
+		case WP_GRENADELAUNCHER:
 			break;
-		case WP_ROCKET_LAUNCHER:
+		case WP_ROCKETLAUNCHER:
 			MAKERGB(pi->flashDlightColor, 1.0f, 0.75f, 0);
 			break;
 		case WP_LIGHTNING:

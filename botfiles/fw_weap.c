@@ -22,37 +22,63 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 =======================================================================================================================================
 */
 
-#ifndef W_GRAPPLE
-#define W_GRAPPLE 100
-#endif
-
 weight "Gauntlet"
 {
-	switch(INVENTORY_GAUNTLET)
+	switch (INVENTORY_GAUNTLET)
 	{
 		case 1: return 0;
 		default: return W_GAUNTLET;
 	}
 }
 
-weight "Machinegun"
+weight "Handgun"
 {
-	switch(INVENTORY_MACHINEGUN)
+	switch (INVENTORY_HANDGUN)
 	{
 		case 1: return 0;
 		default:
 		{
-			switch(INVENTORY_BULLETS)
+			switch (INVENTORY_HANDGUN_AMMO)
 			{
 				case 1: return 0;
 				default:
 				{
-					switch(ENTITY_IS_AN_OBELISK)
+					switch (ENTITY_IS_AN_OBELISK)
+					{
+						case 1: return W_HANDGUN;
+						default:
+						{
+							switch (ENEMY_HORIZONTAL_DIST)
+							{
+								case 500: return 40;
+								default: return W_HANDGUN;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+weight "Machinegun"
+{
+	switch (INVENTORY_MACHINEGUN)
+	{
+		case 1: return 0;
+		default:
+		{
+			switch (INVENTORY_BULLETS)
+			{
+				case 1: return 0;
+				default:
+				{
+					switch (ENTITY_IS_AN_OBELISK)
 					{
 						case 1: return W_MACHINEGUN;
 						default:
 						{
-							switch(ENEMY_HORIZONTAL_DIST)
+							switch (ENEMY_HORIZONTAL_DIST)
 							{
 								case 500: return 40;
 								default: return W_MACHINEGUN;
@@ -65,24 +91,54 @@ weight "Machinegun"
 	}
 }
 
-weight "Chaingun"
+weight "Heavy Machinegun"
 {
-	switch(INVENTORY_CHAINGUN)
+	switch (INVENTORY_HEAVY_MACHINEGUN)
 	{
 		case 1: return 0;
 		default:
 		{
-			switch(INVENTORY_BELT)
+			switch (INVENTORY_BULLETS)
 			{
 				case 1: return 0;
 				default:
 				{
-					switch(ENTITY_IS_AN_OBELISK)
+					switch (ENTITY_IS_AN_OBELISK)
+					{
+						case 1: return W_HEAVY_MACHINEGUN;
+						default:
+						{
+							switch (ENEMY_HORIZONTAL_DIST)
+							{
+								case 500: return 40;
+								default: return W_HEAVY_MACHINEGUN;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+weight "Chaingun"
+{
+	switch (INVENTORY_CHAINGUN)
+	{
+		case 1: return 0;
+		default:
+		{
+			switch (INVENTORY_BELT)
+			{
+				case 1: return 0;
+				default:
+				{
+					switch (ENTITY_IS_AN_OBELISK)
 					{
 						case 1: return W_CHAINGUN;
 						default:
 						{
-							switch(ENEMY_HORIZONTAL_DIST)
+							switch (ENEMY_HORIZONTAL_DIST)
 							{
 								case 500: return 520;
 								default: return W_CHAINGUN;
@@ -97,21 +153,21 @@ weight "Chaingun"
 
 weight "Shotgun"
 {
-	switch(INVENTORY_SHOTGUN)
+	switch (INVENTORY_SHOTGUN)
 	{
 		case 1: return 0;
 		default:
 		{
-			switch(INVENTORY_SHELLS)
+			switch (INVENTORY_SHELLS)
 			{
 				case 1: return 0;
 				default:
 				{
-					switch(ENTITY_IS_AN_OBELISK)
+					switch (ENTITY_IS_AN_OBELISK)
 					{
 						case 1:
 						{
-							switch(ENEMY_HORIZONTAL_DIST)
+							switch (ENEMY_HORIZONTAL_DIST)
 							{
 								case 1000: return W_SHOTGUN;
 								default: return 100;
@@ -119,7 +175,7 @@ weight "Shotgun"
 						}
 						default:
 						{
-							switch(ENEMY_HORIZONTAL_DIST)
+							switch (ENEMY_HORIZONTAL_DIST)
 							{
 								case 500: return 120;
 								default: return 100;
@@ -134,22 +190,22 @@ weight "Shotgun"
 
 weight "Nailgun"
 {
-	switch(INVENTORY_NAILGUN)
+	switch (INVENTORY_NAILGUN)
 	{
 		case 1: return 0;
 		default:
 		{
-			switch(INVENTORY_NAILS)
+			switch (INVENTORY_NAILS)
 			{
 				case 1: return 0;
 				default:
 				{
-					switch(ENTITY_IS_AN_OBELISK)
+					switch (ENTITY_IS_AN_OBELISK)
 					{
 						case 1: return W_NAILGUN;
 						default:
 						{
-							switch(ENEMY_HORIZONTAL_DIST)
+							switch (ENEMY_HORIZONTAL_DIST)
 							{
 								case 500: return 540;
 								default: return W_NAILGUN;
@@ -162,23 +218,52 @@ weight "Nailgun"
 	}
 }
 
-weight "Prox Launcher"
+weight "Phosphorgun"
 {
-	switch(INVENTORY_PROXLAUNCHER)
+	switch (INVENTORY_PHOSPHORGUN)
 	{
 		case 1: return 0;
 		default:
 		{
-			switch(INVENTORY_MINES)
+			switch (INVENTORY_CAPSULES)
 			{
 				case 1: return 0;
 				default:
 				{
-					// mine will ignore an invulnerability sphere
-					switch(ENEMY_IS_INVULNERABLE)
+					switch (ENTITY_IS_AN_OBELISK)
 					{
-						case 1: return W_PROXLAUNCHER;
-						default: return 600;
+						case 1: return W_PHOSPHORGUN;
+						default:
+						{
+							switch (ENEMY_HORIZONTAL_DIST)
+							{
+								case 500: return 540;
+								default: return W_PHOSPHORGUN;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+weight "Prox Launcher"
+{
+	switch (INVENTORY_PROXLAUNCHER)
+	{
+		case 1: return 0;
+		default:
+		{
+			switch (INVENTORY_MINES)
+			{
+				case 1: return 0;
+				default:
+				{
+					switch (ENEMY_HORIZONTAL_DIST)
+					{
+						case 2000: return W_PROXLAUNCHER;
+						default: return $evalint(W_PROXLAUNCHER * 0.1);
 					}
 				}
 			}
@@ -188,17 +273,17 @@ weight "Prox Launcher"
 
 weight "Grenade Launcher"
 {
-	switch(INVENTORY_GRENADELAUNCHER)
+	switch (INVENTORY_GRENADELAUNCHER)
 	{
 		case 1: return 0;
 		default:
 		{
-			switch(INVENTORY_GRENADES)
+			switch (INVENTORY_GRENADES)
 			{
 				case 1: return 0;
 				default:
 				{
-					switch(ENEMY_HORIZONTAL_DIST)
+					switch (ENEMY_HORIZONTAL_DIST)
 					{
 						case 2000: return W_GRENADELAUNCHER;
 						default: return $evalint(W_GRENADELAUNCHER * 0.1);
@@ -209,24 +294,54 @@ weight "Grenade Launcher"
 	}
 }
 
-weight "Rocket Launcher"
+weight "Napalm Launcher"
 {
-	switch(INVENTORY_ROCKETLAUNCHER)
+	switch (INVENTORY_NAPALMLAUNCHER)
 	{
 		case 1: return 0;
 		default:
 		{
-			switch(INVENTORY_ROCKETS)
+			switch (INVENTORY_CANISTERS)
 			{
 				case 1: return 0;
 				default:
 				{
-					switch(ENTITY_IS_AN_OBELISK)
+					switch (ENTITY_IS_AN_OBELISK)
+					{
+						case 1: return W_NAPALMLAUNCHER;
+						default:
+						{
+							switch (ENEMY_HORIZONTAL_DIST)
+							{
+								case 500: return 460;
+								default: return W_NAPALMLAUNCHER;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+weight "Rocket Launcher"
+{
+	switch (INVENTORY_ROCKETLAUNCHER)
+	{
+		case 1: return 0;
+		default:
+		{
+			switch (INVENTORY_ROCKETS)
+			{
+				case 1: return 0;
+				default:
+				{
+					switch (ENTITY_IS_AN_OBELISK)
 					{
 						case 1: return W_ROCKETLAUNCHER;
 						default:
 						{
-							switch(ENEMY_HORIZONTAL_DIST)
+							switch (ENEMY_HORIZONTAL_DIST)
 							{
 								case 500: return 460;
 								default: return W_ROCKETLAUNCHER;
@@ -241,21 +356,21 @@ weight "Rocket Launcher"
 
 weight "Lightning Gun"
 {
-	switch(INVENTORY_LIGHTNING)
+	switch (INVENTORY_LIGHTNING)
 	{
 		case 1: return 0;
 		default:
 		{
-			switch(INVENTORY_LIGHTNINGAMMO)
+			switch (INVENTORY_LIGHTNING_AMMO)
 			{
 				case 1: return 0;
 				default:
 				{
-					switch(ENTITY_IS_AN_OBELISK)
+					switch (ENTITY_IS_AN_OBELISK)
 					{
 						case 1:
 						{
-							switch(ENEMY_HORIZONTAL_DIST)
+							switch (ENEMY_HORIZONTAL_DIST)
 							{
 								case 768: return W_LIGHTNING;
 								default: return $evalint(W_LIGHTNING*0.1);
@@ -263,7 +378,7 @@ weight "Lightning Gun"
 						}
 						default:
 						{
-							switch(ENEMY_HORIZONTAL_DIST)
+							switch (ENEMY_HORIZONTAL_DIST)
 							{
 								case 500: return 480;
 								default: return $evalint(W_LIGHTNING*0.1);
@@ -278,21 +393,21 @@ weight "Lightning Gun"
 
 weight "Railgun"
 {
-	switch(INVENTORY_RAILGUN)
+	switch (INVENTORY_RAILGUN)
 	{
 		case 1: return 0;
 		default:
 		{
-			switch(INVENTORY_SLUGS)
+			switch (INVENTORY_SLUGS)
 			{
 				case 1: return 0;
 				default:
 				{
-					switch(ENTITY_IS_AN_OBELISK)
+					switch (ENTITY_IS_AN_OBELISK)
 					{
 						case 1:
 						{
-							switch(ENEMY_HORIZONTAL_DIST)
+							switch (ENEMY_HORIZONTAL_DIST)
 							{
 								case 4000: return W_RAILGUN;
 								default: return 580;
@@ -300,7 +415,7 @@ weight "Railgun"
 						}
 						default:
 						{
-							switch(ENEMY_HORIZONTAL_DIST)
+							switch (ENEMY_HORIZONTAL_DIST)
 							{
 								case 500: return 100;
 								case 4000: return 120;
@@ -316,22 +431,22 @@ weight "Railgun"
 
 weight "Plasma Gun"
 {
-	switch(INVENTORY_PLASMAGUN)
+	switch (INVENTORY_PLASMAGUN)
 	{
 		case 1: return 0;
 		default:
 		{
-			switch(INVENTORY_CELLS)
+			switch (INVENTORY_CELLS)
 			{
 				case 1: return 0;
 				default:
 				{
-					switch(ENTITY_IS_AN_OBELISK)
+					switch (ENTITY_IS_AN_OBELISK)
 					{
 						case 1: return W_PLASMAGUN;
 						default:
 						{
-							switch(ENEMY_HORIZONTAL_DIST)
+							switch (ENEMY_HORIZONTAL_DIST)
 							{
 								case 500: return 500;
 								default: return W_PLASMAGUN;
@@ -346,22 +461,22 @@ weight "Plasma Gun"
 
 weight "BFG10K"
 {
-	switch(INVENTORY_BFG10K)
+	switch (INVENTORY_BFG10K)
 	{
 		case 1: return 0;
 		default:
 		{
-			switch(INVENTORY_BFGAMMO)
+			switch (INVENTORY_BFG_AMMO)
 			{
 				case 1: return 0;
 				default:
 				{
-					switch(ENTITY_IS_AN_OBELISK)
+					switch (ENTITY_IS_AN_OBELISK)
 					{
 						case 1: return W_BFG10K;
 						default:
 						{
-							switch(ENEMY_HORIZONTAL_DIST)
+							switch (ENEMY_HORIZONTAL_DIST)
 							{
 								case 500: return 560;
 								default: return W_BFG10K;
@@ -374,14 +489,32 @@ weight "BFG10K"
 	}
 }
 
-weight "Grappling Hook"
+weight "Missile Launcher"
 {
-	switch(INVENTORY_GRAPPLINGHOOK)
+	switch (INVENTORY_MISSILELAUNCHER)
 	{
 		case 1: return 0;
 		default:
 		{
-			return W_GRAPPLE;
+			switch (INVENTORY_MISSILES)
+			{
+				case 1: return 0;
+				default:
+				{
+					switch (ENTITY_IS_AN_OBELISK)
+					{
+						case 1: return W_MISSILELAUNCHER;
+						default:
+						{
+							switch (ENEMY_HORIZONTAL_DIST)
+							{
+								case 500: return 560;
+								default: return W_MISSILELAUNCHER;
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 }

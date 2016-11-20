@@ -719,13 +719,13 @@ void FireWeapon(gentity_t *ent) {
 		case WP_NAILGUN:
 			Weapon_Nailgun_Fire(ent);
 			break;
-		case WP_PROX_LAUNCHER:
+		case WP_PROXLAUNCHER:
 			Weapon_Proxlauncher_Fire(ent);
 			break;
-		case WP_GRENADE_LAUNCHER:
+		case WP_GRENADELAUNCHER:
 			Weapon_Grenadelauncher_Fire(ent);
 			break;
-		case WP_ROCKET_LAUNCHER:
+		case WP_ROCKETLAUNCHER:
 			Weapon_RocketLauncher_Fire(ent);
 			break;
 		case WP_LIGHTNING:

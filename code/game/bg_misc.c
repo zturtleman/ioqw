@@ -153,11 +153,25 @@ gitem_t bg_itemlist[] = {
 */
 	{
 		"item_armor_body",
-		"sound/misc/ar2_pkup.wav",
+		"sound/misc/ar3_pkup.wav",
 		{"models/powerups/armor/armor_red.md3", NULL, NULL, NULL},
 /* icon */		"icons/iconr_red",
 /* pickup */	"Heavy Armor",
 		100,
+		IT_ARMOR,
+		0,
+/* sounds */ ""
+	},
+
+/*QUAKED item_armor_full (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+*/
+	{
+		"item_armor_full",
+		"sound/misc/ar4_pkup.wav",
+		{"models/powerups/armor/armor_blue.md3", NULL, NULL, NULL},
+/* icon */		"icons/iconr_blue",
+/* pickup */	"Full Armor",
+		200,
 		IT_ARMOR,
 		0,
 /* sounds */ ""
@@ -181,6 +195,20 @@ gitem_t bg_itemlist[] = {
 /* sounds */ ""
 	},
 
+/*QUAKED weapon_handgun (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+*/
+	{
+		"weapon_handgun",
+		"sound/misc/w_pkup.wav",
+		{"models/weapons2/handgun/handgun.md3", NULL, NULL, NULL},
+/* icon */		"icons/iconw_handgun",
+/* pickup */	"Trusty .44",
+		50,
+		IT_WEAPON,
+		WP_HANDGUN,
+/* sounds */ ""
+	},
+
 /*QUAKED weapon_machinegun (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 */
 	{
@@ -192,6 +220,20 @@ gitem_t bg_itemlist[] = {
 		40,
 		IT_WEAPON,
 		WP_MACHINEGUN,
+/* sounds */ ""
+	},
+
+/*QUAKED weapon_heavy_machinegun (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+*/
+	{
+		"weapon_heavy_machinegun",
+		"sound/misc/w_pkup.wav",
+		{"models/weapons2/heavy_machinegun/heavymgun.md3", NULL, NULL, NULL},
+/* icon */		"icons/iconw_hmgun",
+/* pickup */	"Heavy Machinegun",
+		100,
+		IT_WEAPON,
+		WP_HEAVY_MACHINEGUN,
 /* sounds */ ""
 	},
 
@@ -237,6 +279,20 @@ gitem_t bg_itemlist[] = {
 /* sounds */ ""
 	},
 
+/*QUAKED weapon_phosphorgun (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+*/
+	{
+		"weapon_phosphorgun",
+		"sound/misc/w_pkup.wav",
+		{"models/weapons/phosphorgun/phosphorgun.md3", NULL, NULL, NULL},
+/* icon */		"icons/iconw_phosphorgun",
+/* pickup */	"Phosphorgun",
+		50,
+		IT_WEAPON,
+		WP_PHOSPHORGUN,
+/* sounds */ ""
+	},
+
 /*QUAKED weapon_prox_launcher (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 */
 	{
@@ -247,7 +303,7 @@ gitem_t bg_itemlist[] = {
 /* pickup */	"Prox Launcher",
 		5,
 		IT_WEAPON,
-		WP_PROX_LAUNCHER,
+		WP_PROXLAUNCHER,
 /* sounds */ "sound/weapons/proxmine/wstbtick.wav sound/weapons/proxmine/wstbactv.wav sound/weapons/proxmine/wstbimpl.wav sound/weapons/proxmine/wstbimpm.wav sound/weapons/proxmine/wstbimpd.wav sound/weapons/proxmine/wstbactv.wav"
 	},
 
@@ -261,8 +317,22 @@ gitem_t bg_itemlist[] = {
 /* pickup */	"Grenade Launcher",
 		10,
 		IT_WEAPON,
-		WP_GRENADE_LAUNCHER,
+		WP_GRENADELAUNCHER,
 /* sounds */ "sound/weapons/grenade/hgrenb1a.wav sound/weapons/grenade/hgrenb2a.wav"
+	},
+
+/*QUAKED weapon_napalmlauncher (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+*/
+	{
+		"weapon_napalmlauncher",
+		"sound/misc/w_pkup.wav",
+		{"models/weapons2/napalml/napalml.md3", NULL, NULL, NULL},
+/* icon */		"icons/iconw_napalm",
+/* pickup */	"Napalm Launcher",
+		10,
+		IT_WEAPON,
+		WP_NAPALMLAUNCHER,
+/* sounds */ ""
 	},
 
 /*QUAKED weapon_rocketlauncher (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -275,7 +345,7 @@ gitem_t bg_itemlist[] = {
 /* pickup */	"Rocket Launcher",
 		10,
 		IT_WEAPON,
-		WP_ROCKET_LAUNCHER,
+		WP_ROCKETLAUNCHER,
 /* sounds */ ""
 	},
 
@@ -335,9 +405,37 @@ gitem_t bg_itemlist[] = {
 /* sounds */ ""
 	},
 
+/*QUAKED weapon_missilelauncher (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+*/
+	{
+		"weapon_missilelauncher",
+		"sound/misc/w_pkup.wav",
+		{"models/weapons2/missile/missilel.md3", NULL, NULL, NULL},
+/* icon */		"icons/iconw_missile",
+/* pickup */	"Missile Launcher",
+		5,
+		IT_WEAPON,
+		WP_MISSILELAUNCHER,
+/* sounds */ ""
+	},
+
 	//
 	// AMMO ITEMS
 	//
+
+/*QUAKED ammo_clip (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+*/
+	{
+		"ammo_clip",
+		"sound/misc/am_pkup.wav",
+		{"models/powerups/ammo/handgunam.md3", NULL, NULL, NULL},
+/* icon */		"icons/icona_handgun",
+/* pickup */	"Trusty .44 Ammo",
+		50,
+		IT_AMMO,
+		WP_HANDGUN,
+/* sounds */ ""
+	},
 
 /*QUAKED ammo_bullets (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 */
@@ -347,7 +445,7 @@ gitem_t bg_itemlist[] = {
 		{"models/powerups/ammo/machinegunam.md3", NULL, NULL, NULL},
 /* icon */		"icons/icona_machinegun",
 /* pickup */	"Bullets",
-		50,
+		40,
 		IT_AMMO,
 		WP_MACHINEGUN,
 /* sounds */ ""
@@ -361,7 +459,7 @@ gitem_t bg_itemlist[] = {
 		{"models/powerups/ammo/chaingunam.md3", NULL, NULL, NULL},
 /* icon */		"icons/icona_chaingun",
 /* pickup */	"Chaingun Belt",
-		100,
+		80,
 		IT_AMMO,
 		WP_CHAINGUN,
 /* sounds */ ""
@@ -395,6 +493,20 @@ gitem_t bg_itemlist[] = {
 /* sounds */ ""
 	},
 
+/*QUAKED ammo_capsules (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+*/
+	{
+		"ammo_capsules",
+		"sound/misc/am_pkup.wav",
+		{"models/powerups/ammo/phosphorgunam.md3", NULL, NULL, NULL},
+/* icon */		"icons/icona_phosphorgun",
+/* pickup */	"Capsules",
+		50,
+		IT_AMMO,
+		WP_PHOSPHORGUN,
+/* sounds */ ""
+	},
+
 /*QUAKED ammo_mines (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 */
 	{
@@ -405,7 +517,7 @@ gitem_t bg_itemlist[] = {
 /* pickup */	"Proximity Mines",
 		10,
 		IT_AMMO,
-		WP_PROX_LAUNCHER,
+		WP_PROXLAUNCHER,
 /* sounds */ ""
 	},
 
@@ -419,7 +531,21 @@ gitem_t bg_itemlist[] = {
 /* pickup */	"Grenades",
 		5,
 		IT_AMMO,
-		WP_GRENADE_LAUNCHER,
+		WP_GRENADELAUNCHER,
+/* sounds */ ""
+	},
+
+/*QUAKED ammo_canisters (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+*/
+	{
+		"ammo_canisters",
+		"sound/misc/am_pkup.wav",
+		{"models/powerups/ammo/napalmam.md3", NULL, NULL, NULL},
+/* icon */		"icons/icona_napalm",
+/* pickup */	"Canisters",
+		5,
+		IT_AMMO,
+		WP_NAPALMLAUNCHER,
 /* sounds */ ""
 	},
 
@@ -433,7 +559,7 @@ gitem_t bg_itemlist[] = {
 /* pickup */	"Rockets",
 		5,
 		IT_AMMO,
-		WP_ROCKET_LAUNCHER,
+		WP_ROCKETLAUNCHER,
 /* sounds */ ""
 	},
 
@@ -445,7 +571,7 @@ gitem_t bg_itemlist[] = {
 		{"models/powerups/ammo/lightningam.md3", NULL, NULL, NULL},
 /* icon */		"icons/icona_lightning",
 /* pickup */	"Lightning",
-		60,
+		50,
 		IT_AMMO,
 		WP_LIGHTNING,
 /* sounds */ ""
@@ -493,6 +619,20 @@ gitem_t bg_itemlist[] = {
 /* sounds */ ""
 	},
 
+/*QUAKED ammo_missiles (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+*/
+	{
+		"ammo_missiles",
+		"sound/misc/am_pkup.wav",
+		{"models/powerups/ammo/missileam.md3", NULL, NULL, NULL},
+/* icon */		"icons/icona_missile",
+/* pickup */	"Missiles",
+		4,
+		IT_AMMO,
+		WP_MISSILELAUNCHER,
+/* sounds */ ""
+	},
+
 	//
 	// HOLDABLE ITEMS
 	//
@@ -510,9 +650,11 @@ gitem_t bg_itemlist[] = {
 		HI_KAMIKAZE,
 /* sounds */ "sound/items/kamikazerespawn.wav"
 	},
+
 	//
 	// POWERUP ITEMS
 	//
+
 /*QUAKED item_quad (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 */
 	{

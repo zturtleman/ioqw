@@ -283,7 +283,7 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace) {
 		}
 	}
 
-	if (ent->s.weapon == WP_PROX_LAUNCHER) {
+	if (ent->s.weapon == WP_PROXLAUNCHER) {
 		if (ent->s.pos.trType != TR_GRAVITY) {
 			return;
 		}
@@ -362,7 +362,7 @@ void G_RunMissile(gentity_t *ent) {
 	if (ent->target_ent) {
 		passent = ent->target_ent->s.number;
 	// prox mines that left the owner bbox will attach to anything, even the owner
-	} else if (ent->s.weapon == WP_PROX_LAUNCHER && ent->count) {
+	} else if (ent->s.weapon == WP_PROXLAUNCHER && ent->count) {
 		passent = ENTITYNUM_NONE;
 	} else {
 		// ignore interactions with the missile owner
@@ -395,7 +395,7 @@ void G_RunMissile(gentity_t *ent) {
 		}
 	}
 	// if the prox mine wasn't yet outside the player body
-	if (ent->s.weapon == WP_PROX_LAUNCHER && !ent->count) {
+	if (ent->s.weapon == WP_PROXLAUNCHER && !ent->count) {
 		// check if the prox mine is outside the owner bbox
 		trap_Trace(&tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, ent->r.currentOrigin, ENTITYNUM_NONE, ent->clipmask);
 
@@ -479,7 +479,7 @@ gentity_t *fire_prox(gentity_t *self, vec3_t start, vec3_t dir) {
 	bolt->think = G_ExplodeMissile;
 	bolt->s.eType = ET_MISSILE;
 	bolt->r.svFlags = SVF_USE_CURRENT_ORIGIN;
-	bolt->s.weapon = WP_PROX_LAUNCHER;
+	bolt->s.weapon = WP_PROXLAUNCHER;
 	bolt->s.eFlags = 0;
 	bolt->r.ownerNum = self->s.number;
 	bolt->parent = self;
@@ -526,7 +526,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir) {
 	bolt->think = G_ExplodeMissile;
 	bolt->s.eType = ET_MISSILE;
 	bolt->r.svFlags = SVF_USE_CURRENT_ORIGIN;
-	bolt->s.weapon = WP_GRENADE_LAUNCHER;
+	bolt->s.weapon = WP_GRENADELAUNCHER;
 	bolt->s.eFlags = EF_BOUNCE_HALF;
 	bolt->r.ownerNum = self->s.number;
 	bolt->parent = self;
@@ -570,7 +570,7 @@ gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir) {
 	bolt->think = G_ExplodeMissile;
 	bolt->s.eType = ET_MISSILE;
 	bolt->r.svFlags = SVF_USE_CURRENT_ORIGIN;
-	bolt->s.weapon = WP_ROCKET_LAUNCHER;
+	bolt->s.weapon = WP_ROCKETLAUNCHER;
 	bolt->r.ownerNum = self->s.number;
 	bolt->parent = self;
 	bolt->damage = 100;

@@ -3973,9 +3973,10 @@ void AAS_SetWeaponJumpAreaFlags(void) {
 			continue;
 		}
 
-		if (!strcmp(classname, "item_armor_combat") || !strcmp(classname, "item_armor_body") ||
-			!strcmp(classname, "weapon_chaingun") || !strcmp(classname, "weapon_nailgun") || !strcmp(classname, "weapon_lightning") ||
-			!strcmp(classname, "weapon_railgun") || !strcmp(classname, "weapon_plasmagun") || !strcmp(classname, "weapon_bfg") ||
+		if (!strcmp(classname, "item_armor_combat") || !strcmp(classname, "item_armor_body") || !strcmp(classname, "item_armor_full") ||
+			!strcmp(classname, "weapon_heavy_machinegun") || !strcmp(classname, "weapon_chaingun") || !strcmp(classname, "weapon_shotgun") || !strcmp(classname, "weapon_nailgun") ||
+			!strcmp(classname, "weapon_phosphorgun") || !strcmp(classname, "weapon_napalmlauncher") || !strcmp(classname, "weapon_lightning") || !strcmp(classname, "weapon_railgun") ||
+			!strcmp(classname, "weapon_plasmagun") || !strcmp(classname, "weapon_bfg") || !strcmp(classname, "weapon_missilelauncher") ||
 			!strcmp(classname, "holdable_kamikaze") || !strcmp(classname, "item_quad") || !strcmp(classname, "item_invis") || !strcmp(classname, "item_regen") ||
 			!strcmp(classname, "item_ammoregen") || !strcmp(classname, "item_guard") || !strcmp(classname, "item_doubler") || !strcmp(classname, "item_scout")) {
 			if (AAS_VectorForBSPEpairKey(ent, "origin", origin)) {

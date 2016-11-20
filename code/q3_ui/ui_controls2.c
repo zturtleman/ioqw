@@ -500,13 +500,13 @@ static void Controls_UpdateModel(int anim) {
 			s_controls.playerWeapon = WP_NAILGUN;
 			break;
 		case ANIM_WEAPON6:
-			s_controls.playerWeapon = WP_PROX_LAUNCHER;
+			s_controls.playerWeapon = WP_PROXLAUNCHER;
 			break;
 		case ANIM_WEAPON7:
-			s_controls.playerWeapon = WP_GRENADE_LAUNCHER;
+			s_controls.playerWeapon = WP_GRENADELAUNCHER;
 			break;
 		case ANIM_WEAPON8:
-			s_controls.playerWeapon = WP_ROCKET_LAUNCHER;
+			s_controls.playerWeapon = WP_ROCKETLAUNCHER;
 			break;
 		case ANIM_WEAPON9:
 			s_controls.playerWeapon = WP_LIGHTNING;

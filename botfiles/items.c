@@ -25,14 +25,14 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "inv.h"
 
 #define ITEM_NONE		0
-#define ITEM_AMMO		1
-#define ITEM_WEAPON		2
-#define ITEM_HEALTH		3
-#define ITEM_ARMOR		4
+#define ITEM_HEALTH		1
+#define ITEM_ARMOR		2
+#define ITEM_WEAPON		3
+#define ITEM_AMMO		4
 #define ITEM_POWERUP	5
-#define ITEM_KEY		6
-#define ITEM_FLAG		7
-#define ITEM_ROAM		8
+#define ITEM_FLAG		6
+#define ITEM_ROAM		7
+#define ITEM_KEY		8
 
 //===================================
 // HEALTH
@@ -124,137 +124,14 @@ iteminfo "item_armor_body"
 	maxs		{15,15,15}
 }
 
-//===================================
-// AMMO
-//===================================
-iteminfo "ammo_bullets"
+iteminfo "item_armor_full"
 {
-	name		"Bullets"
-	model		"models/powerups/ammo/machinegunam.md3"
-	modelindex	MODELINDEX_BULLETS
-	type		ITEM_AMMO
-	index		INVENTORY_BULLETS
-	respawntime	40
-	mins		{-15,-15,-15}
-	maxs		{15,15,15}
-}
-
-iteminfo "ammo_belt"
-{
-	name		"Chaingun Belt"
-	model		"models/powerups/ammo/chaingunam.md3"
-	modelindex	MODELINDEX_BELT
-	type		ITEM_AMMO
-	index		INVENTORY_BELT
-	respawntime	40
-	mins		{-15,-15,-15}
-	maxs		{15,15,15}
-}
-
-iteminfo "ammo_shells"
-{
-	name		"Shells"
-	model		"models/powerups/ammo/shotgunam.md3"
-	modelindex	MODELINDEX_SHELLS
-	type		ITEM_AMMO
-	index		INVENTORY_SHELLS
-	respawntime	40
-	mins		{-15,-15,-15}
-	maxs		{15,15,15}
-}
-
-iteminfo "ammo_nails"
-{
-	name		"Nails"
-	model		"models/powerups/ammo/nailgunam.md3"
-	modelindex	MODELINDEX_NAILS
-	type		ITEM_AMMO
-	index		INVENTORY_NAILS
-	respawntime	40
-	mins		{-15,-15,-15}
-	maxs		{15,15,15}
-}
-
-iteminfo "ammo_grenades"
-{
-	name		"Grenades"
-	model		"models/powerups/ammo/grenadeam.md3"
-	modelindex	MODELINDEX_GRENADES
-	type		ITEM_AMMO
-	index		INVENTORY_GRENADES
-	respawntime	40
-	mins		{-15,-15,-15}
-	maxs		{15,15,15}
-}
-
-iteminfo "ammo_mines"
-{
-	name		"Proximity Mines"
-	model		"models/powerups/ammo/proxmineam.md3"
-	modelindex	MODELINDEX_MINES
-	type		ITEM_AMMO
-	index		INVENTORY_MINES
-	respawntime	40
-	mins		{-15,-15,-15}
-	maxs		{15,15,15}
-}
-
-iteminfo "ammo_rockets"
-{
-	name		"Rockets"
-	model		"models/powerups/ammo/rocketam.dm3"
-	modelindex	MODELINDEX_ROCKETS
-	type		ITEM_AMMO
-	index		INVENTORY_ROCKETS
-	respawntime	40
-	mins		{-15,-15,-15}
-	maxs		{15,15,15}
-}
-
-iteminfo "ammo_lightning"
-{
-	name		"Lightning"
-	model		"models/powerups/ammo/lightningam.md3"
-	modelindex	MODELINDEX_LIGHTNINGAMMO
-	type		ITEM_AMMO
-	index		INVENTORY_LIGHTNINGAMMO
-	respawntime	40
-	mins		{-15,-15,-15}
-	maxs		{15,15,15}
-}
-
-iteminfo "ammo_slugs"
-{
-	name		"Slugs"
-	model		"models/powerups/ammo/railgunam.md3"
-	modelindex	MODELINDEX_SLUGS
-	type		ITEM_AMMO
-	index		INVENTORY_SLUGS
-	respawntime	40
-	mins		{-15,-15,-15}
-	maxs		{15,15,15}
-}
-
-iteminfo "ammo_cells"
-{
-	name		"Cells"
-	model		"models/powerups/ammo/plasmaam.md3"
-	modelindex	MODELINDEX_CELLS
-	type		ITEM_AMMO
-	index		INVENTORY_CELLS
-	respawntime	40
-	mins		{-15,-15,-15}
-	maxs		{15,15,15}
-}
-
-iteminfo "ammo_bfg"
-{
-	name		"Bfg ammo"
-	model		"models/powerups/ammo/bfgam.md3"
-	modelindex	MODELINDEX_BFGAMMO
-	type		ITEM_AMMO
-	index		INVENTORY_BFGAMMO
-	respawntime	40
+	name		"Full Armor"
+	model		"models/powerups/armor/armor_blue.md3"
+	modelindex	MODELINDEX_ARMORFULL
+	type		ITEM_ARMOR
+	index		INVENTORY_ARMOR
+	respawntime	25
 	mins		{-15,-15,-15}
 	maxs		{15,15,15}
 }
@@ -274,6 +151,18 @@ iteminfo "weapon_gauntlet"
 	maxs		{15,15,15}
 }
 
+iteminfo "weapon_handgun"
+{
+	name		"Trusty .44"
+	model		"models/weapons2/handgun/handgun.md3"
+	modelindex	MODELINDEX_HANDGUN
+	type		ITEM_WEAPON
+	index		INVENTORY_HANDGUN
+	respawntime	10
+	mins		{-15,-15,-15}
+	maxs		{15,15,15}
+}
+
 iteminfo "weapon_machinegun"
 {
 	name		"Machinegun"
@@ -281,6 +170,18 @@ iteminfo "weapon_machinegun"
 	modelindex	MODELINDEX_MACHINEGUN
 	type		ITEM_WEAPON
 	index		INVENTORY_MACHINEGUN
+	respawntime	10
+	mins		{-15,-15,-15}
+	maxs		{15,15,15}
+}
+
+iteminfo "weapon_heavy_machinegun"
+{
+	name		"Heavy Machinegun"
+	model		"models/weapons2/heavy_machinegun/heavymgun.md3"
+	modelindex	MODELINDEX_HEAVY_MACHINEGUN
+	type		ITEM_WEAPON
+	index		INVENTORY_HEAVY_MACHINEGUN
 	respawntime	10
 	mins		{-15,-15,-15}
 	maxs		{15,15,15}
@@ -322,6 +223,18 @@ iteminfo "weapon_nailgun"
 	maxs		{15,15,15}
 }
 
+iteminfo "weapon_phosphorgun"
+{
+	name		"Phosphorgun"
+	model		"models/weapons/phosphorgun/phosphorgun.md3"
+	modelindex	MODELINDEX_PHOSPHORGUN
+	type		ITEM_WEAPON
+	index		INVENTORY_PHOSPHORGUN
+	respawntime	10
+	mins		{-15,-15,-15}
+	maxs		{15,15,15}
+}
+
 iteminfo "weapon_prox_launcher"
 {
 	name		"Prox Launcher"
@@ -337,10 +250,22 @@ iteminfo "weapon_prox_launcher"
 iteminfo "weapon_grenadelauncher"
 {
 	name		"Grenade Launcher"
-	model		"models/weapons2/grenadel/grenadel.md2"
+	model		"models/weapons2/grenadel/grenadel.md3"
 	modelindex	MODELINDEX_GRENADELAUNCHER
 	type		ITEM_WEAPON
 	index		INVENTORY_GRENADELAUNCHER
+	respawntime	10
+	mins		{-15,-15,-15}
+	maxs		{15,15,15}
+}
+
+iteminfo "weapon_napalmlauncher"
+{
+	name		"Napalm Launcher"
+	model		"models/weapons2/napalml/napalml.md3"
+	modelindex	MODELINDEX_NAPALMLAUNCHER
+	type		ITEM_WEAPON
+	index		INVENTORY_NAPALMLAUNCHER
 	respawntime	10
 	mins		{-15,-15,-15}
 	maxs		{15,15,15}
@@ -406,14 +331,197 @@ iteminfo "weapon_bfg"
 	maxs		{15,15,15}
 }
 
-iteminfo "weapon_grapplinghook"
+iteminfo "weapon_missilelauncher"
 {
-	name		"Grappling Hook"
-	model		"models/weapons2/grapple/grapple.md3"
-	modelindex	MODELINDEX_GRAPPLINGHOOK
+	name		"Missile Launcher"
+	model		"models/weapons2/missile/missilel.md3"
+	modelindex	MODELINDEX_MISSILELAUNCHER
 	type		ITEM_WEAPON
-	index		INVENTORY_GRAPPLINGHOOK
+	index		INVENTORY_MISSILELAUNCHER
 	respawntime	10
+	mins		{-15,-15,-15}
+	maxs		{15,15,15}
+}
+
+//===================================
+// AMMO
+//===================================
+iteminfo "ammo_clip"
+{
+	name		"Trusty .44 Ammo"
+	model		"models/powerups/ammo/handgunam.md3"
+	modelindex	MODELINDEX_HANDGUN_AMMO
+	type		ITEM_AMMO
+	index		INVENTORY_HANDGUN_AMMO
+	respawntime	40
+	mins		{-15,-15,-15}
+	maxs		{15,15,15}
+}
+
+iteminfo "ammo_bullets"
+{
+	name		"Bullets"
+	model		"models/powerups/ammo/machinegunam.md3"
+	modelindex	MODELINDEX_BULLETS
+	type		ITEM_AMMO
+	index		INVENTORY_BULLETS
+	respawntime	40
+	mins		{-15,-15,-15}
+	maxs		{15,15,15}
+}
+
+iteminfo "ammo_belt"
+{
+	name		"Chaingun Belt"
+	model		"models/powerups/ammo/chaingunam.md3"
+	modelindex	MODELINDEX_BELT
+	type		ITEM_AMMO
+	index		INVENTORY_BELT
+	respawntime	40
+	mins		{-15,-15,-15}
+	maxs		{15,15,15}
+}
+
+iteminfo "ammo_shells"
+{
+	name		"Shells"
+	model		"models/powerups/ammo/shotgunam.md3"
+	modelindex	MODELINDEX_SHELLS
+	type		ITEM_AMMO
+	index		INVENTORY_SHELLS
+	respawntime	40
+	mins		{-15,-15,-15}
+	maxs		{15,15,15}
+}
+
+iteminfo "ammo_nails"
+{
+	name		"Nails"
+	model		"models/powerups/ammo/nailgunam.md3"
+	modelindex	MODELINDEX_NAILS
+	type		ITEM_AMMO
+	index		INVENTORY_NAILS
+	respawntime	40
+	mins		{-15,-15,-15}
+	maxs		{15,15,15}
+}
+
+iteminfo "ammo_capsules"
+{
+	name		"Capsules"
+	model		"models/powerups/ammo/phosphorgunam.md3"
+	modelindex	MODELINDEX_CAPSULES
+	type		ITEM_AMMO
+	index		INVENTORY_CAPSULES
+	respawntime	40
+	mins		{-15,-15,-15}
+	maxs		{15,15,15}
+}
+
+iteminfo "ammo_mines"
+{
+	name		"Proximity Mines"
+	model		"models/powerups/ammo/proxmineam.md3"
+	modelindex	MODELINDEX_MINES
+	type		ITEM_AMMO
+	index		INVENTORY_MINES
+	respawntime	40
+	mins		{-15,-15,-15}
+	maxs		{15,15,15}
+}
+
+iteminfo "ammo_grenades"
+{
+	name		"Grenades"
+	model		"models/powerups/ammo/grenadeam.md3"
+	modelindex	MODELINDEX_GRENADES
+	type		ITEM_AMMO
+	index		INVENTORY_GRENADES
+	respawntime	40
+	mins		{-15,-15,-15}
+	maxs		{15,15,15}
+}
+
+iteminfo "ammo_canisters"
+{
+	name		"Canisters"
+	model		"models/powerups/ammo/napalmam.md3"
+	modelindex	MODELINDEX_CANISTERS
+	type		ITEM_AMMO
+	index		INVENTORY_CANISTERS
+	respawntime	40
+	mins		{-15,-15,-15}
+	maxs		{15,15,15}
+}
+
+iteminfo "ammo_rockets"
+{
+	name		"Rockets"
+	model		"models/powerups/ammo/rocketam.dm3"
+	modelindex	MODELINDEX_ROCKETS
+	type		ITEM_AMMO
+	index		INVENTORY_ROCKETS
+	respawntime	40
+	mins		{-15,-15,-15}
+	maxs		{15,15,15}
+}
+
+iteminfo "ammo_lightning"
+{
+	name		"Lightning"
+	model		"models/powerups/ammo/lightningam.md3"
+	modelindex	MODELINDEX_LIGHTNING_AMMO
+	type		ITEM_AMMO
+	index		INVENTORY_LIGHTNING_AMMO
+	respawntime	40
+	mins		{-15,-15,-15}
+	maxs		{15,15,15}
+}
+
+iteminfo "ammo_slugs"
+{
+	name		"Slugs"
+	model		"models/powerups/ammo/railgunam.md3"
+	modelindex	MODELINDEX_SLUGS
+	type		ITEM_AMMO
+	index		INVENTORY_SLUGS
+	respawntime	40
+	mins		{-15,-15,-15}
+	maxs		{15,15,15}
+}
+
+iteminfo "ammo_cells"
+{
+	name		"Cells"
+	model		"models/powerups/ammo/plasmaam.md3"
+	modelindex	MODELINDEX_CELLS
+	type		ITEM_AMMO
+	index		INVENTORY_CELLS
+	respawntime	40
+	mins		{-15,-15,-15}
+	maxs		{15,15,15}
+}
+
+iteminfo "ammo_bfg"
+{
+	name		"Bfg ammo"
+	model		"models/powerups/ammo/bfgam.md3"
+	modelindex	MODELINDEX_BFG_AMMO
+	type		ITEM_AMMO
+	index		INVENTORY_BFG_AMMO
+	respawntime	40
+	mins		{-15,-15,-15}
+	maxs		{15,15,15}
+}
+
+iteminfo "ammo_missiles"
+{
+	name		"Missiles"
+	model		"models/powerups/ammo/missileam.md3"
+	modelindex	MODELINDEX_MISSILES
+	type		ITEM_AMMO
+	index		INVENTORY_MISSILES
+	respawntime	40
 	mins		{-15,-15,-15}
 	maxs		{15,15,15}
 }
@@ -428,18 +536,6 @@ iteminfo "holdable_kamikaze"
 	modelindex	MODELINDEX_KAMIKAZE
 	type		ITEM_POWERUP
 	index		INVENTORY_KAMIKAZE
-	respawntime	60
-	mins		{-15,-15,-15}
-	maxs		{15,15,15}
-}
-
-iteminfo "holdable_invulnerability"
-{
-	name		"Invulnerability"
-	model		"models/powerups/holdable/invulnerability.md3"
-	modelindex	MODELINDEX_INVULNERABILITY
-	type		ITEM_POWERUP
-	index		INVENTORY_INVULNERABILITY
 	respawntime	60
 	mins		{-15,-15,-15}
 	maxs		{15,15,15}

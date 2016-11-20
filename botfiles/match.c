@@ -34,7 +34,6 @@ MTCONTEXT_MISC {
 	NETNAME," entered the game" = (MSG_ENTERGAME, 0);
 	NETNAME," is the new team leader" = (MSG_NEWLEADER, 0);
 }
-
 // initial team command chat messages
 MTCONTEXT_INITIALTEAMCHAT {
 	// help someone (and meet at the rendezvous point)

@@ -429,7 +429,7 @@ static void CG_Missile(centity_t *cent) {
 	ent.hModel = weapon->missileModel;
 	ent.renderfx = RF_NOSHADOW;
 
-	if (cent->currentState.weapon == WP_PROX_LAUNCHER) {
+	if (cent->currentState.weapon == WP_PROXLAUNCHER) {
 		if (s1->team == TEAM_BLUE) {
 			trap_R_AddLightToScene(cent->lerpOrigin, 25, 0.5f, 0.7f, 1.0f);
 			ent.hModel = cgs.media.blueProxMine;
@@ -445,7 +445,7 @@ static void CG_Missile(centity_t *cent) {
 	if (s1->pos.trType != TR_STATIONARY) {
 		RotateAroundDirection(ent.axis, cg.time / 4);
 	} else {
-		if (s1->weapon == WP_PROX_LAUNCHER) {
+		if (s1->weapon == WP_PROXLAUNCHER) {
 			AnglesToAxis(cent->lerpAngles, ent.axis);
 		} else {
 			RotateAroundDirection(ent.axis, s1->time);

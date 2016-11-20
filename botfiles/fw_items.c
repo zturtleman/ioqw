@@ -23,29 +23,29 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 */
 
 // balance range
-#define BR_ARMOR	30
-#define BR_HEALTH	30
-#define BR_WEAPON	30
-#define BR_AMMO		30
-#define BR_POWERUP	30
+#define BR_ARMOR 30
+#define BR_HEALTH 30
+#define BR_WEAPON 30
+#define BR_AMMO 30
+#define BR_POWERUP 30
 // balance macros
-#define MZ(value)			(value) < 0 ? 0 : (value)
-#define ARMOR_SCALE(v)		balance($evalfloat(MZ(FS_ARMOR*v)), $evalfloat(MZ(FS_ARMOR*v-BR_ARMOR)), $evalfloat(MZ(FS_ARMOR*v+BR_ARMOR)))
-#define HEALTH_SCALE(v)		balance($evalfloat(MZ(FS_HEALTH*v)), $evalfloat(MZ(FS_HEALTH*v-BR_HEALTH)), $evalfloat(MZ(FS_HEALTH*v+BR_HEALTH)))
-#define WEAPON_SCALE(v)		balance($evalfloat(MZ(v)), $evalfloat(MZ(v-BR_WEAPON)), $evalfloat(MZ(v+BR_WEAPON)))
-#define AMMO_SCALE(v)		balance($evalfloat(MZ(v)), $evalfloat(MZ(v-BR_AMMO)), $evalfloat(MZ(v+BR_AMMO)))
-#define POWERUP_SCALE(v)	balance($evalfloat(MZ(v)), $evalfloat(MZ(v-BR_POWERUP)), $evalfloat(MZ(v+BR_POWERUP)))
+#define MZ(value) (value) < 0 ? 0 : (value)
+#define ARMOR_SCALE(v) balance($evalfloat(MZ(FS_ARMOR * v)), $evalfloat(MZ(FS_ARMOR * v - BR_ARMOR)), $evalfloat(MZ(FS_ARMOR * v + BR_ARMOR)))
+#define HEALTH_SCALE(v) balance($evalfloat(MZ(FS_HEALTH * v)), $evalfloat(MZ(FS_HEALTH * v - BR_HEALTH)), $evalfloat(MZ(FS_HEALTH * v + BR_HEALTH)))
+#define WEAPON_SCALE(v) balance($evalfloat(MZ(v)), $evalfloat(MZ(v - BR_WEAPON)), $evalfloat(MZ(v + BR_WEAPON)))
+#define AMMO_SCALE(v) balance($evalfloat(MZ(v)), $evalfloat(MZ(v - BR_AMMO)), $evalfloat(MZ(v + BR_AMMO)))
+#define POWERUP_SCALE(v) balance($evalfloat(MZ(v)), $evalfloat(MZ(v - BR_POWERUP)), $evalfloat(MZ(v + BR_POWERUP)))
 
 //=============================================
 // HEALTH
 //=============================================
 weight "item_health_small"
 {
-	switch(BOT_IS_IN_HURRY)
+	switch (BOT_IS_IN_HURRY)
 	{
 		case 1:
 		{
-			switch(INVENTORY_HEALTH)
+			switch (INVENTORY_HEALTH)
 			{
 				case 10: return HEALTH_SCALE(80);
 				case 20: return HEALTH_SCALE(80);
@@ -62,7 +62,7 @@ weight "item_health_small"
 		}
 		default:
 		{
-			switch(INVENTORY_HEALTH)
+			switch (INVENTORY_HEALTH)
 			{
 				case 10: return HEALTH_SCALE(40);
 				case 20: return HEALTH_SCALE(40);
@@ -78,7 +78,7 @@ weight "item_health_small"
 
 weight "item_health"
 {
-	switch(INVENTORY_HEALTH)
+	switch (INVENTORY_HEALTH)
 	{
 		case 10: return HEALTH_SCALE(90);
 		case 20: return HEALTH_SCALE(90);
@@ -96,7 +96,7 @@ weight "item_health"
 
 weight "item_health_large"
 {
-	switch(INVENTORY_HEALTH)
+	switch (INVENTORY_HEALTH)
 	{
 		case 10: return HEALTH_SCALE(100);
 		case 20: return HEALTH_SCALE(100);
@@ -114,7 +114,7 @@ weight "item_health_large"
 
 weight "item_health_mega"
 {
-	switch(INVENTORY_HEALTH)
+	switch (INVENTORY_HEALTH)
 	{
 		case 10: return HEALTH_SCALE(110);
 		case 20: return HEALTH_SCALE(110);
@@ -135,11 +135,11 @@ weight "item_health_mega"
 //=============================================
 weight "item_armor_shard"
 {
-	switch(BOT_IS_IN_HURRY)
+	switch (BOT_IS_IN_HURRY)
 	{
 		case 1:
 		{
-			switch(INVENTORY_ARMOR)
+			switch (INVENTORY_ARMOR)
 			{
 				case 10: return ARMOR_SCALE(20);
 				case 20: return ARMOR_SCALE(20);
@@ -170,7 +170,7 @@ weight "item_armor_shard"
 
 weight "item_armor_combat"
 {
-	switch(INVENTORY_ARMOR)
+	switch (INVENTORY_ARMOR)
 	{
 		case 10: return ARMOR_SCALE(60);
 		case 20: return ARMOR_SCALE(60);
@@ -198,7 +198,7 @@ weight "item_armor_combat"
 
 weight "item_armor_body"
 {
-	switch(INVENTORY_ARMOR)
+	switch (INVENTORY_ARMOR)
 	{
 		case 10: return ARMOR_SCALE(90);
 		case 20: return ARMOR_SCALE(90);
@@ -223,16 +223,83 @@ weight "item_armor_body"
 		default: return ARMOR_SCALE(1);
 	}
 }
+
+weight "item_armor_full"
+{
+	switch (INVENTORY_ARMOR)
+	{
+		case 10: return ARMOR_SCALE(100);
+		case 20: return ARMOR_SCALE(100);
+		case 30: return ARMOR_SCALE(100);
+		case 40: return ARMOR_SCALE(100);
+		case 50: return ARMOR_SCALE(100);
+		case 60: return ARMOR_SCALE(70);
+		case 70: return ARMOR_SCALE(70);
+		case 80: return ARMOR_SCALE(70);
+		case 90: return ARMOR_SCALE(70);
+		case 100: return ARMOR_SCALE(70);
+		case 110: return ARMOR_SCALE(30);
+		case 120: return ARMOR_SCALE(30);
+		case 130: return ARMOR_SCALE(30);
+		case 140: return ARMOR_SCALE(30);
+		case 150: return ARMOR_SCALE(30);
+		case 160: return ARMOR_SCALE(30);
+		case 170: return ARMOR_SCALE(30);
+		case 180: return ARMOR_SCALE(30);
+		case 190: return ARMOR_SCALE(30);
+		case 200: return ARMOR_SCALE(30);
+		default: return ARMOR_SCALE(1);
+	}
+}
+
 //=============================================
 // WEAPONS
 //=============================================
-weight "weapon_machinegun"
+weight "weapon_handgun"
 {
-	switch(INVENTORY_MACHINEGUN)
+	switch (INVENTORY_HANDGUN)
 	{
 		case 1:
 		{
-			switch(INVENTORY_BULLETS)
+			switch (INVENTORY_HANDGUN_AMMO)
+			{
+				case 40: return WEAPON_SCALE(W_HANDGUN - 10);
+				default: return WEAPON_SCALE(W_HANDGUN);
+			}
+		}
+		default:
+		{
+			switch (BOT_IS_IN_HURRY)
+			{
+				case 1:
+				{
+					switch (INVENTORY_HANDGUN_AMMO)
+					{
+						case 50: return WEAPON_SCALE(GWW_HANDGUN);
+						case 100: return WEAPON_SCALE(GWW_HANDGUN - 10);
+						default: return balance(5, 3, 7);
+					}
+				}
+				default:
+				{
+					switch (INVENTORY_HANDGUN_AMMO)
+					{
+						case 20: return WEAPON_SCALE(GWW_HANDGUN);
+						default: return 0;
+					}
+				}
+			}
+		}
+	}
+}
+
+weight "weapon_machinegun"
+{
+	switch (INVENTORY_MACHINEGUN)
+	{
+		case 1:
+		{
+			switch (INVENTORY_BULLETS)
 			{
 				case 40: return WEAPON_SCALE(W_MACHINEGUN - 10);
 				default: return WEAPON_SCALE(W_MACHINEGUN);
@@ -240,11 +307,11 @@ weight "weapon_machinegun"
 		}
 		default:
 		{
-			switch(BOT_IS_IN_HURRY)
+			switch (BOT_IS_IN_HURRY)
 			{
 				case 1:
 				{
-					switch(INVENTORY_BULLETS)
+					switch (INVENTORY_BULLETS)
 					{
 						case 50: return WEAPON_SCALE(GWW_MACHINEGUN);
 						case 100: return WEAPON_SCALE(GWW_MACHINEGUN - 10);
@@ -253,7 +320,7 @@ weight "weapon_machinegun"
 				}
 				default:
 				{
-					switch(INVENTORY_BULLETS)
+					switch (INVENTORY_BULLETS)
 					{
 						case 20: return WEAPON_SCALE(GWW_MACHINEGUN);
 						default: return 0;
@@ -264,18 +331,56 @@ weight "weapon_machinegun"
 	}
 }
 
+weight "weapon_heavy_machinegun"
+{
+	switch (INVENTORY_HEAVY_MACHINEGUN)
+	{
+		case 1:
+		{
+			switch (INVENTORY_BULLETS)
+			{
+				case 40: return WEAPON_SCALE(W_HEAVY_MACHINEGUN - 10);
+				default: return WEAPON_SCALE(W_HEAVY_MACHINEGUN);
+			}
+		}
+		default:
+		{
+			switch (BOT_IS_IN_HURRY)
+			{
+				case 1:
+				{
+					switch (INVENTORY_BULLETS)
+					{
+						case 50: return WEAPON_SCALE(GWW_HEAVY_MACHINEGUN);
+						case 100: return WEAPON_SCALE(GWW_HEAVY_MACHINEGUN - 10);
+						default: return balance(5, 3, 7);
+					}
+				}
+				default:
+				{
+					switch (INVENTORY_BULLETS)
+					{
+						case 20: return WEAPON_SCALE(GWW_HEAVY_MACHINEGUN);
+						default: return 0;
+					}
+				}
+			}
+		}
+	}
+}
+
 weight "weapon_chaingun"
 {
-	switch(INVENTORY_CHAINGUN)
+	switch (INVENTORY_CHAINGUN)
 	{
 		case 1: return WEAPON_SCALE(W_CHAINGUN);
 		default:
 		{
-			switch(BOT_IS_IN_HURRY)
+			switch (BOT_IS_IN_HURRY)
 			{
 				case 1:
 				{
-					switch(INVENTORY_BELT)
+					switch (INVENTORY_BELT)
 					{
 						case 50: return WEAPON_SCALE(GWW_CHAINGUN);
 						case 100: return WEAPON_SCALE(GWW_CHAINGUN - 10);
@@ -284,7 +389,7 @@ weight "weapon_chaingun"
 				}
 				default:
 				{
-					switch(INVENTORY_BELT)
+					switch (INVENTORY_BELT)
 					{
 						case 50: return WEAPON_SCALE(GWW_CHAINGUN);
 						default: return 0;
@@ -297,11 +402,11 @@ weight "weapon_chaingun"
 
 weight "weapon_shotgun"
 {
-	switch(INVENTORY_SHOTGUN)
+	switch (INVENTORY_SHOTGUN)
 	{
 		case 1:
 		{
-			switch(INVENTORY_SHELLS)
+			switch (INVENTORY_SHELLS)
 			{
 				case 10: return WEAPON_SCALE(W_SHOTGUN - 10);
 				default: return WEAPON_SCALE(W_SHOTGUN);
@@ -309,11 +414,11 @@ weight "weapon_shotgun"
 		}
 		default:
 		{
-			switch(BOT_IS_IN_HURRY)
+			switch (BOT_IS_IN_HURRY)
 			{
 				case 1:
 				{
-					switch(INVENTORY_SHELLS)
+					switch (INVENTORY_SHELLS)
 					{
 						case 10: return WEAPON_SCALE(GWW_SHOTGUN);
 						case 20: return WEAPON_SCALE(GWW_SHOTGUN - 10);
@@ -322,7 +427,7 @@ weight "weapon_shotgun"
 				}
 				default:
 				{
-					switch(INVENTORY_SHELLS)
+					switch (INVENTORY_SHELLS)
 					{
 						case 5: return WEAPON_SCALE(GWW_SHOTGUN);
 						default: return 0;
@@ -335,16 +440,16 @@ weight "weapon_shotgun"
 
 weight "weapon_nailgun"
 {
-	switch(INVENTORY_NAILGUN)
+	switch (INVENTORY_NAILGUN)
 	{
 		case 1: return WEAPON_SCALE(W_NAILGUN);
 		default:
 		{
-			switch(BOT_IS_IN_HURRY)
+			switch (BOT_IS_IN_HURRY)
 			{
 				case 1:
 				{
-					switch(INVENTORY_NAILS)
+					switch (INVENTORY_NAILS)
 					{
 						case 20: return WEAPON_SCALE(GWW_NAILGUN);
 						case 40: return WEAPON_SCALE(GWW_NAILGUN - 10);
@@ -353,7 +458,7 @@ weight "weapon_nailgun"
 				}
 				default:
 				{
-					switch(INVENTORY_NAILS)
+					switch (INVENTORY_NAILS)
 					{
 						case 20: return WEAPON_SCALE(GWW_NAILGUN);
 						default: return 0;
@@ -364,18 +469,49 @@ weight "weapon_nailgun"
 	}
 }
 
+weight "weapon_phosphorgun"
+{
+	switch (INVENTORY_PHOSPHORGUN)
+	{
+		case 1: return WEAPON_SCALE(W_PHOSPHORGUN);
+		default:
+		{
+			switch (BOT_IS_IN_HURRY)
+			{
+				case 1:
+				{
+					switch (INVENTORY_CAPSULES)
+					{
+						case 20: return WEAPON_SCALE(GWW_PHOSPHORGUN);
+						case 40: return WEAPON_SCALE(GWW_PHOSPHORGUN - 10);
+						default: return balance(5, 3, 7);
+					}
+				}
+				default:
+				{
+					switch (INVENTORY_CAPSULES)
+					{
+						case 10: return WEAPON_SCALE(GWW_PHOSPHORGUN);
+						default: return 0;
+					}
+				}
+			}
+		}
+	}
+}
+
 weight "weapon_prox_launcher"
 {
-	switch(BOT_IS_IN_HURRY)
+	switch (BOT_IS_IN_HURRY)
 	{
 		case 1:
 		{
-			switch(INVENTORY_PROXLAUNCHER)
+			switch (INVENTORY_PROXLAUNCHER)
 			{
 				case 1: return WEAPON_SCALE(W_PROXLAUNCHER);
 				default:
 				{
-					switch(INVENTORY_MINES)
+					switch (INVENTORY_MINES)
 					{
 						case 5: return WEAPON_SCALE(GWW_PROXLAUNCHER);
 						case 10: return WEAPON_SCALE(GWW_PROXLAUNCHER - 10);
@@ -390,16 +526,16 @@ weight "weapon_prox_launcher"
 
 weight "weapon_grenadelauncher"
 {
-	switch(BOT_IS_IN_HURRY)
+	switch (BOT_IS_IN_HURRY)
 	{
 		case 1:
 		{
-			switch(INVENTORY_GRENADELAUNCHER)
+			switch (INVENTORY_GRENADELAUNCHER)
 			{
 				case 1: return WEAPON_SCALE(W_GRENADELAUNCHER);
 				default:
 				{
-					switch(INVENTORY_GRENADES)
+					switch (INVENTORY_GRENADES)
 					{
 						case 20: return WEAPON_SCALE(GWW_GRENADELAUNCHER);
 						case 40: return WEAPON_SCALE(GWW_GRENADELAUNCHER - 10);
@@ -412,18 +548,42 @@ weight "weapon_grenadelauncher"
 	}
 }
 
+weight "weapon_napalmlauncher"
+{
+	switch (BOT_IS_IN_HURRY)
+	{
+		case 1:
+		{
+			switch (INVENTORY_CANISTERS)
+			{
+				case 1: return WEAPON_SCALE(W_NAPALMLAUNCHER);
+				default:
+				{
+					switch (INVENTORY_CANISTERS)
+					{
+						case 20: return WEAPON_SCALE(GWW_NAPALMLAUNCHER);
+						case 40: return WEAPON_SCALE(GWW_NAPALMLAUNCHER - 10);
+						default: return balance(5, 3, 7);
+					}
+				}
+			}
+		}
+		default: return 0;
+	}
+}
+
 weight "weapon_rocketlauncher"
 {
-	switch(INVENTORY_ROCKETLAUNCHER)
+	switch (INVENTORY_ROCKETLAUNCHER)
 	{
 		case 1: return WEAPON_SCALE(W_ROCKETLAUNCHER);
 		default:
 		{
-			switch(BOT_IS_IN_HURRY)
+			switch (BOT_IS_IN_HURRY)
 			{
 				case 1:
 				{
-					switch(INVENTORY_ROCKETS)
+					switch (INVENTORY_ROCKETS)
 					{
 						case 20: return WEAPON_SCALE(GWW_ROCKETLAUNCHER);
 						case 40: return WEAPON_SCALE(GWW_ROCKETLAUNCHER - 10);
@@ -432,7 +592,7 @@ weight "weapon_rocketlauncher"
 				}
 				default:
 				{
-					switch(INVENTORY_ROCKETS)
+					switch (INVENTORY_ROCKETS)
 					{
 						case 10: return WEAPON_SCALE(GWW_ROCKETLAUNCHER);
 						default: return 0;
@@ -445,16 +605,16 @@ weight "weapon_rocketlauncher"
 
 weight "weapon_lightning"
 {
-	switch(INVENTORY_LIGHTNING)
+	switch (INVENTORY_LIGHTNING)
 	{
 		case 1: return WEAPON_SCALE(W_LIGHTNING);
 		default:
 		{
-			switch(BOT_IS_IN_HURRY)
+			switch (BOT_IS_IN_HURRY)
 			{
 				case 1:
 				{
-					switch(INVENTORY_LIGHTNINGAMMO)
+					switch (INVENTORY_LIGHTNING_AMMO)
 					{
 						case 50: return WEAPON_SCALE(GWW_LIGHTNING);
 						case 80: return WEAPON_SCALE(GWW_LIGHTNING - 10);
@@ -463,7 +623,7 @@ weight "weapon_lightning"
 				}
 				default:
 				{
-					switch(INVENTORY_LIGHTNINGAMMO)
+					switch (INVENTORY_LIGHTNING_AMMO)
 					{
 						case 50: return WEAPON_SCALE(GWW_LIGHTNING);
 						default: return 0;
@@ -476,16 +636,16 @@ weight "weapon_lightning"
 
 weight "weapon_railgun"
 {
-	switch(INVENTORY_RAILGUN)
+	switch (INVENTORY_RAILGUN)
 	{
 		case 1: return WEAPON_SCALE(W_RAILGUN);
 		default:
 		{
-			switch(BOT_IS_IN_HURRY)
+			switch (BOT_IS_IN_HURRY)
 			{
 				case 1:
 				{
-					switch(INVENTORY_SLUGS)
+					switch (INVENTORY_SLUGS)
 					{
 						case 10: return WEAPON_SCALE(GWW_RAILGUN);
 						case 20: return WEAPON_SCALE(GWW_RAILGUN - 10);
@@ -494,7 +654,7 @@ weight "weapon_railgun"
 				}
 				default:
 				{
-					switch(INVENTORY_SLUGS)
+					switch (INVENTORY_SLUGS)
 					{
 						case 5: return WEAPON_SCALE(GWW_RAILGUN);
 						default: return 0;
@@ -507,16 +667,16 @@ weight "weapon_railgun"
 
 weight "weapon_plasmagun"
 {
-	switch(INVENTORY_PLASMAGUN)
+	switch (INVENTORY_PLASMAGUN)
 	{
 		case 1: return WEAPON_SCALE(W_PLASMAGUN);
 		default:
 		{
-			switch(BOT_IS_IN_HURRY)
+			switch (BOT_IS_IN_HURRY)
 			{
 				case 1:
 				{
-					switch(INVENTORY_CELLS)
+					switch (INVENTORY_CELLS)
 					{
 						case 20: return WEAPON_SCALE(GWW_PLASMAGUN);
 						case 50: return WEAPON_SCALE(GWW_PLASMAGUN - 10);
@@ -525,7 +685,7 @@ weight "weapon_plasmagun"
 				}
 				default:
 				{
-					switch(INVENTORY_CELLS)
+					switch (INVENTORY_CELLS)
 					{
 						case 20: return WEAPON_SCALE(GWW_PLASMAGUN);
 						default: return 0;
@@ -538,12 +698,12 @@ weight "weapon_plasmagun"
 
 weight "weapon_bfg"
 {
-	switch(INVENTORY_BFG10K)
+	switch (INVENTORY_BFG10K)
 	{
 		case 1: return WEAPON_SCALE(W_BFG10K);
 		default:
 		{
-			switch(INVENTORY_BFGAMMO)
+			switch (INVENTORY_BFG_AMMO)
 			{
 				case 50: return WEAPON_SCALE(GWW_BFG10K);
 				case 200: return WEAPON_SCALE(GWW_BFG10K - 10);
@@ -553,16 +713,58 @@ weight "weapon_bfg"
 	}
 }
 
+weight "weapon_missilelauncher"
+{
+	switch (INVENTORY_MISSILELAUNCHER)
+	{
+		case 1: return WEAPON_SCALE(W_MISSILELAUNCHER);
+		default:
+		{
+			switch (INVENTORY_MISSILES)
+			{
+				case 5: return WEAPON_SCALE(GWW_MISSILELAUNCHER);
+				case 10: return WEAPON_SCALE(GWW_MISSILELAUNCHER - 10);
+				default: return balance(5, 3, 7);
+			}
+		}
+	}
+}
+
 //=============================================
 // AMMO
 //=============================================
-weight "ammo_bullets"
+weight "ammo_clip"
 {
-	switch(BOT_IS_IN_HURRY)
+	switch (BOT_IS_IN_HURRY)
 	{
 		case 1:
 		{
-			switch(INVENTORY_BULLETS)
+			switch (INVENTORY_HANDGUN_AMMO)
+			{
+				case 20: return AMMO_SCALE(20);
+				case 40: return AMMO_SCALE(20);
+				case 60: return AMMO_SCALE(20);
+				case 80: return AMMO_SCALE(20);
+				case 100: return AMMO_SCALE(20);
+				case 120: return AMMO_SCALE(20);
+				case 140: return AMMO_SCALE(20);
+				case 160: return AMMO_SCALE(20);
+				case 180: return AMMO_SCALE(20);
+				case 200: return AMMO_SCALE(0);
+				default: return 0;
+			}
+		}
+		default: return 0;
+	}
+}
+
+weight "ammo_bullets"
+{
+	switch (BOT_IS_IN_HURRY)
+	{
+		case 1:
+		{
+			switch (INVENTORY_BULLETS)
 			{
 				case 20: return AMMO_SCALE(20);
 				case 40: return AMMO_SCALE(20);
@@ -583,11 +785,11 @@ weight "ammo_bullets"
 
 weight "ammo_belt"
 {
-	switch(BOT_IS_IN_HURRY)
+	switch (BOT_IS_IN_HURRY)
 	{
 		case 1:
 		{
-			switch(INVENTORY_BELT)
+			switch (INVENTORY_BELT)
 			{
 				case 20: return AMMO_SCALE(20);
 				case 40: return AMMO_SCALE(20);
@@ -608,11 +810,11 @@ weight "ammo_belt"
 
 weight "ammo_shells"
 {
-	switch(BOT_IS_IN_HURRY)
+	switch (BOT_IS_IN_HURRY)
 	{
 		case 1:
 		{
-			switch(INVENTORY_SHELLS)
+			switch (INVENTORY_SHELLS)
 			{
 				case 20: return AMMO_SCALE(20);
 				case 40: return AMMO_SCALE(20);
@@ -633,11 +835,36 @@ weight "ammo_shells"
 
 weight "ammo_nails"
 {
-	switch(BOT_IS_IN_HURRY)
+	switch (BOT_IS_IN_HURRY)
 	{
 		case 1:
 		{
-			switch(INVENTORY_NAILS)
+			switch (INVENTORY_NAILS)
+			{
+				case 20: return AMMO_SCALE(20);
+				case 40: return AMMO_SCALE(20);
+				case 60: return AMMO_SCALE(20);
+				case 80: return AMMO_SCALE(20);
+				case 100: return AMMO_SCALE(20);
+				case 120: return AMMO_SCALE(20);
+				case 140: return AMMO_SCALE(20);
+				case 160: return AMMO_SCALE(20);
+				case 180: return AMMO_SCALE(20);
+				case 200: return AMMO_SCALE(0);
+				default: return 0;
+			}
+		}
+		default: return 0;
+	}
+}
+
+weight "ammo_capsules"
+{
+	switch (BOT_IS_IN_HURRY)
+	{
+		case 1:
+		{
+			switch (INVENTORY_CAPSULES)
 			{
 				case 20: return AMMO_SCALE(20);
 				case 40: return AMMO_SCALE(20);
@@ -658,11 +885,11 @@ weight "ammo_nails"
 
 weight "ammo_mines"
 {
-	switch(BOT_IS_IN_HURRY)
+	switch (BOT_IS_IN_HURRY)
 	{
 		case 1:
 		{
-			switch(INVENTORY_MINES)
+			switch (INVENTORY_MINES)
 			{
 				case 20: return AMMO_SCALE(20);
 				case 40: return AMMO_SCALE(20);
@@ -683,11 +910,36 @@ weight "ammo_mines"
 
 weight "ammo_grenades"
 {
-	switch(BOT_IS_IN_HURRY)
+	switch (BOT_IS_IN_HURRY)
 	{
 		case 1:
 		{
-			switch(INVENTORY_GRENADES)
+			switch (INVENTORY_GRENADES)
+			{
+				case 20: return AMMO_SCALE(20);
+				case 40: return AMMO_SCALE(20);
+				case 60: return AMMO_SCALE(20);
+				case 80: return AMMO_SCALE(20);
+				case 100: return AMMO_SCALE(20);
+				case 120: return AMMO_SCALE(20);
+				case 140: return AMMO_SCALE(20);
+				case 160: return AMMO_SCALE(20);
+				case 180: return AMMO_SCALE(20);
+				case 200: return AMMO_SCALE(0);
+				default: return 0;
+			}
+		}
+		default: return 0;
+	}
+}
+
+weight "ammo_canisters"
+{
+	switch (BOT_IS_IN_HURRY)
+	{
+		case 1:
+		{
+			switch (INVENTORY_CANISTERS)
 			{
 				case 20: return AMMO_SCALE(20);
 				case 40: return AMMO_SCALE(20);
@@ -708,11 +960,11 @@ weight "ammo_grenades"
 
 weight "ammo_rockets"
 {
-	switch(BOT_IS_IN_HURRY)
+	switch (BOT_IS_IN_HURRY)
 	{
 		case 1:
 		{
-			switch(INVENTORY_ROCKETS)
+			switch (INVENTORY_ROCKETS)
 			{
 				case 20: return AMMO_SCALE(20);
 				case 40: return AMMO_SCALE(20);
@@ -733,11 +985,11 @@ weight "ammo_rockets"
 
 weight "ammo_lightning"
 {
-	switch(BOT_IS_IN_HURRY)
+	switch (BOT_IS_IN_HURRY)
 	{
 		case 1:
 		{
-			switch(INVENTORY_LIGHTNINGAMMO)
+			switch (INVENTORY_LIGHTNING_AMMO)
 			{
 				case 20: return AMMO_SCALE(20);
 				case 40: return AMMO_SCALE(20);
@@ -758,11 +1010,11 @@ weight "ammo_lightning"
 
 weight "ammo_slugs"
 {
-	switch(BOT_IS_IN_HURRY)
+	switch (BOT_IS_IN_HURRY)
 	{
 		case 1:
 		{
-			switch(INVENTORY_SLUGS)
+			switch (INVENTORY_SLUGS)
 			{
 				case 20: return AMMO_SCALE(20);
 				case 40: return AMMO_SCALE(20);
@@ -783,11 +1035,11 @@ weight "ammo_slugs"
 
 weight "ammo_cells"
 {
-	switch(BOT_IS_IN_HURRY)
+	switch (BOT_IS_IN_HURRY)
 	{
 		case 1:
 		{
-			switch(INVENTORY_CELLS)
+			switch (INVENTORY_CELLS)
 			{
 				case 20: return AMMO_SCALE(20);
 				case 40: return AMMO_SCALE(20);
@@ -808,7 +1060,25 @@ weight "ammo_cells"
 
 weight "ammo_bfg"
 {
-	switch(INVENTORY_BFGAMMO)
+	switch (INVENTORY_BFG_AMMO)
+	{
+		case 20: return AMMO_SCALE(20);
+		case 40: return AMMO_SCALE(20);
+		case 60: return AMMO_SCALE(20);
+		case 80: return AMMO_SCALE(20);
+		case 100: return AMMO_SCALE(20);
+		case 120: return AMMO_SCALE(20);
+		case 140: return AMMO_SCALE(20);
+		case 160: return AMMO_SCALE(20);
+		case 180: return AMMO_SCALE(20);
+		case 200: return AMMO_SCALE(0);
+		default: return 0;
+	}
+}
+
+weight "ammo_missiles"
+{
+	switch (INVENTORY_MISSILES)
 	{
 		case 20: return AMMO_SCALE(20);
 		case 40: return AMMO_SCALE(20);
@@ -829,44 +1099,14 @@ weight "ammo_bfg"
 //=============================================
 weight "holdable_kamikaze"
 {
-	switch(BOT_IS_IN_HURRY)
+	switch (BOT_IS_IN_HURRY)
 	{
 		case 1:
 		{
-			switch(INVENTORY_KAMIKAZE)
+			switch (INVENTORY_KAMIKAZE) // bot already has the kamikaze
 			{
-				case 1:
-				{
-					switch(INVENTORY_INVULNERABILITY)
-					{
-						case 1: return POWERUP_SCALE(W_KAMIKAZE);
-						default: return 0;
-					}
-				}
-				default: return 0; // bot has an emergency goal
-			}
-		}
-		default: return 0;
-	}
-}
-
-weight "holdable_invulnerability"
-{
-	switch(BOT_IS_IN_HURRY)
-	{
-		case 1:
-		{
-			switch(INVENTORY_KAMIKAZE)
-			{
-				case 1:
-				{
-					switch(INVENTORY_INVULNERABILITY)
-					{
-						case 1: return POWERUP_SCALE(W_INVULNERABILITY);
-						default: return 0;
-					}
-				}
-				default: return 0;
+					case 1: return POWERUP_SCALE(W_KAMIKAZE);
+					default: return 0;
 			}
 		}
 		default: return 0; // bot has an emergency goal
@@ -890,19 +1130,19 @@ weight "item_regen"
 
 weight "item_ammoregen"
 {
-	switch(INVENTORY_AMMOREGEN)
+	switch (INVENTORY_AMMOREGEN)
 	{
 		case 1:
 		{
-			switch(INVENTORY_GUARD)
+			switch (INVENTORY_GUARD)
 			{
 				case 1:
 				{
-					switch(INVENTORY_DOUBLER)
+					switch (INVENTORY_DOUBLER)
 					{
 						case 1:
 						{
-							switch(INVENTORY_SCOUT)
+							switch (INVENTORY_SCOUT)
 							{
 								case 1: return POWERUP_SCALE(W_AMMOREGEN);
 								default: return 0;
@@ -920,19 +1160,19 @@ weight "item_ammoregen"
 
 weight "item_guard"
 {
-	switch(INVENTORY_AMMOREGEN)
+	switch (INVENTORY_AMMOREGEN)
 	{
 		case 1:
 		{
-			switch(INVENTORY_GUARD)
+			switch (INVENTORY_GUARD)
 			{
 				case 1:
 				{
-					switch(INVENTORY_DOUBLER)
+					switch (INVENTORY_DOUBLER)
 					{
 						case 1:
 						{
-							switch(INVENTORY_SCOUT)
+							switch (INVENTORY_SCOUT)
 							{
 								case 1: return POWERUP_SCALE(W_GUARD);
 								default: return 0;
@@ -950,19 +1190,19 @@ weight "item_guard"
 
 weight "item_doubler"
 {
-	switch(INVENTORY_AMMOREGEN)
+	switch (INVENTORY_AMMOREGEN)
 	{
 		case 1:
 		{
-			switch(INVENTORY_GUARD)
+			switch (INVENTORY_GUARD)
 			{
 				case 1:
 				{
-					switch(INVENTORY_DOUBLER)
+					switch (INVENTORY_DOUBLER)
 					{
 						case 1:
 						{
-							switch(INVENTORY_SCOUT)
+							switch (INVENTORY_SCOUT)
 							{
 								case 1: return POWERUP_SCALE(W_DOUBLER);
 								default: return 0;
@@ -980,19 +1220,19 @@ weight "item_doubler"
 
 weight "item_scout"
 {
-	switch(INVENTORY_AMMOREGEN)
+	switch (INVENTORY_AMMOREGEN)
 	{
 		case 1:
 		{
-			switch(INVENTORY_GUARD)
+			switch (INVENTORY_GUARD)
 			{
 				case 1:
 				{
-					switch(INVENTORY_DOUBLER)
+					switch (INVENTORY_DOUBLER)
 					{
 						case 1:
 						{
-							switch(INVENTORY_SCOUT)
+							switch (INVENTORY_SCOUT)
 							{
 								case 1: return POWERUP_SCALE(W_SCOUT);
 								default: return 0;
@@ -1008,11 +1248,9 @@ weight "item_scout"
 	}
 }
 
-//=============================================
-// This is only used to pickup dropped CTF
-// flags now. The logic in here makes no
-// sense since the bot has specific CTF AI.
-//=============================================
+//=======================================================================================================================
+// This is only used to pickup dropped CTF flags now. The logic in here makes no sense since the bot has specific CTF AI.
+//=======================================================================================================================
 
 weight "team_CTF_redflag"
 {

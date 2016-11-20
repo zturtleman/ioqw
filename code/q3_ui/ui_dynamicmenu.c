@@ -113,30 +113,34 @@ typedef struct {
 	const char *icon;
 	int game;
 } itemList_t;
-// The machine gun is excluded from the list because it is the default weapon, maps usually don't have it as available for pickup.
+// The gauntlet, hand gun and machine gun are excluded from the list because they are the default weapons, maps usually don't have them as available for pickup.
 static itemList_t dm_itemList[] = {
-	{"Mega", "mh", "item_health_mega", qfalse, "uie_icons/iconh_mega", 0},
-	{"Yel Armour", "ya", "item_armor_combat", qfalse, "uie_icons/iconr_yellow", 0},
-	{"Red Armour", "ra", "item_armor_body", qfalse, "uie_icons/iconr_red", 0},
-//	{"Machine G", "mg", "weapon_machinegun", qfalse, "uie_icons/iconw_machinegun", 0},
-	{"Chaingun", "cg", "weapon_chaingun", qfalse, "uie_icons/iconw_chaingun", 0},
-	{"Shotgun", "sg", "weapon_shotgun", qfalse, "uie_icons/iconw_shotgun", 0},
-	{"Nailgun", "ng", "weapon_nailgun", qfalse, "uie_icons/iconw_nailgun", 0},
-	{"Proxlauncher", "proxy", "weapon_prox_launcher", qfalse, "uie_icons/iconw_prox_launcher", 0},
-	{"Grenadelauncher", "gl", "weapon_grenadelauncher", qfalse, "uie_icons/iconw_grenade", 0},
-	{"Rocketlauncher", "rl", "weapon_rocketlauncher", qfalse, "uie_icons/iconw_rocket", 0},
-	{"Lightninggun", "lg", "weapon_lightning", qfalse, "uie_icons/iconw_lightning", 0},
-	{"Railgun", "rg", "weapon_railgun", qfalse, "uie_icons/iconw_railgun", 0},
-	{"Plasmagun", "pg", "weapon_plasmagun", qfalse, "uie_icons/iconw_plasma", 0},
-	{"BFG10K", "bfg", "weapon_bfg", qfalse, "uie_icons/iconw_bfg", 0},
-	{"Kamikaze", "kam", "holdable_kamikaze", qfalse, "uie_icons/kamikaze", 0},
-	{"Quad Damage", "quad", "item_quad", qfalse, "uie_icons/quad", 0},
-	{"Invisibility", "invis", "item_invis", qfalse, "uie_icons/invis", 0},
-	{"Regeneration", "regen", "item_regen", qfalse, "uie_icons/regen", 0},
-	{"Ammoregen", "areg", "item_ammoregen", qfalse, "uie_icons/ammoregen", 0},
-	{"Guard", "gd", "item_guard", qfalse, "uie_icons/guard", 0},
-	{"Doubler", "db", "item_doubler", qfalse, "uie_icons/doubler", 0},
-	{"Scout", "sc", "item_scout", qfalse, "uie_icons/scout", 0}
+	{"Mega Health", "MH", "item_health_mega", qfalse, "uie_icons/iconh_mega", 0},
+	{"Armor", "YA", "item_armor_combat", qfalse, "uie_icons/iconr_yellow", 0},
+	{"Heavy Armor", "RA", "item_armor_body", qfalse, "uie_icons/iconr_red", 0},
+	{"Full Armor", "BA", "item_armor_full", qfalse, "uie_icons/iconr_blue", 0},
+	{"Heavy Machinegun", "HMG", "weapon_heavy_machinegun", qfalse, "uie_icons/iconw_hmgun", 0},
+	{"Chaingun", "CG", "weapon_chaingun", qfalse, "uie_icons/iconw_chaingun", 0},
+	{"Shotgun", "SG", "weapon_shotgun", qfalse, "uie_icons/iconw_shotgun", 0},
+	{"Nailgun", "NG", "weapon_nailgun", qfalse, "uie_icons/iconw_nailgun", 0},
+	{"Phosphorgun", "PPG", "weapon_phosphorgun", qfalse, "uie_icons/iconw_phosphorgun", 0},
+	{"Proxlauncher", "PM", "weapon_prox_launcher", qfalse, "uie_icons/iconw_prox_launcher", 0},
+	{"Grenadelauncher", "GL", "weapon_grenadelauncher", qfalse, "uie_icons/iconw_grenade", 0},
+	{"Napalmlauncher", "NL", "weapon_napalmlauncher", qfalse, "uie_icons/iconw_napalm", 0},
+	{"Rocketlauncher", "RL", "weapon_rocketlauncher", qfalse, "uie_icons/iconw_rocket", 0},
+	{"Lightninggun", "LG", "weapon_lightning", qfalse, "uie_icons/iconw_lightning", 0},
+	{"Railgun", "RG", "weapon_railgun", qfalse, "uie_icons/iconw_railgun", 0},
+	{"Plasmagun", "PG", "weapon_plasmagun", qfalse, "uie_icons/iconw_plasma", 0},
+	{"BFG10K", "BFG", "weapon_bfg", qfalse, "uie_icons/iconw_bfg", 0},
+	{"Missilelauncher", "ML", "weapon_missilelauncher", qfalse, "uie_icons/iconw_missile", 0},
+	{"Kamikaze", "Kamikazi", "holdable_kamikaze", qfalse, "uie_icons/kamikaze", 0},
+	{"Quad Damage", "Quad", "item_quad", qfalse, "uie_icons/quad", 0},
+	{"Invisibility", "Invis", "item_invis", qfalse, "uie_icons/invis", 0},
+	{"Regeneration", "Regen", "item_regen", qfalse, "uie_icons/regen", 0},
+	{"Ammoregen", "AG", "item_ammoregen", qfalse, "uie_icons/ammoregen", 0},
+	{"Guard", "GD", "item_guard", qfalse, "uie_icons/guard", 0},
+	{"Doubler", "DB", "item_doubler", qfalse, "uie_icons/doubler", 0},
+	{"Scout", "SC", "item_scout", qfalse, "uie_icons/scout", 0}
 };
 
 static int dm_numMenuItems = sizeof(dm_itemList) / sizeof(dm_itemList[0]);

@@ -120,7 +120,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, imp
 			}
 
 			break;
-		case WP_PROX_LAUNCHER:
+		case WP_PROXLAUNCHER:
 			mod = cgs.media.dishFlashModel;
 			light = 300;
 			shader = cgs.media.grenadeExplosionShader;
@@ -129,7 +129,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, imp
 			radius = 64;
 			sfx = cgs.media.sfx_proxexp;
 			break;
-		case WP_GRENADE_LAUNCHER:
+		case WP_GRENADELAUNCHER:
 			mod = cgs.media.dishFlashModel;
 			light = 300;
 			shader = cgs.media.grenadeExplosionShader;
@@ -138,7 +138,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, imp
 			radius = 64;
 			sfx = cgs.media.sfx_rockexp;
 			break;
-		case WP_ROCKET_LAUNCHER:
+		case WP_ROCKETLAUNCHER:
 			mod = cgs.media.dishFlashModel;
 			light = 300;
 			duration = 1000;
@@ -247,9 +247,9 @@ void CG_MissileHitPlayer(int weapon, vec3_t origin, vec3_t dir, int entityNum) {
 	switch (weapon) {
 		case WP_CHAINGUN:
 		case WP_NAILGUN:
-		case WP_PROX_LAUNCHER:
-		case WP_GRENADE_LAUNCHER:
-		case WP_ROCKET_LAUNCHER:
+		case WP_PROXLAUNCHER:
+		case WP_GRENADELAUNCHER:
+		case WP_ROCKETLAUNCHER:
 		case WP_PLASMAGUN:
 		case WP_BFG:
 			CG_MissileHitWall(weapon, 0, origin, dir, IMPACTSOUND_FLESH);
@@ -1257,7 +1257,7 @@ void CG_RegisterWeapon(int weaponNum) {
 			weaponInfo->missileModel = trap_R_RegisterModel("models/weaphits/nail.md3");
 			weaponInfo->flashSound[0] = trap_S_RegisterSound("sound/weapons/nailgun/wnalfire.wav", qfalse);
 			break;
-		case WP_PROX_LAUNCHER:
+		case WP_PROXLAUNCHER:
 			weaponInfo->missileModel = trap_R_RegisterModel("models/weaphits/proxmine.md3");
 			weaponInfo->missileTrailFunc = CG_GrenadeTrail;
 			weaponInfo->wiTrailTime = 700;
@@ -1265,7 +1265,7 @@ void CG_RegisterWeapon(int weaponNum) {
 			weaponInfo->flashSound[0] = trap_S_RegisterSound("sound/weapons/proxmine/wstbfire.wav", qfalse);
 			cgs.media.grenadeExplosionShader = trap_R_RegisterShader("grenadeExplosion");
 			break;
-		case WP_GRENADE_LAUNCHER:
+		case WP_GRENADELAUNCHER:
 			weaponInfo->missileModel = trap_R_RegisterModel("models/ammo/grenade1.md3");
 			weaponInfo->missileTrailFunc = CG_GrenadeTrail;
 			weaponInfo->wiTrailTime = 700;
@@ -1273,7 +1273,7 @@ void CG_RegisterWeapon(int weaponNum) {
 			weaponInfo->flashSound[0] = trap_S_RegisterSound("sound/weapons/grenade/grenlf1a.wav", qfalse);
 			cgs.media.grenadeExplosionShader = trap_R_RegisterShader("grenadeExplosion");
 			break;
-		case WP_ROCKET_LAUNCHER:
+		case WP_ROCKETLAUNCHER:
 			MAKERGB(weaponInfo->flashDlightColor, 1.0f, 0.75f, 0);
 			weaponInfo->missileDlight = 100;
 			MAKERGB(weaponInfo->missileDlightColor, 1.0f, 0.75f, 0);
