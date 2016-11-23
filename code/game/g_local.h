@@ -363,9 +363,11 @@ void G_RunMissile(gentity_t *ent);
 gentity_t *fire_nail(gentity_t *self, vec3_t start, vec3_t forward, vec3_t right, vec3_t up);
 gentity_t *fire_prox(gentity_t *self, vec3_t start, vec3_t aimdir);
 gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t aimdir);
+gentity_t *fire_napalm(gentity_t *self, vec3_t start, vec3_t aimdir);
 gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir);
 gentity_t *fire_plasma(gentity_t *self, vec3_t start, vec3_t aimdir);
 gentity_t *fire_bfg(gentity_t *self, vec3_t start, vec3_t dir);
+gentity_t *fire_missile(gentity_t *self, vec3_t start, vec3_t dir);
 // g_mover.c
 void G_RunMover(gentity_t *ent);
 void Touch_DoorTrigger(gentity_t *ent, gentity_t *other, trace_t *trace);

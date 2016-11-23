@@ -437,8 +437,8 @@ name:						default:	module(s):		description:
 "bot_reloadcharacters"		"0"			-				reload bot character files
 "ai_gametype"				"0"			be_ai_goal.c	game type
 "droppedweight"				"1000"		be_ai_goal.c	additional dropped item weight
-"weapindex_rocketlauncher"	"8"			be_ai_move.c	rl weapon index for rocket jumping
-"weapindex_bfg10k"			"12"		be_ai_move.c	bfg weapon index for bfg jumping
+"weapindex_rocketlauncher"	"12"			be_ai_move.c	rl weapon index for rocket jumping
+"weapindex_bfg10k"			"16"		be_ai_move.c	bfg weapon index for bfg jumping
 "itemconfig"				"items.c"	be_ai_goal.c	item configuration file
 "weaponconfig"				"weapons.c"	be_ai_weap.c	weapon configuration file
 "synfile"					"syn.c"		be_ai_chat.c	file with synonyms

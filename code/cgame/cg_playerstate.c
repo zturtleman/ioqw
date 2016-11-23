@@ -48,7 +48,7 @@ void CG_CheckAmmo(void) {
 
 	total = 0;
 
-	for (i = WP_MACHINEGUN; i < WP_NUM_WEAPONS; i++) {
+	for (i = WP_HANDGUN; i < WP_NUM_WEAPONS; i++) {
 		if (!(weapons[0] & (1 << i))) {
 			continue;
 		}
@@ -57,8 +57,10 @@ void CG_CheckAmmo(void) {
 			case WP_SHOTGUN:
 			case WP_PROXLAUNCHER:
 			case WP_GRENADELAUNCHER:
+			case WP_NAPALMLAUNCHER:
 			case WP_ROCKETLAUNCHER:
 			case WP_RAILGUN:
+			case WP_MISSILELAUNCHER:
 				total += cg.snap->ps.ammo[i] * 1000;
 				break;
 			default:

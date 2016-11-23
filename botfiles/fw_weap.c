@@ -98,7 +98,7 @@ weight "Heavy Machinegun"
 		case 1: return 0;
 		default:
 		{
-			switch (INVENTORY_BULLETS)
+			switch (INVENTORY_HMG_BULLETS)
 			{
 				case 1: return 0;
 				default:
@@ -202,7 +202,14 @@ weight "Nailgun"
 				{
 					switch (ENTITY_IS_AN_OBELISK)
 					{
-						case 1: return W_NAILGUN;
+						case 1:
+						{
+							switch (ENEMY_HORIZONTAL_DIST)
+							{
+								case 2000: return W_NAILGUN;
+								default: return 100;
+							}
+						}
 						default:
 						{
 							switch (ENEMY_HORIZONTAL_DIST)
@@ -308,12 +315,19 @@ weight "Napalm Launcher"
 				{
 					switch (ENTITY_IS_AN_OBELISK)
 					{
-						case 1: return W_NAPALMLAUNCHER;
+						case 1:
+						{
+							switch (ENEMY_HORIZONTAL_DIST)
+							{
+								case 2000: return W_NAPALMLAUNCHER;
+								default: return 100;
+							}
+						}
 						default:
 						{
 							switch (ENEMY_HORIZONTAL_DIST)
 							{
-								case 500: return 460;
+								case 500: return 540;
 								default: return W_NAPALMLAUNCHER;
 							}
 						}

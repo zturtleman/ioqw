@@ -451,6 +451,20 @@ gitem_t bg_itemlist[] = {
 /* sounds */ ""
 	},
 
+/*QUAKED ammo_hmg_bullets (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+*/
+	{
+		"ammo_hmg_bullets",
+		"sound/misc/am_pkup.wav",
+		{"models/powerups/ammo/hmgunam.md3", NULL, NULL, NULL},
+/* icon */		"icons/icona_hmgun",
+/* pickup */	"HMG Bullets",
+		100,
+		IT_AMMO,
+		WP_HEAVY_MACHINEGUN,
+/* sounds */ ""
+	},
+
 /*QUAKED ammo_belt (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 */
 	{

@@ -754,7 +754,7 @@ static void IG_CallVoteMaps_Event(int index) {
 
 	switch (id) {
 		case CVM_SELECTMAP:
-//			UI_MapCallVote(); // TOBIAS
+//			UI_MapCallVote(); // Tobias: TODO
 			break;
 		case CVM_NEXTMAP:
 			UI_ForceMenuOff();
@@ -1405,7 +1405,7 @@ UI_InGameMenu
 =======================================================================================================================================
 */
 void UI_InGameMenu(void) {
-// TOBIAS
+// Tobias: TODO
 /*
 	if (uie_ingame_dynamicmenu.integer) {
 		UI_InGameDynamic();
@@ -1485,7 +1485,7 @@ BotCommand_MenuClose
 =======================================================================================================================================
 */
 void BotCommand_MenuClose(void) {
-// TOBIAS
+// Tobias: TODO
 /*
 	if (uie_autoclosebotmenu.integer) {
 		UI_PopMenu();

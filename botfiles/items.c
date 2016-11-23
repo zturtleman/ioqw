@@ -370,6 +370,18 @@ iteminfo "ammo_bullets"
 	maxs		{15,15,15}
 }
 
+iteminfo "ammo_hmg_bullets"
+{
+	name		"HMG Bullets"
+	model		"models/powerups/ammo/hmgunam.md3"
+	modelindex	MODELINDEX_HMG_BULLETS
+	type		ITEM_AMMO
+	index		INVENTORY_HMG_BULLETS
+	respawntime	40
+	mins		{-15,-15,-15}
+	maxs		{15,15,15}
+}
+
 iteminfo "ammo_belt"
 {
 	name		"Chaingun Belt"

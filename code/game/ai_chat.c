@@ -284,19 +284,27 @@ char *BotWeaponNameForMeansOfDeath(int mod) {
 	switch (mod) {
 		case MOD_GAUNTLET:
 			return "Gauntlet";
+		case MOD_HANDGUN:
+			return "Trusty .44";
 		case MOD_MACHINEGUN:
 			return "Machinegun";
+		case MOD_HEAVY_MACHINEGUN:
+			return "Heavy Machinegun";
 		case MOD_CHAINGUN:
 			return "Chaingun";
 		case MOD_SHOTGUN:
 			return "Shotgun";
 		case MOD_NAIL:
 			return "Nailgun";
+		case MOD_PHOSPHOR:
+			return "Phosphorgun";
 		case MOD_PROXIMITY_MINE:
 			return "Proximity Launcher";
 		case MOD_GRENADE:
 		case MOD_GRENADE_SPLASH:
 			return "Grenade Launcher";
+		case MOD_NAPALM:
+			return "Napalm Launcher";
 		case MOD_ROCKET:
 		case MOD_ROCKET_SPLASH:
 			return "Rocket Launcher";
@@ -310,6 +318,9 @@ char *BotWeaponNameForMeansOfDeath(int mod) {
 		case MOD_BFG:
 		case MOD_BFG_SPLASH:
 			return "BFG10K";
+		case MOD_MISSILE:
+		case MOD_MISSILE_SPLASH:
+			return "Missile Launcher";
 		case MOD_KAMIKAZE:
 			return "Kamikaze";
 		default:
@@ -325,33 +336,43 @@ BotRandomWeaponName
 char *BotRandomWeaponName(void) {
 	int rnd;
 
-	rnd = random() * 11.9;
+	rnd = random() * 16.9;
 
 	switch (rnd) {
 		case 0:
 			return "Gauntlet";
 		case 1:
-			return "Machinegun";
+			return "Trusty .44";
 		case 2:
-			return "Chaingun";
+			return "Machinegun";
 		case 3:
-			return "Shotgun";
+			return "Heavy Machinegun";
 		case 4:
-			return "Nailgun";
+			return "Chaingun";
 		case 5:
-			return "Proximity Launcher";
+			return "Shotgun";
 		case 6:
-			return "Grenade Launcher";
+			return "Nailgun";
 		case 7:
-			return "Rocket Launcher";
+			return "Phosphorgun";
 		case 8:
-			return "Lightning Gun";
+			return "Proximity Launcher";
 		case 9:
-			return "Railgun";
+			return "Grenade Launcher";
 		case 10:
+			return "Napalm Launcher";
+		case 11:
+			return "Rocket Launcher";
+		case 12:
+			return "Lightning Gun";
+		case 13:
+			return "Railgun";
+		case 14:
 			return "Plasmagun";
-		default:
+		case 15:
 			return "BFG10K";
+		default:
+			return "Missile Launcher";
 	}
 }
 

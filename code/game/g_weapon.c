@@ -138,9 +138,16 @@ qboolean CheckGauntletAttack(gentity_t *ent) {
 
 #define CHAINGUN_SPREAD 600
 #define CHAINGUN_DAMAGE 7
+
+#define HEAVY_MACHINEGUN_SPREAD 200
+#define HEAVY_MACHINEGUN_DAMAGE 5
+
 #define MACHINEGUN_SPREAD 200
-#define MACHINEGUN_DAMAGE 7
-#define MACHINEGUN_TEAM_DAMAGE 5 // wimpier MG in teamplay
+#define MACHINEGUN_DAMAGE 5
+
+#define HANDGUN_SPREAD 50
+#define HANDGUN_DAMAGE 5
+
 /*
 =======================================================================================================================================
 Bullet_Fire
@@ -334,6 +341,93 @@ void Weapon_Nailgun_Fire(gentity_t *ent) {
 /*
 =======================================================================================================================================
 
+	PHOSPHORGUN
+
+=======================================================================================================================================
+*/
+
+/*
+=======================================================================================================================================
+Weapon_Phosphorgun_Fire
+=======================================================================================================================================
+*/
+#define MAX_PHOSPHOR_HITS 2
+void Weapon_Phosphorgun_Fire(gentity_t *ent) {
+	vec3_t end;
+	trace_t trace;
+	gentity_t *tent;
+	gentity_t *traceEnt;
+	int damage;
+	int i;
+	int hits;
+	int unlinked;
+	int passent;
+	gentity_t *unlinkedEntities[MAX_PHOSPHOR_HITS];
+
+	damage = 20 * s_quadFactor;
+
+	VectorMA(muzzle, 100000, forward, end);
+	// trace only against the solids, so the railgun will go through people
+	unlinked = 0;
+	hits = 0;
+	passent = ent->s.number;
+
+	do {
+		trap_Trace(&trace, muzzle, NULL, NULL, end, passent, MASK_SHOT);
+
+		if (trace.entityNum >= ENTITYNUM_MAX_NORMAL) {
+			break;
+		}
+
+		traceEnt = &g_entities[trace.entityNum];
+
+		if (traceEnt->takedamage) {
+			if (LogAccuracyHit(traceEnt, ent)) {
+				hits++;
+			}
+
+			G_Damage(traceEnt, ent, ent, forward, trace.endpos, damage, 0, MOD_PHOSPHOR);
+		}
+
+		if (trace.contents & CONTENTS_SOLID) {
+			break; // we hit something solid enough to stop the beam
+		}
+		// unlink this entity, so the next trace will go past it
+		trap_UnlinkEntity(traceEnt);
+
+		unlinkedEntities[unlinked] = traceEnt;
+		unlinked++;
+	} while (unlinked < MAX_PHOSPHOR_HITS);
+	// link back in any entities we unlinked
+	for (i = 0; i < unlinked; i++) {
+		trap_LinkEntity(unlinkedEntities[i]);
+	}
+	// the final trace endpos will be the terminal point of the rail trail
+
+	// snap the endpos to integers to save net bandwidth, but nudged towards the line
+	SnapVectorTowards(trace.endpos, muzzle);
+	// send railgun beam effect
+	tent = G_TempEntity(trace.endpos, EV_RAILTRAIL);
+	// set player number for custom colors on the railtrail
+	tent->s.clientNum = ent->s.clientNum;
+
+	VectorCopy(muzzle, tent->s.origin2);
+	// move origin a bit to come closer to the drawn gun muzzle
+	VectorMA(tent->s.origin2, 4, right, tent->s.origin2);
+	VectorMA(tent->s.origin2, -1, up, tent->s.origin2);
+	// no explosion at end if SURF_NOIMPACT, but still make the trail
+	if (trace.surfaceFlags & SURF_NOIMPACT) {
+		tent->s.eventParm = 255; // don't make the explosion at the end
+	} else {
+		tent->s.eventParm = DirToByte(trace.plane.normal);
+	}
+
+	tent->s.clientNum = ent->s.clientNum;
+}
+
+/*
+=======================================================================================================================================
+
 	PROXIMITY MINE LAUNCHER
 
 =======================================================================================================================================
@@ -380,7 +474,30 @@ void Weapon_Grenadelauncher_Fire(gentity_t *ent) {
 /*
 =======================================================================================================================================
 
-	ROCKET
+	NAPALM LAUNCHER
+
+=======================================================================================================================================
+*/
+
+/*
+=======================================================================================================================================
+Weapon_Napalmlauncher_Fire
+=======================================================================================================================================
+*/
+void Weapon_Napalmlauncher_Fire(gentity_t *ent) {
+	gentity_t *m;
+
+	m = fire_napalm(ent, muzzle, forward);
+	m->damage *= s_quadFactor;
+	m->splashDamage *= s_quadFactor;
+
+//	VectorAdd(m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta); // "real" physics
+}
+
+/*
+=======================================================================================================================================
+
+	ROCKET LAUNCHER
 
 =======================================================================================================================================
 */
@@ -605,6 +722,29 @@ void Weapon_BFG_Fire(gentity_t *ent) {
 
 /*
 =======================================================================================================================================
+
+	MISSILE LAUNCHER
+
+=======================================================================================================================================
+*/
+
+/*
+=======================================================================================================================================
+Weapon_MissileLauncher_Fire
+=======================================================================================================================================
+*/
+void Weapon_MissileLauncher_Fire(gentity_t *ent) {
+	gentity_t *m;
+
+	m = fire_missile(ent, muzzle, forward);
+	m->damage *= s_quadFactor;
+	m->splashDamage *= s_quadFactor;
+
+//	VectorAdd(m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta); // "real" physics
+}
+
+/*
+=======================================================================================================================================
 LogAccuracyHit
 =======================================================================================================================================
 */
@@ -702,13 +842,14 @@ void FireWeapon(gentity_t *ent) {
 		case WP_GAUNTLET:
 			Weapon_Gauntlet(ent);
 			break;
+		case WP_HANDGUN:
+			Bullet_Fire(ent, HANDGUN_SPREAD, HANDGUN_DAMAGE, MOD_HANDGUN);
+			break;
 		case WP_MACHINEGUN:
-			if (g_gametype.integer != GT_TEAM) {
-				Bullet_Fire(ent, MACHINEGUN_SPREAD, MACHINEGUN_DAMAGE, MOD_MACHINEGUN);
-			} else {
-				Bullet_Fire(ent, MACHINEGUN_SPREAD, MACHINEGUN_TEAM_DAMAGE, MOD_MACHINEGUN);
-			}
-
+			Bullet_Fire(ent, MACHINEGUN_SPREAD, MACHINEGUN_DAMAGE, MOD_MACHINEGUN);
+			break;
+		case WP_HEAVY_MACHINEGUN:
+			Bullet_Fire(ent, HEAVY_MACHINEGUN_SPREAD, HEAVY_MACHINEGUN_DAMAGE, MOD_HEAVY_MACHINEGUN);
 			break;
 		case WP_CHAINGUN:
 			Bullet_Fire(ent, CHAINGUN_SPREAD, CHAINGUN_DAMAGE, MOD_CHAINGUN);
@@ -719,11 +860,17 @@ void FireWeapon(gentity_t *ent) {
 		case WP_NAILGUN:
 			Weapon_Nailgun_Fire(ent);
 			break;
+		case WP_PHOSPHORGUN:
+			Weapon_Phosphorgun_Fire(ent);
+			break;
 		case WP_PROXLAUNCHER:
 			Weapon_Proxlauncher_Fire(ent);
 			break;
 		case WP_GRENADELAUNCHER:
 			Weapon_Grenadelauncher_Fire(ent);
+			break;
+		case WP_NAPALMLAUNCHER:
+			Weapon_Napalmlauncher_Fire(ent);
 			break;
 		case WP_ROCKETLAUNCHER:
 			Weapon_RocketLauncher_Fire(ent);
@@ -739,6 +886,9 @@ void FireWeapon(gentity_t *ent) {
 			break;
 		case WP_BFG:
 			Weapon_BFG_Fire(ent);
+			break;
+		case WP_MISSILELAUNCHER:
+			Weapon_MissileLauncher_Fire(ent);
 			break;
 		default:
 			// FIXME: G_Error("Bad ent->s.weapon");

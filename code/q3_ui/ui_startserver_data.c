@@ -146,6 +146,7 @@ itemnode_t server_itemlist[ITEM_COUNT] = {
 	// ammo
 	{ITEMGROUP_AMMO, ITEM_HANDGUN_AMMO, "ammo_clip", "HGA"},
 	{ITEMGROUP_AMMO, ITEM_BULLETS, "ammo_bullets", "MGA"},
+	{ITEMGROUP_AMMO, ITEM_HMG_BULLETS, "ammo_hmg_bullets", "HMGA"},
 	{ITEMGROUP_AMMO, ITEM_BELT, "ammo_belt", "CGA"},
 	{ITEMGROUP_AMMO, ITEM_SHELLS, "ammo_shells", "SGA"},
 	{ITEMGROUP_AMMO, ITEM_NAILS, "ammo_nails", "NGA"},

@@ -556,6 +556,48 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir) {
 
 /*
 =======================================================================================================================================
+fire_napalm
+=======================================================================================================================================
+*/
+gentity_t *fire_napalm(gentity_t *self, vec3_t start, vec3_t dir) {
+	gentity_t *bolt;
+
+	VectorNormalize(dir);
+
+	bolt = G_Spawn();
+	bolt->classname = "napalm";
+	bolt->nextthink = level.time + 15000;
+	bolt->think = G_ExplodeMissile;
+	bolt->s.eType = ET_MISSILE;
+	bolt->r.svFlags = SVF_USE_CURRENT_ORIGIN;
+	bolt->s.weapon = WP_NAPALMLAUNCHER;
+	bolt->r.ownerNum = self->s.number;
+	bolt->parent = self;
+	bolt->damage = 1;
+	bolt->splashDamage = 1;
+	bolt->splashRadius = 500;
+	bolt->methodOfDeath = MOD_NAPALM;
+	bolt->clipmask = MASK_SHOT;
+	bolt->target_ent = NULL;
+	bolt->s.pos.trType = TR_GRAVITY;
+	bolt->s.pos.trTime = level.time - MISSILE_PRESTEP_TIME; // move a bit on the very first frame
+
+	VectorCopy(start, bolt->s.pos.trBase);
+	VectorScale(dir, 2500, bolt->s.pos.trDelta);
+	SnapVector(bolt->s.pos.trDelta); // save net bandwidth
+	VectorCopy(start, bolt->r.currentOrigin);
+
+	if (self->client) {
+		bolt->s.team = self->client->sess.sessionTeam;
+	} else {
+		bolt->s.team = TEAM_FREE;
+	}
+
+	return bolt;
+}
+
+/*
+=======================================================================================================================================
 fire_rocket
 =======================================================================================================================================
 */
@@ -671,6 +713,50 @@ gentity_t *fire_bfg(gentity_t *self, vec3_t start, vec3_t dir) {
 
 	VectorCopy(start, bolt->s.pos.trBase);
 	VectorScale(dir, 2000, bolt->s.pos.trDelta);
+	SnapVector(bolt->s.pos.trDelta); // save net bandwidth
+	VectorCopy(start, bolt->r.currentOrigin);
+
+	if (self->client) {
+		bolt->s.team = self->client->sess.sessionTeam;
+	} else {
+		bolt->s.team = TEAM_FREE;
+	}
+
+	return bolt;
+}
+
+
+/*
+=======================================================================================================================================
+fire_missile
+=======================================================================================================================================
+*/
+gentity_t *fire_missile(gentity_t *self, vec3_t start, vec3_t dir) {
+	gentity_t *bolt;
+
+	VectorNormalize(dir);
+
+	bolt = G_Spawn();
+	bolt->classname = "missile";
+	bolt->nextthink = level.time + 10000;
+	bolt->think = G_ExplodeMissile;
+	bolt->s.eType = ET_MISSILE;
+	bolt->r.svFlags = SVF_USE_CURRENT_ORIGIN;
+	bolt->s.weapon = WP_MISSILELAUNCHER;
+	bolt->r.ownerNum = self->s.number;
+	bolt->parent = self;
+	bolt->damage = 10000;
+	bolt->splashDamage = 500;
+	bolt->splashRadius = 500;
+	bolt->methodOfDeath = MOD_MISSILE;
+	bolt->splashMethodOfDeath = MOD_MISSILE_SPLASH;
+	bolt->clipmask = MASK_SHOT;
+	bolt->target_ent = NULL;
+	bolt->s.pos.trType = TR_LINEAR;
+	bolt->s.pos.trTime = level.time - MISSILE_PRESTEP_TIME; // move a bit on the very first frame
+
+	VectorCopy(start, bolt->s.pos.trBase);
+	VectorScale(dir, 5000, bolt->s.pos.trDelta);
 	SnapVector(bolt->s.pos.trDelta); // save net bandwidth
 	VectorCopy(start, bolt->r.currentOrigin);
 

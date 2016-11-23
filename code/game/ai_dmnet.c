@@ -1374,18 +1374,26 @@ BotSelectActivateWeapon
 */
 int BotSelectActivateWeapon(bot_state_t *bs) {
 
-	if (bs->inventory[INVENTORY_MACHINEGUN] > 0 && bs->inventory[INVENTORY_BULLETS] > 0) {
+	if (bs->inventory[INVENTORY_HANDGUN] > 0 && bs->inventory[INVENTORY_HANDGUN_AMMO] > 0) {
+		return WEAPONINDEX_HANDGUN;
+	} else if (bs->inventory[INVENTORY_MACHINEGUN] > 0 && bs->inventory[INVENTORY_BULLETS] > 0) {
 		return WEAPONINDEX_MACHINEGUN;
+	} else if (bs->inventory[INVENTORY_HEAVY_MACHINEGUN] > 0 && bs->inventory[INVENTORY_HMG_BULLETS] > 0) {
+		return WEAPONINDEX_HEAVY_MACHINEGUN;
 	} else if (bs->inventory[INVENTORY_CHAINGUN] > 0 && bs->inventory[INVENTORY_BELT] > 0) {
 		return WEAPONINDEX_CHAINGUN;
 	} else if (bs->inventory[INVENTORY_SHOTGUN] > 0 && bs->inventory[INVENTORY_SHELLS] > 0) {
 		return WEAPONINDEX_SHOTGUN;
 	} else if (bs->inventory[INVENTORY_NAILGUN] > 0 && bs->inventory[INVENTORY_NAILS] > 0) {
 		return WEAPONINDEX_NAILGUN;
+	} else if (bs->inventory[INVENTORY_PHOSPHORGUN] > 0 && bs->inventory[INVENTORY_CAPSULES] > 0) {
+		return WEAPONINDEX_PHOSPHORGUN;
 	} else if (bs->inventory[INVENTORY_PROXLAUNCHER] > 0 && bs->inventory[INVENTORY_MINES] > 0) {
 		return WEAPONINDEX_PROXLAUNCHER;
 	} else if (bs->inventory[INVENTORY_GRENADELAUNCHER] > 0 && bs->inventory[INVENTORY_GRENADES] > 0) {
 		return WEAPONINDEX_GRENADELAUNCHER;
+	} else if (bs->inventory[INVENTORY_NAPALMLAUNCHER] > 0 && bs->inventory[INVENTORY_CANISTERS] > 0) {
+		return WEAPONINDEX_NAPALMLAUNCHER;
 	} else if (bs->inventory[INVENTORY_ROCKETLAUNCHER] > 0 && bs->inventory[INVENTORY_ROCKETS] > 0) {
 		return WEAPONINDEX_ROCKETLAUNCHER;
 	} else if (bs->inventory[INVENTORY_LIGHTNING] > 0 && bs->inventory[INVENTORY_LIGHTNING_AMMO] > 0) {
@@ -1396,6 +1404,8 @@ int BotSelectActivateWeapon(bot_state_t *bs) {
 		return WEAPONINDEX_PLASMAGUN;
 	} else if (bs->inventory[INVENTORY_BFG10K] > 0 && bs->inventory[INVENTORY_BFG_AMMO] > 0) {
 		return WEAPONINDEX_BFG;
+	} else if (bs->inventory[INVENTORY_MISSILELAUNCHER] > 0 && bs->inventory[INVENTORY_MISSILES] > 0) {
+		return WEAPONINDEX_MISSILELAUNCHER;
 	} else {
 		return -1;
 	}
@@ -1472,8 +1482,7 @@ void BotClearPath(bot_state_t *bs, bot_moveresult_t *moveresult) {
 		if (bestmine != -1) {
 			// state->team == TEAM_RED || state->team == TEAM_BLUE
 
-			// deactivate prox mines in the bot's path by shooting
-			// rockets or plasma cells etc. at them
+			// deactivate prox mines in the bot's path by shooting rockets or plasma cells etc. at them
 			BotAI_GetEntityState(bs->proxmines[bestmine], &state);
 			VectorCopy(state.pos.trBase, target);
 			target[2] += 2;

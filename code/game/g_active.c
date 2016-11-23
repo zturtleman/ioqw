@@ -400,16 +400,26 @@ void ClientTimerActions(gentity_t *ent, int msec) {
 
 	if (bg_itemlist[client->ps.stats[STAT_PERSISTANT_POWERUP]].giTag == PW_AMMOREGEN) {
 		int w, max, inc, t, i;
-		int weapList[] = {WP_MACHINEGUN, WP_CHAINGUN, WP_SHOTGUN, WP_NAILGUN, WP_PROXLAUNCHER, WP_GRENADELAUNCHER, WP_ROCKETLAUNCHER, WP_LIGHTNING, WP_RAILGUN, WP_PLASMAGUN, WP_BFG};
+		int weapList[] = {WP_HANDGUN, WP_MACHINEGUN, WP_HEAVY_MACHINEGUN, WP_CHAINGUN, WP_SHOTGUN, WP_NAILGUN, WP_PHOSPHORGUN, WP_PROXLAUNCHER, WP_GRENADELAUNCHER, WP_NAPALMLAUNCHER, WP_ROCKETLAUNCHER, WP_LIGHTNING, WP_RAILGUN, WP_PLASMAGUN, WP_BFG, WP_MISSILELAUNCHER};
 		int weapCount = ARRAY_LEN(weapList);
 
 		for (i = 0; i < weapCount; i++) {
 			w = weapList[i];
 
 			switch (w) {
+				case WP_HANDGUN:
+					max = 50;
+					inc = 5;
+					t = 500;
+					break;
 				case WP_MACHINEGUN:
 					max = 50;
 					inc = 4;
+					t = 1000;
+					break;
+				case WP_HEAVY_MACHINEGUN:
+					max = 100;
+					inc = 5;
 					t = 1000;
 					break;
 				case WP_CHAINGUN:
@@ -427,12 +437,22 @@ void ClientTimerActions(gentity_t *ent, int msec) {
 					inc = 1;
 					t = 1250;
 					break;
+				case WP_PHOSPHORGUN:
+					max = 50;
+					inc = 5;
+					t = 1050;
+					break;
 				case WP_PROXLAUNCHER:
 					max = 5;
 					inc = 1;
 					t = 2000;
 					break;
 				case WP_GRENADELAUNCHER:
+					max = 10;
+					inc = 1;
+					t = 2000;
+					break;
+				case WP_NAPALMLAUNCHER:
 					max = 10;
 					inc = 1;
 					t = 2000;
@@ -461,6 +481,11 @@ void ClientTimerActions(gentity_t *ent, int msec) {
 					max = 10;
 					inc = 1;
 					t = 4000;
+					break;
+				case WP_MISSILELAUNCHER:
+					max = 10;
+					inc = 1;
+					t = 6000;
 					break;
 				default:
 					max = 0;

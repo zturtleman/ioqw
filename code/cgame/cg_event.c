@@ -116,6 +116,7 @@ static void CG_Obituary(entityState_t *ent) {
 	Q_strncpyz(targetName, Info_ValueForKey(targetInfo, "n"), sizeof(targetName) - 2);
 
 	strcat(targetName, S_COLOR_WHITE);
+	gender = ci->gender;
 	message2 = "";
 	// check for single client messages
 	switch (mod) {
@@ -149,9 +150,17 @@ static void CG_Obituary(entityState_t *ent) {
 	}
 
 	if (attacker == target) {
-		gender = ci->gender;
-
 		switch (mod) {
+			case MOD_PHOSPHOR:
+				if (gender == GENDER_FEMALE) {
+					message = "got a mouthful of his own phosphorus capsules";
+				} else if (gender == GENDER_NEUTER) {
+					message = "got a mouthful of its own phosphorus capsules";
+				} else {
+					message = "got a mouthful of her own phosphorus capsules";
+				}
+
+				break;
 			case MOD_PROXIMITY_MINE:
 				if (gender == GENDER_FEMALE) {
 					message = "found her prox mine";
@@ -169,6 +178,16 @@ static void CG_Obituary(entityState_t *ent) {
 					message = "tripped on its own grenade";
 				} else {
 					message = "tripped on his own grenade";
+				}
+
+				break;
+			case MOD_NAPALM:
+				if (gender == GENDER_FEMALE) {
+					message = "set herself alight";
+				} else if (gender == GENDER_NEUTER) {
+					message = "set itself alight";
+				} else {
+					message = "set himself alight";
 				}
 
 				break;
@@ -194,6 +213,16 @@ static void CG_Obituary(entityState_t *ent) {
 				break;
 			case MOD_BFG_SPLASH:
 				message = "should have used a smaller gun";
+				break;
+			case MOD_MISSILE_SPLASH:
+				if (gender == GENDER_FEMALE) {
+					message = "blew herself away with her own missile";
+				} else if (gender == GENDER_NEUTER) {
+					message = "blew itself away with its own missile";
+				} else {
+					message = "blew himself away with his own missile";
+				}
+
 				break;
 			case MOD_KAMIKAZE:
 				message = "goes out with a bang";
@@ -249,10 +278,21 @@ static void CG_Obituary(entityState_t *ent) {
 	if (attacker != ENTITYNUM_WORLD) {
 		switch (mod) {
 			case MOD_GAUNTLET:
-				message = "was pummeled by";
+				if (gender == GENDER_FEMALE) {
+					message = "was fisted by";
+				} else {
+					message = "was pummeled by";
+				}
+
+				break;
+			case MOD_HANDGUN:
+				message = "was shot down by";
 				break;
 			case MOD_MACHINEGUN:
 				message = "was machinegunned by";
+				break;
+			case MOD_HEAVY_MACHINEGUN:
+				message = "was perforated by";
 				break;
 			case MOD_CHAINGUN:
 				message = "got lead poisoning from";
@@ -264,9 +304,13 @@ static void CG_Obituary(entityState_t *ent) {
 			case MOD_NAIL:
 				message = "was nailed by";
 				break;
+			case MOD_PHOSPHOR:
+				message = "swallowed";
+				message2 = "'s phosphorus capsules";
+				break;
 			case MOD_PROXIMITY_MINE:
 				message = "was too close to";
-				message2 = "'s Prox Mine";
+				message2 = "'s prox mine";
 				break;
 			case MOD_GRENADE:
 				message = "ate";
@@ -275,6 +319,10 @@ static void CG_Obituary(entityState_t *ent) {
 			case MOD_GRENADE_SPLASH:
 				message = "was shredded by";
 				message2 = "'s shrapnel";
+				break;
+			case MOD_NAPALM:
+				message = "roasted to a nice golden brown by";
+				message2 = "'s Napalm Launcher";
 				break;
 			case MOD_ROCKET:
 				message = "ate";
@@ -285,23 +333,34 @@ static void CG_Obituary(entityState_t *ent) {
 				message2 = "'s rocket";
 				break;
 			case MOD_LIGHTNING:
-				message = "was electrocuted by";
+				message = "was lacerated by";
 				break;
 			case MOD_RAILGUN:
 				message = "was railed by";
 				break;
 			case MOD_PLASMA:
-				message = "was melted by";
-				message2 = "'s plasmagun";
+				message = "got burned by";
+				message2 = "'s Plasmagun";
 				break;
 			case MOD_PLASMA_SPLASH:
 				message = "was melted by";
-				message2 = "'s plasmagun";
+				message2 = "'s blue-hot plasma";
 				break;
 			case MOD_BFG:
+				message = "was vaporized by";
+				message2 = "'s BFG";
+				break;
 			case MOD_BFG_SPLASH:
 				message = "was blasted by";
 				message2 = "'s BFG";
+				break;
+			case MOD_MISSILE:
+				message = "was ripped apart by";
+				message2 = "'s missile";
+				break;
+			case MOD_MISSILE_SPLASH:
+				message = "was blown away by";
+				message2 = "'s missile";
 				break;
 			case MOD_KAMIKAZE:
 				message = "falls to";
@@ -317,7 +376,7 @@ static void CG_Obituary(entityState_t *ent) {
 		}
 
 		if (message) {
-			CG_Printf("%s %s %s%s\n", targetName, message, attackerName, message2);
+			CG_Printf("%s %s %s%s.\n", targetName, message, attackerName, message2);
 			return;
 		}
 	}
@@ -376,7 +435,7 @@ static void CG_ItemPickup(int itemNum) {
 	// see if it should be the grabbed weapon
 	if (bg_itemlist[itemNum].giType == IT_WEAPON) {
 		// select it immediately
-		if (cg_autoswitch.integer && bg_itemlist[itemNum].giTag != WP_MACHINEGUN) {
+		if (cg_autoswitch.integer && bg_itemlist[itemNum].giTag != WP_HANDGUN && bg_itemlist[itemNum].giTag != WP_MACHINEGUN) {
 			cg.weaponSelectTime = cg.time;
 			cg.weaponSelect = bg_itemlist[itemNum].giTag;
 		}

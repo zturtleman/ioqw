@@ -97,7 +97,9 @@ tryagain:
 		case WP_GAUNTLET:
 			MAKERGB(pi->flashDlightColor, 1.0f, 1.0f, 1.0f);
 			break;
+		case WP_HANDGUN:
 		case WP_MACHINEGUN:
+		case WP_HEAVY_MACHINEGUN:
 			MAKERGB(pi->flashDlightColor, 1.0f, 0.75f, 0);
 			break;
 		case WP_CHAINGUN:
@@ -107,11 +109,13 @@ tryagain:
 			MAKERGB(pi->flashDlightColor, 1.0f, 0.7f, 0);
 			break;
 		case WP_NAILGUN:
+		case WP_PHOSPHORGUN:
 			MAKERGB(pi->flashDlightColor, 1, 0.7f, 0);
 			break;
 		case WP_PROXLAUNCHER:
 			break;
 		case WP_GRENADELAUNCHER:
+		case WP_NAPALMLAUNCHER:
 			break;
 		case WP_ROCKETLAUNCHER:
 			MAKERGB(pi->flashDlightColor, 1.0f, 0.75f, 0);
@@ -126,6 +130,7 @@ tryagain:
 			MAKERGB(pi->flashDlightColor, 0.7f, 0.8f, 1.0f);
 			break;
 		case WP_BFG:
+		case WP_MISSILELAUNCHER:
 			MAKERGB(pi->flashDlightColor, 0.65f, 1.0f, 0.7f);
 			break;
 		default:

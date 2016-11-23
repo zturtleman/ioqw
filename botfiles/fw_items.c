@@ -263,7 +263,7 @@ weight "weapon_handgun"
 		{
 			switch (INVENTORY_HANDGUN_AMMO)
 			{
-				case 40: return WEAPON_SCALE(W_HANDGUN - 10);
+				case 10: return WEAPON_SCALE(W_HANDGUN - 10);
 				default: return WEAPON_SCALE(W_HANDGUN);
 			}
 		}
@@ -275,8 +275,8 @@ weight "weapon_handgun"
 				{
 					switch (INVENTORY_HANDGUN_AMMO)
 					{
-						case 50: return WEAPON_SCALE(GWW_HANDGUN);
-						case 100: return WEAPON_SCALE(GWW_HANDGUN - 10);
+						case 10: return WEAPON_SCALE(GWW_HANDGUN);
+						case 20: return WEAPON_SCALE(GWW_HANDGUN - 10);
 						default: return balance(5, 3, 7);
 					}
 				}
@@ -284,7 +284,7 @@ weight "weapon_handgun"
 				{
 					switch (INVENTORY_HANDGUN_AMMO)
 					{
-						case 20: return WEAPON_SCALE(GWW_HANDGUN);
+						case 10: return WEAPON_SCALE(GWW_HANDGUN);
 						default: return 0;
 					}
 				}
@@ -337,9 +337,9 @@ weight "weapon_heavy_machinegun"
 	{
 		case 1:
 		{
-			switch (INVENTORY_BULLETS)
+			switch (INVENTORY_HMG_BULLETS)
 			{
-				case 40: return WEAPON_SCALE(W_HEAVY_MACHINEGUN - 10);
+				case 100: return WEAPON_SCALE(W_HEAVY_MACHINEGUN - 10);
 				default: return WEAPON_SCALE(W_HEAVY_MACHINEGUN);
 			}
 		}
@@ -349,7 +349,7 @@ weight "weapon_heavy_machinegun"
 			{
 				case 1:
 				{
-					switch (INVENTORY_BULLETS)
+					switch (INVENTORY_HMG_BULLETS)
 					{
 						case 50: return WEAPON_SCALE(GWW_HEAVY_MACHINEGUN);
 						case 100: return WEAPON_SCALE(GWW_HEAVY_MACHINEGUN - 10);
@@ -358,9 +358,9 @@ weight "weapon_heavy_machinegun"
 				}
 				default:
 				{
-					switch (INVENTORY_BULLETS)
+					switch (INVENTORY_HMG_BULLETS)
 					{
-						case 20: return WEAPON_SCALE(GWW_HEAVY_MACHINEGUN);
+						case 50: return WEAPON_SCALE(GWW_HEAVY_MACHINEGUN);
 						default: return 0;
 					}
 				}
@@ -765,6 +765,31 @@ weight "ammo_bullets"
 		case 1:
 		{
 			switch (INVENTORY_BULLETS)
+			{
+				case 20: return AMMO_SCALE(20);
+				case 40: return AMMO_SCALE(20);
+				case 60: return AMMO_SCALE(20);
+				case 80: return AMMO_SCALE(20);
+				case 100: return AMMO_SCALE(20);
+				case 120: return AMMO_SCALE(20);
+				case 140: return AMMO_SCALE(20);
+				case 160: return AMMO_SCALE(20);
+				case 180: return AMMO_SCALE(20);
+				case 200: return AMMO_SCALE(0);
+				default: return 0;
+			}
+		}
+		default: return 0;
+	}
+}
+
+weight "ammo_hmg_bullets"
+{
+	switch (BOT_IS_IN_HURRY)
+	{
+		case 1:
+		{
+			switch (INVENTORY_HMG_BULLETS)
 			{
 				case 20: return AMMO_SCALE(20);
 				case 40: return AMMO_SCALE(20);

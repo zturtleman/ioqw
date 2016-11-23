@@ -87,7 +87,7 @@ projectileinfo
 {
 	name			"machinegunbullet"
 	gravity			0.0
-	damage			7
+	damage			5
 	damagetype		DAMAGETYPE_IMPACT
 }
 
@@ -109,7 +109,7 @@ projectileinfo
 {
 	name			"hmgbullet"
 	gravity			0.0
-	damage			7
+	damage			5
 	damagetype		DAMAGETYPE_IMPACT
 }
 
@@ -197,7 +197,7 @@ projectileinfo
 {
 	name			"capsule"
 	gravity			0.0
-	damage			10
+	damage			20
 	damagetype		DAMAGETYPE_IMPACT
 }
 
@@ -206,7 +206,7 @@ weaponinfo
 	name			"Phosphorgun"
 	number			WEAPONINDEX_PHOSPHORGUN
 	projectile		"capsule"
-	numprojectiles	10
+	numprojectiles	1
 	hspread			1
 	vspread			1
 	speed			0

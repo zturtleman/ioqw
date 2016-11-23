@@ -1046,11 +1046,14 @@ void ClientSpawn(gentity_t *ent) {
 	client->ps.clientNum = index;
 
 	COM_BitSet(client->ps.weapons, WP_MACHINEGUN);
+	COM_BitSet(client->ps.weapons, WP_HANDGUN);
 
 	if (g_gametype.integer == GT_TEAM) {
 		client->ps.ammo[WP_MACHINEGUN] = 50;
+		client->ps.ammo[WP_HANDGUN] = 50;
 	} else {
 		client->ps.ammo[WP_MACHINEGUN] = 100;
+		client->ps.ammo[WP_HANDGUN] = 100;
 	}
 
 	COM_BitSet(client->ps.weapons, WP_GAUNTLET);

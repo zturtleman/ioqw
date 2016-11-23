@@ -1507,8 +1507,14 @@ static void PM_Weapon(void) {
 		case WP_GAUNTLET:
 			addTime = 400;
 			break;
+		case WP_HANDGUN:
+			addTime = 200;
+			break;
 		case WP_MACHINEGUN:
 			addTime = 100;
+			break;
+		case WP_HEAVY_MACHINEGUN:
+			addTime = 50;
 			break;
 		case WP_CHAINGUN:
 			addTime = 30;
@@ -1519,11 +1525,17 @@ static void PM_Weapon(void) {
 		case WP_NAILGUN:
 			addTime = 1000;
 			break;
+		case WP_PHOSPHORGUN:
+			addTime = 300;
+			break;
 		case WP_PROXLAUNCHER:
 			addTime = 800;
 			break;
 		case WP_GRENADELAUNCHER:
 			addTime = 800;
+			break;
+		case WP_NAPALMLAUNCHER:
+			addTime = 1100;
 			break;
 		case WP_ROCKETLAUNCHER:
 			addTime = 800;
@@ -1539,6 +1551,9 @@ static void PM_Weapon(void) {
 			break;
 		case WP_BFG:
 			addTime = 200;
+			break;
+		case WP_MISSILELAUNCHER:
+			addTime = 4000;
 			break;
 	}
 
