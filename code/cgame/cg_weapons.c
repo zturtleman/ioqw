@@ -339,7 +339,7 @@ static void CG_NailTrail(centity_t *ent, const weaponInfo_t *wi) {
 	startTime = ent->trailTime;
 	t = step * ((startTime + step) / step);
 
-	BG_EvaluateTrajectory(&es->pos, cg.time, origin);
+	BG_EvaluateTrajectory(&es->pos, cg.time, origin, qfalse, es->effect2Time);
 
 	contents = CG_PointContents(origin, -1);
 	// if object (e.g. grenade) is stationary, don't toss up smoke
@@ -348,7 +348,7 @@ static void CG_NailTrail(centity_t *ent, const weaponInfo_t *wi) {
 		return;
 	}
 
-	BG_EvaluateTrajectory(&es->pos, ent->trailTime, lastPos);
+	BG_EvaluateTrajectory(&es->pos, ent->trailTime, lastPos, qfalse, es->effect2Time);
 
 	lastContents = CG_PointContents(lastPos, -1);
 	ent->trailTime = cg.time;
@@ -362,7 +362,7 @@ static void CG_NailTrail(centity_t *ent, const weaponInfo_t *wi) {
 	}
 
 	for (; t <= ent->trailTime; t += step) {
-		BG_EvaluateTrajectory(&es->pos, t, lastPos);
+		BG_EvaluateTrajectory(&es->pos, t, lastPos, qfalse, es->effect2Time);
 
 		smoke = CG_SmokePuff(lastPos, up, wi->trailRadius, 1, 1, 1, 0.33f, wi->wiTrailTime, t, 0, 0, cgs.media.nailPuffShader);
 		// use the optimized local entity add
@@ -398,7 +398,7 @@ static void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi) {
 	startTime = ent->trailTime;
 	t = step * ((startTime + step) / step);
 
-	BG_EvaluateTrajectory(&es->pos, cg.time, origin);
+	BG_EvaluateTrajectory(&es->pos, cg.time, origin, qfalse, es->effect2Time);
 	contents = CG_PointContents(origin, -1);
 	// if object (e.g. grenade) is stationary, don't toss up smoke
 	if (es->pos.trType == TR_STATIONARY) {
@@ -406,7 +406,7 @@ static void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi) {
 		return;
 	}
 
-	BG_EvaluateTrajectory(&es->pos, ent->trailTime, lastPos);
+	BG_EvaluateTrajectory(&es->pos, ent->trailTime, lastPos, qfalse, es->effect2Time);
 
 	lastContents = CG_PointContents(lastPos, -1);
 	ent->trailTime = cg.time;
@@ -420,7 +420,7 @@ static void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi) {
 	}
 
 	for (; t <= ent->trailTime; t += step) {
-		BG_EvaluateTrajectory(&es->pos, t, lastPos);
+		BG_EvaluateTrajectory(&es->pos, t, lastPos, qfalse, es->effect2Time);
 
 		smoke = CG_SmokePuff(lastPos, up, wi->trailRadius, 1, 1, 1, 0.33f, wi->wiTrailTime, t, 0, 0, cgs.media.smokePuffShader);
 		// use the optimized local entity add
@@ -458,7 +458,7 @@ static void CG_PlasmaTrail(centity_t *cent, const weaponInfo_t *wi) {
 
 	es = &cent->currentState;
 
-	BG_EvaluateTrajectory(&es->pos, cg.time, origin);
+	BG_EvaluateTrajectory(&es->pos, cg.time, origin, qfalse, es->effect2Time);
 
 	le = CG_AllocLocalEntity();
 

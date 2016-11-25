@@ -132,7 +132,7 @@ void CG_BloodTrail(localEntity_t *le) {
 	t2 = step * (cg.time / step);
 
 	for (; t <= t2; t += step) {
-		BG_EvaluateTrajectory(&le->pos, t, newOrigin);
+		BG_EvaluateTrajectory(&le->pos, t, newOrigin, qfalse, -1);
 
 		blood = CG_SmokePuff(newOrigin, vec3_origin, 20, 1, 1, 1, 1, 2000, t, 0, 0, cgs.media.bloodTrailShader);
 		// use the optimized version
@@ -204,7 +204,7 @@ void CG_ReflectVelocity(localEntity_t *le, trace_t *trace) {
 	// reflect the velocity on the trace plane
 	hitTime = cg.time - cg.frametime + cg.frametime * trace->fraction;
 
-	BG_EvaluateTrajectoryDelta(&le->pos, hitTime, velocity);
+	BG_EvaluateTrajectoryDelta(&le->pos, hitTime, velocity, qfalse, -1);
 
 	dot = DotProduct(velocity, trace->plane.normal);
 
@@ -252,7 +252,7 @@ void CG_AddFragment(localEntity_t *le) {
 		return;
 	}
 	// calculate new position
-	BG_EvaluateTrajectory(&le->pos, cg.time, newOrigin);
+	BG_EvaluateTrajectory(&le->pos, cg.time, newOrigin, qfalse, -1);
 	// trace a line from previous position to new position
 	CG_Trace(&trace, le->refEntity.origin, NULL, NULL, newOrigin, -1, CONTENTS_SOLID);
 
@@ -263,7 +263,7 @@ void CG_AddFragment(localEntity_t *le) {
 		if (le->leFlags & LEF_TUMBLE) {
 			vec3_t angles;
 
-			BG_EvaluateTrajectory(&le->angles, cg.time, angles);
+			BG_EvaluateTrajectory(&le->angles, cg.time, angles, qtrue, -1);
 			AnglesToAxis(angles, le->refEntity.axis);
 		}
 
@@ -350,7 +350,7 @@ static void CG_AddMoveScaleFade(localEntity_t *le) {
 		re->radius = le->radius * (1.0 - c) + 8;
 	}
 
-	BG_EvaluateTrajectory(&le->pos, cg.time, re->origin);
+	BG_EvaluateTrajectory(&le->pos, cg.time, re->origin, qfalse, -1);
 	// if the view would be "inside" the sprite, kill the sprite so it doesn't add too much overdraw
 	VectorSubtract(re->origin, cg.refdef.vieworg, delta);
 

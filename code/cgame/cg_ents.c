@@ -424,7 +424,7 @@ static void CG_Missile(centity_t *cent) {
 	if (weapon->missileSound) {
 		vec3_t velocity;
 
-		BG_EvaluateTrajectoryDelta(&cent->currentState.pos, cg.time, velocity);
+		BG_EvaluateTrajectoryDelta(&cent->currentState.pos, cg.time, velocity, qfalse, -1);
 
 		trap_S_AddLoopingSound(cent->currentState.number, cent->lerpOrigin, velocity, weapon->missileSound);
 	}
@@ -590,11 +590,11 @@ void CG_AdjustPositionForMover(const vec3_t in, int moverNum, int fromTime, int 
 		return;
 	}
 
-	BG_EvaluateTrajectory(&cent->currentState.pos, fromTime, oldOrigin);
-	BG_EvaluateTrajectory(&cent->currentState.apos, fromTime, oldAngles);
+	BG_EvaluateTrajectory(&cent->currentState.pos, fromTime, oldOrigin, qfalse, cent->currentState.effect2Time);
+	BG_EvaluateTrajectory(&cent->currentState.apos, fromTime, oldAngles, qtrue, cent->currentState.effect2Time);
 
-	BG_EvaluateTrajectory(&cent->currentState.pos, toTime, origin);
-	BG_EvaluateTrajectory(&cent->currentState.apos, toTime, angles);
+	BG_EvaluateTrajectory(&cent->currentState.pos, toTime, origin, qfalse, cent->currentState.effect2Time);
+	BG_EvaluateTrajectory(&cent->currentState.apos, toTime, angles, qtrue, cent->currentState.effect2Time);
 
 	VectorSubtract(origin, oldOrigin, deltaOrigin);
 	VectorSubtract(angles, oldAngles, deltaAngles);
@@ -620,15 +620,15 @@ static void CG_InterpolateEntityPosition(centity_t *cent) {
 
 	f = cg.frameInterpolation;
 	// this will linearize a sine or parabolic curve, but it is important to not extrapolate player positions if more recent data is available
-	BG_EvaluateTrajectory(&cent->currentState.pos, cg.snap->serverTime, current);
-	BG_EvaluateTrajectory(&cent->nextState.pos, cg.nextSnap->serverTime, next);
+	BG_EvaluateTrajectory(&cent->currentState.pos, cg.snap->serverTime, current, qfalse, cent->currentState.effect2Time);
+	BG_EvaluateTrajectory(&cent->nextState.pos, cg.nextSnap->serverTime, next, qfalse, cent->currentState.effect2Time);
 
 	cent->lerpOrigin[0] = current[0] + f * (next[0] - current[0]);
 	cent->lerpOrigin[1] = current[1] + f * (next[1] - current[1]);
 	cent->lerpOrigin[2] = current[2] + f * (next[2] - current[2]);
 
-	BG_EvaluateTrajectory(&cent->currentState.apos, cg.snap->serverTime, current);
-	BG_EvaluateTrajectory(&cent->nextState.apos, cg.nextSnap->serverTime, next);
+	BG_EvaluateTrajectory(&cent->currentState.apos, cg.snap->serverTime, current, qtrue, cent->currentState.effect2Time);
+	BG_EvaluateTrajectory(&cent->nextState.apos, cg.nextSnap->serverTime, next, qtrue, cent->currentState.effect2Time);
 
 	cent->lerpAngles[0] = LerpAngle(current[0], next[0], f);
 	cent->lerpAngles[1] = LerpAngle(current[1], next[1], f);
@@ -661,8 +661,8 @@ static void CG_CalcEntityLerpPositions(centity_t *cent) {
 		return;
 	}
 	// just use the current frame and evaluate as best we can
-	BG_EvaluateTrajectory(&cent->currentState.pos, cg.time, cent->lerpOrigin);
-	BG_EvaluateTrajectory(&cent->currentState.apos, cg.time, cent->lerpAngles);
+	BG_EvaluateTrajectory(&cent->currentState.pos, cg.time, cent->lerpOrigin, qfalse, cent->currentState.effect2Time);
+	BG_EvaluateTrajectory(&cent->currentState.apos, cg.time, cent->lerpAngles, qtrue, cent->currentState.effect2Time);
 	// adjust for riding a mover if it wasn't rolled into the predicted player state
 	if (cent != &cg.predictedPlayerEntity) {
 		CG_AdjustPositionForMover(cent->lerpOrigin, cent->currentState.groundEntityNum, cg.snap->serverTime, cg.time, cent->lerpOrigin, cent->lerpAngles, cent->lerpAngles);

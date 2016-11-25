@@ -101,8 +101,9 @@ static void CG_ClipMoveToEntities(const vec3_t start, const vec3_t mins, const v
 		if (ent->solid == SOLID_BMODEL) {
 			// special value for bmodel
 			cmodel = trap_CM_InlineModel(ent->modelindex);
-			VectorCopy(cent->lerpAngles, angles);
-			BG_EvaluateTrajectory(&cent->currentState.pos, cg.physicsTime, origin);
+
+			BG_EvaluateTrajectory(&cent->currentState.apos, cg.physicsTime, angles, qtrue, cent->currentState.effect2Time);
+			BG_EvaluateTrajectory(&cent->currentState.pos, cg.physicsTime, origin, qfalse, cent->currentState.effect2Time);
 		} else {
 			// encoded bbox
 			x = (ent->solid & 255);

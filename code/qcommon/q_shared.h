@@ -474,6 +474,7 @@ static ID_INLINE float Q_fabs(float x) {
 float Q_fabs(float f);
 float Q_rsqrt(float f); // reciprocal square root
 #endif
+float Q_ln(float f);
 #define SQRTFAST(x) ((x) * Q_rsqrt(x))
 signed char ClampChar(int i);
 signed short ClampShort(int i);
@@ -1130,10 +1131,26 @@ typedef struct usercmd_s {
 typedef enum {
 	TR_STATIONARY,
 	TR_INTERPOLATE,	// non-parametric, but interpolate between snapshots
+	TR_GRAVITY_PAUSED,
+	TR_ROTATING,
+	TR_LINEAR_BOB,
 	TR_LINEAR,
 	TR_LINEAR_STOP,
+	TR_NONLINEAR_STOP,
 	TR_GRAVITY,
-	TR_SINE		// value = base + sin(time / duration) * delta
+	TR_GRAVITY_FLOAT,
+	TR_GRAVITY_SMALL,
+	TR_GRAVITY_LOW,
+	TR_GRAVITY_WATER,
+	TR_GRAVITY_LOCAL,
+	TR_BUOYANCY,
+	TR_ACCELERATE,
+	TR_DECCELERATE,
+	TR_SPLINE,
+	TR_LINEAR_PATH,
+	TR_WATER,
+	TR_SINE,		// value = base + sin(time / duration) * delta
+	TR_ORBITAL
 } trType_t;
 
 typedef struct {

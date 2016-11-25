@@ -598,8 +598,8 @@ typedef enum {
 	ET_EVENTS // any of the EV_* events can be added freestanding by setting eType to ET_EVENTS + eventNum this avoids having to set eFlags and eventNum
 } entityType_t;
 
-void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result);
-void BG_EvaluateTrajectoryDelta(const trajectory_t *tr, int atTime, vec3_t result);
+void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qboolean isAngle, int splinePath);
+void BG_EvaluateTrajectoryDelta(const trajectory_t *tr, int atTime, vec3_t result, qboolean isAngle, int splineData);
 void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerState_t *ps);
 void BG_TouchJumpPad(playerState_t *ps, entityState_t *jumppad);
 void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, qboolean snap);
@@ -633,6 +633,54 @@ void SnapVectorTowards(vec3_t v, vec3_t to);
 #define KAMI_SHOCKWAVE_MAXRADIUS 1320
 #define KAMI_BOOMSPHERE_MAXRADIUS 720
 #define KAMI_SHOCKWAVE2_MAXRADIUS 704
+
+#define MAX_PATH_CORNERS 512
+
+#define MAX_SPLINE_PATHS 512
+#define MAX_SPLINE_CONTROLS 4
+#define MAX_SPLINE_SEGMENTS 16
+
+typedef struct {
+	char name[64];
+	vec3_t origin;
+} pathCorner_t;
+
+extern int numPathCorners;
+extern pathCorner_t pathCorners[MAX_PATH_CORNERS];
+
+typedef struct splinePath_s splinePath_t;
+
+typedef struct {
+	vec3_t start;
+	vec3_t v_norm;
+	float length;
+} splineSegment_t;
+
+struct splinePath_s {
+	pathCorner_t point;
+	char strTarget[64];
+	splinePath_t *next;
+	splinePath_t *prev;
+	pathCorner_t controls[MAX_SPLINE_CONTROLS];
+	int numControls;
+	splineSegment_t segments[MAX_SPLINE_SEGMENTS];
+	float length;
+	qboolean isStart;
+	qboolean isEnd;
+};
+
+extern int numSplinePaths;
+extern splinePath_t splinePaths[MAX_SPLINE_PATHS];
+
+pathCorner_t *BG_Find_PathCorner(const char *match);
+splinePath_t *BG_GetSplineData(int number, qboolean *backwards);
+void BG_AddPathCorner(const char *name, vec3_t origin);
+splinePath_t *BG_AddSplinePath(const char *name, const char *target, vec3_t origin);
+void BG_BuildSplinePaths(void);
+splinePath_t *BG_Find_Spline(const char *match);
+float BG_SplineLength(splinePath_t *pSpline);
+void BG_AddSplineControl(splinePath_t *spline, const char *name);
+void BG_LinearPathOrigin2(float radius, splinePath_t **pSpline, float *deltaTime, vec3_t result, qboolean backwards);
 
 typedef struct {
 	const char *name;

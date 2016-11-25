@@ -1192,7 +1192,7 @@ void CG_CheckEvents(centity_t *cent) {
 		}
 	}
 	// calculate the position at exactly the frame time
-	BG_EvaluateTrajectory(&cent->currentState.pos, cg.snap->serverTime, cent->lerpOrigin);
+	BG_EvaluateTrajectory(&cent->currentState.pos, cg.snap->serverTime, cent->lerpOrigin, qfalse, cent->currentState.effect2Time);
 
 	CG_SetEntitySoundPosition(cent);
 	CG_EntityEvent(cent, cent->lerpOrigin);

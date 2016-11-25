@@ -39,7 +39,7 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace) {
 	// reflect the velocity on the trace plane
 	hitTime = level.previousTime + (level.time - level.previousTime) * trace->fraction;
 
-	BG_EvaluateTrajectoryDelta(&ent->s.pos, hitTime, velocity);
+	BG_EvaluateTrajectoryDelta(&ent->s.pos, hitTime, velocity, qfalse, ent->s.effect2Time);
 
 	dot = DotProduct(velocity, trace->plane.normal);
 	VectorMA(velocity, -2 * dot, trace->plane.normal, ent->s.pos.trDelta);
@@ -70,7 +70,7 @@ void G_ExplodeMissile(gentity_t *ent) {
 	vec3_t dir;
 	vec3_t origin;
 
-	BG_EvaluateTrajectory(&ent->s.pos, level.time, origin);
+	BG_EvaluateTrajectory(&ent->s.pos, level.time, origin, qfalse, ent->s.effect2Time);
 	SnapVector(origin);
 	G_SetOrigin(ent, origin);
 	// we don't have a valid direction, so just point straight up
@@ -273,7 +273,7 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace) {
 				hitClient = qtrue;
 			}
 
-			BG_EvaluateTrajectoryDelta(&ent->s.pos, level.time, velocity);
+			BG_EvaluateTrajectoryDelta(&ent->s.pos, level.time, velocity, qfalse, ent->s.effect2Time);
 
 			if (VectorLength(velocity) == 0) {
 				velocity[2] = 1; // stepped on a grenade
@@ -357,7 +357,7 @@ void G_RunMissile(gentity_t *ent) {
 	int passent;
 
 	// get current position
-	BG_EvaluateTrajectory(&ent->s.pos, level.time, origin);
+	BG_EvaluateTrajectory(&ent->s.pos, level.time, origin, qfalse, ent->s.effect2Time);
 	// if this missile bounced off
 	if (ent->target_ent) {
 		passent = ent->target_ent->s.number;

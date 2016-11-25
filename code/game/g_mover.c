@@ -425,8 +425,8 @@ void G_MoverTeam(gentity_t *ent) {
 
 	for (part = ent; part; part = part->teamchain) {
 		// get current position
-		BG_EvaluateTrajectory(&part->s.pos, level.time, origin);
-		BG_EvaluateTrajectory(&part->s.apos, level.time, angles);
+		BG_EvaluateTrajectory(&part->s.pos, level.time, origin, qfalse, ent->s.effect2Time);
+		BG_EvaluateTrajectory(&part->s.apos, level.time, angles, qtrue, ent->s.effect2Time);
 
 		VectorSubtract(origin, part->r.currentOrigin, move);
 		VectorSubtract(angles, part->r.currentAngles, amove);
@@ -442,8 +442,8 @@ void G_MoverTeam(gentity_t *ent) {
 			part->s.pos.trTime += level.time - level.previousTime;
 			part->s.apos.trTime += level.time - level.previousTime;
 
-			BG_EvaluateTrajectory(&part->s.pos, level.time, part->r.currentOrigin);
-			BG_EvaluateTrajectory(&part->s.apos, level.time, part->r.currentAngles);
+			BG_EvaluateTrajectory(&part->s.pos, level.time, part->r.currentOrigin, qfalse, ent->s.effect2Time);
+			BG_EvaluateTrajectory(&part->s.apos, level.time, part->r.currentAngles, qtrue, ent->s.effect2Time);
 
 			trap_LinkEntity(part);
 		}
@@ -534,7 +534,7 @@ void SetMoverState(gentity_t *ent, moverState_t moverState, int time) {
 			break;
 	}
 
-	BG_EvaluateTrajectory(&ent->s.pos, level.time, ent->r.currentOrigin);
+	BG_EvaluateTrajectory(&ent->s.pos, level.time, ent->r.currentOrigin, qfalse, ent->s.effect2Time);
 	trap_LinkEntity(ent);
 }
 

@@ -864,7 +864,7 @@ void G_BounceItem(gentity_t *ent, trace_t *trace) {
 	// reflect the velocity on the trace plane
 	hitTime = level.previousTime + (level.time - level.previousTime) * trace->fraction;
 
-	BG_EvaluateTrajectoryDelta(&ent->s.pos, hitTime, velocity);
+	BG_EvaluateTrajectoryDelta(&ent->s.pos, hitTime, velocity, qfalse, ent->s.effect2Time);
 
 	dot = DotProduct(velocity, trace->plane.normal);
 	VectorMA(velocity, -2 * dot, trace->plane.normal, ent->s.pos.trDelta);
@@ -909,7 +909,7 @@ void G_RunItem(gentity_t *ent) {
 		return;
 	}
 	// get current position
-	BG_EvaluateTrajectory(&ent->s.pos, level.time, origin);
+	BG_EvaluateTrajectory(&ent->s.pos, level.time, origin, qfalse, ent->s.effect2Time);
 	// trace a line from the previous position to the current position
 	if (ent->clipmask) {
 		mask = ent->clipmask;
