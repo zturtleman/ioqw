@@ -300,10 +300,9 @@ char *BotWeaponNameForMeansOfDeath(int mod) {
 			return "Phosphorgun";
 		case MOD_PROXIMITY_MINE:
 			return "Proximity Launcher";
-		case MOD_GRENADE:
 		case MOD_GRENADE_SPLASH:
 			return "Grenade Launcher";
-		case MOD_NAPALM:
+		case MOD_NAPALM_SPLASH:
 			return "Napalm Launcher";
 		case MOD_ROCKET:
 		case MOD_ROCKET_SPLASH:

@@ -1331,7 +1331,7 @@ static void ObeliskTouch(gentity_t *self, gentity_t *other, trace_t *trace) {
 ObeliskPain
 =======================================================================================================================================
 */
-static void ObeliskPain(gentity_t *self, gentity_t *attacker, int damage) {
+void ObeliskPain(gentity_t *self, gentity_t *attacker, int damage) {
 	int actualDamage = damage / 10;
 
 	if (actualDamage <= 0) {

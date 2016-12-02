@@ -31,10 +31,10 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 G_BounceMissile
 =======================================================================================================================================
 */
-void G_BounceMissile(gentity_t *ent, trace_t *trace) {
-	vec3_t velocity;
+qboolean G_BounceMissile(gentity_t *ent, trace_t *trace) {
+	vec3_t velocity, relativeDelta;
+	int hitTime, contents;
 	float dot;
-	int hitTime;
 
 	// reflect the velocity on the trace plane
 	hitTime = level.previousTime + (level.time - level.previousTime) * trace->fraction;
@@ -44,19 +44,42 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace) {
 	dot = DotProduct(velocity, trace->plane.normal);
 	VectorMA(velocity, -2 * dot, trace->plane.normal, ent->s.pos.trDelta);
 
+	if (trace->surfaceFlags & SURF_DUST) {
+		ent->s.pos.trDelta[2] *= 0.65f;
+	}
+
+	contents = trap_PointContents(ent->r.currentOrigin, -1);
+
+	if (contents & (CONTENTS_WATER|CONTENTS_SLIME|CONTENTS_LAVA)) {
+		ent->s.pos.trDelta[2] *= 0.25f;
+	}
+
 	if (ent->s.eFlags & EF_BOUNCE_HALF) {
-		VectorScale(ent->s.pos.trDelta, 0.65, ent->s.pos.trDelta);
-		// check for stop
-		if (trace->plane.normal[2] > 0.2 && VectorLength(ent->s.pos.trDelta) < 40) {
-			G_SetOrigin(ent, trace->endpos);
-			ent->s.time = level.time / 4;
-			return;
+		ent->s.pos.trDelta[2] *= 0.5f;
+	}
+
+	if (ent->s.eFlags & (EF_BOUNCE|EF_BOUNCE_HALF)) {
+		// if it hit a client then barely bounce off of them since they are "soft"
+		if (trace->entityNum >= 0 && trace->entityNum < MAX_CLIENTS) {
+			VectorScale(ent->s.pos.trDelta, 0.02f, ent->s.pos.trDelta);
+		} else {
+			VectorScale(ent->s.pos.trDelta, 0.55f, ent->s.pos.trDelta);
+			// calculate relative delta for stop calcs
+			VectorCopy(ent->s.pos.trDelta, relativeDelta);
+			// check for stop
+			if (trace->plane.normal[2] > 0.2f && VectorLengthSquared(relativeDelta) < 1600) {
+				G_SetOrigin(ent, trace->endpos);
+				ent->s.time = level.time; // final rotation value
+				return qfalse;
+			}
 		}
 	}
 
 	VectorAdd(ent->r.currentOrigin, trace->plane.normal, ent->r.currentOrigin);
 	VectorCopy(ent->r.currentOrigin, ent->s.pos.trBase);
+
 	ent->s.pos.trTime = level.time;
+	return qtrue;
 }
 
 /*
@@ -254,20 +277,21 @@ G_MissileImpact
 void G_MissileImpact(gentity_t *ent, trace_t *trace) {
 	gentity_t *other;
 	qboolean hitClient = qfalse;
+	vec3_t velocity;
 
 	other = &g_entities[trace->entityNum];
 	// check for bounce
-	if (!other->takedamage && (ent->s.eFlags & (EF_BOUNCE|EF_BOUNCE_HALF))) {
-		G_BounceMissile(ent, trace);
-		G_AddEvent(ent, EV_GRENADE_BOUNCE, 0);
+	if (ent->s.eFlags & (EF_BOUNCE|EF_BOUNCE_HALF)) {
+		if (G_BounceMissile(ent, trace) && !trace->startsolid) { // no bounce, no bounce sound
+			G_AddEvent(ent, EV_GRENADE_BOUNCE, 0);
+		}
+
 		return;
 	}
 	// impact damage
 	if (other->takedamage) {
 		// FIXME: wrong damage direction?
 		if (ent->damage) {
-			vec3_t velocity;
-
 			if (LogAccuracyHit(other, &g_entities[ent->r.ownerNum])) {
 				g_entities[ent->r.ownerNum].client->accuracy_hits++;
 				hitClient = qtrue;
@@ -358,11 +382,8 @@ void G_RunMissile(gentity_t *ent) {
 
 	// get current position
 	BG_EvaluateTrajectory(&ent->s.pos, level.time, origin, qfalse, ent->s.effect2Time);
-	// if this missile bounced off
-	if (ent->target_ent) {
-		passent = ent->target_ent->s.number;
-	// prox mines that left the owner bbox will attach to anything, even the owner
-	} else if (ent->s.weapon == WP_PROXLAUNCHER && ent->count) {
+	// missiles that left the owner bbox will interact with anything, even the owner
+	if (ent->count) {
 		passent = ENTITYNUM_NONE;
 	} else {
 		// ignore interactions with the missile owner
@@ -375,6 +396,7 @@ void G_RunMissile(gentity_t *ent) {
 		// make sure the tr.entityNum is set to the entity we're stuck in
 		trap_Trace(&tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, ent->r.currentOrigin, passent, ent->clipmask);
 		tr.fraction = 0;
+		ent->clipmask &= ~CONTENTS_BODY;
 	} else {
 		VectorCopy(tr.endpos, ent->r.currentOrigin);
 	}
@@ -394,9 +416,9 @@ void G_RunMissile(gentity_t *ent) {
 			return; // exploded
 		}
 	}
-	// if the prox mine wasn't yet outside the player body
-	if (ent->s.weapon == WP_PROXLAUNCHER && !ent->count) {
-		// check if the prox mine is outside the owner bbox
+	// if the missile wasn't yet outside the player body
+	if (!ent->count) {
+		// check if the missile is outside the owner bbox
 		trap_Trace(&tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, ent->r.currentOrigin, ENTITYNUM_NONE, ent->clipmask);
 
 		if (!tr.startsolid || tr.entityNum != ent->r.ownerNum) {
@@ -425,14 +447,14 @@ gentity_t *fire_nail(gentity_t *self, vec3_t start, vec3_t forward, vec3_t right
 	bolt->nextthink = level.time + 10000;
 	bolt->think = G_ExplodeMissile;
 	bolt->s.eType = ET_MISSILE;
-	bolt->r.svFlags = SVF_USE_CURRENT_ORIGIN;
 	bolt->s.weapon = WP_NAILGUN;
 	bolt->r.ownerNum = self->s.number;
 	bolt->parent = self;
 	bolt->damage = 20;
 	bolt->methodOfDeath = MOD_NAIL;
 	bolt->clipmask = MASK_SHOT;
-	bolt->target_ent = NULL;
+	// count is used to check if the missile left the player bbox, if count == 1 then the missile left the player bbox and can attack to it
+	bolt->count = 0;
 	bolt->s.pos.trType = TR_LINEAR;
 	bolt->s.pos.trTime = level.time;
 
@@ -474,11 +496,10 @@ gentity_t *fire_prox(gentity_t *self, vec3_t start, vec3_t dir) {
 	VectorNormalize(dir);
 
 	bolt = G_Spawn();
-	bolt->classname = "prox mine";
+	bolt->classname = "proxmine";
 	bolt->nextthink = level.time + 3000;
 	bolt->think = G_ExplodeMissile;
 	bolt->s.eType = ET_MISSILE;
-	bolt->r.svFlags = SVF_USE_CURRENT_ORIGIN;
 	bolt->s.weapon = WP_PROXLAUNCHER;
 	bolt->s.eFlags = 0;
 	bolt->r.ownerNum = self->s.number;
@@ -489,9 +510,7 @@ gentity_t *fire_prox(gentity_t *self, vec3_t start, vec3_t dir) {
 	bolt->methodOfDeath = MOD_PROXIMITY_MINE;
 	bolt->splashMethodOfDeath = MOD_PROXIMITY_MINE;
 	bolt->clipmask = MASK_SHOT;
-	bolt->target_ent = NULL;
-	// count is used to check if the prox mine left the player bbox
-	// if count == 1 then the prox mine left the player bbox and can attack to it
+	// count is used to check if the missile left the player bbox, if count == 1 then the missile left the player bbox and can attack to it
 	bolt->count = 0;
 	bolt->s.pos.trType = TR_GRAVITY;
 	bolt->s.pos.trTime = level.time - MISSILE_PRESTEP_TIME; // move a bit on the very first frame
@@ -525,23 +544,23 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir) {
 	bolt->nextthink = level.time + 2500;
 	bolt->think = G_ExplodeMissile;
 	bolt->s.eType = ET_MISSILE;
-	bolt->r.svFlags = SVF_USE_CURRENT_ORIGIN;
 	bolt->s.weapon = WP_GRENADELAUNCHER;
-	bolt->s.eFlags = EF_BOUNCE_HALF;
+	bolt->s.eFlags = EF_BOUNCE;
 	bolt->r.ownerNum = self->s.number;
 	bolt->parent = self;
-	bolt->damage = 100;
-	bolt->splashDamage = 100;
-	bolt->splashRadius = 150;
-	bolt->methodOfDeath = MOD_GRENADE;
+	bolt->damage = 0;
+	bolt->splashDamage = 200;
+	bolt->splashRadius = 200;
+	bolt->methodOfDeath = MOD_GRENADE_SPLASH;
 	bolt->splashMethodOfDeath = MOD_GRENADE_SPLASH;
 	bolt->clipmask = MASK_SHOT;
-	bolt->target_ent = NULL;
+	// count is used to check if the missile left the player bbox, if count == 1 then the missile left the player bbox and can attack to it
+	bolt->count = 0;
 	bolt->s.pos.trType = TR_GRAVITY;
 	bolt->s.pos.trTime = level.time - MISSILE_PRESTEP_TIME; // move a bit on the very first frame
 
 	VectorCopy(start, bolt->s.pos.trBase);
-	VectorScale(dir, 700, bolt->s.pos.trDelta);
+	VectorScale(dir, 1300, bolt->s.pos.trDelta);
 	SnapVector(bolt->s.pos.trDelta); // save net bandwidth
 	VectorCopy(start, bolt->r.currentOrigin);
 
@@ -569,21 +588,22 @@ gentity_t *fire_napalm(gentity_t *self, vec3_t start, vec3_t dir) {
 	bolt->nextthink = level.time + 15000;
 	bolt->think = G_ExplodeMissile;
 	bolt->s.eType = ET_MISSILE;
-	bolt->r.svFlags = SVF_USE_CURRENT_ORIGIN;
 	bolt->s.weapon = WP_NAPALMLAUNCHER;
 	bolt->r.ownerNum = self->s.number;
 	bolt->parent = self;
-	bolt->damage = 1;
-	bolt->splashDamage = 1;
-	bolt->splashRadius = 500;
-	bolt->methodOfDeath = MOD_NAPALM;
+	bolt->damage = 0;
+	bolt->splashDamage = 10;
+	bolt->splashRadius = 300;
+	bolt->methodOfDeath = MOD_NAPALM_SPLASH;
+	bolt->splashMethodOfDeath = MOD_NAPALM_SPLASH;
 	bolt->clipmask = MASK_SHOT;
-	bolt->target_ent = NULL;
+	// count is used to check if the missile left the player bbox, if count == 1 then the missile left the player bbox and can attack to it
+	bolt->count = 0;
 	bolt->s.pos.trType = TR_GRAVITY;
 	bolt->s.pos.trTime = level.time - MISSILE_PRESTEP_TIME; // move a bit on the very first frame
 
 	VectorCopy(start, bolt->s.pos.trBase);
-	VectorScale(dir, 2500, bolt->s.pos.trDelta);
+	VectorScale(dir, 5000, bolt->s.pos.trDelta);
 	SnapVector(bolt->s.pos.trDelta); // save net bandwidth
 	VectorCopy(start, bolt->r.currentOrigin);
 
@@ -611,7 +631,6 @@ gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir) {
 	bolt->nextthink = level.time + 15000;
 	bolt->think = G_ExplodeMissile;
 	bolt->s.eType = ET_MISSILE;
-	bolt->r.svFlags = SVF_USE_CURRENT_ORIGIN;
 	bolt->s.weapon = WP_ROCKETLAUNCHER;
 	bolt->r.ownerNum = self->s.number;
 	bolt->parent = self;
@@ -621,12 +640,13 @@ gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir) {
 	bolt->methodOfDeath = MOD_ROCKET;
 	bolt->splashMethodOfDeath = MOD_ROCKET_SPLASH;
 	bolt->clipmask = MASK_SHOT;
-	bolt->target_ent = NULL;
+	// count is used to check if the missile left the player bbox, if count == 1 then the missile left the player bbox and can attack to it
+	bolt->count = 0;
 	bolt->s.pos.trType = TR_LINEAR;
 	bolt->s.pos.trTime = level.time - MISSILE_PRESTEP_TIME; // move a bit on the very first frame
 
 	VectorCopy(start, bolt->s.pos.trBase);
-	VectorScale(dir, 900, bolt->s.pos.trDelta);
+	VectorScale(dir, 1000, bolt->s.pos.trDelta);
 	SnapVector(bolt->s.pos.trDelta); // save net bandwidth
 	VectorCopy(start, bolt->r.currentOrigin);
 
@@ -654,7 +674,6 @@ gentity_t *fire_plasma(gentity_t *self, vec3_t start, vec3_t dir) {
 	bolt->nextthink = level.time + 10000;
 	bolt->think = G_ExplodeMissile;
 	bolt->s.eType = ET_MISSILE;
-	bolt->r.svFlags = SVF_USE_CURRENT_ORIGIN;
 	bolt->s.weapon = WP_PLASMAGUN;
 	bolt->r.ownerNum = self->s.number;
 	bolt->parent = self;
@@ -664,7 +683,8 @@ gentity_t *fire_plasma(gentity_t *self, vec3_t start, vec3_t dir) {
 	bolt->methodOfDeath = MOD_PLASMA;
 	bolt->splashMethodOfDeath = MOD_PLASMA_SPLASH;
 	bolt->clipmask = MASK_SHOT;
-	bolt->target_ent = NULL;
+	// count is used to check if the missile left the player bbox, if count == 1 then the missile left the player bbox and can attack to it
+	bolt->count = 0;
 	bolt->s.pos.trType = TR_LINEAR;
 	bolt->s.pos.trTime = level.time;
 
@@ -697,7 +717,6 @@ gentity_t *fire_bfg(gentity_t *self, vec3_t start, vec3_t dir) {
 	bolt->nextthink = level.time + 10000;
 	bolt->think = G_ExplodeMissile;
 	bolt->s.eType = ET_MISSILE;
-	bolt->r.svFlags = SVF_USE_CURRENT_ORIGIN;
 	bolt->s.weapon = WP_BFG;
 	bolt->r.ownerNum = self->s.number;
 	bolt->parent = self;
@@ -707,7 +726,8 @@ gentity_t *fire_bfg(gentity_t *self, vec3_t start, vec3_t dir) {
 	bolt->methodOfDeath = MOD_BFG;
 	bolt->splashMethodOfDeath = MOD_BFG_SPLASH;
 	bolt->clipmask = MASK_SHOT;
-	bolt->target_ent = NULL;
+	// count is used to check if the missile left the player bbox, if count == 1 then the missile left the player bbox and can attack to it
+	bolt->count = 0;
 	bolt->s.pos.trType = TR_LINEAR;
 	bolt->s.pos.trTime = level.time - MISSILE_PRESTEP_TIME; // move a bit on the very first frame
 
@@ -741,22 +761,22 @@ gentity_t *fire_missile(gentity_t *self, vec3_t start, vec3_t dir) {
 	bolt->nextthink = level.time + 10000;
 	bolt->think = G_ExplodeMissile;
 	bolt->s.eType = ET_MISSILE;
-	bolt->r.svFlags = SVF_USE_CURRENT_ORIGIN;
 	bolt->s.weapon = WP_MISSILELAUNCHER;
 	bolt->r.ownerNum = self->s.number;
 	bolt->parent = self;
-	bolt->damage = 10000;
-	bolt->splashDamage = 500;
-	bolt->splashRadius = 500;
+	bolt->damage = 1000;
+	bolt->splashDamage = 1000;
+	bolt->splashRadius = 1000;
 	bolt->methodOfDeath = MOD_MISSILE;
 	bolt->splashMethodOfDeath = MOD_MISSILE_SPLASH;
 	bolt->clipmask = MASK_SHOT;
-	bolt->target_ent = NULL;
+	// count is used to check if the missile left the player bbox, if count == 1 then the missile left the player bbox and can attack to it
+	bolt->count = 0;
 	bolt->s.pos.trType = TR_LINEAR;
 	bolt->s.pos.trTime = level.time - MISSILE_PRESTEP_TIME; // move a bit on the very first frame
 
 	VectorCopy(start, bolt->s.pos.trBase);
-	VectorScale(dir, 5000, bolt->s.pos.trDelta);
+	VectorScale(dir, 10000, bolt->s.pos.trDelta);
 	SnapVector(bolt->s.pos.trDelta); // save net bandwidth
 	VectorCopy(start, bolt->r.currentOrigin);
 

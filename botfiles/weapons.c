@@ -217,8 +217,8 @@ weaponinfo
 //===========================================================================
 projectileinfo
 {
-	name			"mine"
-	gravity			0.45
+	name			"proxmine"
+	gravity			0.45 // 0.06
 	damage			0
 	damagetype		DAMAGETYPE_IMPACT
 }
@@ -227,11 +227,11 @@ weaponinfo
 {
 	name			"Prox Launcher"
 	number			WEAPONINDEX_PROXLAUNCHER
-	projectile		"mine"
+	projectile		"proxmine"
 	numprojectiles	1
 	hspread			0
 	vspread			0
-	speed			700
+	speed			700 // 7500
 }
 
 //===========================================================================
@@ -240,10 +240,10 @@ weaponinfo
 projectileinfo
 {
 	name			"grenade"
-	gravity			0.45 // 0.35
-	damage			120
-	radius			160
-	damagetype		$evalint(DAMAGETYPE_IMPACT|DAMAGETYPE_RADIAL) // DAMAGETYPE_RADIA only?
+	gravity			0.35
+	damage			0
+	radius			200
+	damagetype		DAMAGETYPE_RADIAL
 }
 
 weaponinfo
@@ -254,7 +254,7 @@ weaponinfo
 	numprojectiles	1
 	hspread			0
 	vspread			0
-	speed			700 // 1300
+	speed			1300
 }
 
 //===========================================================================
@@ -263,10 +263,10 @@ weaponinfo
 projectileinfo
 {
 	name			"napalm"
-	gravity			0.04 // speed: 10000 !!!!!!!!!!!!
-	damage			120
-	radius			160
-	damagetype		$evalint(DAMAGETYPE_IMPACT|DAMAGETYPE_RADIAL) // DAMAGETYPE_RADIA only?
+	gravity			0.08 // 0.04
+	damage			0
+	radius			300
+	damagetype		DAMAGETYPE_RADIAL
 }
 
 weaponinfo
@@ -277,7 +277,7 @@ weaponinfo
 	numprojectiles	1
 	hspread			0
 	vspread			0
-	speed			10000 // gravity: 0.04 !!!!!!!!!!!!
+	speed			5000 // 10000
 }
 
 //===========================================================================
@@ -300,7 +300,7 @@ weaponinfo
 	numprojectiles	1
 	hspread			0
 	vspread			0
-	speed			900
+	speed			1000
 }
 
 //===========================================================================
@@ -375,10 +375,10 @@ weaponinfo
 //===========================================================================
 projectileinfo
 {
-	name			"bfgexplosion"
+	name			"bfg"
 	gravity			0.0
 	damage			100
-	radius			100
+	radius			120
 	damagetype		$evalint(DAMAGETYPE_IMPACT|DAMAGETYPE_RADIAL)
 }
 
@@ -386,7 +386,7 @@ weaponinfo
 {
 	name			"BFG10K"
 	number			WEAPONINDEX_BFG
-	projectile		"bfgexplosion"
+	projectile		"bfg"
 	numprojectiles	1
 	hspread			0
 	vspread			0
@@ -398,10 +398,10 @@ weaponinfo
 //===========================================================================
 projectileinfo
 {
-	name			"missileexplosion"
+	name			"missile"
 	gravity			0.0
-	damage			500
-	radius			500
+	damage			1000
+	radius			1000
 	damagetype		$evalint(DAMAGETYPE_IMPACT|DAMAGETYPE_RADIAL)
 }
 
@@ -409,9 +409,9 @@ weaponinfo
 {
 	name			"Missile Launcher"
 	number			WEAPONINDEX_MISSILELAUNCHER
-	projectile		"missileexplosion"
+	projectile		"missile"
 	numprojectiles	1
 	hspread			0
 	vspread			0
-	speed			5000
+	speed			10000
 }

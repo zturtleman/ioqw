@@ -1508,7 +1508,7 @@ static void PM_Weapon(void) {
 			addTime = 400;
 			break;
 		case WP_HANDGUN:
-			addTime = 200;
+			addTime = 220;
 			break;
 		case WP_MACHINEGUN:
 			addTime = 100;
@@ -1526,7 +1526,7 @@ static void PM_Weapon(void) {
 			addTime = 1000;
 			break;
 		case WP_PHOSPHORGUN:
-			addTime = 300;
+			addTime = 225;
 			break;
 		case WP_PROXLAUNCHER:
 			addTime = 800;
@@ -1535,7 +1535,7 @@ static void PM_Weapon(void) {
 			addTime = 800;
 			break;
 		case WP_NAPALMLAUNCHER:
-			addTime = 1100;
+			addTime = 1200;
 			break;
 		case WP_ROCKETLAUNCHER:
 			addTime = 800;

@@ -120,6 +120,10 @@ qboolean CheckGauntletAttack(gentity_t *ent) {
 	if (ent->client->persistantPowerup && ent->client->persistantPowerup->item && ent->client->persistantPowerup->item->giTag == PW_DOUBLER) {
 		s_quadFactor *= 2;
 	}
+	// obelisks are hard to damage
+	if (traceEnt->pain == ObeliskPain) {
+		s_quadFactor *= 0.1;
+	}
 
 	damage = 50 * s_quadFactor;
 
@@ -442,7 +446,7 @@ void Weapon_Proxlauncher_Fire(gentity_t *ent) {
 	gentity_t *m;
 
 	m = fire_prox(ent, muzzle, forward);
-	m->damage *= s_quadFactor;
+	m->damage = 0; // Tobias: should the missile hurt as well?
 	m->splashDamage *= s_quadFactor;
 
 //	VectorAdd(m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta); // "real" physics
@@ -465,7 +469,7 @@ void Weapon_Grenadelauncher_Fire(gentity_t *ent) {
 	gentity_t *m;
 
 	m = fire_grenade(ent, muzzle, forward);
-	m->damage *= s_quadFactor;
+	m->damage = 0; // grenades don't explode on contact
 	m->splashDamage *= s_quadFactor;
 
 //	VectorAdd(m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta); // "real" physics
@@ -488,7 +492,7 @@ void Weapon_Napalmlauncher_Fire(gentity_t *ent) {
 	gentity_t *m;
 
 	m = fire_napalm(ent, muzzle, forward);
-	m->damage *= s_quadFactor;
+	m->damage = 0; // Tobias: should the missile hurt as well?
 	m->splashDamage *= s_quadFactor;
 
 //	VectorAdd(m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta); // "real" physics

@@ -323,7 +323,7 @@ qboolean G_MoverPush(gentity_t *pusher, vec3_t move, vec3_t amove, gentity_t **o
 
 		if (check->s.eType == ET_MISSILE) {
 			// if it is a prox mine
-			if (!strcmp(check->classname, "prox mine")) {
+			if (!strcmp(check->classname, "proxmine")) {
 				// if this prox mine is attached to this mover try to move it with the pusher
 				if (check->enemy == pusher) {
 					if (!G_TryPushingProxMine(check, pusher, move, amove)) {
@@ -745,7 +745,6 @@ void InitMover(gentity_t *ent) {
 	ent->use = Use_BinaryMover;
 	ent->reached = Reached_BinaryMover;
 	ent->moverState = MOVER_POS1;
-	ent->r.svFlags = SVF_USE_CURRENT_ORIGIN;
 	ent->s.eType = ET_MOVER;
 
 	VectorCopy(ent->pos1, ent->r.currentOrigin);
