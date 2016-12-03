@@ -417,7 +417,7 @@ void G_RunMissile(gentity_t *ent) {
 		}
 	}
 	// if the missile wasn't yet outside the player body
-	if (!ent->count) {
+	if (!ent->count && ent->s.pos.trType == TR_GRAVITY) {
 		// check if the missile is outside the owner bbox
 		trap_Trace(&tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, ent->r.currentOrigin, ENTITYNUM_NONE, ent->clipmask);
 
@@ -451,7 +451,10 @@ gentity_t *fire_nail(gentity_t *self, vec3_t start, vec3_t forward, vec3_t right
 	bolt->r.ownerNum = self->s.number;
 	bolt->parent = self;
 	bolt->damage = 20;
+	bolt->splashDamage = 10;
+	bolt->splashRadius = 15;
 	bolt->methodOfDeath = MOD_NAIL;
+	bolt->splashMethodOfDeath = MOD_NAIL;
 	bolt->clipmask = MASK_SHOT;
 	// count is used to check if the missile left the player bbox, if count == 1 then the missile left the player bbox and can attack to it
 	bolt->count = 0;

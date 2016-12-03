@@ -151,6 +151,16 @@ static void CG_Obituary(entityState_t *ent) {
 
 	if (attacker == target) {
 		switch (mod) {
+			case MOD_NAIL:
+				if (gender == GENDER_FEMALE) {
+					message = "nailed herself";
+				} else if (gender == GENDER_NEUTER) {
+					message = "nailed itself";
+				} else {
+					message = "nailed himself";
+				}
+
+				break;
 			case MOD_PHOSPHOR:
 				if (gender == GENDER_FEMALE) {
 					message = "got a mouthful of his own phosphorus capsules";
