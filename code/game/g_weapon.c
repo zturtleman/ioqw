@@ -589,11 +589,10 @@ Weapon_Railgun_Fire
 =======================================================================================================================================
 */
 void Weapon_Railgun_Fire(gentity_t *ent) {
-	vec3_t end, move, step;
+	vec3_t end;
 	trace_t trace;
 	gentity_t *traceEnt, *tent, *unlinkedEntities[4];
 	int damage, i, hits, unlinked, passent;
-	float len, j, spacing;
 	qboolean hitClient = qfalse;
 
 	damage = 100 * s_quadFactor;
@@ -636,27 +635,6 @@ void Weapon_Railgun_Fire(gentity_t *ent) {
 	for (i = 0; i < unlinked; i++) {
 		trap_LinkEntity(unlinkedEntities[i]);
 	}
-	// no direct hit, do radius damage (caused by the outer rail rings)
-	// Tobias NOTE: this should be inside the do/while loop, ... because if we do this here the radius damage of the outer rings will not work after the rail already go through a client (FIXME?)
-	//              Unfortunately the ENTITYNUM_MAX_NORMAL break prevents us from doing radius damage after direct damage (or something like that)
-	if (!hitClient) {
-		VectorCopy(muzzle, move);
-		VectorSubtract(trace.endpos, muzzle, step);
-
-		spacing = 16.0f;
-		len = VectorNormalize(step);
-
-		VectorScale(step, spacing, step);
-
-		for (j = 0; j < len; j += spacing) {
-			// don't hurt yourself
-			if (G_RadiusDamage(move, ent, damage * 0.1, 20, ent, MOD_RAILGUN)) {
-				ent->client->accuracy_hits++;
-			}
-
-			VectorAdd(move, step, move);
-		}
-	}
 	// the final trace endpos will be the terminal point of the rail trail
 
 	// snap the endpos to integers to save net bandwidth, but nudged towards the line
@@ -676,7 +654,9 @@ void Weapon_Railgun_Fire(gentity_t *ent) {
 	} else {
 		tent->s.eventParm = DirToByte(trace.plane.normal);
 		// do impact radius damage
-		// Tobias NOTE: 'accuracy' go beyond 100% without the !hitClient check, same as above .... (FIXME?)
+		// Tobias FIXME: 'accuracy' will go beyond 100% without the !hitClient check.
+		// This should be inside the do/while loop, if we do this here tradius damage will not work because the rail trail already go through a client.
+		// Unfortunately the ENTITYNUM_MAX_NORMAL break prevents us from doing radius damage after direct damage (or something like that).
 		if (!hitClient) {
 			if (G_RadiusDamage(trace.endpos, ent, damage * 0.5, 20, NULL, MOD_RAILGUN)) {
 				ent->client->accuracy_hits++;
