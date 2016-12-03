@@ -355,18 +355,12 @@ void Weapon_Nailgun_Fire(gentity_t *ent) {
 Weapon_Phosphorgun_Fire
 =======================================================================================================================================
 */
-#define MAX_PHOSPHOR_HITS 2
 void Weapon_Phosphorgun_Fire(gentity_t *ent) {
 	vec3_t end;
 	trace_t trace;
-	gentity_t *tent;
-	gentity_t *traceEnt;
-	int damage;
-	int i;
-	int hits;
-	int unlinked;
-	int passent;
-	gentity_t *unlinkedEntities[MAX_PHOSPHOR_HITS];
+	gentity_t *traceEnt, *tent, *unlinkedEntities[2];
+	int damage, i, hits, unlinked, passent;
+	qboolean hitClient = qfalse;
 
 	damage = 20 * s_quadFactor;
 
@@ -391,6 +385,8 @@ void Weapon_Phosphorgun_Fire(gentity_t *ent) {
 			}
 
 			G_Damage(traceEnt, ent, ent, forward, trace.endpos, damage, 0, MOD_PHOSPHOR);
+
+			hitClient = qtrue;
 		}
 
 		if (trace.contents & CONTENTS_SOLID) {
@@ -401,7 +397,7 @@ void Weapon_Phosphorgun_Fire(gentity_t *ent) {
 
 		unlinkedEntities[unlinked] = traceEnt;
 		unlinked++;
-	} while (unlinked < MAX_PHOSPHOR_HITS);
+	} while (unlinked < 2);
 	// link back in any entities we unlinked
 	for (i = 0; i < unlinked; i++) {
 		trap_LinkEntity(unlinkedEntities[i]);
@@ -424,6 +420,10 @@ void Weapon_Phosphorgun_Fire(gentity_t *ent) {
 		tent->s.eventParm = 255; // don't make the explosion at the end
 	} else {
 		tent->s.eventParm = DirToByte(trace.plane.normal);
+
+		if (!hitClient) {
+			G_RadiusDamage(trace.endpos, ent, damage * 0.75, 10, NULL, MOD_PHOSPHOR);
+		}
 	}
 
 	tent->s.clientNum = ent->s.clientNum;
@@ -588,18 +588,13 @@ void Weapon_Lightning_Fire(gentity_t *ent) {
 Weapon_Railgun_Fire
 =======================================================================================================================================
 */
-#define MAX_RAIL_HITS 4
 void Weapon_Railgun_Fire(gentity_t *ent) {
-	vec3_t end;
+	vec3_t end, move, step;
 	trace_t trace;
-	gentity_t *tent;
-	gentity_t *traceEnt;
-	int damage;
-	int i;
-	int hits;
-	int unlinked;
-	int passent;
-	gentity_t *unlinkedEntities[MAX_RAIL_HITS];
+	gentity_t *traceEnt, *tent, *unlinkedEntities[4];
+	int damage, i, hits, unlinked, passent;
+	float len, j, spacing;
+	qboolean hitClient = qfalse;
 
 	damage = 100 * s_quadFactor;
 
@@ -624,6 +619,8 @@ void Weapon_Railgun_Fire(gentity_t *ent) {
 			}
 
 			G_Damage(traceEnt, ent, ent, forward, trace.endpos, damage, 0, MOD_RAILGUN);
+
+			hitClient = qtrue;
 		}
 
 		if (trace.contents & CONTENTS_SOLID) {
@@ -634,10 +631,31 @@ void Weapon_Railgun_Fire(gentity_t *ent) {
 
 		unlinkedEntities[unlinked] = traceEnt;
 		unlinked++;
-	} while (unlinked < MAX_RAIL_HITS);
+	} while (unlinked < 4);
 	// link back in any entities we unlinked
 	for (i = 0; i < unlinked; i++) {
 		trap_LinkEntity(unlinkedEntities[i]);
+	}
+	// no direct hit, do radius damage (caused by the outer rail rings)
+	// Tobias NOTE: this should be inside the do/while loop, ... because if we do this here the radius damage of the outer rings will not work after the rail already go through a client (FIXME?)
+	//              Unfortunately the ENTITYNUM_MAX_NORMAL break prevents us from doing radius damage after direct damage (or something like that)
+	if (!hitClient) {
+		VectorCopy(muzzle, move);
+		VectorSubtract(trace.endpos, muzzle, step);
+
+		spacing = 16.0f;
+		len = VectorNormalize(step);
+
+		VectorScale(step, spacing, step);
+
+		for (j = 0; j < len; j += spacing) {
+			// don't hurt yourself
+			if (G_RadiusDamage(move, ent, damage * 0.1, 20, ent, MOD_RAILGUN)) {
+				ent->client->accuracy_hits++;
+			}
+
+			VectorAdd(move, step, move);
+		}
 	}
 	// the final trace endpos will be the terminal point of the rail trail
 
@@ -657,6 +675,13 @@ void Weapon_Railgun_Fire(gentity_t *ent) {
 		tent->s.eventParm = 255; // don't make the explosion at the end
 	} else {
 		tent->s.eventParm = DirToByte(trace.plane.normal);
+		// do impact radius damage
+		// Tobias NOTE: 'accuracy' go beyond 100% without the !hitClient check, same as above .... (FIXME?)
+		if (!hitClient) {
+			if (G_RadiusDamage(trace.endpos, ent, damage * 0.5, 20, NULL, MOD_RAILGUN)) {
+				ent->client->accuracy_hits++;
+			}
+		}
 	}
 
 	tent->s.clientNum = ent->s.clientNum;

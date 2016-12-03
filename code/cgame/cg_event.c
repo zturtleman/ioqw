@@ -163,11 +163,11 @@ static void CG_Obituary(entityState_t *ent) {
 				break;
 			case MOD_PHOSPHOR:
 				if (gender == GENDER_FEMALE) {
-					message = "got a mouthful of his own phosphorus capsules";
+					message = "got a mouthful of her own phosphorus capsules";
 				} else if (gender == GENDER_NEUTER) {
 					message = "got a mouthful of its own phosphorus capsules";
 				} else {
-					message = "got a mouthful of her own phosphorus capsules";
+					message = "got a mouthful of his own phosphorus capsules";
 				}
 
 				break;
