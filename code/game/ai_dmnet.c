@@ -1493,6 +1493,12 @@ void BotClearPath(bot_state_t *bs, bot_moveresult_t *moveresult) {
 				moveresult->weapon = WEAPONINDEX_PLASMAGUN;
 			} else if (bs->inventory[INVENTORY_ROCKETLAUNCHER] > 0 && bs->inventory[INVENTORY_ROCKETS] > 0) {
 				moveresult->weapon = WEAPONINDEX_ROCKETLAUNCHER;
+			} else if (bs->inventory[INVENTORY_PHOSPHORGUN] > 0 && bs->inventory[INVENTORY_CAPSULES] > 0) {
+				moveresult->weapon = WEAPONINDEX_PHOSPHORGUN;
+			} else if (bs->inventory[INVENTORY_RAILGUN] > 0 && bs->inventory[INVENTORY_SLUGS] > 0) {
+				moveresult->weapon = WEAPONINDEX_RAILGUN;
+			} else if (bs->inventory[INVENTORY_NAILGUN] > 0 && bs->inventory[INVENTORY_NAILS] > 0) {
+				moveresult->weapon = WEAPONINDEX_NAILGUN;
 			} else if (bs->inventory[INVENTORY_BFG10K] > 0 && bs->inventory[INVENTORY_BFG_AMMO] > 0) {
 				moveresult->weapon = WEAPONINDEX_BFG;
 			} else {
