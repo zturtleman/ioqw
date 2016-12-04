@@ -1514,7 +1514,7 @@ static void PM_Weapon(void) {
 			addTime = 100;
 			break;
 		case WP_HEAVY_MACHINEGUN:
-			addTime = 50;
+			addTime = 45;
 			break;
 		case WP_CHAINGUN:
 			addTime = 30;

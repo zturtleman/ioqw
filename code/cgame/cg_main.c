@@ -731,6 +731,7 @@ static void CG_RegisterSounds(void) {
 	cgs.media.sfx_chghitflesh = trap_S_RegisterSound("sound/weapons/vulcan/wvulimpl.wav", qfalse);
 	cgs.media.sfx_chghitmetal = trap_S_RegisterSound("sound/weapons/vulcan/wvulimpm.wav", qfalse);
 	cgs.media.sfx_chgstop = trap_S_RegisterSound("sound/weapons/vulcan/wvulwind.wav", qfalse);
+	cgs.media.sfx_hmgstop = trap_S_RegisterSound("sound/weapons/hmg/hmgwind.wav", qfalse);
 	cgs.media.kamikazeExplodeSound = trap_S_RegisterSound("sound/items/kam_explode.wav", qfalse);
 	cgs.media.kamikazeImplodeSound = trap_S_RegisterSound("sound/items/kam_implode.wav", qfalse);
 	cgs.media.kamikazeFarSound = trap_S_RegisterSound("sound/items/kam_explode_far.wav", qfalse);

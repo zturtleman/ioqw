@@ -240,7 +240,7 @@ gitem_t bg_itemlist[] = {
 		100,
 		IT_WEAPON,
 		WP_HEAVY_MACHINEGUN,
-/* sounds */ ""
+/* sounds */ "sound/weapons/hmg/hmgwind.wav"
 	},
 
 /*QUAKED weapon_chaingun (.3 .3 1) (-16 -16 -16) (16 16 16) suspended

@@ -1726,6 +1726,10 @@ static float CG_MachinegunSpinAngle(centity_t *cent) {
 		if (cent->currentState.weapon == WP_CHAINGUN && !cent->pe.barrelSpinning) {
 			trap_S_StartSound(NULL, cent->currentState.number, CHAN_WEAPON, cgs.media.sfx_chgstop);
 		}
+
+		if (cent->currentState.weapon == WP_HEAVY_MACHINEGUN && !cent->pe.barrelSpinning) {
+			trap_S_StartSound(NULL, cent->currentState.number, CHAN_WEAPON, cgs.media.sfx_hmgstop);
+		}
 	}
 
 	return angle;

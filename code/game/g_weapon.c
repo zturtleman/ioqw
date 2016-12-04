@@ -143,7 +143,7 @@ qboolean CheckGauntletAttack(gentity_t *ent) {
 #define CHAINGUN_SPREAD 600
 #define CHAINGUN_DAMAGE 7
 
-#define HEAVY_MACHINEGUN_SPREAD 200
+#define HEAVY_MACHINEGUN_SPREAD 100
 #define HEAVY_MACHINEGUN_DAMAGE 5
 
 #define MACHINEGUN_SPREAD 200

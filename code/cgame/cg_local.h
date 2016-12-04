@@ -674,6 +674,7 @@ typedef struct {
 	sfxHandle_t sfx_chghitflesh;
 	sfxHandle_t sfx_chghitmetal;
 	sfxHandle_t sfx_chgstop;
+	sfxHandle_t sfx_hmgstop;
 	sfxHandle_t kamikazeExplodeSound;
 	sfxHandle_t kamikazeImplodeSound;
 	sfxHandle_t kamikazeFarSound;
