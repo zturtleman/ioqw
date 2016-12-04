@@ -171,6 +171,7 @@ typedef struct centity_s {
 typedef struct markPoly_s {
 	struct markPoly_s *prevMark, *nextMark;
 	int time;
+	int markDuration;
 	qhandle_t markShader;
 	qboolean alphaFade; // fade alpha instead of rgb
 	float color[4];
@@ -1132,7 +1133,7 @@ void CG_OutOfAmmoChange(void); // should this be in pmove?
 // cg_marks.c
 void CG_InitMarkPolys(void);
 void CG_AddMarks(void);
-void CG_ImpactMark(qhandle_t markShader, const vec3_t origin, const vec3_t dir, float orientation, float r, float g, float b, float a, qboolean alphaFade, float radius, qboolean temporary);
+void CG_ImpactMark(qhandle_t markShader, const vec3_t origin, const vec3_t dir, float orientation, float r, float g, float b, float a, qboolean alphaFade, float markRadius, int markDuration);
 // cg_localents.c
 void CG_InitLocalEntities(void);
 localEntity_t *CG_AllocLocalEntity(void);

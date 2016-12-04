@@ -48,26 +48,27 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, imp
 	qhandle_t mark;
 	qhandle_t shader;
 	sfxHandle_t sfx;
-	float radius;
+	float markRadius;
 	float light;
 	vec3_t lightColor;
 	localEntity_t *le;
 	int r;
 	qboolean alphaFade;
 	qboolean isSprite;
-	int duration;
+	int lightDuration, markDuration;
 	vec3_t sprOrg;
 	vec3_t sprVel;
 
+	// set defaults
 	mod = 0;
 	shader = 0;
 	light = 0;
 	lightColor[0] = 1;
 	lightColor[1] = 0.75f;
 	lightColor[2] = 0;
-	// set defaults
+	lightDuration = 600;
 	isSprite = qfalse;
-	duration = 600;
+	markDuration = -1; // keep -1 markDuration for temporary marks
 
 	switch (weapon) {
 		case WP_HANDGUN:
@@ -76,7 +77,8 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, imp
 			mod = cgs.media.bulletFlashModel;
 			shader = cgs.media.bulletExplosionShader;
 			mark = cgs.media.bulletMarkShader;
-			radius = 2;
+			markRadius = 2;
+			markDuration = 30000;
 			r = rand() & 3;
 
 			if (r == 0) {
@@ -91,7 +93,8 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, imp
 		case WP_CHAINGUN:
 			mod = cgs.media.bulletFlashModel;
 			mark = cgs.media.bulletMarkShader;
-			radius = 4;
+			markRadius = 4;
+			markDuration = 30000;
 
 			if (soundType == IMPACTSOUND_FLESH) {
 				sfx = cgs.media.sfx_chghitflesh;
@@ -106,12 +109,14 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, imp
 			mod = cgs.media.bulletFlashModel;
 			shader = cgs.media.bulletExplosionShader;
 			mark = cgs.media.bulletMarkShader;
-			radius = 2;
+			markRadius = 2;
+			markDuration = 30000;
 			sfx = 0;
 			break;
 		case WP_NAILGUN:
 			mark = cgs.media.holeMarkShader;
-			radius = 4;
+			markRadius = 4;
+			markDuration = 30000;
 
 			if (soundType == IMPACTSOUND_FLESH) {
 				sfx = cgs.media.sfx_nghitflesh;
@@ -126,7 +131,8 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, imp
 			mod = cgs.media.bulletFlashModel;
 			shader = cgs.media.bulletExplosionShader;
 			mark = cgs.media.bulletMarkShader;
-			radius = 8;
+			markRadius = 8;
+			markDuration = 40000;
 			r = rand() & 3;
 
 			if (r == 0) {
@@ -144,7 +150,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, imp
 			shader = cgs.media.grenadeExplosionShader;
 			isSprite = qtrue;
 			mark = cgs.media.burnMarkShader;
-			radius = 64;
+			markRadius = 64;
 			sfx = cgs.media.sfx_proxexp;
 			break;
 		case WP_GRENADELAUNCHER:
@@ -153,7 +159,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, imp
 			shader = cgs.media.grenadeExplosionShader;
 			isSprite = qtrue;
 			mark = cgs.media.burnMarkShader;
-			radius = 64;
+			markRadius = 64;
 			sfx = cgs.media.sfx_rockexp;
 			break;
 		case WP_NAPALMLAUNCHER:
@@ -162,17 +168,18 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, imp
 			shader = cgs.media.grenadeExplosionShader;
 			isSprite = qtrue;
 			mark = cgs.media.burnMarkShader;
-			radius = 64;
+			markRadius = 64;
 			sfx = cgs.media.sfx_rockexp;
 			break;
 		case WP_ROCKETLAUNCHER:
 			mod = cgs.media.dishFlashModel;
 			light = 300;
-			duration = 1000;
+			lightDuration = 1000;
 			shader = cgs.media.rocketExplosionShader;
 			isSprite = qtrue;
 			mark = cgs.media.burnMarkShader;
-			radius = 64;
+			markRadius = 64;
+			markDuration = 50000;
 			sfx = cgs.media.sfx_rockexp;
 
 			if (cg_oldRocket.integer == 0) {
@@ -188,7 +195,8 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, imp
 		case WP_LIGHTNING:
 			// no explosion at LG impact, it is added with the beam
 			mark = cgs.media.holeMarkShader;
-			radius = 12;
+			markRadius = 12;
+			markDuration = 30000;
 			r = rand() & 3;
 
 			if (r < 2) {
@@ -204,7 +212,8 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, imp
 			mod = cgs.media.ringFlashModel;
 			shader = cgs.media.railExplosionShader;
 			mark = cgs.media.energyMarkShader;
-			radius = 24;
+			markRadius = 24;
+			markDuration = 50000;
 			sfx = cgs.media.sfx_plasmaexp;
 			break;
 		case WP_PLASMAGUN:
@@ -215,7 +224,8 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, imp
 			lightColor[2] = 1.0f;
 			shader = cgs.media.plasmaExplosionShader;
 			mark = cgs.media.energyMarkShader;
-			radius = 16;
+			markRadius = 16;
+			markDuration = 50000;
 			sfx = cgs.media.sfx_plasmaexp;
 			break;
 		case WP_BFG:
@@ -227,17 +237,19 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, imp
 			shader = cgs.media.bfgExplosionShader;
 			isSprite = qtrue;
 			mark = cgs.media.burnMarkShader;
-			radius = 32;
+			markRadius = 32;
+			markDuration = 50000;
 			sfx = cgs.media.sfx_rockexp;
 			break;
 		case WP_MISSILELAUNCHER:
 			mod = cgs.media.dishFlashModel;
 			light = 1000;
-			duration = 1000;
+			lightDuration = 1000;
 			shader = cgs.media.rocketExplosionShader;
 			isSprite = qtrue;
 			mark = cgs.media.burnMarkShader;
-			radius = 512;
+			markRadius = 512;
+			markDuration = 60000;
 			sfx = cgs.media.sfx_rockexp;
 			// explosion sprite animation
 			VectorMA(origin, 24, dir, sprOrg);
@@ -248,7 +260,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, imp
 	}
 	// create the explosion
 	if (mod) {
-		le = CG_MakeExplosion(origin, dir, mod, shader, duration, isSprite);
+		le = CG_MakeExplosion(origin, dir, mod, shader, lightDuration, isSprite);
 		le->light = light;
 
 		VectorCopy(lightColor, le->lightColor);
@@ -260,16 +272,18 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, imp
 		le->refEntity.shaderRGBA[3] = 0xff;
 	}
 	// impact mark
-	alphaFade = (mark == cgs.media.energyMarkShader); // plasma fades alpha, all others fade color
+	if (markDuration) {
+		alphaFade = (mark == cgs.media.energyMarkShader); // plasma fades alpha, all others fade color
 
-	if (weapon == WP_RAILGUN) {
-		float *color;
+		if (weapon == WP_RAILGUN) {
+			float *color;
 
-		// colorize with client color
-		color = cgs.clientinfo[clientNum].color1;
-		CG_ImpactMark(mark, origin, dir, random() * 360, color[0], color[1], color[2], 1, alphaFade, radius, qfalse);
-	} else {
-		CG_ImpactMark(mark, origin, dir, random() * 360, 1, 1, 1, 1, alphaFade, radius, qfalse);
+			// colorize with client color
+			color = cgs.clientinfo[clientNum].color1;
+			CG_ImpactMark(mark, origin, dir, random() * 360, color[0], color[1], color[2], 1, alphaFade, markRadius, markDuration);
+		} else {
+			CG_ImpactMark(mark, origin, dir, random() * 360, 1, 1, 1, 1, alphaFade, markRadius, markDuration);
+		}
 	}
 	// impact sound
 	if (sfx) {
