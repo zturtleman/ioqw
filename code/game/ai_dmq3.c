@@ -4391,15 +4391,18 @@ void BotCheckAttack(bot_state_t *bs) {
 			fov = 60;
 			break;
 		case WP_SHOTGUN:
+			fov = 30;
+			break;
 		case WP_NAILGUN:
 		case WP_PHOSPHORGUN:
-			fov = 20;
-			break;
 		case WP_ROCKETLAUNCHER:
-			fov = 30;
+			fov = 20;
 			break;
 		case WP_RAILGUN:
 			fov = 10;
+			break;
+		case WP_BFG:
+			fov = 30;
 			break;
 		default:
 			fov = 50;
