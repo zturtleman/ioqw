@@ -4372,17 +4372,42 @@ void BotCheckAttack(bot_state_t *bs) {
 	}
 
 	VectorSubtract(bs->aimtarget, bs->eye, dir);
+	// get the weapon info
+	trap_BotGetWeaponInfo(bs->ws, bs->weaponnum, &wi);
 
-	if (bs->weaponnum == WP_GAUNTLET) {
+	if (wi.number == WP_GAUNTLET && BotWantsToRetreat(bs)) {
 		if (VectorLengthSquared(dir) > Square(60)) {
 			return;
 		}
 	}
+	// some weapons accept only a bit of imprecision (could be dangerous for ourself!)
+	switch (wi.number) {
+		case WP_HANDGUN:
+		case WP_MACHINEGUN:
+		case WP_HEAVY_MACHINEGUN:
+			fov = 20;
+			break;
+		case WP_CHAINGUN:
+			fov = 60;
+			break;
+		case WP_SHOTGUN:
+		case WP_NAILGUN:
+		case WP_PHOSPHORGUN:
+			fov = 20;
+			break;
+		case WP_ROCKETLAUNCHER:
+			fov = 30;
+			break;
+		case WP_RAILGUN:
+			fov = 10;
+			break;
+		default:
+			fov = 50;
+			break;
+	}
 
 	if (VectorLengthSquared(dir) < Square(100)) {
 		fov = 120;
-	} else {
-		fov = 50;
 	}
 
 	vectoangles(dir, angles);
@@ -4396,8 +4421,6 @@ void BotCheckAttack(bot_state_t *bs) {
 	if (bsptrace.fraction < 1 && bsptrace.entityNum != attackentity) {
 		return;
 	}
-	// get the weapon info
-	trap_BotGetWeaponInfo(bs->ws, bs->weaponnum, &wi);
 	// get the start point shooting from
 	VectorCopy(bs->origin, start);
 	start[2] += bs->cur_ps.viewheight;
