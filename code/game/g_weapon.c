@@ -359,7 +359,7 @@ void Weapon_Phosphorgun_Fire(gentity_t *ent) {
 	vec3_t end;
 	trace_t trace;
 	gentity_t *traceEnt, *tent, *unlinkedEntities[2];
-	int damage, i, hits, unlinked, passent;
+	int damage, i, unlinked, passent;
 	qboolean hitClient = qfalse;
 
 	damage = 20 * s_quadFactor;
@@ -367,7 +367,6 @@ void Weapon_Phosphorgun_Fire(gentity_t *ent) {
 	VectorMA(muzzle, 100000, forward, end);
 	// trace only against the solids, so the railgun will go through people
 	unlinked = 0;
-	hits = 0;
 	passent = ent->s.number;
 
 	do {
@@ -381,7 +380,7 @@ void Weapon_Phosphorgun_Fire(gentity_t *ent) {
 
 		if (traceEnt->takedamage) {
 			if (LogAccuracyHit(traceEnt, ent)) {
-				hits++;
+				ent->client->accuracy_hits++;
 			}
 
 			G_Damage(traceEnt, ent, ent, forward, trace.endpos, damage, 0, MOD_PHOSPHOR);
@@ -422,7 +421,9 @@ void Weapon_Phosphorgun_Fire(gentity_t *ent) {
 		tent->s.eventParm = DirToByte(trace.plane.normal);
 
 		if (!hitClient) {
-			G_RadiusDamage(trace.endpos, ent, damage * 0.75, 10, NULL, MOD_PHOSPHOR);
+			if (G_RadiusDamage(trace.endpos, ent, damage * 0.75, 10, NULL, MOD_PHOSPHOR)) {
+				ent->client->accuracy_hits++;
+			}
 		}
 	}
 
