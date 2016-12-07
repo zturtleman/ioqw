@@ -4262,7 +4262,7 @@ WARNING 2: Bots will also throw grenades through windows even from distance, so 
 	// get aim direction
 	VectorSubtract(bestorigin, bs->eye, dir);
 
-	if (wi.number == WP_HANDGUN || wi.number == WP_MACHINEGUN || wi.number == WP_HEAVY_MACHINEGUN || wi.number == WP_SHOTGUN || wi.number == WP_PHOSPHORGUN || wi.number == WP_LIGHTNING || wi.number == WP_RAILGUN) {
+	if (wi.speed) {
 		// distance towards the enemy
 		dist = VectorLength(dir);
 
