@@ -4433,7 +4433,7 @@ void BotCheckAttack(bot_state_t *bs) {
 	start[1] += forward[1] * wi.offset[0] + right[1] * wi.offset[1];
 	start[2] += forward[2] * wi.offset[0] + right[2] * wi.offset[1] + wi.offset[2];
 	// end point aiming at
-	VectorMA(start, 1000, forward, end);
+	VectorMA(start, 100000, forward, end);
 	// a little back to make sure not inside a very close enemy
 	VectorMA(start, -12, forward, start);
 	BotAI_Trace(&trace, start, mins, maxs, end, bs->entitynum, MASK_SHOT);
