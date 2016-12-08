@@ -4262,7 +4262,7 @@ WARNING 2: Bots will also throw grenades through windows even from distance, so 
 	// get aim direction
 	VectorSubtract(bestorigin, bs->eye, dir);
 
-	if (wi.speed) {
+	if (wi.speed == 0) {
 		// distance towards the enemy
 		dist = VectorLength(dir);
 
