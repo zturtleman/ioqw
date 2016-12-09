@@ -3985,19 +3985,6 @@ void BotAimAtEnemy(bot_state_t *bs) {
 			break;
 	}
 
-	if (aim_skill > 0.95) {
-		// don't aim too early
-		reactiontime *= 0.5;
-
-		if (bs->enemysight_time > FloatTime() - reactiontime) {
-			return;
-		}
-
-		if (bs->teleport_time > FloatTime() - reactiontime) {
-			return;
-		}
-	}
-
 	VectorSubtract(entinfo.origin, entinfo.lastvisorigin, enemyvelocity);
 	VectorScale(enemyvelocity, 1 / entinfo.update_time, enemyvelocity);
 	// enemy origin and velocity is remembered every 0.5 seconds
@@ -4262,7 +4249,7 @@ WARNING 2: Bots will also throw grenades through windows even from distance, so 
 	// get aim direction
 	VectorSubtract(bestorigin, bs->eye, dir);
 
-	if (wi.speed == 0) {
+	if (!wi.speed) {
 		// distance towards the enemy
 		dist = VectorLength(dir);
 
@@ -4310,7 +4297,7 @@ BotCheckAttack
 */
 void BotCheckAttack(bot_state_t *bs) {
 	float points, reactiontime, firethrottle;
-	int attackentity, fov;
+	int attackentity, fov, endpoint;
 	bsp_trace_t bsptrace;
 	//float selfpreservation;
 	vec3_t forward, right, start, end, dir, angles;
@@ -4380,32 +4367,45 @@ void BotCheckAttack(bot_state_t *bs) {
 			return;
 		}
 	}
+
+	endpoint = 0;
 	// some weapons accept only a bit of imprecision (could be dangerous for ourself!)
 	switch (wi.number) {
 		case WP_HANDGUN:
 		case WP_MACHINEGUN:
 		case WP_HEAVY_MACHINEGUN:
 			fov = 20;
+			endpoint = 100000;
 			break;
 		case WP_CHAINGUN:
 			fov = 60;
+			endpoint = 1000;
 			break;
 		case WP_SHOTGUN:
 			fov = 30;
 			break;
 		case WP_NAILGUN:
+			fov = 20;
+			break;
 		case WP_PHOSPHORGUN:
+			fov = 20;
+			endpoint = 100000;
+			break;
 		case WP_ROCKETLAUNCHER:
 			fov = 20;
+			endpoint = 1000;
 			break;
 		case WP_RAILGUN:
 			fov = 10;
+			endpoint = 100000;
 			break;
 		case WP_BFG:
 			fov = 30;
+			endpoint = 1000;
 			break;
 		default:
 			fov = 50;
+			endpoint = 700;
 			break;
 	}
 
@@ -4433,7 +4433,7 @@ void BotCheckAttack(bot_state_t *bs) {
 	start[1] += forward[1] * wi.offset[0] + right[1] * wi.offset[1];
 	start[2] += forward[2] * wi.offset[0] + right[2] * wi.offset[1] + wi.offset[2];
 	// end point aiming at
-	VectorMA(start, 100000, forward, end);
+	VectorMA(start, endpoint, forward, end);
 	// a little back to make sure not inside a very close enemy
 	VectorMA(start, -12, forward, start);
 	BotAI_Trace(&trace, start, mins, maxs, end, bs->entitynum, MASK_SHOT);
