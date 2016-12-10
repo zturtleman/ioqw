@@ -187,7 +187,7 @@ weaponinfo
 	numprojectiles	15
 	hspread			1
 	vspread			1
-	speed			1600
+	speed			1500
 }
 
 //===========================================================================

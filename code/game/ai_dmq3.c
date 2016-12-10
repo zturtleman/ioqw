@@ -4153,7 +4153,7 @@ void BotAimAtEnemy(bot_state_t *bs) {
 		// if the bot is skilled enough
 		if (aim_skill > 0.5) {
 			// do prediction shots around corners
-			if (wi.number == WP_GRENADELAUNCHER || wi.number == WP_NAPALMLAUNCHER || wi.number == WP_ROCKETLAUNCHER || wi.number == WP_BFG || wi.number == WP_MISSILELAUNCHER) {
+			if (wi.speed) {
 				// create the chase goal
 				goal.entitynum = bs->client;
 				goal.areanum = bs->areanum;
@@ -4166,7 +4166,10 @@ void BotAimAtEnemy(bot_state_t *bs) {
 
 					if (VectorLengthSquared(dir) > Square(80)) {
 						VectorCopy(target, bestorigin);
-						bestorigin[2] -= 20;
+						// if the projectile does large radial damage try to aim at the ground in front of the enemy
+						if (wi.proj.damagetype & DAMAGETYPE_RADIAL) {
+							bestorigin[2] -= 20;
+						}
 					}
 				}
 
@@ -4379,13 +4382,14 @@ void BotCheckAttack(bot_state_t *bs) {
 			break;
 		case WP_CHAINGUN:
 			fov = 60;
-			endpoint = 1000;
+			endpoint = 2000;
 			break;
 		case WP_SHOTGUN:
 			fov = 30;
 			break;
 		case WP_NAILGUN:
 			fov = 20;
+			endpoint = 2000;
 			break;
 		case WP_PHOSPHORGUN:
 			fov = 20;
@@ -4393,7 +4397,6 @@ void BotCheckAttack(bot_state_t *bs) {
 			break;
 		case WP_ROCKETLAUNCHER:
 			fov = 20;
-			endpoint = 1000;
 			break;
 		case WP_RAILGUN:
 			fov = 10;
@@ -4405,7 +4408,7 @@ void BotCheckAttack(bot_state_t *bs) {
 			break;
 		default:
 			fov = 50;
-			endpoint = 700;
+			endpoint = 750;
 			break;
 	}
 

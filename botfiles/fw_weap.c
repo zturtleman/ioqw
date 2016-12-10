@@ -135,7 +135,14 @@ weight "Chaingun"
 				{
 					switch (ENTITY_IS_AN_OBELISK)
 					{
-						case 1: return W_CHAINGUN;
+						case 1:
+						{
+							switch (ENEMY_HORIZONTAL_DIST)
+							{
+								case 2000: return W_CHAINGUN;
+								default: return $evalint(W_MACHINEGUN + 1); // Tobias: try to fix this! (should be W_PHOSPHORGUN - 1
+							}
+						}
 						default:
 						{
 							switch (ENEMY_HORIZONTAL_DIST)
@@ -169,7 +176,7 @@ weight "Shotgun"
 						{
 							switch (ENEMY_HORIZONTAL_DIST)
 							{
-								case 1000: return W_SHOTGUN;
+								case 750: return W_SHOTGUN;
 								default: return 100;
 							}
 						}
@@ -352,7 +359,14 @@ weight "Rocket Launcher"
 				{
 					switch (ENTITY_IS_AN_OBELISK)
 					{
-						case 1: return W_ROCKETLAUNCHER;
+						case 1:
+						{
+							switch (ENEMY_HORIZONTAL_DIST)
+							{
+								case 2000: return W_ROCKETLAUNCHER;
+								default: return 101;
+							}
+						}
 						default:
 						{
 							switch (ENEMY_HORIZONTAL_DIST)
@@ -386,8 +400,8 @@ weight "Lightning Gun"
 						{
 							switch (ENEMY_HORIZONTAL_DIST)
 							{
-								case 768: return W_LIGHTNING;
-								default: return $evalint(W_LIGHTNING*0.1);
+								case 750: return W_LIGHTNING;
+								default: return $evalint(W_LIGHTNING * 0.1);
 							}
 						}
 						default:
@@ -395,7 +409,7 @@ weight "Lightning Gun"
 							switch (ENEMY_HORIZONTAL_DIST)
 							{
 								case 500: return 480;
-								default: return $evalint(W_LIGHTNING*0.1);
+								default: return $evalint(W_LIGHTNING * 0.1);
 							}
 						}
 					}
