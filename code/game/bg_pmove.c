@@ -1513,7 +1513,7 @@ static void PM_Weapon(void) {
 			if (!pm->gauntletHit) {
 				pm->ps->weaponTime = 0;
 				pm->ps->weaponstate = WEAPON_READY;
-				break; // Tobias break or return?
+				return;
 			}
 
 			PM_StartTorsoAnim(TORSO_ATTACK2);
