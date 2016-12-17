@@ -2259,6 +2259,10 @@ qboolean BotCanCamp(bot_state_t *bs) {
 /*
 =======================================================================================================================================
 BotAggression
+
+qfalse -> bots want to retreat (not affected if the bot is carrying a flag or the enemy is carrying a flag).
+qtrue  -> bots want to chase (not affected if the bot is carrying a flag or the enemy is carrying a flag).
+qtrue  -> bots can decide what to do.
 =======================================================================================================================================
 */
 qboolean BotAggression(bot_state_t *bs) {
@@ -2298,16 +2302,16 @@ qboolean BotAggression(bot_state_t *bs) {
 				if (bs->inventory[ENEMY_HEIGHT] > 42) {
 					return qfalse;
 				}
-				// if the enemy is really near.
-				if (bs->inventory[ENEMY_HORIZONTAL_DIST] < 100) {
-					return qtrue;
-				}
 				// an extremely aggressive bot will less likely retreat.
 				if (aggression > 0.9) {
 					return qtrue;
 				}
+				// if the enemy is really near.
+				if (bs->inventory[ENEMY_HORIZONTAL_DIST] < 200) {
+					return qtrue;
+				}
 				// if the enemy is far away, check if we can attack the enemy from behind.
-				if (bs->inventory[ENEMY_HORIZONTAL_DIST] > 200) {
+				if (bs->inventory[ENEMY_HORIZONTAL_DIST] < 500) {
 					vec3_t dir, angles;
 					VectorSubtract(bs->origin, entinfo.origin, dir);
 					vectoangles(dir, angles);
@@ -2315,6 +2319,10 @@ qboolean BotAggression(bot_state_t *bs) {
 					if (!InFieldOfVision(entinfo.angles, 180, angles)) {
 						return qtrue;
 					}
+				}
+				// if the enemy currently use the handgun.
+				if (bs->inventory[ENEMY_HORIZONTAL_DIST] < 600 && entinfo.weapon == WP_HANDGUN) {
+					return qtrue;
 				}
 				// otherwise a bot, currently using the gauntlet, should retreat!
 				return qfalse;
@@ -2368,6 +2376,18 @@ qboolean BotAggression(bot_state_t *bs) {
 	if (bs->inventory[INVENTORY_AMMOREGEN]) {
 		return qtrue;
 	}
+	// if the bot has the guard powerup.
+	if (bs->inventory[INVENTORY_GUARD]) {
+		return qtrue;
+	}
+	// if the bot has the doubler powerup.
+	if (bs->inventory[INVENTORY_DOUBLER]) {
+		return qtrue;
+	}
+	// if the bot has the scout powerup.
+	if (bs->inventory[INVENTORY_SCOUT]) {
+		return qtrue;
+	}
 	// if the bot can use the heavy machinegun.
 	if (bs->inventory[INVENTORY_HEAVY_MACHINEGUN] > 0 && bs->inventory[INVENTORY_HMG_BULLETS] > 80) {
 		return qtrue;
@@ -2419,27 +2439,28 @@ qboolean BotAggression(bot_state_t *bs) {
 /*
 =======================================================================================================================================
 BotFeelingBad
+
+Used for collecting items and obelisk attack rules.
+
+qfalse -> bots do not collect items when they are in a hurry (carrying flag etc.).
+qtrue  -> bots no longer want to attack the obelisk.
 =======================================================================================================================================
 */
-float BotFeelingBad(bot_state_t *bs) {
-
-	if (bs->weaponnum == WP_GAUNTLET) {
-		return 100;
-	}
+qboolean BotFeelingBad(bot_state_t *bs) {
 
 	if (bs->inventory[INVENTORY_HEALTH] < 40) {
-		return 100;
+		return qtrue;
+	}
+
+	if (bs->weaponnum == WP_GAUNTLET) {
+		return qtrue;
 	}
 
 	if (bs->weaponnum == WP_MACHINEGUN) {
-		return 90;
+		return qtrue;
 	}
 
-	if (bs->inventory[INVENTORY_HEALTH] < 60) {
-		return 80;
-	}
-
-	return 0;
+	return qfalse;
 }
 
 /*
@@ -2468,7 +2489,7 @@ int BotWantsToRetreat(bot_state_t *bs) {
 			}
 		}
 
-		if (BotFeelingBad(bs) > 50) {
+		if (BotFeelingBad(bs)) {
 			return qtrue;
 		}
 
@@ -3103,7 +3124,7 @@ bot_moveresult_t BotAttackMove(bot_state_t *bs, int tfl) {
 	// get the weapon information
 	trap_BotGetWeaponInfo(bs->ws, bs->weaponnum, &wi);
 	// close combat weapons
-	if (wi.numprojectiles == 0) {
+	if (!wi.numprojectiles && BotAggression(bs)) {
 		attack_dist = 0;
 		attack_range = 0;
 	// current weapon grenadelauncher
@@ -3159,6 +3180,10 @@ bot_moveresult_t BotAttackMove(bot_state_t *bs, int tfl) {
 
 	if (attack_skill > 0.7) {
 		strafechange_time += crandom() * 0.2;
+	}
+	// close combat weapons
+	if (!wi.numprojectiles && BotAggression(bs)) {
+		bs->attackstrafe_time = 0;
 	}
 	// if the strafe direction should be changed
 	if (bs->attackstrafe_time > strafechange_time) {
@@ -4213,7 +4238,7 @@ NOTE: 6. This code becomes more precise the faster the projectile moves. Grenade
 WARNING 1: Accuracy is nearly 100% even with very fast projectiled weapons (e.g.: speed 20000 etc.), this means bots will always hit their opponents, even with a bow (eventually decrease the bots individual aim_accuracy), otherwise it is very likely you become shot down by an arrow without knowing :)
 WARNING 2: Bots will also throw grenades through windows even from distance, so be careful!
 */
-	if (wi.proj.gravity > 0) {
+	if (wi.proj.gravity) {
 		vec3_t middleOfArc, topOfArc;
 		// direction towards the enemy.
 		VectorSubtract(bestorigin, bs->origin, dir);
@@ -4365,7 +4390,7 @@ void BotCheckAttack(bot_state_t *bs) {
 	// get the weapon info
 	trap_BotGetWeaponInfo(bs->ws, bs->weaponnum, &wi);
 
-	if (wi.number == WP_GAUNTLET && BotWantsToRetreat(bs)) {
+	if (!wi.numprojectiles && BotWantsToRetreat(bs)) {
 		if (VectorLengthSquared(dir) > Square(60)) {
 			return;
 		}

@@ -991,7 +991,7 @@ int BotGetLongTermGoal(bot_state_t *bs, int tfl, int retreat, bot_goal_t *goal) 
 					return qfalse;
 			}
 			// if the bot no longer wants to attack the obelisk
-			if (BotFeelingBad(bs) > 50) {
+			if (BotFeelingBad(bs)) {
 				return BotGetItemLongTermGoal(bs, tfl, goal);
 			}
 			// if touching the obelisk
