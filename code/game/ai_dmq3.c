@@ -1721,7 +1721,7 @@ BotCheckItemPickup
 void BotCheckItemPickup(bot_state_t *bs, int *oldinventory) {
 	int offence, leader;
 
-	if (gametype <= GT_TEAM) {
+	if (gametype < GT_CTF) {
 		return;
 	}
 
@@ -2199,7 +2199,7 @@ TeamPlayIsOn
 =======================================================================================================================================
 */
 int TeamPlayIsOn(void) {
-	return (gametype >= GT_TEAM);
+	return (gametype > GT_TOURNAMENT);
 }
 
 /*
@@ -2210,7 +2210,7 @@ BotCanCamp
 qboolean BotCanCamp(bot_state_t *bs) {
 
 	// if the bot's team does not lead
-	if (g_gametype.integer >= GT_TEAM && bs->ownteamscore < bs->enemyteamscore) {
+	if (gametype > GT_TOURNAMENT && bs->ownteamscore < bs->enemyteamscore) {
 		return qfalse;
 	}
 	// if the enemy is located way higher than the bot
@@ -2241,7 +2241,6 @@ qboolean BotCanCamp(bot_state_t *bs) {
 		return qfalse;
 	}
 	// the bot should have at least have a good weapon with some ammo
-
 	if (!(bs->inventory[INVENTORY_HEAVY_MACHINEGUN] > 0 && bs->inventory[INVENTORY_HMG_BULLETS] > 100)
 		&& !(bs->inventory[INVENTORY_CHAINGUN] > 0 && bs->inventory[INVENTORY_BELT] > 80)
 		&& !(bs->inventory[INVENTORY_PHOSPHORGUN] > 0 && bs->inventory[INVENTORY_CAPSULES] > 30)
@@ -2337,6 +2336,10 @@ qboolean BotAggression(bot_state_t *bs) {
 			}
 			// if the enemy currently use the grenadelauncher.
 			if (entinfo.weapon == WP_GRENADELAUNCHER) {
+				return qfalse;
+			}
+			// if the enemy currently use the grenadelauncher.
+			if (entinfo.weapon == WP_PROXLAUNCHER) {
 				return qfalse;
 			}
 			// if the enemy has the quad damage.
@@ -3123,26 +3126,26 @@ bot_moveresult_t BotAttackMove(bot_state_t *bs, int tfl) {
 	}
 	// get the weapon information
 	trap_BotGetWeaponInfo(bs->ws, bs->weaponnum, &wi);
-	// close combat weapons
-	if (!wi.numprojectiles && BotAggression(bs)) {
+	// if the current weapon is a close combat weapon or if the enemy uses a weapon with splash damage, go closer
+	if ((!wi.numprojectiles && BotAggression(bs)) || ((entinfo.weapon == WP_NAPALMLAUNCHER || entinfo.weapon == WP_ROCKETLAUNCHER || entinfo.weapon == WP_BFG) && dist < 200 && selfpreservation < 0.5 && movetype != MOVE_CROUCH)) {
 		attack_dist = 0;
 		attack_range = 0;
-	// current weapon grenadelauncher
-	} else if (bs->cur_ps.weapon == WP_GRENADELAUNCHER) {
-		attack_dist = 500;
-		attack_range = 150;
-	// current weapon napalmlauncher
-	} else if (bs->cur_ps.weapon == WP_NAPALMLAUNCHER) {
-		attack_dist = 1500;
+	// if the current weapon is the napalmlauncher, or the enemy uses the napalmlauncher
+	} else if (bs->cur_ps.weapon == WP_NAPALMLAUNCHER || entinfo.weapon == WP_NAPALMLAUNCHER) {
+		attack_dist = 4500;
 		attack_range = 250;
+	// if the current weapon is the grenadelauncher, or the enemy uses the grenadelauncher
+	} else if (bs->cur_ps.weapon == WP_GRENADELAUNCHER || entinfo.weapon == WP_GRENADELAUNCHER) {
+		attack_dist = 2000;
+		attack_range = 150;
+	// if the current weapon is the proxylauncher, or the enemy uses the proxylauncher
+	} else if (bs->cur_ps.weapon == WP_PROXLAUNCHER || entinfo.weapon == WP_PROXLAUNCHER) {
+		attack_dist = 700;
+		attack_range = 100;
 	// current weapon lightning gun
 	} else if (bs->cur_ps.weapon == WP_LIGHTNING) {
 		attack_dist = 0.75 * LIGHTNING_RANGE;
 		attack_range = 0.25 * LIGHTNING_RANGE;
-	// if the enemy uses a weapon with splash damage, go closer
-	} else if ((wi.proj.damagetype & DAMAGETYPE_RADIAL) && wi.proj.radius > 80 && dist < 200 && selfpreservation < 0.5 && movetype != MOVE_CROUCH) {
-		attack_dist = 0;
-		attack_range = 0;
 	// if the enemy uses lightning gun, stay away
 	} else if (entinfo.weapon == WP_LIGHTNING && bs->cur_ps.weapon != WP_LIGHTNING) {
 		attack_dist = LIGHTNING_RANGE + 200;
@@ -3245,7 +3248,7 @@ int BotSameTeam(bot_state_t *bs, int entnum) {
 		return qfalse;
 	}
 
-	if (gametype >= GT_TEAM) {
+	if (gametype > GT_TOURNAMENT) {
 		if (level.clients[bs->client].sess.sessionTeam == level.clients[entnum].sess.sessionTeam) {
 			return qtrue;
 		}
@@ -5346,7 +5349,7 @@ void BotCheckBlockedTeammates(bot_state_t *bs) {
 	vec3_t mins, maxs, end, v1, sideward, up = {0, 0, 1}, blocked_movedir;
 	bsp_trace_t trace;
 
-	if (g_gametype.integer < GT_TEAM) {
+	if (gametype < GT_TEAM) {
 		return;
 	}
 
@@ -5789,11 +5792,11 @@ void BotCheckForProxMines(bot_state_t *bs, entityState_t *state) {
 		return;
 	}
 	// if this prox mine is from someone on our own team
-	if (state->team == BotTeam(bs)) {
+	if (gametype > GT_TOURNAMENT && state->team == BotTeam(bs)) {
 		return;
 	}
 	// if the bot doesn't have a weapon to deactivate the mine
-	if (!(bs->inventory[INVENTORY_PLASMAGUN] > 0 && bs->inventory[INVENTORY_CELLS] > 0) && !(bs->inventory[INVENTORY_ROCKETLAUNCHER] > 0 && bs->inventory[INVENTORY_ROCKETS] > 0) && !(bs->inventory[INVENTORY_BFG10K] > 0 && bs->inventory[INVENTORY_BFG_AMMO] > 0)) {
+	if (!(bs->inventory[INVENTORY_PLASMAGUN] > 0 && bs->inventory[INVENTORY_CELLS] > 0) && !(bs->inventory[INVENTORY_ROCKETLAUNCHER] > 0 && bs->inventory[INVENTORY_ROCKETS] > 0) && !(bs->inventory[INVENTORY_PHOSPHORGUN] > 0 && bs->inventory[INVENTORY_CAPSULES] > 0) && !(bs->inventory[INVENTORY_RAILGUN] > 0 && bs->inventory[INVENTORY_SLUGS] > 0) && !(bs->inventory[INVENTORY_NAILGUN] > 0 && bs->inventory[INVENTORY_NAILS] > 0) && !(bs->inventory[INVENTORY_BFG10K] > 0 && bs->inventory[INVENTORY_BFG_AMMO] > 0)) {
 		return;
 	}
 	// try to avoid the prox mine
@@ -6068,10 +6071,10 @@ void BotCheckSnapshot(bot_state_t *bs) {
 
 	// remove all avoid spots
 	trap_BotAddAvoidSpot(bs->ms, vec3_origin, 0, AVOID_CLEAR);
-	// reset kamikaze body
-	bs->kamikazebody = 0;
 	// reset number of proxmines
 	bs->numproxmines = 0;
+	// reset kamikaze body
+	bs->kamikazebody = 0;
 	ent = 0;
 
 	while ((ent = BotAI_GetSnapshotEntity(bs->client, ent, &state)) != -1) {
@@ -6286,12 +6289,12 @@ void BotDeathmatchAI(bot_state_t *bs, float thinktime) {
 	bs->flags &= ~BFL_IDEALVIEWSET;
 
 	if (!BotIntermission(bs)) {
-		// set the teleport time
-		BotSetTeleportTime(bs);
 		// update some inventory values
 		BotUpdateInventory(bs);
 		// check out the snapshot
 		BotCheckSnapshot(bs);
+		// set the teleport time
+		BotSetTeleportTime(bs);
 		// check for air
 		BotCheckAir(bs);
 		// check the team scores

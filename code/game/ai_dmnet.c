@@ -2236,6 +2236,7 @@ int AINode_Battle_Fight(bot_state_t *bs) {
 	BotAimAtEnemy(bs);
 	// attack the enemy if possible
 	BotCheckAttack(bs);
+	BotClearPath(bs, &moveresult);
 	// if the bot wants to retreat
 	if (!(bs->flags & BFL_FIGHTSUICIDAL)) {
 		if (BotWantsToRetreat(bs)) {

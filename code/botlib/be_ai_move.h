@@ -52,7 +52,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define MOVERESULT_BLOCKEDBYAVOIDSPOT	256 // bot is blocked by an avoid spot
 
 #define MAX_AVOIDREACH 1
-#define MAX_AVOIDSPOTS 32
+#define MAX_AVOIDSPOTS 128
 // avoid spot types
 #define AVOID_CLEAR		0 // clear all avoid spots
 #define AVOID_ALWAYS	1 // avoid always
