@@ -2274,11 +2274,11 @@ qboolean BotAggression(bot_state_t *bs) {
 	if (bs->inventory[ENEMY_HEIGHT] > 200) {
 		return qfalse;
 	}
-	// if the bot currently use the grenadelauncher.
+	// if the bot is using the grenadelauncher.
 	if (bs->weaponnum == WP_GRENADELAUNCHER) {
 		return qfalse;
 	}
-	// if the bot currently use the proxylauncher.
+	// if the bot is using the proxylauncher.
 	if (bs->weaponnum == WP_PROXLAUNCHER) {
 		return qfalse;
 	}
@@ -2287,11 +2287,11 @@ qboolean BotAggression(bot_state_t *bs) {
 		BotEntityInfo(bs->enemy, &entinfo);
 
 		if (entinfo.valid) {
-			// if the enemy currently use the gauntlet.
+			// if the enemy is using the gauntlet.
 			if (entinfo.weapon == WP_GAUNTLET) {
 				return qtrue;
 			}
-			// if the bot currently uses the gauntlet too.
+			// if the bot is using the gauntlet too.
 			if (bs->weaponnum == WP_GAUNTLET) {
 				// if attacking an obelisk
 				if (bs->enemy >= MAX_CLIENTS && (bs->enemy == redobelisk.entitynum || bs->enemy == blueobelisk.entitynum)) {
@@ -2319,7 +2319,7 @@ qboolean BotAggression(bot_state_t *bs) {
 						return qtrue;
 					}
 				}
-				// if the enemy currently use the handgun.
+				// if the enemy is using the handgun.
 				if (bs->inventory[ENEMY_HORIZONTAL_DIST] < 600 && entinfo.weapon == WP_HANDGUN) {
 					return qtrue;
 				}
@@ -2330,15 +2330,15 @@ qboolean BotAggression(bot_state_t *bs) {
 			if (aggression > 0.9 && bs->inventory[ENEMY_HORIZONTAL_DIST] < 200) {
 				return qtrue;
 			}
-			// if the enemy currently use the BFG.
+			// if the enemy is using the BFG.
 			if (entinfo.weapon == WP_BFG) {
 				return qfalse;
 			}
-			// if the enemy currently use the grenadelauncher.
+			// if the enemy is using the grenadelauncher.
 			if (entinfo.weapon == WP_GRENADELAUNCHER) {
 				return qfalse;
 			}
-			// if the enemy currently use the grenadelauncher.
+			// if the enemy is using the proxylauncher.
 			if (entinfo.weapon == WP_PROXLAUNCHER) {
 				return qfalse;
 			}
@@ -3126,27 +3126,27 @@ bot_moveresult_t BotAttackMove(bot_state_t *bs, int tfl) {
 	}
 	// get the weapon information
 	trap_BotGetWeaponInfo(bs->ws, bs->weaponnum, &wi);
-	// if the current weapon is a close combat weapon or if the enemy uses a weapon with splash damage, go closer
+	// if the bot is using a close combat weapon or if the enemy is using a weapon with splash damage, go closer
 	if ((!wi.numprojectiles && BotAggression(bs)) || ((entinfo.weapon == WP_NAPALMLAUNCHER || entinfo.weapon == WP_ROCKETLAUNCHER || entinfo.weapon == WP_BFG) && dist < 200 && selfpreservation < 0.5 && movetype != MOVE_CROUCH)) {
 		attack_dist = 0;
 		attack_range = 0;
-	// if the current weapon is the napalmlauncher, or the enemy uses the napalmlauncher
+	// if the bot is using the napalmlauncher, or the enemy is using the napalmlauncher
 	} else if (bs->cur_ps.weapon == WP_NAPALMLAUNCHER || entinfo.weapon == WP_NAPALMLAUNCHER) {
 		attack_dist = 4500;
 		attack_range = 250;
-	// if the current weapon is the grenadelauncher, or the enemy uses the grenadelauncher
+	// if the bot is using the grenadelauncher, or the enemy is using the grenadelauncher
 	} else if (bs->cur_ps.weapon == WP_GRENADELAUNCHER || entinfo.weapon == WP_GRENADELAUNCHER) {
 		attack_dist = 2000;
 		attack_range = 150;
-	// if the current weapon is the proxylauncher, or the enemy uses the proxylauncher
+	// if the bot is using the proxylauncher, or the enemy is using the proxylauncher
 	} else if (bs->cur_ps.weapon == WP_PROXLAUNCHER || entinfo.weapon == WP_PROXLAUNCHER) {
 		attack_dist = 700;
 		attack_range = 100;
-	// current weapon lightning gun
+	// if the bot is using the lightning gun
 	} else if (bs->cur_ps.weapon == WP_LIGHTNING) {
 		attack_dist = 0.75 * LIGHTNING_RANGE;
 		attack_range = 0.25 * LIGHTNING_RANGE;
-	// if the enemy uses lightning gun, stay away
+	// if the enemy is using the lightning gun, stay away
 	} else if (entinfo.weapon == WP_LIGHTNING && bs->cur_ps.weapon != WP_LIGHTNING) {
 		attack_dist = LIGHTNING_RANGE + 200;
 		attack_range = 100;
