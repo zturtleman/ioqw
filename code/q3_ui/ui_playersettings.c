@@ -504,7 +504,7 @@ static void PlayerSettings_MenuInit(void) {
 	s_playersettings.effects.generic.bottom = y + 2 * PROP_HEIGHT;
 	s_playersettings.effects.numitems = NUM_COLOR_EFFECTS;
 
-	y += 1 * PROP_HEIGHT;
+	y += PROP_HEIGHT;
 	s_playersettings.effects2.generic.type = MTYPE_SPINCONTROL;
 	s_playersettings.effects2.generic.flags = QMF_NODEFAULTINIT;
 	s_playersettings.effects2.generic.id = ID_EFFECTS2;

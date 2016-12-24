@@ -67,7 +67,7 @@ static unsigned short vq4[256 * 64 * 4];
 static unsigned short vq8[256 * 256 * 4];
 
 typedef struct {
-	byte linbuf[DEFAULT_CIN_WIDTH * DEFAULT_CIN_HEIGHT * 4 * 2];
+	byte linbuf[DEFAULT_CIN_WIDTH * DEFAULT_CIN_HEIGHT * 8];
 	byte file[65536];
 	short sqrTable[256];
 	int mcomp[256];

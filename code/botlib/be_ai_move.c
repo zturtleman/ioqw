@@ -73,7 +73,6 @@ typedef struct bot_movestate_s {
 	int numavoidspots;
 } bot_movestate_t;
 // used to avoid reachability links for some time after being used
-#define AVOIDREACH
 #define AVOIDREACH_TIME 6 // avoid links for 6 seconds after use
 #define AVOIDREACH_TRIES 4
 // prediction times
@@ -809,7 +808,6 @@ int BotGetReachabilityToGoal(vec3_t origin, int areanum, int lastgoalareanum, in
 	bestreachnum = 0;
 
 	for (reachnum = AAS_NextAreaReachability(areanum, 0); reachnum; reachnum = AAS_NextAreaReachability(areanum, reachnum)) {
-#ifdef AVOIDREACH
 		// check if it isn't a reachability to avoid
 		for (i = 0; i < MAX_AVOIDREACH; i++) {
 			if (avoidreach[i] == reachnum && avoidreachtimes[i] >= AAS_Time()) {
@@ -825,7 +823,6 @@ int BotGetReachabilityToGoal(vec3_t origin, int areanum, int lastgoalareanum, in
 #endif // DEBUG
 			continue;
 		}
-#endif // AVOIDREACH
 		// get the reachability from the number
 		AAS_ReachabilityFromNum(reachnum, &reach);
 		// NOTE: do not go back to the previous area if the goal didn't change
@@ -1217,6 +1214,7 @@ int BotSwimInDirection(bot_movestate_t *ms, vec3_t dir, float speed, int type) {
 
 	VectorCopy(dir, normdir);
 	VectorNormalize(normdir);
+
 	EA_Move(ms->client, normdir, speed);
 	return qtrue;
 }
@@ -1498,7 +1496,7 @@ bot_moveresult_t BotTravel_Walk(bot_movestate_t *ms, aas_reachability_t *reach) 
 
 	if (ms->moveflags & MFL_WALK) {
 		if (gapdist > 0) {
-			speed = 200 - (180 - 1 * gapdist);
+			speed = 200 - (180 - gapdist);
 		} else {
 			speed = 200;
 		}
@@ -1512,7 +1510,6 @@ bot_moveresult_t BotTravel_Walk(bot_movestate_t *ms, aas_reachability_t *reach) 
 	// elementary action move in direction
 	EA_Move(ms->client, hordir, speed);
 	VectorCopy(hordir, result.movedir);
-
 	return result;
 }
 
@@ -1566,7 +1563,6 @@ bot_moveresult_t BotTravel_BarrierJump(bot_movestate_t *ms, aas_reachability_t *
 	}
 	// always use max speed
 	EA_Move(ms->client, hordir, 400);
-
 	VectorCopy(hordir, result.movedir);
 	return result;
 }
@@ -1611,10 +1607,10 @@ bot_moveresult_t BotTravel_Swim(bot_movestate_t *ms, aas_reachability_t *reach) 
 	BotCheckBlocked(ms, dir, qtrue, &result);
 	// elementary actions
 	EA_Move(ms->client, dir, 400);
-
-	VectorCopy(dir, result.movedir);
+	// set the ideal view angles
 	Vector2Angles(dir, result.ideal_viewangles);
 	result.flags |= MOVERESULT_SWIMVIEW;
+	VectorCopy(dir, result.movedir);
 	return result;
 }
 
@@ -3173,10 +3169,8 @@ void BotMoveToGoal(bot_moveresult_t *result, int movestate, bot_goal_t *goal, in
 				AAS_ReachabilityFromNum(reachnum, &reach);
 				// set a timeout for this reachability
 				ms->reachability_time = AAS_Time() + BotReachabilityTime(&reach);
-#ifdef AVOIDREACH
 				// add the reachability to the reachabilities to avoid for a while
 				BotAddToAvoidReach(ms, reachnum, AVOIDREACH_TIME);
-#endif // AVOIDREACH
 			}
 #ifdef DEBUG
 			else if (botDeveloper) {

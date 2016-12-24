@@ -262,7 +262,7 @@ static void MapSelect_MapCellSize(int *colh, int *colw) {
 	// screen height - 2 buttons
 	// colh rounded to multiple of 2 to reduce drawing "artifacts"
 	*colw = 640 / MAPGRID_COLUMNS;
-	*colh = ((480 - 2 * 64) / MAPGRID_ROWS) & 0xFE;
+	*colh = ((480 - 128) / MAPGRID_ROWS) & 0xFE;
 }
 
 /*

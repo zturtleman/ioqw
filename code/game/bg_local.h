@@ -30,7 +30,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define STEPSIZE 18
 #define JUMP_VELOCITY 270
 #define TIMER_LAND 130
-#define TIMER_GESTURE (34 * 66 + 50)
+#define TIMER_GESTURE 2294
 #define OVERCLIP 1.001f
 
 #define VOICECHAT_GETFLAG			"getflag"			// command someone to get the flag

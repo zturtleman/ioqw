@@ -238,7 +238,7 @@ static void CelebrateStop(gentity_t *player) {
 CelebrateStart
 =======================================================================================================================================
 */
-#define TIMER_GESTURE (34 * 66 + 50)
+#define TIMER_GESTURE 2294
 static void CelebrateStart(gentity_t *player) {
 
 	player->s.torsoAnim = ((player->s.torsoAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT)|TORSO_GESTURE;

@@ -3009,7 +3009,7 @@ void BotRoamGoal(bot_state_t *bs, vec3_t goal) {
 			}
 		}
 		// add a random value to the z-coordinate (NOTE: 48 = maxjump?)
-		bestorg[2] += 2 * 48 * crandom();
+		bestorg[2] += 96 * crandom();
 		// trace a line from the origin to the roam target
 		BotAI_Trace(&trace, bs->origin, NULL, NULL, bestorg, bs->entitynum, MASK_SOLID);
 		// direction and length towards the roam target
