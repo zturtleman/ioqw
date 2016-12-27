@@ -86,7 +86,7 @@ void TossClientItems(gentity_t *self) {
 	weapon = self->s.weapon;
 	// make a special check to see if they are changing to a new weapon that isn't the mg or gauntlet. Without this, a client can pick
 	// up a weapon, be killed, and not drop the weapon because their weapon change hasn't completed yet and they are still holding the MG.
-	if (weapon == WP_MACHINEGUN || weapon == WP_GAUNTLET) { // Tobias: wtf?
+	if (weapon == WP_MACHINEGUN || weapon == WP_GAUNTLET) { // Tobias CHECK: wtf?
 		if (self->client->ps.weaponstate == WEAPON_DROPPING) {
 			weapon = self->client->pers.cmd.weapon;
 		}
@@ -96,7 +96,7 @@ void TossClientItems(gentity_t *self) {
 		}
 	}
 
-	if (weapon > WP_MACHINEGUN && self->client->ps.ammo[weapon]) { // Tobias: be careful here!
+	if (weapon > WP_MACHINEGUN && self->client->ps.ammo[weapon]) { // Tobias NOTE: be careful here!
 		// find the item type for this weapon
 		item = BG_FindItemForWeapon(weapon);
 		// spawn the item

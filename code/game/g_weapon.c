@@ -447,7 +447,7 @@ void Weapon_Proxlauncher_Fire(gentity_t *ent) {
 	gentity_t *m;
 
 	m = fire_prox(ent, muzzle, forward);
-	m->damage = 0; // Tobias: should the missile hurt as well?
+	m->damage = 0; // Tobias CHECK: should the missile hurt as well?
 	m->splashDamage *= s_quadFactor;
 
 //	VectorAdd(m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta); // "real" physics
@@ -493,7 +493,7 @@ void Weapon_Napalmlauncher_Fire(gentity_t *ent) {
 	gentity_t *m;
 
 	m = fire_napalm(ent, muzzle, forward);
-	m->damage = 0; // Tobias: should the missile hurt as well?
+	m->damage = 0; // Tobias CHECK: should the missile hurt as well?
 	m->splashDamage *= s_quadFactor;
 
 //	VectorAdd(m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta); // "real" physics

@@ -2968,7 +2968,7 @@ qboolean BotHasRoamGoal(bot_state_t *bs, vec3_t goal) {
 	}
 
 	if (bs->roamgoal_time > FloatTime()) {
-		audibility_range = 0; // Tobias: Is this needed?
+		audibility_range = 0; // Tobias CHECK: Is this needed?
 		return qfalse;
 	}
 

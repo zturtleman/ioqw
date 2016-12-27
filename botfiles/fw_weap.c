@@ -140,7 +140,7 @@ weight "Chaingun"
 							switch (ENEMY_HORIZONTAL_DIST)
 							{
 								case 2000: return W_CHAINGUN;
-								default: return $evalint(W_MACHINEGUN + 1); // Tobias: try to fix this! (should be W_PHOSPHORGUN - 1
+								default: return $evalint(W_MACHINEGUN + 1); // Tobias TODO: try to fix this! (should be W_PHOSPHORGUN - 1)
 							}
 						}
 						default:
