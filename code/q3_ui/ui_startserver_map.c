@@ -246,7 +246,7 @@ static void StartServer_MapPage_UpdateActionControls(void) {
 
 	curvalue = s_mapcontrols.actionSrc.curvalue;
 	// prevent TEAM games from seeing arena script setting
-	if (s_scriptdata.gametype >= GT_TEAM && curvalue == MAP_CF_ARENASCRIPT) {
+	if (s_scriptdata.gametype > GT_TOURNAMENT && curvalue == MAP_CF_ARENASCRIPT) {
 		curvalue = MAP_CF_TIME;
 		s_mapcontrols.actionSrc.curvalue = curvalue;
 	}
@@ -571,7 +571,7 @@ static void StartServer_MapPage_InitControlsFromScript(void) {
 
 	index = 0;
 
-	if (s_scriptdata.gametype >= GT_CTF) {
+	if (s_scriptdata.gametype > GT_TEAM) {
 		index = 2;
 	}
 	// set "frag" or "capture" control text and fix the mouse hit box for control

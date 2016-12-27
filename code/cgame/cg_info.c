@@ -172,7 +172,7 @@ void CG_DrawInformation(void) {
 	}
 
 	trap_R_SetColor(NULL);
-	CG_DrawPic(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, levelshot);
+	trap_R_DrawStretchPic(0, 0, cgs.glconfig.vidWidth, cgs.glconfig.vidHeight, 0, 0, 1, 1, levelshot);
 	// blend a detail texture over it
 	detail = trap_R_RegisterShader("levelShotDetail");
 	trap_R_DrawStretchPic(0, 0, cgs.glconfig.vidWidth, cgs.glconfig.vidHeight, 0, 0, 2.5, 2, detail);
@@ -276,7 +276,7 @@ void CG_DrawInformation(void) {
 		}
 	}
 
-	if (cgs.gametype >= GT_CTF) {
+	if (cgs.gametype > GT_TEAM) {
 		value = atoi(Info_ValueForKey(info, "capturelimit"));
 
 		if (value) {

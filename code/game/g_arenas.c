@@ -83,7 +83,7 @@ void UpdateTournamentInfo(void) {
 #ifdef MISSIONPACK
 		won = qfalse;
 
-		if (g_gametype.integer >= GT_TEAM) {
+		if (g_gametype.integer > GT_TOURNAMENT) {
 			score1 = level.teamScores[TEAM_RED];
 			score2 = level.teamScores[TEAM_BLUE];
 

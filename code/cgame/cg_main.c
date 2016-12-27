@@ -102,6 +102,8 @@ vmCvar_t cg_bobpitch;
 vmCvar_t cg_bobroll;
 vmCvar_t cg_swingSpeed;
 vmCvar_t cg_shadows;
+vmCvar_t cg_statusScale;
+vmCvar_t cg_stretch;
 vmCvar_t cg_gibs;
 vmCvar_t cg_drawTimer;
 vmCvar_t cg_drawFPS;
@@ -110,6 +112,9 @@ vmCvar_t cg_draw3dIcons;
 vmCvar_t cg_drawIcons;
 vmCvar_t cg_drawAmmoWarning;
 vmCvar_t cg_hitSounds;
+vmCvar_t cg_drawScores;
+vmCvar_t cg_drawPickups;
+vmCvar_t cg_drawStatusHead;
 vmCvar_t cg_drawCrosshair;
 vmCvar_t cg_drawCrosshairNames;
 vmCvar_t cg_crosshairSize;
@@ -142,6 +147,8 @@ vmCvar_t cg_autoswitch;
 vmCvar_t cg_ignore;
 vmCvar_t cg_simpleItems;
 vmCvar_t cg_fov;
+vmCvar_t cg_fovAspectAdjust;
+vmCvar_t cg_fovGunAdjust;
 vmCvar_t cg_zoomFov;
 vmCvar_t cg_thirdPerson;
 vmCvar_t cg_thirdPersonRange;
@@ -210,8 +217,12 @@ static cvarTable_t cvarTable[] = {
 	{&cg_drawGun, "cg_drawGun", "1", CVAR_ARCHIVE},
 	{&cg_zoomFov, "cg_zoomfov", "22.5", CVAR_ARCHIVE},
 	{&cg_fov, "cg_fov", "80", CVAR_ARCHIVE},
+	{&cg_fovAspectAdjust, "cg_fovAspectAdjust", "0", CVAR_ARCHIVE},
+	{&cg_fovGunAdjust, "cg_fovGunAdjust", "0", CVAR_ARCHIVE},
 	{&cg_viewsize, "cg_viewsize", "100", CVAR_ARCHIVE},
 	{&cg_shadows, "cg_shadows", "1", CVAR_ARCHIVE},
+	{&cg_statusScale, "cg_statusScale", "0.5", CVAR_ARCHIVE},
+	{&cg_stretch, "cg_stretch", "0", CVAR_ARCHIVE},
 	{&cg_gibs, "cg_gibs", "1", CVAR_ARCHIVE},
 	{&cg_draw2D, "cg_draw2D", "1", CVAR_ARCHIVE},
 	{&cg_drawStatus, "cg_drawStatus", "1", CVAR_ARCHIVE},
@@ -223,6 +234,9 @@ static cvarTable_t cvarTable[] = {
 	{&cg_drawAmmoWarning, "cg_drawAmmoWarning", "1", CVAR_ARCHIVE},
 	{&cg_drawAttacker, "cg_drawAttacker", "1", CVAR_ARCHIVE},
 	{&cg_hitSounds, "cg_hitSounds", "0", CVAR_ARCHIVE},
+	{&cg_drawScores, "cg_drawScores", "1", CVAR_ARCHIVE},
+	{&cg_drawPickups, "cg_drawPickups", "1", CVAR_ARCHIVE},
+	{&cg_drawStatusHead, "cg_drawStatusHead", "1", CVAR_ARCHIVE},
 	{&cg_drawCrosshair, "cg_drawCrosshair", "1", CVAR_ARCHIVE},
 	{&cg_drawCrosshairNames, "cg_drawCrosshairNames", "0", CVAR_ARCHIVE},
 	{&cg_crosshairSize, "cg_crosshairSize", "14", CVAR_ARCHIVE},
@@ -587,7 +601,7 @@ static void CG_RegisterSounds(void) {
 	cgs.media.countPrepareSound = trap_S_RegisterSound("sound/feedback/prepare.wav", qtrue);
 	cgs.media.countPrepareTeamSound = trap_S_RegisterSound("sound/feedback/prepare_team.wav", qtrue);
 
-	if (cgs.gametype >= GT_TEAM || cg_buildScript.integer) {
+	if (cgs.gametype > GT_TOURNAMENT || cg_buildScript.integer) {
 		cgs.media.captureAwardSound = trap_S_RegisterSound("sound/teamplay/flagcapture_yourteam.wav", qtrue);
 		cgs.media.redLeadsSound = trap_S_RegisterSound("sound/feedback/redleads.wav", qtrue);
 		cgs.media.blueLeadsSound = trap_S_RegisterSound("sound/feedback/blueleads.wav", qtrue);
@@ -901,7 +915,7 @@ static void CG_RegisterGraphics(void) {
 
 	cgs.media.dustPuffShader = trap_R_RegisterShader("hasteSmokePuff");
 
-	if (cgs.gametype >= GT_TEAM || cg_buildScript.integer) {
+	if (cgs.gametype > GT_TOURNAMENT || cg_buildScript.integer) {
 		cgs.media.redFriendShader = trap_R_RegisterShader("sprites/team_red");
 		cgs.media.blueFriendShader = trap_R_RegisterShader("sprites/team_blue");
 		cgs.media.teamStatusBar = trap_R_RegisterShader("gfx/2d/colorbar.tga");
@@ -955,6 +969,8 @@ static void CG_RegisterGraphics(void) {
 			CG_RegisterItemVisuals(i);
 		}
 	}
+	// can be used by HUD so always load it
+	CG_RegisterItemVisuals(3);
 	// wall marks
 	cgs.media.bulletMarkShader = trap_R_RegisterShader("gfx/damage/bullet_mrk");
 	cgs.media.burnMarkShader = trap_R_RegisterShader("gfx/damage/burn_med_mrk");
@@ -1545,7 +1561,7 @@ void CG_SetScoreSelection(void *p) {
 		return;
 	}
 
-	if (cgs.gametype >= GT_TEAM) {
+	if (cgs.gametype > GT_TOURNAMENT) {
 		int feeder = FEEDER_REDTEAM_LIST;
 
 		i = red;
@@ -1570,7 +1586,7 @@ CG_InfoFromScoreIndex
 static clientInfo_t *CG_InfoFromScoreIndex(int index, int team, int *scoreIndex) {
 	int i, count;
 
-	if (cgs.gametype >= GT_TEAM) {
+	if (cgs.gametype > GT_TOURNAMENT) {
 		count = 0;
 
 		for (i = 0; i < cg.numScores; i++) {
@@ -1699,7 +1715,7 @@ CG_FeederSelection
 */
 static void CG_FeederSelection(float feederID, int index) {
 
-	if (cgs.gametype >= GT_TEAM) {
+	if (cgs.gametype > GT_TOURNAMENT) {
 		int i, count;
 		int team = (feederID == FEEDER_REDTEAM_LIST) ? TEAM_RED : TEAM_BLUE;
 
@@ -1952,8 +1968,26 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum) {
 	// get the rendering configuration from the client system
 	trap_GetGlconfig(&cgs.glconfig);
 
-	cgs.screenXScale = cgs.glconfig.vidWidth / 640.0;
-	cgs.screenYScale = cgs.glconfig.vidHeight / 480.0;
+	cgs.screenXScaleStretch = cgs.glconfig.vidWidth * (1.0 / 640.0);
+	cgs.screenYScaleStretch = cgs.glconfig.vidHeight * (1.0 / 480.0);
+
+	if (cgs.glconfig.vidWidth * 480 > cgs.glconfig.vidHeight * 640) {
+		cgs.screenXScale = cgs.glconfig.vidWidth * (1.0 / 640.0);
+		cgs.screenYScale = cgs.glconfig.vidHeight * (1.0 / 480.0);
+		// wide screen
+		cgs.screenXBias = 0.5 * (cgs.glconfig.vidWidth - (cgs.glconfig.vidHeight * (640.0 / 480.0)));
+		cgs.screenXScale = cgs.screenYScale;
+		// no narrow screen
+		cgs.screenYBias = 0;
+	} else {
+		cgs.screenXScale = cgs.glconfig.vidWidth * (1.0 / 640.0);
+		cgs.screenYScale = cgs.glconfig.vidHeight * (1.0 / 480.0);
+		// narrow screen
+		cgs.screenYBias = 0.5 * (cgs.glconfig.vidHeight - (cgs.glconfig.vidWidth * (480.0 / 640.0)));
+		cgs.screenYScale = cgs.screenXScale;
+		// no wide screen
+		cgs.screenXBias = 0;
+	}
 	// get the gamestate from the client system
 	trap_GetGameState(&cgs.gameState);
 	// check version

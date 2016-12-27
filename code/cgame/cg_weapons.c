@@ -1977,12 +1977,17 @@ void CG_AddViewWeapon(playerState_t *ps) {
 
 	VectorClear(fovOffset);
 
-	if (cg.fov > 90) {
-		// drop gun lower at higher fov
-		fovOffset[2] = -0.2 * (cg.fov - 90) * cg.refdef.fov_x / cg.fov;
-	} else if (cg.fov < 90) {
-		// move gun forward at lowerer fov
-		fovOffset[0] = -0.2 * (cg.fov - 90) * cg.refdef.fov_x / cg.fov;
+	if (cg_fovGunAdjust.integer) {
+		if (cg.fov > 90) {
+			// drop gun lower at higher fov
+			fovOffset[2] = -0.2 * (cg.fov - 90) * cg.refdef.fov_x / cg.fov;
+		} else if (cg.fov < 90) {
+			// move gun forward at lowerer fov
+			fovOffset[0] = -0.2 * (cg.fov - 90) * cg.refdef.fov_x / cg.fov;
+		}
+	} else if (cg_fov.integer > 90) {
+		// Q3A's auto adjust
+		fovOffset[2] = -0.2 * (cg_fov.integer - 90);
 	}
 
 	cent = &cg.predictedPlayerEntity; // &cg_entities[cg.snap->ps.clientNum];
@@ -2039,16 +2044,12 @@ CG_DrawWeaponSelect
 =======================================================================================================================================
 */
 void CG_DrawWeaponSelect(void) {
-	int i;
-	int bits[MAX_WEAPONS / (sizeof(int) * 8)];
-	int count;
-	int x, y;
-	float *color;
+	int bits[MAX_WEAPONS / (sizeof(int) * 8)], count, i, x, y, diff, weap, w;
+	float *color, dist;
 	vec4_t fadecolor = {1.0f, 1.0f, 1.0f, 1.0f};
-	float dist;
-	int diff = 1;
-	int weap = 0;
+	char *name;
 
+	CG_SetScreenPlacement(PLACE_CENTER, PLACE_BOTTOM);
 	// don't display if dead
 	if (cg.predictedPlayerState.stats[STAT_HEALTH] <= 0) {
 		return;
@@ -2078,15 +2079,20 @@ void CG_DrawWeaponSelect(void) {
 	}
 
 	cg.bar_count = count;
-
+#ifdef MISSIONPACK
 	y = 380;
-
+#else
+	y = 420;
+#endif
 	if (count <= 0) {
 		return;
 	}
 	// draw current selection:
 	CG_DrawPic(HUD_X - HUD_ICONSIZESEL / 2, y - HUD_ICONSIZESEL / 2, HUD_ICONSIZE + HUD_ICONSIZESEL, HUD_ICONSIZE + HUD_ICONSIZESEL, cg_weapons[cg.weaponSelect].weaponIcon);
 	CG_DrawPic(HUD_X - HUD_ICONSIZESEL / 2, y - HUD_ICONSIZESEL / 2, HUD_ICONSIZE + HUD_ICONSIZESEL, HUD_ICONSIZE + HUD_ICONSIZESEL, cgs.media.selectShader);
+
+	diff = 1;
+	weap = 0;
 
 	for (i = 0; i < 17; i++) {
 		weap = cg.weaponSelect + i;
@@ -2199,6 +2205,16 @@ void CG_DrawWeaponSelect(void) {
 
 		trap_R_SetColor(color);
 
+	}
+	// draw the selected name
+	if (cg_weapons[cg.weaponSelect].item) {
+		name = cg_weapons[cg.weaponSelect].item->pickup_name;
+
+		if (name) {
+			w = CG_DrawStrlen(name) * BIGCHAR_WIDTH;
+			x = (SCREEN_WIDTH - w) / 2;
+			CG_DrawStringExt(x, y - 22, name, color, qfalse, qtrue, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0);
+		}
 	}
 
 	trap_R_SetColor(NULL);

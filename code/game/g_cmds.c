@@ -543,7 +543,7 @@ void SetTeam(gentity_t *ent, const char *s) {
 	} else if (!Q_stricmp(s, "spectator") || !Q_stricmp(s, "s")) {
 		team = TEAM_SPECTATOR;
 		specState = SPECTATOR_FREE;
-	} else if (g_gametype.integer >= GT_TEAM) {
+	} else if (g_gametype.integer > GT_TOURNAMENT) {
 		// if running a team game, assign player to one of the teams
 		specState = SPECTATOR_NOT;
 
@@ -872,7 +872,7 @@ void G_Say(gentity_t *ent, gentity_t *target, int mode, const char *chatText) {
 			color = COLOR_CYAN;
 			break;
 		case SAY_TELL:
-			if (target && target->inuse && target->client && g_gametype.integer >= GT_TEAM && target->client->sess.sessionTeam == ent->client->sess.sessionTeam && Team_GetLocationMsg(ent, location, sizeof(location))) {
+			if (target && target->inuse && target->client && g_gametype.integer > GT_TOURNAMENT && target->client->sess.sessionTeam == ent->client->sess.sessionTeam && Team_GetLocationMsg(ent, location, sizeof(location))) {
 				Com_sprintf(name, sizeof(name), EC"[%s%c%c"EC"] (%s)"EC": ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, location);
 			} else {
 				Com_sprintf(name, sizeof(name), EC"[%s%c%c"EC"]"EC": ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE);
@@ -1145,7 +1145,7 @@ static void Cmd_VoiceTaunt_f(gentity_t *ent) {
 		}
 	}
 
-	if (g_gametype.integer >= GT_TEAM) {
+	if (g_gametype.integer > GT_TOURNAMENT) {
 		// praise a team mate who just got a reward
 		for (i = 0; i < MAX_CLIENTS; i++) {
 			who = g_entities + i;

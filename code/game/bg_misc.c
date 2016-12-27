@@ -874,7 +874,7 @@ qboolean BG_CheckSpawnEntity(const bgEntitySpawnInfo_t *info) {
 		}
 	}
 	// check for "notteam" flag (GT_SINGLE_PLAYER, GT_FFA, GT_TOURNAMENT)
-	if (gametype >= GT_TEAM) {
+	if (gametype > GT_TOURNAMENT) {
 		info->spawnInt("notteam", "0", &i);
 
 		if (i) {

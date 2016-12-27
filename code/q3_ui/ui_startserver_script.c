@@ -387,7 +387,7 @@ static qboolean StartServer_WriteServerParams(void) {
 	AddScript(va("sv_allowDownload %i\n", s_scriptdata.server.allowdownload));
 	AddScript(va("g_allowVote %i\n", s_scriptdata.server.allowvote));
 	// team game options
-	if (s_scriptdata.gametype >= GT_TEAM) {
+	if (s_scriptdata.gametype > GT_TOURNAMENT) {
 		AddScript(va("g_teamAutoJoin %i\n", s_scriptdata.server.autoJoin));
 		AddScript(va("g_teamForceBalance %i\n", s_scriptdata.server.teamBalance));
 	}
@@ -668,7 +668,7 @@ static void StartServer_WriteSelectedBotParams(void) {
 		custom = qtrue;
 	}
 
-	if (s_scriptdata.gametype >= GT_TEAM) {
+	if (s_scriptdata.gametype > GT_TOURNAMENT) {
 		// team game
 		// we must interleave red and blue in case
 		// we have team_forcebalance enabled
@@ -841,7 +841,7 @@ static void StartServer_WriteBotList(int *botlist, int listnum, qboolean kick) {
 		} else {
 			skill = StartServer_GetBotSkill(skillrange);
 
-			if (s_scriptdata.gametype >= GT_TEAM) {
+			if (s_scriptdata.gametype > GT_TOURNAMENT) {
 				team = (player_team + i + 1) % 2; // start with opposite team
 
 				if (i == listnum - 1 && team == player_team) {
@@ -1907,7 +1907,7 @@ qboolean StartServer_CreateServer(const char *scriptFile) {
 
 		if (s_scriptdata.bot.joinAs) {
 			teamjoin = "forceteam %i spectator";
-		} else if (s_scriptdata.gametype >= GT_TEAM) {
+		} else if (s_scriptdata.gametype > GT_TOURNAMENT) {
 			// use %%i so a single %i is generated for player client
 			teamjoin = va("forceteam %%i %s", bot_teamname[StartServer_GetPlayerTeam()]);
 		} else if (s_scriptdata.gametype == GT_TOURNAMENT) {

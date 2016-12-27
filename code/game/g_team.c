@@ -1440,7 +1440,7 @@ void ObeliskInit(gentity_t *ent) {
 void SP_team_redobelisk(gentity_t *ent) {
 	gentity_t *obelisk;
 
-	if (g_gametype.integer <= GT_TEAM) {
+	if (g_gametype.integer < GT_CTF) {
 		G_FreeEntity(ent);
 		return;
 	}
@@ -1469,7 +1469,7 @@ void SP_team_redobelisk(gentity_t *ent) {
 void SP_team_blueobelisk(gentity_t *ent) {
 	gentity_t *obelisk;
 
-	if (g_gametype.integer <= GT_TEAM) {
+	if (g_gametype.integer < GT_CTF) {
 		G_FreeEntity(ent);
 		return;
 	}

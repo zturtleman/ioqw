@@ -524,7 +524,7 @@ void G_CheckMinimumPlayers(void) {
 				G_RemoveRandomBot(-1);
 			}
 		}
-	} else if (g_gametype.integer >= GT_TEAM) {
+	} else if (g_gametype.integer > GT_TOURNAMENT) {
 		if (minplayers >= g_maxclients.integer / 2) {
 			minplayers = (g_maxclients.integer / 2) - 1;
 		}
@@ -665,7 +665,7 @@ static void G_AddBot(const char *name, float skill, const char *team, int delay,
 	}
 	// set default team
 	if (!team || !*team) {
-		if (g_gametype.integer >= GT_TEAM) {
+		if (g_gametype.integer > GT_TOURNAMENT) {
 			if (PickTeam(clientNum) == TEAM_RED) {
 				team = "red";
 			} else {

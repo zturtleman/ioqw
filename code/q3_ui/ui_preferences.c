@@ -55,7 +55,7 @@ enum {
 	ID_BACK
 };
 
-#define NUM_CROSSHAIRS 10
+#define NUM_CROSSHAIRS 5
 
 typedef struct {
 	menuframework_s menu;

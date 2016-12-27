@@ -327,7 +327,7 @@ void InGame_MenuInit(void) {
 	s_ingame.teamorders.color = color_red;
 	s_ingame.teamorders.style = UI_CENTER|UI_SMALLFONT;
 
-	if (!(gametype >= GT_TEAM)) {
+	if (!(gametype > GT_TOURNAMENT)) {
 		s_ingame.teamorders.generic.flags |= QMF_GRAYED;
 	} else if (UI_CurrentPlayerTeam() == TEAM_SPECTATOR) {
 		s_ingame.teamorders.generic.flags |= QMF_GRAYED;

@@ -208,7 +208,7 @@ StartServer_BotPage_UpdateButtonInterface
 */
 static void StartServer_BotPage_UpdateButtonInterface(void) {
 
-	if (s_scriptdata.gametype >= GT_TEAM) {
+	if (s_scriptdata.gametype > GT_TOURNAMENT) {
 		s_botcontrols.swapArrows.generic.flags &= ~(QMF_INACTIVE|QMF_HIDDEN);
 	} else {
 		s_botcontrols.swapArrows.generic.flags |= (QMF_INACTIVE|QMF_HIDDEN);
@@ -274,7 +274,7 @@ static void StartServer_BotPage_UpdateInterface(void) {
 
 	hideTeam = qtrue;
 
-	if (s_scriptdata.gametype >= GT_TEAM) {
+	if (s_scriptdata.gametype > GT_TOURNAMENT) {
 		hideTeam = qfalse;
 	}
 
@@ -646,7 +646,7 @@ static void StartServer_BotPage_InitControlsFromScript(void) {
 	// nothing selected
 	StartServer_BotPage_SelectItem(-1);
 	// swap teams
-	if (s_scriptdata.gametype >= GT_TEAM) {
+	if (s_scriptdata.gametype > GT_TOURNAMENT) {
 		StartServer_BotPage_SetTeamTitle(s_scriptdata.bot.teamSwapped);
 	}
 

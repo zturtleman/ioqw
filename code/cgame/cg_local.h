@@ -50,7 +50,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define WEAPON_SELECT_TIME 1400
 #define ITEM_SCALEUP_TIME 1000
 #define ZOOM_TIME 150
-#define ITEM_BLOB_TIME 200
 #define MUZZLE_FLASH_TIME 20
 #define SINK_TIME 1000 // time for fragments to sink into ground before going away
 #define ATTACKER_HEAD_TIME 10000
@@ -68,7 +67,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 // very large characters
 #define GIANT_WIDTH 32
 #define GIANT_HEIGHT 48
-#define NUM_CROSSHAIRS 10
+#define NUM_CROSSHAIRS 5
 #define TEAM_OVERLAY_MAXNAME_WIDTH 12
 #define TEAM_OVERLAY_MAXLOCATION_WIDTH 16
 
@@ -491,7 +490,6 @@ typedef struct {
 	int warmupCount;
 	int itemPickup;
 	int itemPickupTime;
-	int itemPickupBlendTime; // the pulse around the crosshair is timed separately
 	int weaponSelectTime;
 	int weaponAnimation;
 	int weaponAnimationTime;
@@ -810,6 +808,9 @@ typedef struct {
 	float screenXScale;				// derived from glconfig
 	float screenYScale;
 	float screenXBias;
+	float screenYBias;
+	float screenXScaleStretch;
+	float screenYScaleStretch;
 	int serverCommandSequence;		// reliable command stream counter
 	int processedSnapshotNum;		// the number of snapshots cgame has requested
 	qboolean localServer;			// detected on startup by checking sv_running
@@ -883,6 +884,8 @@ extern vmCvar_t cg_bobup;
 extern vmCvar_t cg_bobpitch;
 extern vmCvar_t cg_bobroll;
 extern vmCvar_t cg_swingSpeed;
+extern vmCvar_t cg_statusScale;
+extern vmCvar_t cg_stretch;
 extern vmCvar_t cg_shadows;
 extern vmCvar_t cg_gibs;
 extern vmCvar_t cg_drawTimer;
@@ -894,6 +897,9 @@ extern vmCvar_t cg_drawAmmoWarning;
 extern vmCvar_t cg_hitSounds;
 extern vmCvar_t cg_drawCrosshair;
 extern vmCvar_t cg_drawCrosshairNames;
+extern vmCvar_t cg_drawScores;
+extern vmCvar_t cg_drawPickups;
+extern vmCvar_t cg_drawStatusHead;
 extern vmCvar_t cg_drawTeamOverlay;
 extern vmCvar_t cg_teamOverlayUserinfo;
 extern vmCvar_t cg_crosshairX;
@@ -927,6 +933,8 @@ extern vmCvar_t cg_autoswitch;
 extern vmCvar_t cg_ignore;
 extern vmCvar_t cg_simpleItems;
 extern vmCvar_t cg_fov;
+extern vmCvar_t cg_fovAspectAdjust;
+extern vmCvar_t cg_fovGunAdjust;
 extern vmCvar_t cg_zoomFov;
 extern vmCvar_t cg_thirdPersonRange;
 extern vmCvar_t cg_thirdPersonAngle;
@@ -1010,6 +1018,21 @@ qboolean CG_CullPoint(vec3_t pt);
 qboolean CG_CullPointAndRadius(const vec3_t pt, vec_t radius);
 void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoPlayback);
 // cg_drawtools.c
+typedef enum {
+	PLACE_STRETCH,
+	PLACE_CENTER,
+	// horizontal only
+	PLACE_LEFT,
+	PLACE_RIGHT,
+	// vertical only
+	PLACE_TOP,
+	PLACE_BOTTOM
+} screenPlacement_e;
+
+void CG_SetScreenPlacement(screenPlacement_e hpos, screenPlacement_e vpos);
+void CG_PopScreenPlacement(void);
+screenPlacement_e CG_GetScreenHorizontalPlacement(void);
+screenPlacement_e CG_GetScreenVerticalPlacement(void);
 void CG_AdjustFrom640(float *x, float *y, float *w, float *h);
 void CG_FillRect(float x, float y, float width, float height, const float *color);
 void CG_DrawPic(float x, float y, float width, float height, qhandle_t hShader);

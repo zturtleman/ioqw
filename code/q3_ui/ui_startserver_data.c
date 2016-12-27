@@ -1410,7 +1410,7 @@ static void StartServer_LoadMapScriptData(void) {
 	f2 = "fragtype";
 	s = gametype_cvar_base[gametype_remap2[s_scriptdata.gametype]];
 
-	if (s_scriptdata.gametype >= GT_CTF) {
+	if (s_scriptdata.gametype > GT_TEAM) {
 		s_scriptdata.map.fragLimit = UI_GetSkirmishCvarIntClamp(0, 999, s, "capturelimit");
 		f = "customcapturelimits";
 		f2 = "capturetype";
@@ -1468,7 +1468,7 @@ static void StartServer_SaveMapScriptData(void) {
 
 	UI_SetSkirmishCvarInt(s, "timelimit", s_scriptdata.map.timeLimit);
 
-	if (s_scriptdata.gametype >= GT_CTF) {
+	if (s_scriptdata.gametype > GT_TEAM) {
 		UI_SetSkirmishCvarInt(s, "capturelimit", s_scriptdata.map.fragLimit);
 		f = "customcapturelimits";
 		f2 = "capturetype";
@@ -1672,7 +1672,7 @@ qboolean StartServer_DeleteBotSlot(int index) {
 	// number of slots to move
 	count = PLAYER_SLOTS - index - 1;
 
-	if (s_scriptdata.gametype >= GT_TEAM && !StartServer_IsRandomBotExclude(s_scriptdata.bot.typeSelect) && index < PLAYER_SLOTS_PERCOL) {
+	if (s_scriptdata.gametype > GT_TOURNAMENT && !StartServer_IsRandomBotExclude(s_scriptdata.bot.typeSelect) && index < PLAYER_SLOTS_PERCOL) {
 		count -= PLAYER_SLOTS_PERCOL;
 	}
 
@@ -1711,7 +1711,7 @@ qboolean StartServer_InsertBotSlot(int index) {
 	// number of slots to move
 	count = PLAYER_SLOTS - index - 1;
 
-	if (s_scriptdata.gametype >= GT_TEAM && index < PLAYER_SLOTS_PERCOL) {
+	if (s_scriptdata.gametype > GT_TOURNAMENT && index < PLAYER_SLOTS_PERCOL) {
 		count -= PLAYER_SLOTS_PERCOL;
 	}
 
@@ -1781,7 +1781,7 @@ int StartServer_SlotTeam(int index) {
 		return SLOTTEAM_INVALID;
 	}
 
-	if (s_scriptdata.gametype >= GT_TEAM) {
+	if (s_scriptdata.gametype > GT_TOURNAMENT) {
 		if (index < PLAYER_SLOTS_PERCOL) {
 			return SLOTTEAM_ONE;
 		}
@@ -1917,7 +1917,7 @@ void StartServer_DoBotAction(int action, int selected) {
 				count = PLAYER_SLOTS;
 				index = bots_done;
 
-				if (s_scriptdata.gametype >= GT_TEAM && !StartServer_IsRandomBotExclude(s_scriptdata.bot.typeSelect)) {
+				if (s_scriptdata.gametype > GT_TOURNAMENT && !StartServer_IsRandomBotExclude(s_scriptdata.bot.typeSelect)) {
 					count = PLAYER_SLOTS_PERCOL;
 				}
 				// compact all the bots, counting the open slots
@@ -1987,7 +1987,7 @@ Wraps the bot.typeSelect safely, based on the current gametype.
 */
 static void StartServer_AdjustBotSelectionFromGametype(void) {
 
-	if (s_scriptdata.gametype >= GT_TEAM && StartServer_IsBotArenaScript(s_scriptdata.bot.typeSelect)) {
+	if (s_scriptdata.gametype > GT_TOURNAMENT && StartServer_IsBotArenaScript(s_scriptdata.bot.typeSelect)) {
 		s_scriptdata.bot.typeSelect = BOTTYPE_SELECT;
 	}
 }
@@ -2128,7 +2128,7 @@ void StartServer_LoadBotScriptData(void) {
 	// skill bias
 	s_scriptdata.bot.skillBias = UI_GetSkirmishCvarIntClamp(0, SKILLBIAS_COUNT, s, "BotSkillBias");
 	// swap teams
-	if (s_scriptdata.gametype >= GT_TEAM) {
+	if (s_scriptdata.gametype > GT_TOURNAMENT) {
 		s_scriptdata.bot.teamSwapped = UI_GetSkirmishCvarIntClamp(0, 1, s, "TeamSwapped");
 	}
 	// load bot stats
@@ -2170,7 +2170,7 @@ static void StartServer_SaveBotScriptData(void) {
 	// join game as
 	UI_SetSkirmishCvarInt(s, "PlayerJoinAs", s_scriptdata.bot.joinAs);
 	// swap teams
-	if (s_scriptdata.gametype >= GT_TEAM) {
+	if (s_scriptdata.gametype > GT_TOURNAMENT) {
 		UI_SetSkirmishCvarInt(s, "TeamSwapped", s_scriptdata.bot.teamSwapped);
 	}
 	// bots
@@ -2347,7 +2347,7 @@ static void StartServer_LoadServerScriptData(void) {
 	s_scriptdata.server.forceRespawn = UI_GetSkirmishCvarIntClamp(0, 999, s, "ForceRespawn");
 	s_scriptdata.server.weaponrespawn = UI_GetSkirmishCvarIntClamp(0, 9999, s, "weaponrespawn");
 
-	if (gametype >= GT_TEAM) {
+	if (gametype > GT_TOURNAMENT) {
 		t = 0;
 
 		if (gametype == GT_TEAM) {
@@ -2416,7 +2416,7 @@ static void StartServer_SaveServerScriptData(void) {
 	UI_SetSkirmishCvar(s, "hostname", s_scriptdata.server.hostname);
 	UI_SetSkirmishCvarInt(s, "ForceRespawn", s_scriptdata.server.forceRespawn);
 
-	if (gametype >= GT_TEAM) {
+	if (gametype > GT_TOURNAMENT) {
 		// ff is an existing cvar, so we use the existing cvar
 		friendly = s_scriptdata.server.friendlyFire;
 

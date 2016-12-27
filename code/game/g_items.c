@@ -84,7 +84,7 @@ int Pickup_Powerup(gentity_t *ent, gentity_t *other) {
 			continue;
 		}
 		// if same team in team game, no sound (cannot use OnSameTeam as it expects to g_entities, not clients)
-		if (g_gametype.integer >= GT_TEAM && other->client->sess.sessionTeam == client->sess.sessionTeam) {
+		if (g_gametype.integer > GT_TOURNAMENT && other->client->sess.sessionTeam == client->sess.sessionTeam) {
 			continue;
 		}
 		// if too far away, no sound

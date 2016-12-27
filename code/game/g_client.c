@@ -715,7 +715,7 @@ void ClientUserinfoChanged(int clientNum) {
 
 	client->ps.stats[STAT_MAX_HEALTH] = client->pers.maxHealth;
 	// set model
-	if (g_gametype.integer >= GT_TEAM) {
+	if (g_gametype.integer > GT_TOURNAMENT) {
 		Q_strncpyz(model, Info_ValueForKey(userinfo, "team_model"), sizeof(model));
 		Q_strncpyz(headModel, Info_ValueForKey(userinfo, "team_headmodel"), sizeof(headModel));
 	} else {
@@ -723,7 +723,7 @@ void ClientUserinfoChanged(int clientNum) {
 		Q_strncpyz(headModel, Info_ValueForKey(userinfo, "headmodel"), sizeof(headModel));
 	}
 #ifdef MISSIONPACK
-	if (g_gametype.integer >= GT_TEAM) {
+	if (g_gametype.integer > GT_TOURNAMENT) {
 		client->pers.teamInfo = qtrue;
 	} else {
 		s = Info_ValueForKey(userinfo, "teamoverlay");
@@ -865,7 +865,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot) {
 		trap_SendServerCommand(-1, va("print \"%s" S_COLOR_WHITE " connected\n\"", client->pers.netname));
 	}
 
-	if (g_gametype.integer >= GT_TEAM && client->sess.sessionTeam != TEAM_SPECTATOR) {
+	if (g_gametype.integer > GT_TOURNAMENT && client->sess.sessionTeam != TEAM_SPECTATOR) {
 		BroadcastTeamChange(client, -1);
 	}
 	// count current clients and rank for scoreboard
@@ -963,7 +963,7 @@ void ClientSpawn(gentity_t *ent) {
 	// do it before setting health back up, so farthest ranging doesn't count this client
 	if (client->sess.sessionTeam == TEAM_SPECTATOR) {
 		spawnPoint = SelectSpectatorSpawnPoint(spawn_origin, spawn_angles);
-	} else if (g_gametype.integer >= GT_CTF) {
+	} else if (g_gametype.integer > GT_TEAM) {
 		// all base oriented team games use the CTF spawn points
 		spawnPoint = SelectCTFSpawnPoint(client->sess.sessionTeam, client->pers.teamState.state, spawn_origin, spawn_angles, !!(ent->r.svFlags & SVF_BOT));
 	} else {
