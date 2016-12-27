@@ -613,6 +613,8 @@ typedef struct {
 	// powerup shaders
 	qhandle_t quadShader;
 	qhandle_t quadWeaponShader;
+	qhandle_t invisRedShader;
+	qhandle_t invisBlueShader;
 	qhandle_t invisShader;
 	qhandle_t regenShader;
 	// weapon effect models

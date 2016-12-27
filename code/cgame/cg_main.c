@@ -861,6 +861,8 @@ static void CG_RegisterGraphics(void) {
 	// powerup shaders
 	cgs.media.quadShader = trap_R_RegisterShader("powerups/quad");
 	cgs.media.quadWeaponShader = trap_R_RegisterShader("powerups/quadWeapon");
+	cgs.media.invisRedShader = trap_R_RegisterShader("powerups/invisibilityRed");
+	cgs.media.invisBlueShader = trap_R_RegisterShader("powerups/invisibilityBlue");
 	cgs.media.invisShader = trap_R_RegisterShader("powerups/invisibility");
 	cgs.media.regenShader = trap_R_RegisterShader("powerups/regen");
 
