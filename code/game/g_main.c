@@ -1057,7 +1057,8 @@ void ExitLevel(void) {
 
 		return;
 	}
-
+	// clear ready players from intermission
+	trap_SetConfigstring(CS_PLAYERS_READY, "");
 	trap_Cvar_VariableStringBuffer("nextmap", nextmap, sizeof(nextmap));
 	trap_Cvar_VariableStringBuffer("d1", d1, sizeof(d1));
 
