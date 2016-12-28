@@ -240,7 +240,7 @@ weaponinfo
 projectileinfo
 {
 	name			"grenade"
-	gravity			0.35
+	gravity			0.39 // 0.35
 	damage			0
 	radius			200
 	damagetype		DAMAGETYPE_RADIAL
@@ -254,7 +254,7 @@ weaponinfo
 	numprojectiles	1
 	hspread			0
 	vspread			0
-	speed			1300
+	speed			1100 // 1300
 }
 
 //===========================================================================
