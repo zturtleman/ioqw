@@ -414,7 +414,7 @@ qboolean UI_ConsoleCommand(int realTime) {
 	}
 
 	if (Q_stricmp(cmd, "ui_teamOrders") == 0) {
-		//UI_TeamOrdersMenu_f();
+		//UI_BotCommandMenu_f();
 		return qtrue;
 	}
 

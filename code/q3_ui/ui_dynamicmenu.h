@@ -69,7 +69,6 @@ void DynamicMenu_RemoveFlags(int depth, int id, int flags);
 int DynamicMenu_ServerGametype(void);
 int DynamicMenu_ServerTimelimit(void);
 int DynamicMenu_ServerFraglimit(void);
-int DynamicMenu_ServerRoundlimit(void);
 int DynamicMenu_ServerCapturelimit(void);
 // information about the menu structure
 

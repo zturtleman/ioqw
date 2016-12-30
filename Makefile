@@ -2518,6 +2518,7 @@ Q3UIOBJ_ = \
   $(B)/$(BASEGAME)/ui/ui_dynamicmenu.o \
   $(B)/$(BASEGAME)/ui/ui_gameinfo.o \
   $(B)/$(BASEGAME)/ui/ui_ingame.o \
+  $(B)/$(BASEGAME)/ui/ui_ingame_mapvote.o \
   $(B)/$(BASEGAME)/ui/ui_loadconfig.o \
   $(B)/$(BASEGAME)/ui/ui_menu.o \
   $(B)/$(BASEGAME)/ui/ui_mfield.o \
@@ -2550,7 +2551,6 @@ Q3UIOBJ_ = \
   $(B)/$(BASEGAME)/ui/ui_startserver_script.o \
   $(B)/$(BASEGAME)/ui/ui_startserver_server.o \
   $(B)/$(BASEGAME)/ui/ui_team.o \
-  $(B)/$(BASEGAME)/ui/ui_teamorders.o \
   $(B)/$(BASEGAME)/ui/ui_video.o \
   \
   $(B)/$(BASEGAME)/qcommon/q_math.o \

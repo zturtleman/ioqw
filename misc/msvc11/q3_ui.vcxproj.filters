@@ -59,6 +59,9 @@
     <ClCompile Include="..\..\code\q3_ui\ui_ingame.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\code\q3_ui\ui_ingame_mapvote.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\code\q3_ui\ui_loadconfig.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -162,9 +165,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\code\q3_ui\ui_team.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\code\q3_ui\ui_teamorders.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\code\q3_ui\ui_video.c">

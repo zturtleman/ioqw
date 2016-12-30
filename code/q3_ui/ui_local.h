@@ -107,6 +107,7 @@ extern vmCvar_t ui_server14;
 extern vmCvar_t ui_server15;
 extern vmCvar_t ui_server16;
 extern vmCvar_t ui_mapicons;
+extern vmCvar_t ui_ingame_dynamicmenu;
 extern vmCvar_t ui_ioq3;
 // ui_qmenu.c
 #define RCOLUMN_OFFSET (BIGCHAR_WIDTH)
@@ -594,10 +595,8 @@ enum {
 
 void UI_RemoveBots_Cache(void);
 void UI_RemoveBotsMenu(int menutype);
-// ui_teamorders.c
-extern void UI_TeamOrdersMenu(void);
-extern void UI_TeamOrdersMenu_f(void);
-extern void UI_TeamOrdersMenu_Cache(void);
+// ui_ingame_mapvote.c
+void UI_MapCallVote(void);
 // ui_loadconfig.c
 void UI_LoadConfig_Cache(void);
 void UI_LoadConfigMenu(void);

@@ -558,6 +558,7 @@ StartServer_BotPage_Cache
 =======================================================================================================================================
 */
 void StartServer_BotPage_Cache(void) {
+
 	trap_R_RegisterShaderNoMip(BOTSELECT_SWAPARROWS0);
 	trap_R_RegisterShaderNoMip(BOTSELECT_SWAPARROWS1);
 	trap_R_RegisterShaderNoMip(BOTSELECT_DEL0);

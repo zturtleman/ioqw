@@ -138,6 +138,7 @@ StartServer_CommonControls_Cache
 =======================================================================================================================================
 */
 void StartServer_CommonControls_Cache(void) {
+
 	trap_R_RegisterShaderNoMip(GAMESERVER_BACK0);
 	trap_R_RegisterShaderNoMip(GAMESERVER_BACK1);
 	trap_R_RegisterShaderNoMip(GAMESERVER_FIGHT0);

@@ -502,10 +502,8 @@ enum {
 };
 // record options
 enum {
-	IGD_RECORD1,
-	IGD_RECORD2,
+	IGD_RECORD,
 	IGD_STOP,
-	IGD_WINDOW,
 	IGD_PLAY
 };
 // setup options
@@ -549,21 +547,6 @@ InGameDynamic_Close
 */
 static void InGameDynamic_Close(void) {
 //	UI_PopMenu();
-}
-
-/*
-=======================================================================================================================================
-IG_RoundLimit_Event
-=======================================================================================================================================
-*/
-static void IG_RoundLimit_Event(int index) {
-	int id;
-
-	id = DynamicMenu_IdAtIndex(index);
-
-	UI_ForceMenuOff();
-
-	trap_Cmd_ExecuteText(EXEC_APPEND, va("callvote roundlimit %i\n", id));
 }
 
 /*
@@ -754,7 +737,7 @@ static void IG_CallVoteMaps_Event(int index) {
 
 	switch (id) {
 		case CVM_SELECTMAP:
-//			UI_MapCallVote(); // Tobias: TODO
+			UI_MapCallVote();
 			break;
 		case CVM_NEXTMAP:
 			UI_ForceMenuOff();
@@ -841,29 +824,20 @@ IG_Demos_Event
 */
 static void IG_Demos_Event(int index) {
 	int id;
-	qboolean window;
 
 	id = DynamicMenu_IdAtIndex(index);
 
 	InGameDynamic_Close();
 
 	switch (id) {
-		case IGD_RECORD1:
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("startrecord"));
-			break;
-		case IGD_RECORD2:
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("startmvd"));
+		case IGD_RECORD:
+			trap_Cmd_ExecuteText(EXEC_APPEND, va("record"));
 			break;
 		case IGD_STOP:
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("stopmvd\n"));
 			trap_Cmd_ExecuteText(EXEC_APPEND, va("stoprecord\n"));
 			break;
 		case IGD_PLAY:
 			UI_DemosMenu();
-			break;
-		case IGD_WINDOW:
-			window = !(trap_Cvar_VariableValue("xp_drawMVDWindow"));
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("xp_drawMVDWindow %i", window));
 			break;
 		default:
 			Com_Printf("IG_Demo_Event: unknown id(%i)", id);
@@ -927,37 +901,6 @@ static void IG_TimeLimit_SubMenu(void) {
 	tmp = DynamicMenu_ServerTimelimit();
 
 	if ((tmp == 0) || (tmp == 5) || (tmp == 10) || (tmp == 15) || (tmp == 20) || (tmp == 25) || (tmp == 30) || (tmp == 45) || (tmp == 60)) {
-		DynamicMenu_SetFlags(depth, tmp, QMF_GRAYED);
-	}
-
-	DynamicMenu_AddBackground(INGAME_FRAME);
-	DynamicMenu_FinishSubMenuInit();
-}
-
-/*
-=======================================================================================================================================
-IG_RoundLimit_SubMenu
-=======================================================================================================================================
-*/
-static void IG_RoundLimit_SubMenu(void) {
-	int tmp;
-	int depth;
-
-	DynamicMenu_SubMenuInit();
-
-	DynamicMenu_AddItem("Unlimited", 0, NULL, IG_RoundLimit_Event);
-	DynamicMenu_AddItem("3", 3, NULL, IG_RoundLimit_Event);
-	DynamicMenu_AddItem("5", 5, NULL, IG_RoundLimit_Event);
-	DynamicMenu_AddItem("7", 7, NULL, IG_RoundLimit_Event);
-	DynamicMenu_AddItem("9", 9, NULL, IG_RoundLimit_Event);
-	DynamicMenu_AddItem("11", 11, NULL, IG_RoundLimit_Event);
-	DynamicMenu_AddItem("13", 13, NULL, IG_RoundLimit_Event);
-	DynamicMenu_AddItem("15", 15, NULL, IG_RoundLimit_Event);
-
-	depth = DynamicMenu_Depth();
-	tmp = DynamicMenu_ServerRoundlimit();
-
-	if ((tmp == 0) || (tmp == 3) || (tmp == 5) || (tmp == 7) || (tmp == 9) || (tmp == 11) || (tmp == 13) || (tmp == 15)) {
 		DynamicMenu_SetFlags(depth, tmp, QMF_GRAYED);
 	}
 
@@ -1086,7 +1029,6 @@ static void IG_CallVoteMisc_SubMenu(void) {
 		}
 	}
 
-	DynamicMenu_AddItem("RoundLimit", 0, IG_RoundLimit_SubMenu, NULL);
 	DynamicMenu_AddItem("Unlagged", 0, IG_Unlagged_SubMenu, NULL);
 
 	DynamicMenu_AddBackground(INGAME_FRAME);
@@ -1210,10 +1152,8 @@ static void IG_Demos_SubMenu(void) {
 
 	DynamicMenu_SubMenuInit();
 
-	DynamicMenu_AddIconItem("Record ", IGD_RECORD1, "menu/uie_art/rotate_record1", NULL, IG_Demos_Event);
-	DynamicMenu_AddIconItem("Multi - Record", IGD_RECORD2, "menu/uie_art/rotate_record2", NULL, IG_Demos_Event);
+	DynamicMenu_AddIconItem("Record ", IGD_RECORD, "menu/uie_art/rotate_record1", NULL, IG_Demos_Event);
 	DynamicMenu_AddIconItem("Stop", IGD_STOP, "menu/uie_art/rotate_stop1", NULL, IG_Demos_Event);
-	DynamicMenu_AddIconItem("Window", IGD_WINDOW, "menu/uie_art/rotate_right1", NULL, IG_Demos_Event);
 	DynamicMenu_AddIconItem("Play", IGD_PLAY, "menu/uie_art/rotate_play1", NULL, IG_Demos_Event);
 
 	DynamicMenu_AddBackground(INGAME_FRAME);
@@ -1398,20 +1338,17 @@ void UI_InGameDynamic(void) {
 	DynamicMenu_MenuInit(qfalse, qtrue);
 	InGameDynamic_InitPrimaryMenu();
 }
-
+// Tobias: TODO Entscheidung ob Dynamic oder nicht
 /*
 =======================================================================================================================================
 UI_InGameMenu
 =======================================================================================================================================
 */
 void UI_InGameMenu(void) {
-// Tobias: TODO
-/*
-	if (uie_ingame_dynamicmenu.integer) {
-		UI_InGameDynamic();
 
+	if (ui_ingame_dynamicmenu.integer) {
+		UI_InGameDynamic();
 	} else {
-*/
 		// force as top level menu
 		uis.menusp = 0;
 		// set menu cursor to a nice location
@@ -1420,7 +1357,7 @@ void UI_InGameMenu(void) {
 
 		InGame_MenuInit();
 		UI_PushMenu(&s_ingame.menu);
-//	}
+	}
 }
 
 /*
@@ -1440,6 +1377,7 @@ enum {
 	COM_QUITLEADER,
 	COM_MYTASK
 } commandId;
+
 static char *commandString[] = {
 	"Who is the leader",		// COM_WHOLEADER
 	"I am the leader",			// COM_IAMLEADER

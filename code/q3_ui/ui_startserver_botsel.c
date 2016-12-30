@@ -642,6 +642,7 @@ UI_BotSelect_Cache
 =======================================================================================================================================
 */
 void UI_BotSelect_Cache(void) {
+
 	trap_R_RegisterShaderNoMip(BOTSELECT_BACK0);
 	trap_R_RegisterShaderNoMip(BOTSELECT_BACK1);
 	trap_R_RegisterShaderNoMip(BOTSELECT_ACCEPT0);

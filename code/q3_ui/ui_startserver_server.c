@@ -316,6 +316,7 @@ StartServer_ServerPage_Cache
 =======================================================================================================================================
 */
 void StartServer_ServerPage_Cache(void) {
+
 	trap_R_RegisterShaderNoMip(SERVER_SAVE0);
 	trap_R_RegisterShaderNoMip(SERVER_SAVE1);
 }

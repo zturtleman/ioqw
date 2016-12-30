@@ -195,18 +195,6 @@ int DynamicMenu_ServerCapturelimit(void) {
 
 /*
 =======================================================================================================================================
-DynamicMenu_ServerRoundlimit
-=======================================================================================================================================
-*/
-int DynamicMenu_ServerRoundlimit(void) {
-	char info[MAX_INFO_STRING];
-
-	trap_GetConfigString(CS_SERVERINFO, info, sizeof(info));
-	return atoi(Info_ValueForKey(info, "roundlimit"));
-}
-
-/*
-=======================================================================================================================================
 DynamicMenu_ItemShortname
 =======================================================================================================================================
 */
@@ -530,7 +518,7 @@ DynamicMenu_IconSpace
 =======================================================================================================================================
 */
 static float DynamicMenu_IconSpace(void) {
-	return(MENUICON_WIDTH + 2 * MENUICON_GAP);
+	return (MENUICON_WIDTH + 2 * MENUICON_GAP);
 }
 
 /*

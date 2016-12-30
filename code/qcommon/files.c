@@ -1514,7 +1514,7 @@ int FS_Delete(char *filename) {
 	}
 
 	if (stat == 1) {
-		return(FS_DeleteDir(filename, qtrue, qtrue));
+		return (FS_DeleteDir(filename, qtrue, qtrue));
 	} else {
 		if (FS_Remove(ospath)) { // success
 			return 1;
