@@ -42,10 +42,10 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define ART_ARROWDOWN "menu/art/arrows_vert_bot"
 #define ART_SELECT "menu/art/opponents_select"
 
-#define ART_KICK0 "menu/uie_art/kick_0"
-#define ART_KICK1 "menu/uie_art/kick_1"
-#define ART_VOTE0 "menu/uie_art/vote_0"
-#define ART_VOTE1 "menu/uie_art/vote_1"
+#define ART_KICK0 "menu/ui_art/kick_0"
+#define ART_KICK1 "menu/ui_art/kick_1"
+#define ART_VOTE0 "menu/ui_art/vote_0"
+#define ART_VOTE1 "menu/ui_art/vote_1"
 
 #define ID_UP		10
 #define ID_DOWN		11

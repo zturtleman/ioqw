@@ -53,8 +53,8 @@ id Software at the address below.
 #define PT_EXCLUDEPARENT		16
 #define PT_EXCLUDEGRANDPARENT	32
 
-typedef void(*createHandler)(void);
-typedef void(*eventHandler)(int index);
+typedef void (*createHandler)(void);
+typedef void (*eventHandler)(int index);
 // manipulate menu
 qboolean DynamicMenu_AddItem(const char *string, int id, createHandler crh, eventHandler evh);
 qboolean DynamicMenu_AddIconItem(const char *string, int id, const char *icon, createHandler crh, eventHandler evh);

@@ -503,8 +503,7 @@ enum {
 // record options
 enum {
 	IGD_RECORD,
-	IGD_STOP,
-	IGD_PLAY
+	IGD_STOP
 };
 // setup options
 enum {
@@ -536,8 +535,6 @@ static char *jointeam_cmd[DM_START_MAX] = {
 	"blue",			// DM_START_BLUE
 	"auto",			// DM_START_AUTO
 	"ready"			// DM_READY
-//	"follow1",		// DM_START_FOLLOW1
-//	"follow2"		// DM_START_FOLLOW2
 };
 
 /*
@@ -637,7 +634,7 @@ static void IG_UseOldInGame_Event(int index) {
 		case ID_NEXTMAP:
 			break;
 		default:
-			Com_Printf("IG_UseOldInGame_Event: unknown id(%i)", id);
+			Com_Printf("IG_UseOldInGame_Event: unknown id (%i)", id);
 			return;
 	}
 
@@ -685,7 +682,7 @@ static void IG_Setup_Event(int index) {
 			UI_SaveConfigMenu();
 			break;
 		default:
-			Com_Printf("IG_Setup_Event: unknown id(%i)", id);
+			Com_Printf("IG_Setup_Event: unknown id (%i)", id);
 			return;
 	}
 }
@@ -718,7 +715,7 @@ static void IG_CallVoteGameType_Event(int index) {
 		case GT_HARVESTER:
 			break;
 	default:
-		Com_Printf("IG_CallVoteGameType_Event: unknown game - id(%i)", id);
+		Com_Printf("IG_CallVoteGameType_Event: unknown game - id (%i)", id);
 		return;
 	}
 
@@ -749,7 +746,7 @@ static void IG_CallVoteMaps_Event(int index) {
 			break;
 		default:
 			UI_ForceMenuOff();
-			Com_Printf("IG_CallVoteMaps_Event: unknown id(%i)", id);
+			Com_Printf("IG_CallVoteMaps_Event: unknown id (%i)", id);
 			return;
 	}
 }
@@ -778,7 +775,7 @@ static void IG_CallVote_Event(int index) {
 			UI_RemoveBotsMenu(RBM_CALLVOTELEADER);
 			break;
 		default:
-			Com_Printf("IG_CallVote_Event: unknown id(%i)", id);
+			Com_Printf("IG_CallVote_Event: unknown id (%i)", id);
 			return;
 	}
 }
@@ -810,7 +807,7 @@ static void IG_Vote_Event(int index) {
 			s = "teamvote yes\n";
 			break;
 		default:
-			Com_Printf("IG_Vote_Event: unknown id(%i)", id);
+			Com_Printf("IG_Vote_Event: unknown id (%i)", id);
 			return;
 	}
 
@@ -836,11 +833,8 @@ static void IG_Demos_Event(int index) {
 		case IGD_STOP:
 			trap_Cmd_ExecuteText(EXEC_APPEND, va("stoprecord\n"));
 			break;
-		case IGD_PLAY:
-			UI_DemosMenu();
-			break;
 		default:
-			Com_Printf("IG_Demo_Event: unknown id(%i)", id);
+			Com_Printf("IG_Demo_Event: unknown id (%i)", id);
 			return;
 	}
 }
@@ -869,7 +863,7 @@ static void IG_Start_Event(int index) {
 	UI_ForceMenuOff();
 
 	if (id < 0 || id >= DM_START_MAX) {
-		Com_Printf("IG_Start_Event: unknown id(%i)", id);
+		Com_Printf("IG_Start_Event: unknown id (%i)", id);
 		return;
 	}
 
@@ -1152,9 +1146,8 @@ static void IG_Demos_SubMenu(void) {
 
 	DynamicMenu_SubMenuInit();
 
-	DynamicMenu_AddIconItem("Record ", IGD_RECORD, "menu/uie_art/rotate_record1", NULL, IG_Demos_Event);
-	DynamicMenu_AddIconItem("Stop", IGD_STOP, "menu/uie_art/rotate_stop1", NULL, IG_Demos_Event);
-	DynamicMenu_AddIconItem("Play", IGD_PLAY, "menu/uie_art/rotate_play1", NULL, IG_Demos_Event);
+	DynamicMenu_AddIconItem("Record ", IGD_RECORD, "menu/ui_art/rotate_record1", NULL, IG_Demos_Event);
+	DynamicMenu_AddIconItem("Stop", IGD_STOP, "menu/ui_art/rotate_stop1", NULL, IG_Demos_Event);
 
 	DynamicMenu_AddBackground(INGAME_FRAME);
 	DynamicMenu_FinishSubMenuInit();
@@ -1190,14 +1183,7 @@ static void IG_Setup_SubMenu(void) {
 	DynamicMenu_AddItem("Controls", IGS_CONTROLS, NULL, IG_Setup_Event);
 	DynamicMenu_AddItem("System", IGS_OPTIONS, NULL, IG_Setup_Event);
 	DynamicMenu_AddItem("Load/Save", IGS_LOADSAVE, NULL, IG_Setup_Event);
-	/*
-	DynamicMenu_AddItem("Graphics", IGS_GRAPHICS, NULL, IG_Setup_Event);
-	DynamicMenu_AddItem("Display", IGS_DISPLAY, NULL, IG_Setup_Event);
-	DynamicMenu_AddItem("Sound", IGS_SOUND, NULL, IG_Setup_Event);
-	DynamicMenu_AddItem("Network", IGS_NETWORK, NULL, IG_Setup_Event);
-	DynamicMenu_AddItem("Map", IGS_MAP, IG_Map_SubMenu, NULL);
-	DynamicMenu_AddItem("Bots", IGS_BOTS, IG_AddBot_SubMenu, NULL);
-	*/
+
 	DynamicMenu_AddBackground(INGAME_FRAME);
 	DynamicMenu_FinishSubMenuInit();
 }
@@ -1237,15 +1223,12 @@ static void IG_Start_SubMenu(void) {
 		DynamicMenu_AddIconItem("Join Game", DM_START_GAME, "menu/medals/medal_gauntlet", NULL, IG_Start_Event);
 	} else {
 		DynamicMenu_AddIconItem("Auto Join", DM_START_AUTO, "menu/medals/medal_capture", NULL, IG_Start_Event);
-		DynamicMenu_AddIconItem("Join Red", DM_START_RED, "uie_icons/iconf_red", NULL, IG_Start_Event);
-		DynamicMenu_AddIconItem("Join Blue", DM_START_BLUE, "uie_icons/iconf_blu", NULL, IG_Start_Event);
+		DynamicMenu_AddIconItem("Join Red", DM_START_RED, "ui_icons/iconf_red", NULL, IG_Start_Event);
+		DynamicMenu_AddIconItem("Join Blue", DM_START_BLUE, "ui_icons/iconf_blu", NULL, IG_Start_Event);
 	}
 
 	DynamicMenu_AddItem("Spectate", DM_START_SPECTATOR, NULL, IG_Start_Event);
-	/*
-	DynamicMenu_AddItem("Follow #1", DM_START_FOLLOW1, NULL, IG_Start_Event);
-	DynamicMenu_AddItem("Follow #2", DM_START_FOLLOW2, NULL, IG_Start_Event);
-	*/
+
 	if (UI_CurrentPlayerTeam() == TEAM_SPECTATOR) {
 		DynamicMenu_SetFlags(depth, DM_START_SPECTATOR, QMF_GRAYED);
 		DynamicMenu_SetFlags(depth, DM_READY, QMF_GRAYED);
@@ -1278,12 +1261,12 @@ static void InGameDynamic_InitPrimaryMenu(void) {
 
 	if (gametype != GT_SINGLE_PLAYER) {
 		DynamicMenu_AddItem("Call Vote", IGM_CALLVOTE, IG_CallVote_SubMenu, NULL);
-		// DynamicMenu_AddItem("Vote", IGM_VOTE, IG_Vote_SubMenu, NULL);
+		DynamicMenu_AddItem("Vote", IGM_VOTE, IG_Vote_SubMenu, NULL);
 	}
 
 	DynamicMenu_AddItem("Team Orders", IGM_TEAMORDERS, NULL, IG_TeamOrders_Event);
 	DynamicMenu_AddItem("Setup", IGM_SETUP, IG_Setup_SubMenu, NULL);
-	// disable map commands if non - local server
+	// disable map commands if non-local server
 	if (localserver) {
 		DynamicMenu_AddItem("Map", IGM_MAP, IG_Map_SubMenu, NULL);
 	}
@@ -1301,7 +1284,7 @@ static void InGameDynamic_InitPrimaryMenu(void) {
 	if (gametype < GT_TEAM || team == TEAM_SPECTATOR) {
 		DynamicMenu_SetFlags(depth, IGM_TEAMORDERS, QMF_GRAYED);
 	}
-	// spec protects voting menu(otherwise it could be used to cheat)
+	// spec protects voting menu (otherwise it could be used to cheat)
 	if (team == TEAM_SPECTATOR) {
 		DynamicMenu_SetFlags(depth, IGM_CALLVOTE, QMF_GRAYED);
 		DynamicMenu_SetFlags(depth, IGM_VOTE, QMF_GRAYED);
@@ -1425,7 +1408,7 @@ BotCommand_MenuClose
 void BotCommand_MenuClose(void) {
 // Tobias: TODO
 /*
-	if (uie_autoclosebotmenu.integer) {
+	if (ui_autoclosebotmenu.integer) {
 		UI_PopMenu();
 	}
 */
@@ -1446,7 +1429,7 @@ static void DM_BotPlayerTarget_Event(int index) {
 	depth = DynamicMenu_DepthOfIndex(index);
 
 	if (depth != DynamicMenu_Depth() || depth < 3) {
-		Com_Printf("BotPlayerTarget_Event: index %i at wrong depth(%i)\n", index, depth);
+		Com_Printf("BotPlayerTarget_Event: index %i at wrong depth (%i)\n", index, depth);
 		BotCommand_MenuClose();
 		return;
 	}
@@ -1487,7 +1470,7 @@ static void DM_BotItemItemTarget_Event(int index) {
 	depth = DynamicMenu_DepthOfIndex(index);
 
 	if (depth != DynamicMenu_Depth() || depth < 4) {
-		Com_Printf("BotItemItemTarget_Event: index %i at wrong depth(%i)\n", index, depth);
+		Com_Printf("BotItemItemTarget_Event: index %i at wrong depth (%i)\n", index, depth);
 		BotCommand_MenuClose();
 		return;
 	}
@@ -1528,7 +1511,7 @@ static void DM_BotItemTarget_Event(int index) {
 	depth = DynamicMenu_DepthOfIndex(index);
 
 	if (depth != DynamicMenu_Depth() || depth < 3) {
-		Com_Printf("BotItemTarget_Event: index %i at wrong depth(%i)\n", index, depth);
+		Com_Printf("BotItemTarget_Event: index %i at wrong depth (%i)\n", index, depth);
 		BotCommand_MenuClose();
 		return;
 	}
@@ -1575,7 +1558,7 @@ static void DM_BotCommand_Event(int index) {
 	depth = DynamicMenu_DepthOfIndex(index);
 
 	if (depth != DynamicMenu_Depth() || depth < 2) {
-		Com_Printf("BotCommand_Event: index %i at wrong depth(%i)\n", index, depth);
+		Com_Printf("BotCommand_Event: index %i at wrong depth (%i)\n", index, depth);
 		BotCommand_MenuClose();
 		return;
 	}
@@ -1590,7 +1573,7 @@ static void DM_BotCommand_Event(int index) {
 		case BC_DEFENDBASE:
 			break;
 		default:
-			Com_Printf("BotCommand_Event: unknown command(%i)\n", cmd);
+			Com_Printf("BotCommand_Event: unknown command (%i)\n", cmd);
 			BotCommand_MenuClose();
 			return;
 	}
@@ -1616,7 +1599,7 @@ static void DM_Command_Event(int index) {
 	depth = DynamicMenu_DepthOfIndex(index);
 
 	if (depth != DynamicMenu_Depth()) {
-		Com_Printf("Command_Event: index %i at wrong depth(%i)\n", index, depth);
+		Com_Printf("Command_Event: index %i at wrong depth (%i)\n", index, depth);
 		BotCommand_MenuClose();
 		return;
 	}
@@ -1630,7 +1613,7 @@ static void DM_Command_Event(int index) {
 		case COM_MYTASK:
 			break;
 		default:
-			Com_Printf("Command_Event: unknown command(%i)\n", cmd);
+			Com_Printf("Command_Event: unknown command (%i)\n", cmd);
 			BotCommand_MenuClose();
 			return;
 	}

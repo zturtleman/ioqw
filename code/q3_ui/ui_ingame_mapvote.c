@@ -61,9 +61,9 @@ id Software at the address below.
 #define MAPSELECT_PREVIOUS "menu/art/arrows_horz_left"
 #define MAPSELECT_CANCEL0 "menu/art/back_0"
 #define MAPSELECT_CANCEL1 "menu/art/back_1"
-#define MAPSELECT_VOTE0 "menu/uie_art/vote_0"
-#define MAPSELECT_VOTE1 "menu/uie_art/vote_1"
-#define MAPSELECT_MAPFOCUS "menu/uie_art/mapfocus"
+#define MAPSELECT_VOTE0 "menu/ui_art/vote_0"
+#define MAPSELECT_VOTE1 "menu/ui_art/vote_1"
+#define MAPSELECT_MAPFOCUS "menu/ui_art/mapfocus"
 #define MAPSELECT_MAPSELECTED "menu/art/maps_selected"
 
 #define MAPNAME_LONGBUFFER 64
