@@ -43,9 +43,11 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define ART_NEXT0 "menu/art/next_0"
 #define ART_NEXT1 "menu/art/next_1"
 
-#define ID_AGAIN	10
-#define ID_NEXT		11
-#define ID_MENU		12
+enum {
+	ID_AGAIN,
+	ID_NEXT,
+	ID_MENU
+};
 
 typedef struct {
 	menuframework_s menu;

@@ -35,8 +35,10 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define SPECIFYSERVER_FIGHT0 "menu/art/fight_0"
 #define SPECIFYSERVER_FIGHT1 "menu/art/fight_1"
 
-#define ID_SPECIFYSERVERBACK	102
-#define ID_SPECIFYSERVERGO		103
+enum {
+	ID_SPECIFYSERVERBACK,
+	ID_SPECIFYSERVERGO
+};
 
 static char *specifyserver_artlist[] = {
 	SPECIFYSERVER_FRAMEL,

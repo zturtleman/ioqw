@@ -26,10 +26,12 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #define TEAMMAIN_FRAME "menu/art/cut_frame"
 
-#define ID_JOINRED	100
-#define ID_JOINBLUE	101
-#define ID_JOINGAME	102
-#define ID_SPECTATE	103
+enum {
+	ID_JOINRED,
+	ID_JOINBLUE,
+	ID_JOINGAME,
+	ID_SPECTATE
+};
 
 typedef struct {
 	menuframework_s menu;

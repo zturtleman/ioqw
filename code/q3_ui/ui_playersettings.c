@@ -47,12 +47,15 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #define NUM_COLOR_EFFECTS 13
 
-#define ID_NAME		10
-#define ID_HANDICAP	11
-#define ID_EFFECTS	12
-#define ID_BACK		13
-#define ID_MODEL	14
-#define ID_EFFECTS2	15
+enum {
+	ID_NAME,
+	ID_HANDICAP,
+	ID_EFFECTS,
+	ID_BACK,
+	ID_MODEL,
+	ID_EFFECTS2
+};
+
 
 #define MAX_NAMELENGTH 20
 

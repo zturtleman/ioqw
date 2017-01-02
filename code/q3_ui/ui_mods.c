@@ -35,9 +35,11 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define NAMEBUFSIZE (MAX_MODS * 48)
 #define GAMEBUFSIZE (MAX_MODS * 16)
 
-#define ID_BACK	10
-#define ID_GO	11
-#define ID_LIST	12
+enum {
+	ID_BACK,
+	ID_GO,
+	ID_LIST
+};
 
 typedef struct {
 	menuframework_s menu;

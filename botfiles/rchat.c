@@ -810,7 +810,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 	"I'm not going to ask you twice!";
 }
 
-[("but ", 0)] = 4 
+[("but ", 0)] = 4
 {
 	"Yeah you're always making excuses.";
 	"The fact that ",0," has no relevance here!";
@@ -853,7 +853,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 	"Death to campers!";
 	"I camp the ",weapon," spawn.";
 	"I got my tent up and I'm roasting wienies.";
-} 
+}
 
 [("can I ", 0)] = 4
 {
@@ -2222,8 +2222,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 	response_insult;
 }
 
-["cult", "occult", "god", "goddess", "earth mother", "new age", "jesus", "christ", "christian", "unitarian", "unitarianism", "latter day saint", "christianity", "deity", "worship", "mormon", "jew", "judaism", "islam", "moslem", "buddha", "buddhist", "buddhism", "hindu", "hinduism", "kali", "shinto", "shintoism", "reverend", "religion", "religious", "pray", "priest", "nun", "heathen", "infidel", "pagan", "paganism", "paganistic", "minister", "wicca", "wiccan", "witch", "satanistic", "satanist", "satanism", 
-"church", "temple", "synagogue"] = 5
+["cult", "occult", "god", "goddess", "earth mother", "new age", "jesus", "christ", "christian", "unitarian", "unitarianism", "latter day saint", "christianity", "deity", "worship", "mormon", "jew", "judaism", "islam", "moslem", "buddha", "buddhist", "buddhism", "hindu", "hinduism", "kali", "shinto", "shintoism", "reverend", "religion", "religious", "pray", "priest", "nun", "heathen", "infidel", "pagan", "paganism", "paganistic", "minister", "wicca", "wiccan", "witch", "satanistic", "satanist", "satanism", "church", "temple", "synagogue"] = 5
 {
 	"Interesting. I worship the holy ",animal,".";
 	"Hallelujah!";
@@ -2781,7 +2780,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 	"Yeah, when pigs fly.";
 }
 
-[("i feel", 0)] =4 
+[("i feel", 0)] = 4
 {
 	"~Do you like feeling ",0,"?";
 	"~Do you always feel ",0," when you're around me?";

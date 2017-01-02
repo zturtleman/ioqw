@@ -47,18 +47,19 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define ART_VOTE0 "menu/ui_art/vote_0"
 #define ART_VOTE1 "menu/ui_art/vote_1"
 
-#define ID_UP		10
-#define ID_DOWN		11
-#define ID_DELETE	12
-#define ID_BACK		13
-
-#define ID_BOTNAME0	20
-#define ID_BOTNAME1	21
-#define ID_BOTNAME2	22
-#define ID_BOTNAME3	23
-#define ID_BOTNAME4	24
-#define ID_BOTNAME5	25
-#define ID_BOTNAME6	26
+enum {
+	ID_UP,
+	ID_DOWN,
+	ID_DELETE,
+	ID_BACK,
+	ID_BOTNAME0,
+	ID_BOTNAME1,
+	ID_BOTNAME2,
+	ID_BOTNAME3,
+	ID_BOTNAME4,
+	ID_BOTNAME5,
+	ID_BOTNAME6
+};
 
 typedef struct {
 	menuframework_s menu;

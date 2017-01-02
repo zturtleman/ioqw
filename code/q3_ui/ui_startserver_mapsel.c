@@ -66,15 +66,17 @@ id Software at the address below.
 #define MAPPIC_WIDTH 138
 #define MAPPIC_HEIGHT 92
 
-#define ID_MAPSELECT_CANCEL		10
-#define ID_MAPSELECT_NEXT		11
-#define ID_MAPSELECT_PREV		12
-#define ID_MAPSELECT_OK			13
-#define ID_MAPSELECT_ALLMAPS	14
-#define ID_MAPSELECT_FILTERMAPS	15
-#define ID_MAPSELECT_MAPICONS	16
-#define ID_MAPSELECT_MULTISEL	17
-#define ID_MAPSELECT_LISTVIEW	18
+enum {
+	ID_MAPSELECT_CANCEL,
+	ID_MAPSELECT_NEXT,
+	ID_MAPSELECT_PREV,
+	ID_MAPSELECT_OK,
+	ID_MAPSELECT_ALLMAPS,
+	ID_MAPSELECT_FILTERMAPS,
+	ID_MAPSELECT_MAPICONS,
+	ID_MAPSELECT_MULTISEL,
+	ID_MAPSELECT_LISTVIEW
+};
 
 #define MAPGRID_ROWS 3
 #define MAPGRID_COLUMNS 4
@@ -121,9 +123,6 @@ typedef struct mapselect_s {
 	menuradiobutton_s multisel;
 	menuradiobutton_s listview;
 	menulist_s maplist;
-#ifndef NO_UI_MINILOGO_SKIRMISH
-	menubitmap_s logo;
-#endif
 	int gametype; // GT_* format
 	int nummaps;
 	int maxpages;
@@ -1596,16 +1595,6 @@ static void MapSelect_MenuInit(int gametype, int index, const char *mapname) {
 
 	s_mapselect.multisel.curvalue = (int)Com_Clamp(0, 1, trap_Cvar_VariableValue("ui_map_multisel"));
 	s_mapselect.listview.curvalue = (int)Com_Clamp(0, 1, trap_Cvar_VariableValue("ui_map_list"));
-#ifndef NO_UI_MINILOGO_SKIRMISH
-	s_mapselect.logo.generic.type = MTYPE_BITMAP;
-	s_mapselect.logo.generic.flags = QMF_INACTIVE|QMF_HIGHLIGHT;
-	s_mapselect.logo.generic.x = UI_LOGO_X;
-	s_mapselect.logo.generic.y = UI_LOGO_Y;
-	s_mapselect.logo.width = 64;
-	s_mapselect.logo.height = 16;
-	s_mapselect.logo.focuspic = UI_LOGO_NAME;
-	s_mapselect.logo.focuscolor = color_translucent;
-#endif
 	// register for display
 	Menu_AddItem(&s_mapselect.menu, &s_mapselect.banner);
 	Menu_AddItem(&s_mapselect.menu, &s_mapselect.arrows);
@@ -1635,11 +1624,7 @@ static void MapSelect_MenuInit(int gametype, int index, const char *mapname) {
 	MapSelect_AddToMultiSelect(s_mapselect.currentmap);
 	MapSelect_SetNewMapPage();
 	MapSelect_SetMapTypeIcons();
-#ifndef NO_UI_MINILOGO_SKIRMISH
-	if (random() < 0.1) {
-		Menu_AddItem(&s_mapselect.menu, &s_mapselect.logo);
-	}
-#endif
+
 	UI_PushMenu(&s_mapselect.menu);
 }
 

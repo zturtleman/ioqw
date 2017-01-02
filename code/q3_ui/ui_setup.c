@@ -39,14 +39,16 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define ART_FRAMEL "menu/art/frame2_l"
 #define ART_FRAMER "menu/art/frame1_r"
 
-#define ID_CUSTOMIZEPLAYER		10
-#define ID_CUSTOMIZECONTROLS	11
-#define ID_SYSTEMCONFIG			12
-#define ID_GAME					13
-#define ID_LOAD					14
-#define ID_SAVE					15
-#define ID_DEFAULTS				16
-#define ID_BACK					17
+enum {
+	ID_CUSTOMIZEPLAYER,
+	ID_CUSTOMIZECONTROLS,
+	ID_SYSTEMCONFIG,
+	ID_GAME,
+	ID_LOAD,
+	ID_SAVE,
+	ID_DEFAULTS,
+	ID_BACK
+};
 
 typedef struct {
 	menuframework_s menu;

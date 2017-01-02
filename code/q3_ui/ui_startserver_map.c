@@ -116,9 +116,6 @@ typedef struct mapcontrols_s {
 	menulist_s actionSrc;
 	menulist_s actionDest;
 	menubitmap_s actionActivate;
-#ifndef NO_UI_MINILOGO_SKIRMISH
-	menubitmap_s logo;
-#endif
 	// local data implementing interface
 	int statusbar_height;
 	char statusbar_text[MAX_STATUSBAR_TEXT];
@@ -1486,16 +1483,7 @@ void StartServer_MapPage_MenuInit(void) {
 	s_mapcontrols.actionActivate.width = 64;
 	s_mapcontrols.actionActivate.height = 32;
 	s_mapcontrols.actionActivate.focuspic = GAMESERVER_ACTION1;
-#ifndef NO_UI_MINILOGO_SKIRMISH
-	s_mapcontrols.logo.generic.type = MTYPE_BITMAP;
-	s_mapcontrols.logo.generic.flags = QMF_INACTIVE|QMF_HIGHLIGHT;
-	s_mapcontrols.logo.generic.x = UI_LOGO_X;
-	s_mapcontrols.logo.generic.y = UI_LOGO_Y;
-	s_mapcontrols.logo.width = 64;
-	s_mapcontrols.logo.height = 16;
-	s_mapcontrols.logo.focuspic = UI_LOGO_NAME;
-	s_mapcontrols.logo.focuscolor = color_translucent;
-#endif
+
 	y += 16;
 	s_mapcontrols.statusbar_height = y;
 	// load map info here, so mapSourceType is correctly initialized
@@ -1534,11 +1522,7 @@ void StartServer_MapPage_MenuInit(void) {
 	Menu_AddItem(menuptr, &s_mapcontrols.actionSrc);
 	Menu_AddItem(menuptr, &s_mapcontrols.actionDest);
 	Menu_AddItem(menuptr, &s_mapcontrols.actionActivate);
-#ifndef NO_UI_MINILOGO_SKIRMISH
-	if (random() < 0.1) {
-		Menu_AddItem(menuptr, &s_mapcontrols.logo);
-	}
-#endif
+
 	UI_PushMenu(&s_mapcontrols.menu);
 }
 

@@ -37,8 +37,10 @@ static char *serverinfo_artlist[] = {
 	NULL
 };
 
-#define ID_ADD	100
-#define ID_BACK	101
+enum {
+	ID_ADD,
+	ID_BACK
+};
 
 typedef struct {
 	menuframework_s menu;

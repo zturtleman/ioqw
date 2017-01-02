@@ -390,7 +390,7 @@ static qboolean StartServer_WriteServerParams(void) {
 		AddScript(va("g_teamAutoJoin %i\n", s_scriptdata.server.autoJoin));
 		AddScript(va("g_teamForceBalance %i\n", s_scriptdata.server.teamBalance));
 	}
-	// Nombre de los equipos
+	// nombre de los equipos
 	AddScript(va("g_blueTeam %s\n", bot_teamname[0]));
 	AddScript(va("g_redTeam %s\n", bot_teamname[1]));
 	// count the number of clients
@@ -1698,6 +1698,7 @@ qboolean StartServer_LoadFromConfig(const char *filename) {
 	// Cvar/value pairs until we hit the END block
 	ptr = begin;
 	gametype = -1;
+
 	COM_Parse(&ptr); // drop BEGIN
 
 	do {
@@ -1796,7 +1797,8 @@ static qboolean StartServer_WriteScriptParams(void) {
 		StartServer_WriteScriptCvar(saveparam_list[i]);
 	}
 	// save the gametype specific parameters
-	/*count = sizeof(customsaveparam_list) / sizeof(customsaveparam_list[0]);
+	/*
+	count = sizeof(customsaveparam_list) / sizeof(customsaveparam_list[0]);
 
 	for (i = 0; i < count; i++) {
 		if (customsaveparam_list[i].type != s_scriptdata.gametype) {
@@ -1804,7 +1806,8 @@ static qboolean StartServer_WriteScriptParams(void) {
 		}
 
 		StartServer_WriteScriptCvar(customsaveparam_list[i].param);
-	}*/
+	}
+	*/
 	// close off the block
 	AddScript("// "END_PARAMETER_BLOCK"\n\n");
 	return qtrue;

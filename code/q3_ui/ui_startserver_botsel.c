@@ -62,12 +62,14 @@ id Software at the address below.
 #define BOTSELECT_ARROWSL "menu/art/arrows_horz_left"
 #define BOTSELECT_ARROWSR "menu/art/arrows_horz_right"
 
-#define ID_BOTSELECT_VIEWLIST	1
-#define ID_BOTSELECT_LEFT		2
-#define ID_BOTSELECT_RIGHT		3
-#define ID_BOTSELECT_BACK		4
-#define ID_BOTSELECT_ACCEPT		5
-#define ID_BOTSELECT_MULTISEL	6
+enum {
+	ID_BOTSELECT_VIEWLIST,
+	ID_BOTSELECT_LEFT,
+	ID_BOTSELECT_RIGHT,
+	ID_BOTSELECT_BACK,
+	ID_BOTSELECT_ACCEPT,
+	ID_BOTSELECT_MULTISEL
+};
 
 #define BOTNAME_LENGTH 16
 

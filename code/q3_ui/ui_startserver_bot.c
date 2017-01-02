@@ -1508,7 +1508,6 @@ void StartServer_BotPage_MenuInit(void) {
 	s_botcontrols.joinAs.generic.x = BOT_LEFTCTRL;
 	s_botcontrols.joinAs.generic.y = y;
 	s_botcontrols.joinAs.generic.name = "Spectator:";
-
 	// re-initialized in StartServer_BotPage_SetTeamTitle()
 	y += (3 * LINE_HEIGHT) / 2;
 	s_botcontrols.teamLeft.generic.type = MTYPE_PTEXT;

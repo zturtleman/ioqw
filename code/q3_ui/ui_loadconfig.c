@@ -45,11 +45,13 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define MAX_CONFIGS 128
 #define NAMEBUFSIZE (MAX_CONFIGS * 16)
 
-#define ID_BACK		10
-#define ID_GO		11
-#define ID_LIST		12
-#define ID_LEFT		13
-#define ID_RIGHT	14
+enum {
+	ID_BACK,
+	ID_GO,
+	ID_LIST,
+	ID_LEFT,
+	ID_RIGHT
+};
 
 #define ARROWS_WIDTH 128
 #define ARROWS_HEIGHT 48

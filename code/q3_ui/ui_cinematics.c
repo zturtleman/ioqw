@@ -31,17 +31,19 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #define VERTICAL_SPACING 30
 
-#define ID_BACK			10
-#define ID_CIN_IDLOGO	11
-#define ID_CIN_INTRO	12
-#define ID_CIN_TIER1	13
-#define ID_CIN_TIER2	14
-#define ID_CIN_TIER3	15
-#define ID_CIN_TIER4	16
-#define ID_CIN_TIER5	17
-#define ID_CIN_TIER6	18
-#define ID_CIN_TIER7	19
-#define ID_CIN_END		20
+enum {
+	ID_BACK,
+	ID_CIN_IDLOGO,
+	ID_CIN_INTRO,
+	ID_CIN_TIER1,
+	ID_CIN_TIER2,
+	ID_CIN_TIER3,
+	ID_CIN_TIER4,
+	ID_CIN_TIER5,
+	ID_CIN_TIER6,
+	ID_CIN_TIER7,
+	ID_CIN_END
+};
 
 typedef struct {
 	menuframework_s menu;

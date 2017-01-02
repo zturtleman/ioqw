@@ -65,14 +65,16 @@ typedef struct {
 #define C_MISC		3
 #define C_MAX		4
 
-#define ID_MOVEMENT		100
-#define ID_LOOKING		101
-#define ID_WEAPONS		102
-#define ID_MISC			103
-#define ID_DEFAULTS		104
-#define ID_BACK			105
-#define ID_SAVEANDEXIT	106
-#define ID_EXIT			107
+enum {
+	ID_MOVEMENT,
+	ID_LOOKING,
+	ID_WEAPONS,
+	ID_MISC,
+	ID_DEFAULTS,
+	ID_BACK,
+	ID_SAVEANDEXIT,
+	ID_EXIT
+};
 
 enum {
 	// bindable actions

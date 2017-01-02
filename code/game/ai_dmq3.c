@@ -4215,7 +4215,7 @@ void BotAimAtEnemy(bot_state_t *bs) {
                                                                   o   *
                                                              o *
                                                         o*
-                                                   o * 
+                                                   o *
                                                o *
                                           o   *
                                      o     *

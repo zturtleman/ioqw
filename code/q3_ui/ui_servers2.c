@@ -60,31 +60,35 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define ART_REMOVE0 "menu/art/delete_0"
 #define ART_REMOVE1 "menu/art/delete_1"
 
-#define ID_MASTER		10
-#define ID_GAMETYPE		11
-#define ID_SORTKEY		12
-#define ID_SHOW_FULL	13
-#define ID_SHOW_EMPTY	14
-#define ID_LIST			15
-#define ID_SCROLL_UP	16
-#define ID_SCROLL_DOWN	17
-#define ID_BACK			18
-#define ID_REFRESH		19
-#define ID_SPECIFY		20
-#define ID_CREATE		21
-#define ID_CONNECT		22
-#define ID_REMOVE		23
+enum {
+	ID_MASTER,
+	ID_GAMETYPE,
+	ID_SORTKEY,
+	ID_SHOW_FULL,
+	ID_SHOW_EMPTY,
+	ID_LIST,
+	ID_SCROLL_UP,
+	ID_SCROLL_DOWN,
+	ID_BACK,
+	ID_REFRESH,
+	ID_SPECIFY,
+	ID_CREATE,
+	ID_CONNECT,
+	ID_REMOVE
+};
 
 #define GR_LOGO		30
 #define GR_LETTERS	31
 
-#define UIAS_LOCAL		0
-#define UIAS_GLOBAL1	1
-#define UIAS_GLOBAL2	2
-#define UIAS_GLOBAL3	3
-#define UIAS_GLOBAL4	4
-#define UIAS_GLOBAL5	5
-#define UIAS_FAVORITES	6
+enum {
+	UIAS_LOCAL,
+	UIAS_GLOBAL1,
+	UIAS_GLOBAL2,
+	UIAS_GLOBAL3,
+	UIAS_GLOBAL4,
+	UIAS_GLOBAL5,
+	UIAS_FAVORITES
+};
 
 #define UI_MAX_MASTER_SERVERS 5
 
@@ -94,14 +98,16 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define SORT_GAME		3
 #define SORT_PING		4
 
-#define GAMES_ALL		0
-#define GAMES_FFA		1
-#define GAMES_TEAMPLAY	2
-#define GAMES_TOURNEY	3
-#define GAMES_CTF		4
-#define GAMES_1FCTF		5
-#define GAMES_OBELISK	6
-#define GAMES_HARVESTER	7
+enum {
+	GAMES_ALL,
+	GAMES_FFA,
+	GAMES_TEAMPLAY,
+	GAMES_TOURNEY,
+	GAMES_CTF,
+	GAMES_1FCTF,
+	GAMES_OBELISK,
+	GAMES_HARVESTER
+};
 
 static const char *master_items[] = {
 	"Local",

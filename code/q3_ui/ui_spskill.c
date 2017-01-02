@@ -43,13 +43,15 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define ART_MAP_COMPLETE4 "menu/art/level_complete4"
 #define ART_MAP_COMPLETE5 "menu/art/level_complete5"
 
-#define ID_BABY			10
-#define ID_EASY			11
-#define ID_MEDIUM		12
-#define ID_HARD			13
-#define ID_NIGHTMARE	14
-#define ID_BACK			15
-#define ID_FIGHT		16
+enum {
+	ID_BABY,
+	ID_EASY,
+	ID_MEDIUM,
+	ID_HARD,
+	ID_NIGHTMARE,
+	ID_BACK,
+	ID_FIGHT
+};
 
 typedef struct {
 	menuframework_s menu;

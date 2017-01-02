@@ -42,21 +42,23 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define ART_ARROWDOWN "menu/art/arrows_vert_bot"
 #define ART_SELECT "menu/art/opponents_select"
 
-#define ID_BACK			10
-#define ID_GO			11
-#define ID_LIST			12
-#define ID_UP			13
-#define ID_DOWN			14
-#define ID_SKILL		15
-#define ID_TEAM			16
-#define ID_BOTNAME0		20
-#define ID_BOTNAME1		21
-#define ID_BOTNAME2		22
-#define ID_BOTNAME3		23
-#define ID_BOTNAME4		24
-#define ID_BOTNAME5		25
-#define ID_BOTNAME6		26
-#define ID_SKILLSLIDER	27
+enum {
+	ID_BACK,
+	ID_GO,
+	ID_LIST,
+	ID_UP,
+	ID_DOWN,
+	ID_SKILL,
+	ID_TEAM,
+	ID_BOTNAME0,
+	ID_BOTNAME1,
+	ID_BOTNAME2,
+	ID_BOTNAME3,
+	ID_BOTNAME4,
+	ID_BOTNAME5,
+	ID_BOTNAME6,
+	ID_SKILLSLIDER
+};
 
 typedef struct {
 	menuframework_s menu;

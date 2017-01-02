@@ -37,13 +37,15 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define ART_BACK0 "menu/art/back_0"
 #define ART_BACK1 "menu/art/back_1"
 
-#define ID_GRAPHICS	10
-#define ID_DISPLAY	11
-#define ID_SOUND	12
-#define ID_NETWORK	13
-#define ID_RATE		14
-#define ID_VOIP		15
-#define ID_BACK		16
+enum {
+	ID_GRAPHICS,
+	ID_DISPLAY,
+	ID_SOUND,
+	ID_NETWORK,
+	ID_RATE,
+	ID_VOIP,
+	ID_BACK
+};
 
 static const char *rate_items[] = {
 	"<= 28.8K",

@@ -32,14 +32,16 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #include "ui_local.h"
 
-#define ID_SINGLEPLAYER	10
-#define ID_MULTIPLAYER	11
-#define ID_SETUP		12
-#define ID_DEMOS		13
-#define ID_CINEMATICS	14
-#define ID_TEAMARENA	15
-#define ID_MODS			16
-#define ID_EXIT			17
+enum {
+	ID_SINGLEPLAYER,
+	ID_MULTIPLAYER,
+	ID_SETUP,
+	ID_DEMOS,
+	ID_CINEMATICS,
+	ID_TEAMARENA,
+	ID_MODS,
+	ID_EXIT
+};
 
 #define MAIN_BANNER_MODEL "models/mapobjects/banner/banner5.md3"
 #define MAIN_MENU_VERTICAL_SPACING 34

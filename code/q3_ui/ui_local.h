@@ -35,14 +35,12 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 // status bar text buffer
 #define MAX_STATUSBAR_TEXT 64
 #define STATUSBAR_FADETIME 1500
-// logo art, all are 128x32 but they view very well at 64x16
-// define NO_UI_MINILOGO to remove 
+// logo art, all are 128 * 32 but they view very well at 64 * 16
 #define UI_LOGO_POWERED "menu/ui_art/ui_powered"
 #define UI_LOGO_ASSISTED "menu/ui_art/ui_assisted"
 #define UI_LOGO_INCLUDE "menu/ui_art/ui_include"
 #define UI_LOGO_IMPROVED "menu/ui_art/ui_improved"
 #define UI_LOGO_USING "menu/ui_art/ui_using"
-#define UI_LOGO_NAME "menu/ui_art/ui_name"
 
 #define UI_LOGO_X 570
 #define UI_LOGO_Y 400

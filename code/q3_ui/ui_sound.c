@@ -39,17 +39,18 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define ART_ACCEPT0 "menu/art/accept_0"
 #define ART_ACCEPT1 "menu/art/accept_1"
 
-#define ID_GRAPHICS			10
-#define ID_DISPLAY			11
-#define ID_SOUND			12
-#define ID_NETWORK			13
-#define ID_EFFECTSVOLUME	14
-#define ID_MUSICVOLUME		15
-#define ID_QUALITY			16
-#define ID_SOUNDSYSTEM		17
-//#define ID_A3D			18
-#define ID_BACK				19
-#define ID_APPLY			20
+enum {
+	ID_GRAPHICS,
+	ID_DISPLAY,
+	ID_SOUND,
+	ID_NETWORK,
+	ID_EFFECTSVOLUME,
+	ID_MUSICVOLUME,
+	ID_QUALITY,
+	ID_SOUNDSYSTEM,
+	ID_BACK,
+	ID_APPLY
+};
 
 #define DEFAULT_SDL_SND_SPEED 48000
 

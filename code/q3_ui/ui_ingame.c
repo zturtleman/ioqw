@@ -714,9 +714,9 @@ static void IG_CallVoteGameType_Event(int index) {
 			break;
 		case GT_HARVESTER:
 			break;
-	default:
-		Com_Printf("IG_CallVoteGameType_Event: unknown game - id (%i)", id);
-		return;
+		default:
+			Com_Printf("IG_CallVoteGameType_Event: unknown game - id (%i)", id);
+			return;
 	}
 
 	trap_Cmd_ExecuteText(EXEC_APPEND, va("callvote g_gametype %i\n", id));
