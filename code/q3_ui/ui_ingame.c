@@ -1015,12 +1015,10 @@ static void IG_CallVoteMisc_SubMenu(void) {
 
 	DynamicMenu_AddItem("Timelimit", 0, IG_TimeLimit_SubMenu, NULL);
 
-	if (DynamicMenu_ServerGametype() == GT_CTF || DynamicMenu_ServerGametype() == GT_1FCTF) {
+	if (DynamicMenu_ServerGametype() > GT_TEAM) {
 		DynamicMenu_AddItem("CaptureLimit", 0, IG_CaptureLimit_SubMenu, NULL);
 	} else {
-		if (DynamicMenu_ServerGametype() == GT_FFA || DynamicMenu_ServerGametype() == GT_TEAM || DynamicMenu_ServerGametype() == GT_TOURNAMENT) {
-			DynamicMenu_AddItem("FragLimit", 0, IG_FragLimit_SubMenu, NULL);
-		}
+		DynamicMenu_AddItem("FragLimit", 0, IG_FragLimit_SubMenu, NULL);
 	}
 
 	DynamicMenu_AddItem("Unlagged", 0, IG_Unlagged_SubMenu, NULL);
@@ -1765,7 +1763,7 @@ static void BotCommand_InitPrimaryMenu(void) {
 	DynamicMenu_AddListOfPlayers(PT_FRIENDLY|PT_BOTONLY, DM_CommandList_SubMenu, NULL);
 	DynamicMenu_AddItem("Leader?", COM_WHOLEADER, NULL, DM_Command_Event);
 
-	if (botcommandmenu_gametype == GT_CTF) {
+	if (botcommandmenu_gametype > GT_TEAM) {
 		DynamicMenu_AddItem("My task?", COM_MYTASK, NULL, DM_Command_Event);
 	}
 

@@ -153,8 +153,7 @@ static const int botChange_frequency[BOTCHANGE_COUNT + 1] = {
 	4,	// BOTCHANGE_MAP4
 	0	// size matches botChange_list[]
 };
-// internal Q3 exe script buffer is limited to 16K in size
-// so there's no benefit in increasing our script buffer
+// internal Q3 exe script buffer is limited to 16K in size, so there's no benefit in increasing our script buffer
 #define SCRIPT_BUFFER (1024 * 16 - 1)
 
 #define SERVER_ADDBOT "ui_ab"
@@ -170,10 +169,10 @@ typedef struct serverexec_s {
 	int cycle_count;			// number of maps in the cycle
 	// for MAP_MS_RANDOMLIST: stores listed map order
 	// for MAP_MS_RANDOM, MAP_MS_RANDOMEXCLUDE: stores map indices as they're generated
-	qboolean random_generate; // qtrue if map_rnd_index[] is used
+	qboolean random_generate;	// qtrue if map_rnd_index[] is used
 	qboolean random_order;		// qtrue if map_rnd[] is used
 	int random_count;			// number of variables stored in map_rnd[]
-	int map_rnd[MAX_MAPS_LIST]; // order in which maps are written
+	int map_rnd[MAX_MAPS_LIST];	// order in which maps are written
 	int map_rnd_index[MAX_MAPS_LIST]; // indices of map that will be written
 	int botcount_firstmap;		// only used with BOTTYPE_* ARENASCRIPT
 	int max_scripted_bots;		// only used with BOTTYPE_* ARENASCRIPT
@@ -207,7 +206,7 @@ Returns qtrue if the gametype uses capturelimit instead of fraglimit.
 */
 static qboolean UI_IsCaptureLimited(int type) {
 
-	if (type == GT_CTF) {
+	if (type > GT_TEAM) {
 		return qtrue;
 	}
 

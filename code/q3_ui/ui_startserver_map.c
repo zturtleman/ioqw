@@ -592,7 +592,7 @@ static void StartServer_MapPage_InitControlsFromScript(void) {
 
 	s_mapcontrols.mapSourceType.curvalue = s_scriptdata.map.SourceType;
 	// get the right text string in the multi-function control
-	if (s_scriptdata.gametype == GT_CTF) {
+	if (s_scriptdata.gametype > GT_TEAM) {
 		s_mapcontrols.actionSrc.itemnames = copyFrom_ctf_items;
 	} else {
 		s_mapcontrols.actionSrc.itemnames = copyFrom_items;

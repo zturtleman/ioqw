@@ -634,8 +634,8 @@ void StartServer_DrawMapPicture(int x, int y, int w, int h, mappic_t *mappic, ve
 	icons = ui_mapicons.integer;
 
 	if (icons == MAPICONS_ALL) {
-		for (i = 0; i < NUM_GAMETYPES; i++) { // Only main icon
-			if ((i != GT_1FCTF) & (i != GT_CTF)) {
+		for (i = 0; i < NUM_GAMETYPES; i++) { // only main icon
+			if (i < GT_CTF) {
 				mapbits = 1 << gametype_remap[i];
 
 				if (gametype_remap[i] == GT_FFA) {

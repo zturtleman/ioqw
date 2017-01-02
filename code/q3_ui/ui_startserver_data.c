@@ -657,7 +657,7 @@ void UI_SetSkirmishCvarInt(char *base, const char *name, int value) {
 =======================================================================================================================================
 UI_StartServer_MergeSkirmishCvars
 
-Convert from text format to internal NUL buffer terminated.
+Convert from text format to internal NULL buffer terminated.
 May have been edited by a program that changes line terminator formats so we attempt to recover from this.
 =======================================================================================================================================
 */
@@ -2348,12 +2348,25 @@ static void StartServer_LoadServerScriptData(void) {
 	s_scriptdata.server.weaponrespawn = UI_GetSkirmishCvarIntClamp(0, 9999, s, "weaponrespawn");
 
 	if (gametype > GT_TOURNAMENT) {
-		t = 0;
-
-		if (gametype == GT_TEAM) {
-			t = "ui_team_friendly";
-		} else if (gametype == GT_CTF) {
-			t = "ui_ctf_friendly";
+		switch (gametype) {
+			case GT_TEAM:
+				t = "ui_team_friendly";
+				break;
+			case GT_CTF:
+				t = "ui_ctf_friendly";
+				break;
+			case GT_1FCTF:
+				t = "ui_1flag_friendly";
+				break;
+			case GT_OBELISK:
+				t = "ui_obelisk_friendly";
+				break;
+			case GT_HARVESTER:
+				t = "ui_harvester_friendly";
+				break;
+			default:
+				t = 0;
+				break;
 		}
 
 		if (t) {
@@ -2420,10 +2433,24 @@ static void StartServer_SaveServerScriptData(void) {
 		// ff is an existing cvar, so we use the existing cvar
 		friendly = s_scriptdata.server.friendlyFire;
 
-		if (gametype == GT_TEAM) {
-			trap_Cvar_SetValue("ui_team_friendly", friendly);
-		} else if (gametype == GT_CTF) {
-			trap_Cvar_SetValue("ui_ctf_friendly", friendly);
+		switch (gametype) {
+			case GT_TEAM:
+				trap_Cvar_SetValue("ui_team_friendly", friendly);
+				break;
+			case GT_CTF:
+				trap_Cvar_SetValue("ui_ctf_friendly", friendly);
+				break;
+			case GT_1FCTF:
+				trap_Cvar_SetValue("ui_1flag_friendly", friendly);
+				break;
+			case GT_OBELISK:
+				trap_Cvar_SetValue("ui_obelisk_friendly", friendly);
+				break;
+			case GT_HARVESTER:
+				trap_Cvar_SetValue("ui_harvester_friendly", friendly);
+				break;
+			default:
+				break;
 		}
 
 		UI_SetSkirmishCvarInt(s, "AutoJoin", s_scriptdata.server.autoJoin);

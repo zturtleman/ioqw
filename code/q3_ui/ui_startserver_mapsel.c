@@ -1404,7 +1404,7 @@ static void MapSelect_MenuInit(int gametype, int index, const char *mapname) {
 
 	MapSelect_Cache();
 
-	if (gametype != GT_CTF && MapSelect_MapSupportsGametype(mapname)) {
+	if (gametype < GT_CTF && MapSelect_MapSupportsGametype(mapname)) {
 		s_mapselect.allmaps.curvalue = ms_allmaps;
 	} else {
 		s_mapselect.allmaps.curvalue = 0;
@@ -1622,7 +1622,7 @@ static void MapSelect_MenuInit(int gametype, int index, const char *mapname) {
 	Menu_AddItem(&s_mapselect.menu, &s_mapselect.listview);
 	Menu_AddItem(&s_mapselect.menu, &s_mapselect.maplist);
 
-	if (gametype != GT_CTF) {
+	if (gametype < GT_CTF) {
 		Menu_AddItem(&s_mapselect.menu, &s_mapselect.allmaps);
 	}
 
