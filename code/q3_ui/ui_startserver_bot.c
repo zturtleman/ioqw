@@ -686,7 +686,7 @@ Specialist interface init, used when user has toggled type of bot selection.
 static void StartServer_BotPage_LoadBotNameList(int type) {
 
 	StartServer_LoadBotNameList(type);
-	// its possible for StartServer_LoadBotNameList() to change the selection type, so we recover that change here
+	// it is possible for StartServer_LoadBotNameList() to change the selection type, so we recover that change here
 	s_botcontrols.botTypeSelect.curvalue = s_scriptdata.bot.typeSelect;
 
 	StartServer_BotPage_CopySlotTypeToInterface();

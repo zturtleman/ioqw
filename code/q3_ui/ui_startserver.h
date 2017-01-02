@@ -297,7 +297,7 @@ qboolean StartServer_IsRandomBotExclude(int type);
 =======================================================================================================================================
 */
 
-// must match order in item_serverlist[]
+// must match order in server_itemlist[]
 enum {
 	ITEM_GAUNTLET,
 	ITEM_HANDGUN,

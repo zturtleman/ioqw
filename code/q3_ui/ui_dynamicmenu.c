@@ -56,13 +56,13 @@ id Software at the address below.
 #define MENUICON_WIDTH 20
 #define MENUICON_HEIGHT 20
 #define MENUICON_GAP 2
-// Gap(screen pixels) between the border of a menu item and the border of the menu
+// Gap (screen pixels) between the border of a menu item and the border of the menu
 #define SUBMENU_SURROUNDGAP 1
-// Horizontal separation(screen pixels) between a sub menu and it's parent
+// Horizontal separation (screen pixels) between a sub menu and it's parent
 #define SUBMENU_GAP 0
-// Gap(virtual screen pixels) between left edge of menu item border and text / icon
+// Gap (virtual screen pixels) between left edge of menu item border and text/icon
 #define MENUSPACE_X 10
-// Vertical gap(virtual screen pixels) between text and top / bottom border of menu item
+// Vertical gap (virtual screen pixels) between text and top/bottom border of menu item
 #define MENUSPACE_Y 2
 // Scale factor for menu text and icons
 #define MENU_SCALE 0.7
@@ -86,7 +86,7 @@ typedef struct {
 	dynamicitem_t data[MAX_MENUITEMS];
 	qhandle_t background[MAX_MENUITEMS];
 	int start[MAX_DYNAMICDEPTH];
-	int end[MAX_DYNAMICDEPTH]; // indicates to(last item + 1)
+	int end[MAX_DYNAMICDEPTH]; // indicates to (last item + 1)
 	int active[MAX_DYNAMICDEPTH];
 	qboolean icon[MAX_DYNAMICDEPTH];
 	int gametype;
@@ -314,14 +314,14 @@ void DynamicMenu_AddListOfPlayers(int type, createHandler crh, eventHandler evh)
 		}
 
 		if (type & PT_EXCLUDEPARENT && depth >= 1) {
-			// depth has been increased by init of(sub)menu
+			// depth has been increased by init of (sub)menu
 			if (!Q_stricmp(name, s_dynamic.data[s_dynamic.active[depth - 1]].text)) {
 				continue;
 			}
 		}
 
 		if (type & PT_EXCLUDEGRANDPARENT && depth >= 2) {
-			// depth has been increased by init of(sub)menu
+			// depth has been increased by init of (sub)menu
 			if (!Q_stricmp(name, s_dynamic.data[s_dynamic.active[depth - 2]].text)) {
 				continue;
 			}
@@ -821,7 +821,7 @@ void DynamicMenu_SetFocus(int pos) {
 	}
 
 	s_dynamic.active[newdepth - 1] = pos;
-	// show this one(if needed)
+	// show this one (if needed)
 	if (s_dynamic.data[pos].createSubMenu) {
 		s_dynamic.data[pos].createSubMenu();
 	}

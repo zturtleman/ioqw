@@ -477,7 +477,6 @@ static void UI_BotSelect_UpdateView(void) {
 		botSelectInfo.botlist.generic.flags |= (QMF_INACTIVE|QMF_HIDDEN);
 	} else {
 		// list display
-
 		for (i = 0; i < MAX_GRIDMODELSPERPAGE; i++) {
 			botSelectInfo.picbuttons[i].generic.flags |= (QMF_HIDDEN|QMF_INACTIVE);
 		}
@@ -1168,7 +1167,6 @@ static void UI_BotSelect_Init(char *bot, int index) {
 
 	UI_BotSelect_BuildList();
 	UI_BotSelect_SetViewType();
-
 	UI_BotSelect_Default(bot);
 	UI_BotSelect_UpdateView();
 	UI_BotSelect_CheckAcceptButton();

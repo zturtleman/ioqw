@@ -207,8 +207,7 @@ static void StartServer_MapPage_SetPageText(void) {
 		s_mapcontrols.mapPage.generic.flags |= (QMF_INACTIVE|QMF_HIDDEN);
 		pagenum = 1;
 	} else {
-		// page text is all the same length (all digits less than 10)
-		// so leave generic.left etc. alone
+		// page text is all the same length (all digits less than 10), so leave generic.left etc. alone
 		s_mapcontrols.mapPage.generic.flags &= ~(QMF_INACTIVE|QMF_HIDDEN);
 		pagenum = s_mapcontrols.map_page + 1;
 	}
