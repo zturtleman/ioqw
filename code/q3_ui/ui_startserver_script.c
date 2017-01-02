@@ -669,22 +669,12 @@ static void StartServer_WriteSelectedBotParams(void) {
 	}
 
 	if (s_scriptdata.gametype > GT_TOURNAMENT) {
-		// team game
-		// we must interleave red and blue in case
-		// we have team_forcebalance enabled
+		// team games: we must interleave red and blue in case we have team_forcebalance enabled
 		team = StartServer_GetPlayerTeam();
 		left = 0;
 		right = PLAYER_SLOTS_PERCOL;
-
+		// find first free left bot
 		do {
-// Tobias FIXME:
-// For some wacko reason this piece of code causes a weird bug!
-// The bug: As soon as both teams aren't equal (bot count) some bots won't enter the game.
-//		   e.g.: If there is only one bot on the blue team and four bots on the red team, only two bots will join the red team (because of the one bot and the human on the blue team).
-//		   The funny thing is, without this piece of code the bug will NOT occur, but I have absolutely no idea for what this piece of code is there! So I will disable this part of code for the moment.
-// NOTE: This bug occurs even with the original UI Enhanced 1.3 mod, and also with Q3 Excessive, and UIE for OpenArena!
-/*
-			// find first free left bot
 			for (; left < PLAYER_SLOTS_PERCOL; left++) {
 				if (s_scriptdata.bot.slotType[left] != SLOTTYPE_BOT) {
 					continue;
@@ -696,7 +686,20 @@ static void StartServer_WriteSelectedBotParams(void) {
 
 				break;
 			}
-			// find next free right bot
+
+			if (left < PLAYER_SLOTS_PERCOL) {
+				if (custom) {
+					skillrange = &s_scriptdata.bot.skill[left];
+				}
+
+				skill = StartServer_GetBotSkill(skillrange);
+				AddScript(va("addbot %s %s %s %i; ", s_scriptdata.bot.name[left], skill, bot_teamname[team], delay));
+				left++;
+			}
+
+		} while (left < PLAYER_SLOTS_PERCOL);
+		// find next free right bot
+		do {
 			for (; right < PLAYER_SLOTS; right++) {
 				if (s_scriptdata.bot.slotType[right] != SLOTTYPE_BOT) {
 					continue;
@@ -708,17 +711,6 @@ static void StartServer_WriteSelectedBotParams(void) {
 
 				break;
 			}
-*/
-// Tobias end
-			if (left < PLAYER_SLOTS_PERCOL) {
-				if (custom) {
-					skillrange = &s_scriptdata.bot.skill[left];
-				}
-
-				skill = StartServer_GetBotSkill(skillrange);
-				AddScript(va("addbot %s %s %s %i; ", s_scriptdata.bot.name[left], skill, bot_teamname[team], delay));
-				left++;
-			}
 
 			if (right < PLAYER_SLOTS) {
 				if (custom) {
@@ -729,7 +721,7 @@ static void StartServer_WriteSelectedBotParams(void) {
 				AddScript(va("addbot %s %s %s %i; ", s_scriptdata.bot.name[right], skill, bot_teamname[1 - team], delay));
 				right++;
 			}
-		} while (left < PLAYER_SLOTS_PERCOL && right < PLAYER_SLOTS);
+		} while (right < PLAYER_SLOTS);
 	} else {
 		// single player game
 		for (i = 0; i < PLAYER_SLOTS; i++) {

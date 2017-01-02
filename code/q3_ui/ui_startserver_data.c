@@ -1874,7 +1874,7 @@ void StartServer_DoBotAction(int action, int selected) {
 	switch (action) {
 		case BOT_CT_CLEARALL:
 			for (i = 0; i < PLAYER_SLOTS; i++) {
-				if (s_scriptdata.bot.slotType[i] == SLOTTYPE_BOT || s_scriptdata.bot.slotType[i] == SLOTTYPE_OPEN) {
+				if (s_scriptdata.bot.slotType[i] == SLOTTYPE_BOT || s_scriptdata.bot.slotType[i] == SLOTTYPE_OPEN || s_scriptdata.bot.slotType[i] == SLOTTYPE_EMPTY) {
 					s_scriptdata.bot.slotType[i] = SLOTTYPE_EMPTY;
 					StartServer_BotNameDrawn(i, qfalse);
 					memset(s_scriptdata.bot.name[i], 0, MAX_NAME_LENGTH);
