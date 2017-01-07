@@ -65,33 +65,6 @@ void QDECL Com_Printf(const char *msg, ...) {
 
 /*
 =======================================================================================================================================
-UI_ClampCvar
-=======================================================================================================================================
-*/
-float UI_ClampCvar(float min, float max, float value) {
-
-	if (value < min) {
-		return min;
-	}
-
-	if (value > max) {
-		return max;
-	}
-
-	return value;
-}
-
-/*
-=======================================================================================================================================
-UI_StartDemoLoop
-=======================================================================================================================================
-*/
-void UI_StartDemoLoop(void) {
-	trap_Cmd_ExecuteText(EXEC_APPEND, "d1\n");
-}
-
-/*
-=======================================================================================================================================
 UI_PushMenu
 =======================================================================================================================================
 */
@@ -692,7 +665,7 @@ void UI_DrawProportionalString_AutoWrapped(int x, int y, int xmax, int ystep, co
 
 			if (c_bcp == '\0') {
 				// that was the last word
-				// we could start a new loop, but that wouldn't be much use´even if the word is too long, we would overflow it (see above)
+				// we could start a new loop, but that wouldn't be much use even if the word is too long, we would overflow it (see above)
 				// so just print it now if needed
 				s2++;
 
@@ -880,10 +853,6 @@ UI_SetActiveMenu
 */
 void UI_SetActiveMenu(uiMenuCommand_t menu) {
 
-	// this should be the ONLY way the menu system is brought up
-	// enusure minimum menu data is cached
-	Menu_Cache();
-
 	switch (menu) {
 		case UIMENU_NONE:
 			UI_ForceMenuOff();
@@ -1060,14 +1029,12 @@ UI_ConsoleCommand
 =======================================================================================================================================
 */
 qboolean UI_ConsoleCommand(int realTime) {
-	char *cmd;
+	const char *cmd;
 
 	uis.frametime = realTime - uis.realtime;
 	uis.realtime = realTime;
 
 	cmd = UI_Argv(0);
-	// ensure minimum menu data is available
-	Menu_Cache();
 
 	if (Q_stricmp(cmd, "levelselect") == 0) {
 		UI_SPLevelMenu_f();
@@ -1246,15 +1213,6 @@ void UI_DrawRect(float x, float y, float width, float height, const float *color
 
 /*
 =======================================================================================================================================
-UI_SetColor
-=======================================================================================================================================
-*/
-void UI_SetColor(const float *rgba) {
-	trap_R_SetColor(rgba);
-}
-
-/*
-=======================================================================================================================================
 UI_UpdateScreen
 =======================================================================================================================================
 */
@@ -1300,7 +1258,8 @@ void UI_Refresh(int realtime) {
 		}
 	}
 	// draw cursor
-	UI_SetColor(NULL);
+	trap_R_SetColor(NULL);
+
 	UI_DrawHandlePic(uis.cursorx - 16, uis.cursory - 16, 32, 32, uis.cursor);
 #ifndef NDEBUG
 	if (uis.debug) {
@@ -1313,17 +1272,6 @@ void UI_Refresh(int realtime) {
 		trap_S_StartLocalSound(menu_in_sound, CHAN_LOCAL_SOUND);
 		m_entersound = qfalse;
 	}
-}
-
-/*
-=======================================================================================================================================
-UI_DrawTextBox
-=======================================================================================================================================
-*/
-void UI_DrawTextBox(int x, int y, int width, int lines) {
-
-	UI_FillRect(x + BIGCHAR_WIDTH / 2, y + BIGCHAR_HEIGHT / 2, (width + 1) * BIGCHAR_WIDTH, (lines + 1) * BIGCHAR_HEIGHT, colorBlack);
-	UI_DrawRect(x + BIGCHAR_WIDTH / 2, y + BIGCHAR_HEIGHT / 2, (width + 1) * BIGCHAR_WIDTH, (lines + 1) * BIGCHAR_HEIGHT, colorWhite);
 }
 
 /*

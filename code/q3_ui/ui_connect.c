@@ -177,11 +177,10 @@ void UI_DrawConnectScreen(qboolean overlay) {
 	uiClientState_t cstate;
 	char info[MAX_INFO_VALUE];
 
-	Menu_Cache();
-
 	if (!overlay) {
 		// draw the dialog background
-		UI_SetColor(color_white);
+		trap_R_SetColor(color_white);
+
 		UI_DrawHandlePic(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, uis.menuBackShader);
 	}
 	// see what information we should display

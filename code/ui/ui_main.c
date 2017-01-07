@@ -658,7 +658,7 @@ void _UI_Refresh(int realtime) {
 		UI_BuildFindPlayerList(qfalse);
 	}
 	// draw cursor
-	UI_SetColor(NULL);
+	trap_R_SetColor(NULL);
 
 	if (Menu_Count() > 0 && (trap_Key_GetCatcher() & KEYCATCH_UI)) {
 		UI_DrawHandlePic(uiInfo.uiDC.cursorx - 16, uiInfo.uiDC.cursory - 16, 32, 32, uiInfo.uiDC.Assets.cursor);
@@ -5903,7 +5903,7 @@ void _UI_Init(qboolean inGameLoad) {
 	//UI_Load();
 
 	uiInfo.uiDC.registerShaderNoMip = &trap_R_RegisterShaderNoMip;
-	uiInfo.uiDC.setColor = &UI_SetColor;
+	uiInfo.uiDC.setColor = &trap_R_SetColor;
 	uiInfo.uiDC.drawHandlePic = &UI_DrawHandlePic;
 	uiInfo.uiDC.drawStretchPic = &trap_R_DrawStretchPic;
 	uiInfo.uiDC.drawText = &Text_Paint;
@@ -6308,7 +6308,7 @@ static void UI_DisplayDownloadInfo(const char *downloadName, float centerPoint, 
 
 	leftWidth = 320;
 
-	UI_SetColor(colorWhite);
+	trap_R_SetColor(colorWhite);
 
 	Text_PaintCenter(centerPoint, yStart + 112, scale, colorWhite, dlText, 0);
 	Text_PaintCenter(centerPoint, yStart + 192, scale, colorWhite, etaText, 0);

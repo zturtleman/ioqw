@@ -604,9 +604,11 @@ static void Slider_Draw(menuslider_s *s) {
 	// draw label
 	UI_DrawString(x - SMALLCHAR_WIDTH, y, s->generic.name, UI_RIGHT|style, color);
 	// draw slider
-	UI_SetColor(color);
+	trap_R_SetColor(color);
+
 	UI_DrawHandlePic(x + SMALLCHAR_WIDTH, y, 96, 16, sliderBar);
-	UI_SetColor(NULL);
+
+	trap_R_SetColor(NULL);
 	// clamp thumb
 	if (s->maxvalue > s->minvalue) {
 		s->range = (s->curvalue - s->minvalue) / (float)(s->maxvalue - s->minvalue);
