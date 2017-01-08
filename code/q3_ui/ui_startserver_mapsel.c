@@ -1439,7 +1439,7 @@ static void MapSelect_MenuInit(int gametype, int index, const char *mapname) {
 	s_mapselect.banner.generic.type = MTYPE_BTEXT;
 	s_mapselect.banner.generic.x = 160;
 	s_mapselect.banner.generic.y = 24;
-	s_mapselect.banner.string = "MAP SELECT";
+	s_mapselect.banner.string = "Map Select";
 	s_mapselect.banner.color = color_white;
 	s_mapselect.banner.style = UI_CENTER|UI_GIANTFONT;
 

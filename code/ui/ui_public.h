@@ -37,7 +37,7 @@ typedef struct {
 
 typedef enum {
 	//============== general Quake services ==================
-	// See sharedTraps_t in qcommon.h for TRAP_MEMSET=0, etc
+	// See sharedTraps_t in qcommon.h for TRAP_MEMSET = 0, etc.
 	UI_PRINT = 20,
 	UI_ERROR,
 	UI_MILLISECONDS,

@@ -666,7 +666,7 @@ void _UI_Refresh(int realtime) {
 #ifndef NDEBUG
 	if (uiInfo.uiDC.debug) {
 		// cursor coordinates
-		//FIXME
+		// FIXME
 		//UI_DrawString(0, 0, va("(%d, %d)", uis.cursorx, uis.cursory), UI_LEFT|UI_SMALLFONT, colorRed);
 	}
 #endif
@@ -2416,7 +2416,7 @@ UI_DrawGLInfo
 =======================================================================================================================================
 */
 static void UI_DrawGLInfo(rectDef_t *rect, float scale, vec4_t color, int textStyle) {
-	char * eptr;
+	char *eptr;
 	char buff[1024];
 	const char *lines[64];
 	int y, numLines, i;
@@ -2856,8 +2856,10 @@ static qboolean UI_ClanName_HandleKey(int flags, float *special, int key) {
 		}
 
 		trap_Cvar_Set("ui_teamName", uiInfo.teamList[i].teamName);
+
 		UI_HeadCountByTeam();
 		UI_FeederSelection(FEEDER_HEADS, 0);
+
 		updateModel = qtrue;
 		return qtrue;
 	}
@@ -2901,6 +2903,7 @@ static qboolean UI_GameType_HandleKey(int flags, float *special, int key, qboole
 		}
 
 		trap_Cvar_SetValue("ui_gameType", ui_gameType.integer);
+
 		UI_SetCapFragLimits(qtrue);
 		UI_LoadBestScores(uiInfo.mapList[ui_currentMap.integer].mapLoadName, uiInfo.gameTypes[ui_gameType.integer].gtEnum);
 
@@ -2935,6 +2938,7 @@ static qboolean UI_NetGameType_HandleKey(int flags, float *special, int key) {
 		trap_Cvar_SetValue("ui_netGameType", ui_netGameType.integer);
 		trap_Cvar_SetValue("ui_actualnetGameType", uiInfo.gameTypes[ui_netGameType.integer].gtEnum);
 		trap_Cvar_SetValue("ui_currentNetMap", 0);
+
 		UI_MapCountByGameType(qfalse);
 		Menu_SetFeederSelection(NULL, FEEDER_ALLMAPS, 0, NULL);
 		return qtrue;
@@ -2961,6 +2965,7 @@ static qboolean UI_JoinGameType_HandleKey(int flags, float *special, int key) {
 		}
 
 		trap_Cvar_SetValue("ui_joinGameType", ui_joinGameType.integer);
+
 		UI_BuildServerDisplayList(qtrue);
 		return qtrue;
 	}

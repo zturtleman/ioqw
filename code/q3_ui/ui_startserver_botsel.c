@@ -1034,7 +1034,7 @@ static void UI_BotSelect_Init(char *bot, int index) {
 	botSelectInfo.banner.generic.type = MTYPE_BTEXT;
 	botSelectInfo.banner.generic.x = 320;
 	botSelectInfo.banner.generic.y = 16;
-	botSelectInfo.banner.string = "SELECT BOT";
+	botSelectInfo.banner.string = "Select Bot";
 	botSelectInfo.banner.color = color_white;
 	botSelectInfo.banner.style = UI_CENTER;
 

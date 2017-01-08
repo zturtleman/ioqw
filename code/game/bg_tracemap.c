@@ -332,7 +332,7 @@ void BG_GenerateTracemap(const char *mapname, vec3_t mapcoordsMins, vec3_t mapco
 	}
 	// min is 0
 	// max is 255
-	// this is d&l, min=1 max=255
+	// this is d&l, min = 1 max = 255
 	scalefactor = 254.f / (skygroundmax - skygroundmin);
 
 	if (scalefactor == 0.f) {

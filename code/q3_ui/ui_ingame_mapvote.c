@@ -416,32 +416,31 @@ static void MapCallVote_LoadMaps(const char *mapname, qboolean cache) {
 			if (buf[j] == '\0') {
 				break;
 			}
-		
+
 			if (buf[j] == ' ') {
 				lastspace = j;
 			}
-		
+
 			count2++;
-		
+
 			if ((count2 % nchars) == 0) {
 				if (lastspace) {
 					buf[lastspace] = '\0';
 					count2 = j - lastspace;
-				
+
 					if (!secondline) {
 						secondline = lastspace + 1;
 					}
 
 					lastspace = 0;
 					continue;
-			
 				}
 				// move always preserves buf[MAPNAME_LONGBUFFER - 1]
 				memcpy(&buf[j + 1], &buf[j], MAPNAME_LONGBUFFER - j - 2);
-			
+
 				buf[j] = '\0';
 				count2 = 0;
-			
+
 				if (!secondline) {
 					secondline = j + 1;
 				}
@@ -662,7 +661,7 @@ static void MapCallVote_FilterChanged(void) {
 		info = UI_GetArenaInfoByNumber(s_mapselect2.index_maplist[s_mapselect2.currentmap]);
 		Q_strncpyz(mapname, Info_ValueForKey(info, "map"), MAPNAME_BUFFER);
 	} else {
-		mapname[0]='\0';
+		mapname[0] = '\0';
 	}
 	// handle muliple selections
 	// try and keep as many as possible across filter changes
@@ -863,7 +862,7 @@ static void MapCallVote_DrawMapPic(void *self) {
 
 	UI_DrawString(x, y - offset, s_mapselect2.mapdrawname[n], UI_CENTER|UI_SMALLFONT, color);
 	// mapname
-	UI_DrawString(x, y - 18 , s_mapselect2.mapinfo[id].mapname, UI_CENTER|UI_SMALLFONT, color_white);
+	UI_DrawString(x, y - 18, s_mapselect2.mapinfo[id].mapname, UI_CENTER|UI_SMALLFONT, color_white);
 }
 
 /*
@@ -934,7 +933,7 @@ static void MapCallVote_ScrollListDraw(void *ptr) {
 					u -= (l->width * charwidth) / 2 + 1;
 				}
 
-				UI_FillRect(u, y, l->width * charwidth , lineheight, listbar_color);
+				UI_FillRect(u, y, l->width * charwidth, lineheight, listbar_color);
 
 				if (color != color_red) {
 					color = text_color_highlight;
@@ -1262,7 +1261,7 @@ static void MapCallVote_MenuInit(int gametype, int index, const char *mapname) {
 	s_mapselect2.banner.generic.type = MTYPE_BTEXT;
 	s_mapselect2.banner.generic.x = 160;
 	s_mapselect2.banner.generic.y = 6;
-	s_mapselect2.banner.string = "MAP SELECT";
+	s_mapselect2.banner.string = "Map Select";
 	s_mapselect2.banner.color = color_white;
 	s_mapselect2.banner.style = UI_CENTER|UI_GIANTFONT;
 

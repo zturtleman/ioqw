@@ -125,7 +125,7 @@ static void UI_SetupMenu_Event(void *ptr, int event) {
 //			UI_SaveConfigMenu();
 //			break;
 		case ID_DEFAULTS:
-			UI_ConfirmMenu("SET TO DEFAULTS?", Setup_ResetDefaults_Draw, Setup_ResetDefaults_Action);
+			UI_ConfirmMenu("Set to defaults?", Setup_ResetDefaults_Draw, Setup_ResetDefaults_Action);
 			break;
 		case ID_BACK:
 			UI_PopMenu();
@@ -152,7 +152,7 @@ static void UI_SetupMenu_Init(void) {
 	setupMenuInfo.banner.generic.type = MTYPE_BTEXT;
 	setupMenuInfo.banner.generic.x = 320;
 	setupMenuInfo.banner.generic.y = 16;
-	setupMenuInfo.banner.string = "SETUP";
+	setupMenuInfo.banner.string = "Setup";
 	setupMenuInfo.banner.color = color_white;
 	setupMenuInfo.banner.style = UI_CENTER;
 
@@ -185,7 +185,7 @@ static void UI_SetupMenu_Init(void) {
 	setupMenuInfo.setupplayer.generic.y = y;
 	setupMenuInfo.setupplayer.generic.id = ID_CUSTOMIZEPLAYER;
 	setupMenuInfo.setupplayer.generic.callback = UI_SetupMenu_Event;
-	setupMenuInfo.setupplayer.string = "PLAYER";
+	setupMenuInfo.setupplayer.string = "Player";
 	setupMenuInfo.setupplayer.color = color_red;
 	setupMenuInfo.setupplayer.style = UI_CENTER;
 
@@ -196,7 +196,7 @@ static void UI_SetupMenu_Init(void) {
 	setupMenuInfo.setupcontrols.generic.y = y;
 	setupMenuInfo.setupcontrols.generic.id = ID_CUSTOMIZECONTROLS;
 	setupMenuInfo.setupcontrols.generic.callback = UI_SetupMenu_Event;
-	setupMenuInfo.setupcontrols.string = "CONTROLS";
+	setupMenuInfo.setupcontrols.string = "Controls";
 	setupMenuInfo.setupcontrols.color = color_red;
 	setupMenuInfo.setupcontrols.style = UI_CENTER;
 
@@ -207,7 +207,7 @@ static void UI_SetupMenu_Init(void) {
 	setupMenuInfo.setupsystem.generic.y = y;
 	setupMenuInfo.setupsystem.generic.id = ID_SYSTEMCONFIG;
 	setupMenuInfo.setupsystem.generic.callback = UI_SetupMenu_Event;
-	setupMenuInfo.setupsystem.string = "SYSTEM";
+	setupMenuInfo.setupsystem.string = "System";
 	setupMenuInfo.setupsystem.color = color_red;
 	setupMenuInfo.setupsystem.style = UI_CENTER;
 
@@ -218,7 +218,7 @@ static void UI_SetupMenu_Init(void) {
 	setupMenuInfo.game.generic.y = y;
 	setupMenuInfo.game.generic.id = ID_GAME;
 	setupMenuInfo.game.generic.callback = UI_SetupMenu_Event;
-	setupMenuInfo.game.string = "GAME OPTIONS";
+	setupMenuInfo.game.string = "Game Options";
 	setupMenuInfo.game.color = color_red;
 	setupMenuInfo.game.style = UI_CENTER;
 
@@ -231,7 +231,7 @@ static void UI_SetupMenu_Init(void) {
 		setupMenuInfo.load.generic.y = y;
 		setupMenuInfo.load.generic.id = ID_LOAD;
 		setupMenuInfo.load.generic.callback = UI_SetupMenu_Event;
-		setupMenuInfo.load.string = "LOAD";
+		setupMenuInfo.load.string = "Load";
 		setupMenuInfo.load.color = color_red;
 		setupMenuInfo.load.style = UI_CENTER;
 
@@ -242,7 +242,7 @@ static void UI_SetupMenu_Init(void) {
 		setupMenuInfo.save.generic.y = y;
 		setupMenuInfo.save.generic.id = ID_SAVE;
 		setupMenuInfo.save.generic.callback = UI_SetupMenu_Event;
-		setupMenuInfo.save.string = "SAVE";
+		setupMenuInfo.save.string = "Save";
 		setupMenuInfo.save.color = color_red;
 		setupMenuInfo.save.style = UI_CENTER;
 #endif
@@ -253,7 +253,7 @@ static void UI_SetupMenu_Init(void) {
 		setupMenuInfo.defaults.generic.y = y;
 		setupMenuInfo.defaults.generic.id = ID_DEFAULTS;
 		setupMenuInfo.defaults.generic.callback = UI_SetupMenu_Event;
-		setupMenuInfo.defaults.string = "DEFAULTS";
+		setupMenuInfo.defaults.string = "Defaults";
 		setupMenuInfo.defaults.color = color_red;
 		setupMenuInfo.defaults.style = UI_CENTER;
 	}

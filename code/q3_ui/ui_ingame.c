@@ -190,13 +190,13 @@ static void InGame_EventHandler(int id) {
 			UI_SetupMenu();
 			break;
 		case ID_LEAVEARENA:
-			UI_ConfirmMenu("LEAVE ARENA?", 0, InGame_LeaveAction);
+			UI_ConfirmMenu("Leave Arena?", 0, InGame_LeaveAction);
 			break;
 		case ID_RESTART:
-			UI_ConfirmMenu("RESTART ARENA?", 0, InGame_RestartAction);
+			UI_ConfirmMenu("Restart Arena?", 0, InGame_RestartAction);
 			break;
 		case ID_QUIT:
-			UI_ConfirmMenu("EXIT GAME?", 0, InGame_QuitAction);
+			UI_ConfirmMenu("Exit Game?", 0, InGame_QuitAction);
 			break;
 		case ID_SERVERINFO:
 			UI_ServerInfoMenu();
@@ -214,7 +214,7 @@ static void InGame_EventHandler(int id) {
 			UI_PopMenu();
 			break;
 		case ID_NEXTMAP:
-			UI_ConfirmMenu("NEXT MAP?", 0, InGame_NextMap);
+			UI_ConfirmMenu("Next Map?", 0, InGame_NextMap);
 			break;
 	}
 }
@@ -282,7 +282,7 @@ void InGame_MenuInit(void) {
 	s_ingame.team.generic.y = y;
 	s_ingame.team.generic.id = ID_TEAM;
 	s_ingame.team.generic.callback = InGame_Event;
-	s_ingame.team.string = "START";
+	s_ingame.team.string = "Start";
 	s_ingame.team.color = color_red;
 	s_ingame.team.style = UI_CENTER|UI_SMALLFONT;
 
@@ -293,7 +293,7 @@ void InGame_MenuInit(void) {
 	s_ingame.addbots.generic.y = y;
 	s_ingame.addbots.generic.id = ID_ADDBOTS;
 	s_ingame.addbots.generic.callback = InGame_Event;
-	s_ingame.addbots.string = "ADD BOTS";
+	s_ingame.addbots.string = "Add Bots";
 	s_ingame.addbots.color = color_red;
 	s_ingame.addbots.style = UI_CENTER|UI_SMALLFONT;
 
@@ -308,7 +308,7 @@ void InGame_MenuInit(void) {
 	s_ingame.removebots.generic.y = y;
 	s_ingame.removebots.generic.id = ID_REMOVEBOTS;
 	s_ingame.removebots.generic.callback = InGame_Event;
-	s_ingame.removebots.string = "REMOVE BOTS";
+	s_ingame.removebots.string = "Remove Bots";
 	s_ingame.removebots.color = color_red;
 	s_ingame.removebots.style = UI_CENTER|UI_SMALLFONT;
 
@@ -323,7 +323,7 @@ void InGame_MenuInit(void) {
 	s_ingame.teamorders.generic.y = y;
 	s_ingame.teamorders.generic.id = ID_TEAMORDERS;
 	s_ingame.teamorders.generic.callback = InGame_Event;
-	s_ingame.teamorders.string = "TEAM ORDERS";
+	s_ingame.teamorders.string = "Team Orders";
 	s_ingame.teamorders.color = color_red;
 	s_ingame.teamorders.style = UI_CENTER|UI_SMALLFONT;
 
@@ -340,7 +340,7 @@ void InGame_MenuInit(void) {
 	s_ingame.setup.generic.y = y;
 	s_ingame.setup.generic.id = ID_SETUP;
 	s_ingame.setup.generic.callback = InGame_Event;
-	s_ingame.setup.string = "SETUP";
+	s_ingame.setup.string = "Setup";
 	s_ingame.setup.color = color_red;
 	s_ingame.setup.style = UI_CENTER|UI_SMALLFONT;
 
@@ -351,7 +351,7 @@ void InGame_MenuInit(void) {
 	s_ingame.server.generic.y = y;
 	s_ingame.server.generic.id = ID_SERVERINFO;
 	s_ingame.server.generic.callback = InGame_Event;
-	s_ingame.server.string = "SERVER INFO";
+	s_ingame.server.string = "Server Info";
 	s_ingame.server.color = color_red;
 	s_ingame.server.style = UI_CENTER|UI_SMALLFONT;
 
@@ -362,7 +362,7 @@ void InGame_MenuInit(void) {
 	s_ingame.restart.generic.y = y;
 	s_ingame.restart.generic.id = ID_RESTART;
 	s_ingame.restart.generic.callback = InGame_Event;
-	s_ingame.restart.string = "RESTART ARENA";
+	s_ingame.restart.string = "Restart Arena";
 	s_ingame.restart.color = color_red;
 	s_ingame.restart.style = UI_CENTER|UI_SMALLFONT;
 
@@ -377,7 +377,7 @@ void InGame_MenuInit(void) {
 	s_ingame.nextmap.generic.y = y;
 	s_ingame.nextmap.generic.id = ID_NEXTMAP;
 	s_ingame.nextmap.generic.callback = InGame_Event;
-	s_ingame.nextmap.string = "NEXT MAP";
+	s_ingame.nextmap.string = "Next Map";
 	s_ingame.nextmap.color = color_red;
 	s_ingame.nextmap.style = UI_CENTER|UI_SMALLFONT;
 
@@ -392,7 +392,7 @@ void InGame_MenuInit(void) {
 	s_ingame.resume.generic.y = y;
 	s_ingame.resume.generic.id = ID_RESUME;
 	s_ingame.resume.generic.callback = InGame_Event;
-	s_ingame.resume.string = "RESUME GAME";
+	s_ingame.resume.string = "Resume Game";
 	s_ingame.resume.color = color_red;
 	s_ingame.resume.style = UI_CENTER|UI_SMALLFONT;
 
@@ -403,7 +403,7 @@ void InGame_MenuInit(void) {
 	s_ingame.leave.generic.y = y;
 	s_ingame.leave.generic.id = ID_LEAVEARENA;
 	s_ingame.leave.generic.callback = InGame_Event;
-	s_ingame.leave.string = "LEAVE ARENA";
+	s_ingame.leave.string = "Leave Arena";
 	s_ingame.leave.color = color_red;
 	s_ingame.leave.style = UI_CENTER|UI_SMALLFONT;
 
@@ -414,7 +414,7 @@ void InGame_MenuInit(void) {
 	s_ingame.quit.generic.y = y;
 	s_ingame.quit.generic.id = ID_QUIT;
 	s_ingame.quit.generic.callback = InGame_Event;
-	s_ingame.quit.string = "EXIT GAME";
+	s_ingame.quit.string = "Exit Game";
 	s_ingame.quit.color = color_red;
 	s_ingame.quit.style = UI_CENTER|UI_SMALLFONT;
 

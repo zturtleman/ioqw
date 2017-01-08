@@ -518,7 +518,7 @@ typedef struct {
 	char testModelName[MAX_QPATH];
 	qboolean testGun;
 	float bar_offset; // offset calculation for middle bar
-	int bar_count; //number of items displayed in the bar
+	int bar_count; // number of items displayed in the bar
 } cg_t;
 
 /**************************************************************************************************************************************

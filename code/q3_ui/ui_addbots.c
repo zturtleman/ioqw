@@ -94,7 +94,9 @@ static void AddBots_SetBotIcon(void) {
 	char *info;
 
 	info = UI_GetBotInfoByNumber(addBotsMenuInfo.sortedBotNums[addBotsMenuInfo.baseBotNum + addBotsMenuInfo.selectedBotNum]);
+
 	UI_ServerPlayerIcon(Info_ValueForKey(info, "model"), addBotsMenuInfo.boticon, MAX_QPATH);
+
 	addBotsMenuInfo.icon.shader = 0;
 }
 
@@ -269,6 +271,7 @@ static void UI_AddBotsMenu_DownEvent(void *ptr, int event) {
 	}
 
 	addBotsMenuInfo.baseBotNum = bot;
+
 	UI_AddBotsMenu_SetBotNames();
 	AddBots_SetBotIcon();
 }
@@ -330,7 +333,7 @@ static void UI_AddBotsMenu_Draw(void) {
 	qhandle_t hpic;
 	menubitmap_s *b;
 
-	UI_DrawBannerString(320, 16, "ADD BOTS", UI_CENTER, color_white);
+	UI_DrawBannerString(320, 16, "Add Bots", UI_CENTER, color_white);
 	UI_DrawNamedPic(320 - 233, 240 - 166, 466, 332, ART_BACKGROUND);
 	// standard menu drawing
 	Menu_Draw(&addBotsMenuInfo.menu);
@@ -355,7 +358,9 @@ static void UI_AddBotsMenu_Draw(void) {
 		y -= h;
 
 		trap_R_SetColor(color_black);
+
 		UI_DrawHandlePic(x, y, w, h, hpic);
+
 		trap_R_SetColor(NULL);
 
 		UI_DrawHandlePic(x - 2, y - 2, w, h, hpic);
@@ -481,7 +486,7 @@ static void UI_AddBotsMenu_Init(void) {
 	addBotsMenuInfo.team.generic.callback = UI_AddBotsMenu_TeamEvent;
 	addBotsMenuInfo.team.generic.x = 320;
 	addBotsMenuInfo.team.generic.y = y;
-	addBotsMenuInfo.team.generic.name = "Team: ";
+	addBotsMenuInfo.team.generic.name = "Team:";
 	addBotsMenuInfo.team.generic.id = ID_TEAM;
 
 	if (addBotsMenuInfo.gametype > GT_TOURNAMENT) {

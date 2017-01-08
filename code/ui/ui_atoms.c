@@ -430,6 +430,7 @@ void UI_DrawNamedPic(float x, float y, float width, float height, const char *pi
 	qhandle_t hShader;
 
 	hShader = trap_R_RegisterShaderNoMip(picname);
+
 	UI_AdjustFrom640(&x, &y, &width, &height);
 	trap_R_DrawStretchPic(x, y, width, height, 0, 0, 1, 1, hShader);
 }

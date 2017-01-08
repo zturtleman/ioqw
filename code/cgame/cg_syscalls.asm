@@ -136,6 +136,6 @@ equ trap_Key_GetKey						-510
 
 equ trap_CIN_PlayCinematic				-601
 equ trap_CIN_StopCinematic				-602
-equ trap_CIN_RunCinematic 				-603
+equ trap_CIN_RunCinematic				-603
 equ trap_CIN_DrawCinematic				-604
 equ trap_CIN_SetExtents					-605

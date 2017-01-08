@@ -107,7 +107,7 @@ void TeamMain_MenuInit(void) {
 	s_teammain.joinred.generic.callback = TeamMain_MenuEvent;
 	s_teammain.joinred.generic.x = 320;
 	s_teammain.joinred.generic.y = y;
-	s_teammain.joinred.string = "JOIN RED";
+	s_teammain.joinred.string = "Join Red";
 	s_teammain.joinred.style = UI_CENTER|UI_SMALLFONT;
 	s_teammain.joinred.color = colorRed;
 	y += 20;
@@ -118,7 +118,7 @@ void TeamMain_MenuInit(void) {
 	s_teammain.joinblue.generic.callback = TeamMain_MenuEvent;
 	s_teammain.joinblue.generic.x = 320;
 	s_teammain.joinblue.generic.y = y;
-	s_teammain.joinblue.string = "JOIN BLUE";
+	s_teammain.joinblue.string = "Join Blue";
 	s_teammain.joinblue.style = UI_CENTER|UI_SMALLFONT;
 	s_teammain.joinblue.color = colorRed;
 	y += 20;
@@ -129,7 +129,7 @@ void TeamMain_MenuInit(void) {
 	s_teammain.joingame.generic.callback = TeamMain_MenuEvent;
 	s_teammain.joingame.generic.x = 320;
 	s_teammain.joingame.generic.y = y;
-	s_teammain.joingame.string = "JOIN GAME";
+	s_teammain.joingame.string = "Join Game";
 	s_teammain.joingame.style = UI_CENTER|UI_SMALLFONT;
 	s_teammain.joingame.color = colorRed;
 	y += 20;
@@ -140,7 +140,7 @@ void TeamMain_MenuInit(void) {
 	s_teammain.spectate.generic.callback = TeamMain_MenuEvent;
 	s_teammain.spectate.generic.x = 320;
 	s_teammain.spectate.generic.y = y;
-	s_teammain.spectate.string = "SPECTATE";
+	s_teammain.spectate.string = "Spectate";
 	s_teammain.spectate.style = UI_CENTER|UI_SMALLFONT;
 	s_teammain.spectate.color = colorRed;
 

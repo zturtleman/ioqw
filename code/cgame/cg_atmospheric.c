@@ -174,7 +174,7 @@ qboolean CG_AtmosphericKludge(void) {
 */
 /*
 	if (!Q_stricmp(cgs.rawmapname, "sp_bruck_test006")) {
-		//T = SNOW, B = 5 10, C = 0.5, G = 0.3 2, BV = 20 30, GV = 25 40, W = 3 5, H = 608, D = 2000
+		// T = SNOW, B = 5 10, C = 0.5, G = 0.3 2, BV = 20 30, GV = 25 40, W = 3 5, H = 608, D = 2000
 		CG_EffectParse("T = SNOW, B = 5 10, C = 0.5, G = 0.3 2, BV = 20 30, GV = 25 40, W = 3 5, H = 512, D = 2000 4000");
 		//CG_EffectParse("T = SNOW, B = 5 7, C = 0.2, G = 0.1 5, BV = 15 25, GV = 25 40, W = 3 5, H = 512, D = 2000");
 		return (kludgeResult = qtrue);

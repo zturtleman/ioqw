@@ -932,6 +932,7 @@ void MSG_WriteDeltaUsercmdKey(msg_t *msg, int key, usercmd_t *from, usercmd_t *t
 	}
 
 	key ^= to->serverTime;
+
 	MSG_WriteBits(msg, 1, 1);
 	MSG_WriteDeltaKey(msg, key, from->angles[0], to->angles[0], 16);
 	MSG_WriteDeltaKey(msg, key, from->angles[1], to->angles[1], 16);
@@ -1382,6 +1383,7 @@ void MSG_ReadDeltaEntity(msg_t *msg, entityState_t *from, entityState_t *to, int
 					}
 				}
 			}
+
 //			pcount[i]++;
 		}
 	}
@@ -1710,13 +1712,13 @@ void MSG_WriteDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct pl
 		MSG_WriteBits(msg, 0, 1); // no change to any
 		oldsize += 4;
 	}
-	// Split this into two groups using shorts so it wouldn't have to use a long every time ammo changed for any weap.
-	// This seemed like a much friendlier option than making it read/write a long for any ammo change.
+	// split this into two groups using shorts so it wouldn't have to use a long every time ammo changed for any weap.
+	// this seemed like a much friendlier option than making it read/write a long for any ammo change.
 
-	// j == 0 : weaps 0-15
-	// j == 1 : weaps 16-31
-	// j == 2 : weaps 32-47 // now up to 64 (but still pretty net-friendly)
-	// j == 3 : weaps 48-63
+	// j == 0: weaps 0-15
+	// j == 1: weaps 16-31
+	// j == 2: weaps 32-47 // now up to 64 (but still pretty net-friendly)
+	// j == 3: weaps 48-63
 
 	// ammo stored
 	for (j = 0; j < 4; j++) { // modified for 64 weaps
@@ -1879,7 +1881,7 @@ void MSG_ReadDeltaPlayerstate(msg_t *msg, playerState_t *from, playerState_t *to
 			LOG("PS_STATS");
 			bits = MSG_ReadShort(msg);
 
-			for (i = 0 ; i < MAX_STATS ; i++) {
+			for (i = 0; i < MAX_STATS; i++) {
 				if (bits & (1 << i)) {
 					to->stats[i] = MSG_ReadShort(msg);
 				}
@@ -1890,7 +1892,7 @@ void MSG_ReadDeltaPlayerstate(msg_t *msg, playerState_t *from, playerState_t *to
 			LOG("PS_PERSISTANT");
 			bits = MSG_ReadShort(msg);
 
-			for (i = 0 ; i < MAX_PERSISTANT ; i++) {
+			for (i = 0; i < MAX_PERSISTANT; i++) {
 				if (bits & (1 << i)) {
 					to->persistant[i] = MSG_ReadShort(msg);
 				}
@@ -1901,7 +1903,7 @@ void MSG_ReadDeltaPlayerstate(msg_t *msg, playerState_t *from, playerState_t *to
 			LOG("PS_HOLDABLE");
 			bits = MSG_ReadShort(msg);
 
-			for (i = 0 ; i < MAX_HOLDABLE ; i++) {
+			for (i = 0; i < MAX_HOLDABLE; i++) {
 				if (bits & (1 << i)) {
 					to->holdable[i] = MSG_ReadShort(msg);
 				}
@@ -1912,22 +1914,22 @@ void MSG_ReadDeltaPlayerstate(msg_t *msg, playerState_t *from, playerState_t *to
 			LOG("PS_POWERUPS");
 			bits = MSG_ReadShort(msg);
 
-			for (i = 0 ; i < MAX_POWERUPS ; i++) {
+			for (i = 0; i < MAX_POWERUPS; i++) {
 				if (bits & (1 << i)) {
 					to->powerups[i] = MSG_ReadLong(msg);
 				}
 			}
 		}
 	}
-	// Split this into two groups using shorts so it wouldn't have to use a long every time ammo changed for any weap.
-	// This seemed like a much friendlier option than making it read/write a long for any ammo change.
+	// split this into two groups using shorts so it wouldn't have to use a long every time ammo changed for any weap.
+	// this seemed like a much friendlier option than making it read/write a long for any ammo change.
 
 	// parse ammo
 
-	// j == 0 : weaps 0-15
-	// j == 1 : weaps 16-31
-	// j == 2 : weaps 32-47 // now up to 64 (but still pretty net-friendly).
-	// j == 3 : weaps 48-63
+	// j == 0: weaps 0-15
+	// j == 1: weaps 16-31
+	// j == 2: weaps 32-47 // now up to 64 (but still pretty net-friendly).
+	// j == 3: weaps 48-63
 
 	// ammo stored
 	if (MSG_ReadBits(msg, 1)) { // check for any ammo change (0-63)
@@ -1936,7 +1938,7 @@ void MSG_ReadDeltaPlayerstate(msg_t *msg, playerState_t *from, playerState_t *to
 				LOG("PS_AMMO");
 				bits = MSG_ReadShort(msg);
 
-				for (i = 0 ; i < 16 ; i++) {
+				for (i = 0; i < 16; i++) {
 					if (bits & (1 << i)) {
 						to->ammo[i + (j * 16)] = MSG_ReadShort(msg);
 					}
@@ -1950,7 +1952,7 @@ void MSG_ReadDeltaPlayerstate(msg_t *msg, playerState_t *from, playerState_t *to
 			LOG("PS_AMMOCLIP");
 			bits = MSG_ReadShort(msg);
 
-			for (i = 0 ; i < 16 ; i++) {
+			for (i = 0; i < 16; i++) {
 				if (bits & (1 << i)) {
 					to->ammoclip[i + (j * 16)] = MSG_ReadShort(msg);
 				}
@@ -1968,7 +1970,7 @@ void MSG_ReadDeltaPlayerstate(msg_t *msg, playerState_t *from, playerState_t *to
 		Com_Printf(" (%i bits)\n", endBit - startBit);
 	}
 }
-// Predefined set of nodes for Huffman compression
+// predefined set of nodes for Huffman compression
 int msg_hData[256] = {
 	250315,	// 0
 	41193,	// 1
@@ -2242,8 +2244,8 @@ void MSG_initHuffman(void) {
 
 	for (i = 0; i < 256; i++) {
 		for (j = 0; j < msg_hData[i]; j++) {
-			Huff_addRef(&msgHuff.compressor, (byte)i); // Do update
-			Huff_addRef(&msgHuff.decompressor, (byte)i); // Do update
+			Huff_addRef(&msgHuff.compressor, (byte)i); // do update
+			Huff_addRef(&msgHuff.decompressor, (byte)i); // do update
 		}
 	}
 }

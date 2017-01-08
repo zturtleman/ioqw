@@ -334,11 +334,11 @@ static void UI_RemoveBotsMenu_Init(int action) {
 	removeBotsMenuInfo.banner.style = UI_CENTER;
 
 	if (action == RBM_CALLVOTEKICK) {
-		removeBotsMenuInfo.banner.string = "CALLVOTE KICK";
+		removeBotsMenuInfo.banner.string = "Callvote Kick";
 	} else if (action == RBM_CALLVOTELEADER) {
-		removeBotsMenuInfo.banner.string = "CALLVOTE TEAM LEADER";
+		removeBotsMenuInfo.banner.string = "Callvote Team Leader";
 	} else {
-		removeBotsMenuInfo.banner.string = "REMOVE BOTS";
+		removeBotsMenuInfo.banner.string = "Remove Bots";
 	}
 
 	removeBotsMenuInfo.background.generic.type = MTYPE_BITMAP;

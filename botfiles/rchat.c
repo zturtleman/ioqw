@@ -1287,7 +1287,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 }
 
 ["desperate", "desperation", "frantic"] = 6
-
 {
 	"Yeah, I'd say you're desperate now.";
 	"Just how desperate are you?";
@@ -1417,7 +1416,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 ["doctor", "doctors", "hospital", "psychiatric", "psychiatrist", "psychologist", "specialist"] = 5
 {
-
 	"Doctors make my flesh crawl.";
 	"I ~don't need a doctor.";
 	"I hate quacks.";
@@ -1585,7 +1583,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 	response_insult;
 }
 
-
 ["error", "mistake", "mistakes", "mess up", "screw up", "goof", "goofed", "fucked up", "fuck up"] = 5
 {
 	"~You're pretty much a screw-up, huh?";
@@ -1598,7 +1595,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 	"Slow down and get it right.";
 	"And whose fault is that?";
 }
-
 
 ["escape", "flee", "get away", "run away"] = 5
 {
@@ -1639,7 +1635,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 }
 
 ["excess", "excessive", "too much"] = 5
-
 {
 	"How much is too much?";
 	"Anything worth doing is worth over doing.";
@@ -1739,7 +1734,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 	"Fanatics should be hanged, then shot, then boiled alive.";
 	"Are you including 'fanboys' in with 'fanatics'?";
 	"Who is you calling a fanatic?";
-
 }
 
 ["fat", "fatso", "fatty", "fat butt"] = 5
@@ -1750,7 +1744,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 	"Porker?";
 	"Oink! Oink!";
 	immaturity01;
-
 }
 
 ["father", "dad", "daddy"] = 5
@@ -1943,7 +1936,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 	proposition01;
 	response_insult;
 	"Take a walk on the NO side!";
-
 }
 
 ["fuck you", !"tell", !"not", !"say", "fuck off", "eat shit", "eat me", "you suck", "you cunt", "you stink", "piece of shit", "asshole", "cock smoker", "cocksmoker", "dick head", "dickhead", "shit head", "shithead", "dickweed", "shitwad", "queer", "lezzie", "slut", "dyke", "fag", "faggot", "gay", "homo", "hole"] = 6
@@ -2048,7 +2040,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 	"Sorry, I checked my sense of humor at the door.";
 }
 
-
 ["future"] = 5
 {
 	"What about the future?";
@@ -2123,7 +2114,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 [("give me", 0), ("hand me", 0), ("get me", 0)] = 4
 {
-
 	"I'm not giving you a thing ",7,".";
 	"Get your own ",0,".";
 	"~You expect me get you ",0,"? Hah!";
@@ -2441,7 +2431,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 {
 	playtips;
 }
-
 
 ["hippie", "hippy"] = 5
 {
@@ -3240,6 +3229,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 	botnames," really intimidates me.";
 	"Big ",animal,"s intimidate me.";
 }
+
 ["invisible", "invisibility"] = 3
 {
 	"I hate it when someone else is invisible.";
@@ -3937,8 +3927,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 	"Aww, come on!";
 	"~You always say no!";
 }
-//************************
-//Thanks to those who helped this part of the game happen.
+// thanks to those who helped this part of the game happen.
 ["special thanks"] = 8
 {
 	"The warriors of 'Quake Wars' want to thank some special people. [Type *more* several times to see them all.].";
@@ -3951,7 +3940,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 	"To Paul Steed, Kenneth Scott, and Steve Boisvert who pitched in some extra lines.";
 }
 //**************************
-
 ["nobody", "noone", "no one"] = 6
 {
 	"Nobody?";
@@ -4182,7 +4170,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 	"~You wouldn't even know what to do with privacy.";
 	response_insult;
 }
-
 
 ["problem"] = 5
 {
@@ -4593,6 +4580,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 	"~You're a 'tragedy magnet', ",7,".";
 	response_insult;
 }
+
 ["thirsty"] = 5
 {
 	"What do they have to drink around here?";
@@ -4934,7 +4922,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 	"Figure it out for yourself, ",fighter,".";
 	"~Do the math yourself, ",fighter,".";
 	response_insult;
-
 }
 
 ["when", &name] = 6
@@ -5483,8 +5470,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 	"How should I know?";
 }
 
-["id guys", "john carmack", "carmack", "adrian", "kevin cloud", "donna jackson", "miss donna", "ms. donna", "id mom", "nabeo", "anna kang", "katherine anna kang", "kak", "todd hollenshead", "toddh", "kevinc", "adrianator", "psteed", "paul steed", "park ranger", "maul steed", "paul jaquays", "jaquays", "paulj", "jcash", "hellrot", "kenneth", "protofiend", "mailordermonkeybitch", "superactionfunboy", "Mr Elusive", "mr. elusive", "jan paul", "willits", "thanatar", "eric", "eric webb",
- "devine", "graeme", "xian", "disruptor", "christian antkow", "kaai", "kaai cluney", "aaron seeler", "zoid"] = 9
+["id guys", "john carmack", "carmack", "adrian", "kevin cloud", "donna jackson", "miss donna", "ms. donna", "id mom", "nabeo", "anna kang", "katherine anna kang", "kak", "todd hollenshead", "toddh", "kevinc", "adrianator", "psteed", "paul steed", "park ranger", "maul steed", "paul jaquays", "jaquays", "paulj", "jcash", "hellrot", "kenneth", "protofiend", "mailordermonkeybitch", "superactionfunboy", "Mr Elusive", "mr. elusive", "jan paul", "willits", "thanatar", "eric", "eric webb", "devine", "graeme", "xian", "disruptor", "christian antkow", "kaai", "kaai cluney", "aaron seeler", "zoid"] = 9
 {
 	"Prostrate yourself when you speak of the arena masters!";
 	"Bow down, give homage to the arena masters.";
@@ -5493,9 +5479,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 	"Use that name with care, ",7,".";
 	"Forgive this trespass by ",7,", oh masters of the arena.";
 }
-
-//Responses to team chat messages made in ffa mode
-
+// responses to team chat messages made in ffa mode
 ["I am the leader", "I am the team leader", "I am team leader", "I am leader"] = 8
 {
 	"Leader? Of what?";
@@ -5508,6 +5492,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 	"Leader? When did we choose up teams? I want ",botnames," on my team!";
 	response_insult;
 }
+
 ["team"] = 5
 {
 	"Team. What team?";
@@ -5548,7 +5533,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 [(1," camp the ", 0), &name] = 7
 {
-	
 	"Heh, I'd do that anyway.";
 	"Bwahahahaha, I'd camp the ",0," anyway.";
 	negative," My tent is in the wash.";
@@ -5586,7 +5570,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 	"No ~one tells me what to do! NO ~ONE!";
 	response_insult;
 }
-
 
 [(1," patrol from ", 0), &name] = 7
 {

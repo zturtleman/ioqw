@@ -70,13 +70,13 @@ equ trap_LAN_GetPingInfo				-204
 equ trap_LAN_GetServerCount				-205
 equ trap_LAN_GetServerAddressString		-206
 equ trap_LAN_GetServerInfo				-207
-equ trap_LAN_MarkServerVisible 			-208
+equ trap_LAN_MarkServerVisible			-208
 equ trap_LAN_UpdateVisiblePings			-209
 equ trap_LAN_ResetPings					-210
 equ trap_LAN_LoadCachedServers			-211
 equ trap_LAN_SaveCachedServers			-212
 equ trap_LAN_AddServer					-213
-equ trap_LAN_RemoveServer	 			-214
+equ trap_LAN_RemoveServer				-214
 equ trap_LAN_ServerStatus				-215
 equ trap_LAN_GetServerPing				-216
 equ trap_LAN_ServerIsVisible			-217
@@ -118,6 +118,6 @@ equ trap_Key_GetKey						-510
 
 equ trap_CIN_PlayCinematic				-601
 equ trap_CIN_StopCinematic				-602
-equ trap_CIN_RunCinematic 				-603
+equ trap_CIN_RunCinematic				-603
 equ trap_CIN_DrawCinematic				-604
 equ trap_CIN_SetExtents					-605

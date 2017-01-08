@@ -151,6 +151,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, imp
 			isSprite = qtrue;
 			mark = cgs.media.burnMarkShader;
 			markRadius = 64;
+			markDuration = 50000;
 			sfx = cgs.media.sfx_proxexp;
 			break;
 		case WP_GRENADELAUNCHER:
@@ -160,6 +161,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, imp
 			isSprite = qtrue;
 			mark = cgs.media.burnMarkShader;
 			markRadius = 64;
+			markDuration = 50000;
 			sfx = cgs.media.sfx_rockexp;
 			break;
 		case WP_NAPALMLAUNCHER:

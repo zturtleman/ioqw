@@ -675,7 +675,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 	"Oh good. I always win here.";\
 	"Uggh. ~Why is it always THIS arena?";
 
-#define LEVEL_START1 \	
+#define LEVEL_START1 \
 	"Let's rock and roll!";\
 	"Oh yeah! I smell victory already.";\
 	"Let's rock!";\
@@ -827,17 +827,17 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 	"Careful contents under pressure.";
 
 #define DEATH_SUICIDE0 \
- 	"Crap!";\
+	"Crap!";\
 	"Doh!";\
 	"Frack!";
 
 #define DEATH_SUICIDE1 \
- 	"I'm my own worst enemy.";\
+	"I'm my own worst enemy.";\
 	"Grrrrrr.";\
 	"Just a minor setback.";
 
 #define DEATH_SUICIDE2 \
- 	"I hate it when that happens.";\
+	"I hate it when that happens.";\
 	"Stop laughing ",0,"!";\
 	"Hehe!";
 
@@ -876,7 +876,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 	"Man, I'd hate anyone doing that to me.";
 
 #define DEATH_RAIL0 \
-	"Camping Punk!";\	
+	"Camping Punk!";\
 	0,"!! ~You ... CAMPER!";\
 	"Wow. Where did that shot come from?";\
 	"Nice shot ",0,"!";

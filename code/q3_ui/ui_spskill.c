@@ -223,7 +223,7 @@ static void UI_SPSkillMenu_Init(void) {
 	skillMenuInfo.art_banner.generic.flags = QMF_CENTER_JUSTIFY;
 	skillMenuInfo.art_banner.generic.x = 320;
 	skillMenuInfo.art_banner.generic.y = 16;
-	skillMenuInfo.art_banner.string = "DIFFICULTY";
+	skillMenuInfo.art_banner.string = "Difficulty";
 	skillMenuInfo.art_banner.color = color_white;
 	skillMenuInfo.art_banner.style = UI_CENTER;
 
@@ -336,7 +336,9 @@ UI_SPSkillMenu
 void UI_SPSkillMenu(const char *arenaInfo) {
 
 	UI_SPSkillMenu_Init();
+
 	skillMenuInfo.arenaInfo = arenaInfo;
+
 	UI_PushMenu(&skillMenuInfo.menu);
 	Menu_SetCursorToItem(&skillMenuInfo.menu, &skillMenuInfo.item_fight);
 }

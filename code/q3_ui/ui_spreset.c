@@ -106,7 +106,7 @@ Reset_MenuDraw
 static void Reset_MenuDraw(void) {
 
 	UI_DrawNamedPic(142, 118, 359, 256, ART_FRAME);
-	UI_DrawProportionalString(320, 194 + 10, "RESET GAME?", UI_CENTER|UI_INVERSE, color_red);
+	UI_DrawProportionalString(320, 194 + 10, "Reset Game?", UI_CENTER|UI_INVERSE, color_red);
 	UI_DrawProportionalString(s_reset.slashX, 265, "/", UI_LEFT|UI_INVERSE, color_red);
 
 	Menu_Draw(&s_reset.menu);
@@ -141,8 +141,8 @@ void UI_ResetMenu(void) {
 
 	Reset_Cache();
 
-	n1 = UI_ProportionalStringWidth("YES/NO");
-	n2 = UI_ProportionalStringWidth("YES") + PROP_GAP_WIDTH;
+	n1 = UI_ProportionalStringWidth("Yes/No");
+	n2 = UI_ProportionalStringWidth("Yes") + PROP_GAP_WIDTH;
 	n3 = UI_ProportionalStringWidth("/") + PROP_GAP_WIDTH;
 
 	l1 = 320 - (n1 / 2);
@@ -170,7 +170,7 @@ void UI_ResetMenu(void) {
 	s_reset.yes.generic.id = ID_YES;
 	s_reset.yes.generic.x = l1;
 	s_reset.yes.generic.y = 264;
-	s_reset.yes.string = "YES";
+	s_reset.yes.string = "Yes";
 	s_reset.yes.color = color_red;
 	s_reset.yes.style = UI_LEFT;
 
@@ -180,7 +180,7 @@ void UI_ResetMenu(void) {
 	s_reset.no.generic.id = ID_NO;
 	s_reset.no.generic.x = l3;
 	s_reset.no.generic.y = 264;
-	s_reset.no.string = "NO";
+	s_reset.no.string = "No";
 	s_reset.no.color = color_red;
 	s_reset.no.style = UI_LEFT;
 

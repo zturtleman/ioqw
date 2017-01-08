@@ -1379,7 +1379,7 @@ BG_Find_Spline
 splinePath_t *BG_Find_Spline(const char *match) {
 	int i;
 
-	for (i = 0 ; i < numSplinePaths; i++) {
+	for (i = 0; i < numSplinePaths; i++) {
 		if (!Q_stricmp(splinePaths[i].point.name, match)) {
 			return &splinePaths[i];
 		}
@@ -1519,7 +1519,7 @@ BG_Find_PathCorner
 pathCorner_t *BG_Find_PathCorner(const char *match) {
 	int i;
 
-	for (i = 0 ; i < numPathCorners; i++) {
+	for (i = 0; i < numPathCorners; i++) {
 		if (!Q_stricmp(pathCorners[i].name, match)) {
 			return &pathCorners[i];
 		}
@@ -1632,10 +1632,10 @@ void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qb
 			if (atTime > tr->trTime + tr->trDuration) {
 				atTime = tr->trTime + tr->trDuration;
 			}
-			//new slow-down at end
+			// new slow-down at end
 			if (atTime - tr->trTime > tr->trDuration || atTime - tr->trTime <= 0) {
 				deltaTime = 0;
-			} else { //FIXME: maybe scale this somehow? So that it starts out faster and stops faster?
+			} else { // FIXME: maybe scale this somehow? So that it starts out faster and stops faster?
 				deltaTime = tr->trDuration * 0.001f * ((float)cos(DEG2RAD(90.0f - (90.0f * ((float)atTime - tr->trTime) / (float)tr->trDuration))));
 			}
 

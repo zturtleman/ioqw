@@ -105,13 +105,9 @@ static void UI_CinematicsMenu_Event(void *ptr, int event) {
 	}
 
 	n = ((menucommon_s *)ptr)->id - ID_CIN_IDLOGO;
-	trap_Cvar_Set("nextmap", va("ui_cinematics %i", n));
 
-	if (uis.demoversion && ((menucommon_s *)ptr)->id == ID_CIN_END) {
-		trap_Cmd_ExecuteText(EXEC_APPEND, "disconnect; cinematic demoEnd.RoQ 1\n");
-	} else {
-		trap_Cmd_ExecuteText(EXEC_APPEND, va("disconnect; cinematic %s.RoQ\n", cinematics[n]));
-	}
+	trap_Cvar_Set("nextmap", va("ui_cinematics %i", n));
+	trap_Cmd_ExecuteText(EXEC_APPEND, va("disconnect; cinematic %s.RoQ\n", cinematics[n]));
 }
 
 /*
@@ -131,7 +127,7 @@ static void UI_CinematicsMenu_Init(void) {
 	cinematicsMenuInfo.banner.generic.type = MTYPE_BTEXT;
 	cinematicsMenuInfo.banner.generic.x = 320;
 	cinematicsMenuInfo.banner.generic.y = 16;
-	cinematicsMenuInfo.banner.string = "CINEMATICS";
+	cinematicsMenuInfo.banner.string = "Cinematics";
 	cinematicsMenuInfo.banner.color = color_white;
 	cinematicsMenuInfo.banner.style = UI_CENTER;
 
@@ -172,10 +168,6 @@ static void UI_CinematicsMenu_Init(void) {
 	cinematicsMenuInfo.cin_intro.string = "INTRO";
 	cinematicsMenuInfo.cin_intro.color = color_red;
 	cinematicsMenuInfo.cin_intro.style = UI_CENTER;
-
-	if (uis.demoversion) {
-		cinematicsMenuInfo.cin_intro.generic.flags |= QMF_GRAYED;
-	}
 
 	y += VERTICAL_SPACING;
 	cinematicsMenuInfo.cin_tier1.generic.type = MTYPE_PTEXT;
@@ -357,6 +349,7 @@ void UI_CinematicsMenu_f(void) {
 	int n;
 
 	n = atoi(UI_Argv(1));
+
 	UI_CinematicsMenu();
 	Menu_SetCursorToItem(&cinematicsMenuInfo.menu, cinematicsMenuInfo.menu.items[n + 3]);
 }
