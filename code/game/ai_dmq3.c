@@ -2842,7 +2842,7 @@ NOTE: Another approach of a similar function is 'BotGetEntitySurfaceSoundCoeffic
 	  Surfaceparms was planned to be taken into account in ET, should we do this?
 =======================================================================================================================================
 */
-int BotGetEntityEventSoundCoefficient(const gentity_t* ent) {
+int BotGetEntityEventSoundCoefficient(const gentity_t *ent) {
 
 	if (ent->s.eType < ET_EVENTS) {
 		switch (ent->s.eType) {
@@ -2902,7 +2902,7 @@ BotHasRoamGoal
 =======================================================================================================================================
 */
 qboolean BotHasRoamGoal(bot_state_t *bs, vec3_t goal) {
-	gentity_t* ent;
+	gentity_t *ent;
 	int i, audibility_range;
 	float dist, weight, total_weight;
 	vec3_t bestorg, angles, dir;

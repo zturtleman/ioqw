@@ -23,6 +23,9 @@
     <ClCompile Include="..\..\code\qcommon\q_shared.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\code\qcommon\q_unicode.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\code\q3_ui\ui_addbots.c">
       <Filter>Source Files</Filter>
     </ClCompile>

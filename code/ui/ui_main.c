@@ -721,6 +721,8 @@ Asset_Parse
 qboolean Asset_Parse(int handle) {
 	pc_token_t token;
 	const char *tempStr;
+	float borderWidth = 1;
+	qboolean forceAutoHint = qtrue;
 
 	if (!trap_PC_ReadToken(handle, &token)) {
 		return qfalse;
@@ -748,7 +750,7 @@ qboolean Asset_Parse(int handle) {
 				return qfalse;
 			}
 
-			trap_R_RegisterFont(tempStr, pointSize, &uiInfo.uiDC.Assets.textFont);
+			trap_R_RegisterFont(tempStr, pointSize, borderWidth, forceAutoHint, &uiInfo.uiDC.Assets.textFont);
 			uiInfo.uiDC.Assets.fontRegistered = qtrue;
 			continue;
 		}
@@ -760,7 +762,7 @@ qboolean Asset_Parse(int handle) {
 				return qfalse;
 			}
 
-			trap_R_RegisterFont(tempStr, pointSize, &uiInfo.uiDC.Assets.smallFont);
+			trap_R_RegisterFont(tempStr, pointSize, borderWidth, forceAutoHint, &uiInfo.uiDC.Assets.smallFont);
 			continue;
 		}
 
@@ -771,7 +773,7 @@ qboolean Asset_Parse(int handle) {
 				return qfalse;
 			}
 
-			trap_R_RegisterFont(tempStr, pointSize, &uiInfo.uiDC.Assets.bigFont);
+			trap_R_RegisterFont(tempStr, pointSize, borderWidth, forceAutoHint, &uiInfo.uiDC.Assets.bigFont);
 			continue;
 		}
 		// gradientbar

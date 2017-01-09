@@ -1513,7 +1513,11 @@
 				RelativePath="..\..\code\qcommon\q_shared.c"
 				>
 			</File>
-			<File
+      <File
+				RelativePath="..\..\code\qcommon\q_unicode.c"
+				>
+      </File>
+      <File
 				RelativePath="..\..\code\ui\ui_shared.c"
 				>
 				<FileConfiguration

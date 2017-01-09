@@ -540,7 +540,27 @@
 					/>
 				</FileConfiguration>
 			</File>
-			<File
+      <File
+				RelativePath="..\..\code\qcommon\q_unicode.c"
+				>
+        <FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+          <Tool
+						Name="VCCLCompilerTool"
+					/>
+        </FileConfiguration>
+        <FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+          <Tool
+						Name="VCCLCompilerTool"
+					/>
+        </FileConfiguration>
+      </File>
+      <File
 				RelativePath="..\..\code\ui\ui_atoms.c"
 				>
 				<FileConfiguration

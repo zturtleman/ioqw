@@ -1269,7 +1269,7 @@ qhandle_t trap_R_RegisterModel(const char *name);		// returns rgb axis if not fo
 qhandle_t trap_R_RegisterSkin(const char *name);		// returns all white if not found
 qhandle_t trap_R_RegisterShader(const char *name);		// returns all white if not found
 qhandle_t trap_R_RegisterShaderNoMip(const char *name);	// returns all white if not found
-void trap_R_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font);
+void trap_R_RegisterFont(const char *fontName, int pointSize, float borderWidth, qboolean forceAutoHint, fontInfo_t *font);
 // a scene is built up by calls to R_ClearScene and the various R_Add functions.
 // Nothing is drawn until R_RenderScene is called.
 void trap_R_ClearScene(void);
@@ -1284,6 +1284,8 @@ void trap_R_RenderScene(const refdef_t *fd);
 void trap_R_SetColor(const float *rgba); // NULL = 1, 1, 1, 1
 void trap_R_SetClipRegion(const float *region);
 void trap_R_DrawStretchPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader);
+void trap_R_DrawStretchPicGradient(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader, const float *gradientColor);
+void trap_R_DrawRotatedPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader, float angle);
 void trap_R_ModelBounds(clipHandle_t model, vec3_t mins, vec3_t maxs);
 int trap_R_LerpTag(orientation_t *tag, clipHandle_t mod, int startFrame, int endFrame, float frac, const char *tagName);
 void trap_R_RemapShader(const char *oldShader, const char *newShader, const char *timeOffset);

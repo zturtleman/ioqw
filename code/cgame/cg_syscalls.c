@@ -595,8 +595,8 @@ qhandle_t trap_R_RegisterShaderNoMip(const char *name) {
 trap_R_RegisterFont
 =======================================================================================================================================
 */
-void trap_R_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font) {
-	syscall(CG_R_REGISTERFONT, fontName, pointSize, font);
+void trap_R_RegisterFont(const char *fontName, int pointSize, float borderWidth, qboolean forceAutoHint, fontInfo_t *font) {
+	syscall(CG_R_REGISTERFONT, fontName, pointSize, PASSFLOAT(borderWidth), forceAutoHint, font);
 }
 
 /*
@@ -696,6 +696,24 @@ trap_R_DrawStretchPic
 */
 void trap_R_DrawStretchPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader) {
 	syscall(CG_R_DRAWSTRETCHPIC, PASSFLOAT(x), PASSFLOAT(y), PASSFLOAT(w), PASSFLOAT(h), PASSFLOAT(s1), PASSFLOAT(t1), PASSFLOAT(s2), PASSFLOAT(t2), hShader);
+}
+
+/*
+=======================================================================================================================================
+trap_R_DrawStretchPicGradient
+=======================================================================================================================================
+*/
+void trap_R_DrawStretchPicGradient(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader, const float *gradientColor) {
+	syscall(CG_R_DRAWSTRETCHPIC_GRADIENT, PASSFLOAT(x), PASSFLOAT(y), PASSFLOAT(w), PASSFLOAT(h), PASSFLOAT(s1), PASSFLOAT(t1), PASSFLOAT(s2), PASSFLOAT(t2), hShader, gradientColor);
+}
+
+/*
+=======================================================================================================================================
+trap_R_DrawRotatedPic
+=======================================================================================================================================
+*/
+void trap_R_DrawRotatedPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader, float angle) {
+	syscall(CG_R_DRAWROTATEDPIC, PASSFLOAT(x), PASSFLOAT(y), PASSFLOAT(w), PASSFLOAT(h), PASSFLOAT(s1), PASSFLOAT(t1), PASSFLOAT(s2), PASSFLOAT(t2), hShader, PASSFLOAT(angle));
 }
 
 /*

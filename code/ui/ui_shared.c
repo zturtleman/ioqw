@@ -6631,7 +6631,7 @@ qboolean MenuParse_font(itemDef_t *item, int handle) {
 	}
 
 	if (!DC->Assets.fontRegistered) {
-		DC->registerFont(menu->font, 48, &DC->Assets.textFont);
+		DC->registerFont(menu->font, 48, 1, qtrue, &DC->Assets.textFont);
 		DC->Assets.fontRegistered = qtrue;
 	}
 

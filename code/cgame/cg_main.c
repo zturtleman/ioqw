@@ -1179,6 +1179,8 @@ CG_Asset_Parse
 qboolean CG_Asset_Parse(int handle) {
 	pc_token_t token;
 	const char *tempStr;
+	float borderWidth = 1;
+	qboolean forceAutoHint = qtrue;
 
 	if (!trap_PC_ReadToken(handle, &token)) {
 		return qfalse;
@@ -1204,7 +1206,7 @@ qboolean CG_Asset_Parse(int handle) {
 				return qfalse;
 			}
 
-			cgDC.registerFont(tempStr, pointSize, &cgDC.Assets.textFont);
+			cgDC.registerFont(tempStr, pointSize, borderWidth, forceAutoHint, &cgDC.Assets.textFont);
 			continue;
 		}
 		// smallFont
@@ -1215,7 +1217,7 @@ qboolean CG_Asset_Parse(int handle) {
 				return qfalse;
 			}
 
-			cgDC.registerFont(tempStr, pointSize, &cgDC.Assets.smallFont);
+			cgDC.registerFont(tempStr, pointSize, borderWidth, forceAutoHint, &cgDC.Assets.smallFont);
 			continue;
 		}
 		// font
@@ -1226,7 +1228,7 @@ qboolean CG_Asset_Parse(int handle) {
 				return qfalse;
 			}
 
-			cgDC.registerFont(tempStr, pointSize, &cgDC.Assets.bigFont);
+			cgDC.registerFont(tempStr, pointSize, borderWidth, forceAutoHint, &cgDC.Assets.bigFont);
 			continue;
 		}
 		// gradientbar
@@ -1906,7 +1908,7 @@ CG_AssetCache
 void CG_AssetCache(void) {
 
 	//if (Assets.textFont == NULL) {
-	//	trap_R_RegisterFont("fonts/arial.ttf", 72, &Assets.textFont);
+	//	trap_R_RegisterFont("fonts/arial.ttf", 72, 1, qtrue, &Assets.textFont);
 	//}
 
 	//Assets.background = trap_R_RegisterShaderNoMip(ASSET_BACKGROUND);

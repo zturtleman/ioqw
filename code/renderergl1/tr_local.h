@@ -1478,6 +1478,9 @@ typedef struct {
 	float	w, h;
 	float	s1, t1;
 	float	s2, t2;
+
+	byte gradientColor[4];      // color values 0-255
+	float angle;
 } stretchPicCommand_t;
 
 typedef struct {
@@ -1523,6 +1526,8 @@ typedef enum {
 	RC_END_OF_LIST,
 	RC_SET_COLOR,
 	RC_STRETCH_PIC,
+	RC_ROTATED_PIC,
+	RC_STRETCH_PIC_GRADIENT,
 	RC_DRAW_SURFS,
 	RC_DRAW_BUFFER,
 	RC_SWAP_BUFFERS,
@@ -1567,6 +1572,10 @@ void RE_SetColor( const float *rgba );
 void RE_SetClipRegion( const float *region );
 void RE_StretchPic ( float x, float y, float w, float h, 
 					  float s1, float t1, float s2, float t2, qhandle_t hShader );
+void RE_RotatedPic( float x, float y, float w, float h,
+					float s1, float t1, float s2, float t2, qhandle_t hShader, float angle );       // NERVE - SMF
+void RE_StretchPicGradient( float x, float y, float w, float h,
+							float s1, float t1, float s2, float t2, qhandle_t hShader, const float *gradientColor );
 void RE_BeginFrame( stereoFrame_t stereoFrame );
 void RE_EndFrame( int *frontEndMsec, int *backEndMsec );
 void RE_SaveJPG(char * filename, int quality, int image_width, int image_height,

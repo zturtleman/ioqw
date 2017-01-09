@@ -112,6 +112,8 @@ extern cvar_t *r_ext_max_anisotropy;
 extern cvar_t *r_stereoEnabled;
 
 extern	cvar_t	*r_saveFontData;
+extern	cvar_t	*r_fontBorderWidth;
+extern	cvar_t	*r_fontForceAutoHint;
 
 qboolean	R_GetModeInfo( int *width, int *height, float *windowAspect, int mode );
 
@@ -131,7 +133,7 @@ qhandle_t RE_RegisterShaderFromImage(const char *name, int lightmapIndex, image_
 // font stuff
 void R_InitFreeType( void );
 void R_DoneFreeType( void );
-void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font);
+void RE_RegisterFont(const char *fontName, int pointSize, float borderWidth, qboolean forceAutoHint, fontInfo_t *font);
 
 /*
 =============================================================

@@ -1606,6 +1606,13 @@ Menu_Cache
 */
 void Menu_Cache(void) {
 
+	// pointsize is a performance killer.
+	trap_R_RegisterFont("fonts/tinyFont.ttf", TINYCHAR_HEIGHT, 0.5, qtrue, &uis.tinyFont);
+	trap_R_RegisterFont("fonts/smallFont.ttf", SMALLCHAR_HEIGHT, 1, qtrue, &uis.smallFont);
+	trap_R_RegisterFont("fonts/bigFont.ttf", BIGCHAR_HEIGHT, 1, qtrue, &uis.bigFont);
+	trap_R_RegisterFont("fonts/giantFont.ttf", GIANTCHAR_HEIGHT, 1, qtrue, &uis.giantFont);
+	trap_R_RegisterFont("fonts/titanFont.ttf", TITANCHAR_HEIGHT, 1, qtrue, &uis.titanFont);
+
 	uis.charset = trap_R_RegisterShaderNoMip("gfx/2d/bigchars");
 	uis.charsetProp = trap_R_RegisterShaderNoMip("menu/art/font1_prop.tga");
 	uis.charsetPropGlow = trap_R_RegisterShaderNoMip("menu/art/font1_prop_glo.tga");

@@ -94,10 +94,12 @@ equ trap_R_AddLightToScene				-309
 equ trap_R_RenderScene					-310
 equ trap_R_SetColor						-311
 equ trap_R_DrawStretchPic				-312
-equ trap_R_LerpTag						-313
-equ trap_R_ModelBounds					-314
-equ trap_R_RemapShader					-315
-equ trap_R_SetClipRegion				-316
+equ trap_R_DrawStretchPicGradient		-313
+equ trap_R_DrawRotatedPic				-314
+equ trap_R_LerpTag						-315
+equ trap_R_ModelBounds					-316
+equ trap_R_RemapShader					-317
+equ trap_R_SetClipRegion				-318
 
 equ trap_S_RegisterSound				-401
 equ trap_S_SoundDuration				-402

@@ -260,18 +260,31 @@ typedef enum {
 #define PROP_SMALL_SIZE_SCALE 0.75
 #define BLINK_DIVISOR 200
 #define PULSE_DIVISOR 75.0f
+// horizontal alignment
+#define UI_LEFT				0x00000001 // default
+#define UI_CENTER			0x00000002
+#define UI_RIGHT			0x00000003
+#define UI_FORMATMASK		0x0000000F
+// vertical alignment
+#define UI_VA_TOP			0x00000010 // default
+#define UI_VA_CENTER		0x00000020
+#define UI_VA_BOTTOM		0x00000030
+#define UI_VA_FORMATMASK	0x000000F0
+// font selection
+#define UI_TINYFONT			0x00000100
+#define UI_SMALLFONT		0x00000200
+#define UI_BIGFONT			0x00000300 // default
+#define UI_GIANTFONT		0x00000400
+#define UI_TITANFONT		0x00000500
+#define UI_FONTMASK			0x00000F00
+// other flags
+#define UI_DROPSHADOW		0x00001000
+#define UI_BLINK			0x00002000
+#define UI_INVERSE			0x00004000
+#define UI_PULSE			0x00008000
+#define UI_FORCECOLOR		0x00010000
+#define UI_GRADIENT			0x00020000
 
-#define UI_LEFT			0x00000000 // default
-#define UI_CENTER		0x00000001
-#define UI_RIGHT		0x00000002
-#define UI_FORMATMASK	0x00000007
-#define UI_SMALLFONT	0x00000010
-#define UI_BIGFONT		0x00000020 // default
-#define UI_GIANTFONT	0x00000040
-#define UI_DROPSHADOW	0x00000800
-#define UI_BLINK		0x00001000
-#define UI_INVERSE		0x00002000
-#define UI_PULSE		0x00004000
 #if !defined(NDEBUG) && !defined(BSPC)
 #define HUNK_DEBUG
 #endif
@@ -327,17 +340,20 @@ extern vec3_t bytedirs[NUMVERTEXNORMALS];
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 
-#define TINYCHAR_WIDTH (SMALLCHAR_WIDTH)
-#define TINYCHAR_HEIGHT (SMALLCHAR_HEIGHT / 2)
+#define TINYCHAR_WIDTH 8	// was: (SMALLCHAR_WIDTH)		| new:  5 | font: Arial Narrow |
+#define TINYCHAR_HEIGHT 8	// was: (SMALLCHAR_HEIGHT / 2)	| new:  5 | font: Arial Narrow |
 
-#define SMALLCHAR_WIDTH 8
-#define SMALLCHAR_HEIGHT 16
+#define SMALLCHAR_WIDTH 8	// was: 8						| new:  8 | font: Arial DINPro |
+#define SMALLCHAR_HEIGHT 16	// was: 16						| new:  8 | font: Arial DINPro |
 
-#define BIGCHAR_WIDTH 16
-#define BIGCHAR_HEIGHT 16
+#define BIGCHAR_WIDTH 16	// was: 16						| new: 14 | font: Arial Impact |
+#define BIGCHAR_HEIGHT 16	// was: 16						| new: 14 | font: Arial Impact |
 
-#define GIANTCHAR_WIDTH 32
-#define GIANTCHAR_HEIGHT 48
+#define GIANTCHAR_WIDTH 32	// was: 32						| new: 22 | font: Arial Impact | can we use BIGCHAR?
+#define GIANTCHAR_HEIGHT 48	// was: 48						| new: 22 | font: Arial Impact | can we use BIGCHAR?
+
+#define TITANCHAR_WIDTH 72	// NEW							| new: 72 | font: Arial Impact | can we use BIGCHAR?
+#define TITANCHAR_HEIGHT 72	// NEW							| new: 72 | font: Arial Impact | can we use BIGCHAR?
 
 extern vec4_t colorBlack;
 extern vec4_t colorRed;
@@ -1230,7 +1246,7 @@ typedef enum {
 typedef struct {
 	int height;			// number of scan lines
 	int top;			// top of glyph in buffer
-	int bottom;			// bottom of glyph in buffer
+	int left;			// left of glyph in buffer
 	int pitch;			// width for copying
 	int xSkip;			// x adjustment
 	int imageWidth;		// width of actual image
@@ -1243,10 +1259,15 @@ typedef struct {
 	char shaderName[32];
 } glyphInfo_t;
 
+#define FONTFLAG_CURSORS	0x0001 // font has extra glyphs (notably cursors) like Q3's bigchars font
+#define FONTFLAG_BORDER		0x0002 // font has a border
+
 typedef struct {
 	glyphInfo_t glyphs [GLYPHS_PER_FONT];
 	float glyphScale;
 	char name[MAX_QPATH];
+	int pointSize;
+	int flags;
 } fontInfo_t;
 
 #define Square(x) ((x) * (x))

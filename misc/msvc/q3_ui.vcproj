@@ -488,7 +488,27 @@
 					/>
 				</FileConfiguration>
 			</File>
-			<File
+      <File
+				RelativePath="..\..\code\qcommon\q_unicode.c"
+				>
+        <FileConfiguration
+					Name="Debug TA|Win32"
+					ExcludedFromBuild="true"
+					>
+          <Tool
+						Name="VCCLCompilerTool"
+					/>
+        </FileConfiguration>
+        <FileConfiguration
+					Name="Release TA|Win32"
+					ExcludedFromBuild="true"
+					>
+          <Tool
+						Name="VCCLCompilerTool"
+					/>
+        </FileConfiguration>
+      </File>
+      <File
 				RelativePath="..\..\code\q3_ui\ui_addbots.c"
 				>
 				<FileConfiguration

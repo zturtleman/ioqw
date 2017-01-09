@@ -27,6 +27,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 **************************************************************************************************************************************/
 
 #include "ui_local.h"
+#include "../qcommon/q_unicode.h"
 
 uiStatic_t uis;
 qboolean m_entersound; // after a frame, so caching won't disrupt the sound
@@ -151,7 +152,7 @@ void UI_ForceMenuOff(void) {
 UI_LerpColor
 =======================================================================================================================================
 */
-void UI_LerpColor(vec4_t a, vec4_t b, vec4_t c, float t) {
+void UI_LerpColor(const vec4_t a, const vec4_t b, vec4_t c, float t) {
 	int i;
 
 	// lerp and clamp each component
@@ -166,194 +167,187 @@ void UI_LerpColor(vec4_t a, vec4_t b, vec4_t c, float t) {
 	}
 }
 
-static int propMap[128][3] = {
-	{0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1},
-	{0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1},
+/*
+=======================================================================================================================================
 
-	{0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1},
-	{0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1},
+	TEXT DRAWING
 
-	{0, 0, PROP_SPACE_WIDTH}, // SPACE
-	{11, 122, 7},	// !
-	{154, 181, 14},	// "
-	{55, 122, 17},	// #
-	{79, 122, 18},	// $
-	{101, 122, 23},	// %
-	{153, 122, 18},	// &
-	{9, 93, 7},		// '
-	{207, 122, 8},	// (
-	{230, 122, 9},	// )
-	{177, 122, 18},	// *
-	{30, 152, 18},	// +
-	{85, 181, 7},	// ,
-	{34, 93, 11},	// -
-	{110, 181, 6},	// .
-	{130, 152, 14},	// /
-
-	{22, 64, 17},	// 0
-	{41, 64, 12},	// 1
-	{58, 64, 17},	// 2
-	{78, 64, 18},	// 3
-	{98, 64, 19},	// 4
-	{120, 64, 18},	// 5
-	{141, 64, 18},	// 6
-	{204, 64, 16},	// 7
-	{162, 64, 17},	// 8
-	{182, 64, 18},	// 9
-	{59, 181, 7},	// :
-	{35, 181, 7},	// ;
-	{203, 152, 14},	// <
-	{56, 93, 14},	// =
-	{228, 152, 14},	// >
-	{177, 181, 18},	// ?
-
-	{28, 122, 22},	// @
-	{5, 4, 18},		// A
-	{27, 4, 18},	// B
-	{48, 4, 18},	// C
-	{69, 4, 17},	// D
-	{90, 4, 13},	// E
-	{106, 4, 13},	// F
-	{121, 4, 18},	// G
-	{143, 4, 17},	// H
-	{164, 4, 8},	// I
-	{175, 4, 16},	// J
-	{195, 4, 18},	// K
-	{216, 4, 12},	// L
-	{230, 4, 23},	// M
-	{6, 34, 18},	// N
-	{27, 34, 18},	// O
-
-	{48, 34, 18},	// P
-	{68, 34, 18},	// Q
-	{90, 34, 17},	// R
-	{110, 34, 18},	// S
-	{130, 34, 14},	// T
-	{146, 34, 18},	// U
-	{166, 34, 19},	// V
-	{185, 34, 29},	// W
-	{215, 34, 18},	// X
-	{234, 34, 18},	// Y
-	{5, 64, 14},	// Z
-	{60, 152, 7},	// [
-	{106, 151, 13},	// '\'
-	{83, 152, 7},	// ]
-	{128, 122, 17},	// ^
-	{4, 152, 21},	// _
-
-	{134, 181, 5},	// '
-	{5, 4, 18},		// A
-	{27, 4, 18},	// B
-	{48, 4, 18},	// C
-	{69, 4, 17},	// D
-	{90, 4, 13},	// E
-	{106, 4, 13},	// F
-	{121, 4, 18},	// G
-	{143, 4, 17},	// H
-	{164, 4, 8},	// I
-	{175, 4, 16},	// J
-	{195, 4, 18},	// K
-	{216, 4, 12},	// L
-	{230, 4, 23},	// M
-	{6, 34, 18},	// N
-	{27, 34, 18},	// O
-
-	{48, 34, 18},	// P
-	{68, 34, 18},	// Q
-	{90, 34, 17},	// R
-	{110, 34, 18},	// S
-	{130, 34, 14},	// T
-	{146, 34, 18},	// U
-	{166, 34, 19},	// V
-	{185, 34, 29},	// W
-	{215, 34, 18},	// X
-	{234, 34, 18},	// Y
-	{5, 64, 14},	// Z
-	{153, 152, 13},	// {
-	{11, 181, 5},	// |
-	{180, 152, 13},	// }
-	{79, 93, 17},	// ~
-	{0, 0, -1}		// DEL
-};
-
-static int propMapB[26][3] = {
-	{11, 12, 33},
-	{49, 12, 31},
-	{85, 12, 31},
-	{120, 12, 30},
-	{156, 12, 21},
-	{183, 12, 21},
-	{207, 12, 32},
-
-	{13, 55, 30},
-	{49, 55, 13},
-	{66, 55, 29},
-	{101, 55, 31},
-	{135, 55, 21},
-	{158, 55, 40},
-	{204, 55, 32},
-
-	{12, 97, 31},
-	{48, 97, 31},
-	{82, 97, 30},
-	{118, 97, 30},
-	{153, 97, 30},
-	{185, 97, 25},
-	{213, 97, 30},
-
-	{11, 139, 32},
-	{42, 139, 51},
-	{93, 139, 32},
-	{126, 139, 31},
-	{158, 139, 25},
-};
-
-#define PROPB_GAP_WIDTH 4
-#define PROPB_SPACE_WIDTH 12
-#define PROPB_HEIGHT 36
+=======================================================================================================================================
+*/
 
 /*
 =======================================================================================================================================
-UI_DrawBannerString2
+UI_Text_GetGlyph
 =======================================================================================================================================
 */
-static void UI_DrawBannerString2(int x, int y, const char *str, vec4_t color) {
+const glyphInfo_t *UI_Text_GetGlyph(const fontInfo_t *font, unsigned long index) {
+
+	if (index == 0 || index >= GLYPHS_PER_FONT) {
+		return &font->glyphs[(int)'.'];
+	}
+
+	return &font->glyphs[index];
+}
+
+/*
+=======================================================================================================================================
+UI_Text_Width
+=======================================================================================================================================
+*/
+float UI_Text_Width(const char *text, const fontInfo_t *font, float scale, int limit) {
+	int count, len;
+	float out;
+	const glyphInfo_t *glyph;
+	float useScale;
 	const char *s;
-	unsigned char ch;
-	float ax;
-	float ay;
-	float aw;
-	float ah;
-	float frow;
-	float fcol;
-	float fwidth;
-	float fheight;
 
-	// draw the colored text
-	trap_R_SetColor(color);
+	if (!text) {
+		return 0;
+	}
 
-	ax = x * uis.xscale + uis.bias;
-	ay = y * uis.yscale;
-	s = str;
+	useScale = scale * font->glyphScale;
+	out = 0;
 
-	while (*s) {
-		ch = *s & 127;
+	len = Q_UTF8_PrintStrlen(text);
 
-		if (ch == ' ') {
-			ax += ((float)PROPB_SPACE_WIDTH + (float)PROPB_GAP_WIDTH) * uis.xscale;
-		} else if (ch >= 'A' && ch <= 'Z') {
-			ch -= 'A';
-			fcol = (float)propMapB[ch][0] / 256.0f;
-			frow = (float)propMapB[ch][1] / 256.0f;
-			fwidth = (float)propMapB[ch][2] / 256.0f;
-			fheight = (float)PROPB_HEIGHT / 256.0f;
-			aw = (float)propMapB[ch][2] * uis.xscale;
-			ah = (float)PROPB_HEIGHT * uis.yscale;
-			trap_R_DrawStretchPic(ax, ay, aw, ah, fcol, frow, fcol + fwidth, frow + fheight, uis.charsetPropB);
-			ax += (aw + (float)PROPB_GAP_WIDTH * uis.xscale);
+	if (limit > 0 && len > limit) {
+		len = limit;
+	}
+
+	s = text;
+	count = 0;
+
+	while (s && *s && count < len) {
+		if (Q_IsColorString(s)) {
+			s += 2;
+			continue;
 		}
 
-		s++;
+		glyph = UI_Text_GetGlyph(font, Q_UTF8_CodePoint(&s));
+		out += glyph->xSkip;
+		count++;
+	}
+
+	return out * useScale;
+}
+
+/*
+=======================================================================================================================================
+UI_Text_PaintChar
+
+NOTE: scale must be multiplied by font->glyphScale.
+=======================================================================================================================================
+*/
+void UI_Text_PaintChar(float x, float y, float width, float height, float useScale, float s, float t, float s2, float t2, qhandle_t hShader) {
+	float w, h;
+
+	w = width * useScale;
+	h = height * useScale;
+
+	UI_AdjustFrom640(&x, &y, &w, &h);
+	trap_R_DrawStretchPic(x, y, w, h, s, t, s2, t2, hShader);
+}
+
+/*
+=======================================================================================================================================
+UI_Text_PaintGlyph
+
+NOTE: scale must be multiplied by font->glyphScale.
+=======================================================================================================================================
+*/
+void UI_Text_PaintGlyph(float x, float y, float useScale, const glyphInfo_t *glyph, float *gradientColor) {
+	float w, h;
+
+	w = glyph->imageWidth * useScale;
+	h = glyph->imageHeight * useScale;
+
+	UI_AdjustFrom640(&x, &y, &w, &h);
+
+	if (gradientColor) {
+		trap_R_DrawStretchPicGradient(x, y, w, h, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph, gradientColor);
+	} else {
+		trap_R_DrawStretchPic(x, y, w, h, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
+	}
+}
+
+static vec4_t lastTextColor = {0, 0, 0, 1};
+
+/*
+=======================================================================================================================================
+UI_Text_Paint
+=======================================================================================================================================
+*/
+void UI_Text_Paint(float x, float y, const fontInfo_t *font, float scale, const vec4_t color, const char *text, float adjust, int limit, float shadowOffset, float gradient, qboolean forceColor) {
+	int len, count;
+	vec4_t newColor;
+	vec4_t gradientColor;
+	const glyphInfo_t *glyph;
+	const char *s;
+	float yadj, xadj;
+	float useScale;
+
+	if (!text) {
+		return;
+	}
+
+	useScale = scale * font->glyphScale;
+
+	trap_R_SetColor(color);
+
+	Vector4Copy(color, newColor);
+	Vector4Copy(color, lastTextColor);
+
+	gradientColor[0] = Com_Clamp(0, 1, newColor[0] - gradient);
+	gradientColor[1] = Com_Clamp(0, 1, newColor[1] - gradient);
+	gradientColor[2] = Com_Clamp(0, 1, newColor[2] - gradient);
+	gradientColor[3] = color[3];
+
+	len = Q_UTF8_PrintStrlen(text);
+
+	if (limit > 0 && len > limit) {
+		len = limit;
+	}
+
+	s = text;
+	count = 0;
+
+	while (s && *s && count < len) {
+		if (Q_IsColorString(s)) {
+			if (!forceColor) {
+				VectorCopy(g_color_table[ColorIndex(*(s + 1))], newColor);
+				newColor[3] = color[3];
+				trap_R_SetColor(newColor);
+				Vector4Copy(newColor, lastTextColor);
+
+				gradientColor[0] = Com_Clamp(0, 1, newColor[0] - gradient);
+				gradientColor[1] = Com_Clamp(0, 1, newColor[1] - gradient);
+				gradientColor[2] = Com_Clamp(0, 1, newColor[2] - gradient);
+				gradientColor[3] = color[3];
+			}
+
+			s += 2;
+			continue;
+		}
+
+		glyph = UI_Text_GetGlyph(font, Q_UTF8_CodePoint(&s));
+
+		yadj = useScale * glyph->top;
+		xadj = useScale * glyph->left;
+
+		if (shadowOffset) {
+			colorBlack[3] = newColor[3];
+			trap_R_SetColor(colorBlack);
+
+			UI_Text_PaintGlyph(x + xadj + shadowOffset, y - yadj + shadowOffset, useScale, glyph, NULL);
+
+			trap_R_SetColor(newColor);
+			colorBlack[3] = 1.0f;
+		}
+
+		UI_Text_PaintGlyph(x + xadj, y - yadj, useScale, glyph, (gradient != 0) ? gradientColor : NULL);
+
+		x += (glyph->xSkip * useScale) + adjust;
+		count++;
 	}
 
 	trap_R_SetColor(NULL);
@@ -361,32 +355,308 @@ static void UI_DrawBannerString2(int x, int y, const char *str, vec4_t color) {
 
 /*
 =======================================================================================================================================
+UI_Text_PaintWithCursor
+=======================================================================================================================================
+*/
+void UI_Text_PaintWithCursor(float x, float y, const fontInfo_t *font, float scale, const vec4_t color, const char *text, int cursorPos, char cursor, float adjust, int limit, float shadowOffset, float gradient, qboolean forceColor) {
+	int len, count;
+	vec4_t newColor;
+	vec4_t gradientColor;
+	const glyphInfo_t *glyph, *glyph2;
+	float yadj, xadj;
+	float useScale;
+	const char *s;
+
+	if (!text) {
+		return;
+	}
+
+	useScale = scale * font->glyphScale;
+
+	trap_R_SetColor(color);
+
+	Vector4Copy(color, newColor);
+	Vector4Copy(color, lastTextColor);
+
+	gradientColor[0] = Com_Clamp(0, 1, newColor[0] - gradient);
+	gradientColor[1] = Com_Clamp(0, 1, newColor[1] - gradient);
+	gradientColor[2] = Com_Clamp(0, 1, newColor[2] - gradient);
+	gradientColor[3] = color[3];
+	// NOTE: doesn't use Q_UTF8_PrintStrlen because this function draws color codes
+	len = Q_UTF8_Strlen(text);
+
+	if (limit > 0 && len > limit) {
+		len = limit;
+	}
+
+	s = text;
+	count = 0;
+	glyph2 = UI_Text_GetGlyph(font, cursor);
+
+	while (s && *s && count < len) {
+		if (Q_IsColorString(s)) {
+			if (!forceColor) {
+				VectorCopy(g_color_table[ColorIndex(*(s + 1))], newColor);
+				newColor[3] = color[3];
+				trap_R_SetColor(newColor);
+				Vector4Copy(newColor, lastTextColor);
+
+				gradientColor[0] = Com_Clamp(0, 1, newColor[0] - gradient);
+				gradientColor[1] = Com_Clamp(0, 1, newColor[1] - gradient);
+				gradientColor[2] = Com_Clamp(0, 1, newColor[2] - gradient);
+				gradientColor[3] = color[3];
+			}
+			// display color codes in edit fields instead of skipping them
+		}
+
+		glyph = UI_Text_GetGlyph(font, Q_UTF8_CodePoint(&s));
+
+		if (count == cursorPos && ((uis.realtime / BLINK_DIVISOR) & 1) == 0) {
+			yadj = useScale * glyph2->top;
+
+			UI_Text_PaintChar(x, y - yadj, glyph->left + glyph->xSkip, glyph2->imageHeight, useScale, glyph2->s, glyph2->t, glyph2->s2, glyph2->t2, glyph2->glyph); // use horizontal width of text character
+		}
+
+		yadj = useScale * glyph->top;
+		xadj = useScale * glyph->left;
+
+		if (shadowOffset) {
+			colorBlack[3] = newColor[3];
+			trap_R_SetColor(colorBlack);
+			UI_Text_PaintGlyph(x + xadj + shadowOffset, y - yadj + shadowOffset, useScale, glyph, NULL);
+			trap_R_SetColor(newColor);
+			colorBlack[3] = 1.0f;
+		}
+		// make overstrike cursor invert color
+		if (count == cursorPos && !((uis.realtime / BLINK_DIVISOR) & 1)/* && cursor == GLYPH_OVERSTRIKE*/) { // Tobias TODO
+			// invert color
+			vec4_t invertedColor;
+
+			invertedColor[0] = 1.0f - newColor[0];
+			invertedColor[1] = 1.0f - newColor[1];
+			invertedColor[2] = 1.0f - newColor[2];
+			invertedColor[3] = color[3];
+
+			trap_R_SetColor(invertedColor);
+
+			UI_Text_PaintGlyph(x + xadj, y - yadj, useScale, glyph, NULL);
+		} else {
+			UI_Text_PaintGlyph(x + xadj, y - yadj, useScale, glyph, (gradient != 0) ? gradientColor : NULL);
+		}
+
+		if (count == cursorPos && !((uis.realtime / BLINK_DIVISOR) & 1)/* && cursor == GLYPH_OVERSTRIKE*/) { // Tobias TODO
+			// restore color
+			trap_R_SetColor(newColor);
+		}
+
+		x += (glyph->xSkip * useScale) + adjust;
+		count++;
+	}
+	// need to paint cursor at end of text
+	if (cursorPos == len && !((uis.realtime / BLINK_DIVISOR) & 1)) {
+		yadj = useScale * glyph2->top;
+		UI_Text_PaintGlyph(x, y - yadj, useScale, glyph2, NULL);
+	}
+
+	trap_R_SetColor(NULL);
+}
+
+#define MAX_WRAP_BYTES 1024
+#define MAX_WRAP_LINES 1024
+
+/*
+=======================================================================================================================================
+UI_Text_Paint_AutoWrapped
+=======================================================================================================================================
+*/
+void UI_Text_Paint_AutoWrapped(float x, float y, const fontInfo_t *font, float scale, const vec4_t color, const char *str, float adjust, int limit, float shadowOffset, float gradient, qboolean forceColor, float xmax, float ystep, int style) {
+	int width;
+	char *s1, *s2, *s3;
+	char c_bcp;
+	char buf[MAX_WRAP_BYTES];
+	char wrapped[MAX_WRAP_BYTES + MAX_WRAP_LINES];
+	qboolean autoNewline[MAX_WRAP_LINES];
+	int numLines;
+	vec4_t newColor;
+	const char *p, *start;
+	float drawX;
+
+	if (!str || str[0] == '\0') {
+		return;
+	}
+	// wrap the text
+	Q_strncpyz(buf, str, sizeof(buf));
+
+	s1 = s2 = s3 = buf;
+
+	wrapped[0] = 0;
+	numLines = 0;
+
+	while (1) {
+		do {
+			s3 += Q_UTF8_Width(s3);
+		} while (*s3 != '\n' && *s3 != ' ' && *s3 != '\0');
+
+		c_bcp = *s3;
+		*s3 = '\0';
+		width = UI_Text_Width(s1, font, scale, 0);
+		*s3 = c_bcp;
+
+		if (width > xmax) {
+			if (s1 == s2) {
+				// fuck, don't have a clean cut, we'll overflow
+				s2 = s3;
+			}
+
+			*s2 = '\0';
+
+			Q_strcat(wrapped, sizeof(wrapped), s1);
+			Q_strcat(wrapped, sizeof(wrapped), "\n");
+
+			if (numLines < MAX_WRAP_LINES) {
+				autoNewline[numLines] = qtrue;
+				numLines++;
+			}
+
+			if (c_bcp == '\0') {
+				// that was the last word
+				// we could start a new loop, but that wouldn't be much use
+				// even if the word is too long, we would overflow it (see above) so just print it now if needed
+				s2 += Q_UTF8_Width(s2);
+
+				if (*s2 != '\0' && *s2 != '\n') { // if we are printing an overflowing line we have s2 == s3
+					Q_strcat(wrapped, sizeof(wrapped), s2);
+					Q_strcat(wrapped, sizeof(wrapped), "\n");
+
+					if (numLines < MAX_WRAP_LINES) {
+						autoNewline[numLines] = qtrue;
+						numLines++;
+					}
+				}
+
+				break;
+			}
+
+			s2 += Q_UTF8_Width(s2);
+			s1 = s2;
+			s3 = s2;
+		} else if (c_bcp == '\n') {
+			*s3 = '\0';
+
+			Q_strcat(wrapped, sizeof(wrapped), s1);
+			Q_strcat(wrapped, sizeof(wrapped), "\n");
+
+			if (numLines < MAX_WRAP_LINES) {
+				autoNewline[numLines] = qfalse;
+				numLines++;
+			}
+
+			s3 += Q_UTF8_Width(s3);
+			s1 = s3;
+			s2 = s3;
+
+			if (*s3 == '\0') { // we reached the end
+				break;
+			}
+		} else {
+			s2 = s3;
+
+			if (c_bcp == '\0') { // we reached the end
+				Q_strcat(wrapped, sizeof(wrapped), s1);
+				Q_strcat(wrapped, sizeof(wrapped), "\n");
+
+				if (numLines < MAX_WRAP_LINES) {
+					autoNewline[numLines] = qfalse;
+					numLines++;
+				}
+
+				break;
+			}
+		}
+	}
+	// draw the text
+	switch (style & UI_VA_FORMATMASK) {
+		case UI_VA_CENTER:
+			// center justify at y
+			y = y - numLines * ystep / 2.0f;
+			break;
+		case UI_VA_BOTTOM:
+			// bottom justify at y
+			y = y - numLines * ystep;
+			break;
+		case UI_VA_TOP:
+		default:
+			// top justify at y
+			break;
+	}
+
+	numLines = 0;
+
+	Vector4Copy(color, newColor);
+
+	start = wrapped;
+	p = strchr(wrapped, '\n');
+
+	while (p && *p) {
+		strncpy(buf, start, p - start + 1);
+		buf[p - start] = '\0';
+
+		switch (style & UI_FORMATMASK) {
+			case UI_CENTER:
+				// center justify at x
+				drawX = x - UI_Text_Width(buf, font, scale, 0) / 2;
+				break;
+			case UI_RIGHT:
+				// right justify at x
+				drawX = x - UI_Text_Width(buf, font, scale, 0);
+				break;
+			case UI_LEFT:
+			default:
+				// left justify at x
+				drawX = x;
+				break;
+		}
+
+		UI_Text_Paint(drawX, y, font, scale, newColor, buf, adjust, 0, shadowOffset, gradient, forceColor);
+
+		y += ystep;
+
+		if (numLines >= MAX_WRAP_LINES || autoNewline[numLines]) {
+			Vector4Copy(lastTextColor, newColor);
+		} else {
+			// reset color after non-wrapped lines
+			Vector4Copy(color, newColor);
+		}
+
+		numLines++;
+		start += p - start + 1;
+		p = strchr(p + 1, '\n');
+	}
+}
+
+/*
+=======================================================================================================================================
+
+	STRING FUNCTIONS
+
+=======================================================================================================================================
+*/
+
+#define PROPB_GAP_WIDTH 4
+#define PROPB_SPACE_WIDTH 12
+#define PROPB_HEIGHT 36
+
+/*
+=======================================================================================================================================
 UI_DrawBannerString
 =======================================================================================================================================
 */
 void UI_DrawBannerString(int x, int y, const char *str, int style, vec4_t color) {
-	const char *s;
-	int ch;
+	float decent;
 	int width;
-	vec4_t drawcolor;
 
 	// find the width of the drawn text
-	s = str;
-	width = 0;
-
-	while (*s) {
-		ch = *s;
-
-		if (ch == ' ') {
-			width += PROPB_SPACE_WIDTH;
-		} else if (ch >= 'A' && ch <= 'Z') {
-			width += propMapB[ch - 'A'][2] + PROPB_GAP_WIDTH;
-		}
-
-		s++;
-	}
-
-	width -= PROPB_GAP_WIDTH;
+	width = UI_Text_Width(str, &uis.bigFont, PROPB_HEIGHT / 48.0f, 0);
 
 	switch (style & UI_FORMATMASK) {
 		case UI_CENTER:
@@ -399,14 +669,11 @@ void UI_DrawBannerString(int x, int y, const char *str, int style, vec4_t color)
 		default:
 			break;
 	}
+	// this function expects that y is top of line, text_paint expects at baseline
+	decent = -uis.bigFont.glyphs[(int)'g'].top + uis.bigFont.glyphs[(int)'g'].height;
+	y = y + PROPB_HEIGHT - decent * PROPB_HEIGHT / 48.0f * uis.bigFont.glyphScale;
 
-	if (style & UI_DROPSHADOW) {
-		drawcolor[0] = drawcolor[1] = drawcolor[2] = 0;
-		drawcolor[3] = color[3];
-		UI_DrawBannerString2(x + 2, y + 2, str, drawcolor);
-	}
-
-	UI_DrawBannerString2(x, y, str, color);
+	UI_Text_Paint(x, y, &uis.bigFont, PROPB_HEIGHT / 48.0f, color, str, 0, 0, (style & UI_DROPSHADOW) ? 2 : 0, 0, qfalse);
 }
 
 /*
@@ -415,74 +682,7 @@ UI_ProportionalStringWidth
 =======================================================================================================================================
 */
 int UI_ProportionalStringWidth(const char *str) {
-	const char *s;
-	int ch;
-	int charWidth;
-	int width;
-
-	s = str;
-	width = 0;
-
-	while (*s) {
-		ch = *s & 127;
-		charWidth = propMap[ch][2];
-
-		if (charWidth != -1) {
-			width += charWidth;
-			width += PROP_GAP_WIDTH;
-		}
-
-		s++;
-	}
-
-	width -= PROP_GAP_WIDTH;
-	return width;
-}
-
-/*
-=======================================================================================================================================
-UI_DrawProportionalString2
-=======================================================================================================================================
-*/
-static void UI_DrawProportionalString2(int x, int y, const char *str, vec4_t color, float sizeScale, qhandle_t charset) {
-	const char *s;
-	unsigned char ch;
-	float ax;
-	float ay;
-	float aw = 0;
-	float ah;
-	float frow;
-	float fcol;
-	float fwidth;
-	float fheight;
-
-	// draw the colored text
-	trap_R_SetColor(color);
-
-	ax = x * uis.xscale + uis.bias;
-	ay = y * uis.yscale;
-	s = str;
-
-	while (*s) {
-		ch = *s & 127;
-
-		if (ch == ' ') {
-			aw = (float)PROP_SPACE_WIDTH * uis.xscale * sizeScale;
-		} else if (propMap[ch][2] != -1) {
-			fcol = (float)propMap[ch][0] / 256.0f;
-			frow = (float)propMap[ch][1] / 256.0f;
-			fwidth = (float)propMap[ch][2] / 256.0f;
-			fheight = (float)PROP_HEIGHT / 256.0f;
-			aw = (float)propMap[ch][2] * uis.xscale * sizeScale;
-			ah = (float)PROP_HEIGHT * uis.yscale * sizeScale;
-			trap_R_DrawStretchPic(ax, ay, aw, ah, fcol, frow, fcol + fwidth, frow + fheight, charset);
-		}
-
-		ax += (aw + (float)PROP_GAP_WIDTH * uis.xscale * sizeScale);
-		s++;
-	}
-
-	trap_R_SetColor(NULL);
+	return UI_Text_Width(str, &uis.bigFont, PROP_HEIGHT / 48.0f, 0);
 }
 
 /*
@@ -492,7 +692,7 @@ UI_ProportionalSizeScale
 */
 float UI_ProportionalSizeScale(int style) {
 
-	if (style & UI_SMALLFONT) {
+	if ((style & UI_FONTMASK) == UI_SMALLFONT) {
 		return PROP_SMALL_SIZE_SCALE;
 	}
 
@@ -501,96 +701,52 @@ float UI_ProportionalSizeScale(int style) {
 
 /*
 =======================================================================================================================================
-UI_DrawScaledProportionalString
-
-The use of float x, y allows greater positioning precision.
-We can now "compensate" for alignment issues arising from the virtual 640x480 screen resolution.
-Any function calling with int arguments will still exhibit previous behaviour.
-=======================================================================================================================================
-*/
-void UI_DrawScaledProportionalString(float x, float y, const char *str, int style, float sizeScale, vec4_t color) {
-	vec4_t drawcolor;
-	int width;
-
-	sizeScale *= UI_ProportionalSizeScale(style);
-
-	switch (style & UI_FORMATMASK) {
-		case UI_CENTER:
-			width = UI_ProportionalStringWidth(str) * sizeScale;
-			x -= width / 2;
-			break;
-		case UI_RIGHT:
-			width = UI_ProportionalStringWidth(str) * sizeScale;
-			x -= width;
-			break;
-		case UI_LEFT:
-		default:
-			break;
-	}
-
-	if (style & UI_DROPSHADOW) {
-		drawcolor[0] = drawcolor[1] = drawcolor[2] = 0;
-		drawcolor[3] = color[3];
-		UI_DrawProportionalString2(x + 2, y + 2, str, drawcolor, sizeScale, uis.charsetProp);
-	}
-
-	if (style & UI_INVERSE) {
-		drawcolor[0] = color[0] * 0.7;
-		drawcolor[1] = color[1] * 0.7;
-		drawcolor[2] = color[2] * 0.7;
-		drawcolor[3] = color[3];
-		UI_DrawProportionalString2(x, y, str, drawcolor, sizeScale, uis.charsetProp);
-		return;
-	}
-
-	if (style & UI_PULSE) {
-		drawcolor[0] = color[0] * 0.7;
-		drawcolor[1] = color[1] * 0.7;
-		drawcolor[2] = color[2] * 0.7;
-		drawcolor[3] = color[3];
-		UI_DrawProportionalString2(x, y, str, color, sizeScale, uis.charsetProp);
-
-		drawcolor[0] = color[0];
-		drawcolor[1] = color[1];
-		drawcolor[2] = color[2];
-		drawcolor[3] = 0.5 + 0.5 * sin(uis.realtime / PULSE_DIVISOR);
-		UI_DrawProportionalString2(x, y, str, drawcolor, sizeScale, uis.charsetPropGlow);
-		return;
-	}
-
-	UI_DrawProportionalString2(x, y, str, color, sizeScale, uis.charsetProp);
-}
-
-/*
-=======================================================================================================================================
 UI_DrawProportionalString
 =======================================================================================================================================
 */
 void UI_DrawProportionalString(int x, int y, const char *str, int style, vec4_t color) {
+	float decent;
+	int glowY;
 	vec4_t drawcolor;
 	int width;
-	float sizeScale;
+	int charh;
+	float propScale;
+	float scale;
 
-	sizeScale = UI_ProportionalSizeScale(style);
+	propScale = UI_ProportionalSizeScale(style);
+	charh = propScale * PROP_HEIGHT;
+	scale = propScale * PROP_HEIGHT / 48.0f;
 
 	switch (style & UI_FORMATMASK) {
 		case UI_CENTER:
-			width = UI_ProportionalStringWidth(str) * sizeScale;
+			width = UI_ProportionalStringWidth(str) * propScale;
 			x -= width / 2;
 			break;
 		case UI_RIGHT:
-			width = UI_ProportionalStringWidth(str) * sizeScale;
+			width = UI_ProportionalStringWidth(str) * propScale;
 			x -= width;
 			break;
 		case UI_LEFT:
 		default:
 			break;
 	}
+	// this function expects that y is top of line, text_paint expects at baseline
 
-	if (style & UI_DROPSHADOW) {
-		drawcolor[0] = drawcolor[1] = drawcolor[2] = 0;
-		drawcolor[3] = color[3];
-		UI_DrawProportionalString2(x + 2, y + 2, str, drawcolor, sizeScale, uis.charsetProp);
+	// glow font
+	decent = -uis.bigFont.glyphs[(int)'g'].top + uis.bigFont.glyphs[(int)'g'].height;
+	glowY = y + charh - decent * scale * uis.bigFont.glyphScale;
+
+	if (decent != 0) {
+		// make TrueType fonts line up with font1_prop bitmap font which has 4 transparent pixels above glyphs at 16 point font size
+		glowY += 3.0f * propScale;
+	}
+	// normal font
+	decent = -uis.bigFont.glyphs[(int)'g'].top + uis.bigFont.glyphs[(int)'g'].height;
+	y = y + charh - decent * scale * uis.bigFont.glyphScale;
+
+	if (decent != 0) {
+		// make TrueType fonts line up with font1_prop bitmap font which has 4 transparent pixels above glyphs at 16 point font size
+		y += 3.0f * propScale;
 	}
 
 	if (style & UI_INVERSE) {
@@ -598,26 +754,21 @@ void UI_DrawProportionalString(int x, int y, const char *str, int style, vec4_t 
 		drawcolor[1] = color[1] * 0.7;
 		drawcolor[2] = color[2] * 0.7;
 		drawcolor[3] = color[3];
-		UI_DrawProportionalString2(x, y, str, drawcolor, sizeScale, uis.charsetProp);
+		UI_Text_Paint(x, y, &uis.bigFont, scale, drawcolor, str, 0, 0, (style & UI_DROPSHADOW) ? 2 : 0, 0, qfalse);
 		return;
 	}
 
 	if (style & UI_PULSE) {
-		drawcolor[0] = color[0] * 0.7;
-		drawcolor[1] = color[1] * 0.7;
-		drawcolor[2] = color[2] * 0.7;
-		drawcolor[3] = color[3];
-		UI_DrawProportionalString2(x, y, str, color, sizeScale, uis.charsetProp);
-
+		UI_Text_Paint(x, y, &uis.bigFont, scale, color, str, 0, 0, (style & UI_DROPSHADOW) ? 2 : 0, 0, qfalse);
 		drawcolor[0] = color[0];
 		drawcolor[1] = color[1];
 		drawcolor[2] = color[2];
 		drawcolor[3] = 0.5 + 0.5 * sin(uis.realtime / PULSE_DIVISOR);
-		UI_DrawProportionalString2(x, y, str, drawcolor, sizeScale, uis.charsetPropGlow);
+		UI_Text_Paint(x, glowY, &uis.bigFont, scale, drawcolor, str, 0, 0, 0, 0, qfalse);
 		return;
 	}
 
-	UI_DrawProportionalString2(x, y, str, color, sizeScale, uis.charsetProp);
+	UI_Text_Paint(x, y, &uis.bigFont, scale, color, str, 0, 0, (style & UI_DROPSHADOW) ? 2 : 0, 0, qfalse);
 }
 
 /*
@@ -665,8 +816,8 @@ void UI_DrawProportionalString_AutoWrapped(int x, int y, int xmax, int ystep, co
 
 			if (c_bcp == '\0') {
 				// that was the last word
-				// we could start a new loop, but that wouldn't be much use even if the word is too long, we would overflow it (see above)
-				// so just print it now if needed
+				// we could start a new loop, but that wouldn't be much use
+				// even if the word is too long, we would overflow it (see above) so just print it now if needed
 				s2++;
 
 				if (*s2 != '\0') { // if we are printing an overflowing line we have s2 == s3
@@ -692,60 +843,180 @@ void UI_DrawProportionalString_AutoWrapped(int x, int y, int xmax, int ystep, co
 
 /*
 =======================================================================================================================================
-UI_DrawString2
+UI_DrawStringLineHeight
+
+Returns draw height of text line for drawing multiple lines of text.
 =======================================================================================================================================
 */
-static void UI_DrawString2(int x, int y, const char *str, vec4_t color, int charw, int charh) {
-	const char *s;
-	char ch;
-	int forceColor = qfalse; // APSFIXME
-	vec4_t tempcolor;
-	float ax;
-	float ay;
-	float aw;
-	float ah;
-	float frow;
-	float fcol;
+int UI_DrawStringLineHeight(int style) {
+	const fontInfo_t *font;
+	int lineHeight;
+	int charh;
+	int gap;
 
-	if (y < -charh) {
-		// offscreen
+	gap = 0;
+
+	switch (style & UI_FONTMASK) {
+		case UI_TINYFONT:
+			font = &uis.tinyFont;
+			gap = 1;
+			break;
+		case UI_SMALLFONT:
+			font = &uis.smallFont;
+			gap = 2;
+			break;
+		case UI_BIGFONT:
+		default:
+			font = &uis.bigFont;
+			gap = 2;
+			break;
+		case UI_GIANTFONT:
+			font = &uis.giantFont;
+			gap = 2;
+			break;
+		case UI_TITANFONT:
+			font = &uis.titanFont;
+			gap = 6;
+			break;
+	}
+
+	charh = font->pointSize;
+	lineHeight = charh + gap;
+
+	return lineHeight;
+}
+
+/*
+=======================================================================================================================================
+UI_DrawStringDirect
+=======================================================================================================================================
+*/
+void UI_DrawStringDirect(int x, int y, const char *str, int style, const vec4_t color, float scale, int maxChars, float shadowOffset, float gradient, int cursorPos, int cursorChar, float wrapX) {
+	int charh;
+	vec4_t newcolor;
+	vec4_t lowlight;
+	const float *drawcolor;
+	const fontInfo_t *font;
+	int decent;
+
+	if (!str) {
 		return;
 	}
-	// draw the colored text
-	trap_R_SetColor(color);
 
-	ax = x * uis.xscale + uis.bias;
-	ay = y * uis.yscale;
-	aw = charw * uis.xscale;
-	ah = charh * uis.yscale;
-	s = str;
-
-	while (*s) {
-		if (Q_IsColorString(s)) {
-			if (!forceColor) {
-				memcpy(tempcolor, g_color_table[ColorIndex(s[1])], sizeof(tempcolor));
-
-				tempcolor[3] = color[3];
-				trap_R_SetColor(tempcolor);
-			}
-
-			s += 2;
-			continue;
-		}
-
-		ch = *s & 255;
-
-		if (ch != ' ') {
-			frow = (ch >> 4) * 0.0625;
-			fcol = (ch &15) * 0.0625;
-			trap_R_DrawStretchPic(ax, ay, aw, ah, fcol, frow, fcol + 0.0625, frow + 0.0625, uis.charset);
-		}
-
-		ax += aw;
-		s++;
+	if (!color) {
+		color = colorWhite;
 	}
 
-	trap_R_SetColor(NULL);
+	if ((style & UI_BLINK) && ((uis.realtime / BLINK_DIVISOR) & 1)) {
+		return;
+	}
+
+	switch (style & UI_FONTMASK) {
+		case UI_TINYFONT:
+			font = &uis.tinyFont;
+			break;
+		case UI_SMALLFONT:
+			font = &uis.smallFont;
+			break;
+		case UI_BIGFONT:
+		default:
+			font = &uis.bigFont;
+			break;
+		case UI_GIANTFONT:
+			font = &uis.giantFont;
+			break;
+		case UI_TITANFONT:
+			font = &uis.titanFont;
+			break;
+	}
+
+	charh = font->pointSize;
+
+	if (shadowOffset == 0 && (style & UI_DROPSHADOW)) {
+		shadowOffset = 2;
+	}
+
+	if (gradient == 0 && (style & UI_GRADIENT)) {
+		gradient = 0.4f;
+	}
+
+	if (scale <= 0) {
+		scale = charh / 48.0f;
+	} else {
+		charh = 48 * scale;
+	}
+
+	if (style & UI_PULSE) {
+		lowlight[0] = 0.8 * color[0];
+		lowlight[1] = 0.8 * color[1];
+		lowlight[2] = 0.8 * color[2];
+		lowlight[3] = 0.8 * color[3];
+		UI_LerpColor(color, lowlight, newcolor, 0.5 + 0.5 * sin(uis.realtime / PULSE_DIVISOR));
+		drawcolor = newcolor;
+	} else {
+		drawcolor = color;
+	}
+
+	if (wrapX <= 0) {
+		switch (style & UI_FORMATMASK) {
+			case UI_CENTER:
+				// center justify at x
+				x = x - UI_Text_Width(str, font, scale, 0) / 2;
+				break;
+			case UI_RIGHT:
+				// right justify at x
+				x = x - UI_Text_Width(str, font, scale, 0);
+				break;
+			case UI_LEFT:
+			default:
+				// left justify at x
+				break;
+		}
+
+		switch (style & UI_VA_FORMATMASK) {
+			case UI_VA_CENTER:
+				// center justify at y
+				y = y - charh / 2;
+				break;
+			case UI_VA_BOTTOM:
+				// bottom justify at y
+				y = y - charh;
+				break;
+			case UI_VA_TOP:
+			default:
+				// top justify at y
+				break;
+		}
+	}
+	// this function expects that y is top of line, text_paint expects at baseline
+	decent = -font->glyphs[(int)'g'].top + font->glyphs[(int)'g'].height;
+	y = y + charh - decent * scale * font->glyphScale;
+
+	if (decent != 0) {
+		// make TrueType fonts line up with bigchars bitmap font which has 2 transparent pixels above glyphs at 16 point font size
+		y += 2.0f * charh / 16.0f;
+	}
+
+	if (cursorChar >= 0) {
+		UI_Text_PaintWithCursor(x, y, font, scale, drawcolor, str, cursorPos, cursorChar, 0, maxChars, shadowOffset, gradient, !!(style & UI_FORCECOLOR));
+	} else if (wrapX > 0) {
+		// replace 'char height' in line height with our scaled charh
+		// ZTM: TODO: This text gap handling is kind of messy. Passing scale to UI_DrawStringLineHeight might make cleaner code here.
+		int gap = UI_DrawStringLineHeight(style) - font->pointSize;
+
+		UI_Text_Paint_AutoWrapped(x, y, font, scale, drawcolor, str, 0, maxChars, shadowOffset, gradient, !!(style & UI_FORCECOLOR), wrapX, charh + gap, style);
+	} else {
+		UI_Text_Paint(x, y, font, scale, drawcolor, str, 0, maxChars, shadowOffset, gradient, !!(style & UI_FORCECOLOR));
+	}
+}
+
+/*
+=======================================================================================================================================
+UI_DrawStringExtWithCursor
+=======================================================================================================================================
+*/
+void UI_DrawStringExtWithCursor(int x, int y, const char *str, int style, const vec4_t color, float scale, int maxChars, float shadowOffset, float gradient, int cursorPos, int cursorChar) {
+	UI_DrawStringDirect(x, y, str, style, color, scale, maxChars, shadowOffset, gradient, cursorPos, cursorChar, 0);
 }
 
 /*
@@ -754,68 +1025,7 @@ UI_DrawString
 =======================================================================================================================================
 */
 void UI_DrawString(int x, int y, const char *str, int style, vec4_t color) {
-	int len;
-	int charw;
-	int charh;
-	vec4_t newcolor;
-	vec4_t lowlight;
-	float *drawcolor;
-	vec4_t dropcolor;
-
-	if (!str) {
-		return;
-	}
-
-	if ((style & UI_BLINK) && ((uis.realtime / BLINK_DIVISOR) & 1)) {
-		return;
-	}
-
-	if (style & UI_SMALLFONT) {
-		charw = SMALLCHAR_WIDTH;
-		charh = SMALLCHAR_HEIGHT;
-	} else if (style & UI_GIANTFONT) {
-		charw = GIANTCHAR_WIDTH;
-		charh = GIANTCHAR_HEIGHT;
-	} else {
-		charw = BIGCHAR_WIDTH;
-		charh = BIGCHAR_HEIGHT;
-	}
-
-	if (style & UI_PULSE) {
-		lowlight[0] = 0.8 * color[0];
-		lowlight[1] = 0.8 * color[1];
-		lowlight[2] = 0.8 * color[2];
-		lowlight[3] = 0.8 * color[3];
-
-		UI_LerpColor(color, lowlight, newcolor, 0.5 + 0.5 * sin(uis.realtime / PULSE_DIVISOR));
-		drawcolor = newcolor;
-	} else {
-		drawcolor = color;
-	}
-
-	switch (style & UI_FORMATMASK) {
-		case UI_CENTER:
-			// center justify at x
-			len = strlen(str);
-			x = x - len * charw / 2;
-			break;
-		case UI_RIGHT:
-			// right justify at x
-			len = strlen(str);
-			x = x - len * charw;
-			break;
-		default:
-			// left justify at x
-			break;
-	}
-
-	if (style & UI_DROPSHADOW) {
-		dropcolor[0] = dropcolor[1] = dropcolor[2] = 0;
-		dropcolor[3] = drawcolor[3];
-		UI_DrawString2(x + 2, y + 2, str, dropcolor, charw, charh);
-	}
-
-	UI_DrawString2(x, y, str, drawcolor, charw, charh);
+	UI_DrawStringExtWithCursor(x, y, str, style, color, 0, 0, 0, 0, -1, -1);
 }
 
 /*
@@ -831,6 +1041,14 @@ void UI_DrawChar(int x, int y, int ch, int style, vec4_t color) {
 
 	UI_DrawString(x, y, buff, style, color);
 }
+
+/*
+=======================================================================================================================================
+
+	COMMON UI FUNCTIONS
+
+=======================================================================================================================================
+*/
 
 /*
 =======================================================================================================================================

@@ -2331,7 +2331,8 @@ Q3CGOBJ_ = \
   $(B)/$(BASEGAME)/cgame/cg_weapons.o \
   \
   $(B)/$(BASEGAME)/qcommon/q_math.o \
-  $(B)/$(BASEGAME)/qcommon/q_shared.o
+  $(B)/$(BASEGAME)/qcommon/q_shared.o \
+  $(B)/$(BASEGAME)/qcommon/q_unicode.o
 
 Q3CGOBJ = $(Q3CGOBJ_) $(B)/$(BASEGAME)/cgame/cg_syscalls.o
 Q3CGVMOBJ = $(Q3CGOBJ_:%.o=%.asm)
@@ -2377,7 +2378,8 @@ MPCGOBJ_ = \
   $(B)/$(MISSIONPACK)/ui/ui_shared.o \
   \
   $(B)/$(MISSIONPACK)/qcommon/q_math.o \
-  $(B)/$(MISSIONPACK)/qcommon/q_shared.o
+  $(B)/$(MISSIONPACK)/qcommon/q_shared.o \
+  $(B)/$(MISSIONPACK)/qcommon/q_unicode.o
 
 MPCGOBJ = $(MPCGOBJ_) $(B)/$(MISSIONPACK)/cgame/cg_syscalls.o
 MPCGVMOBJ = $(MPCGOBJ_:%.o=%.asm)
@@ -2554,7 +2556,8 @@ Q3UIOBJ_ = \
   $(B)/$(BASEGAME)/ui/ui_video.o \
   \
   $(B)/$(BASEGAME)/qcommon/q_math.o \
-  $(B)/$(BASEGAME)/qcommon/q_shared.o
+  $(B)/$(BASEGAME)/qcommon/q_shared.o \
+  $(B)/$(BASEGAME)/qcommon/q_unicode.o
 
 Q3UIOBJ = $(Q3UIOBJ_) $(B)/$(MISSIONPACK)/ui/ui_syscalls.o
 Q3UIVMOBJ = $(Q3UIOBJ_:%.o=%.asm)
@@ -2582,7 +2585,9 @@ MPUIOBJ_ = \
   $(B)/$(MISSIONPACK)/ui/bg_lib.o \
   \
   $(B)/$(MISSIONPACK)/qcommon/q_math.o \
-  $(B)/$(MISSIONPACK)/qcommon/q_shared.o
+  $(B)/$(MISSIONPACK)/qcommon/q_shared.o \
+  $(B)/$(MISSIONPACK)/qcommon/q_unicode.o
+
 
 MPUIOBJ = $(MPUIOBJ_) $(B)/$(MISSIONPACK)/ui/ui_syscalls.o
 MPUIVMOBJ = $(MPUIOBJ_:%.o=%.asm)

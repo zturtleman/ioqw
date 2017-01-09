@@ -438,6 +438,11 @@ void UI_PlayerInfo_UpdateColor(playerInfo_t *pi);
 qboolean UI_RegisterClientModelname(playerInfo_t *pi, const char *modelSkinName);
 // ui_atoms.c
 typedef struct {
+	fontInfo_t tinyFont;
+	fontInfo_t smallFont;
+	fontInfo_t bigFont;
+	fontInfo_t giantFont;
+	fontInfo_t titanFont;
 	int frametime;
 	int realtime;
 	int cursorx;
@@ -460,7 +465,6 @@ typedef struct {
 	float xscale;
 	float yscale;
 	float bias;
-	qboolean demoversion;
 	qboolean firstdraw;
 } uiStatic_t;
 
@@ -475,10 +479,9 @@ extern void UI_DrawHandlePic(float x, float y, float w, float h, qhandle_t hShad
 extern void UI_FillRect(float x, float y, float width, float height, const float *color);
 extern void UI_DrawRect(float x, float y, float width, float height, const float *color);
 extern void UI_UpdateScreen(void);
-extern void UI_LerpColor(vec4_t a, vec4_t b, vec4_t c, float t);
+extern void UI_LerpColor(const vec4_t a, const vec4_t b, vec4_t c, float t);
 extern void UI_DrawBannerString(int x, int y, const char *str, int style, vec4_t color);
 extern float UI_ProportionalSizeScale(int style);
-extern void UI_DrawScaledProportionalString(float x, float y, const char *str, int style, float sizeScale, vec4_t color);
 extern void UI_DrawProportionalString(int x, int y, const char *str, int style, vec4_t color);
 extern void UI_DrawProportionalString_AutoWrapped(int x, int ystart, int xmax, int ystep, const char *str, int style, vec4_t color);
 extern int UI_ProportionalStringWidth(const char *str);
@@ -539,7 +542,7 @@ qhandle_t trap_R_RegisterModel(const char *name);
 qhandle_t trap_R_RegisterSkin(const char *name);
 qhandle_t trap_R_RegisterShader(const char *name);
 qhandle_t trap_R_RegisterShaderNoMip(const char *name);
-void trap_R_RegisterFont(const char *pFontname, int pointSize, fontInfo_t *font);
+void trap_R_RegisterFont(const char *pFontname, int pointSize, float borderWidth, qboolean forceAutoHint, fontInfo_t *font);
 void trap_R_ClearScene(void);
 void trap_R_AddRefEntityToScene(const refEntity_t *re);
 void trap_R_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts);
@@ -548,6 +551,8 @@ void trap_R_RenderScene(const refdef_t *fd);
 void trap_R_SetColor(const float *rgba);
 void trap_R_SetClipRegion(const float *region);
 void trap_R_DrawStretchPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader);
+void trap_R_DrawStretchPicGradient(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader, const float *gradientColor);
+void trap_R_DrawRotatedPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader, float angle);
 void trap_R_ModelBounds(clipHandle_t model, vec3_t mins, vec3_t maxs);
 int trap_R_LerpTag(orientation_t *tag, clipHandle_t mod, int startFrame, int endFrame, float frac, const char *tagName);
 void trap_R_RemapShader(const char *oldShader, const char *newShader, const char *timeOffset);

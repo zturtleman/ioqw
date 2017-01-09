@@ -1115,6 +1115,7 @@
     </ClCompile>
     <ClCompile Include="..\..\code\qcommon\q_math.c" />
     <ClCompile Include="..\..\code\qcommon\q_shared.c" />
+    <ClCompile Include="..\..\code\qcommon\q_unicode.c" />
     <ClCompile Include="..\..\code\ui\ui_shared.c">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug TA|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug TA|x64'">Disabled</Optimization>
