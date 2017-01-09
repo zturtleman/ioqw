@@ -1204,6 +1204,24 @@ static float CG_DrawScores(float y) {
 			w = CG_DrawStrlen(s) * BIGCHAR_WIDTH + 8;
 			x -= w;
 			CG_DrawBigString(x + 4, y, s, 1.0F);
+		} else {
+			qboolean spectator;
+			score = cg.snap->ps.persistant[PERS_SCORE];
+			spectator = (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR);
+
+			s = va("%2i", score);
+			w = CG_DrawStrlen(s) * BIGCHAR_WIDTH + 8;
+			x -= w;
+
+			if (!spectator) {
+				color[0] = 0.5f;
+				color[1] = 0.5f;
+				color[2] = 0.5f;
+				color[3] = 0.33f;
+				CG_FillRect(x, y - 4, w, BIGCHAR_HEIGHT + 8, color);
+			}
+
+			CG_DrawBigString(x + 4, y, s, 1.0F);
 		}
 	} else {
 		qboolean spectator;

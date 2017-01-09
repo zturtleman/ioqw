@@ -243,10 +243,8 @@ static void PM_Friction(void) {
 	}
 
 	newspeed /= speed;
-
-	vel[0] = vel[0] * newspeed;
-	vel[1] = vel[1] * newspeed;
-	vel[2] = vel[2] * newspeed;
+	// use VectorScale instead of multiplying by hand
+	VectorScale(vel, newspeed, vel);
 }
 
 /*
@@ -328,6 +326,32 @@ static float PM_CmdScale(usercmd_t *cmd) {
 
 	total = sqrt(cmd->forwardmove * cmd->forwardmove + cmd->rightmove * cmd->rightmove + cmd->upmove * cmd->upmove);
 	scale = (float)pm->ps->speed * max / (127.0 * total);
+	// ignore if spectator
+	if (pm->ps->persistant[PERS_TEAM] == TEAM_SPECTATOR) {
+		return scale;
+	}
+	// apply speed scale for strafing and going backwards
+	if (cmd->forwardmove < 0) {
+		scale *= 0.75f;
+	} else if (cmd->rightmove) {
+		scale *= 0.9f;
+	}
+	// apply weapon speed scale
+	switch (pm->ps->weapon) {
+		case WP_GAUNTLET:
+		case WP_HANDGUN:
+			scale *= 1.15f;
+			break;
+		case WP_RAILGUN:
+		case WP_BFG:
+			scale *= 0.9f;
+			break;
+		case WP_MISSILELAUNCHER:
+			scale *= 0.75f;
+			break;
+		default:
+			break;
+	}
 
 	return scale;
 }
@@ -603,8 +627,6 @@ static void PM_AirMove(void) {
 
 	cmd = pm->cmd;
 	scale = PM_CmdScale(&cmd);
-	// set the movementDir so clients can rotate the legs for strafing
-	PM_SetMovementDir();
 	// project moves down to flat plane
 	pml.forward[2] = 0;
 	pml.right[2] = 0;
@@ -631,6 +653,8 @@ static void PM_AirMove(void) {
 	}
 
 	PM_StepSlideMove(qtrue);
+	// set the movementDir so players can rotate the legs for strafing
+	PM_SetMovementDir();
 }
 
 /*
@@ -672,8 +696,6 @@ static void PM_WalkMove(void) {
 	smove = pm->cmd.rightmove;
 	cmd = pm->cmd;
 	scale = PM_CmdScale(&cmd);
-	// set the movementDir so clients can rotate the legs for strafing
-	PM_SetMovementDir();
 	// project moves down to flat plane
 	pml.forward[2] = 0;
 	pml.right[2] = 0;
@@ -724,9 +746,6 @@ static void PM_WalkMove(void) {
 
 	if ((pml.groundTrace.surfaceFlags & SURF_SLICK) || pm->ps->pm_flags & PMF_TIME_KNOCKBACK) {
 		pm->ps->velocity[2] -= pm->ps->gravity * pml.frametime;
-	} else {
-		// don't reset the z velocity for slopes
-//		pm->ps->velocity[2] = 0;
 	}
 
 	vel = VectorLength(pm->ps->velocity);
@@ -744,7 +763,8 @@ static void PM_WalkMove(void) {
 	}
 
 	PM_StepSlideMove(qfalse);
-
+	// set the movementDir so players can rotate the legs for strafing
+	PM_SetMovementDir();
 	//Com_Printf("velocity2 = %1.1f\n", VectorLength(pm->ps->velocity));
 }
 
@@ -1167,17 +1187,15 @@ Sets mins, maxs, and pm->ps->viewheight.
 static void PM_CheckDuck(void) {
 	trace_t trace;
 
-	pm->mins[0] = -15;
-	pm->mins[1] = -15;
-
-	pm->maxs[0] = 15;
-	pm->maxs[1] = 15;
-
-	pm->mins[2] = MINS_Z;
+	pm->mins[0] = pm->ps->mins[0];
+	pm->mins[1] = pm->ps->mins[1];
+	pm->maxs[0] = pm->ps->maxs[0];
+	pm->maxs[1] = pm->ps->maxs[1];
+	pm->mins[2] = pm->ps->mins[2];
 
 	if (pm->ps->pm_type == PM_DEAD) {
-		pm->maxs[2] = -8;
-		pm->ps->viewheight = DEAD_VIEWHEIGHT;
+		pm->maxs[2] = pm->ps->maxs[2]; // NOTE: must set death bounding box in game code
+		pm->ps->viewheight = pm->ps->deadViewHeight;
 		return;
 	}
 
@@ -1186,7 +1204,7 @@ static void PM_CheckDuck(void) {
 	} else { // stand up if possible
 		if (pm->ps->pm_flags & PMF_DUCKED) {
 			// try to stand up
-			pm->maxs[2] = 32;
+			pm->maxs[2] = pm->ps->maxs[2];
 			pm->trace(&trace, pm->ps->origin, pm->mins, pm->maxs, pm->ps->origin, pm->ps->clientNum, pm->tracemask);
 
 			if (!trace.allsolid) {
@@ -1196,11 +1214,11 @@ static void PM_CheckDuck(void) {
 	}
 
 	if (pm->ps->pm_flags & PMF_DUCKED) {
-		pm->maxs[2] = 16;
-		pm->ps->viewheight = CROUCH_VIEWHEIGHT;
+		pm->maxs[2] = pm->ps->crouchMaxZ;
+		pm->ps->viewheight = pm->ps->crouchViewHeight;
 	} else {
-		pm->maxs[2] = 32;
-		pm->ps->viewheight = DEFAULT_VIEWHEIGHT;
+		pm->maxs[2] = pm->ps->maxs[2];
+		pm->ps->viewheight = pm->ps->standViewHeight;
 	}
 }
 

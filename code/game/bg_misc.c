@@ -888,13 +888,13 @@ qboolean BG_CheckSpawnEntity(const bgEntitySpawnInfo_t *info) {
 		}
 	}
 #ifdef MISSIONPACK
-	info->spawnInt("notta", "0", &i);
+	info->spawnInt("notq3a", "0", &i);
 
 	if (i) {
 		return qfalse;
 	}
 #else
-	info->spawnInt("notq3a", "0", &i);
+	info->spawnInt("notta", "0", &i);
 
 	if (i) {
 		return qfalse;

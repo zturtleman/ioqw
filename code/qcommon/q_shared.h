@@ -1071,6 +1071,10 @@ typedef struct playerState_s {
 	int externalEvent;		// events set on player from another source
 	int externalEventParm;
 	int clientNum;			// ranges from 0 to MAX_CLIENTS-1
+	// allow for individual bounding boxes
+	vec3_t mins, maxs;
+	float crouchMaxZ;
+	float crouchViewHeight, standViewHeight, deadViewHeight;
 	// weapon info
 	int weapon;				// copied to entityState_t->weapon
 	int weaponstate;

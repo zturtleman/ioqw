@@ -291,6 +291,18 @@ static void CG_Item(centity_t *cent) {
 	} else {
 		frac = 1.0;
 	}
+	// Tobias HACK: decrease the size of some models until we have new models...
+	if (item->giType == IT_AMMO) {
+		VectorScale(ent.axis[0], 0.45, ent.axis[0]);
+		VectorScale(ent.axis[1], 0.45, ent.axis[1]);
+		VectorScale(ent.axis[2], 0.45, ent.axis[2]);
+	}
+
+	if (item->giType == IT_ARMOR || item->giType == IT_HEALTH) {
+		VectorScale(ent.axis[0], 0.75, ent.axis[0]);
+		VectorScale(ent.axis[1], 0.75, ent.axis[1]);
+		VectorScale(ent.axis[2], 0.75, ent.axis[2]);
+	}
 	// items without glow textures need to keep a minimum light value so they are always visible
 	if ((item->giType == IT_WEAPON) || (item->giType == IT_ARMOR)) {
 		ent.renderfx |= RF_MINLIGHT;
@@ -353,6 +365,12 @@ static void CG_Item(centity_t *cent) {
 					VectorScale(ent.axis[1], frac, ent.axis[1]);
 					VectorScale(ent.axis[2], frac, ent.axis[2]);
 					ent.nonNormalizedAxes = qtrue;
+				}
+				// Tobias HACK: also decrease the size of the health spheres until we have new models...
+				if (item->giType == IT_HEALTH) {
+					VectorScale(ent.axis[0], 0.75, ent.axis[0]);
+					VectorScale(ent.axis[1], 0.75, ent.axis[1]);
+					VectorScale(ent.axis[2], 0.75, ent.axis[2]);
 				}
 
 				trap_R_AddRefEntityToScene(&ent);
@@ -451,6 +469,10 @@ static void CG_Missile(centity_t *cent) {
 			RotateAroundDirection(ent.axis, s1->time);
 		}
 	}
+
+	VectorScale(ent.axis[0], 0.45, ent.axis[0]);
+	VectorScale(ent.axis[1], 0.45, ent.axis[1]);
+	VectorScale(ent.axis[2], 0.45, ent.axis[2]);
 	// add to refresh list, possibly with quad glow
 	CG_AddRefEntityWithPowerups(&ent, s1);
 }

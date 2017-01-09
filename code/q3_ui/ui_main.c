@@ -212,7 +212,7 @@ static cvarTable_t cvarTable[] = {
 	{&ui_map_list, "ui_map_list", "0", CVAR_ROM|CVAR_ARCHIVE},
 	{&ui_bot_multisel, "ui_bot_multisel", "1", CVAR_ROM|CVAR_ARCHIVE},
 	{&ui_bot_list, "ui_bot_list", "1", CVAR_ROM|CVAR_ARCHIVE},
-	{&ui_ingame_dynamicmenu, "ui_ingame_dynamicmenu", "1", CVAR_ROM|CVAR_ARCHIVE},
+	{&ui_ingame_dynamicmenu, "ui_ingame_dynamicmenu", "0", CVAR_ROM|CVAR_ARCHIVE},
 	{&ui_animsfx, "ui_s_animsfx", "1", CVAR_ROM|CVAR_ARCHIVE},
 	{&ui_mapicons, "ui_mapicons", "0", CVAR_ROM|CVAR_ARCHIVE},
 	{&ui_autoclosebotmenu, "ui_autoclosebotmenu", "0", CVAR_ROM|CVAR_ARCHIVE},

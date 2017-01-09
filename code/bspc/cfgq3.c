@@ -41,7 +41,7 @@ bbox	//30x30x56
 	presencetype	PRESENCE_NORMAL
 	flags			0x0000
 	mins			{-15, -15, -24}
-	maxs			{15, 15, 32}
+	maxs			{15, 15, 48}
 } //end bbox
 
 bbox	//30x30x40
@@ -49,7 +49,7 @@ bbox	//30x30x40
 	presencetype	PRESENCE_CROUCH
 	flags			0x0001
 	mins			{-15, -15, -24}
-	maxs			{15, 15, 16}
+	maxs			{15, 15, 32}
 } //end bbox
 
 settings
@@ -60,8 +60,8 @@ settings
 	phys_gravity				800
 	phys_waterfriction			1
 	phys_watergravity			400
-	phys_maxvelocity			320
-	phys_maxwalkvelocity		320
+	phys_maxvelocity			300
+	phys_maxwalkvelocity		300
 	phys_maxcrouchvelocity		100
 	phys_maxswimvelocity		150
 	phys_walkaccelerate			10
@@ -69,9 +69,9 @@ settings
 	phys_swimaccelerate			4
 	phys_maxstep				19
 	phys_maxsteepness			0.7
-	phys_maxwaterjump			18
-	phys_maxbarrier				33
-	phys_jumpvel				270
+	phys_maxwaterjump			12
+	phys_maxbarrier				43
+	phys_jumpvel				200
 	phys_falldelta5				40
 	phys_falldelta10			60
 	phys_strafejumping			1
@@ -90,7 +90,7 @@ settings
 	rs_startelevator			50
 	rs_falldamage5				300
 	rs_falldamage10				500
-	rs_maxfallheight			0 // 0 means no limit
+	rs_maxfallheight			512 // 0 means no limit
 	rs_maxjumpfallheight		450
 	rs_allowladders				0
 } //end settings

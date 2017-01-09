@@ -31,7 +31,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define MAX_SPAWN_POINTS 128
 
 static vec3_t playerMins = {-15, -15, -24};
-static vec3_t playerMaxs = {15, 15, 32};
+static vec3_t playerMaxs = {15, 15, 48};
 
 /*QUAKED info_player_deathmatch (1 0 1) (-16 -16 -24) (16 16 32) initial
 potential spawning position for deathmatch games.
@@ -469,7 +469,10 @@ void CopyToBodyQue(gentity_t *ent) {
 	VectorCopy(ent->r.maxs, body->r.maxs);
 	VectorCopy(ent->r.absmin, body->r.absmin);
 	VectorCopy(ent->r.absmax, body->r.absmax);
-
+// TOBIAS FIXME: This is from ET, otherwise there is an invisible but passable shootable box!
+	// bodies have lower bounding box
+	body->r.maxs[2] = 0;
+// TOBIASEND
 	body->clipmask = CONTENTS_SOLID|CONTENTS_PLAYERCLIP;
 	body->r.contents = CONTENTS_CORPSE;
 	body->r.ownerNum = ent->s.number;
@@ -1042,7 +1045,14 @@ void ClientSpawn(gentity_t *ent) {
 
 	VectorCopy(playerMins, ent->r.mins);
 	VectorCopy(playerMaxs, ent->r.maxs);
+	// setup the bounding boxes and viewheights for prediction
+	VectorCopy(ent->r.mins, client->ps.mins);
+	VectorCopy(ent->r.maxs, client->ps.maxs);
 
+	client->ps.crouchViewHeight = CROUCH_VIEWHEIGHT;
+	client->ps.standViewHeight = DEFAULT_VIEWHEIGHT;
+	client->ps.deadViewHeight = DEAD_VIEWHEIGHT;
+	client->ps.crouchMaxZ = client->ps.maxs[2] - (client->ps.standViewHeight - client->ps.crouchViewHeight);
 	client->ps.clientNum = index;
 
 	COM_BitSet(client->ps.weapons, WP_MACHINEGUN);
