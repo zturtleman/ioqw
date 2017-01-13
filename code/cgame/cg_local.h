@@ -23,6 +23,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 */
 
 #include "../qcommon/q_shared.h"
+#include "../qcommon/q_unicode.h"
 #include "../renderercommon/tr_types.h"
 #include "../game/bg_public.h"
 #include "cg_public.h"
@@ -64,6 +65,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define TEXT_ICON_SPACE 4
 #define TEAMCHAT_WIDTH 80
 #define TEAMCHAT_HEIGHT 8
+#define CENTERPRINT_HEIGHT 128
 // very large characters
 #define GIANT_WIDTH 32
 #define GIANT_HEIGHT 48
@@ -460,11 +462,11 @@ typedef struct {
 	// skull trails
 	skulltrail_t skulltrails[MAX_CLIENTS];
 	// centerprinting
+	int centerPrintPriority;
 	int centerPrintTime;
-	int centerPrintCharWidth;
+	int centerPrintStyle;
 	int centerPrintY;
 	char centerPrint[1024];
-	int centerPrintLines;
 	// low ammo warning state
 	int lowAmmoWarning; // 1 = low, 2 = empty
 	// crosshair client ID
@@ -534,6 +536,13 @@ typedef struct {
 	qhandle_t charsetPropGlow;
 	qhandle_t charsetPropB;
 	qhandle_t whiteShader;
+	// truetype fonts
+	fontInfo_t tinyFont;
+	fontInfo_t smallFont;
+	fontInfo_t bigFont;
+	fontInfo_t giantFont;
+	fontInfo_t titanFont;
+
 	qhandle_t redCubeModel;
 	qhandle_t blueCubeModel;
 	qhandle_t redCubeIcon;
@@ -813,6 +822,7 @@ typedef struct {
 	float screenYBias;
 	float screenXScaleStretch;
 	float screenYScaleStretch;
+	float screenFakeWidth;			// width in fake 640x480 coords, it can be more than 640
 	int serverCommandSequence;		// reliable command stream counter
 	int processedSnapshotNum;		// the number of snapshots cgame has requested
 	qboolean localServer;			// detected on startup by checking sv_running
@@ -1040,13 +1050,18 @@ void CG_FillRect(float x, float y, float width, float height, const float *color
 void CG_DrawPic(float x, float y, float width, float height, qhandle_t hShader);
 void CG_SetClipRegion(float x, float y, float w, float h);
 void CG_ClearClipRegion(void);
-void CG_DrawString(float x, float y, const char *string, float charWidth, float charHeight, const float *modulate);
-void CG_DrawStringExt(int x, int y, const char *string, const float *setColor, qboolean forceColor, qboolean shadow, int charWidth, int charHeight, int maxChars);
+void CG_DrawString(int x, int y, const char *str, int style, const vec4_t color);
+void CG_DrawStringWithCursor(int x, int y, const char *str, int style, const vec4_t color, int cursorPos, int cursorChar);
+void CG_DrawStringExt(int x, int y, const char *str, int style, const vec4_t color, float scale, int maxChars, float shadowOffset);
+void CG_DrawStringExtWithCursor(int x, int y, const char *str, int style, const vec4_t color, float scale, int maxChars, float shadowOffset, float gradient, int cursorPos, int cursorChar);
+void CG_DrawStringAutoWrap(int x, int y, const char *str, int style, const vec4_t color, float shadowOffset, float gradient, float wrapX);
+void CG_DrawStringDirect(int x, int y, const char *str, int style, const vec4_t color, float scale, int maxChars, float shadowOffset, float gradient, int cursorPos, int cursorChar, float wrapX);
 void CG_DrawBigString(int x, int y, const char *s, float alpha);
 void CG_DrawBigStringColor(int x, int y, const char *s, vec4_t color);
 void CG_DrawSmallString(int x, int y, const char *s, float alpha);
 void CG_DrawSmallStringColor(int x, int y, const char *s, vec4_t color);
-int CG_DrawStrlen(const char *str);
+float CG_DrawStrlen(const char *str, int style);
+int CG_DrawStringLineHeight(int style);
 float *CG_FadeColor(int startMsec, int totalMsec);
 float *CG_TeamColor(int team);
 void CG_TileClear(void);
@@ -1073,7 +1088,7 @@ extern char teamChat2[256];
 
 void CG_AddLagometerFrameInfo(void);
 void CG_AddLagometerSnapshotInfo(snapshot_t *snap);
-void CG_CenterPrint(const char *str, int y, int charWidth);
+void CG_CenterPrint(const char *str, int y, int style, int priority);
 void CG_DrawHead(float x, float y, float w, float h, int clientNum, vec3_t headAngles);
 void CG_DrawActive(stereoFrame_t stereoView);
 void CG_DrawFlagModel(float x, float y, float w, float h, int team, qboolean force2D);

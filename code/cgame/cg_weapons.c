@@ -2053,7 +2053,7 @@ CG_DrawWeaponSelect
 =======================================================================================================================================
 */
 void CG_DrawWeaponSelect(void) {
-	int bits[MAX_WEAPONS / (sizeof(int) * 8)], count, i, x, y, diff, weap, w;
+	int bits[MAX_WEAPONS / (sizeof(int) * 8)], count, i, x, y, diff, weap;
 	float *color, dist;
 	vec4_t fadecolor = {1.0f, 1.0f, 1.0f, 1.0f};
 	char *name;
@@ -2220,9 +2220,7 @@ void CG_DrawWeaponSelect(void) {
 		name = cg_weapons[cg.weaponSelect].item->pickup_name;
 
 		if (name) {
-			w = CG_DrawStrlen(name) * BIGCHAR_WIDTH;
-			x = (SCREEN_WIDTH - w) / 2;
-			CG_DrawStringExt(x, y - 22, name, color, qfalse, qtrue, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0);
+			CG_DrawString(SCREEN_WIDTH / 2, y - 6, name, UI_CENTER|UI_VA_BOTTOM|UI_DROPSHADOW|UI_SMALLFONT, color);
 		}
 	}
 

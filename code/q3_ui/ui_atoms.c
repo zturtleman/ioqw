@@ -644,7 +644,7 @@ void UI_Text_Paint_AutoWrapped(float x, float y, const fontInfo_t *font, float s
 
 #define PROPB_GAP_WIDTH 4
 #define PROPB_SPACE_WIDTH 12
-#define PROPB_HEIGHT 36
+#define PROPB_HEIGHT 48
 
 /*
 =======================================================================================================================================
@@ -656,7 +656,7 @@ void UI_DrawBannerString(int x, int y, const char *str, int style, vec4_t color)
 	int width;
 
 	// find the width of the drawn text
-	width = UI_Text_Width(str, &uis.bigFont, PROPB_HEIGHT / 48.0f, 0);
+	width = UI_Text_Width(str, &uis.titanFont, PROPB_HEIGHT / 48.0f, 0);
 
 	switch (style & UI_FORMATMASK) {
 		case UI_CENTER:
@@ -670,10 +670,10 @@ void UI_DrawBannerString(int x, int y, const char *str, int style, vec4_t color)
 			break;
 	}
 	// this function expects that y is top of line, text_paint expects at baseline
-	decent = -uis.bigFont.glyphs[(int)'g'].top + uis.bigFont.glyphs[(int)'g'].height;
-	y = y + PROPB_HEIGHT - decent * PROPB_HEIGHT / 48.0f * uis.bigFont.glyphScale;
+	decent = -uis.titanFont.glyphs[(int)'g'].top + uis.titanFont.glyphs[(int)'g'].height;
+	y = y + PROPB_HEIGHT - decent * PROPB_HEIGHT / 48.0f * uis.titanFont.glyphScale;
 
-	UI_Text_Paint(x, y, &uis.bigFont, PROPB_HEIGHT / 48.0f, color, str, 0, 0, (style & UI_DROPSHADOW) ? 2 : 0, 0, qfalse);
+	UI_Text_Paint(x, y, &uis.titanFont, PROPB_HEIGHT / 48.0f, color, str, 0, 0, (style & UI_DROPSHADOW) ? 2 : 0, 0, qfalse);
 }
 
 /*
@@ -682,7 +682,7 @@ UI_ProportionalStringWidth
 =======================================================================================================================================
 */
 int UI_ProportionalStringWidth(const char *str) {
-	return UI_Text_Width(str, &uis.bigFont, PROP_HEIGHT / 48.0f, 0);
+	return UI_Text_Width(str, &uis.titanFont, PROP_HEIGHT / 48.0f, 0);
 }
 
 /*
@@ -733,16 +733,16 @@ void UI_DrawProportionalString(int x, int y, const char *str, int style, vec4_t 
 	// this function expects that y is top of line, text_paint expects at baseline
 
 	// glow font
-	decent = -uis.bigFont.glyphs[(int)'g'].top + uis.bigFont.glyphs[(int)'g'].height;
-	glowY = y + charh - decent * scale * uis.bigFont.glyphScale;
+	decent = -uis.titanFont.glyphs[(int)'g'].top + uis.titanFont.glyphs[(int)'g'].height;
+	glowY = y + charh - decent * scale * uis.titanFont.glyphScale;
 
 	if (decent != 0) {
 		// make TrueType fonts line up with font1_prop bitmap font which has 4 transparent pixels above glyphs at 16 point font size
 		glowY += 3.0f * propScale;
 	}
 	// normal font
-	decent = -uis.bigFont.glyphs[(int)'g'].top + uis.bigFont.glyphs[(int)'g'].height;
-	y = y + charh - decent * scale * uis.bigFont.glyphScale;
+	decent = -uis.titanFont.glyphs[(int)'g'].top + uis.titanFont.glyphs[(int)'g'].height;
+	y = y + charh - decent * scale * uis.titanFont.glyphScale;
 
 	if (decent != 0) {
 		// make TrueType fonts line up with font1_prop bitmap font which has 4 transparent pixels above glyphs at 16 point font size
@@ -754,21 +754,21 @@ void UI_DrawProportionalString(int x, int y, const char *str, int style, vec4_t 
 		drawcolor[1] = color[1] * 0.7;
 		drawcolor[2] = color[2] * 0.7;
 		drawcolor[3] = color[3];
-		UI_Text_Paint(x, y, &uis.bigFont, scale, drawcolor, str, 0, 0, (style & UI_DROPSHADOW) ? 2 : 0, 0, qfalse);
+		UI_Text_Paint(x, y, &uis.titanFont, scale, drawcolor, str, 0, 0, (style & UI_DROPSHADOW) ? 2 : 0, 0, qfalse);
 		return;
 	}
 
 	if (style & UI_PULSE) {
-		UI_Text_Paint(x, y, &uis.bigFont, scale, color, str, 0, 0, (style & UI_DROPSHADOW) ? 2 : 0, 0, qfalse);
+		UI_Text_Paint(x, y, &uis.titanFont, scale, color, str, 0, 0, (style & UI_DROPSHADOW) ? 2 : 0, 0, qfalse);
 		drawcolor[0] = color[0];
 		drawcolor[1] = color[1];
 		drawcolor[2] = color[2];
 		drawcolor[3] = 0.5 + 0.5 * sin(uis.realtime / PULSE_DIVISOR);
-		UI_Text_Paint(x, glowY, &uis.bigFont, scale, drawcolor, str, 0, 0, 0, 0, qfalse);
+		UI_Text_Paint(x, glowY, &uis.titanFont, scale, drawcolor, str, 0, 0, 0, 0, qfalse);
 		return;
 	}
 
-	UI_Text_Paint(x, y, &uis.bigFont, scale, color, str, 0, 0, (style & UI_DROPSHADOW) ? 2 : 0, 0, qfalse);
+	UI_Text_Paint(x, y, &uis.titanFont, scale, color, str, 0, 0, (style & UI_DROPSHADOW) ? 2 : 0, 0, qfalse);
 }
 
 /*

@@ -265,10 +265,10 @@ static void CG_Obituary(entityState_t *ent) {
 		}
 #ifdef MISSIONPACK
 		if (!(cg_singlePlayer.integer && cg_cameraOrbit.integer)) {
-			CG_CenterPrint(s, SCREEN_HEIGHT * 0.30, BIGCHAR_WIDTH);
+			CG_CenterPrint(s, CENTERPRINT_HEIGHT, UI_CENTER|UI_VA_CENTER|UI_DROPSHADOW|UI_GIANTFONT, 2);
 		}
 #else
-		CG_CenterPrint(s, SCREEN_HEIGHT * 0.30, BIGCHAR_WIDTH);
+		CG_CenterPrint(s, CENTERPRINT_HEIGHT, UI_CENTER|UI_VA_CENTER|UI_DROPSHADOW|UI_GIANTFONT, 2);
 #endif
 		// print the text message as well
 	}
@@ -409,10 +409,10 @@ static void CG_UseItem(centity_t *cent) {
 	// print a message if the local player
 	if (es->number == cg.snap->ps.clientNum) {
 		if (!itemNum) {
-			CG_CenterPrint("No item to use", SCREEN_HEIGHT * 0.30, BIGCHAR_WIDTH);
+			CG_CenterPrint("No item to use", CENTERPRINT_HEIGHT, UI_CENTER|UI_VA_CENTER|UI_DROPSHADOW|UI_GIANTFONT, 1);
 		} else {
 			item = BG_FindItemForHoldable(itemNum);
-			CG_CenterPrint(va("Use %s", item->pickup_name), SCREEN_HEIGHT * 0.30, BIGCHAR_WIDTH);
+			CG_CenterPrint(va("Use %s", item->pickup_name), CENTERPRINT_HEIGHT, UI_CENTER|UI_VA_CENTER|UI_DROPSHADOW|UI_GIANTFONT, 1);
 		}
 	}
 
