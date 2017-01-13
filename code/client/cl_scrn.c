@@ -176,7 +176,7 @@ void SCR_DrawSmallChar(int x, int y, int ch) {
 		return;
 	}
 
-	if (y < -SMALLCHAR_HEIGHT) {
+	if (y < -SMALLCHAR_DOUBLE_HEIGHT) {
 		return;
 	}
 
@@ -186,7 +186,7 @@ void SCR_DrawSmallChar(int x, int y, int ch) {
 	fcol = col * 0.0625;
 	size = 0.0625;
 
-	re.DrawStretchPic(x, y, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, fcol, frow, fcol + size, frow + size, cls.charSetShader);
+	re.DrawStretchPic(x, y, SMALLCHAR_WIDTH, SMALLCHAR_DOUBLE_HEIGHT, fcol, frow, fcol + size, frow + size, cls.charSetShader);
 }
 
 /*

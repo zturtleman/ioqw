@@ -204,6 +204,7 @@ Sets the coordinates of the rendered window.
 static void CG_CalcVrect(void) {
 	int size;
 
+	cgs.screenFakeWidth = cgs.glconfig.vidWidth / cgs.screenXScale;
 	// the intermission should always be full screen
 	if (cg.snap->ps.pm_type == PM_INTERMISSION) {
 		size = 100;

@@ -39,6 +39,7 @@ CG_SetScreenPlacement
 =======================================================================================================================================
 */
 void CG_SetScreenPlacement(screenPlacement_e hpos, screenPlacement_e vpos) {
+
 	cg_lastHorizontalPlacement = cg_horizontalPlacement;
 	cg_lastVerticalPlacement = cg_verticalPlacement;
 	cg_horizontalPlacement = hpos;
@@ -51,6 +52,7 @@ CG_PopScreenPlacement
 =======================================================================================================================================
 */
 void CG_PopScreenPlacement(void) {
+
 	cg_horizontalPlacement = cg_lastHorizontalPlacement;
 	cg_verticalPlacement = cg_lastVerticalPlacement;
 }
@@ -224,103 +226,227 @@ void CG_ClearClipRegion(void) {
 
 /*
 =======================================================================================================================================
-CG_DrawChar
 
-Coordinates and size in 640 * 480 virtual screen size.
+	TEXT DRAWING
+
 =======================================================================================================================================
 */
-void CG_DrawChar(int x, int y, int width, int height, int ch) {
-	int row, col;
-	float frow, fcol;
-	float size;
-	float ax, ay, aw, ah;
 
-	ch &= 255;
+/*
+=======================================================================================================================================
+Text_GetGlyph
+=======================================================================================================================================
+*/
+const glyphInfo_t *Text_GetGlyph(const fontInfo_t *font, unsigned long index) {
 
-	if (ch == ' ') {
-		return;
+	if (index == 0 || index >= GLYPHS_PER_FONT) {
+		return &font->glyphs[(int)'.'];
 	}
 
-	ax = x;
-	ay = y;
-	aw = width;
-	ah = height;
-	CG_AdjustFrom640(&ax, &ay, &aw, &ah);
-
-	row = ch >> 4;
-	col = ch &15;
-	frow = row * 0.0625;
-	fcol = col * 0.0625;
-	size = 0.0625;
-
-	trap_R_DrawStretchPic(ax, ay, aw, ah, fcol, frow, fcol + size, frow + size, cgs.media.charsetShader);
+	return &font->glyphs[index];
 }
 
 /*
 =======================================================================================================================================
-CG_DrawStringExt
-
-Draws a multi-colored string with a drop shadow, optionally forcing to a fixed color.
-Coordinates are at 640 * 480 virtual resolution.
+Text_Width
 =======================================================================================================================================
 */
-void CG_DrawStringExt(int x, int y, const char *string, const float *setColor, qboolean forceColor, qboolean shadow, int charWidth, int charHeight, int maxChars) {
-	vec4_t color;
+float Text_Width(const char *text, const fontInfo_t *font, float scale, int limit) {
+	int count, len;
+	float out;
+	const glyphInfo_t *glyph;
+	float useScale;
 	const char *s;
-	int xx;
-	int cnt;
 
-	if (maxChars <= 0) {
-		maxChars = 32767; // do them all!
+	if (!text) {
+		return 0;
 	}
-	// draw the drop shadow
-	if (shadow) {
-		color[0] = color[1] = color[2] = 0;
-		color[3] = setColor[3];
 
-		trap_R_SetColor(color);
+	useScale = scale * font->glyphScale;
+	out = 0;
+	len = Q_UTF8_PrintStrlen(text);
 
-		s = string;
-		xx = x;
-		cnt = 0;
+	if (limit > 0 && len > limit) {
+		len = limit;
+	}
 
-		while (*s && cnt < maxChars) {
-			if (Q_IsColorString(s)) {
-				s += 2;
-				continue;
-			}
+	s = text;
+	count = 0;
 
-			CG_DrawChar(xx + 2, y + 2, charWidth, charHeight, *s);
-
-			cnt++;
-			xx += charWidth;
-			s++;
+	while (s && *s && count < len) {
+		if (Q_IsColorString(s)) {
+			s += 2;
+			continue;
 		}
+
+		glyph = Text_GetGlyph(font, Q_UTF8_CodePoint(&s));
+		out += glyph->xSkip;
+		count++;
 	}
-	// draw the colored text
-	s = string;
-	xx = x;
-	cnt = 0;
 
-	trap_R_SetColor(setColor);
+	return out * useScale;
+}
 
-	while (*s && cnt < maxChars) {
+/*
+=======================================================================================================================================
+Text_Height
+=======================================================================================================================================
+*/
+float Text_Height(const char *text, const fontInfo_t *font, float scale, int limit) {
+	int len, count;
+	float max;
+	const glyphInfo_t *glyph;
+	float useScale;
+	const char *s;
+
+	if (!text) {
+		return 0;
+	}
+
+	useScale = scale * font->glyphScale;
+	max = 0;
+	len = Q_UTF8_PrintStrlen(text);
+
+	if (limit > 0 && len > limit) {
+		len = limit;
+	}
+
+	s = text;
+	count = 0;
+
+	while (s && *s && count < len) {
+		if (Q_IsColorString(s)) {
+			s += 2;
+			continue;
+		}
+
+		glyph = Text_GetGlyph(font, Q_UTF8_CodePoint(&s));
+
+		if (max < glyph->height) {
+			max = glyph->height;
+		}
+
+		count++;
+	}
+
+	return max * useScale;
+}
+
+/*
+=======================================================================================================================================
+Text_PaintChar
+
+NOTE: scale must be multiplied by font->glyphScale.
+=======================================================================================================================================
+*/
+void Text_PaintChar(float x, float y, float width, float height, float useScale, float s, float t, float s2, float t2, qhandle_t hShader) {
+	float w, h;
+
+	w = width * useScale;
+	h = height * useScale;
+
+	CG_AdjustFrom640(&x, &y, &w, &h);
+	trap_R_DrawStretchPic(x, y, w, h, s, t, s2, t2, hShader);
+}
+
+/*
+=======================================================================================================================================
+Text_PaintGlyph
+
+NOTE: scale must be multiplied by font->glyphScale.
+=======================================================================================================================================
+*/
+void Text_PaintGlyph(float x, float y, float useScale, const glyphInfo_t *glyph, float *gradientColor) {
+	float w, h;
+
+	w = glyph->imageWidth * useScale;
+	h = glyph->imageHeight * useScale;
+
+	CG_AdjustFrom640(&x, &y, &w, &h);
+
+	if (gradientColor) {
+		trap_R_DrawStretchPicGradient(x, y, w, h, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph, gradientColor);
+	} else {
+		trap_R_DrawStretchPic(x, y, w, h, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
+	}
+}
+
+static vec4_t lastTextColor = {0, 0, 0, 1};
+
+/*
+=======================================================================================================================================
+Text_Paint
+=======================================================================================================================================
+*/
+void Text_Paint(float x, float y, const fontInfo_t *font, float scale, const vec4_t color, const char *text, float adjust, int limit, float shadowOffset, float gradient, qboolean forceColor) {
+	int len, count;
+	vec4_t newColor;
+	vec4_t gradientColor;
+	const glyphInfo_t *glyph;
+	const char *s;
+	float yadj, xadj;
+	float useScale;
+
+	if (!text) {
+		return;
+	}
+
+	useScale = scale * font->glyphScale;
+
+	trap_R_SetColor(color);
+
+	Vector4Copy(color, newColor);
+	Vector4Copy(color, lastTextColor);
+
+	gradientColor[0] = Com_Clamp(0, 1, newColor[0] - gradient);
+	gradientColor[1] = Com_Clamp(0, 1, newColor[1] - gradient);
+	gradientColor[2] = Com_Clamp(0, 1, newColor[2] - gradient);
+	gradientColor[3] = color[3];
+
+	len = Q_UTF8_PrintStrlen(text);
+
+	if (limit > 0 && len > limit) {
+		len = limit;
+	}
+
+	s = text;
+	count = 0;
+
+	while (s && *s && count < len) {
 		if (Q_IsColorString(s)) {
 			if (!forceColor) {
-				memcpy(color, g_color_table[ColorIndex(*(s + 1))], sizeof(color));
-				color[3] = setColor[3];
-				trap_R_SetColor(color);
+				VectorCopy(g_color_table[ColorIndex(*(s + 1))], newColor);
+				newColor[3] = color[3];
+				trap_R_SetColor(newColor);
+				Vector4Copy(newColor, lastTextColor);
+
+				gradientColor[0] = Com_Clamp(0, 1, newColor[0] - gradient);
+				gradientColor[1] = Com_Clamp(0, 1, newColor[1] - gradient);
+				gradientColor[2] = Com_Clamp(0, 1, newColor[2] - gradient);
+				gradientColor[3] = color[3];
 			}
 
 			s += 2;
 			continue;
 		}
 
-		CG_DrawChar(xx, y, charWidth, charHeight, *s);
+		glyph = Text_GetGlyph(font, Q_UTF8_CodePoint(&s));
 
-		xx += charWidth;
-		cnt++;
-		s++;
+		yadj = useScale * glyph->top;
+		xadj = useScale * glyph->left;
+
+		if (shadowOffset) {
+			colorBlack[3] = newColor[3];
+			trap_R_SetColor(colorBlack);
+			Text_PaintGlyph(x + xadj + shadowOffset, y - yadj + shadowOffset, useScale, glyph, NULL);
+			trap_R_SetColor(newColor);
+			colorBlack[3] = 1.0f;
+		}
+
+		Text_PaintGlyph(x + xadj, y - yadj, useScale, glyph, (gradient != 0) ? gradientColor : NULL);
+
+		x += (glyph->xSkip * useScale) + adjust;
+		count++;
 	}
 
 	trap_R_SetColor(NULL);
@@ -328,257 +454,359 @@ void CG_DrawStringExt(int x, int y, const char *string, const float *setColor, q
 
 /*
 =======================================================================================================================================
-CG_DrawBigString
+Text_PaintWithCursor
 =======================================================================================================================================
 */
-void CG_DrawBigString(int x, int y, const char *s, float alpha) {
-	float color[4];
+void Text_PaintWithCursor(float x, float y, const fontInfo_t *font, float scale, const vec4_t color, const char *text, int cursorPos, char cursor, float adjust, int limit, float shadowOffset, float gradient, qboolean forceColor) {
+	int len, count;
+	vec4_t newColor;
+	vec4_t gradientColor;
+	const glyphInfo_t *glyph, *glyph2;
+	float yadj, xadj;
+	float useScale;
+	const char *s;
 
-	color[0] = color[1] = color[2] = 1.0;
-	color[3] = alpha;
-	CG_DrawStringExt(x, y, s, color, qfalse, qtrue, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0);
-}
+	if (!text) {
+		return;
+	}
 
-/*
-=======================================================================================================================================
-CG_DrawBigStringColor
-=======================================================================================================================================
-*/
-void CG_DrawBigStringColor(int x, int y, const char *s, vec4_t color) {
-	CG_DrawStringExt(x, y, s, color, qtrue, qtrue, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0);
-}
+	useScale = scale * font->glyphScale;
 
-/*
-=======================================================================================================================================
-CG_DrawSmallString
-=======================================================================================================================================
-*/
-void CG_DrawSmallString(int x, int y, const char *s, float alpha) {
-	float color[4];
+	trap_R_SetColor(color);
 
-	color[0] = color[1] = color[2] = 1.0;
-	color[3] = alpha;
-	CG_DrawStringExt(x, y, s, color, qfalse, qfalse, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0);
-}
+	Vector4Copy(color, newColor);
+	Vector4Copy(color, lastTextColor);
 
-/*
-=======================================================================================================================================
-CG_DrawSmallStringColor
-=======================================================================================================================================
-*/
-void CG_DrawSmallStringColor(int x, int y, const char *s, vec4_t color) {
-	CG_DrawStringExt(x, y, s, color, qtrue, qfalse, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0);
-}
+	gradientColor[0] = Com_Clamp(0, 1, newColor[0] - gradient);
+	gradientColor[1] = Com_Clamp(0, 1, newColor[1] - gradient);
+	gradientColor[2] = Com_Clamp(0, 1, newColor[2] - gradient);
+	gradientColor[3] = color[3];
+	// NOTE: doesn't use Q_UTF8_PrintStrlen because this function draws color codes
+	len = Q_UTF8_Strlen(text);
 
-/*
-=======================================================================================================================================
-CG_DrawStrlen
+	if (limit > 0 && len > limit) {
+		len = limit;
+	}
 
-Returns character count, skiping color escape codes.
-=======================================================================================================================================
-*/
-int CG_DrawStrlen(const char *str) {
-	const char *s = str;
-	int count = 0;
+	s = text;
+	count = 0;
+	glyph2 = Text_GetGlyph(font, cursor);
 
-	while (*s) {
+	while (s && *s && count < len) {
 		if (Q_IsColorString(s)) {
-			s += 2;
+			if (!forceColor) {
+				VectorCopy(g_color_table[ColorIndex(*(s + 1))], newColor);
+				newColor[3] = color[3];
+				trap_R_SetColor(newColor);
+				Vector4Copy(newColor, lastTextColor);
+
+				gradientColor[0] = Com_Clamp(0, 1, newColor[0] - gradient);
+				gradientColor[1] = Com_Clamp(0, 1, newColor[1] - gradient);
+				gradientColor[2] = Com_Clamp(0, 1, newColor[2] - gradient);
+				gradientColor[3] = color[3];
+			}
+			// display color codes in edit fields instead of skipping them
+		}
+
+		glyph = Text_GetGlyph(font, Q_UTF8_CodePoint(&s));
+
+		if (count == cursorPos) {
+			yadj = useScale * glyph2->top;
+
+			Text_PaintChar(x, y - yadj, glyph->left + glyph->xSkip, glyph2->imageHeight, useScale, glyph2->s, glyph2->t, glyph2->s2, glyph2->t2, glyph2->glyph); // use horizontal width of text character
+		}
+
+		yadj = useScale * glyph->top;
+		xadj = useScale * glyph->left;
+
+		if (shadowOffset) {
+			colorBlack[3] = newColor[3];
+			trap_R_SetColor(colorBlack);
+			Text_PaintGlyph(x + xadj + shadowOffset, y - yadj + shadowOffset, useScale, glyph, NULL);
+			trap_R_SetColor(newColor);
+			colorBlack[3] = 1.0f;
+		}
+		// make overstrike cursor invert color
+		if (count == cursorPos/* && cursor == GLYPH_OVERSTRIKE*/) { // Tobias: FIXME
+			// invert color
+			vec4_t invertedColor;
+
+			invertedColor[0] = 1.0f - newColor[0];
+			invertedColor[1] = 1.0f - newColor[1];
+			invertedColor[2] = 1.0f - newColor[2];
+			invertedColor[3] = color[3];
+
+			trap_R_SetColor(invertedColor);
+
+			Text_PaintGlyph(x + xadj, y - yadj, useScale, glyph, NULL);
 		} else {
-			count++;
-			s++;
+			Text_PaintGlyph(x + xadj, y - yadj, useScale, glyph, (gradient != 0) ? gradientColor : NULL);
+		}
+
+		if (count == cursorPos/* && cursor == GLYPH_OVERSTRIKE*/) { // Tobias: FIXME
+			// restore color
+			trap_R_SetColor(newColor);
+		}
+
+		x += (glyph->xSkip * useScale) + adjust;
+		count++;
+	}
+	// need to paint cursor at end of text
+	if (cursorPos == len) {
+		yadj = useScale * glyph2->top;
+		Text_PaintGlyph(x, y - yadj, useScale, glyph2, NULL);
+	}
+
+	trap_R_SetColor(NULL);
+}
+
+/*
+=======================================================================================================================================
+Text_Paint_Limit
+=======================================================================================================================================
+*/
+void Text_Paint_Limit(float *maxX, float x, float y, const fontInfo_t *font, float scale, const vec4_t color, const char *text, float adjust, int limit) {
+	int len, count;
+	vec4_t newColor;
+	const glyphInfo_t *glyph;
+	const char *s;
+	float max;
+	float yadj, xadj;
+	float useScale;
+
+	if (!text || !maxX) {
+		return;
+	}
+
+	max = *maxX;
+	useScale = scale * font->glyphScale;
+
+	trap_R_SetColor(color);
+
+	Vector4Copy(color, lastTextColor);
+
+	len = Q_UTF8_PrintStrlen(text);
+
+	if (limit > 0 && len > limit) {
+		len = limit;
+	}
+
+	s = text;
+	count = 0;
+
+	while (s && *s && count < len) {
+		if (Q_IsColorString(s)) {
+			VectorCopy(g_color_table[ColorIndex(*(s + 1))], newColor);
+			newColor[3] = color[3];
+			trap_R_SetColor(newColor);
+			Vector4Copy(newColor, lastTextColor);
+			s += 2;
+			continue;
+		}
+
+		glyph = Text_GetGlyph(font, Q_UTF8_CodePoint(&s));
+
+		if (x + (glyph->xSkip * useScale) > max) {
+			*maxX = 0;
+			break;
+		}
+
+		yadj = useScale * glyph->top;
+		xadj = useScale * glyph->left;
+
+		Text_PaintGlyph(x + xadj, y - yadj, useScale, glyph, NULL);
+
+		x += (glyph->xSkip * useScale) + adjust;
+		*maxX = x;
+		count++;
+	}
+
+	trap_R_SetColor(NULL);
+}
+
+#define MAX_WRAP_BYTES 1024
+#define MAX_WRAP_LINES 1024
+
+/*
+=======================================================================================================================================
+Text_Paint_AutoWrapped
+=======================================================================================================================================
+*/
+void Text_Paint_AutoWrapped(float x, float y, const fontInfo_t *font, float scale, const vec4_t color, const char *str, float adjust, int limit, float shadowOffset, float gradient, qboolean forceColor, float xmax, float ystep, int style) {
+	int width;
+	char *s1, *s2, *s3;
+	char c_bcp;
+	char buf[MAX_WRAP_BYTES];
+	char wrapped[MAX_WRAP_BYTES + MAX_WRAP_LINES];
+	qboolean autoNewline[MAX_WRAP_LINES];
+	int numLines;
+	vec4_t newColor;
+	const char *p, *start;
+	float drawX;
+
+	if (!str || str[0] == '\0') {
+		return;
+	}
+	// wrap the text
+	Q_strncpyz(buf, str, sizeof(buf));
+
+	s1 = s2 = s3 = buf;
+	wrapped[0] = 0;
+	numLines = 0;
+
+	while (1) {
+		do {
+			s3 += Q_UTF8_Width(s3);
+		} while (*s3 != '\n' && *s3 != ' ' && *s3 != '\0');
+
+		c_bcp = *s3;
+		*s3 = '\0';
+		width = Text_Width(s1, font, scale, 0);
+		*s3 = c_bcp;
+
+		if (width > xmax) {
+			if (s1 == s2) {
+				// fuck, don't have a clean cut, we'll overflow
+				s2 = s3;
+			}
+
+			*s2 = '\0';
+
+			Q_strcat(wrapped, sizeof(wrapped), s1);
+			Q_strcat(wrapped, sizeof(wrapped), "\n");
+
+			if (numLines < MAX_WRAP_LINES) {
+				autoNewline[numLines] = qtrue;
+				numLines++;
+			}
+
+			if (c_bcp == '\0') {
+				// that was the last word
+				// we could start a new loop, but that wouldn't be much use
+				// even if the word is too long, we would overflow it (see above) so just print it now if needed
+				s2 += Q_UTF8_Width(s2);
+
+				if (*s2 != '\0' && *s2 != '\n') { // if we are printing an overflowing line we have s2 == s3
+					Q_strcat(wrapped, sizeof(wrapped), s2);
+					Q_strcat(wrapped, sizeof(wrapped), "\n");
+
+					if (numLines < MAX_WRAP_LINES) {
+						autoNewline[numLines] = qtrue;
+						numLines++;
+					}
+				}
+
+				break;
+			}
+
+			s2 += Q_UTF8_Width(s2);
+			s1 = s2;
+			s3 = s2;
+		} else if (c_bcp == '\n') {
+			*s3 = '\0';
+
+			Q_strcat(wrapped, sizeof(wrapped), s1);
+			Q_strcat(wrapped, sizeof(wrapped), "\n");
+
+			if (numLines < MAX_WRAP_LINES) {
+				autoNewline[numLines] = qfalse;
+				numLines++;
+			}
+
+			s3 += Q_UTF8_Width(s3);
+			s1 = s3;
+			s2 = s3;
+
+			if (*s3 == '\0') { // we reached the end
+				break;
+			}
+		} else {
+			s2 = s3;
+
+			if (c_bcp == '\0') { // we reached the end
+				Q_strcat(wrapped, sizeof(wrapped), s1);
+				Q_strcat(wrapped, sizeof(wrapped), "\n");
+
+				if (numLines < MAX_WRAP_LINES) {
+					autoNewline[numLines] = qfalse;
+					numLines++;
+				}
+
+				break;
+			}
 		}
 	}
-
-	return count;
-}
-
-/*
-=======================================================================================================================================
-CG_TileClearBox
-
-This repeats a 64 * 64 tile graphic to fill the screen around a sized down refresh window.
-=======================================================================================================================================
-*/
-static void CG_TileClearBox(int x, int y, int w, int h, qhandle_t hShader) {
-	float s1, t1, s2, t2;
-
-	s1 = x / 64.0;
-	t1 = y / 64.0;
-	s2 = (x + w) / 64.0;
-	t2 = (y + h) / 64.0;
-	trap_R_DrawStretchPic(x, y, w, h, s1, t1, s2, t2, hShader);
-}
-
-/*
-=======================================================================================================================================
-CG_TileClear
-
-Clear around a sized down screen.
-=======================================================================================================================================
-*/
-void CG_TileClear(void) {
-	int top, bottom, left, right;
-	int w, h;
-
-	w = cgs.glconfig.vidWidth;
-	h = cgs.glconfig.vidHeight;
-
-	if (cg.refdef.x == 0 && cg.refdef.y == 0 && cg.refdef.width == w && cg.refdef.height == h) {
-		return; // full screen rendering
-	}
-
-	top = cg.refdef.y;
-	bottom = top + cg.refdef.height - 1;
-	left = cg.refdef.x;
-	right = left + cg.refdef.width - 1;
-	// clear above view screen
-	CG_TileClearBox(0, 0, w, top, cgs.media.backTileShader);
-	// clear below view screen
-	CG_TileClearBox(0, bottom, w, h - bottom, cgs.media.backTileShader);
-	// clear left of view screen
-	CG_TileClearBox(0, top, left, bottom - top + 1, cgs.media.backTileShader);
-	// clear right of view screen
-	CG_TileClearBox(right, top, w - right, bottom - top + 1, cgs.media.backTileShader);
-}
-
-/*
-=======================================================================================================================================
-CG_FadeColor
-=======================================================================================================================================
-*/
-float *CG_FadeColor(int startMsec, int totalMsec) {
-	static vec4_t color;
-	int t;
-
-	if (startMsec == 0) {
-		return NULL;
-	}
-
-	t = cg.time - startMsec;
-
-	if (t >= totalMsec) {
-		return NULL;
-	}
-	// fade out
-	if (totalMsec - t < FADE_TIME) {
-		color[3] = (totalMsec - t) * 1.0 / FADE_TIME;
-	} else {
-		color[3] = 1.0;
-	}
-
-	color[0] = color[1] = color[2] = 1;
-	return color;
-}
-
-/*
-=======================================================================================================================================
-CG_TeamColor
-=======================================================================================================================================
-*/
-float *CG_TeamColor(int team) {
-	static vec4_t red = {1, 0.2f, 0.2f, 1};
-	static vec4_t blue = {0.2f, 0.2f, 1, 1};
-	static vec4_t other = {1, 1, 1, 1};
-	static vec4_t spectator = {0.7f, 0.7f, 0.7f, 1};
-
-	switch (team) {
-		case TEAM_RED:
-			return red;
-		case TEAM_BLUE:
-			return blue;
-		case TEAM_SPECTATOR:
-			return spectator;
+	// draw the text
+	switch (style & UI_VA_FORMATMASK) {
+		case UI_VA_CENTER:
+			// center justify at y
+			y = y - numLines * ystep / 2.0f;
+			break;
+		case UI_VA_BOTTOM:
+			// bottom justify at y
+			y = y - numLines * ystep;
+			break;
+		case UI_VA_TOP:
 		default:
-			return other;
+			// top justify at y
+			break;
+	}
+
+	numLines = 0;
+
+	Vector4Copy(color, newColor);
+
+	start = wrapped;
+	p = strchr(wrapped, '\n');
+
+	while (p && *p) {
+		strncpy(buf, start, p - start + 1);
+		buf[p - start] = '\0';
+
+		switch (style & UI_FORMATMASK) {
+			case UI_CENTER:
+				// center justify at x
+				drawX = x - Text_Width(buf, font, scale, 0) / 2;
+				break;
+			case UI_RIGHT:
+				// right justify at x
+				drawX = x - Text_Width(buf, font, scale, 0);
+				break;
+			case UI_LEFT:
+			default:
+				// left justify at x
+				drawX = x;
+				break;
+		}
+
+		Text_Paint(drawX, y, font, scale, newColor, buf, adjust, 0, shadowOffset, gradient, forceColor);
+
+		y += ystep;
+
+		if (numLines >= MAX_WRAP_LINES || autoNewline[numLines]) {
+			Vector4Copy(lastTextColor, newColor);
+		} else {
+			// reset color after non-wrapped lines
+			Vector4Copy(color, newColor);
+		}
+
+		numLines++;
+		start += p - start + 1;
+		p = strchr(p + 1, '\n');
 	}
 }
 
 /*
 =======================================================================================================================================
-CG_GetColorForHealth
+
+	STRING FUNCTIONS
+
 =======================================================================================================================================
 */
-void CG_GetColorForHealth(int health, int armor, vec4_t hcolor) {
-	int count;
-	int max;
 
-	// calculate the total points of damage that can be sustained at the current health / armor level
-	if (health <= 0) {
-		VectorClear(hcolor); // black
-		hcolor[3] = 1;
-		return;
-	}
-
-	count = armor;
-	max = health * ARMOR_PROTECTION / (1.0 - ARMOR_PROTECTION);
-
-	if (max < count) {
-		count = max;
-	}
-
-	health += count;
-	// set the color based on health
-	hcolor[0] = 1.0;
-	hcolor[3] = 1.0;
-
-	if (health >= 100) {
-		hcolor[2] = 1.0;
-	} else if (health < 66) {
-		hcolor[2] = 0;
-	} else {
-		hcolor[2] = (health - 66) / 33.0;
-	}
-
-	if (health > 60) {
-		hcolor[1] = 1.0;
-	} else if (health < 30) {
-		hcolor[1] = 0;
-	} else {
-		hcolor[1] = (health - 30) / 30.0;
-	}
-}
-
-/*
-=======================================================================================================================================
-CG_ColorForHealth
-=======================================================================================================================================
-*/
-void CG_ColorForHealth(vec4_t hcolor) {
-	CG_GetColorForHealth(cg.snap->ps.stats[STAT_HEALTH], cg.snap->ps.stats[STAT_ARMOR], hcolor);
-}
-
-/*
-=======================================================================================================================================
-CG_KeysStringForBinding
-=======================================================================================================================================
-*/
-void CG_KeysStringForBinding(const char *binding, char *string, int stringSize) {
-	char name2[32];
-	int keys[2];
-	int i, key;
-
-	for (i = 0, key = 0; i < 2; i++) {
-		key = trap_Key_GetKey(binding, key);
-		keys[i] = key;
-		key++;
-	}
-
-	if (keys[0] == -1) {
-		Q_strncpyz(string, "???", stringSize);
-		return;
-	}
-
-	trap_Key_KeynumToStringBuf(keys[0], string, MIN(32, stringSize));
-	Q_strupr(string);
-
-	if (keys[1] != -1) {
-		trap_Key_KeynumToStringBuf(keys[1], name2, 32);
-		Q_strupr(name2);
-		Q_strcat(string, stringSize, " or ");
-		Q_strcat(string, stringSize, name2);
-	}
-}
+/**************************************************************************************************************************************
+ Tobias FIXME: UI STRINGS(remove this)
+**************************************************************************************************************************************/
 
 static int propMap[128][3] = {
 	{0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1}, {0, 0, -1},
@@ -597,7 +825,7 @@ static int propMap[128][3] = {
 	{230, 122, 9}, // )
 	{177, 122, 18}, // *
 	{30, 152, 18}, // +
-	{85, 181, 7}, // ,
+	{85, 181, 7}, // , 
 	{34, 93, 11}, // -
 	{110, 181, 6}, // .
 	{130, 152, 14}, // /
@@ -714,7 +942,7 @@ static int propMapB[26][3] = {
 
 #define PROPB_GAP_WIDTH 4
 #define PROPB_SPACE_WIDTH 12
-#define PROPB_HEIGHT 36
+#define PROPB_HEIGHT 48
 
 /*
 =======================================================================================================================================
@@ -962,4 +1190,488 @@ void UI_DrawProportionalString(int x, int y, const char *str, int style, vec4_t 
 	}
 
 	UI_DrawProportionalString2(x, y, str, color, sizeScale, cgs.media.charsetProp);
+}
+
+/**************************************************************************************************************************************
+ Tobias end
+**************************************************************************************************************************************/
+
+/*
+=======================================================================================================================================
+CG_DrawStringDirect
+=======================================================================================================================================
+*/
+void CG_DrawStringDirect(int x, int y, const char *str, int style, const vec4_t color, float scale, int maxChars, float shadowOffset, float gradient, int cursorPos, int cursorChar, float wrapX) {
+	int charh;
+	const float *drawcolor;
+	const fontInfo_t *font;
+	int decent;
+
+	if (!str) {
+		return;
+	}
+
+	if (!color) {
+		color = colorWhite;
+	}
+
+	switch (style & UI_FONTMASK) {
+		case UI_TINYFONT:
+			font = &cgs.media.tinyFont;
+			break;
+		case UI_SMALLFONT:
+			font = &cgs.media.smallFont;
+			break;
+		case UI_BIGFONT:
+		default:
+			font = &cgs.media.bigFont;
+			break;
+		case UI_GIANTFONT:
+			font = &cgs.media.giantFont;
+			break;
+		case UI_TITANFONT:
+			font = &cgs.media.titanFont;
+			break;
+	}
+
+	charh = font->pointSize;
+
+	if (shadowOffset == 0 && (style & UI_DROPSHADOW)) {
+		shadowOffset = 2;
+	}
+
+	if (gradient == 0 && (style & UI_GRADIENT)) {
+		gradient = 0.4f;
+	}
+
+	if (scale <= 0) {
+		scale = charh / 48.0f;
+	} else {
+		charh = 48 * scale;
+	}
+
+	drawcolor = color;
+
+	if (wrapX <= 0) {
+		switch (style & UI_FORMATMASK) {
+			case UI_CENTER:
+				// center justify at x
+				x = x - Text_Width(str, font, scale, 0) / 2;
+				break;
+			case UI_RIGHT:
+				// right justify at x
+				x = x - Text_Width(str, font, scale, 0);
+				break;
+			case UI_LEFT:
+			default:
+				// left justify at x
+				break;
+		}
+
+		switch (style & UI_VA_FORMATMASK) {
+			case UI_VA_CENTER:
+				// center justify at y
+				y = y - charh / 2;
+				break;
+			case UI_VA_BOTTOM:
+				// bottom justify at y
+				y = y - charh;
+				break;
+			case UI_VA_TOP:
+			default:
+				// top justify at y
+				break;
+		}
+	}
+	// this function expects that y is top of line, text_paint expects at baseline
+	decent = -font->glyphs[(int)'g'].top + font->glyphs[(int)'g'].height;
+	y = y + charh - decent * scale * font->glyphScale;
+
+	if (decent != 0) {
+		// make TrueType fonts line up with bigchars bitmap font which has 2 transparent pixels above glyphs at 16 point font size
+		y += 2.0f * charh / 16.0f;
+	}
+
+	if (cursorChar >= 0) {
+		Text_PaintWithCursor(x, y, font, scale, drawcolor, str, cursorPos, cursorChar, 0, maxChars, shadowOffset, gradient, !!(style & UI_FORCECOLOR));
+	} else if (wrapX > 0) {
+		// replace 'char height' in line height with our scaled charh
+		// ZTM: TODO: This text gap handling is kind of messy. Passing scale to CG_DrawStringLineHeight might make cleaner code here.
+		int gap = CG_DrawStringLineHeight(style) - font->pointSize;
+
+		Text_Paint_AutoWrapped(x, y, font, scale, drawcolor, str, 0, maxChars, shadowOffset, gradient, !!(style & UI_FORCECOLOR), wrapX, charh + gap, style);
+	} else {
+		Text_Paint(x, y, font, scale, drawcolor, str, 0, maxChars, shadowOffset, gradient, !!(style & UI_FORCECOLOR));
+	}
+}
+
+/*
+=======================================================================================================================================
+CG_DrawStringAutoWrap
+=======================================================================================================================================
+*/
+void CG_DrawStringAutoWrap(int x, int y, const char *str, int style, const vec4_t color, float shadowOffset, float gradient, float wrapX) {
+	CG_DrawStringDirect(x, y, str, style, color, 0, 0, shadowOffset, gradient, -1, -1, wrapX);
+}
+
+/*
+=======================================================================================================================================
+CG_DrawStringExtWithCursor
+=======================================================================================================================================
+*/
+void CG_DrawStringExtWithCursor(int x, int y, const char *str, int style, const vec4_t color, float scale, int maxChars, float shadowOffset, float gradient, int cursorPos, int cursorChar) {
+	CG_DrawStringDirect(x, y, str, style, color, scale, maxChars, shadowOffset, gradient, cursorPos, cursorChar, 0);
+}
+
+/*
+=======================================================================================================================================
+CG_DrawStringWithCursor
+=======================================================================================================================================
+*/
+void CG_DrawStringWithCursor(int x, int y, const char *str, int style, const vec4_t color, int cursorPos, int cursorChar) {
+	CG_DrawStringExtWithCursor(x, y, str, style, color, 0, 0, 0, 0, cursorPos, cursorChar);
+}
+
+/*
+=======================================================================================================================================
+CG_DrawStringExt
+=======================================================================================================================================
+*/
+void CG_DrawStringExt(int x, int y, const char *str, int style, const vec4_t color, float scale, int maxChars, float shadowOffset) {
+	CG_DrawStringExtWithCursor(x, y, str, style, color, scale, maxChars, shadowOffset, 0, -1, -1);
+}
+
+/*
+=======================================================================================================================================
+CG_DrawString
+
+Draws a multi-colored string with a drop shadow, optionally forcing
+to a fixed color.
+
+Coordinates are at 640 by 480 virtual resolution
+
+Gradient value is how much to darken color at bottom of text.
+=======================================================================================================================================
+*/
+void CG_DrawString(int x, int y, const char *str, int style, const vec4_t color) {
+	CG_DrawStringExtWithCursor(x, y, str, style, color, 0, 0, 0, 0, -1, -1);
+}
+
+/*
+=======================================================================================================================================
+CG_DrawBigString
+=======================================================================================================================================
+*/
+void CG_DrawBigString(int x, int y, const char *s, float alpha) {
+	float color[4];
+
+	color[0] = color[1] = color[2] = 1.0;
+	color[3] = alpha;
+	CG_DrawString(x, y, s, UI_DROPSHADOW|UI_BIGFONT, color);
+}
+
+/*
+=======================================================================================================================================
+CG_DrawBigStringColor
+=======================================================================================================================================
+*/
+void CG_DrawBigStringColor(int x, int y, const char *s, vec4_t color) {
+	CG_DrawString(x, y, s, UI_FORCECOLOR|UI_DROPSHADOW|UI_BIGFONT, color);
+}
+
+/*
+=======================================================================================================================================
+CG_DrawSmallString
+=======================================================================================================================================
+*/
+void CG_DrawSmallString(int x, int y, const char *s, float alpha) {
+	float color[4];
+
+	color[0] = color[1] = color[2] = 1.0;
+	color[3] = alpha;
+	CG_DrawString(x, y, s, UI_SMALLFONT, color);
+}
+
+/*
+=======================================================================================================================================
+CG_DrawSmallStringColor
+=======================================================================================================================================
+*/
+void CG_DrawSmallStringColor(int x, int y, const char *s, vec4_t color) {
+	CG_DrawString(x, y, s, UI_FORCECOLOR|UI_SMALLFONT, color);
+}
+
+/*
+=======================================================================================================================================
+CG_DrawStrlen
+
+Returns draw width, skiping color escape codes.
+=======================================================================================================================================
+*/
+float CG_DrawStrlen(const char *str, int style) {
+	const fontInfo_t *font;
+	int charh;
+
+	switch (style & UI_FONTMASK) {
+		case UI_TINYFONT:
+			font = &cgs.media.tinyFont;
+			break;
+		case UI_SMALLFONT:
+			font = &cgs.media.smallFont;
+			break;
+		case UI_BIGFONT:
+		default:
+			font = &cgs.media.bigFont;
+			break;
+		case UI_GIANTFONT:
+			font = &cgs.media.giantFont;
+			break;
+		case UI_TITANFONT:
+			font = &cgs.media.titanFont;
+			break;
+	}
+
+	charh = font->pointSize;
+
+	return Text_Width(str, font, charh / 48.0f, 0);
+}
+
+/*
+=======================================================================================================================================
+CG_DrawStringLineHeight
+
+Returns draw height of text line for drawing multiple lines of text.
+=======================================================================================================================================
+*/
+int CG_DrawStringLineHeight(int style) {
+	const fontInfo_t *font;
+	int lineHeight;
+	int charh;
+	int gap;
+
+	gap = 0;
+
+	switch (style & UI_FONTMASK) {
+		case UI_TINYFONT:
+			font = &cgs.media.tinyFont;
+			gap = 1;
+			break;
+		case UI_SMALLFONT:
+			font = &cgs.media.smallFont;
+			gap = 2;
+			break;
+		case UI_BIGFONT:
+		default:
+			font = &cgs.media.bigFont;
+			gap = 2;
+			break;
+		case UI_GIANTFONT:
+			font = &cgs.media.giantFont;
+			gap = 2;
+			break;
+		case UI_TITANFONT:
+			font = &cgs.media.titanFont;
+			gap = 6;
+			break;
+	}
+
+	charh = font->pointSize;
+	lineHeight = charh + gap;
+
+	return lineHeight;
+}
+
+/*
+=======================================================================================================================================
+
+	COMMON UI FUNCTIONS
+
+=======================================================================================================================================
+*/
+
+/*
+=======================================================================================================================================
+CG_TileClearBox
+
+This repeats a 64 * 64 tile graphic to fill the screen around a sized down refresh window.
+=======================================================================================================================================
+*/
+static void CG_TileClearBox(int x, int y, int w, int h, qhandle_t hShader) {
+	float s1, t1, s2, t2;
+
+	s1 = x / 64.0;
+	t1 = y / 64.0;
+	s2 = (x + w) / 64.0;
+	t2 = (y + h) / 64.0;
+	trap_R_DrawStretchPic(x, y, w, h, s1, t1, s2, t2, hShader);
+}
+
+/*
+=======================================================================================================================================
+CG_TileClear
+
+Clear around a sized down screen.
+=======================================================================================================================================
+*/
+void CG_TileClear(void) {
+	int top, bottom, left, right;
+	int w, h;
+
+	w = cgs.glconfig.vidWidth;
+	h = cgs.glconfig.vidHeight;
+
+	if (cg.refdef.x == 0 && cg.refdef.y == 0 && cg.refdef.width == w && cg.refdef.height == h) {
+		return; // full screen rendering
+	}
+
+	top = cg.refdef.y;
+	bottom = top + cg.refdef.height - 1;
+	left = cg.refdef.x;
+	right = left + cg.refdef.width - 1;
+	// clear above view screen
+	CG_TileClearBox(0, 0, w, top, cgs.media.backTileShader);
+	// clear below view screen
+	CG_TileClearBox(0, bottom, w, h - bottom, cgs.media.backTileShader);
+	// clear left of view screen
+	CG_TileClearBox(0, top, left, bottom - top + 1, cgs.media.backTileShader);
+	// clear right of view screen
+	CG_TileClearBox(right, top, w - right, bottom - top + 1, cgs.media.backTileShader);
+}
+
+/*
+=======================================================================================================================================
+CG_FadeColor
+=======================================================================================================================================
+*/
+float *CG_FadeColor(int startMsec, int totalMsec) {
+	static vec4_t color;
+	int t;
+
+	if (startMsec == 0) {
+		return NULL;
+	}
+
+	t = cg.time - startMsec;
+
+	if (t >= totalMsec) {
+		return NULL;
+	}
+	// fade out
+	if (totalMsec - t < FADE_TIME) {
+		color[3] = (totalMsec - t) * 1.0 / FADE_TIME;
+	} else {
+		color[3] = 1.0;
+	}
+
+	color[0] = color[1] = color[2] = 1;
+	return color;
+}
+
+/*
+=======================================================================================================================================
+CG_TeamColor
+=======================================================================================================================================
+*/
+float *CG_TeamColor(int team) {
+	static vec4_t red = {1, 0.2f, 0.2f, 1};
+	static vec4_t blue = {0.2f, 0.2f, 1, 1};
+	static vec4_t other = {1, 1, 1, 1};
+	static vec4_t spectator = {0.7f, 0.7f, 0.7f, 1};
+
+	switch (team) {
+		case TEAM_RED:
+			return red;
+		case TEAM_BLUE:
+			return blue;
+		case TEAM_SPECTATOR:
+			return spectator;
+		default:
+			return other;
+	}
+}
+
+/*
+=======================================================================================================================================
+CG_GetColorForHealth
+=======================================================================================================================================
+*/
+void CG_GetColorForHealth(int health, int armor, vec4_t hcolor) {
+	int count;
+	int max;
+
+	// calculate the total points of damage that can be sustained at the current health / armor level
+	if (health <= 0) {
+		VectorClear(hcolor); // black
+		hcolor[3] = 1;
+		return;
+	}
+
+	count = armor;
+	max = health * ARMOR_PROTECTION / (1.0 - ARMOR_PROTECTION);
+
+	if (max < count) {
+		count = max;
+	}
+
+	health += count;
+	// set the color based on health
+	hcolor[0] = 1.0;
+	hcolor[3] = 1.0;
+
+	if (health >= 100) {
+		hcolor[2] = 1.0;
+	} else if (health < 66) {
+		hcolor[2] = 0;
+	} else {
+		hcolor[2] = (health - 66) / 33.0;
+	}
+
+	if (health > 60) {
+		hcolor[1] = 1.0;
+	} else if (health < 30) {
+		hcolor[1] = 0;
+	} else {
+		hcolor[1] = (health - 30) / 30.0;
+	}
+}
+
+/*
+=======================================================================================================================================
+CG_ColorForHealth
+=======================================================================================================================================
+*/
+void CG_ColorForHealth(vec4_t hcolor) {
+	CG_GetColorForHealth(cg.snap->ps.stats[STAT_HEALTH], cg.snap->ps.stats[STAT_ARMOR], hcolor);
+}
+
+/*
+=======================================================================================================================================
+CG_KeysStringForBinding
+=======================================================================================================================================
+*/
+void CG_KeysStringForBinding(const char *binding, char *string, int stringSize) {
+	char name2[32];
+	int keys[2];
+	int i, key;
+
+	for (i = 0, key = 0; i < 2; i++) {
+		key = trap_Key_GetKey(binding, key);
+		keys[i] = key;
+		key++;
+	}
+
+	if (keys[0] == -1) {
+		Q_strncpyz(string, "???", stringSize);
+		return;
+	}
+
+	trap_Key_KeynumToStringBuf(keys[0], string, MIN(32, stringSize));
+	Q_strupr(string);
+
+	if (keys[1] != -1) {
+		trap_Key_KeynumToStringBuf(keys[1], name2, 32);
+		Q_strupr(name2);
+		Q_strcat(string, stringSize, " or ");
+		Q_strcat(string, stringSize, name2);
+	}
 }

@@ -527,7 +527,7 @@ void Con_DrawInput(void) {
 		return;
 	}
 
-	y = con.vislines - (SMALLCHAR_HEIGHT * 2);
+	y = con.vislines - (SMALLCHAR_DOUBLE_HEIGHT * 2);
 
 	re.SetColor(con.color);
 
@@ -592,7 +592,7 @@ void Con_DrawNotify(void) {
 			SCR_DrawSmallChar(cl_conXOffset->integer + con.xadjust + (x + 1) * SMALLCHAR_WIDTH, v, text[x] & 0xff);
 		}
 
-		v += SMALLCHAR_HEIGHT;
+		v += SMALLCHAR_DOUBLE_HEIGHT;
 	}
 
 	re.SetColor(NULL);
@@ -663,12 +663,12 @@ void Con_DrawSolidConsole(float frac) {
 	i = strlen(QW_VERSION);
 
 	for (x = 0; x < i; x++) {
-		SCR_DrawSmallChar(cls.glconfig.vidWidth - (i - x + 1) * SMALLCHAR_WIDTH, lines - SMALLCHAR_HEIGHT, QW_VERSION[x]);
+		SCR_DrawSmallChar(cls.glconfig.vidWidth - (i - x + 1) * SMALLCHAR_WIDTH, lines - SMALLCHAR_DOUBLE_HEIGHT, QW_VERSION[x]);
 	}
 	// draw the text
 	con.vislines = lines;
-	rows = (lines - SMALLCHAR_HEIGHT) / SMALLCHAR_HEIGHT; // rows of text to draw
-	y = lines - (SMALLCHAR_HEIGHT * 3);
+	rows = (lines - SMALLCHAR_DOUBLE_HEIGHT) / SMALLCHAR_DOUBLE_HEIGHT; // rows of text to draw
+	y = lines - (SMALLCHAR_DOUBLE_HEIGHT * 3);
 	// draw from the bottom up
 	if (con.display != con.current) {
 		// draw arrows to show the buffer is backscrolled
@@ -678,7 +678,7 @@ void Con_DrawSolidConsole(float frac) {
 			SCR_DrawSmallChar(con.xadjust + (x + 1) * SMALLCHAR_WIDTH, y, '^');
 		}
 
-		y -= SMALLCHAR_HEIGHT;
+		y -= SMALLCHAR_DOUBLE_HEIGHT;
 		rows--;
 	}
 
@@ -691,7 +691,7 @@ void Con_DrawSolidConsole(float frac) {
 	currentColor = 7;
 	re.SetColor(g_color_table[currentColor]);
 
-	for (i = 0; i < rows; i++, y -= SMALLCHAR_HEIGHT, row--) {
+	for (i = 0; i < rows; i++, y -= SMALLCHAR_DOUBLE_HEIGHT, row--) {
 		if (row < 0) {
 			break;
 		}

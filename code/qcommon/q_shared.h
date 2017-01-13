@@ -340,20 +340,22 @@ extern vec3_t bytedirs[NUMVERTEXNORMALS];
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 
-#define TINYCHAR_WIDTH 8	// was: (SMALLCHAR_WIDTH)		| new:  5 | font: Arial Narrow |
-#define TINYCHAR_HEIGHT 8	// was: (SMALLCHAR_HEIGHT / 2)	| new:  5 | font: Arial Narrow |
+#define TINYCHAR_WIDTH 5	// was: (SMALLCHAR_WIDTH)		| new:  5 | shadowOffset: 0.4f | font: Arial Narrow
+#define TINYCHAR_HEIGHT 5	// was: (SMALLCHAR_HEIGHT / 2)	| new:  5 | shadowOffset: 0.4f | font: Arial Narrow
 
-#define SMALLCHAR_WIDTH 8	// was: 8						| new:  8 | font: Arial DINPro |
-#define SMALLCHAR_HEIGHT 16	// was: 16						| new:  8 | font: Arial DINPro |
+#define SMALLCHAR_WIDTH 8	// was: 8						| new:  8 | shadowOffset: 0.7f | font: DIN Pro Cond Medium
+#define SMALLCHAR_HEIGHT 8	// was: 16						| new:  8 | shadowOffset: 0.7f | font: DIN Pro Cond Medium
 
-#define BIGCHAR_WIDTH 16	// was: 16						| new: 14 | font: Arial Impact |
-#define BIGCHAR_HEIGHT 16	// was: 16						| new: 14 | font: Arial Impact |
+#define SMALLCHAR_DOUBLE_HEIGHT 16 // Tobias FIXME: used for console (bitmap) font
 
-#define GIANTCHAR_WIDTH 32	// was: 32						| new: 22 | font: Arial Impact | can we use BIGCHAR?
-#define GIANTCHAR_HEIGHT 48	// was: 48						| new: 22 | font: Arial Impact | can we use BIGCHAR?
+#define BIGCHAR_WIDTH 12	// was: 16						| new: 12 | shadowOffset: 1.3f | font: Impact
+#define BIGCHAR_HEIGHT 12	// was: 16						| new: 12 | shadowOffset: 1.3f | font: Impact
 
-#define TITANCHAR_WIDTH 72	// NEW							| new: 72 | font: Arial Impact | can we use BIGCHAR?
-#define TITANCHAR_HEIGHT 72	// NEW							| new: 72 | font: Arial Impact | can we use BIGCHAR?
+#define GIANTCHAR_WIDTH 22	// was: 32						| new: 22 | shadowOffset: 1.7f | font: Impact
+#define GIANTCHAR_HEIGHT 22	// was: 48						| new: 22 | shadowOffset: 1.7f | font: Impact
+
+#define TITANCHAR_WIDTH 48	// NEW							| new: 48 | shadowOffset: 3f   | font: Impact
+#define TITANCHAR_HEIGHT 48	// NEW							| new: 48 | shadowOffset: 3f   | font: Impact
 
 extern vec4_t colorBlack;
 extern vec4_t colorRed;

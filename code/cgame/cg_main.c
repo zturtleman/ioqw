@@ -1908,7 +1908,7 @@ CG_AssetCache
 void CG_AssetCache(void) {
 
 	//if (Assets.textFont == NULL) {
-	//	trap_R_RegisterFont("fonts/arial.ttf", 72, 1, qtrue, &Assets.textFont);
+	//	trap_R_RegisterFont("fonts/arial.ttf", 72, 0, qtrue, &Assets.textFont);
 	//}
 
 	//Assets.background = trap_R_RegisterShaderNoMip(ASSET_BACKGROUND);
@@ -1959,6 +1959,12 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum) {
 	cgs.media.charsetProp = trap_R_RegisterShaderNoMip("menu/art/font1_prop.tga");
 	cgs.media.charsetPropGlow = trap_R_RegisterShaderNoMip("menu/art/font1_prop_glo.tga");
 	cgs.media.charsetPropB = trap_R_RegisterShaderNoMip("menu/art/font2_prop.tga");
+	// register fonts here, otherwise CG_LoadingString wont work
+	trap_R_RegisterFont("fonts/tinyFont.ttf", TINYCHAR_HEIGHT, 0, qtrue, &cgs.media.tinyFont);
+	trap_R_RegisterFont("fonts/smallFont.ttf", SMALLCHAR_HEIGHT, 0, qtrue, &cgs.media.smallFont);
+	trap_R_RegisterFont("fonts/bigFont.ttf", BIGCHAR_HEIGHT, 0, qtrue, &cgs.media.bigFont);
+	trap_R_RegisterFont("fonts/bigFont.ttf", GIANTCHAR_HEIGHT, 0, qtrue, &cgs.media.giantFont);
+	trap_R_RegisterFont("fonts/bigFont.ttf", TITANCHAR_HEIGHT, 0, qtrue, &cgs.media.titanFont);
 
 	CG_RegisterCvars();
 	CG_InitConsoleCommands();
