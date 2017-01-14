@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-The work contained within this file is software written by various´copyright holders. The initial contributor, Id Software holds all
+The work contained within this file is software written by various copyright holders. The initial contributor, Id Software holds all
 copyright over their software. However, software used and written by and for UI Enhanced has copyrights held by the initial author of
 the software.
 

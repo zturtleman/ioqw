@@ -1239,7 +1239,7 @@ static const char *gameNames[] = {
 	"Free For All",
 	"Tournament",
 	"Team Deathmatch",
-	"Capture the Flag",
+	"Capture The Flag",
 	"One Flag CTF",
 	"Overload",
 	"Harvester"
@@ -1299,9 +1299,10 @@ void Cmd_CallVote_f(gentity_t *ent) {
 	} else if (!Q_stricmp(arg1, "g_doWarmup")) {
 	} else if (!Q_stricmp(arg1, "timelimit")) {
 	} else if (!Q_stricmp(arg1, "fraglimit")) {
+	} else if (!Q_stricmp(arg1, "capturelimit")) {
 	} else {
 		trap_SendServerCommand(ent - g_entities, "print \"Invalid vote string.\n\"");
-		trap_SendServerCommand(ent - g_entities, "print \"Vote commands are: map_restart, nextmap, map <mapname>, g_gametype <n>, kick <player>, clientkick <clientnum>, g_doWarmup, timelimit <time>, fraglimit <frags>.\n\"");
+		trap_SendServerCommand(ent - g_entities, "print \"Vote commands are: map_restart, nextmap, map <mapname>, g_gametype <n>, kick <player>, clientkick <clientnum>, g_doWarmup, timelimit <time>, fraglimit <frags>, capturelimit <captures>.\n\"");
 		return;
 	}
 	// if there is still a vote to be executed

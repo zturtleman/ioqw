@@ -249,3 +249,65 @@ void UI_UpdateCvars(void) {
 		trap_Cvar_Update(cv->vmCvar);
 	}
 }
+
+/*
+=======================================================================================================================================
+UI_CurrentPlayerTeam
+=======================================================================================================================================
+*/
+int UI_CurrentPlayerTeam(void) {
+	static uiClientState_t cs;
+	static char info[MAX_INFO_STRING];
+
+	trap_GetClientState(&cs);
+	trap_GetConfigString(CS_PLAYERS + cs.clientNum, info, MAX_INFO_STRING);
+	return atoi(Info_ValueForKey(info, "t"));
+}
+
+/*
+=======================================================================================================================================
+UI_ServerGametype
+=======================================================================================================================================
+*/
+int UI_ServerGametype(void) {
+	char info[MAX_INFO_STRING];
+
+	trap_GetConfigString(CS_SERVERINFO, info, sizeof(info));
+	return atoi(Info_ValueForKey(info, "g_gametype"));
+}
+
+/*
+=======================================================================================================================================
+UI_ServerTimelimit
+=======================================================================================================================================
+*/
+int UI_ServerTimelimit(void) {
+	char info[MAX_INFO_STRING];
+
+	trap_GetConfigString(CS_SERVERINFO, info, sizeof(info));
+	return atoi(Info_ValueForKey(info, "timelimit"));
+}
+
+/*
+=======================================================================================================================================
+UI_ServerFraglimit
+=======================================================================================================================================
+*/
+int UI_ServerFraglimit(void) {
+	char info[MAX_INFO_STRING];
+
+	trap_GetConfigString(CS_SERVERINFO, info, sizeof(info));
+	return atoi(Info_ValueForKey(info, "fraglimit"));
+}
+
+/*
+=======================================================================================================================================
+UI_ServerCapturelimit
+=======================================================================================================================================
+*/
+int UI_ServerCapturelimit(void) {
+	char info[MAX_INFO_STRING];
+
+	trap_GetConfigString(CS_SERVERINFO, info, sizeof(info));
+	return atoi(Info_ValueForKey(info, "capturelimit"));
+}

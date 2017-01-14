@@ -2520,7 +2520,15 @@ Q3UIOBJ_ = \
   $(B)/$(BASEGAME)/ui/ui_dynamicmenu.o \
   $(B)/$(BASEGAME)/ui/ui_gameinfo.o \
   $(B)/$(BASEGAME)/ui/ui_ingame.o \
-  $(B)/$(BASEGAME)/ui/ui_ingame_mapvote.o \
+  $(B)/$(BASEGAME)/ui/ui_ingame_callvote.o \
+  $(B)/$(BASEGAME)/ui/ui_ingame_callvote_capturelimit.o \
+  $(B)/$(BASEGAME)/ui/ui_ingame_callvote_fraglimit.o \
+  $(B)/$(BASEGAME)/ui/ui_ingame_callvote_gametype.o \
+  $(B)/$(BASEGAME)/ui/ui_ingame_callvote_kick.o \
+  $(B)/$(BASEGAME)/ui/ui_ingame_callvote_map.o \
+  $(B)/$(BASEGAME)/ui/ui_ingame_callvote_timelimit.o \
+  $(B)/$(BASEGAME)/ui/ui_ingame_command.o \
+  $(B)/$(BASEGAME)/ui/ui_ingame_vote.o \
   $(B)/$(BASEGAME)/ui/ui_loadconfig.o \
   $(B)/$(BASEGAME)/ui/ui_menu.o \
   $(B)/$(BASEGAME)/ui/ui_mfield.o \
