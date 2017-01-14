@@ -53,9 +53,6 @@
     <ClCompile Include="..\..\code\q3_ui\ui_display.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\code\q3_ui\ui_dynamicmenu.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\code\q3_ui\ui_gameinfo.c">
       <Filter>Source Files</Filter>
     </ClCompile>

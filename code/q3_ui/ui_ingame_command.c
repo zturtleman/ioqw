@@ -25,982 +25,847 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 /*
 =======================================================================================================================================
 
-	INGAME MENU
+	INGAME COMMAND MENU
 
 =======================================================================================================================================
 */
 
 #include "ui_local.h"
-#include "ui_dynamicmenu.h"
 
 #define INGAME_FRAME "menu/art/addbotframe"
 #define INGAME_SCROLL "menu/ui_art/separator"
 
-enum {
-	ID_SETUP,
-	ID_TEAM,
-	ID_LEAVEARENA,
-	ID_RESTART,
-	ID_QUIT,
-	ID_SERVERINFO,
-	ID_ADDBOTS,
-	ID_REMOVEBOTS,
-	ID_TEAMORDERS,
-	ID_RESUME,
-	ID_NEXTMAP
-};
+#define MAX_DYNAMICDEPTH 6
+#define MAX_MENUSTRING 19
+#define MAX_BOT_ICON 64
 
-/*
-=======================================================================================================================================
-Dynamic_InGame_EventHandler
+#define MENUICON_WIDTH 20
+#define MENUICON_HEIGHT 20
+#define MENUICON_GAP 2
+// gap (screen pixels) between the border of a menu item and the border of the menu
+#define SUBMENU_SURROUNDGAP 1
+// horizontal separation (screen pixels) between a sub menu and it's parent
+#define SUBMENU_GAP 0
+// gap (virtual screen pixels) between left edge of menu item border and text/icon
+#define MENUSPACE_X 10
+// vertical gap (virtual screen pixels) between text and top/bottom border of menu item
+#define MENUSPACE_Y 2
+// scale factor for menu text and icons
+#define MENU_SCALE 0.7
 
-May be used by dynamic menu system also.
-=======================================================================================================================================
-*/
-static void Dynamic_InGame_EventHandler(int id) {
+typedef struct {
+	char text[MAX_MENUSTRING];
+	int index;
+	int id;
+	qhandle_t icon;
+	createHandler createSubMenu;
+	eventHandler runEvent;
+	float trueX; // used for pixel perfect positioning
+	float trueY;
+	float trueH;
+	float trueW;
+} dynamicitem_t;
 
-	switch (id) {
-		case ID_TEAM:
-			break;
-		case ID_SETUP:
-			break;
-		case ID_LEAVEARENA:
-			break;
-		case ID_RESTART:
-			break;
-		case ID_QUIT:
-			break;
-		case ID_SERVERINFO:
-			break;
-		case ID_ADDBOTS:
-			break;
-		case ID_REMOVEBOTS:
-			break;
-		case ID_TEAMORDERS:
-			UI_BotCommandMenu_f();
-			break;
-		case ID_RESUME:
-			UI_PopMenu();
-			break;
-		case ID_NEXTMAP:
-			break;
-	}
-}
+typedef struct {
+	menuframework_s menu;
+	menutext_s item[MAX_MENUITEMS];
+	dynamicitem_t data[MAX_MENUITEMS];
+	qhandle_t background[MAX_MENUITEMS];
+	int start[MAX_DYNAMICDEPTH];
+	int end[MAX_DYNAMICDEPTH]; // indicates to (last item + 1)
+	int active[MAX_DYNAMICDEPTH];
+	qboolean icon[MAX_DYNAMICDEPTH];
+	int gametype;
+	int depth;
+} dynamicmenu_t;
 
-/*
-=======================================================================================================================================
-Dynamic_InGame_Event
-=======================================================================================================================================
-*/
-static void Dynamic_InGame_Event(void *ptr, int notification) {
-
-	if (notification != QM_ACTIVATED) {
-		return;
-	}
-
-	Dynamic_InGame_EventHandler(((menucommon_s *)ptr)->id);
-}
+static dynamicmenu_t s_dynamic;
+static vec4_t dynamicmenu_edgecolor = {1.0f, 1.0f, 1.0f, 0.5f};
+static vec4_t dynamicmenu_infillcolor = {1.0f, 1.0f, 1.0f, 0.33f};
 
 /*
 =======================================================================================================================================
 
-	INGAME ESCAPE MENU, USING DYNAMIC MENU SYSTEM
+	DYANMIC MENU CORE SERVICES
 
 =======================================================================================================================================
 */
 
 typedef struct {
-	int gametype;
-	char *menu;
-} gametypeMenu;
-
-static gametypeMenu gametypeMenu_data[] = {
-	{GT_FFA, "Free For All"},
-	{GT_TOURNAMENT, "Tournament"},
-	{GT_TEAM, "Team Deathmatch"},
-	{GT_CTF, "Capture The Flag"},
-	{GT_1FCTF, "One Flag CTF"},
-	{GT_OBELISK, "Overload"},
-	{GT_HARVESTER, "Harvester"}
+	const char *longname;
+	const char *shortname;
+	const char *classname;
+	qboolean loaded;
+	const char *icon;
+	int game;
+} itemList_t;
+// the gauntlet, hand gun and machine gun are excluded from the list because they are the default weapons, maps usually don't have them as available for pickup.
+static itemList_t dm_itemList[] = {
+	{"Mega Health", "MH", "item_health_mega", qfalse, "ui_icons/iconh_mega", 0},
+	{"Armor", "YA", "item_armor_combat", qfalse, "ui_icons/iconr_yellow", 0},
+	{"Heavy Armor", "RA", "item_armor_body", qfalse, "ui_icons/iconr_red", 0},
+	{"Full Armor", "BA", "item_armor_full", qfalse, "ui_icons/iconr_blue", 0},
+	{"Heavy Machinegun", "HMG", "weapon_heavy_machinegun", qfalse, "ui_icons/iconw_hmgun", 0},
+	{"Chaingun", "CG", "weapon_chaingun", qfalse, "ui_icons/iconw_chaingun", 0},
+	{"Shotgun", "SG", "weapon_shotgun", qfalse, "ui_icons/iconw_shotgun", 0},
+	{"Nailgun", "NG", "weapon_nailgun", qfalse, "ui_icons/iconw_nailgun", 0},
+	{"Phosphorgun", "PPG", "weapon_phosphorgun", qfalse, "ui_icons/iconw_phosphorgun", 0},
+	{"Proxlauncher", "PM", "weapon_prox_launcher", qfalse, "ui_icons/iconw_prox_launcher", 0},
+	{"Grenadelauncher", "GL", "weapon_grenadelauncher", qfalse, "ui_icons/iconw_grenade", 0},
+	{"Napalmlauncher", "NL", "weapon_napalmlauncher", qfalse, "ui_icons/iconw_napalm", 0},
+	{"Rocketlauncher", "RL", "weapon_rocketlauncher", qfalse, "ui_icons/iconw_rocket", 0},
+	{"Lightninggun", "LG", "weapon_lightning", qfalse, "ui_icons/iconw_lightning", 0},
+	{"Railgun", "RG", "weapon_railgun", qfalse, "ui_icons/iconw_railgun", 0},
+	{"Plasmagun", "PG", "weapon_plasmagun", qfalse, "ui_icons/iconw_plasma", 0},
+	{"BFG10K", "BFG", "weapon_bfg", qfalse, "ui_icons/iconw_bfg", 0},
+	{"Missilelauncher", "ML", "weapon_missilelauncher", qfalse, "ui_icons/iconw_missile", 0},
+	{"Kamikaze", "Kamikazi", "holdable_kamikaze", qfalse, "ui_icons/kamikaze", 0},
+	{"Quad Damage", "Quad", "item_quad", qfalse, "ui_icons/quad", 0},
+	{"Invisibility", "Invis", "item_invis", qfalse, "ui_icons/invis", 0},
+	{"Regeneration", "Regen", "item_regen", qfalse, "ui_icons/regen", 0},
+	{"Ammoregen", "AG", "item_ammoregen", qfalse, "ui_icons/ammoregen", 0},
+	{"Guard", "GD", "item_guard", qfalse, "ui_icons/guard", 0},
+	{"Doubler", "DB", "item_doubler", qfalse, "ui_icons/doubler", 0},
+	{"Scout", "SC", "item_scout", qfalse, "ui_icons/scout", 0}
 };
 
-static int gametypeMenu_size = sizeof(gametypeMenu_data) / sizeof(gametypeMenu_data[0]);
-// main dynamic in game menu
-enum {
-	IGM_START,
-	IGM_CALLVOTE,
-	IGM_VOTE,
-	IGM_TEAMORDERS,
-	IGM_SETUP,
-	IGM_BOTS,
-	IGM_MAP,
-	IGM_DEMOS,
-	IGM_EXIT,
-	IGM_CLOSE
-};
-// callvote map options
-enum {
-	CVM_SELECTMAP,
-	CVM_NEXTMAP,
-	CVM_MAPRESTART
-};
-// callvote options
-enum {
-	IGCV_MAP,
-	IGCV_GAMETYPE,
-	IGCV_MISC,
-	IGCV_KICK,
-	IGCV_TEAMBALANCE,
-	IGCV_LEADER
-};
-// vote options
-enum {
-	IGV_YES,
-	IGV_NO,
-	IGV_TEAMYES,
-	IGV_TEAMNO
-};
-// record options
-enum {
-	IGD_RECORD,
-	IGD_STOP
-};
-// setup options
-enum {
-	IGS_PLAYER,
-	IGS_MODEL,
-	IGS_CONTROLS,
-	IGS_OPTIONS,
-	IGS_GRAPHICS,
-	IGS_DISPLAY,
-	IGS_SOUND,
-	IGS_NETWORK,
-	IGS_LOADSAVE
-};
-// join team options
-enum {
-	DM_START_SPECTATOR,
-	DM_START_GAME,
-	DM_START_RED,
-	DM_START_BLUE,
-	DM_START_AUTO,
-	DM_READY,
-	DM_START_MAX
-};
-
-static char *jointeam_cmd[DM_START_MAX] = {
-	"spectator",	// DM_START_SPECTATOR
-	"free",			// DM_START_GAME
-	"red",			// DM_START_RED
-	"blue",			// DM_START_BLUE
-	"auto",			// DM_START_AUTO
-	"ready"			// DM_READY
-};
+static int dm_numMenuItems = sizeof(dm_itemList) / sizeof(dm_itemList[0]);
 
 /*
 =======================================================================================================================================
-InGameDynamic_Close
+DynamicMenu_ItemShortname
 =======================================================================================================================================
 */
-static void InGameDynamic_Close(void) {
-//	UI_PopMenu();
+const char *DynamicMenu_ItemShortname(int index) {
+	return dm_itemList[index].shortname;
 }
 
 /*
 =======================================================================================================================================
-IG_Unlagged_Event
+DynamicMenu_AddListOfItems
 =======================================================================================================================================
 */
-static void IG_Unlagged_Event(int index) {
-	int id;
+void DynamicMenu_AddListOfItems(int exclude, createHandler crh, eventHandler evh) {
+	int i;
 
-	id = DynamicMenu_IdAtIndex(index);
+	for (i = 0; i < dm_numMenuItems; i++) {
+		if (!dm_itemList[i].loaded) {
+			continue;
+		}
 
-	UI_ForceMenuOff();
+		if (dm_itemList[i].game && dm_itemList[i].game != s_dynamic.gametype) {
+			continue;
+		}
 
-	switch (id) {
-		case 0:
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("callvote unlagged off\n"));
-			break;
-		case 1:
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("callvote unlagged on\n"));
-			break;
+		if (!DynamicMenu_AddIconItem(dm_itemList[i].longname, i, dm_itemList[i].icon, crh, evh)) {
+			continue;
+		}
+
+		if (i == exclude) {
+			// gray the item
+			s_dynamic.item[s_dynamic.end[s_dynamic.depth - 1] - 1].generic.flags |= QMF_GRAYED;
+		}
 	}
 }
 
 /*
 =======================================================================================================================================
-IG_FragLimit_Event
+DynamicMenu_InitMapItems
 =======================================================================================================================================
 */
-static void IG_FragLimit_Event(int index) {
-	int id;
+static void DynamicMenu_InitMapItems(void) {
+	int i, j;
+	char items[MAX_ITEMS + 1];
 
-	id = DynamicMenu_IdAtIndex(index);
+	for (i = 0; i < dm_numMenuItems; i++) {
+		dm_itemList[i].loaded = qfalse;
+	}
 
-	UI_ForceMenuOff();
+	trap_GetConfigString(CS_ITEMS, items, sizeof(items));
 
-	trap_Cmd_ExecuteText(EXEC_APPEND, va("callvote fraglimit %i\n", id));
+	for (i = 1; i < bg_numItems; i++) {
+		if (items[i] != '1') {
+			continue;
+		}
+		// locate item on our list
+		for (j = 0; j < dm_numMenuItems; j++) {
+			if (!Q_stricmp(bg_itemlist[i].classname, dm_itemList[j].classname)) {
+				dm_itemList[j].loaded = qtrue;
+				break;
+			}
+		}
+	}
 }
 
 /*
 =======================================================================================================================================
-IG_CaptureLimit_Event
+DynamicMenu_AddListOfPlayers
 =======================================================================================================================================
 */
-static void IG_CaptureLimit_Event(int index) {
-	int id;
+void DynamicMenu_AddListOfPlayers(int type, createHandler crh, eventHandler evh) {
+	int numPlayers, isBot, n, playerTeam, team, depth;
+	char info[MAX_INFO_STRING], boticon[MAX_BOT_ICON], name[64];
+	uiClientState_t cs;
 
-	id = DynamicMenu_IdAtIndex(index);
+	trap_GetConfigString(CS_SERVERINFO, info, sizeof(info));
 
-	UI_ForceMenuOff();
+	numPlayers = atoi(Info_ValueForKey(info, "sv_maxclients"));
 
-	trap_Cmd_ExecuteText(EXEC_APPEND, va("callvote capturelimit %i\n", id));
+	trap_GetClientState(&cs);
+	trap_GetConfigString(CS_PLAYERS + cs.clientNum, info, MAX_INFO_STRING);
+
+	playerTeam = atoi(Info_ValueForKey(info, "t"));
+	depth = s_dynamic.depth - 1;
+
+	for (n = 0; n < numPlayers; n++) {
+		trap_GetConfigString(CS_PLAYERS + n, info, MAX_INFO_STRING);
+
+		if (n == cs.clientNum) {
+			continue;
+		}
+
+		isBot = atoi(Info_ValueForKey(info, "skill"));
+
+		if ((type & PT_BOTONLY) && !isBot) {
+			continue;
+		}
+
+		if ((type & PT_PLAYERONLY) && isBot) {
+			continue;
+		}
+
+		team = atoi(Info_ValueForKey(info, "t"));
+
+		if ((type & PT_FRIENDLY) && team != playerTeam) {
+			continue;
+		}
+
+		if ((type & PT_ENEMY) && team == playerTeam) {
+			continue;
+		}
+
+		Q_strncpyz(name, Info_ValueForKey(info, "n"), 64);
+		Q_CleanStr(name);
+
+		if (!name[0]) {
+			continue;
+		}
+
+		if (type & PT_EXCLUDEPARENT && depth >= 1) {
+			// depth has been increased by init of (sub)menu
+			if (!Q_stricmp(name, s_dynamic.data[s_dynamic.active[depth - 1]].text)) {
+				continue;
+			}
+		}
+
+		if (type & PT_EXCLUDEGRANDPARENT && depth >= 2) {
+			// depth has been increased by init of (sub)menu
+			if (!Q_stricmp(name, s_dynamic.data[s_dynamic.active[depth - 2]].text)) {
+				continue;
+			}
+		}
+
+		UI_ServerPlayerIcon(Info_ValueForKey(info, "model"), boticon, MAX_BOT_ICON);
+
+		DynamicMenu_AddIconItem(name, 0, boticon, crh, evh);
+	}
 }
 
 /*
 =======================================================================================================================================
-IG_TimeLimit_Event
+
+	DYANMIC MENU
+
 =======================================================================================================================================
 */
-static void IG_TimeLimit_Event(int index) {
-	int id;
 
-	id = DynamicMenu_IdAtIndex(index);
-
-	UI_ForceMenuOff();
-
-	trap_Cmd_ExecuteText(EXEC_APPEND, va("callvote timelimit %i\n", id));
+/*
+=======================================================================================================================================
+DynamicMenu_Depth
+=======================================================================================================================================
+*/
+int DynamicMenu_Depth(void) {
+	return s_dynamic.depth;
 }
 
 /*
 =======================================================================================================================================
-IG_UseOldInGame_Event
+DynamicMenu_ActiveIdAtDepth
 =======================================================================================================================================
 */
-static void IG_UseOldInGame_Event(int index) {
-	int id;
+int DynamicMenu_ActiveIdAtDepth(int depth) {
+	return s_dynamic.data[s_dynamic.active[depth - 1]].id;
+}
 
-	id = DynamicMenu_IdAtIndex(index);
+/*
+=======================================================================================================================================
+DynamicMenu_ActiveIndexAtDepth
+=======================================================================================================================================
+*/
+int DynamicMenu_ActiveIndexAtDepth(int depth) {
+	return s_dynamic.active[depth - 1];
+}
 
-	InGameDynamic_Close();
+/*
+=======================================================================================================================================
+DynamicMenu_IdAtIndex
+=======================================================================================================================================
+*/
+int DynamicMenu_IdAtIndex(int index) {
+	return s_dynamic.data[index].id;
+}
 
-	switch (id) {
-		case ID_ADDBOTS:
-		case ID_REMOVEBOTS:
-		case ID_RESTART:
-		case ID_LEAVEARENA:
-		case ID_QUIT:
-		case ID_NEXTMAP:
-			break;
-		default:
-			Com_Printf("IG_UseOldInGame_Event: unknown id (%i)", id);
+/*
+=======================================================================================================================================
+DynamicMenu_StringAtIndex
+=======================================================================================================================================
+*/
+const char *DynamicMenu_StringAtIndex(int index) {
+	return s_dynamic.data[index].text;
+}
+
+/*
+=======================================================================================================================================
+DynamicMenu_SetFlags
+=======================================================================================================================================
+*/
+void DynamicMenu_SetFlags(int depth, int id, int flags) {
+	int i;
+
+	for (i = s_dynamic.start[depth - 1]; i < s_dynamic.end[depth - 1]; i++) {
+		if (s_dynamic.data[i].id == id) {
+			s_dynamic.item[i].generic.flags |= flags;
 			return;
+		}
 	}
-
-	Dynamic_InGame_EventHandler(id);
 }
 
 /*
 =======================================================================================================================================
-IG_Setup_Event
+DynamicMenu_RemoveFlags
 =======================================================================================================================================
 */
-static void IG_Setup_Event(int index) {
-	int id;
+void DynamicMenu_RemoveFlags(int depth, int id, int flags) {
+	int i;
 
-	id = DynamicMenu_IdAtIndex(index);
-
-	InGameDynamic_Close();
-
-	switch (id) {
-		case IGS_PLAYER:
-			UI_PlayerSettingsMenu();
-			break;
-		case IGS_MODEL:
-			UI_PlayerModelMenu();
-			break;
-		case IGS_CONTROLS:
-			UI_ControlsMenu();
-			break;
-		case IGS_OPTIONS:
-			UI_GraphicsOptionsMenu();
-			break;
-		case IGS_GRAPHICS:
-			UI_GraphicsOptionsMenu();
-			break;
-		case IGS_DISPLAY:
-			UI_DisplayOptionsMenu();
-			break;
-		case IGS_SOUND:
-			UI_SoundOptionsMenu();
-			break;
-		case IGS_NETWORK:
-			UI_NetworkOptionsMenu();
-			break;
-		case IGS_LOADSAVE:
-			UI_SaveConfigMenu();
-			break;
-		default:
-			Com_Printf("IG_Setup_Event: unknown id (%i)", id);
+	for (i = s_dynamic.start[depth - 1]; i < s_dynamic.end[depth - 1]; i++) {
+		if (s_dynamic.data[i].id == id) {
+			s_dynamic.item[i].generic.flags &= ~flags;
 			return;
+		}
 	}
 }
 
 /*
 =======================================================================================================================================
-IG_CallVoteGameType_Event
+DynamicMenu_SubMenuInit
 =======================================================================================================================================
 */
-static void IG_CallVoteGameType_Event(int index) {
-	int id;
+qboolean DynamicMenu_SubMenuInit(void) {
+	int pos;
 
-	id = DynamicMenu_IdAtIndex(index);
-
-	UI_ForceMenuOff();
-
-	switch (id) {
-		case GT_FFA:
-			break;
-		case GT_TOURNAMENT:
-			break;
-		case GT_TEAM:
-			break;
-		case GT_CTF:
-			break;
-		case GT_1FCTF:
-			break;
-		case GT_OBELISK:
-			break;
-		case GT_HARVESTER:
-			break;
-		default:
-			Com_Printf("IG_CallVoteGameType_Event: unknown game - id (%i)", id);
-			return;
+	if (s_dynamic.depth == MAX_DYNAMICDEPTH) {
+		return qfalse;
 	}
 
-	trap_Cmd_ExecuteText(EXEC_APPEND, va("callvote g_gametype %i\n", id));
-}
-
-/*
-=======================================================================================================================================
-IG_CallVoteMaps_Event
-=======================================================================================================================================
-*/
-static void IG_CallVoteMaps_Event(int index) {
-	int id;
-
-	id = DynamicMenu_IdAtIndex(index);
-
-	switch (id) {
-		case CVM_SELECTMAP:
-			UI_VoteMapMenu();
-			break;
-		case CVM_NEXTMAP:
-			UI_ForceMenuOff();
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("callvote nextmap\n"));
-			break;
-		case CVM_MAPRESTART:
-			UI_ForceMenuOff();
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("callvote map_restart\n"));
-			break;
-		default:
-			UI_ForceMenuOff();
-			Com_Printf("IG_CallVoteMaps_Event: unknown id (%i)", id);
-			return;
-	}
-}
-
-/*
-=======================================================================================================================================
-IG_CallVote_Event
-=======================================================================================================================================
-*/
-static void IG_CallVote_Event(int index) {
-	int id;
-
-	id = DynamicMenu_IdAtIndex(index);
-
-	InGameDynamic_Close();
-
-	switch (id) {
-		case IGCV_KICK:
-			UI_RemoveBotsMenu(RBM_CALLVOTEKICK);
-			break;
-		case IGCV_TEAMBALANCE:
-			UI_ForceMenuOff();
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("callvote teambalance\n"));
-			break;
-		case IGCV_LEADER:
-			UI_RemoveBotsMenu(RBM_CALLVOTELEADER);
-			break;
-		default:
-			Com_Printf("IG_CallVote_Event: unknown id (%i)", id);
-			return;
-	}
-}
-
-/*
-=======================================================================================================================================
-IG_Vote_Event
-=======================================================================================================================================
-*/
-static void IG_Vote_Event(int index) {
-	int id;
-	char *s;
-
-	id = DynamicMenu_IdAtIndex(index);
-
-	InGameDynamic_Close();
-
-	switch (id) {
-		case IGV_YES:
-			s = "vote yes\n";
-			break;
-		case IGV_NO:
-			s = "vote no\n";
-			break;
-		case IGV_TEAMYES:
-			s = "teamvote yes\n";
-			break;
-		case IGV_TEAMNO:
-			s = "teamvote yes\n";
-			break;
-		default:
-			Com_Printf("IG_Vote_Event: unknown id (%i)", id);
-			return;
+	if (s_dynamic.depth == 0) {
+		pos = 0;
+	} else {
+		pos = s_dynamic.end[s_dynamic.depth - 1];
 	}
 
-	trap_Cmd_ExecuteText(EXEC_APPEND, s);
-}
-
-/*
-=======================================================================================================================================
-IG_Demos_Event
-=======================================================================================================================================
-*/
-static void IG_Demos_Event(int index) {
-	int id;
-
-	id = DynamicMenu_IdAtIndex(index);
-
-	InGameDynamic_Close();
-
-	switch (id) {
-		case IGD_RECORD:
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("record"));
-			break;
-		case IGD_STOP:
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("stoprecord\n"));
-			break;
-		default:
-			Com_Printf("IG_Demo_Event: unknown id (%i)", id);
-			return;
+	if (pos == MAX_MENUITEMS) {
+		return qfalse;
 	}
+
+	s_dynamic.depth++;
+	s_dynamic.active[s_dynamic.depth - 1] = -1;
+	s_dynamic.start[s_dynamic.depth - 1] = pos;
+	s_dynamic.end[s_dynamic.depth - 1] = pos;
+	s_dynamic.background[s_dynamic.depth - 1] = 0;
+
+	return qtrue;
 }
 
 /*
 =======================================================================================================================================
-IG_TeamOrders_Event
+DynamicMenu_AddIconItem
 =======================================================================================================================================
 */
-static void IG_TeamOrders_Event(int index) {
+qboolean DynamicMenu_AddIconItem(const char *string, int id, const char *icon, createHandler crh, eventHandler evh) {
+	int index, depth;
 
-	UI_PopMenu();
-	UI_BotCommandMenu_f();
+	depth = s_dynamic.depth - 1;
+	index = s_dynamic.end[depth];
+
+	if (index == MAX_MENUITEMS) {
+		return qfalse;
+	}
+	// can't have submenu and event attached to menu item
+	if (crh && evh) {
+		return qfalse;
+	}
+
+	if (!string || !string[0]) {
+		string = "[no text]";
+	}
+
+	s_dynamic.data[index].index = index;
+	s_dynamic.data[index].id = id;
+	s_dynamic.data[index].createSubMenu = crh;
+	s_dynamic.data[index].runEvent = evh;
+	Q_strncpyz(s_dynamic.data[index].text, string, MAX_MENUSTRING);
+
+	if (icon) {
+		s_dynamic.data[index].icon = trap_R_RegisterShaderNoMip(icon);
+	} else {
+		s_dynamic.data[index].icon = 0;
+	}
+
+	s_dynamic.end[depth]++;
+
+	return qtrue;
 }
 
 /*
 =======================================================================================================================================
-IG_Start_Event
+DynamicMenu_AddItem
 =======================================================================================================================================
 */
-static void IG_Start_Event(int index) {
-	int id;
+qboolean DynamicMenu_AddItem(const char *string, int id, createHandler crh, eventHandler evh) {
+	return DynamicMenu_AddIconItem(string, id, NULL, crh, evh);
+}
 
-	id = DynamicMenu_IdAtIndex(index);
+/*
+=======================================================================================================================================
+DynamicMenu_AddBackground
+=======================================================================================================================================
+*/
+void DynamicMenu_AddBackground(const char *background) {
 
-	UI_ForceMenuOff();
-
-	if (id < 0 || id >= DM_START_MAX) {
-		Com_Printf("IG_Start_Event: unknown id (%i)", id);
+	if (!background || !background[0]) {
 		return;
 	}
 
-	trap_Cmd_ExecuteText(EXEC_APPEND, va("team %s\n", jointeam_cmd[id]));
+	s_dynamic.background[s_dynamic.depth - 1] = trap_R_RegisterShaderNoMip(background);
 }
 
 /*
 =======================================================================================================================================
-IG_TimeLimit_SubMenu
+DynamicMenu_IconSpace
 =======================================================================================================================================
 */
-static void IG_TimeLimit_SubMenu(void) {
-	int tmp;
-	int depth;
-
-	DynamicMenu_SubMenuInit();
-
-	DynamicMenu_AddItem("Unlimited", 0, NULL, IG_TimeLimit_Event);
-	DynamicMenu_AddItem("5", 5, NULL, IG_TimeLimit_Event);
-	DynamicMenu_AddItem("10", 10, NULL, IG_TimeLimit_Event);
-	DynamicMenu_AddItem("15", 15, NULL, IG_TimeLimit_Event);
-	DynamicMenu_AddItem("20", 20, NULL, IG_TimeLimit_Event);
-	DynamicMenu_AddItem("25", 25, NULL, IG_TimeLimit_Event);
-	DynamicMenu_AddItem("30", 30, NULL, IG_TimeLimit_Event);
-	DynamicMenu_AddItem("45", 45, NULL, IG_TimeLimit_Event);
-	DynamicMenu_AddItem("60", 60, NULL, IG_TimeLimit_Event);
-
-	depth = DynamicMenu_Depth();
-	tmp = UI_ServerTimelimit();
-
-	if ((tmp == 0) || (tmp == 5) || (tmp == 10) || (tmp == 15) || (tmp == 20) || (tmp == 25) || (tmp == 30) || (tmp == 45) || (tmp == 60)) {
-		DynamicMenu_SetFlags(depth, tmp, QMF_GRAYED);
-	}
-
-	DynamicMenu_AddBackground(INGAME_FRAME);
-	DynamicMenu_FinishSubMenuInit();
+static float DynamicMenu_IconSpace(void) {
+	return (MENUICON_WIDTH + 2 * MENUICON_GAP);
 }
 
 /*
 =======================================================================================================================================
-IG_Unlagged_SubMenu
+DynamicMenu_FinishSubMenuInit
+
+Where we need pixel accurate positioning we need to use pixels of 1 / uis.scale size in the virtual 640 * 480 screen.
 =======================================================================================================================================
 */
-static void IG_Unlagged_SubMenu(void) {
+void DynamicMenu_FinishSubMenuInit(void) {
+	int depth, width, i, count, start, active;
+	float maxwidth, height, lineheight, posx, posy, scale;
+	qboolean submenu, icon;
+	menutext_s *ptr;
+	dynamicitem_t *dptr;
 
-	DynamicMenu_SubMenuInit();
+	depth = s_dynamic.depth - 1;
+	// find the widest item
+	submenu = qfalse;
+	icon = qfalse;
+	maxwidth = 0;
+	start = s_dynamic.start[depth];
+	count = s_dynamic.end[depth] - start;
 
-	DynamicMenu_AddItem("Yes", 1, NULL, IG_Unlagged_Event);
-	DynamicMenu_AddItem("No", 0, NULL, IG_Unlagged_Event);
+	for (i = 0; i < count; i++) {
+		width = UI_ProportionalStringWidth(s_dynamic.data[i + start].text);
 
-	DynamicMenu_AddBackground(INGAME_FRAME);
-	DynamicMenu_FinishSubMenuInit();
-}
+		if (width > maxwidth) {
+			maxwidth = width;
+		}
 
-/*
-=======================================================================================================================================
-IG_FragLimit_SubMenu
-=======================================================================================================================================
-*/
-static void IG_FragLimit_SubMenu(void) {
-	int tmp;
-	int depth;
+		if (s_dynamic.data[i + start].createSubMenu) {
+			submenu = qtrue;
+		}
 
-	DynamicMenu_SubMenuInit();
-
-	DynamicMenu_AddItem("Unlimited", 0, NULL, IG_FragLimit_Event);
-	DynamicMenu_AddItem("10", 10, NULL, IG_FragLimit_Event);
-	DynamicMenu_AddItem("15", 15, NULL, IG_FragLimit_Event);
-	DynamicMenu_AddItem("20", 20, NULL, IG_FragLimit_Event);
-	DynamicMenu_AddItem("30", 30, NULL, IG_FragLimit_Event);
-	DynamicMenu_AddItem("40", 40, NULL, IG_FragLimit_Event);
-	DynamicMenu_AddItem("50", 50, NULL, IG_FragLimit_Event);
-	DynamicMenu_AddItem("75", 75, NULL, IG_FragLimit_Event);
-	DynamicMenu_AddItem("100", 100, NULL, IG_FragLimit_Event);
-
-	depth = DynamicMenu_Depth();
-	tmp = UI_ServerFraglimit();
-
-	if ((tmp == 0) || (tmp == 10) || (tmp == 15) || (tmp == 20) || (tmp == 30) || (tmp == 40) || (tmp == 50) || (tmp == 75) || (tmp == 100)) {
-		DynamicMenu_SetFlags(depth, tmp, QMF_GRAYED);
-	}
-
-	DynamicMenu_AddBackground(INGAME_FRAME);
-	DynamicMenu_FinishSubMenuInit();
-}
-
-/*
-=======================================================================================================================================
-IG_CaptureLimit_SubMenu
-=======================================================================================================================================
-*/
-static void IG_CaptureLimit_SubMenu(void) {
-	int tmp;
-	int depth;
-
-	DynamicMenu_SubMenuInit();
-
-	DynamicMenu_AddItem("Unlimited", 0, NULL, IG_CaptureLimit_Event);
-	DynamicMenu_AddItem("1", 1, NULL, IG_CaptureLimit_Event);
-	DynamicMenu_AddItem("2", 2, NULL, IG_CaptureLimit_Event);
-	DynamicMenu_AddItem("4", 4, NULL, IG_CaptureLimit_Event);
-	DynamicMenu_AddItem("6", 6, NULL, IG_CaptureLimit_Event);
-	DynamicMenu_AddItem("8", 8, NULL, IG_CaptureLimit_Event);
-	DynamicMenu_AddItem("10", 10, NULL, IG_CaptureLimit_Event);
-	DynamicMenu_AddItem("12", 12, NULL, IG_CaptureLimit_Event);
-
-	depth = DynamicMenu_Depth();
-	tmp = UI_ServerCapturelimit();
-
-	if ((tmp == 0) || (tmp == 1) || (tmp == 2) || (tmp == 4) || (tmp == 6) || (tmp == 8) || (tmp == 10) || (tmp == 12)) {
-		DynamicMenu_SetFlags(depth, tmp, QMF_GRAYED);
-	}
-
-	DynamicMenu_AddBackground(INGAME_FRAME);
-	DynamicMenu_FinishSubMenuInit();
-}
-
-/*
-=======================================================================================================================================
-IG_Map_SubMenu
-=======================================================================================================================================
-*/
-static void IG_Map_SubMenu(void) {
-	int depth;
-
-	DynamicMenu_SubMenuInit();
-
-	DynamicMenu_AddItem("Restart map", ID_RESTART, NULL, IG_UseOldInGame_Event);
-	DynamicMenu_AddItem("Next map", ID_NEXTMAP, NULL, IG_UseOldInGame_Event);
-
-	depth = DynamicMenu_Depth();
-
-	if (UI_ServerGametype() == GT_SINGLE_PLAYER) {
-		DynamicMenu_SetFlags(depth, ID_NEXTMAP, QMF_GRAYED);
-	}
-
-	DynamicMenu_AddBackground(INGAME_FRAME);
-	DynamicMenu_FinishSubMenuInit();
-}
-
-/*
-=======================================================================================================================================
-IG_CallVoteMisc_SubMenu
-=======================================================================================================================================
-*/
-static void IG_CallVoteMisc_SubMenu(void) {
-
-	DynamicMenu_SubMenuInit();
-
-	DynamicMenu_AddItem("Timelimit", 0, IG_TimeLimit_SubMenu, NULL);
-
-	if (UI_ServerGametype() > GT_TEAM) {
-		DynamicMenu_AddItem("CaptureLimit", 0, IG_CaptureLimit_SubMenu, NULL);
-	} else {
-		DynamicMenu_AddItem("FragLimit", 0, IG_FragLimit_SubMenu, NULL);
-	}
-
-	DynamicMenu_AddItem("Unlagged", 0, IG_Unlagged_SubMenu, NULL);
-
-	DynamicMenu_AddBackground(INGAME_FRAME);
-	DynamicMenu_FinishSubMenuInit();
-}
-
-/*
-=======================================================================================================================================
-IG_CallVoteMaps_SubMenu
-=======================================================================================================================================
-*/
-static void IG_CallVoteMaps_SubMenu(void) {
-
-	DynamicMenu_SubMenuInit();
-
-	DynamicMenu_AddItem("Select map", CVM_SELECTMAP, NULL, IG_CallVoteMaps_Event);
-	DynamicMenu_AddItem("Next map", CVM_NEXTMAP, NULL, IG_CallVoteMaps_Event);
-	DynamicMenu_AddItem("Map restart", CVM_MAPRESTART, NULL, IG_CallVoteMaps_Event);
-
-	DynamicMenu_AddBackground(INGAME_FRAME);
-	DynamicMenu_FinishSubMenuInit();
-}
-
-/*
-=======================================================================================================================================
-IG_CallVoteMisc_SubMenu
-=======================================================================================================================================
-*/
-static void IG_CallVoteGameType_SubMenu(void) {
-	int gametype;
-	int i;
-	int depth;
-	const char *icon;
-
-	gametype = UI_ServerGametype();
-
-	DynamicMenu_SubMenuInit();
-
-	depth = DynamicMenu_Depth();
-
-	for (i = 0; i < gametypeMenu_size; i++) {
-		icon = UI_DefaultIconFromGameType(gametypeMenu_data[i].gametype);
-
-		DynamicMenu_AddIconItem(gametypeMenu_data[i].menu, gametypeMenu_data[i].gametype, icon, NULL, IG_CallVoteGameType_Event);
-
-		if (gametypeMenu_data[i].gametype == gametype) {
-			DynamicMenu_SetFlags(depth, gametype, QMF_GRAYED);
+		if (s_dynamic.data[i + start].icon) {
+			icon = qtrue;
 		}
 	}
 
-	DynamicMenu_AddBackground(INGAME_FRAME);
-	DynamicMenu_FinishSubMenuInit();
-}
-
-/*
-=======================================================================================================================================
-IG_CallVote_SubMenu
-=======================================================================================================================================
-*/
-static void IG_CallVote_SubMenu(void) {
-	int team;
-	int depth;
-
-	team = UI_CurrentPlayerTeam();
-
-	DynamicMenu_SubMenuInit();
-
-	depth = DynamicMenu_Depth();
-
-	DynamicMenu_AddItem("Gametype", IGCV_GAMETYPE, IG_CallVoteGameType_SubMenu, NULL);
-	DynamicMenu_AddItem("Maps", 0, IG_CallVoteMaps_SubMenu, NULL);
-	DynamicMenu_AddItem("Misc", 0, IG_CallVoteMisc_SubMenu, NULL);
-	// DynamicMenu_AddItem("Map", IGCV_MAP, NULL, IG_CallVote_Event);
-	// DynamicMenu_AddItem("Kick", IGCV_KICK, NULL, IG_CallVote_Event);
-	DynamicMenu_AddItem("Team Balance", IGCV_TEAMBALANCE, NULL, IG_CallVote_Event);
-	DynamicMenu_AddItem("Leader", IGCV_LEADER, NULL, IG_CallVote_Event);
-
-	if (team == TEAM_SPECTATOR || team == TEAM_FREE) {
-		DynamicMenu_SetFlags(depth, IGCV_LEADER, QMF_GRAYED);
-		DynamicMenu_SetFlags(depth, IGCV_TEAMBALANCE, QMF_GRAYED);
+	if (submenu) {
+		maxwidth += UI_ProportionalStringWidth(" \r"); // space and submenu pointer
 	}
 
-	DynamicMenu_AddBackground(INGAME_FRAME);
-	DynamicMenu_FinishSubMenuInit();
-}
+	scale = UI_ProportionalSizeScale(UI_SMALLFONT);
 
-/*
-=======================================================================================================================================
-IG_Vote_SubMenu
-=======================================================================================================================================
-*/
-static void IG_Vote_SubMenu(void) {
-	char buf[MAX_INFO_STRING];
+	maxwidth *= scale;
+	maxwidth *= (MENU_SCALE * 1.2); // some adjustment for scaling of font used
+	maxwidth += MENUSPACE_X;
 
-	DynamicMenu_SubMenuInit();
-
-	trap_GetConfigString(CS_VOTE_TIME, buf, MAX_INFO_STRING);
-
-	if (atoi(buf) != 0) {
-		DynamicMenu_AddItem("Yes", IGV_YES, NULL, IG_Vote_Event);
-		DynamicMenu_AddItem("No", IGV_NO, NULL, IG_Vote_Event);
+	if (icon) {
+		maxwidth += DynamicMenu_IconSpace();
 	}
 
-	trap_GetConfigString(CS_TEAMVOTE_TIME, buf, MAX_INFO_STRING);
+	s_dynamic.icon[depth] = icon;
+	// determine the position of the menu
+	lineheight = PROP_HEIGHT * scale + 2 * MENUSPACE_Y;
+	height = count * lineheight;
 
-	if (atoi(buf) != 0) {
-		DynamicMenu_AddItem("Team Yes", IGV_TEAMYES, NULL, IG_Vote_Event);
-		DynamicMenu_AddItem("Team No", IGV_TEAMNO, NULL, IG_Vote_Event);
-	}
-
-	DynamicMenu_AddBackground(INGAME_FRAME);
-	DynamicMenu_FinishSubMenuInit();
-}
-
-/*
-=======================================================================================================================================
-IG_Demos_SubMenu
-=======================================================================================================================================
-*/
-static void IG_Demos_SubMenu(void) {
-
-	DynamicMenu_SubMenuInit();
-
-	DynamicMenu_AddIconItem("Record ", IGD_RECORD, "menu/ui_art/rotate_record1", NULL, IG_Demos_Event);
-	DynamicMenu_AddIconItem("Stop", IGD_STOP, "menu/ui_art/rotate_stop1", NULL, IG_Demos_Event);
-
-	DynamicMenu_AddBackground(INGAME_FRAME);
-	DynamicMenu_FinishSubMenuInit();
-}
-
-/*
-=======================================================================================================================================
-IG_AddBot_SubMenu
-=======================================================================================================================================
-*/
-static void IG_AddBot_SubMenu(void) {
-
-	DynamicMenu_SubMenuInit();
-
-	DynamicMenu_AddItem("Add bot", ID_ADDBOTS, NULL, IG_UseOldInGame_Event);
-	DynamicMenu_AddItem("Remove bot", ID_REMOVEBOTS, NULL, IG_UseOldInGame_Event);
-
-	DynamicMenu_AddBackground(INGAME_FRAME);
-	DynamicMenu_FinishSubMenuInit();
-}
-
-/*
-=======================================================================================================================================
-IG_Setup_SubMenu
-=======================================================================================================================================
-*/
-static void IG_Setup_SubMenu(void) {
-
-	DynamicMenu_SubMenuInit();
-
-	DynamicMenu_AddItem("Player", IGS_PLAYER, NULL, IG_Setup_Event);
-	DynamicMenu_AddItem("Model", IGS_MODEL, NULL, IG_Setup_Event);
-	DynamicMenu_AddItem("Controls", IGS_CONTROLS, NULL, IG_Setup_Event);
-	DynamicMenu_AddItem("System", IGS_OPTIONS, NULL, IG_Setup_Event);
-	DynamicMenu_AddItem("Load/Save", IGS_LOADSAVE, NULL, IG_Setup_Event);
-
-	DynamicMenu_AddBackground(INGAME_FRAME);
-	DynamicMenu_FinishSubMenuInit();
-}
-
-/*
-=======================================================================================================================================
-IG_Exit_SubMenu
-=======================================================================================================================================
-*/
-static void IG_Exit_SubMenu(void) {
-
-	DynamicMenu_SubMenuInit();
-
-	DynamicMenu_AddItem("Main Menu", ID_LEAVEARENA, NULL, IG_UseOldInGame_Event);
-	DynamicMenu_AddItem("Quit", ID_QUIT, NULL, IG_UseOldInGame_Event);
-
-	DynamicMenu_AddBackground(INGAME_FRAME);
-	DynamicMenu_FinishSubMenuInit();
-}
-
-/*
-=======================================================================================================================================
-IG_Start_SubMenu
-=======================================================================================================================================
-*/
-static void IG_Start_SubMenu(void) {
-	int depth;
-	int gametype;
-
-	gametype = UI_ServerGametype();
-
-	DynamicMenu_SubMenuInit();
-
-	depth = DynamicMenu_Depth();
-
-	if (gametype < GT_TEAM) {
-		DynamicMenu_AddIconItem("Join Game", DM_START_GAME, "menu/medals/medal_gauntlet", NULL, IG_Start_Event);
+	if (depth == 0) {
+		posy = 240 - height / 2;
+		posx = 0;
 	} else {
-		DynamicMenu_AddIconItem("Auto Join", DM_START_AUTO, "menu/medals/medal_capture", NULL, IG_Start_Event);
-		DynamicMenu_AddIconItem("Join Red", DM_START_RED, "ui_icons/iconf_red", NULL, IG_Start_Event);
-		DynamicMenu_AddIconItem("Join Blue", DM_START_BLUE, "ui_icons/iconf_blu", NULL, IG_Start_Event);
+		active = s_dynamic.active[depth - 1];
+		posx = s_dynamic.data[active].trueX + s_dynamic.data[active].trueW + (SUBMENU_SURROUNDGAP + SUBMENU_GAP);
+		posy = s_dynamic.data[active].trueY;
+
+		if (posy + height > 480 - 48) {
+			posy = 480 - 48 - height;
+		}
 	}
 
-	DynamicMenu_AddItem("Spectate", DM_START_SPECTATOR, NULL, IG_Start_Event);
+	for (i = 0; i < count; i++) {
+		ptr = &s_dynamic.item[start + i];
+		dptr = &s_dynamic.data[start + i];
 
-	if (UI_CurrentPlayerTeam() == TEAM_SPECTATOR) {
-		DynamicMenu_SetFlags(depth, DM_START_SPECTATOR, QMF_GRAYED);
-		DynamicMenu_SetFlags(depth, DM_READY, QMF_GRAYED);
+		dptr->trueX = posx + (SUBMENU_SURROUNDGAP + 1);
+		dptr->trueY = posy + i * lineheight;
+		dptr->trueH = lineheight - 1;
+		dptr->trueW = maxwidth;
+
+		ptr->generic.x = dptr->trueX;
+		ptr->generic.y = dptr->trueY;
+		ptr->generic.left = dptr->trueX;
+		ptr->generic.right = dptr->trueX + dptr->trueW;
+		ptr->generic.top = dptr->trueY;
+		ptr->generic.bottom = dptr->trueY + dptr->trueH;
+		ptr->generic.flags &= ~(QMF_HIDDEN|QMF_INACTIVE);
 	}
-
-	DynamicMenu_AddBackground(INGAME_FRAME);
-	DynamicMenu_FinishSubMenuInit();
 }
 
 /*
 =======================================================================================================================================
-InGameDynamic_InitPrimaryMenu
+DynamicMenu_OnActiveList
 =======================================================================================================================================
 */
-static void InGameDynamic_InitPrimaryMenu(void) {
-	int depth;
-	int gametype;
-	int team;
-	qboolean localserver;
-	qboolean voting;
-	char buf[MAX_INFO_STRING];
+qboolean DynamicMenu_OnActiveList(int index) {
+	int depth, i;
 
-	team = UI_CurrentPlayerTeam();
-	gametype = UI_ServerGametype();
-	localserver = trap_Cvar_VariableValue("sv_running");
+	depth = s_dynamic.depth;
 
-	DynamicMenu_SubMenuInit();
-
-	DynamicMenu_AddItem("Start", IGM_START, IG_Start_SubMenu, NULL);
-
-	if (gametype != GT_SINGLE_PLAYER) {
-		DynamicMenu_AddItem("Call Vote", IGM_CALLVOTE, IG_CallVote_SubMenu, NULL);
-		DynamicMenu_AddItem("Vote", IGM_VOTE, IG_Vote_SubMenu, NULL);
+	for (i = 0; i < depth; i++) {
+		if (s_dynamic.active[i] == index) {
+			return qtrue;
+		}
 	}
 
-	DynamicMenu_AddItem("Team Orders", IGM_TEAMORDERS, NULL, IG_TeamOrders_Event);
-	DynamicMenu_AddItem("Setup", IGM_SETUP, IG_Setup_SubMenu, NULL);
-	// disable map commands if non-local server
-	if (localserver) {
-		DynamicMenu_AddItem("Map", IGM_MAP, IG_Map_SubMenu, NULL);
-	}
-	// bot manipulation
-	if (!(!localserver || !trap_Cvar_VariableValue("bot_enable") || (gametype == GT_SINGLE_PLAYER))) {
-		DynamicMenu_AddItem("Bots", IGM_BOTS, IG_AddBot_SubMenu, NULL);
-	}
-
-	DynamicMenu_AddItem("Demos", IGM_DEMOS, IG_Demos_SubMenu, NULL);
-	DynamicMenu_AddItem("Exit!", IGM_EXIT, IG_Exit_SubMenu, NULL);
-
-	depth = DynamicMenu_Depth();
-	gametype = trap_Cvar_VariableValue("g_gametype");
-
-	if (gametype < GT_TEAM || team == TEAM_SPECTATOR) {
-		DynamicMenu_SetFlags(depth, IGM_TEAMORDERS, QMF_GRAYED);
-	}
-	// spec protects voting menu (otherwise it could be used to cheat)
-	if (team == TEAM_SPECTATOR) {
-		DynamicMenu_SetFlags(depth, IGM_CALLVOTE, QMF_GRAYED);
-		DynamicMenu_SetFlags(depth, IGM_VOTE, QMF_GRAYED);
-	}
-	// disable vote menu if no voting
-	voting = qfalse;
-	trap_GetConfigString(CS_VOTE_TIME, buf, MAX_INFO_STRING);
-
-	if (atoi(buf) != 0) {
-		voting = qtrue;
-	}
-
-	trap_GetConfigString(CS_TEAMVOTE_TIME, buf, MAX_INFO_STRING);
-
-	if (atoi(buf) != 0) {
-		voting = qtrue;
-	}
-
-	if (!voting) {
-		DynamicMenu_SetFlags(depth, IGM_VOTE, QMF_GRAYED);
-	}
-
-	DynamicMenu_AddBackground(INGAME_FRAME);
-	DynamicMenu_FinishSubMenuInit();
+	return qfalse;
 }
 
 /*
 =======================================================================================================================================
-UI_InGameDynamic
+DynamicMenu_DrawBackground
 =======================================================================================================================================
 */
-void UI_InGameDynamic(void) {
+static void DynamicMenu_DrawBackground(int depth) {
+	float fx, fy, fw, fh, offset;
+	int x, y, w, h, first, last;
+	dynamicitem_t *dptr;
 
-	DynamicMenu_MenuInit(qfalse, qtrue);
-	InGameDynamic_InitPrimaryMenu();
+	first = s_dynamic.start[depth];
+	last = s_dynamic.end[depth] - 1;
+	// menu border
+	dptr = &s_dynamic.data[first];
+
+	fx = dptr->trueX;
+	fy = dptr->trueY;
+	fw = dptr->trueW;
+	fh = s_dynamic.data[last].trueY + s_dynamic.data[last].trueH - fy;
+
+	offset = (SUBMENU_SURROUNDGAP + 1);
+
+	UI_DrawRect(fx - offset, fy - offset, fw + 2 * offset, fh + 2 * offset, dynamicmenu_edgecolor);
+	// background graphic
+	if (!s_dynamic.background[depth]) {
+		return;
+	}
+
+	x = s_dynamic.item[first].generic.left;
+	y = s_dynamic.item[first].generic.top;
+	w = s_dynamic.item[first].generic.right - x;
+	h = s_dynamic.item[last].generic.bottom - y;
+
+	UI_DrawHandlePic(x, y, w, h, s_dynamic.background[depth]);
 }
-// Tobias: TODO Entscheidung ob Dynamic oder nicht
+
 /*
 =======================================================================================================================================
-UI_InGameMenu
+DynamicMenu_MenuItemDraw
 =======================================================================================================================================
-*//*
-void UI_InGameMenu(void) {
+*/
+static void DynamicMenu_MenuItemDraw(void *self) {
+	float fx, fy, fh, fw, txt_y, offset, *color;
+	int style, depth, charh;
+	menutext_s *t;
+	dynamicitem_t *dptr;
+	vec4_t tmp_color;
+	qboolean active;
 
-	if (ui_ingame_dynamicmenu.integer) {
-		UI_InGameDynamic();
+	t = (menutext_s *)self;
+	dptr = &s_dynamic.data[t->generic.id];
+	depth = DynamicMenu_DepthOfIndex(t->generic.id) - 1;
+
+	if (s_dynamic.start[depth] == t->generic.id) {
+		DynamicMenu_DrawBackground(depth);
+	}
+
+	fx = dptr->trueX;
+	fy = dptr->trueY;
+	fw = dptr->trueW;
+	fh = dptr->trueH;
+	// draw the border for the item;
+	active = DynamicMenu_OnActiveList(t->generic.id);
+
+	UI_DrawRect(fx, fy, fw, fh, dynamicmenu_edgecolor);
+
+	if (active) {
+		// draw selected infill
+		offset = 1; // correction for screen resolution
+		UI_FillRect(fx + offset, fy + offset, fw - 2 * offset, fh - 2 * offset, dynamicmenu_infillcolor);
+	}
+	// draw the icon if present
+	fx += MENUSPACE_X;
+
+	tmp_color[0] = 1.0;
+	tmp_color[1] = 1.0;
+	tmp_color[2] = 1.0;
+	tmp_color[3] = 1.0;
+
+	if (dptr->icon) {
+		float icon_y = fy + 0.5 * (fh - MENUICON_HEIGHT * MENU_SCALE);
+		tmp_color[3] = 0.8;
+
+		if (t->generic.flags & QMF_GRAYED) {
+			tmp_color[3] = 0.5;
+		}
+
+		trap_R_SetColor(tmp_color);
+		UI_DrawHandlePic(fx + MENUICON_GAP, icon_y, MENUICON_WIDTH * MENU_SCALE, MENUICON_HEIGHT * MENU_SCALE, dptr->icon);
+		trap_R_SetColor(NULL);
+	}
+
+	if (s_dynamic.icon[depth]) {
+		fx += DynamicMenu_IconSpace();
+	}
+	// draw the text
+	if (t->generic.flags & QMF_GRAYED) {
+		color = text_color_disabled;
 	} else {
-		// force as top level menu
-		uis.menusp = 0;
-		// set menu cursor to a nice location
-		uis.cursorx = 319;
-		uis.cursory = 80;
+		color = t->color;
+	}
 
-		InGame_MenuInit();
-		UI_PushMenu(&s_ingame.menu);
+	style = t->style;
+
+	if (t->generic.flags & QMF_PULSEIFFOCUS) {
+		if (Menu_ItemAtCursor(t->generic.parent) == t) {
+			style |= UI_PULSE;
+		} else {
+			style |= UI_INVERSE;
+		}
+	}
+
+	txt_y = fy + 0.5 * (fh - PROP_HEIGHT * MENU_SCALE * UI_ProportionalSizeScale(style));
+
+	UI_DrawProportionalString(fx, txt_y, t->string, style, color);
+	// draw the cursor for submenu if needed
+	if (style & UI_SMALLFONT) {
+		charh = SMALLCHAR_HEIGHT;
+	} else {
+		charh = BIGCHAR_HEIGHT;
+	}
+
+	txt_y = fy + 0.5 * (fh - charh);
+
+	if (dptr->createSubMenu) {
+		UI_DrawChar(dptr->trueX + dptr->trueW, txt_y, 13, style|UI_RIGHT, color);
 	}
 }
+
+/*
+=======================================================================================================================================
+DynamicMenu_MenuDraw
+=======================================================================================================================================
 */
+static void DynamicMenu_MenuDraw(void) {
+
+	if (uis.debug) {
+		UI_DrawString(0, SMALLCHAR_HEIGHT, va("depth:%i", s_dynamic.depth), UI_SMALLFONT, color_white);
+		UI_DrawString(0, 32 + SMALLCHAR_HEIGHT, va("active: %i %i %i", s_dynamic.active[0], s_dynamic.active[1], s_dynamic.active[2]), UI_SMALLFONT, color_white);
+	}
+
+	Menu_Draw(&s_dynamic.menu);
+}
+
+/*
+=======================================================================================================================================
+DynamicMenu_DepthOfIndex
+=======================================================================================================================================
+*/
+int DynamicMenu_DepthOfIndex(int pos) {
+	int i, maxdepth, depth;
+
+	maxdepth = s_dynamic.depth;
+	depth = 0;
+
+	for (i = 0; i < maxdepth; i++) {
+		if (pos < s_dynamic.end[i]) {
+			depth = i + 1;
+			break;
+		}
+	}
+
+	return depth;
+}
+
+/*
+=======================================================================================================================================
+DynamicMenu_SetFocus
+=======================================================================================================================================
+*/
+void DynamicMenu_SetFocus(int pos) {
+	int i, depth, newdepth;
+
+	depth = s_dynamic.depth;
+	newdepth = DynamicMenu_DepthOfIndex(pos);
+
+	if (newdepth == 0) {
+		Com_Printf("SetFocus: index %i outside menu\n", pos);
+		return;
+	}
+
+	s_dynamic.active[newdepth - 1] = pos;
+	s_dynamic.depth = newdepth;
+	// hide any previous submenus
+	if (newdepth < depth) {
+		for (i = s_dynamic.start[newdepth]; i < s_dynamic.end[depth - 1]; i++) {
+			s_dynamic.item[i].generic.flags |= (QMF_HIDDEN|QMF_INACTIVE);
+			s_dynamic.item[i].generic.flags &= ~QMF_GRAYED;
+		}
+	}
+
+	s_dynamic.active[newdepth - 1] = pos;
+	// show this one (if needed)
+	if (s_dynamic.data[pos].createSubMenu) {
+		s_dynamic.data[pos].createSubMenu();
+	}
+}
+
+/*
+=======================================================================================================================================
+DynamicMenu_ClearFocus
+=======================================================================================================================================
+*/
+void DynamicMenu_ClearFocus(int pos) {
+
+}
+
+/*
+=======================================================================================================================================
+DynamicMenu_ActivateControl
+=======================================================================================================================================
+*/
+static void DynamicMenu_ActivateControl(int pos) {
+	int depth;
+
+	depth = DynamicMenu_DepthOfIndex(pos);
+
+	if (depth == 0) {
+		Com_Printf("ActivateControl: index %i outside menu\n", pos);
+		return;
+	}
+	// not at the deepest level, can't be a command
+	if (depth < s_dynamic.depth) {
+		return;
+	}
+
+	if (s_dynamic.data[pos].runEvent) {
+		s_dynamic.data[pos].runEvent(pos);
+	} else {
+		Com_Printf("ActivateControl: index %i has no event\n", pos);
+	}
+}
+
+/*
+=======================================================================================================================================
+DynamicMenu_MenuEvent
+=======================================================================================================================================
+*/
+static void DynamicMenu_MenuEvent(void *self, int event) {
+	menutext_s *t;
+
+	t = (menutext_s *)self;
+
+	switch (event) {
+		case QM_GOTFOCUS:
+			DynamicMenu_SetFocus(t->generic.id);
+			break;
+		case QM_LOSTFOCUS:
+			DynamicMenu_ClearFocus(t->generic.id);
+			break;
+		case QM_ACTIVATED:
+			DynamicMenu_ActivateControl(t->generic.id);
+			break;
+	}
+}
+
+/*
+=======================================================================================================================================
+DynamicMenu_MenuInit
+=======================================================================================================================================
+*/
+void DynamicMenu_MenuInit(qboolean full, qboolean wrap) {
+	int i;
+
+	memset(&s_dynamic.menu, 0, sizeof(dynamicmenu_t));
+
+	s_dynamic.gametype = (int)trap_Cvar_VariableValue("g_gametype");
+
+	s_dynamic.menu.draw = DynamicMenu_MenuDraw;
+	s_dynamic.menu.fullscreen = full;
+	s_dynamic.menu.wrapAround = wrap;
+	// start up the menu system
+	s_dynamic.depth = 0;
+	// force as top level menu
+	trap_Key_SetCatcher(KEYCATCH_UI);
+
+	uis.menusp = 0;
+	// set menu cursor to a nice location
+	uis.cursorx = 50;
+	uis.cursory = 180;
+
+	for (i = 0; i < MAX_MENUITEMS; i++) {
+		s_dynamic.item[i].generic.type = MTYPE_PTEXT;
+		s_dynamic.item[i].generic.flags = QMF_INACTIVE|QMF_HIDDEN|QMF_NODEFAULTINIT|QMF_PULSEIFFOCUS;
+		s_dynamic.item[i].generic.ownerdraw = DynamicMenu_MenuItemDraw;
+		s_dynamic.item[i].generic.callback = DynamicMenu_MenuEvent;
+		s_dynamic.item[i].generic.id = i;
+		s_dynamic.item[i].string = s_dynamic.data[i].text;
+		s_dynamic.item[i].style = UI_SMALLFONT|UI_DROPSHADOW;
+		s_dynamic.item[i].color = color_red;
+
+		Menu_AddItem(&s_dynamic.menu, &s_dynamic.item[i]);
+	}
+
+	DynamicMenu_InitMapItems();
+
+	UI_PushMenu(&s_dynamic.menu);
+}
+
 /*
 =======================================================================================================================================
 
