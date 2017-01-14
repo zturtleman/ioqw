@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-The work contained within this file is software written by various´copyright holders. The initial contributor, Id Software holds all
+The work contained within this file is software written by various copyright holders. The initial contributor, Id Software holds all
 copyright over their software. However, software used and written by and for UI Enhanced has copyrights held by the initial author of
 the software.
 
@@ -144,54 +144,6 @@ static itemList_t dm_itemList[] = {
 };
 
 static int dm_numMenuItems = sizeof(dm_itemList) / sizeof(dm_itemList[0]);
-
-/*
-=======================================================================================================================================
-DynamicMenu_ServerGametype
-=======================================================================================================================================
-*/
-int DynamicMenu_ServerGametype(void) {
-	char info[MAX_INFO_STRING];
-
-	trap_GetConfigString(CS_SERVERINFO, info, sizeof(info));
-	return atoi(Info_ValueForKey(info, "g_gametype"));
-}
-
-/*
-=======================================================================================================================================
-DynamicMenu_ServerTimelimit
-=======================================================================================================================================
-*/
-int DynamicMenu_ServerTimelimit(void) {
-	char info[MAX_INFO_STRING];
-
-	trap_GetConfigString(CS_SERVERINFO, info, sizeof(info));
-	return atoi(Info_ValueForKey(info, "timelimit"));
-}
-
-/*
-=======================================================================================================================================
-DynamicMenu_ServerFraglimit
-=======================================================================================================================================
-*/
-int DynamicMenu_ServerFraglimit(void) {
-	char info[MAX_INFO_STRING];
-
-	trap_GetConfigString(CS_SERVERINFO, info, sizeof(info));
-	return atoi(Info_ValueForKey(info, "fraglimit"));
-}
-
-/*
-=======================================================================================================================================
-DynamicMenu_ServerCapturelimit
-=======================================================================================================================================
-*/
-int DynamicMenu_ServerCapturelimit(void) {
-	char info[MAX_INFO_STRING];
-
-	trap_GetConfigString(CS_SERVERINFO, info, sizeof(info));
-	return atoi(Info_ValueForKey(info, "capturelimit"));
-}
 
 /*
 =======================================================================================================================================

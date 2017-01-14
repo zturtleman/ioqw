@@ -62,7 +62,31 @@
     <ClCompile Include="..\..\code\q3_ui\ui_ingame.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\code\q3_ui\ui_ingame_mapvote.c">
+    <ClCompile Include="..\..\code\q3_ui\ui_ingame_callvote.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\q3_ui\ui_ingame_callvote_capturelimit.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\q3_ui\ui_ingame_callvote_fraglimit.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\q3_ui\ui_ingame_callvote_gametype.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\q3_ui\ui_ingame_callvote_kick.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\q3_ui\ui_ingame_callvote_map.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\q3_ui\ui_ingame_callvote_timelimit.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\q3_ui\ui_ingame_command.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\code\q3_ui\ui_ingame_vote.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\code\q3_ui\ui_loadconfig.c">

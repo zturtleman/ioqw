@@ -307,6 +307,10 @@ extern void MainMenu_Cache(void);
 extern void UI_MainMenu(void);
 extern void UI_RegisterCvars(void);
 extern void UI_UpdateCvars(void);
+extern int UI_ServerGametype(void);
+extern int UI_ServerTimelimit(void);
+extern int UI_ServerFraglimit(void);
+extern int UI_ServerCapturelimit(void);
 // ui_credits.c
 extern void UI_CreditMenu(void);
 // ui_ingame.c
@@ -315,6 +319,21 @@ extern void InGame_Cache(void);
 extern void UI_InGameMenu(void);
 extern void UI_DynamicMenuCache(void);
 extern void UI_BotCommandMenu_f(void);
+// ui_ingame_callvote.c
+extern void UI_CallVoteMenu(void);
+// ui_ingame_callvote_fraglimit.c
+extern void UI_VoteFraglimitMenu(void);
+extern void UI_VoteCapturelimitMenu(void);
+// ui_ingame_callvote_gametype.c
+extern void UI_VoteGametypeMenu(void);
+// ui_ingame_callvote_kick.c
+extern void UI_VoteKickMenu(void);
+// ui_ingame_callvote_map.c
+extern void UI_VoteMapMenu(void);
+// ui_ingame_callvote_timelimit.c
+extern void UI_VoteTimelimitMenu(void);
+// ui_ingame_vote.c
+extern void UI_VoteMenu(void);
 // ui_confirm.c
 extern void ConfirmMenu_Cache(void);
 extern void UI_ConfirmMenu(const char *question, void (*draw)(void), void (*action)(qboolean result));
@@ -594,8 +613,32 @@ enum {
 
 void UI_RemoveBots_Cache(void);
 void UI_RemoveBotsMenu(int menutype);
-// ui_ingame_mapvote.c
-void UI_MapCallVote(void);
+// ui_ingame_callvote_map.c
+void UI_VoteMapMenu(void);
+
+#define INGAME_MENU_VERTICAL_SPACING 28
+#define MAX_INGAME_SCROLLS 6
+#define SCROLL_HEIGHT 16
+
+typedef struct {
+	menuframework_s menu;
+	menubitmap_s frame;
+	menutext_s team;
+	menutext_s addbots;
+	menutext_s removebots;
+	menutext_s callvote;
+	menutext_s vote;
+	menutext_s server;
+	menutext_s setup;
+	menutext_s restart;
+	menutext_s nextmap;
+	menutext_s leave;
+	menutext_s quit;
+//	menutext_s teamorders;
+	int num_scrolls;
+	int scroll_y [MAX_INGAME_SCROLLS];
+} ingamemenu_t;
+
 // ui_loadconfig.c
 void UI_LoadConfig_Cache(void);
 void UI_LoadConfigMenu(void);

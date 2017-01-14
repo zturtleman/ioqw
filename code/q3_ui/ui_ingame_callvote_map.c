@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-The work contained within this file is software written by various´copyright holders. The initial contributor, Id Software holds all
+The work contained within this file is software written by various copyright holders. The initial contributor, Id Software holds all
 copyright over their software. However, software used and written by and for UI Enhanced has copyrights held by the initial author of
 the software.
 
@@ -157,10 +157,10 @@ static mapselect_t s_mapselect2;
 
 /*
 =======================================================================================================================================
-MapCallVote_MapCellSize
+VoteMenu_Map_CellSize
 =======================================================================================================================================
 */
-static void MapCallVote_MapCellSize(int *colh, int *colw) {
+static void VoteMenu_Map_CellSize(int *colh, int *colw) {
 
 	// screen height - 2 buttons
 	// colh rounded to multiple of 2 to reduce drawing "artifacts"
@@ -170,10 +170,10 @@ static void MapCallVote_MapCellSize(int *colh, int *colw) {
 
 /*
 =======================================================================================================================================
-MapCallVote_SetViewType
+VoteMenu_Map_SetViewType
 =======================================================================================================================================
 */
-static void MapCallVote_SetViewType(void) {
+static void VoteMenu_Map_SetViewType(void) {
 
 	if (s_mapselect2.listview.curvalue) {
 		s_mapselect2.maxMapsPerPage = MAX_LISTMAPSPERPAGE;
@@ -196,10 +196,10 @@ static void MapCallVote_SetViewType(void) {
 
 /*
 =======================================================================================================================================
-MapCallVote_MapIndex
+VoteMenu_Map_Index
 =======================================================================================================================================
 */
-static int MapCallVote_MapIndex(const char *mapname) {
+static int VoteMenu_Map_Index(const char *mapname) {
 	int i;
 	const char *info;
 
@@ -221,10 +221,10 @@ static int MapCallVote_MapIndex(const char *mapname) {
 
 /*
 =======================================================================================================================================
-MapCallVote_MapSupportsGametype
+VoteMenu_Map_SupportsGametype
 =======================================================================================================================================
 */
-static qboolean MapCallVote_MapSupportsGametype(const char *mapname) {
+static qboolean VoteMenu_Map_SupportsGametype(const char *mapname) {
 	int count, matchbits, gamebits, i;
 	const char *info;
 	char *arena_mapname;
@@ -274,10 +274,10 @@ static qboolean MapCallVote_MapSupportsGametype(const char *mapname) {
 
 /*
 =======================================================================================================================================
-MapCallVote_FilteredMap
+VoteMenu_Map_FilteredMap
 =======================================================================================================================================
 */
-static qboolean MapCallVote_FilteredMap(const char *mapname) {
+static qboolean VoteMenu_Map_FilteredMap(const char *mapname) {
 	qboolean idmap;
 	int type;
 
@@ -305,10 +305,10 @@ static qboolean MapCallVote_FilteredMap(const char *mapname) {
 
 /*
 =======================================================================================================================================
-MapCallVote_SetMapTypeIcons
+VoteMenu_Map_SetMapTypeIcons
 =======================================================================================================================================
 */
-static void MapCallVote_SetMapTypeIcons(void) {
+static void VoteMenu_Map_SetMapTypeIcons(void) {
 	int gametype, customtype;
 	menubitmap_s *icon_type, *icon_custom;
 
@@ -334,10 +334,10 @@ static void MapCallVote_SetMapTypeIcons(void) {
 
 /*
 =======================================================================================================================================
-MapCallVote_ValidateMapForLoad
+VoteMenu_Map_ValidateMapForLoad
 =======================================================================================================================================
 */
-static qboolean MapCallVote_ValidateMapForLoad(const char *info, int matchbits, qboolean cache) {
+static qboolean VoteMenu_Map_ValidateMapForLoad(const char *info, int matchbits, qboolean cache) {
 	int gamebits;
 	const char *arena_mapname;
 
@@ -354,7 +354,7 @@ static qboolean MapCallVote_ValidateMapForLoad(const char *info, int matchbits, 
 		return qfalse;
 	}
 
-	if (!MapCallVote_FilteredMap(arena_mapname)) {
+	if (!VoteMenu_Map_FilteredMap(arena_mapname)) {
 		return qfalse;
 	}
 	// cache map image
@@ -367,10 +367,10 @@ static qboolean MapCallVote_ValidateMapForLoad(const char *info, int matchbits, 
 
 /*
 =======================================================================================================================================
-MapCallVote_LoadMaps
+VoteMenu_Map_LoadMaps
 =======================================================================================================================================
 */
-static void MapCallVote_LoadMaps(const char *mapname, qboolean cache) {
+static void VoteMenu_Map_LoadMaps(const char *mapname, qboolean cache) {
 	int count, matchbits, i, j, nchars, lastspace, secondline, count2;
 	const char *info;
 	char *buf;
@@ -391,7 +391,7 @@ static void MapCallVote_LoadMaps(const char *mapname, qboolean cache) {
 	for (i = 0; i < count; i++) {
 		info = UI_GetArenaInfoByNumber(i);
 
-		if (!info || !MapCallVote_ValidateMapForLoad(info, matchbits, cache)) {
+		if (!info || !VoteMenu_Map_ValidateMapForLoad(info, matchbits, cache)) {
 			if (!info) {
 				trap_Print(va("Load Map error(%i)\n", i));
 			}
@@ -451,19 +451,19 @@ static void MapCallVote_LoadMaps(const char *mapname, qboolean cache) {
 		s_mapselect2.nummaps++;
 	}
 	// set up the correct map page
-	s_mapselect2.currentmap = MapCallVote_MapIndex(mapname);
+	s_mapselect2.currentmap = VoteMenu_Map_Index(mapname);
 
-	MapCallVote_SetViewType();
+	VoteMenu_Map_SetViewType();
 }
 
 /*
 =======================================================================================================================================
-MapCallVote_HighlightIfOnPage
+VoteMenu_Map_HighlightIfOnPage
 
 Only used for grid display of maps.
 =======================================================================================================================================
 */
-static void MapCallVote_HighlightIfOnPage(int index) {
+static void VoteMenu_Map_HighlightIfOnPage(int index) {
 	int i;
 
 	i = index - s_mapselect2.page * MAX_GRIDMAPSPERPAGE;
@@ -476,10 +476,10 @@ static void MapCallVote_HighlightIfOnPage(int index) {
 
 /*
 =======================================================================================================================================
-MapCallVote_OnCurrentPage
+VoteMenu_Map_OnCurrentPage
 =======================================================================================================================================
 */
-static qboolean MapCallVote_OnCurrentPage(int index) {
+static qboolean VoteMenu_Map_OnCurrentPage(int index) {
 	int base;
 
 	base = s_mapselect2.page * s_mapselect2.maxMapsPerPage;
@@ -501,10 +501,10 @@ static qboolean MapCallVote_OnCurrentPage(int index) {
 
 /*
 =======================================================================================================================================
-MapCallVote_UpdateAcceptInterface
+VoteMenu_Map_UpdateAcceptInterface
 =======================================================================================================================================
 */
-static void MapCallVote_UpdateAcceptInterface(void) {
+static void VoteMenu_Map_UpdateAcceptInterface(void) {
 
 	if (s_mapselect2.currentmap == -1) {
 		s_mapselect2.accept.generic.flags |= (QMF_GRAYED|QMF_INACTIVE);
@@ -515,10 +515,10 @@ static void MapCallVote_UpdateAcceptInterface(void) {
 
 /*
 =======================================================================================================================================
-MapCallVote_UpdateInterface
+VoteMenu_Map_UpdateInterface
 =======================================================================================================================================
 */
-static void MapCallVote_UpdateInterface(void) {
+static void VoteMenu_Map_UpdateInterface(void) {
 	int top, i;
 
 	if (s_mapselect2.listview.curvalue) {
@@ -547,18 +547,18 @@ static void MapCallVote_UpdateInterface(void) {
 
 		s_mapselect2.maplist.generic.flags |= (QMF_HIDDEN|QMF_INACTIVE);
 
-		MapCallVote_HighlightIfOnPage(s_mapselect2.currentmap);
+		VoteMenu_Map_HighlightIfOnPage(s_mapselect2.currentmap);
 	}
 
-	MapCallVote_UpdateAcceptInterface();
+	VoteMenu_Map_UpdateAcceptInterface();
 }
 
 /*
 =======================================================================================================================================
-MapCallVote_SetNewMapPics
+VoteMenu_Map_SetNewMapPics
 =======================================================================================================================================
 */
-static void MapCallVote_SetNewMapPics(void) {
+static void VoteMenu_Map_SetNewMapPics(void) {
 	int top, i, j;
 	const char *info;
 
@@ -605,10 +605,10 @@ static void MapCallVote_SetNewMapPics(void) {
 
 /*
 =======================================================================================================================================
-MapCallVote_SetNewListNames
+VoteMenu_Map_SetNewListNames
 =======================================================================================================================================
 */
-static void MapCallVote_SetNewListNames(void) {
+static void VoteMenu_Map_SetNewListNames(void) {
 	int base, i;
 
 	base = s_mapselect2.page * s_mapselect2.maxMapsPerPage;
@@ -623,7 +623,7 @@ static void MapCallVote_SetNewListNames(void) {
 		s_mapselect2.maplist.numitems++;
 	}
 
-	if (MapCallVote_OnCurrentPage(s_mapselect2.currentmap)) {
+	if (VoteMenu_Map_OnCurrentPage(s_mapselect2.currentmap)) {
 		s_mapselect2.maplist.curvalue = s_mapselect2.currentmap % s_mapselect2.maxMapsPerPage;
 	} else {
 		s_mapselect2.maplist.curvalue = -1;
@@ -634,26 +634,26 @@ static void MapCallVote_SetNewListNames(void) {
 
 /*
 =======================================================================================================================================
-MapCallVote_SetNewMapPage
+VoteMenu_Map_SetNewMapPage
 =======================================================================================================================================
 */
-static void MapCallVote_SetNewMapPage(void) {
+static void VoteMenu_Map_SetNewMapPage(void) {
 
-	MapCallVote_SetNewMapPics();
+	VoteMenu_Map_SetNewMapPics();
 
 	if (s_mapselect2.listview.curvalue) {
-		MapCallVote_SetNewListNames();
+		VoteMenu_Map_SetNewListNames();
 	}
 
-	MapCallVote_UpdateInterface();
+	VoteMenu_Map_UpdateInterface();
 }
 
 /*
 =======================================================================================================================================
-MapCallVote_FilterChanged
+VoteMenu_Map_FilterChanged
 =======================================================================================================================================
 */
-static void MapCallVote_FilterChanged(void) {
+static void VoteMenu_Map_FilterChanged(void) {
 	char mapname[MAPNAME_BUFFER];
 	const char *info;
 
@@ -666,17 +666,17 @@ static void MapCallVote_FilterChanged(void) {
 	// handle muliple selections
 	// try and keep as many as possible across filter changes
 	// convert to arena index
-	MapCallVote_LoadMaps(mapname, qfalse);
-	MapCallVote_SetNewMapPage();
-	MapCallVote_SetMapTypeIcons();
+	VoteMenu_Map_LoadMaps(mapname, qfalse);
+	VoteMenu_Map_SetNewMapPage();
+	VoteMenu_Map_SetMapTypeIcons();
 }
 
 /*
 =======================================================================================================================================
-MapCallVote_CommitSelection
+VoteMenu_Map_CommitSelection
 =======================================================================================================================================
 */
-static void MapCallVote_CommitSelection(void) {
+static void VoteMenu_Map_CommitSelection(void) {
 	const char *info;
 
 	/*
@@ -691,10 +691,10 @@ static void MapCallVote_CommitSelection(void) {
 
 /*
 =======================================================================================================================================
-MapCallVote_MenuEvent
+VoteMenu_Map_Event
 =======================================================================================================================================
 */
-static void MapCallVote_MenuEvent(void *ptr, int event) {
+static void VoteMenu_Map_Event(void *ptr, int event) {
 
 	if (event != QM_ACTIVATED) {
 		return;
@@ -707,57 +707,57 @@ static void MapCallVote_MenuEvent(void *ptr, int event) {
 		case ID_MAPSELECT_OK:
 			ms_allmaps2 = s_mapselect2.allmaps.curvalue;
 			ms_filter2 = s_mapselect2.filter.curvalue;
-			MapCallVote_CommitSelection();
+			VoteMenu_Map_CommitSelection();
 			break;
 		case ID_MAPSELECT_PREV:
 			if (s_mapselect2.page > 0) {
 				s_mapselect2.page--;
-				MapCallVote_SetNewMapPage();
+				VoteMenu_Map_SetNewMapPage();
 			}
 
 			break;
 		case ID_MAPSELECT_NEXT:
 			if (s_mapselect2.page < s_mapselect2.maxpages - 1) {
 				s_mapselect2.page++;
-				MapCallVote_SetNewMapPage();
+				VoteMenu_Map_SetNewMapPage();
 			}
 
 			break;
 		case ID_MAPSELECT_FILTERMAPS:
 		case ID_MAPSELECT_ALLMAPS:
-			MapCallVote_FilterChanged();
+			VoteMenu_Map_FilterChanged();
 			// very ugly but works, I couldn't do an infinite bucle
 			if ((s_mapselect2.nomaps & s_mapselect2.filter.numitems) > s_mapselect2.filter.curvalue) {
 				s_mapselect2.filter.curvalue++;
-				MapCallVote_FilterChanged();
+				VoteMenu_Map_FilterChanged();
 			}
 
 			if ((s_mapselect2.nomaps & s_mapselect2.filter.numitems) > s_mapselect2.filter.curvalue) {
 				s_mapselect2.filter.curvalue++;
-				MapCallVote_FilterChanged();
+				VoteMenu_Map_FilterChanged();
 			}
 
 			if ((s_mapselect2.nomaps & s_mapselect2.filter.numitems) > s_mapselect2.filter.curvalue) {
 				s_mapselect2.filter.curvalue++;
-				MapCallVote_FilterChanged();
+				VoteMenu_Map_FilterChanged();
 			}
 
 			if ((s_mapselect2.nomaps & s_mapselect2.filter.numitems) > s_mapselect2.filter.curvalue) {
 				s_mapselect2.filter.curvalue++;
-				MapCallVote_FilterChanged();
+				VoteMenu_Map_FilterChanged();
 			}
 
 			if ((s_mapselect2.nomaps & s_mapselect2.filter.numitems) == s_mapselect2.filter.curvalue) {
 				s_mapselect2.filter.curvalue = 0;
-				MapCallVote_FilterChanged();
+				VoteMenu_Map_FilterChanged();
 			}
 
 			break;
 		case ID_MAPSELECT_LISTVIEW:
 			trap_Cvar_SetValue("ui_map_list", s_mapselect2.listview.curvalue);
-			MapCallVote_SetViewType();
-			MapCallVote_SetNewMapPage();
-			MapCallVote_UpdateInterface();
+			VoteMenu_Map_SetViewType();
+			VoteMenu_Map_SetNewMapPage();
+			VoteMenu_Map_UpdateInterface();
 			break;
 		case ID_MAPSELECT_MAPICONS:
 			trap_Cvar_SetValue("ui_mapicons", s_mapselect2.mapicons.curvalue);
@@ -767,10 +767,10 @@ static void MapCallVote_MenuEvent(void *ptr, int event) {
 
 /*
 =======================================================================================================================================
-MapCallVote_MapCallVoteEvent
+VoteMenu_Map_CallVoteEvent
 =======================================================================================================================================
 */
-static void MapCallVote_MapCallVoteEvent(void *ptr, int event) {
+static void VoteMenu_Map_CallVoteEvent(void *ptr, int event) {
 	int index;
 
 	if (event != QM_ACTIVATED) {
@@ -780,15 +780,15 @@ static void MapCallVote_MapCallVoteEvent(void *ptr, int event) {
 	index = (s_mapselect2.page * MAX_GRIDMAPSPERPAGE) + ((menucommon_s *)ptr)->id;
 	s_mapselect2.currentmap = index;
 
-	MapCallVote_UpdateInterface();
+	VoteMenu_Map_UpdateInterface();
 }
 
 /*
 =======================================================================================================================================
-MapCallVote_DrawMapPic
+VoteMenu_Map_DrawMapPic
 =======================================================================================================================================
 */
-static void MapCallVote_DrawMapPic(void *self) {
+static void VoteMenu_Map_DrawMapPic(void *self) {
 	menubitmap_s *b;
 	int hasfocus, n, x, y, w, secondline, offset, id, h;
 	vec4_t tempcolor;
@@ -867,10 +867,10 @@ static void MapCallVote_DrawMapPic(void *self) {
 
 /*
 =======================================================================================================================================
-MapCallVote_Cache
+VoteMenu_Map_Cache
 =======================================================================================================================================
 */
-void MapCallVote_Cache(void) {
+void VoteMenu_Map_Cache(void) {
 
 	trap_R_RegisterShaderNoMip(MAPSELECT_HARROWS);
 	trap_R_RegisterShaderNoMip(MAPSELECT_NEXT);
@@ -886,10 +886,10 @@ void MapCallVote_Cache(void) {
 
 /*
 =======================================================================================================================================
-MapCallVote_ScrollCharParams
+VoteMenu_Map_ScrollCharParams
 =======================================================================================================================================
 */
-static void MapCallVote_ScrollCharParams(int *height, int *width, int *line) {
+static void VoteMenu_Map_ScrollCharParams(int *height, int *width, int *line) {
 
 	*height = SMALLCHAR_HEIGHT;
 	*width = SMALLCHAR_WIDTH;
@@ -898,10 +898,10 @@ static void MapCallVote_ScrollCharParams(int *height, int *width, int *line) {
 
 /*
 =======================================================================================================================================
-MapCallVote_ScrollListDraw
+VoteMenu_Map_ScrollListDraw
 =======================================================================================================================================
 */
-static void MapCallVote_ScrollListDraw(void *ptr) {
+static void VoteMenu_Map_ScrollListDraw(void *ptr) {
 	float *color;
 	qboolean hasfocus;
 	menulist_s *l;
@@ -910,7 +910,7 @@ static void MapCallVote_ScrollListDraw(void *ptr) {
 	l = (menulist_s *)ptr;
 	hasfocus = (l->generic.parent->cursor == l->generic.menuPosition);
 
-	MapCallVote_ScrollCharParams(&charheight, &charwidth, &lineheight);
+	VoteMenu_Map_ScrollCharParams(&charheight, &charwidth, &lineheight);
 
 	x = l->generic.x;
 
@@ -976,16 +976,16 @@ static void MapCallVote_ScrollListDraw(void *ptr) {
 
 /*
 =======================================================================================================================================
-MapCallVote_ListIndexFromCursor
+VoteMenu_Map_ListIndexFromCursor
 =======================================================================================================================================
 */
-static qboolean MapCallVote_ListIndexFromCursor(int *pos) {
+static qboolean VoteMenu_Map_ListIndexFromCursor(int *pos) {
 	menulist_s *l;
 	int charheight, charwidth, lineheight, x, y, w, cursorx, cursory, column;
 
 	l = &s_mapselect2.maplist;
 
-	MapCallVote_ScrollCharParams(&charheight, &charwidth, &lineheight);
+	VoteMenu_Map_ScrollCharParams(&charheight, &charwidth, &lineheight);
 
 	*pos = -1;
 	// check scroll region
@@ -1010,12 +1010,12 @@ static qboolean MapCallVote_ListIndexFromCursor(int *pos) {
 
 /*
 =======================================================================================================================================
-MapCallVote_DrawListMapPic
+VoteMenu_Map_DrawListMapPic
 
 Draws the picture under cursor in the map selection listbox.
 =======================================================================================================================================
 */
-static void MapCallVote_DrawListMapPic(void) {
+static void VoteMenu_Map_DrawListMapPic(void) {
 	static int oldindex = 0;
 	static int maptime = 0;
 	int base, index, delta, x, y, colw, colh;
@@ -1028,7 +1028,7 @@ static void MapCallVote_DrawListMapPic(void) {
 
 	base = s_mapselect2.page * s_mapselect2.maxMapsPerPage;
 	// cursor is outside list, fade map
-	if (MapCallVote_ListIndexFromCursor(&index) && MapCallVote_OnCurrentPage(base + index)) {
+	if (VoteMenu_Map_ListIndexFromCursor(&index) && VoteMenu_Map_OnCurrentPage(base + index)) {
 		maptime = uis.realtime;
 		oldindex = index;
 	} else {
@@ -1047,7 +1047,7 @@ static void MapCallVote_DrawListMapPic(void) {
 	x = 640 - MAPPIC_WIDTH;
 	y = s_mapselect2.bottomrow_y + 20 + 90;
 
-	MapCallVote_MapCellSize(&colh, &colw);
+	VoteMenu_Map_CellSize(&colh, &colw);
 
 	trap_R_SetColor(fading_red);
 	UI_DrawNamedPic(x - (colw - MAPPIC_WIDTH) / 2 - 4, y - 7, colw + 6, colh + 12, MAPSELECT_SELECT);
@@ -1060,10 +1060,10 @@ static void MapCallVote_DrawListMapPic(void) {
 
 /*
 =======================================================================================================================================
-MapCallVote_MenuDraw
+VoteMenu_Map_Draw
 =======================================================================================================================================
 */
-static void MapCallVote_MenuDraw(void) {
+static void VoteMenu_Map_Draw(void) {
 
 	StartServer_BackgroundDraw(qfalse);
 	// draw the controls
@@ -1075,18 +1075,18 @@ static void MapCallVote_MenuDraw(void) {
 	}
 
 	if (s_mapselect2.listview.curvalue) {
-		MapCallVote_DrawListMapPic();
+		VoteMenu_Map_DrawListMapPic();
 	}
 }
 
 /*
 =======================================================================================================================================
-MapCallVote_HandleListKey
+VoteMenu_Map_HandleListKey
 
 Returns true if the list box accepts that key input.
 =======================================================================================================================================
 */
-static qboolean MapCallVote_HandleListKey(int key, sfxHandle_t *psfx) {
+static qboolean VoteMenu_Map_HandleListKey(int key, sfxHandle_t *psfx) {
 	menulist_s *l;
 	int index, sel;
 
@@ -1098,7 +1098,7 @@ static qboolean MapCallVote_HandleListKey(int key, sfxHandle_t *psfx) {
 				// absorbed, silent sound effect
 				*psfx = (menu_null_sound);
 
-				if (!MapCallVote_ListIndexFromCursor(&index)) {
+				if (!VoteMenu_Map_ListIndexFromCursor(&index)) {
 					return qtrue;
 				}
 
@@ -1114,7 +1114,7 @@ static qboolean MapCallVote_HandleListKey(int key, sfxHandle_t *psfx) {
 					sel += l->curvalue;
 					s_mapselect2.currentmap = sel;
 
-					MapCallVote_UpdateAcceptInterface();
+					VoteMenu_Map_UpdateAcceptInterface();
 					*psfx = (menu_move_sound);
 				}
 			}
@@ -1131,10 +1131,10 @@ static qboolean MapCallVote_HandleListKey(int key, sfxHandle_t *psfx) {
 
 /*
 =======================================================================================================================================
-MapCallVote_Key
+VoteMenu_Map_Key
 =======================================================================================================================================
 */
-static sfxHandle_t MapCallVote_Key(int key) {
+static sfxHandle_t VoteMenu_Map_Key(int key) {
 	menulist_s *l;
 	sfxHandle_t sfx;
 
@@ -1142,7 +1142,7 @@ static sfxHandle_t MapCallVote_Key(int key) {
 	sfx = menu_null_sound;
 
 	if (l == &s_mapselect2.maplist) {
-		if (!MapCallVote_HandleListKey(key, &sfx)) {
+		if (!VoteMenu_Map_HandleListKey(key, &sfx)) {
 			return menu_buzz_sound;
 		}
 	} else {
@@ -1154,17 +1154,17 @@ static sfxHandle_t MapCallVote_Key(int key) {
 
 /*
 =======================================================================================================================================
-MapCallVote_ScrollListInit
+VoteMenu_Map_ScrollListInit
 =======================================================================================================================================
 */
-static void MapCallVote_ScrollListInit(menulist_s *l) {
+static void VoteMenu_Map_ScrollListInit(menulist_s *l) {
 	int charheight, charwidth, lineheight, w;
 
 	l->oldvalue = 0;
 	l->curvalue = 0;
 	l->top = 0;
 
-	MapCallVote_ScrollCharParams(&charheight, &charwidth, &lineheight);
+	VoteMenu_Map_ScrollCharParams(&charheight, &charwidth, &lineheight);
 
 	if (!l->columns) {
 		l->columns = 1;
@@ -1188,10 +1188,10 @@ static void MapCallVote_ScrollListInit(menulist_s *l) {
 
 /*
 =======================================================================================================================================
-MapCallVote_MenuInit
+UI_VoteMapMenuInternal
 =======================================================================================================================================
 */
-static void MapCallVote_MenuInit(int gametype, int index, const char *mapname) {
+static void UI_VoteMapMenuInternal(int gametype, int index, const char *mapname) {
 	int lastpage, i, x, y, top, colw, colh;
 
 	lastpage = -1;
@@ -1205,11 +1205,11 @@ static void MapCallVote_MenuInit(int gametype, int index, const char *mapname) {
 	memset(&s_mapselect2, 0, sizeof(s_mapselect2));
 
 	s_mapselect2.gametype = gametype;
-	s_mapselect2.menu.key = MapCallVote_Key;
+	s_mapselect2.menu.key = VoteMenu_Map_Key;
 
-	MapCallVote_Cache();
+	VoteMenu_Map_Cache();
 
-	if (gametype < GT_CTF && MapCallVote_MapSupportsGametype(mapname)) {
+	if (gametype < GT_CTF && VoteMenu_Map_SupportsGametype(mapname)) {
 		s_mapselect2.allmaps.curvalue = ms_allmaps2;
 	} else {
 		s_mapselect2.allmaps.curvalue = 0;
@@ -1240,7 +1240,7 @@ static void MapCallVote_MenuInit(int gametype, int index, const char *mapname) {
 	s_mapselect2.index = index;
 	s_mapselect2.menu.wrapAround = qtrue;
 	s_mapselect2.menu.fullscreen = qtrue;
-	s_mapselect2.menu.draw = MapCallVote_MenuDraw;
+	s_mapselect2.menu.draw = VoteMenu_Map_Draw;
 
 	s_mapselect2.buttonsbackground.generic.type = MTYPE_BITMAP;
 	s_mapselect2.buttonsbackground.generic.name = ART_BUTTONSBACKGROUND;
@@ -1293,7 +1293,7 @@ static void MapCallVote_MenuInit(int gametype, int index, const char *mapname) {
 	s_mapselect2.filter.generic.y = 18;
 	s_mapselect2.filter.generic.name = "Filter:";
 	s_mapselect2.filter.generic.id = ID_MAPSELECT_FILTERMAPS;
-	s_mapselect2.filter.generic.callback = MapCallVote_MenuEvent;
+	s_mapselect2.filter.generic.callback = VoteMenu_Map_Event;
 	s_mapselect2.filter.itemnames = mapfilter_items;
 
 	s_mapselect2.allmaps.generic.type = MTYPE_RADIOBUTTON;
@@ -1301,14 +1301,14 @@ static void MapCallVote_MenuInit(int gametype, int index, const char *mapname) {
 	s_mapselect2.allmaps.generic.y = 28 + LINE_HEIGHT + 8;
 	s_mapselect2.allmaps.generic.name = "All maps:";
 	s_mapselect2.allmaps.generic.id = ID_MAPSELECT_ALLMAPS;
-	s_mapselect2.allmaps.generic.callback = MapCallVote_MenuEvent;
+	s_mapselect2.allmaps.generic.callback = VoteMenu_Map_Event;
 
 	s_mapselect2.mapicons.generic.type = MTYPE_SPINCONTROL;
 	s_mapselect2.mapicons.generic.x = 480 + 8 * SMALLCHAR_WIDTH;
 	s_mapselect2.mapicons.generic.y = 28 + LINE_HEIGHT + 8;
 	s_mapselect2.mapicons.generic.name = "Icons:";
 	s_mapselect2.mapicons.generic.id = ID_MAPSELECT_MAPICONS;
-	s_mapselect2.mapicons.generic.callback = MapCallVote_MenuEvent;
+	s_mapselect2.mapicons.generic.callback = VoteMenu_Map_Event;
 	s_mapselect2.mapicons.itemnames = mapicons_items2;
 	s_mapselect2.mapicons.curvalue = (int)Com_Clamp(0, MAPICONS_MAX - 1, ui_mapicons.integer);
 
@@ -1323,7 +1323,7 @@ static void MapCallVote_MenuInit(int gametype, int index, const char *mapname) {
 	s_mapselect2.previous.generic.type = MTYPE_BITMAP;
 	s_mapselect2.previous.generic.flags = QMF_LEFT_JUSTIFY|QMF_PULSEIFFOCUS;
 	s_mapselect2.previous.generic.id = ID_MAPSELECT_PREV;
-	s_mapselect2.previous.generic.callback = MapCallVote_MenuEvent;
+	s_mapselect2.previous.generic.callback = VoteMenu_Map_Event;
 	s_mapselect2.previous.generic.x = 320;
 	s_mapselect2.previous.generic.y = 435;
 	s_mapselect2.previous.width = 96;
@@ -1333,7 +1333,7 @@ static void MapCallVote_MenuInit(int gametype, int index, const char *mapname) {
 	s_mapselect2.next.generic.type = MTYPE_BITMAP;
 	s_mapselect2.next.generic.flags = QMF_LEFT_JUSTIFY|QMF_PULSEIFFOCUS;
 	s_mapselect2.next.generic.id = ID_MAPSELECT_NEXT;
-	s_mapselect2.next.generic.callback = MapCallVote_MenuEvent;
+	s_mapselect2.next.generic.callback = VoteMenu_Map_Event;
 	s_mapselect2.next.generic.x = 320 + 96;
 	s_mapselect2.next.generic.y = 435;
 	s_mapselect2.next.width = 96;
@@ -1344,7 +1344,7 @@ static void MapCallVote_MenuInit(int gametype, int index, const char *mapname) {
 	s_mapselect2.cancel.generic.name = MAPSELECT_CANCEL0;
 	s_mapselect2.cancel.generic.flags = QMF_LEFT_JUSTIFY|QMF_PULSEIFFOCUS;
 	s_mapselect2.cancel.generic.id = ID_MAPSELECT_CANCEL;
-	s_mapselect2.cancel.generic.callback = MapCallVote_MenuEvent;
+	s_mapselect2.cancel.generic.callback = VoteMenu_Map_Event;
 	s_mapselect2.cancel.generic.x = 0;
 	s_mapselect2.cancel.generic.y = 435;
 	s_mapselect2.cancel.width = BUTTON_WIDTH;
@@ -1355,7 +1355,7 @@ static void MapCallVote_MenuInit(int gametype, int index, const char *mapname) {
 	s_mapselect2.accept.generic.name = MAPSELECT_VOTE0;
 	s_mapselect2.accept.generic.flags = QMF_RIGHT_JUSTIFY|QMF_PULSEIFFOCUS;
 	s_mapselect2.accept.generic.id = ID_MAPSELECT_OK;
-	s_mapselect2.accept.generic.callback = MapCallVote_MenuEvent;
+	s_mapselect2.accept.generic.callback = VoteMenu_Map_Event;
 	s_mapselect2.accept.generic.x = 640;
 	s_mapselect2.accept.generic.y = 435;
 	s_mapselect2.accept.width = BUTTON_WIDTH;
@@ -1366,18 +1366,18 @@ static void MapCallVote_MenuInit(int gametype, int index, const char *mapname) {
 	s_mapselect2.maplist.generic.flags = QMF_PULSEIFFOCUS|QMF_NODEFAULTINIT;
 	s_mapselect2.maplist.generic.x = 3 * SMALLCHAR_WIDTH;
 	s_mapselect2.maplist.generic.y = 84;
-	s_mapselect2.maplist.generic.ownerdraw = MapCallVote_ScrollListDraw;
+	s_mapselect2.maplist.generic.ownerdraw = VoteMenu_Map_ScrollListDraw;
 	s_mapselect2.maplist.columns = MAPLIST_COLUMNS;
 	s_mapselect2.maplist.seperation = 2;
 	s_mapselect2.maplist.height = MAPLIST_ROWS;
 	s_mapselect2.maplist.width = 22;
 	s_mapselect2.maplist.itemnames = s_mapselect2.maplist_alias;
 
-	MapCallVote_ScrollListInit(&s_mapselect2.maplist);
+	VoteMenu_Map_ScrollListInit(&s_mapselect2.maplist);
 
 	top = s_mapselect2.page * s_mapselect2.maxMapsPerPage;
 
-	MapCallVote_MapCellSize(&colh, &colw);
+	VoteMenu_Map_CellSize(&colh, &colw);
 
 	s_mapselect2.bottomrow_y = 64 + 2 * colh;
 
@@ -1388,8 +1388,8 @@ static void MapCallVote_MenuInit(int gametype, int index, const char *mapname) {
 		s_mapselect2.mappics[i].generic.type = MTYPE_BITMAP;
 		s_mapselect2.mappics[i].generic.name = 0;
 		s_mapselect2.mappics[i].generic.flags = QMF_NODEFAULTINIT;
-		s_mapselect2.mappics[i].generic.ownerdraw = MapCallVote_DrawMapPic;
-		s_mapselect2.mappics[i].generic.callback = MapCallVote_MapCallVoteEvent;
+		s_mapselect2.mappics[i].generic.ownerdraw = VoteMenu_Map_DrawMapPic;
+		s_mapselect2.mappics[i].generic.callback = VoteMenu_Map_CallVoteEvent;
 		s_mapselect2.mappics[i].generic.id = i;
 		s_mapselect2.mappics[i].generic.x = x;
 		s_mapselect2.mappics[i].generic.y = y;
@@ -1409,7 +1409,7 @@ static void MapCallVote_MenuInit(int gametype, int index, const char *mapname) {
 	s_mapselect2.listview.generic.y = 485 - 2 * SMALLCHAR_HEIGHT;
 	s_mapselect2.listview.generic.name = "List view:";
 	s_mapselect2.listview.generic.id = ID_MAPSELECT_LISTVIEW;
-	s_mapselect2.listview.generic.callback = MapCallVote_MenuEvent;
+	s_mapselect2.listview.generic.callback = VoteMenu_Map_Event;
 
 	s_mapselect2.listview.curvalue = (int)Com_Clamp(0, 1, trap_Cvar_VariableValue("ui_map_list"));
 	// register for display
@@ -1437,23 +1437,23 @@ static void MapCallVote_MenuInit(int gametype, int index, const char *mapname) {
 		Menu_AddItem(&s_mapselect2.menu, &s_mapselect2.mappics[i]);
 	}
 
-	MapCallVote_LoadMaps(mapname, qfalse);
-	MapCallVote_SetNewMapPage();
-	MapCallVote_SetMapTypeIcons();
+	VoteMenu_Map_LoadMaps(mapname, qfalse);
+	VoteMenu_Map_SetNewMapPage();
+	VoteMenu_Map_SetMapTypeIcons();
 
 	UI_PushMenu(&s_mapselect2.menu);
 }
 
 /*
 =======================================================================================================================================
-UI_MapCallVote
+UI_VoteMapMenu
 =======================================================================================================================================
 */
-void UI_MapCallVote(void) {
+void UI_VoteMapMenu(void) {
 
-	gametype = DynamicMenu_ServerGametype();
+	gametype = UI_ServerGametype();
 
 	UI_LoadMapTypeInfo();
 
-	MapCallVote_MenuInit(gametype, index, mapname);
+	UI_VoteMapMenuInternal(gametype, index, mapname);
 }

@@ -125,7 +125,7 @@ static const char *servertype_items[] = {
 	"Free For All",
 	"Tournament",
 	"Team Deathmatch",
-	"Capture the Flag",
+	"Capture The Flag",
 	"One Flag CTF",
 	"Overload",
 	"Harvester",
