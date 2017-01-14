@@ -140,6 +140,7 @@ extern vmCvar_t ui_server13;
 extern vmCvar_t ui_server14;
 extern vmCvar_t ui_server15;
 extern vmCvar_t ui_server16;
+extern vmCvar_t ui_firststart;
 extern vmCvar_t ui_mapicons;
 extern vmCvar_t ui_ingame_dynamicmenu;
 extern vmCvar_t ui_ioq3;
@@ -347,6 +348,9 @@ extern int UI_ServerGametype(void);
 extern int UI_ServerTimelimit(void);
 extern int UI_ServerFraglimit(void);
 extern int UI_ServerCapturelimit(void);
+// ui_firstconnect.c
+extern void FirstConnect_Cache(void);
+extern void UI_FirstConnectMenu(void);
 // ui_credits.c
 extern void UI_CreditMenu(void);
 // ui_ingame.c
