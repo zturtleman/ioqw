@@ -26,6 +26,8 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "../qcommon/qcommon.h"
 
 cvar_t *cl_shownet;
+// TTimo: win32 dedicated
+cvar_t *cl_language;
 
 /*
 =======================================================================================================================================
@@ -42,6 +44,8 @@ CL_Init
 */
 void CL_Init(void) {
 	cl_shownet = Cvar_Get("cl_shownet", "0", CVAR_TEMP);
+	// TTimo: localisation, prolly not any use in dedicated/null client
+	cl_language = Cvar_Get("cl_language", "0", CVAR_ARCHIVE);
 }
 
 /*

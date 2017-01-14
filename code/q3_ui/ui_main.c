@@ -74,6 +74,25 @@ Q_EXPORT intptr_t vmMain(int command, int arg0, int arg1, int arg2, int arg3, in
 	return -1;
 }
 
+#define MAX_VA_STRING 32000
+
+/*
+=======================================================================================================================================
+UI_TranslateString
+=======================================================================================================================================
+*/
+char *UI_TranslateString(const char *string) {
+	static char staticbuf[2][MAX_VA_STRING];
+	static int bufcount = 0;
+	char *buf;
+
+	buf = staticbuf[bufcount++ % 2];
+
+	trap_TranslateString(string, buf);
+
+	return buf;
+}
+
 typedef struct {
 	vmCvar_t *vmCvar;
 	char *cvarName;

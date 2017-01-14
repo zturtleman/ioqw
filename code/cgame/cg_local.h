@@ -1072,6 +1072,7 @@ void UI_DrawProportionalString(int x, int y, const char *str, int style, vec4_t 
 void CG_DrawRect(float x, float y, float width, float height, float size, const float *color);
 void CG_DrawSides(float x, float y, float w, float h, float size);
 void CG_DrawTopBottom(float x, float y, float w, float h, float size);
+char *CG_TranslateString(const char *string);
 // cg_draw.c, cg_newDraw.c
 typedef enum {
 	SYSTEM_PRINT,
@@ -1242,6 +1243,7 @@ void trap_GetClipboardData(char *buf, int bufsize);
 void trap_GetGlconfig(glconfig_t *glconfig);
 // force a screen update, only used during gamestate load
 void trap_UpdateScreen(void);
+void trap_TranslateString(const char *string, char *buf); // localization
 int trap_MemoryRemaining(void);
 // the gamestate should be grabbed at startup, and whenever a configstring changes
 void trap_GetGameState(gameState_t *gamestate);

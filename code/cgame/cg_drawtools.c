@@ -1675,3 +1675,22 @@ void CG_KeysStringForBinding(const char *binding, char *string, int stringSize) 
 		Q_strcat(string, stringSize, name2);
 	}
 }
+
+#define MAX_VA_STRING 32000
+
+/*
+=======================================================================================================================================
+CG_TranslateString
+=======================================================================================================================================
+*/
+char *CG_TranslateString(const char *string) {
+	static char staticbuf[2][MAX_VA_STRING];
+	static int bufcount = 0;
+	char *buf;
+
+	buf = staticbuf[bufcount++ % 2];
+
+	trap_TranslateString(string, buf);
+
+	return buf;
+}
