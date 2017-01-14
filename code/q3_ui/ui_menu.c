@@ -266,6 +266,11 @@ void UI_MainMenu(void) {
 
 	trap_Cvar_SetValue("sv_killserver", 1);
 
+	if (ui_firststart.integer) {
+		UI_FirstConnectMenu();
+		return;
+	}
+
 	memset(&s_main, 0, sizeof(mainmenu_t));
 	memset(&s_errorMessage, 0, sizeof(errorMessage_t));
 	// com_errorMessage would need that too
