@@ -1325,4 +1325,12 @@ typedef enum _flag_status {
 
 #define LERP(a, b, w) ((a) * (1.0f - (w)) + (b) * (w))
 #define LUMA(red, green, blue) (0.2126f * (red) + 0.7152f * (green) + 0.0722f * (blue))
+// localization
+typedef enum {
+	LANGUAGE_FRENCH = 0,
+	LANGUAGE_GERMAN,
+	LANGUAGE_ITALIAN,
+	LANGUAGE_SPANISH,
+	MAX_LANGUAGES
+} languages_t;
 #endif // __Q_SHARED_H

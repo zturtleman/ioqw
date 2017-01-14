@@ -889,6 +889,9 @@ intptr_t CL_UISystemCalls(intptr_t *args) {
 		case UI_UPDATESCREEN:
 			SCR_UpdateScreen();
 			return 0;
+		case UI_CL_TRANSLATE_STRING:
+			CL_TranslateString(VMA(1), VMA(2));
+			return 0;
 		case UI_R_LERPTAG:
 			return re.LerpTag(VMA(1), args[2], args[3], args[4], VMF(5), VMA(6));
 		case UI_S_REGISTERSOUND:

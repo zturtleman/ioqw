@@ -59,6 +59,7 @@ equ trap_GetClipboardData				-101
 equ trap_GetGlconfig					-102
 equ trap_MemoryRemaining				-103
 equ trap_UpdateScreen					-104
+equ trap_TranslateString				-105
 
 equ trap_GetClientState					-151
 equ trap_GetConfigString				-152

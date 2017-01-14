@@ -538,6 +538,7 @@ extern void UI_DrawHandlePic(float x, float y, float w, float h, qhandle_t hShad
 extern void UI_FillRect(float x, float y, float width, float height, const float *color);
 extern void UI_DrawRect(float x, float y, float width, float height, const float *color);
 extern void UI_UpdateScreen(void);
+char *UI_TranslateString(const char *string);
 extern void UI_LerpColor(const vec4_t a, const vec4_t b, vec4_t c, float t);
 extern void UI_DrawBannerString(int x, int y, const char *str, int style, vec4_t color);
 extern float UI_ProportionalSizeScale(int style);
@@ -576,6 +577,7 @@ void UI_SPSkillMenu_Cache(void);
 void trap_GetClipboardData(char *buf, int bufsize);
 void trap_GetGlconfig(glconfig_t *glconfig);
 void trap_UpdateScreen(void);
+void trap_TranslateString(const char *string, char *buf); // localization
 int trap_MemoryRemaining(void);
 void trap_GetClientState(uiClientState_t *state);
 int trap_GetConfigString(int index, char *buff, int buffsize);

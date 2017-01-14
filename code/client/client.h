@@ -116,6 +116,8 @@ typedef struct {
 	clSnapshot_t snapshots[PACKET_BACKUP];
 	entityState_t entityBaselines[MAX_GENTITIES]; // for delta compression when not in previous frame
 	entityState_t parseEntities[MAX_PARSE_ENTITIES];
+	qboolean corruptedTranslationFile;
+	char translationVersion[MAX_STRING_TOKENS];
 } clientActive_t;
 
 extern clientActive_t cl;
@@ -339,6 +341,8 @@ extern cvar_t *cl_downloadMethod;
 extern cvar_t *cl_conXOffset;
 extern cvar_t *cl_inGameVideo;
 extern cvar_t *cl_lanForcePackets;
+// localization
+extern cvar_t *cl_language;
 extern cvar_t *cl_autoRecordDemo;
 extern cvar_t *cl_consoleKeys;
 #ifdef USE_MUMBLE
@@ -385,6 +389,12 @@ void CL_ShutdownRef(void);
 void CL_InitRef(void);
 int CL_ServerStatus(char *serverAddress, char *serverStatusString, int maxLen);
 qboolean CL_CheckPaused(void);
+// localization
+void CL_InitTranslation(void);
+void CL_SaveTransTable(const char *fileName, qboolean newOnly);
+void CL_ReloadTranslation(void);
+void CL_TranslateString(const char *string, char *dest_buffer);
+const char *CL_TranslateStringBuf(const char *string);
 // cl_input
 typedef struct {
 	int down[2];			// key nums holding it down

@@ -552,6 +552,9 @@ intptr_t CL_CgameSystemCalls(intptr_t *args) {
 			// if there is a map change while we are downloading at pk3.
 			SCR_UpdateScreen();
 			return 0;
+		case CG_TRANSLATE_STRING:
+			CL_TranslateString(VMA(1), VMA(2));
+			return 0;
 		case CG_CM_LOADMAP:
 			CL_CM_LoadMap(VMA(1));
 			return 0;
