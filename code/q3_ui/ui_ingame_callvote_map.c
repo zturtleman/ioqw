@@ -40,7 +40,6 @@ id Software at the address below.
 
 #include "ui_local.h"
 #include "ui_startserver_q3.h"
-#include "ui_dynamicmenu.h"
 
 /*
 =======================================================================================================================================
