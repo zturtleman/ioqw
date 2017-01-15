@@ -232,7 +232,7 @@ CG_DrawField
 Draws large numbers for status bar and powerups.
 =======================================================================================================================================
 */
-static void CG_DrawField(int x, int y, int width, int value) {
+static void CG_DrawField(int x, int y, int width, int value, float *color) {
 	char num[16], *ptr;
 	int l;
 	int frame;
@@ -277,6 +277,8 @@ static void CG_DrawField(int x, int y, int width, int value) {
 	x += (1.0f - cg_statusScale.value) * l * CHAR_WIDTH * 0.5f;
 	y += (1.0f - cg_statusScale.value) * CHAR_HEIGHT;
 
+	trap_R_SetColor(color);
+
 	ptr = num;
 
 	while (*ptr && l) {
@@ -292,6 +294,8 @@ static void CG_DrawField(int x, int y, int width, int value) {
 		ptr++;
 		l--;
 	}
+
+	trap_R_SetColor(NULL);
 }
 #endif
 /*
@@ -588,7 +592,6 @@ static void CG_DrawStatusBar(void) {
 	centity_t *cent;
 	playerState_t *ps;
 	int value;
-	vec4_t hcolor;
 	vec3_t angles;
 	vec3_t origin;
 	float scale, iconSize;
@@ -621,6 +624,7 @@ static void CG_DrawStatusBar(void) {
 		origin[1] = 0;
 		origin[2] = 0;
 		angles[YAW] = 90 + 20 * sin(cg.time / 1000.0);
+
 		CG_Draw3DModel(480 + CHAR_WIDTH * 3 + TEXT_ICON_SPACE, 480 - iconSize, iconSize, iconSize, cg_weapons[cent->currentState.weapon].ammoModel, 0, origin, angles);
 	}
 
@@ -629,6 +633,7 @@ static void CG_DrawStatusBar(void) {
 		origin[1] = 0;
 		origin[2] = -5;
 		angles[YAW] = (cg.time & 2047) * 360 / 4096.0;
+
 		CG_DrawHealthModel(240 + CHAR_WIDTH * 3 + TEXT_ICON_SPACE, 480 - iconSize, iconSize, iconSize, cg_items[3].models[0], 0, cg_items[3].models[1], origin, angles, 0);
 		// if we didn't draw a 3D icon, draw a 2D icon for health
 		if (!cg_draw3dIcons.integer && cg_drawIcons.integer) {
@@ -651,6 +656,7 @@ static void CG_DrawStatusBar(void) {
 		origin[1] = 0;
 		origin[2] = -10;
 		angles[YAW] = (cg.time & 2047) * 360 / 2048.0;
+
 		CG_Draw3DModel(CHAR_WIDTH * 3 + TEXT_ICON_SPACE, 480 - iconSize, iconSize, iconSize, cgs.media.armorModel, 0, origin, angles);
 	}
 	// ammo
@@ -669,10 +675,7 @@ static void CG_DrawStatusBar(void) {
 				}
 			}
 
-			trap_R_SetColor(colors[color]);
-
-			CG_DrawField(480, 432, 3, value);
-			trap_R_SetColor(NULL);
+			CG_DrawField(480, 432, 3, value, colors[color]);
 			// if we didn't draw a 3D icon, draw a 2D icon for ammo
 			if (!cg_draw3dIcons.integer && cg_drawIcons.integer) {
 				qhandle_t icon;
@@ -689,27 +692,21 @@ static void CG_DrawStatusBar(void) {
 	value = ps->stats[STAT_HEALTH];
 
 	if (value > 100) {
-		trap_R_SetColor(colors[3]); // white
+		color = 3; // white
 	} else if (value > 25) {
-		trap_R_SetColor(colors[0]); // green
+		color = 0; // green
 	} else if (value > 0) {
 		color = (cg.time >> 8) & 1; // flash
-		trap_R_SetColor(colors[color]);
 	} else {
-		trap_R_SetColor(colors[1]); // red
+		color = 1; // red
 	}
 	// stretch the health up when taking damage
-	CG_DrawField(260, 432, 3, value);
-	CG_ColorForHealth(hcolor);
-
-	trap_R_SetColor(hcolor);
+	CG_DrawField(260, 432, 3, value, colors[color]);
 	// armor
 	value = ps->stats[STAT_ARMOR];
 
 	if (value > 0) {
-		trap_R_SetColor(colors[0]);
-		CG_DrawField(0, 432, 3, value);
-		trap_R_SetColor(NULL);
+		CG_DrawField(0, 432, 3, value, colors[color]);
 		// if we didn't draw a 3D icon, draw a 2D icon for armor
 		if (!cg_draw3dIcons.integer && cg_drawIcons.integer) {
 			CG_DrawPic(CHAR_WIDTH * 3 + TEXT_ICON_SPACE, 480 - iconSize, iconSize, iconSize, cgs.media.armorIcon);
@@ -1385,13 +1382,12 @@ static float CG_DrawPowerups(float y) {
 			color = 1;
 			y -= ICON_SIZE;
 
-			trap_R_SetColor(colors[color]);
-			CG_DrawField(x, y, 2, sortedTime[i] / 1000);
+			CG_DrawField(x, y, 2, sortedTime[i] / 1000, colors[color]);
 
 			t = ps->powerups[sorted[i]];
 
 			if (t - cg.time >= POWERUP_BLINKS * POWERUP_BLINK_TIME) {
-				trap_R_SetColor(NULL);
+
 			} else {
 				vec4_t modulate;
 
@@ -1409,10 +1405,10 @@ static float CG_DrawPowerups(float y) {
 			}
 
 			CG_DrawPic(640 - size, y + ICON_SIZE / 2 - size / 2, size, size, trap_R_RegisterShader(item->icon));
+
+			trap_R_SetColor(NULL);
 		}
 	}
-
-	trap_R_SetColor(NULL);
 
 	return y;
 }
@@ -1735,7 +1731,6 @@ static void CG_DrawLagometer(void) {
 	x = 640 - 48;
 	y = 480 - 48;
 #endif
-	trap_R_SetColor(NULL);
 	CG_DrawPic(x, y, 48, 48, cgs.media.lagometerShader);
 
 	ax = x;
@@ -1919,8 +1914,6 @@ static void CG_DrawCrosshair(void) {
 
 		CG_ColorForHealth(hcolor);
 		trap_R_SetColor(hcolor);
-	} else {
-		trap_R_SetColor(NULL);
 	}
 
 	w = h = cg_crosshairSize.value;
