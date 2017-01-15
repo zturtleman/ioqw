@@ -31,18 +31,18 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define SCOREBOARD_X (0)
 #define SB_HEADER 86
 #define SB_TOP (SB_HEADER + 32)
-// Where the status bar starts, so we don't overwrite it
+// where the status bar starts, so we don't overwrite it
 #define SB_STATUSBAR 420
 #define SB_NORMAL_HEIGHT 40
 #define SB_INTER_HEIGHT 16 // interleaved height
 #define SB_MAXCLIENTS_NORMAL ((SB_STATUSBAR - SB_TOP) / SB_NORMAL_HEIGHT)
 #define SB_MAXCLIENTS_INTER ((SB_STATUSBAR - SB_TOP) / SB_INTER_HEIGHT - 1)
-// Used when interleaved
+// used when interleaved
 #define SB_LEFT_BOTICON_X (SCOREBOARD_X + 0)
 #define SB_LEFT_HEAD_X (SCOREBOARD_X + 32)
 #define SB_RIGHT_BOTICON_X (SCOREBOARD_X + 64)
 #define SB_RIGHT_HEAD_X (SCOREBOARD_X + 96)
-// Normal
+// normal
 #define SB_BOTICON_X (SCOREBOARD_X + 32)
 #define SB_HEAD_X (SCOREBOARD_X + 64)
 #define SB_SCORELINE_X 112
@@ -53,10 +53,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define SB_TIME_X (SB_SCORELINE_X + 17 * BIGCHAR_WIDTH + 8) // width 5
 #define SB_NAME_X (SB_SCORELINE_X + 22 * BIGCHAR_WIDTH) // width 15
 
-// The new and improved score board
-
-// In cases where the number of clients is high, the score board heads are interleaved
-// here's the layout
+// in cases where the number of players is high, the score board heads are interleaved, here's the layout:
 
 //  0   32   80  112  144   240  320  400   <-- pixel position
 //  bot head bot head score ping time name
@@ -85,19 +82,19 @@ static void CG_DrawClientScore(int y, score_t *score, float *color, float fade, 
 	iconx = SB_BOTICON_X + (SB_RATING_WIDTH / 2);
 	headx = SB_HEAD_X + (SB_RATING_WIDTH / 2);
 	// draw the handicap or bot skill marker (unless player has flag)
-	if (ci->powerups & (1 << PW_NEUTRALFLAG)) {
+	if (ci->powerups &(1 << PW_NEUTRALFLAG)) {
 		if (largeFormat) {
 			CG_DrawFlagModel(iconx, y - (32 - BIGCHAR_HEIGHT) / 2, 32, 32, TEAM_FREE, qfalse);
 		} else {
 			CG_DrawFlagModel(iconx, y, 16, 16, TEAM_FREE, qfalse);
 		}
-	} else if (ci->powerups & (1 << PW_REDFLAG)) {
+	} else if (ci->powerups &(1 << PW_REDFLAG)) {
 		if (largeFormat) {
 			CG_DrawFlagModel(iconx, y - (32 - BIGCHAR_HEIGHT) / 2, 32, 32, TEAM_RED, qfalse);
 		} else {
 			CG_DrawFlagModel(iconx, y, 16, 16, TEAM_RED, qfalse);
 		}
-	} else if (ci->powerups & (1 << PW_BLUEFLAG)) {
+	} else if (ci->powerups &(1 << PW_BLUEFLAG)) {
 		if (largeFormat) {
 			CG_DrawFlagModel(iconx, y - (32 - BIGCHAR_HEIGHT) / 2, 32, 32, TEAM_BLUE, qfalse);
 		} else {
@@ -121,7 +118,7 @@ static void CG_DrawClientScore(int y, score_t *score, float *color, float fade, 
 				CG_DrawString(iconx, y, string, UI_DROPSHADOW|UI_SMALLFONT, color);
 			}
 		}
-		// draw the wins / losses
+		// draw the wins/losses
 		if (cgs.gametype == GT_TOURNAMENT) {
 			Com_sprintf(string, sizeof(string), "%i/%i", ci->wins, ci->losses);
 
@@ -134,6 +131,7 @@ static void CG_DrawClientScore(int y, score_t *score, float *color, float fade, 
 	}
 	// draw the face
 	VectorClear(headAngles);
+
 	headAngles[YAW] = 180;
 
 	if (largeFormat) {
@@ -295,7 +293,7 @@ qboolean CG_DrawOldScoreboard(void) {
 		return qfalse;
 	}
 
-	if (cg.showScores || cg.predictedPlayerState.pm_type == PM_DEAD || cg.predictedPlayerState.pm_type == PM_INTERMISSION) {
+	if (cg.showScores || cg.predictedPlayerState.pm_type == PM_DEAD) {
 		fade = 1.0;
 		fadeColor = colorWhite;
 	} else {
@@ -447,12 +445,7 @@ void CG_DrawOldTourneyScoreboard(void) {
 	CG_SetScreenPlacement(PLACE_STRETCH, PLACE_STRETCH);
 	CG_FillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, color);
 	CG_PopScreenPlacement();
-
-	color[0] = 1;
-	color[1] = 1;
-	color[2] = 1;
-	color[3] = 1;
-	// print the message of the day
+	// print the mesage of the day
 	s = CG_ConfigString(CS_MOTD);
 
 	if (!s[0]) {
@@ -471,20 +464,42 @@ void CG_DrawOldTourneyScoreboard(void) {
 	CG_CenterGiantLine(64, s);
 	// print the two scores
 	y = 160;
+	// free for all scoreboard (players sorted by score)
+	if (cgs.gametype < GT_TOURNAMENT) {
+		int style, gap;
 
-	if (cgs.gametype > GT_TOURNAMENT) {
-		// teamplay scoreboard
-		CG_DrawStringExt(8, y, "Red Team", UI_CENTER|UI_DROPSHADOW|UI_GIANTFONT, color, 0, 0, 1);
-		s = va("%i", cg.teamScores[0]);
-		CG_DrawStringExt(632 - GIANT_WIDTH * strlen(s), y, s, UI_CENTER|UI_DROPSHADOW|UI_GIANTFONT, color, 0, 0, 1);
+		style = UI_GIANTFONT;
+		gap = GIANTCHAR_HEIGHT + 16;
+		// use smaller font if not all players fit
+		if (cg.numScores > (SCREEN_HEIGHT - y) / gap) {
+			style = UI_BIGFONT;
+			gap = BIGCHAR_HEIGHT + 4;
+		}
 
-		y += 64;
+		for (i = 0; i < cg.numScores; i++) {
+			ci = &cgs.clientinfo[cg.scores[i].client];
 
-		CG_DrawStringExt(8, y, "Blue Team", UI_CENTER|UI_DROPSHADOW|UI_GIANTFONT, color, 0, 0, 1);
-		s = va("%i", cg.teamScores[1]);
-		CG_DrawStringExt(632 - GIANT_WIDTH * strlen(s), y, s, UI_CENTER|UI_DROPSHADOW|UI_GIANTFONT, color, 0, 0, 1);
-	} else {
-		// free for all scoreboard
+			if (!ci->infoValid) {
+				continue;
+			}
+
+			if (ci->team != TEAM_FREE) {
+				continue;
+			}
+
+			CG_DrawString(8, y, ci->name, UI_LEFT|UI_DROPSHADOW|style, NULL);
+
+			s = va("%i", ci->score);
+			CG_DrawString(632, y, s, UI_RIGHT|UI_DROPSHADOW|style, NULL);
+
+			y += gap;
+
+			if (y >= SCREEN_HEIGHT) {
+				break;
+			}
+		}
+	// tournament scoreboard
+	} else if (cgs.gametype == GT_TOURNAMENT) {
 		for (i = 0; i < MAX_CLIENTS; i++) {
 			ci = &cgs.clientinfo[i];
 
@@ -496,10 +511,25 @@ void CG_DrawOldTourneyScoreboard(void) {
 				continue;
 			}
 
-			CG_DrawStringExt(8, y, ci->name, UI_CENTER|UI_DROPSHADOW|UI_GIANTFONT, color, 0, 0, 1);
+			CG_DrawString(8, y, ci->name, UI_LEFT|UI_DROPSHADOW|UI_GIANTFONT, NULL);
+
 			s = va("%i", ci->score);
-			CG_DrawStringExt(632 - GIANT_WIDTH * strlen(s), y, s, UI_CENTER|UI_DROPSHADOW|UI_GIANTFONT, color, 0, 0, 1);
-			y += 64;
+			CG_DrawString(632, y, s, UI_RIGHT|UI_DROPSHADOW|UI_GIANTFONT, NULL);
+
+			y += GIANTCHAR_HEIGHT + 16;
 		}
+	// teamplay scoreboard
+	} else {
+		CG_DrawString(8, y, "Red Team", UI_LEFT|UI_DROPSHADOW|UI_GIANTFONT, NULL);
+
+		s = va("%i", cg.teamScores[0]);
+		CG_DrawString(632, y, s, UI_RIGHT|UI_DROPSHADOW|UI_GIANTFONT, NULL);
+		
+		y += GIANTCHAR_HEIGHT + 16;
+
+		CG_DrawString(8, y, "Blue Team", UI_LEFT|UI_DROPSHADOW|UI_GIANTFONT, NULL);
+
+		s = va("%i", cg.teamScores[1]);
+		CG_DrawString(632, y, s, UI_RIGHT|UI_DROPSHADOW|UI_GIANTFONT, NULL);
 	}
 }
