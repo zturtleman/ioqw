@@ -356,21 +356,39 @@ extern vec3_t bytedirs[NUMVERTEXNORMALS];
 
 #define TITANCHAR_WIDTH 48	// NEW							| new: 48 | shadowOffset: 3f   | font: Impact
 #define TITANCHAR_HEIGHT 48	// NEW							| new: 48 | shadowOffset: 3f   | font: Impact
-
+//see: http://wolfwiki.anime.net/index.php/Color_Codes
 extern vec4_t colorBlack;
 extern vec4_t colorRed;
 extern vec4_t colorGreen;
-extern vec4_t colorBlue;
 extern vec4_t colorYellow;
-extern vec4_t colorMagenta;
+extern vec4_t colorBlue;
 extern vec4_t colorCyan;
+extern vec4_t colorMagenta;
 extern vec4_t colorWhite;
-extern vec4_t colorLtGrey;
+extern vec4_t colorOrange;
 extern vec4_t colorMdGrey;
+extern vec4_t colorLtGrey;
+extern vec4_t colorMdGreen;
+extern vec4_t colorMdYellow;
+extern vec4_t colorMdBlue;
+extern vec4_t colorMdRed;
+extern vec4_t colorMdOrange;
+extern vec4_t colorMdCyan;
 extern vec4_t colorDkGrey;
+extern vec4_t colorDkGreen;
+
+extern vec4_t clrBrown;
+extern vec4_t clrBrownDk;
+extern vec4_t clrBrownLine;
+extern vec4_t clrBrownLineFull;
+extern vec4_t clrBrownTextLt2;
+extern vec4_t clrBrownTextLt;
+extern vec4_t clrBrownText;
+extern vec4_t clrBrownTextDk;
+extern vec4_t clrBrownTextDk2;
 
 #define Q_COLOR_ESCAPE '^'
-#define Q_IsColorString(p) ((p) && *(p) == Q_COLOR_ESCAPE && *((p) + 1) && isalnum(*((p) + 1))) // ^[0 - 9a - zA - Z]
+#define Q_IsColorString(p) ((p) && *(p) == Q_COLOR_ESCAPE && *((p) + 1) && isgraph(*((p) + 1)) && *((p) + 1) != Q_COLOR_ESCAPE)
 
 #define COLOR_BLACK		'0'
 #define COLOR_RED		'1'
@@ -380,20 +398,45 @@ extern vec4_t colorDkGrey;
 #define COLOR_CYAN		'5'
 #define COLOR_MAGENTA	'6'
 #define COLOR_WHITE		'7'
+#define COLOR_ORANGE	'8'
+#define COLOR_MDGREY	'9'
+#define COLOR_LTGREY	':'
+//#define COLOR_LTGREY	';'
+#define COLOR_MDGREEN	'<'
+#define COLOR_MDYELLOW	'='
+#define COLOR_MDBLUE	'>'
+#define COLOR_MDRED		'?'
+#define COLOR_LTORANGE	'A'
+#define COLOR_MDCYAN	'B'
+#define COLOR_MDPURPLE	'C'
+#define COLOR_NULL		'*'
 
-#define ColorIndexForNumber(c) ((c) & 0x07)
-#define ColorIndex(c) (ColorIndexForNumber((c) - '0'))
+#define COLOR_BITS 31
+#define ColorIndex(c) (((c) - '0') & COLOR_BITS)
+#define ColorIndexForNumber(c) ((c) & 0x07) // Tobias FIXME: the console still needs this!
 
-#define S_COLOR_BLACK	"^0"
-#define S_COLOR_RED		"^1"
-#define S_COLOR_GREEN	"^2"
-#define S_COLOR_YELLOW	"^3"
-#define S_COLOR_BLUE	"^4"
-#define S_COLOR_CYAN	"^5"
-#define S_COLOR_MAGENTA	"^6"
-#define S_COLOR_WHITE	"^7"
+#define S_COLOR_BLACK		"^0"
+#define S_COLOR_RED			"^1"
+#define S_COLOR_GREEN		"^2"
+#define S_COLOR_YELLOW		"^3"
+#define S_COLOR_BLUE		"^4"
+#define S_COLOR_CYAN		"^5"
+#define S_COLOR_MAGENTA		"^6"
+#define S_COLOR_WHITE		"^7"
+#define S_COLOR_ORANGE		"^8"
+#define S_COLOR_MDGREY		"^9"
+#define S_COLOR_LTGREY		"^:"
+//#define S_COLOR_LTGREY	"^;"
+#define S_COLOR_MDGREEN		"^<"
+#define S_COLOR_MDYELLOW	"^="
+#define S_COLOR_MDBLUE		"^>"
+#define S_COLOR_MDRED		"^?"
+#define S_COLOR_LTORANGE	"^A"
+#define S_COLOR_MDCYAN		"^B"
+#define S_COLOR_MDPURPLE	"^C"
+#define S_COLOR_NULL		"^*"
 
-extern vec4_t g_color_table[8];
+extern vec4_t g_color_table[32];
 
 #define MAKERGB(v, r, g, b) v[0] = r; v[1] = g; v[2] = b
 #define MAKERGBA(v, r, g, b, a) v[0] = r; v[1] = g; v[2] = b; v[3] = a
@@ -499,6 +542,10 @@ signed short ClampShort(int i);
 // this isn't a real cheap function to call!
 int DirToByte(vec3_t dir);
 void ByteToDir(int b, vec3_t dir);
+
+#define vec4_set(v, x, y, z, n) ((v)[0] = (x), (v)[1] = (y), (v)[2] = (z), (v)[3] = (n))
+// Vector multiply & add
+#define vec4_ma(v, s, b, o) ((o)[0] = (v)[0] + (b)[0] * (s), (o)[1] = (v)[1] + (b)[1] * (s), (o)[2] = (v)[2] + (b)[2] * (s), (o)[3] = (v)[3] + (b)[3] * (s))
 #if 1
 #define DotProduct(x, y) ((x)[0] * (y)[0] + (x)[1] * (y)[1] + (x)[2] * (y)[2])
 #define VectorSubtract(a, b, c) ((c)[0] = (a)[0] - (b)[0], (c)[1] = (a)[1] - (b)[1], (c)[2] = (a)[2] - (b)[2])
@@ -527,7 +574,9 @@ typedef struct {
 #define VectorClear(a) ((a)[0] = (a)[1] = (a)[2] = 0)
 #define VectorNegate(a, b) ((b)[0] = -(a)[0], (b)[1] = -(a)[1], (b)[2] = -(a)[2])
 #define VectorSet(v, x, y, z) ((v)[0] = (x), (v)[1] = (y), (v)[2] = (z))
+#define Vector4Set(v, x, y, z, n) vec4_set(v, x, y, z, n)
 #define Vector4Copy(a, b) ((b)[0] = (a)[0], (b)[1] = (a)[1], (b)[2] = (a)[2], (b)[3] = (a)[3])
+#define Vector4MA(v, s, b, o) vec4_ma(v, s, b, o)
 #define Byte4Copy(a, b) ((b)[0] = (a)[0], (b)[1] = (a)[1], (b)[2] = (a)[2], (b)[3] = (a)[3])
 #define SnapVector(v) {v[0] = ((int)(v[0])); v[1] = ((int)(v[1])); v[2] = ((int)(v[2]));}
 // just in case you don't want to use the macros
