@@ -1642,13 +1642,9 @@ void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qb
 			VectorMA(tr->trBase, deltaTime, tr->trDelta, result);
 			break;
 		case TR_GRAVITY:
-			if (atTime < tr->trTime) {
-				atTime = tr->trTime;
-			}
-
-			deltaTime = (atTime - tr->trTime) * 0.001f; // milliseconds to seconds
+			deltaTime = (atTime - tr->trTime) * 0.001; // milliseconds to seconds
 			VectorMA(tr->trBase, deltaTime, tr->trDelta, result);
-			result[2] -= 0.5f * gravity * deltaTime * deltaTime;
+			result[2] -= 0.5 * DEFAULT_GRAVITY * deltaTime * deltaTime; // FIXME: local gravity...
 			break;
 		case TR_GRAVITY_FLOAT:
 			deltaTime = (atTime - tr->trTime) * 0.001f; // milliseconds to seconds
@@ -1929,9 +1925,9 @@ void BG_EvaluateTrajectoryDelta(const trajectory_t *tr, int atTime, vec3_t resul
 			VectorScale(tr->trDelta, deltaTime, result);
 			break;
 		case TR_GRAVITY:
-			deltaTime = (atTime - tr->trTime) * 0.001f; // milliseconds to seconds
+			deltaTime = (atTime - tr->trTime) * 0.001; // milliseconds to seconds
 			VectorCopy(tr->trDelta, result);
-			result[2] -= gravity * deltaTime;
+			result[2] -= DEFAULT_GRAVITY * deltaTime; // FIXME: local gravity...
 			break;
 		case TR_GRAVITY_FLOAT:
 			deltaTime = (atTime - tr->trTime) * 0.001f; // milliseconds to seconds
