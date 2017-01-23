@@ -273,9 +273,10 @@ typedef enum {
 // font selection
 #define UI_TINYFONT			0x00000100
 #define UI_SMALLFONT		0x00000200
-#define UI_BIGFONT			0x00000300 // default
-#define UI_GIANTFONT		0x00000400
-#define UI_TITANFONT		0x00000500
+#define UI_DEFAULTFONT		0x00000300 // default
+#define UI_BIGFONT			0x00000400
+#define UI_GIANTFONT		0x00000500
+#define UI_TITANFONT		0x00000600
 #define UI_FONTMASK			0x00000F00
 // other flags
 #define UI_DROPSHADOW		0x00001000
@@ -348,8 +349,11 @@ extern vec3_t bytedirs[NUMVERTEXNORMALS];
 
 #define SMALLCHAR_DOUBLE_HEIGHT 16 // Tobias FIXME: used for console (bitmap) font
 
-#define BIGCHAR_WIDTH 12	// was: 16						| new: 12 | shadowOffset: 1.3f | font: Impact
-#define BIGCHAR_HEIGHT 12	// was: 16						| new: 12 | shadowOffset: 1.3f | font: Impact
+#define DEFAULTCHAR_WIDTH 14	// NEW						| new: 14 | shadowOffset: 1f   | font: DIN 1451 Engschrift
+#define DEFAULTCHAR_HEIGHT 14	// NEW						| new: 14 | shadowOffset: 1f   | font: DIN 1451 Engschrift
+
+#define BIGCHAR_WIDTH 14	// was: 16						| new: 14 | shadowOffset: 1.3f | font: Impact
+#define BIGCHAR_HEIGHT 14	// was: 16						| new: 14 | shadowOffset: 1.3f | font: Impact
 
 #define GIANTCHAR_WIDTH 22	// was: 32						| new: 22 | shadowOffset: 1.7f | font: Impact
 #define GIANTCHAR_HEIGHT 22	// was: 48						| new: 22 | shadowOffset: 1.7f | font: Impact

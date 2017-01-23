@@ -1962,6 +1962,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum) {
 	// register fonts here, otherwise CG_LoadingString wont work
 	trap_R_RegisterFont("fonts/tinyFont.ttf", TINYCHAR_HEIGHT, 0, qtrue, &cgs.media.tinyFont);
 	trap_R_RegisterFont("fonts/smallFont.ttf", SMALLCHAR_HEIGHT, 0, qtrue, &cgs.media.smallFont);
+	trap_R_RegisterFont("fonts/defaultFont.ttf", DEFAULTCHAR_HEIGHT, 0, qtrue, &cgs.media.defaultFont);
 	trap_R_RegisterFont("fonts/bigFont.ttf", BIGCHAR_HEIGHT, 0, qtrue, &cgs.media.bigFont);
 	trap_R_RegisterFont("fonts/bigFont.ttf", GIANTCHAR_HEIGHT, 0, qtrue, &cgs.media.giantFont);
 	trap_R_RegisterFont("fonts/bigFont.ttf", TITANCHAR_HEIGHT, 0, qtrue, &cgs.media.titanFont);
