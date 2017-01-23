@@ -499,6 +499,7 @@ qboolean UI_RegisterClientModelname(playerInfo_t *pi, const char *modelSkinName)
 typedef struct {
 	fontInfo_t tinyFont;
 	fontInfo_t smallFont;
+	fontInfo_t defaultFont;
 	fontInfo_t bigFont;
 	fontInfo_t giantFont;
 	fontInfo_t titanFont;

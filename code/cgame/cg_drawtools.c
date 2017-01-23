@@ -1222,6 +1222,9 @@ void CG_DrawStringDirect(int x, int y, const char *str, int style, const vec4_t 
 		case UI_SMALLFONT:
 			font = &cgs.media.smallFont;
 			break;
+		case UI_DEFAULTFONT:
+			font = &cgs.media.defaultFont;
+			break;
 		case UI_BIGFONT:
 		default:
 			font = &cgs.media.bigFont;
@@ -1419,6 +1422,9 @@ float CG_DrawStrlen(const char *str, int style) {
 		case UI_SMALLFONT:
 			font = &cgs.media.smallFont;
 			break;
+		case UI_DEFAULTFONT:
+			font = &cgs.media.defaultFont;
+			break;
 		case UI_BIGFONT:
 		default:
 			font = &cgs.media.bigFont;
@@ -1458,6 +1464,10 @@ int CG_DrawStringLineHeight(int style) {
 			break;
 		case UI_SMALLFONT:
 			font = &cgs.media.smallFont;
+			gap = 2;
+			break;
+		case UI_DEFAULTFONT:
+			font = &cgs.media.defaultFont;
 			gap = 2;
 			break;
 		case UI_BIGFONT:

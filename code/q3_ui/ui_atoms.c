@@ -865,6 +865,10 @@ int UI_DrawStringLineHeight(int style) {
 			font = &uis.smallFont;
 			gap = 2;
 			break;
+		case UI_DEFAULTFONT:
+			font = &uis.defaultFont;
+			gap = 2;
+			break;
 		case UI_BIGFONT:
 		default:
 			font = &uis.bigFont;
@@ -917,6 +921,9 @@ void UI_DrawStringDirect(int x, int y, const char *str, int style, const vec4_t 
 			break;
 		case UI_SMALLFONT:
 			font = &uis.smallFont;
+			break;
+		case UI_DEFAULTFONT:
+			font = &uis.defaultFont;
 			break;
 		case UI_BIGFONT:
 		default:

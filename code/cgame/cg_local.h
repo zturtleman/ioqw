@@ -539,6 +539,7 @@ typedef struct {
 	// truetype fonts
 	fontInfo_t tinyFont;
 	fontInfo_t smallFont;
+	fontInfo_t defaultFont;
 	fontInfo_t bigFont;
 	fontInfo_t giantFont;
 	fontInfo_t titanFont;
