@@ -306,8 +306,8 @@ An interpreted function will immediately execute an OP_ENTER instruction, which 
 
 int VM_CallInterpreted(vm_t *vm, int *args) {
 	byte stack[OPSTACK_SIZE + 15];
-	register int *opStack;
-	register uint8_t opStackOfs;
+	int *opStack;
+	uint8_t opStackOfs;
 	int programCounter;
 	int programStack;
 	int stackOnEntry;

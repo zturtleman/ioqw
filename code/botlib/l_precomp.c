@@ -500,7 +500,7 @@ PC_NameHash
 */
 //char primes[16] = {1, 3, 5, 7, 11, 13, 17, 19, 23, 27, 29, 31, 37, 41, 43, 47};
 int PC_NameHash(char *name) {
-	int register hash, i;
+	int hash, i;
 
 	hash = 0;
 
