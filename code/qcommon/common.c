@@ -2492,14 +2492,14 @@ static void Com_DetectSSE(void) {
 #endif
 		Q_VMftol = qvmftolsse;
 
-		Com_Printf("Have SSE support\n");
+		Com_Printf("SSE instruction set enabled\n");
 #if !idx64
 	} else {
 		Q_ftol = qftolx87;
 		Q_VMftol = qvmftolx87;
 		Q_SnapVector = qsnapvectorx87;
 
-		Com_Printf("No SSE support on this machine\n");
+		Com_Printf("SSE instruction set not available\n");
 	}
 #endif
 }

@@ -1598,7 +1598,7 @@ void RB_StageIteratorGeneric( void )
 	// 
 	// now do any dynamic lighting needed
 	//
-	if ( tess.dlightBits && tess.shader->lightingStage >= 0 ) {
+	if ( tess.dlightBits && tess.shader->lightingStage >= 0 && r_lightmap->integer == 0 ) {
 		if ( r_dlightMode->integer )
 		{
 			ForwardDlight();
