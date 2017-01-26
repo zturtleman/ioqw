@@ -573,7 +573,7 @@ static void GLimp_InitExtensions(void) {
 	// GL_EXT_texture_env_add
 	glConfig.textureEnvAddAvailable = qfalse;
 
-	if (SDL_GL_ExtensionSupported("EXT_texture_env_add")) {
+	if (SDL_GL_ExtensionSupported("GL_EXT_texture_env_add")) {
 		if (r_ext_texture_env_add->integer) {
 			glConfig.textureEnvAddAvailable = qtrue;
 			ri.Printf(PRINT_ALL, "...using GL_EXT_texture_env_add\n");
