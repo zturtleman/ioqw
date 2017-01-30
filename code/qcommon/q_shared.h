@@ -360,36 +360,14 @@ extern vec3_t bytedirs[NUMVERTEXNORMALS];
 
 #define TITANCHAR_WIDTH 48	// NEW							| new: 48 | shadowOffset: 3f   | font: Impact
 #define TITANCHAR_HEIGHT 48	// NEW							| new: 48 | shadowOffset: 3f   | font: Impact
-//see: http://wolfwiki.anime.net/index.php/Color_Codes
+
 extern vec4_t colorBlack;
 extern vec4_t colorRed;
-extern vec4_t colorGreen;
 extern vec4_t colorYellow;
-extern vec4_t colorBlue;
-extern vec4_t colorCyan;
-extern vec4_t colorMagenta;
 extern vec4_t colorWhite;
 extern vec4_t colorOrange;
 extern vec4_t colorMdGrey;
 extern vec4_t colorLtGrey;
-extern vec4_t colorMdGreen;
-extern vec4_t colorMdYellow;
-extern vec4_t colorMdBlue;
-extern vec4_t colorMdRed;
-extern vec4_t colorMdOrange;
-extern vec4_t colorMdCyan;
-extern vec4_t colorDkGrey;
-extern vec4_t colorDkGreen;
-
-extern vec4_t clrBrown;
-extern vec4_t clrBrownDk;
-extern vec4_t clrBrownLine;
-extern vec4_t clrBrownLineFull;
-extern vec4_t clrBrownTextLt2;
-extern vec4_t clrBrownTextLt;
-extern vec4_t clrBrownText;
-extern vec4_t clrBrownTextDk;
-extern vec4_t clrBrownTextDk2;
 
 #define Q_COLOR_ESCAPE '^'
 #define Q_IsColorString(p) ((p) && *(p) == Q_COLOR_ESCAPE && *((p) + 1) && isgraph(*((p) + 1)) && *((p) + 1) != Q_COLOR_ESCAPE)
@@ -403,9 +381,9 @@ extern vec4_t clrBrownTextDk2;
 #define COLOR_MAGENTA	'6'
 #define COLOR_WHITE		'7'
 #define COLOR_ORANGE	'8'
-#define COLOR_MDGREY	'9'
-#define COLOR_LTGREY	':'
-//#define COLOR_LTGREY	';'
+#define COLOR_DKGREY	'9'
+#define COLOR_MDGREY	':'
+#define COLOR_LTGREY	';'
 #define COLOR_MDGREEN	'<'
 #define COLOR_MDYELLOW	'='
 #define COLOR_MDBLUE	'>'
@@ -428,9 +406,9 @@ extern vec4_t clrBrownTextDk2;
 #define S_COLOR_MAGENTA		"^6"
 #define S_COLOR_WHITE		"^7"
 #define S_COLOR_ORANGE		"^8"
-#define S_COLOR_MDGREY		"^9"
-#define S_COLOR_LTGREY		"^:"
-//#define S_COLOR_LTGREY	"^;"
+#define S_COLOR_DKGREY		"^9"
+#define S_COLOR_MDGREY		"^:"
+#define S_COLOR_LTGREY		"^;"
 #define S_COLOR_MDGREEN		"^<"
 #define S_COLOR_MDYELLOW	"^="
 #define S_COLOR_MDBLUE		"^>"
