@@ -39,34 +39,12 @@ vec3_t axisDefault[3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
 
 vec4_t colorBlack = {0, 0, 0, 1};
 vec4_t colorRed = {1, 0, 0, 1};
-vec4_t colorGreen = {0, 1, 0, 1};
 vec4_t colorYellow = {1, 1, 0, 1};
-vec4_t colorBlue = {0, 0, 1, 1};
-vec4_t colorCyan = {0, 1, 1, 1};
-vec4_t colorMagenta = {1, 0, 1, 1};
 vec4_t colorWhite = {1, 1, 1, 1};
 vec4_t colorOrange = {1, 0.5, 0, 1};
 vec4_t colorMdGrey = {0.5, 0.5, 0.5, 1};
 vec4_t colorLtGrey = {0.75, 0.75, 0.75, 1};
-vec4_t colorMdGreen = {0, 0.5, 0, 1};
-vec4_t colorMdYellow = {0.5, 0.5, 0, 1};
-vec4_t colorMdBlue = {0, 0, 0.5, 1};
-vec4_t colorMdRed = {0.5, 0, 0, 1};
-vec4_t colorMdOrange = {0.5, 0.25, 0, 1};
-vec4_t colorMdCyan = {0, 0.5, 0.5, 1};
-vec4_t colorDkGrey = {0.25, 0.25, 0.25, 1};
-vec4_t colorDkGreen = {0, 0.20f, 0, 1};
-
-vec4_t clrBrown = {0.68f, 0.68f, 0.56f, 1.f};
-vec4_t clrBrownDk = {0.58f * 0.75f, 0.58f * 0.75f, 0.46f * 0.75f, 1.f};
-vec4_t clrBrownLine = {0.0525f, 0.05f, 0.025f, 0.2f};
-vec4_t clrBrownLineFull = {0.0525f, 0.05f, 0.025f, 1.f};
-vec4_t clrBrownTextLt2 = {108 * 1.8f / 255.f, 88 * 1.8f / 255.f, 62 * 1.8f / 255.f, 1.f};
-vec4_t clrBrownTextLt = {108 * 1.3f / 255.f, 88 * 1.3f / 255.f, 62 * 1.3f / 255.f, 1.f};
-vec4_t clrBrownText = {108 / 255.f, 88 / 255.f, 62 / 255.f, 1.f};
-vec4_t clrBrownTextDk = {20 / 255.f, 2 / 255.f, 0 / 255.f, 1.f};
-vec4_t clrBrownTextDk2 = {108 * 0.75f / 255.f, 88 * 0.75f / 255.f, 62 * 0.75f / 255.f, 1.f};
-
+// see: http://wolfwiki.anime.net/index.php/Color_Codes
 vec4_t g_color_table[32] = {
 	{0.0, 0.0, 0.0, 1.0},		// 0 - black         0
 	{1.0, 0.0, 0.0, 1.0},		// 1 - red           1
@@ -77,8 +55,8 @@ vec4_t g_color_table[32] = {
 	{1.0, 0.0, 1.0, 1.0},		// 6 - magenta       6
 	{1.0, 1.0, 1.0, 1.0},		// 7 - white         7
 	{1.0, 0.5, 0.0, 1.0},		// 8 - orange        8
-	{0.5, 0.5, 0.5, 1.0},		// 9 - md.grey       9
-	{0.75, 0.75, 0.75, 1.0},	// : - lt.grey      10
+	{0.25, 0.25, 0.25, 1},		// 9 - dk.grey       9
+	{0.5, 0.5, 0.5, 1.0},		// : - md.grey      10
 	{0.75, 0.75, 0.75, 1.0},	// ; - lt.grey      11
 	{0.0, 0.5, 0.0, 1.0},		// < - md.green     12
 	{0.5, 0.5, 0.0, 1.0},		// = - md.yellow    13
