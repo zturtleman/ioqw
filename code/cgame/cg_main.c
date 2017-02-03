@@ -960,6 +960,14 @@ static void CG_RegisterGraphics(void) {
 #ifdef MISSIONPACK
 	cgs.media.heartShader = trap_R_RegisterShaderNoMip("ui/assets/statusbar/selectedhealth.tga");
 #endif
+	cgs.media.medalAccuracy = trap_R_RegisterShaderNoMip("medal_accuracy");
+	cgs.media.medalExcellent = trap_R_RegisterShaderNoMip("medal_excellent");
+	cgs.media.medalImpressive = trap_R_RegisterShaderNoMip("medal_impressive");
+	cgs.media.medalGauntlet = trap_R_RegisterShaderNoMip("medal_gauntlet");
+	cgs.media.medalCapture = trap_R_RegisterShaderNoMip("medal_capture");
+	cgs.media.medalDefend = trap_R_RegisterShaderNoMip("medal_defend");
+	cgs.media.medalAssist = trap_R_RegisterShaderNoMip("medal_assist");
+
 	memset(cg_items, 0, sizeof(cg_items));
 	memset(cg_weapons, 0, sizeof(cg_weapons));
 	// only register the items that the server says we need

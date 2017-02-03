@@ -660,6 +660,14 @@ typedef struct {
 	qhandle_t scoreboardPing;
 	qhandle_t scoreboardScore;
 	qhandle_t scoreboardTime;
+	// medals shown during gameplay
+	qhandle_t medalAccuracy;
+	qhandle_t medalExcellent;
+	qhandle_t medalImpressive;
+	qhandle_t medalGauntlet;
+	qhandle_t medalCapture;
+	qhandle_t medalDefend;
+	qhandle_t medalAssist;
 	// sounds
 	sfxHandle_t itemPickupSounds[MAX_ITEMS];
 	sfxHandle_t quadSound;
@@ -1052,11 +1060,12 @@ void CG_DrawPic(float x, float y, float width, float height, qhandle_t hShader);
 void CG_SetClipRegion(float x, float y, float w, float h);
 void CG_ClearClipRegion(void);
 void CG_DrawString(int x, int y, const char *str, int style, const vec4_t color);
+void CG_DrawFloatString(float x, int y, const char *str, int style, const vec4_t color);
 void CG_DrawStringWithCursor(int x, int y, const char *str, int style, const vec4_t color, int cursorPos, int cursorChar);
 void CG_DrawStringExt(int x, int y, const char *str, int style, const vec4_t color, float scale, int maxChars, float shadowOffset);
-void CG_DrawStringExtWithCursor(int x, int y, const char *str, int style, const vec4_t color, float scale, int maxChars, float shadowOffset, float gradient, int cursorPos, int cursorChar);
+void CG_DrawStringExtWithCursor(float x, int y, const char *str, int style, const vec4_t color, float scale, int maxChars, float shadowOffset, float gradient, int cursorPos, int cursorChar);
 void CG_DrawStringAutoWrap(int x, int y, const char *str, int style, const vec4_t color, float shadowOffset, float gradient, float wrapX);
-void CG_DrawStringDirect(int x, int y, const char *str, int style, const vec4_t color, float scale, int maxChars, float shadowOffset, float gradient, int cursorPos, int cursorChar, float wrapX);
+void CG_DrawStringDirect(float x, int y, const char *str, int style, const vec4_t color, float scale, int maxChars, float shadowOffset, float gradient, int cursorPos, int cursorChar, float wrapX);
 void CG_DrawBigString(int x, int y, const char *s, float alpha);
 void CG_DrawBigStringColor(int x, int y, const char *s, vec4_t color);
 void CG_DrawSmallString(int x, int y, const char *s, float alpha);
@@ -1117,6 +1126,7 @@ const char *CG_GameTypeString(void);
 qboolean CG_YourTeamHasFlag(void);
 qboolean CG_OtherTeamHasFlag(void);
 qhandle_t CG_StatusHandle(int task);
+float Text_Width(const char *text, const fontInfo_t *font, float scale, int limit);
 // cg_particles.c
 void CG_ClearParticles(void);
 void CG_AddParticles(void);
@@ -1211,7 +1221,6 @@ void CG_LoadingClient(int clientNum);
 void CG_DrawInformation(void);
 // cg_scoreboard.c
 qboolean CG_DrawOldScoreboard(void);
-void CG_DrawOldTourneyScoreboard(void);
 // cg_consolecmds.c
 qboolean CG_ConsoleCommand(void);
 void CG_InitConsoleCommands(void);
