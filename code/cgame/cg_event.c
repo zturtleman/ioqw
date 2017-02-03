@@ -48,9 +48,9 @@ const char *CG_PlaceString(int rank) {
 	}
 
 	if (rank == 1) {
-		s = S_COLOR_BLUE "1st" S_COLOR_WHITE; // draw in blue
+		s = S_COLOR_RED "1st" S_COLOR_WHITE; // draw in red
 	} else if (rank == 2) {
-		s = S_COLOR_RED "2nd" S_COLOR_WHITE; // draw in red
+		s = S_COLOR_ORANGE "2nd" S_COLOR_WHITE; // draw in orange
 	} else if (rank == 3) {
 		s = S_COLOR_YELLOW "3rd" S_COLOR_WHITE; // draw in yellow
 	} else if (rank == 11) {

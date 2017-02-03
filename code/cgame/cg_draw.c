@@ -2076,20 +2076,17 @@ CG_DrawSpectator
 =======================================================================================================================================
 */
 static void CG_DrawSpectator(void) {
-	int lineHeight, y;
 
-	CG_SetScreenPlacement(PLACE_CENTER, PLACE_BOTTOM);
+	if (cg.scoreBoardShowing) {
+		return;
+	}
 
-	lineHeight = CG_DrawStringLineHeight(UI_BIGFONT);
-	y = SCREEN_HEIGHT - lineHeight * 2;
-
-	CG_DrawString(320, y, "SPECTATOR", UI_CENTER|UI_DROPSHADOW|UI_BIGFONT, NULL);
-	y += lineHeight;
+	CG_SetScreenPlacement(PLACE_CENTER, PLACE_TOP);
 
 	if (cgs.gametype == GT_TOURNAMENT) {
-		CG_DrawString(320, y, "Waiting to play", UI_CENTER|UI_DROPSHADOW|UI_BIGFONT, NULL);
-	} else if (cgs.gametype > GT_TOURNAMENT) {
-		CG_DrawString(320, y, "Press ESC and use the JOIN menu to play", UI_CENTER|UI_DROPSHADOW|UI_BIGFONT, NULL);
+		CG_DrawString(320, 73, "Waiting to play", UI_CENTER|UI_DROPSHADOW|UI_BIGFONT, NULL);
+	} else {
+		CG_DrawString(320, 73, "Press ESC and use the JOIN menu to play", UI_CENTER|UI_DROPSHADOW|UI_BIGFONT, NULL);
 	}
 }
 
@@ -2578,18 +2575,6 @@ static void CG_Draw2D(stereoFrame_t stereoFrame) {
 
 /*
 =======================================================================================================================================
-CG_DrawTourneyScoreboard
-=======================================================================================================================================
-*/
-static void CG_DrawTourneyScoreboard(void) {
-#ifdef MISSIONPACK
-#else
-	CG_DrawOldTourneyScoreboard();
-#endif
-}
-
-/*
-=======================================================================================================================================
 CG_DrawMiscGamemodels
 =======================================================================================================================================
 */
@@ -2644,11 +2629,6 @@ void CG_DrawActive(stereoFrame_t stereoView) {
 	// optionally draw the info screen instead
 	if (!cg.snap) {
 		CG_DrawInformation();
-		return;
-	}
-	// optionally draw the tournament scoreboard instead
-	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR && (cg.snap->ps.pm_flags & PMF_SCOREBOARD)) {
-		CG_DrawTourneyScoreboard();
 		return;
 	}
 	// clear around the rendered view if sized down

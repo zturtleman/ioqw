@@ -1201,7 +1201,7 @@ void UI_DrawProportionalString(int x, int y, const char *str, int style, vec4_t 
 CG_DrawStringDirect
 =======================================================================================================================================
 */
-void CG_DrawStringDirect(int x, int y, const char *str, int style, const vec4_t color, float scale, int maxChars, float shadowOffset, float gradient, int cursorPos, int cursorChar, float wrapX) {
+void CG_DrawStringDirect(float x, int y, const char *str, int style, const vec4_t color, float scale, int maxChars, float shadowOffset, float gradient, int cursorPos, int cursorChar, float wrapX) {
 	int charh;
 	const float *drawcolor;
 	const fontInfo_t *font;
@@ -1322,7 +1322,7 @@ void CG_DrawStringAutoWrap(int x, int y, const char *str, int style, const vec4_
 CG_DrawStringExtWithCursor
 =======================================================================================================================================
 */
-void CG_DrawStringExtWithCursor(int x, int y, const char *str, int style, const vec4_t color, float scale, int maxChars, float shadowOffset, float gradient, int cursorPos, int cursorChar) {
+void CG_DrawStringExtWithCursor(float x, int y, const char *str, int style, const vec4_t color, float scale, int maxChars, float shadowOffset, float gradient, int cursorPos, int cursorChar) {
 	CG_DrawStringDirect(x, y, str, style, color, scale, maxChars, shadowOffset, gradient, cursorPos, cursorChar, 0);
 }
 
@@ -1348,8 +1348,7 @@ void CG_DrawStringExt(int x, int y, const char *str, int style, const vec4_t col
 =======================================================================================================================================
 CG_DrawString
 
-Draws a multi-colored string with a drop shadow, optionally forcing
-to a fixed color.
+Draws a multi-colored string with a drop shadow, optionally forcing to a fixed color.
 
 Coordinates are at 640 by 480 virtual resolution
 
@@ -1357,6 +1356,17 @@ Gradient value is how much to darken color at bottom of text.
 =======================================================================================================================================
 */
 void CG_DrawString(int x, int y, const char *str, int style, const vec4_t color) {
+	CG_DrawStringExtWithCursor(x, y, str, style, color, 0, 0, 0, 0, -1, -1);
+}
+
+/*
+=======================================================================================================================================
+CG_DrawFloatString
+
+Same as CG_DrawString, but x is float.
+=======================================================================================================================================
+*/
+void CG_DrawFloatString(float x, int y, const char *str, int style, const vec4_t color) {
 	CG_DrawStringExtWithCursor(x, y, str, style, color, 0, 0, 0, 0, -1, -1);
 }
 
