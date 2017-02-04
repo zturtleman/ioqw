@@ -184,34 +184,39 @@ Returns a player number for either a number or name string.
 Returns -1 if invalid.
 =======================================================================================================================================
 */
-int ClientNumberFromString(gentity_t *to, char *s) {
+int ClientNumberFromString(gentity_t *to, char *s, qboolean checkNums, qboolean checkNames) {
 	gclient_t *cl;
 	int idnum;
 	char cleanName[MAX_STRING_CHARS];
 
-	// numeric values could be slot numbers
-	if (StringIsInteger(s)) {
-		idnum = atoi(s);
+	if (checkNums) {
+		// numeric values could be slot numbers
+		if (StringIsInteger(s)) {
+			idnum = atoi(s);
 
-		if (idnum >= 0 && idnum < level.maxclients) {
-			cl = &level.clients[idnum];
+			if (idnum >= 0 && idnum < level.maxclients) {
+				cl = &level.clients[idnum];
 
-			if (cl->pers.connected == CON_CONNECTED) {
-				return idnum;
+				if (cl->pers.connected == CON_CONNECTED) {
+					return idnum;
+				}
 			}
 		}
 	}
-	// check for a name match
-	for (idnum = 0, cl = level.clients; idnum < level.maxclients; idnum++, cl++) {
-		if (cl->pers.connected != CON_CONNECTED) {
-			continue;
-		}
 
-		Q_strncpyz(cleanName, cl->pers.netname, sizeof(cleanName));
-		Q_CleanStr(cleanName);
+	if (checkNames) {
+		// check for a name match
+		for (idnum = 0, cl = level.clients; idnum < level.maxclients; idnum++, cl++) {
+			if (cl->pers.connected != CON_CONNECTED) {
+				continue;
+			}
 
-		if (!Q_stricmp(cleanName, s)) {
-			return idnum;
+			Q_strncpyz(cleanName, cl->pers.netname, sizeof(cleanName));
+			Q_CleanStr(cleanName);
+
+			if (!Q_stricmp(cleanName, s)) {
+				return idnum;
+			}
 		}
 	}
 
@@ -713,7 +718,7 @@ void Cmd_Follow_f(gentity_t *ent) {
 
 	trap_Argv(1, arg, sizeof(arg));
 
-	i = ClientNumberFromString(ent, arg);
+	i = ClientNumberFromString(ent, arg, qtrue, qtrue);
 
 	if (i == -1) {
 		return;
@@ -937,7 +942,7 @@ static void Cmd_Tell_f(gentity_t *ent) {
 	}
 
 	trap_Argv(1, arg, sizeof(arg));
-	targetNum = ClientNumberFromString(ent, arg);
+	targetNum = ClientNumberFromString(ent, arg, qtrue, qtrue);
 
 	if (targetNum == -1) {
 		return;
@@ -1068,7 +1073,7 @@ static void Cmd_VoiceTell_f(gentity_t *ent, qboolean voiceonly) {
 	}
 
 	trap_Argv(1, arg, sizeof(arg));
-	targetNum = ClientNumberFromString(ent, arg);
+	targetNum = ClientNumberFromString(ent, arg, qtrue, qtrue);
 
 	if (targetNum == -1) {
 		return;
@@ -1205,7 +1210,7 @@ void Cmd_GameCommand_f(gentity_t *ent) {
 	}
 
 	trap_Argv(1, arg, sizeof(arg));
-	targetNum = ClientNumberFromString(ent, arg);
+	targetNum = ClientNumberFromString(ent, arg, qtrue, qtrue);
 
 	if (targetNum == -1) {
 		return;
@@ -1347,6 +1352,20 @@ void Cmd_CallVote_f(gentity_t *ent) {
 
 		Com_sprintf(level.voteString, sizeof(level.voteString), "vstr nextmap");
 		Com_sprintf(level.voteDisplayString, sizeof(level.voteDisplayString), "%s", level.voteString);
+	} else if (!Q_stricmp(arg1, "kicknum") || !Q_stricmp(arg1, "kick")) {
+		i = ClientNumberFromString(ent, arg2, !Q_stricmp(arg1, "kicknum"), !Q_stricmp(arg1, "kick"));
+
+		if (i == -1) {
+			return;
+		}
+
+		if (level.clients[i].pers.localClient) {
+			trap_SendServerCommand(ent - g_entities, "print \"Cannot kick host client.\n\"");
+			return;
+		}
+
+		Com_sprintf(level.voteString, sizeof(level.voteString), "kicknum %d", i);
+		Com_sprintf(level.voteDisplayString, sizeof(level.voteDisplayString), "kick %s", level.clients[i].pers.netname);
 	} else {
 		Com_sprintf(level.voteString, sizeof(level.voteString), "%s \"%s\"", arg1, arg2);
 		Com_sprintf(level.voteDisplayString, sizeof(level.voteDisplayString), "%s", level.voteString);
