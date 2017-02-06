@@ -36,7 +36,7 @@ static void SV_SendConfigstring(client_t *client, int index) {
 	int len;
 
 	if (sv.configstrings[index].restricted && Com_ClientListContains(&sv.configstrings[index].clientList, client - svs.clients)) {
-		// Send a blank config string for this client if it's listed
+		// send a blank config string for this client if it's listed
 		SV_SendServerCommand(client, "cs %i \"\"\n", index);
 		return;
 	}
@@ -181,7 +181,7 @@ void SV_SetConfigstringRestrictions(int index, const clientList_t *clientList) {
 	for (i = 0; i < sv_maxclients->integer; i++) {
 		if (svs.clients[i].state >= CS_CONNECTED) {
 			if (Com_ClientListContains(&oldClientList, i) != Com_ClientListContains(clientList, i)) {
-				// A client has left or joined the restricted list, so update
+				// a client has left or joined the restricted list, so update
 				SV_SendConfigstring(&svs.clients[i], index);
 			}
 		}

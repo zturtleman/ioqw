@@ -123,6 +123,7 @@ char *vtos(const vec3_t v) {
 	// use an array so that multiple vtos won't collide
 	s = str[index];
 	index = (index + 1) & 7;
+
 	Com_sprintf(s, 32, "(%i %i %i)", (int)v[0], (int)v[1], (int)v[2]);
 	return s;
 }
@@ -282,8 +283,11 @@ char *CG_AddSpawnVarToken(const char *string) {
 	}
 
 	dest = cg.spawnVarChars + cg.numSpawnVarChars;
+
 	memcpy(dest, string, l + 1);
+
 	cg.numSpawnVarChars += l + 1;
+
 	return dest;
 }
 
@@ -291,7 +295,7 @@ char *CG_AddSpawnVarToken(const char *string) {
 =======================================================================================================================================
 CG_ParseSpawnVars
 
-Parses a brace bounded set of key / value pairs out of the level's entity strings into cg.spawnVars[].
+Parses a brace bounded set of key/value pairs out of the level's entity strings into cg.spawnVars[].
 This does not actually spawn an entity.
 =======================================================================================================================================
 */
@@ -310,7 +314,7 @@ qboolean CG_ParseSpawnVars(void) {
 	if (com_token[0] != '{') {
 		CG_Error("CG_ParseSpawnVars: found %s when expecting {", com_token);
 	}
-	// go through all the key / value pairs
+	// go through all the key/value pairs
 	while (1) {
 		// parse key
 		if (!trap_GetEntityToken(&cg.spawnEntityOffset, keyname, sizeof(keyname))) {
@@ -360,7 +364,7 @@ void SP_worldspawn(void) {
 
 	CG_SpawnString("enableBreath", "0", &s);
 	trap_Cvar_Set("cg_enableBreath", s);
-	// top left / bottom right
+	// top left/bottom right
 	if (CG_SpawnVector2D("mapcoordsmins", "-128 128", cg.mapcoordsMins) && CG_SpawnVector2D("mapcoordsmaxs", "128 -128", cg.mapcoordsMaxs)) {
 		cg.mapcoordsValid = qtrue;
 	} else {

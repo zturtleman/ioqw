@@ -353,7 +353,7 @@ static int GraphicsOptions_FindBuiltinResolution(int mode) {
 	if (!resolutionsDetected) {
 		return mode;
 	}
-	// Display resolution
+	// display resolution
 	if (mode == 0) {
 		return -2;
 	}
@@ -382,7 +382,7 @@ static int GraphicsOptions_FindDetectedResolution(int mode) {
 	if (!resolutionsDetected) {
 		return mode;
 	}
-	// Display resolution
+	// display resolution
 	if (mode == -2) {
 		return 0;
 	}
@@ -502,11 +502,11 @@ static void GraphicsOptions_GetResolutions(void) {
 		unsigned int i = 0;
 		static char displayRes[64];
 
-		// Add display resolution video mode
+		// add display resolution video mode
 		Com_sprintf(displayRes, sizeof(displayRes), "Auto (%dx%d)", uis.glconfig.displayWidth, uis.glconfig.displayHeight);
 
 		detectedResolutions[i++] = displayRes;
-		// Use display resolution in "Very High Quality" template
+		// use display resolution in "Very High Quality" template
 		s_ivo_templates[0].mode = -2;
 
 		while (s && i < ARRAY_LEN(detectedResolutions) - 1) {

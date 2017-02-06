@@ -376,7 +376,7 @@ void G_RegisterCvars(void) {
 		trap_Cvar_Set("g_gametype", "0");
 		trap_Cvar_Update(&g_gametype);
 	}
-	// Don't allow single player gametype to be used in multiplayer.
+	// don't allow single player gametype to be used in multiplayer.
 	if (g_gametype.integer == GT_SINGLE_PLAYER && !g_singlePlayer.integer) {
 		trap_Cvar_SetValue("g_gametype", GT_FFA);
 		trap_Cvar_Update(&g_gametype);

@@ -1228,7 +1228,7 @@ qboolean CG_Asset_Parse(int handle) {
 			cgDC.registerFont(tempStr, pointSize, borderWidth, forceAutoHint, &cgDC.Assets.smallFont);
 			continue;
 		}
-		// font
+		// bigFont
 		if (Q_stricmp(token.string, "bigfont") == 0) {
 			int pointSize;
 
@@ -2105,7 +2105,7 @@ CG_VoIPString
 =======================================================================================================================================
 */
 static char *CG_VoIPString(void) {
-	// a generous overestimate of the space needed for 0,1,2...61,62,63
+	// a generous overestimate of the space needed for 0, 1, 2...61, 62, 63
 	static char voipString[MAX_CLIENTS * 4];
 	char voipSendTarget[MAX_CVAR_VALUE_STRING];
 
@@ -2132,7 +2132,7 @@ static char *CG_VoIPString(void) {
 
 			slen += nlen;
 		}
-		// Notice that if the Com_sprintf was truncated, slen was not updated, so this will remove any trailing commas or partially-completed numbers
+		// notice that if the Com_sprintf was truncated, slen was not updated, so this will remove any trailing commas or partially-completed numbers
 		voipString[slen] = '\0';
 	} else if (Q_stricmp(voipSendTarget, "crosshair") == 0) {
 		Com_sprintf(voipString, sizeof(voipString), "%d", CG_CrosshairPlayer());

@@ -1619,7 +1619,7 @@ void CG_GetColorForHealth(int health, int armor, vec4_t hcolor) {
 	int count;
 	int max;
 
-	// calculate the total points of damage that can be sustained at the current health / armor level
+	// calculate the total points of damage that can be sustained at the current health/armor level
 	if (health <= 0) {
 		VectorClear(hcolor); // black
 		hcolor[3] = 1;

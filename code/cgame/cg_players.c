@@ -2287,7 +2287,7 @@ void CG_Player(centity_t *cent) {
 	memcpy(&shadowRef, &torso, sizeof(shadowRef));
 
 	VectorCopy(cent->lerpOrigin, legs.origin);
-	// NOTE: Make sure to set legs.frameModel / legs.oldframeModel before this call, if you're going to use them!
+	// NOTE: Make sure to set legs.frameModel/legs.oldframeModel before this call, if you're going to use them!
 	if (CG_PositionRotatedEntityOnTag(&shadowRef, &legs, ci->legsModel, "tag_torso")) {
 		VectorCopy(shadowRef.origin, shadowOrigin);
 	} else {
