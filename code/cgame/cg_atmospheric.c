@@ -63,6 +63,7 @@ CG_ClearPolyPool
 =======================================================================================================================================
 */
 static void CG_ClearPolyPool(void) {
+
 	numParticlesInFrame = 0;
 	atmPolyShader = 0;
 }
@@ -96,7 +97,9 @@ static void CG_AddPolyToPool(qhandle_t shader, const polyVert_t *verts) {
 	}
 
 	atmPolyShader = shader;
+
 	memcpy(&atmPolyPool[numParticlesInFrame * 3], verts, 3 * sizeof(polyVert_t));
+
 	numParticlesInFrame++;
 #else
 	int firstIndex;
@@ -133,10 +136,12 @@ static qboolean kludgeChecked, kludgeResult;
 /*
 =======================================================================================================================================
 CG_AtmosphericKludge
+
+Activate rain for specified kludge maps that don't have it specified for them.
 =======================================================================================================================================
 */
 qboolean CG_AtmosphericKludge(void) {
-	// Activate rain for specified kludge maps that don't have it specified for them.
+
 	if (kludgeChecked) {
 		return (kludgeResult);
 	}
@@ -232,13 +237,20 @@ static qboolean CG_SetParticleActive(cg_atmosphericParticle_t *particle, active_
 
 /*
 =======================================================================================================================================
+
+	RAINDROP MANAGEMENT FUNCTIONS
+
+=======================================================================================================================================
+*/
+
+/*
+=======================================================================================================================================
 CG_RainParticleGenerate
 
-Raindrop management functions.
+Attempt to 'spot' a raindrop somewhere below a sky texture.
 =======================================================================================================================================
 */
 static qboolean CG_RainParticleGenerate(cg_atmosphericParticle_t *particle, vec3_t currvec, float currweight) {
-	// Attempt to 'spot' a raindrop somewhere below a sky texture.
 	float angle, distance;
 	float groundHeight, skyHeight;
 //	int msec = trap_Milliseconds();
@@ -314,10 +326,11 @@ static qboolean CG_RainParticleGenerate(cg_atmosphericParticle_t *particle, vec3
 /*
 =======================================================================================================================================
 CG_RainParticleCheckVisible
+
+Check the raindrop is visible and still going, wrapping if necessary.
 =======================================================================================================================================
 */
 static qboolean CG_RainParticleCheckVisible(cg_atmosphericParticle_t *particle) {
-	// Check the raindrop is visible and still going, wrapping if necessary.
 	float moved;
 	vec2_t distance;
 //	int msec = trap_Milliseconds();
@@ -370,10 +383,11 @@ static qboolean CG_RainParticleCheckVisible(cg_atmosphericParticle_t *particle) 
 /*
 =======================================================================================================================================
 CG_RainParticleRender
+
+Draw a raindrop.
 =======================================================================================================================================
 */
 static void CG_RainParticleRender(cg_atmosphericParticle_t *particle) {
-	// Draw a raindrop
 	vec3_t forward, right;
 	polyVert_t verts[3];
 	vec2_t line;
@@ -410,7 +424,6 @@ static void CG_RainParticleRender(cg_atmosphericParticle_t *particle) {
 //		rendertime += trap_Milliseconds() - msec;
 		return;
 	}
-
 	// fade nearby rain particles
 	if (dist < Square(128.f)) {
 		dist = .25f + .75f * (dist / Square(128.f));
@@ -459,13 +472,20 @@ static void CG_RainParticleRender(cg_atmosphericParticle_t *particle) {
 
 /*
 =======================================================================================================================================
+
+	SNOW MANAGEMENT FUNCTIONS
+
+=======================================================================================================================================
+*/
+
+/*
+=======================================================================================================================================
 CG_SnowParticleGenerate
 
-Snow management functions.
+Attempt to 'spot' a snowflake somewhere below a sky texture.
 =======================================================================================================================================
 */
 static qboolean CG_SnowParticleGenerate(cg_atmosphericParticle_t *particle, vec3_t currvec, float currweight) {
-	// Attempt to 'spot' a snowflake somewhere below a sky texture.
 	float angle, distance;
 	float groundHeight, skyHeight;
 //	int msec = trap_Milliseconds();
@@ -527,10 +547,11 @@ static qboolean CG_SnowParticleGenerate(cg_atmosphericParticle_t *particle, vec3
 /*
 =======================================================================================================================================
 CG_SnowParticleCheckVisible
+
+Check the snowflake is visible and still going, wrapping if necessary.
 =======================================================================================================================================
 */
 static qboolean CG_SnowParticleCheckVisible(cg_atmosphericParticle_t *particle) {
-	// Check the snowflake is visible and still going, wrapping if necessary.
 	float moved;
 	vec2_t distance;
 //	int msec = trap_Milliseconds();
@@ -584,10 +605,11 @@ static qboolean CG_SnowParticleCheckVisible(cg_atmosphericParticle_t *particle) 
 /*
 =======================================================================================================================================
 CG_SnowParticleRender
+
+Draw a snowflake.
 =======================================================================================================================================
 */
 static void CG_SnowParticleRender(cg_atmosphericParticle_t *particle) {
-	// Draw a snowflake
 	vec3_t forward, right;
 	polyVert_t verts[3];
 	vec2_t line;
@@ -694,7 +716,7 @@ static void CG_EffectGust(void) {
 	// Generate random values for the next gust
 	int diff;
 
-	cg_atmFx.baseEndTime = cg.time + cg_atmFx.baseMinTime + (rand() % (cg_atmFx.baseMaxTime - cg_atmFx.baseMinTime));
+	cg_atmFx.baseEndTime = cg.time + cg_atmFx.baseMinTime + (rand()%(cg_atmFx.baseMaxTime - cg_atmFx.baseMinTime));
 	diff = cg_atmFx.changeMaxTime - cg_atmFx.changeMinTime;
 	cg_atmFx.gustStartTime = cg_atmFx.baseEndTime + cg_atmFx.changeMinTime + (diff ? (rand() % diff) : 0);
 	diff = cg_atmFx.gustMaxTime - cg_atmFx.gustMinTime;
@@ -706,15 +728,17 @@ static void CG_EffectGust(void) {
 /*
 =======================================================================================================================================
 CG_EffectGustCurrent
+
+Calculate direction for new drops.
 =======================================================================================================================================
 */
 static qboolean CG_EffectGustCurrent(vec3_t curr, float *weight, int *num) {
-	// Calculate direction for new drops.
 	vec3_t temp;
 	float frac;
 
 	if (cg.time < cg_atmFx.baseEndTime) {
 		VectorCopy(cg_atmFx.baseVec, curr);
+
 		*weight = cg_atmFx.baseWeight;
 		*num = cg_atmFx.baseDrops;
 	} else {
@@ -723,15 +747,18 @@ static qboolean CG_EffectGustCurrent(vec3_t curr, float *weight, int *num) {
 		if (cg.time < cg_atmFx.gustStartTime) {
 			frac = ((float)(cg.time - cg_atmFx.baseEndTime)) / ((float)(cg_atmFx.gustStartTime - cg_atmFx.baseEndTime));
 			VectorMA(cg_atmFx.baseVec, frac, temp, curr);
+
 			*weight = cg_atmFx.baseWeight + (cg_atmFx.gustWeight - cg_atmFx.baseWeight) * frac;
 			*num = cg_atmFx.baseDrops + ((float)(cg_atmFx.gustDrops - cg_atmFx.baseDrops)) * frac;
 		} else if (cg.time < cg_atmFx.gustEndTime) {
 			VectorCopy(cg_atmFx.gustVec, curr);
+
 			*weight = cg_atmFx.gustWeight;
 			*num = cg_atmFx.gustDrops;
 		} else {
 			frac = 1.0 - ((float)(cg.time - cg_atmFx.gustEndTime)) / ((float)(cg_atmFx.baseStartTime - cg_atmFx.gustEndTime));
 			VectorMA(cg_atmFx.baseVec, frac, temp, curr);
+
 			*weight = cg_atmFx.baseWeight + (cg_atmFx.gustWeight - cg_atmFx.baseWeight) * frac;
 			*num = cg_atmFx.baseDrops + ((float)(cg_atmFx.gustDrops - cg_atmFx.baseDrops)) * frac;
 
@@ -747,10 +774,11 @@ static qboolean CG_EffectGustCurrent(vec3_t curr, float *weight, int *num) {
 /*
 =======================================================================================================================================
 CG_EP_ParseFloats
+
+Parse the float or floats.
 =======================================================================================================================================
 */
 static void CG_EP_ParseFloats(char *floatstr, float *f1, float *f2) {
-	// Parse the float or floats
 	char *middleptr;
 	char buff[64];
 
@@ -770,10 +798,11 @@ static void CG_EP_ParseFloats(char *floatstr, float *f1, float *f2) {
 /*
 =======================================================================================================================================
 CG_EP_ParseInts
+
+Parse the int or ints.
 =======================================================================================================================================
 */
 static void CG_EP_ParseInts(char *intstr, int *i1, int *i2) {
-	// Parse the int or ints
 	char *middleptr;
 	char buff[64];
 
@@ -793,10 +822,11 @@ static void CG_EP_ParseInts(char *intstr, int *i1, int *i2) {
 /*
 =======================================================================================================================================
 CG_EffectParse
+
+Split the string into it's component parts.
 =======================================================================================================================================
 */
 void CG_EffectParse(const char *effectstr) {
-	// Split the string into it's component parts.
 	float bmin, bmax, cmin, cmax, gmin, gmax, bdrop, gdrop /*, wsplash, lsplash*/;
 	int count, bheight;
 	char *startptr, *eqptr, *endptr;
@@ -965,13 +995,20 @@ void CG_EffectParse(const char *effectstr) {
 
 /*
 =======================================================================================================================================
+
+	MAIN RENDER LOOP
+
+=======================================================================================================================================
+*/
+
+/*
+=======================================================================================================================================
 CG_AddAtmosphericEffects
 
-Main render loop.
+Add atmospheric effects (e.g. rain, snow etc.) to view.
 =======================================================================================================================================
 */
 void CG_AddAtmosphericEffects(void) {
-	// Add atmospheric effects (e.g. rain, snow etc.) to view
 	int curr, max, currnum;
 	cg_atmosphericParticle_t *particle;
 	vec3_t currvec;
@@ -992,6 +1029,7 @@ void CG_AddAtmosphericEffects(void) {
 	cg_atmFx.oldDropsActive = cg_atmFx.dropsActive;
 	cg_atmFx.dropsActive = 0;
 	cg_atmFx.dropsRendered = cg_atmFx.dropsCreated = cg_atmFx.dropsSkipped = 0;
+
 //	getgroundtime = getskytime = rendertime = checkvisibletime = generatetime = 0;
 //	n_getgroundtime = n_getskytime = n_rendertime = n_checkvisibletime = n_generatetime = 0;
 

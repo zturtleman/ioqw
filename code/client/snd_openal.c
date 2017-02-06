@@ -645,7 +645,7 @@ static qboolean S_AL_HearingThroughEntity(int entityNum) {
 	float distanceSq;
 
 	if (lastListenerNumber == entityNum) {
-		// This is an outrageous hack to detect whether or not the player is rendering in third person or not. We can't ask the renderer
+		// this is an outrageous hack to detect whether or not the player is rendering in third person or not. We can't ask the renderer
 		// because the renderer has no notion of entities and we can't ask cgame since that would involve changing the API and hence mod
 		// compatibility. I don't think there is any way around this, but I'll leave the FIXME just in case anyone has a bright idea.
 		distanceSq = DistanceSquared(entityList[entityNum].origin, lastListenerOrigin);
@@ -979,7 +979,7 @@ static srcHandle_t S_AL_SrcAlloc(alSrcPriority_t priority, int entnum, int chann
 				weakest = i;
 			}
 		}
-		// The channel system is not actually adhered to by base game, and not
+		// the channel system is not actually adhered to by base game, and not
 		// implemented in snd_dma.c, so while the following is strictly correct, it
 		// causes incorrect behaviour versus defacto base game
 #if 0
@@ -1727,19 +1727,19 @@ S_AL_MusicSourceGet
 */
 static void S_AL_MusicSourceGet(void) {
 
-	// Allocate a musicSource at high priority
+	// allocate a musicSource at high priority
 	musicSourceHandle = S_AL_SrcAlloc(SRCPRI_STREAM, -2, 0);
 
 	if (musicSourceHandle == -1) {
 		return;
 	}
-	// Lock the musicSource so nobody else can use it, and get the raw musicSource
+	// lock the musicSource so nobody else can use it, and get the raw musicSource
 	S_AL_SrcLock(musicSourceHandle);
 
 	musicSource = S_AL_SrcGet(musicSourceHandle);
 	// make sure that after unmuting the S_AL_Gain in S_Update() does not turn volume up prematurely for this source
 	srcList[musicSourceHandle].scaleGain = 0.0f;
-	// Set some musicSource parameters
+	// set some musicSource parameters
 	qalSource3f(musicSource, AL_POSITION, 0.0, 0.0, 0.0);
 	qalSource3f(musicSource, AL_VELOCITY, 0.0, 0.0, 0.0);
 	qalSource3f(musicSource, AL_DIRECTION, 0.0, 0.0, 0.0);
@@ -1754,7 +1754,7 @@ S_AL_MusicSourceFree
 */
 static void S_AL_MusicSourceFree(void) {
 
-	// Release the output musicSource
+	// release the output musicSource
 	S_AL_SrcUnlock(musicSourceHandle);
 	S_AL_SrcKill(musicSourceHandle);
 
@@ -1790,15 +1790,15 @@ static void S_AL_StopBackgroundTrack(void) {
 	if (!musicPlaying) {
 		return;
 	}
-	// Stop playing
+	// stop playing
 	qalSourceStop(musicSource);
-	// Detach any buffers
+	// detach any buffers
 	qalSourcei(musicSource, AL_BUFFER, 0);
-	// Delete the buffers
+	// delete the buffers
 	qalDeleteBuffers(NUM_MUSIC_BUFFERS, musicBuffers);
-	// Free the musicSource
+	// free the musicSource
 	S_AL_MusicSourceFree();
-	// Unload the stream
+	// unload the stream
 	S_AL_CloseMusicFiles();
 
 	musicPlaying = qfalse;
@@ -1828,7 +1828,7 @@ static void S_AL_MusicProcess(ALuint b) {
 	}
 
 	l = S_CodecReadStream(curstream, MUSIC_BUFFER_SIZE, decode_buffer);
-	// Run out data to read, start at the beginning again
+	// run out data to read, start at the beginning again
 	if (l == 0) {
 		S_CodecCloseStream(curstream);
 		// the intro stream just finished playing so we don't need to reopen the music stream.
@@ -1851,7 +1851,7 @@ static void S_AL_MusicProcess(ALuint b) {
 	format = S_AL_Format(curstream->info.width, curstream->info.channels);
 
 	if (l == 0) {
-		// We have no data to buffer, so buffer silence
+		// we have no data to buffer, so buffer silence
 		byte dummyData[2] = {0};
 		qalBufferData(b, AL_FORMAT_MONO16, (void *)dummyData, 2, 48000);
 	} else {
@@ -1880,7 +1880,7 @@ static void S_AL_StartBackgroundTrack(const char *intro, const char *loop) {
 	if ((!intro || !*intro) && (!loop || !*loop)) {
 		return;
 	}
-	// Allocate a musicSource
+	// allocate a musicSource
 	S_AL_MusicSourceGet();
 
 	if (musicSourceHandle == -1) {
@@ -1895,11 +1895,11 @@ static void S_AL_StartBackgroundTrack(const char *intro, const char *loop) {
 	} else {
 		issame = qfalse;
 	}
-	// Copy the loop over
+	// copy the loop over
 	Q_strncpyz(s_backgroundLoop, loop, sizeof(s_backgroundLoop));
 
 	if (!issame) { // Open the intro and don't mind whether it succeeds.
-		// The important part is the loop.
+		// the important part is the loop.
 		intro_stream = S_CodecOpenStream(intro);
 	} else {
 		intro_stream = NULL;
@@ -1912,19 +1912,19 @@ static void S_AL_StartBackgroundTrack(const char *intro, const char *loop) {
 		S_AL_MusicSourceFree();
 		return;
 	}
-	// Generate the musicBuffers
+	// generate the musicBuffers
 	if (!S_AL_GenBuffers(NUM_MUSIC_BUFFERS, musicBuffers, "music")) {
 		return;
 	}
-	// Queue the musicBuffers up
+	// queue the musicBuffers up
 	for (i = 0; i < NUM_MUSIC_BUFFERS; i++) {
 		S_AL_MusicProcess(musicBuffers[i]);
 	}
 
 	qalSourceQueueBuffers(musicSource, NUM_MUSIC_BUFFERS, musicBuffers);
-	// Set the initial gain property
+	// set the initial gain property
 	S_AL_Gain(musicSource, s_alGain->value * s_musicVolume->value);
-	// Start playing
+	// start playing
 	qalSourcePlay(musicSource);
 
 	musicPlaying = qtrue;
@@ -1951,8 +1951,8 @@ static void S_AL_MusicUpdate(void) {
 		S_AL_MusicProcess(b);
 		qalSourceQueueBuffers(musicSource, 1, &b);
 	}
-	// Hitches can cause OpenAL to be starved of buffers when streaming.
-	// If this happens, it will stop playback. This restarts the source if it is no longer playing, and if there are buffers available
+	// hitches can cause OpenAL to be starved of buffers when streaming.
+	// if this happens, it will stop playback. This restarts the source if it is no longer playing, and if there are buffers available
 	qalGetSourcei(musicSource, AL_SOURCE_STATE, &state);
 	qalGetSourcei(musicSource, AL_BUFFERS_QUEUED, &numBuffers);
 
@@ -1960,7 +1960,7 @@ static void S_AL_MusicUpdate(void) {
 		Com_DPrintf(S_COLOR_YELLOW "Restarted OpenAL music\n");
 		qalSourcePlay(musicSource);
 	}
-	// Set the gain property
+	// set the gain property
 	S_AL_Gain(musicSource, s_alGain->value * s_musicVolume->value);
 }
 // Local state variables

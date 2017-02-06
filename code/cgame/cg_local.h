@@ -429,9 +429,9 @@ typedef struct {
 	vec3_t refdefViewAngles;		// will be converted to refdef.viewaxis
 	float fov;						// either range checked cg_fov or forced value
 	// spawn variables
-	qboolean spawning;				// the CG_Spawn*() functions are valid
+	qboolean spawning;				// the CG_Spawn *() functions are valid
 	int numSpawnVars;
-	char *spawnVars[MAX_SPAWN_VARS][2]; // key / value pairs
+	char *spawnVars[MAX_SPAWN_VARS][2]; // key/value pairs
 	int numSpawnVarChars;
 	char spawnVarChars[MAX_SPAWN_VARS_CHARS];
 	int spawnEntityOffset;
@@ -514,13 +514,13 @@ typedef struct {
 	int bobcycle;
 	float xyspeed;
 	int nextOrbitTime;
-	//qboolean cameraMode; // if rendering from a loaded camera
+	//qboolean cameraMode;	// if rendering from a loaded camera
 	// development tool
 	refEntity_t testModelEntity;
 	char testModelName[MAX_QPATH];
 	qboolean testGun;
-	float bar_offset; // offset calculation for middle bar
-	int bar_count; // number of items displayed in the bar
+	float bar_offset;		// offset calculation for middle bar
+	int bar_count;			// number of items displayed in the bar
 } cg_t;
 
 /**************************************************************************************************************************************

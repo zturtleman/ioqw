@@ -35,6 +35,7 @@ void S_Base_StopAllSounds(void);
 void S_Base_StopBackgroundTrack(void);
 
 snd_stream_t *s_backgroundStream = NULL;
+
 static char s_backgroundLoop[MAX_QPATH];
 // static char s_backgroundMusic[MAX_QPATH]; // TTimo: unused
 
@@ -570,7 +571,7 @@ static qboolean S_Base_HearingThroughEntity(int entityNum, vec3_t origin) {
 	}
 
 	if (listener_number == entityNum) {
-		// This is an outrageous hack to detect whether or not the player is rendering in third person or not. We can't ask the renderer
+		// this is an outrageous hack to detect whether or not the player is rendering in third person or not. We can't ask the renderer
 		// because the renderer has no notion of entities and we can't ask cgame since that would involve changing the API and hence mod
 		// compatibility. I don't think there is any way around this, but I'll leave the FIXME just in case anyone has a bright idea.
 		distanceSq = DistanceSquared(sorigin, listener_origin);

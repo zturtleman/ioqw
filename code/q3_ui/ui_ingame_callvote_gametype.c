@@ -237,7 +237,7 @@ void UI_VoteGametypeMenuInternal(void) {
 	y += Gametype_MENU_VERTICAL_SPACING;
 	SetGametypeMenuText(&s_callvotemenu_gametype.bTDM, y, ID_TDM, s_callvotemenu_gametype.TDM, "Team Deathmatch");
 	y += Gametype_MENU_VERTICAL_SPACING;
-	SetGametypeMenuText(&s_callvotemenu_gametype.bCTF, y, ID_CTF, s_callvotemenu_gametype.CTF, "Capture The Flag");
+	SetGametypeMenuText(&s_callvotemenu_gametype.bCTF, y, ID_CTF, s_callvotemenu_gametype.CTF, "Capture the Flag");
 	y += Gametype_MENU_VERTICAL_SPACING;
 	SetGametypeMenuText(&s_callvotemenu_gametype.b1FCTF, y, ID_1FCTF, s_callvotemenu_gametype.Oneflag, "One Flag CTF");
 	y += Gametype_MENU_VERTICAL_SPACING;

@@ -180,7 +180,6 @@ void UI_DrawConnectScreen(qboolean overlay) {
 	if (!overlay) {
 		// draw the dialog background
 		trap_R_SetColor(color_white);
-
 		UI_DrawHandlePic(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, uis.menuBackShader);
 	}
 	// see what information we should display

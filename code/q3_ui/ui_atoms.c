@@ -816,8 +816,8 @@ void UI_DrawProportionalString_AutoWrapped(int x, int y, int xmax, int ystep, co
 
 			if (c_bcp == '\0') {
 				// that was the last word
-				// we could start a new loop, but that wouldn't be much use
-				// even if the word is too long, we would overflow it (see above) so just print it now if needed
+				// we could start a new loop, but that wouldn't be much use even if the word is too long, we would overflow it (see above)
+				// so just print it now if needed
 				s2++;
 
 				if (*s2 != '\0') { // if we are printing an overflowing line we have s2 == s3
@@ -958,6 +958,7 @@ void UI_DrawStringDirect(int x, int y, const char *str, int style, const vec4_t 
 		lowlight[1] = 0.8 * color[1];
 		lowlight[2] = 0.8 * color[2];
 		lowlight[3] = 0.8 * color[3];
+
 		UI_LerpColor(color, lowlight, newcolor, 0.5 + 0.5 * sin(uis.realtime / PULSE_DIVISOR));
 		drawcolor = newcolor;
 	} else {

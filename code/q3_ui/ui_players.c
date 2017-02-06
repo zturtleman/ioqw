@@ -90,6 +90,7 @@ tryagain:
 
 	COM_StripExtension(item->world_model[0], path, sizeof(path));
 	Q_strcat(path, sizeof(path), "_flash.md3");
+
 	pi->flashModel = trap_R_RegisterModel(path);
 
 	switch (weaponNum) {
@@ -296,6 +297,7 @@ static qboolean UI_PositionEntityOnTag(refEntity_t *entity, const refEntity_t *p
 	// cast away const because of compiler problems
 	MatrixMultiply(lerped.axis, ((refEntity_t *)parent)->axis, entity->axis);
 	entity->backlerp = parent->backlerp;
+
 	return returnValue;
 }
 
@@ -321,6 +323,7 @@ static qboolean UI_PositionRotatedEntityOnTag(refEntity_t *entity, const refEnti
 	// cast away const because of compiler problems
 	MatrixMultiply(entity->axis, lerped.axis, tempAxis);
 	MatrixMultiply(tempAxis, ((refEntity_t *)parent)->axis, entity->axis);
+
 	return returnValue;
 }
 

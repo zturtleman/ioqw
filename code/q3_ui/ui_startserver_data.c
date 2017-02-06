@@ -116,7 +116,7 @@ const char *gametype_items[NUM_GAMETYPES + 1] = {
 	"Free For All",
 	"Tournament",
 	"Team Deathmatch",
-	"Capture The Flag",
+	"Capture the Flag",
 	"One Flag CTF",
 	"Overload",
 	"Harvester",
@@ -324,7 +324,7 @@ ui_cvarTable_t ui_cvarTable[] = {
 	{"ui_team_TeamSwapped", "0"},
 	{"ui_team_AutoJoin", "1"},
 	{"ui_team_TeamBalance", "1"},
-	// Capture The Flag
+	// Capture the Flag
 	{"ui_ctf_capturetype", "0"},
 	{"ui_ctf_timetype", "0"},
 	{"ui_ctf_customcapturelimits", ""},

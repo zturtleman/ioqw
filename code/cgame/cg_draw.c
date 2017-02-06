@@ -223,7 +223,7 @@ void CG_Text_Paint(float x, float y, float scale, vec4_t color, const char *text
 		trap_R_SetColor(NULL);
 	}
 }
-#endif // MISSIONPACK
+#endif
 #ifndef MISSIONPACK
 /*
 =======================================================================================================================================
@@ -297,7 +297,7 @@ static void CG_DrawField(int x, int y, int width, int value, float *color) {
 
 	trap_R_SetColor(NULL);
 }
-#endif
+#endif // MISSIONPACK
 /*
 =======================================================================================================================================
 CG_Draw3DModel
@@ -550,7 +550,7 @@ static void CG_DrawStatusBarFlag(float x, int team) {
 
 	CG_DrawFlagModel(x + (1.0f - cg_statusScale.value) * ICON_SIZE * 0.5f, 480 - iconSize, iconSize, iconSize, team, qfalse);
 }
-#endif
+#endif // MISSIONPACK
 /*
 =======================================================================================================================================
 CG_DrawTeamBackground
@@ -905,7 +905,6 @@ static float CG_DrawTeamOverlay(float y, qboolean right, qboolean upper) {
 	plyrs = 0;
 	// max player name width
 	pwidth = 0;
-
 	count = (numSortedTeamPlayers > 8) ? 8 : numSortedTeamPlayers;
 
 	for (i = 0; i < count; i++) {
@@ -977,9 +976,7 @@ static float CG_DrawTeamOverlay(float y, qboolean right, qboolean upper) {
 	}
 
 	trap_R_SetColor(hcolor);
-
 	CG_DrawPic(x, y, w, h, cgs.media.teamStatusBar);
-
 	trap_R_SetColor(NULL);
 
 	for (i = 0; i < count; i++) {
@@ -987,7 +984,6 @@ static float CG_DrawTeamOverlay(float y, qboolean right, qboolean upper) {
 
 		if (ci->infoValid && ci->team == team) {
 			hcolor[0] = hcolor[1] = hcolor[2] = hcolor[3] = 1.0;
-
 			xx = x + iconWidth;
 
 			CG_DrawStringExt(xx, y, ci->name, UI_DROPSHADOW|UI_TINYFONT, NULL, 0, TEAM_OVERLAY_MAXNAME_WIDTH, 0);
@@ -1145,7 +1141,7 @@ static float CG_DrawScores(float y) {
 		CG_DrawBigString(x + 4, y, s, 1.0f);
 
 		if (cgs.gametype == GT_CTF) {
-			// Display flag status
+			// display flag status
 			item = BG_FindItemForPowerup(PW_BLUEFLAG);
 
 			if (item) {
@@ -1158,7 +1154,7 @@ static float CG_DrawScores(float y) {
 		}
 
 		if (cgs.gametype == GT_1FCTF) {
-			// Display flag status
+			// display flag status
 			item = BG_FindItemForPowerup(PW_NEUTRALFLAG);
 
 			if (item) {
@@ -1225,11 +1221,11 @@ static float CG_DrawScores(float y) {
 			s = va("%2i", v);
 			w = CG_DrawStrlen(s, UI_BIGFONT) + 8;
 			x -= w;
+
 			CG_DrawBigString(x + 4, y, s, 1.0f);
 		}
 	} else {
 		qboolean spectator;
-
 		x = 640;
 		score = cg.snap->ps.persistant[PERS_SCORE];
 		spectator = (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR);
@@ -1537,9 +1533,7 @@ static void CG_DrawTeamInfo(void) {
 		}
 
 		trap_R_SetColor(hcolor);
-
 		CG_DrawPic(CHATLOC_X, CHATLOC_Y - h, 640, h, cgs.media.teamStatusBar);
-
 		trap_R_SetColor(NULL);
 
 		hcolor[0] = hcolor[1] = hcolor[2] = 1.0f;
@@ -1669,7 +1663,6 @@ static void CG_DrawDisconnect(void) {
 	CG_SetScreenPlacement(PLACE_CENTER, PLACE_CENTER);
 	// also add text in center of screen
 	s = "Connection Interrupted!";
-
 	CG_DrawString(SCREEN_WIDTH / 2, 100, s, UI_CENTER|UI_DROPSHADOW|UI_BIGFONT, NULL);
 	// blink the icon
 	if ((cg.time >> 9) & 1) {
@@ -1909,7 +1902,6 @@ static void CG_DrawCrosshair(void) {
 	hShader = cgs.media.crosshairShader[ca % NUM_CROSSHAIRS];
 
 	CG_DrawPic(((SCREEN_WIDTH - w) * 0.5f) + x, ((SCREEN_HEIGHT - h) * 0.5f) + y, w, h, hShader);
-
 	trap_R_SetColor(NULL);
 }
 
@@ -2210,7 +2202,7 @@ static qboolean CG_DrawScoreboard(void) {
 		if (firstTime) {
 			CG_SetScoreSelection(menuScoreboard);
 			firstTime = qfalse;
-			// Update time now to prevent spectator list from jumping.
+			// update time now to prevent spectator list from jumping.
 			cg.spectatorTime = trap_Milliseconds();
 		}
 
@@ -2393,7 +2385,7 @@ static void CG_DrawWarmup(void) {
 			s1 = "Team Deathmatch";
 			break;
 		case GT_CTF:
-			s1 = "Capture The Flag";
+			s1 = "Capture the Flag";
 			break;
 		case GT_1FCTF:
 			s1 = "One Flag CTF";

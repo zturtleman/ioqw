@@ -49,8 +49,8 @@ typedef struct {
 	int serverTime;						// server time the message is valid for (in msec)
 	byte areamask[MAX_MAP_AREA_BYTES];	// portalarea visibility bits
 	playerState_t ps;					// complete information about the current player at this time
-	int numEntities;					// all of the entities that need to be presented
-	entityState_t entities[MAX_ENTITIES_IN_SNAPSHOT]; // at the time of this snapshot
+	int numEntities;
+	entityState_t entities[MAX_ENTITIES_IN_SNAPSHOT]; // all of the entities that need to be presented at the time of this snapshot
 	int numServerCommands;				// text based server commands to execute when this
 	int serverCommandSequence;			// snapshot becomes current
 } snapshot_t;

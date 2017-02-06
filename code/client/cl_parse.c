@@ -385,7 +385,7 @@ void CL_SystemInfoChanged(void) {
 		if ((cvar_flags = Cvar_Flags(key)) == CVAR_NONEXISTENT) {
 			Cvar_Get(key, value, CVAR_SERVER_CREATED|CVAR_ROM);
 		} else {
-			// If this cvar may not be modified by a server discard the value.
+			// if this cvar may not be modified by a server discard the value.
 			if (!(cvar_flags & (CVAR_SYSTEMINFO|CVAR_SERVER_CREATED|CVAR_USER_CREATED))) {
 #ifndef STANDALONE
 				if (Q_stricmp(key, "g_synchronousClients") && Q_stricmp(key, "pmove_fixed") && Q_stricmp(key, "pmove_msec"))
@@ -509,7 +509,7 @@ void CL_ParseGamestate(msg_t *msg) {
 	}
 
 	FS_ConditionalRestart(clc.checksumFeed, qfalse);
-	// This used to call CL_StartHunkUsers, but now we enter the download state before loading the cgame
+	// this used to call CL_StartHunkUsers, but now we enter the download state before loading the cgame
 	CL_InitDownloads();
 	// make sure the game starts
 	Cvar_Set("cl_paused", "0");
@@ -580,10 +580,10 @@ void CL_ParseDownload(msg_t *msg) {
 
 	clc.downloadBlock++;
 	clc.downloadCount += size;
-	// So UI gets access to it
+	// so UI gets access to it
 	Cvar_SetValue("cl_downloadCount", clc.downloadCount);
 
-	if (!size) { // A zero length block means EOF
+	if (!size) { // a zero length block means EOF
 		if (clc.download) {
 			FS_FCloseFile(clc.download);
 			clc.download = 0;
@@ -591,9 +591,9 @@ void CL_ParseDownload(msg_t *msg) {
 			FS_SV_Rename(clc.downloadTempName, clc.downloadName, qfalse);
 		}
 		// send intentions now
-		// We need this because without it, we would hold the last nextdl and then start loading right away.
-		// If we take a while to load, the server is happily trying to send us that last block over and over.
-		// Write it twice to help make sure we acknowledge the download
+		// we need this because without it, we would hold the last nextdl and then start loading right away.
+		// if we take a while to load, the server is happily trying to send us that last block over and over.
+		// write it twice to help make sure we acknowledge the download
 		CL_WritePacket();
 		CL_WritePacket();
 		// get another file if needed
@@ -715,7 +715,7 @@ static void CL_ParseVoip(msg_t *msg, qboolean ignoreData) {
 		clc.voipIncomingGeneration[sender] = generation;
 		seqdiff = 0;
 	} else if (seqdiff < 0) { // we're ahead of the sequence?!
-		// This shouldn't happen unless the packet is corrupted or something.
+		// this shouldn't happen unless the packet is corrupted or something.
 		Com_DPrintf("VoIP: misordered sequence! %d < %d!\n", sequence, clc.voipIncomingSequence[sender]);
 		// reset the decoder just in case.
 		opus_decoder_ctl(clc.opusDecoder[sender], OPUS_RESET_STATE);
