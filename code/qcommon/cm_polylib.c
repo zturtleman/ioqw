@@ -571,7 +571,7 @@ void CheckWinding(winding_t *w) {
 
 		for (j = 0; j < 3; j++) {
 			if (p1[j] > MAX_MAP_BOUNDS || p1[j] < -MAX_MAP_BOUNDS) {
-				Com_Error(ERR_DROP, "CheckFace: BUGUS_RANGE: %f", p1[j]);
+				Com_Error(ERR_DROP, "CheckWinding: BUGUS_RANGE: %f", p1[j]);
 			}
 		}
 

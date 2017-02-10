@@ -332,7 +332,7 @@ void BG_GenerateTracemap(const char *mapname, vec3_t mapcoordsMins, vec3_t mapco
 	}
 	// min is 0
 	// max is 255
-	// this is d&l, min = 1 max = 255
+	// this is d&l, min = 1, max = 255
 	scalefactor = 254.f / (skygroundmax - skygroundmin);
 
 	if (scalefactor == 0.f) {
@@ -416,19 +416,19 @@ void BG_GenerateTracemap(const char *mapname, vec3_t mapcoordsMins, vec3_t mapco
 	trap_FS_Write(&data, sizeof(data), f); // 11
 
 	data = TRACEMAP_SIZE & 255;
-	trap_FS_Write(&data, sizeof(data), f); // 12 : width
+	trap_FS_Write(&data, sizeof(data), f); // 12: width
 
 	data = TRACEMAP_SIZE >> 8;
-	trap_FS_Write(&data, sizeof(data), f); // 13 : width
+	trap_FS_Write(&data, sizeof(data), f); // 13: width
 
 	data = TRACEMAP_SIZE & 255;
-	trap_FS_Write(&data, sizeof(data), f); // 14 : height
+	trap_FS_Write(&data, sizeof(data), f); // 14: height
 
 	data = TRACEMAP_SIZE >> 8;
-	trap_FS_Write(&data, sizeof(data), f); // 15 : height
+	trap_FS_Write(&data, sizeof(data), f); // 15: height
 
 	data = 32;
-	trap_FS_Write(&data, sizeof(data), f); // 16 : pixel size
+	trap_FS_Write(&data, sizeof(data), f); // 16: pixel size
 
 	data = 0;
 	trap_FS_Write(&data, sizeof(data), f); // 17
@@ -530,7 +530,7 @@ qboolean BG_LoadTraceMap(char *mapname, vec2_t world_mins, vec2_t world_maxs) {
 		}
 
 		for (i = 0; i < TRACEMAP_SIZE; i++) {
-			trap_FS_Read(&datablock, sizeof(datablock), f); // TRACEMAP_SIZE * { b g r a }
+			trap_FS_Read(&datablock, sizeof(datablock), f); // TRACEMAP_SIZE * {b g r a}
 
 			for (j = 0; j < TRACEMAP_SIZE; j++) {
 				if (i == 0 && j < 6) {

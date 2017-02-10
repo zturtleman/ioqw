@@ -3065,7 +3065,7 @@ void FS_AddGameDirectory(const char *path, const char *dir) {
 			pakdirsi++;
 		}
 	}
-	// done
+
 	Sys_FreeFileList(pakfiles);
 	Sys_FreeFileList(pakdirs);
 	// add the directory to the search path

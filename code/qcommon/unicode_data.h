@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright(C) 2012-2013 Unvanquished Developers.
+Copyright (C) 2012-2013 Unvanquished Developers.
 
 This file is part of Spearmint Source Code.
 

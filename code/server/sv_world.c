@@ -589,6 +589,7 @@ void SV_Trace(trace_t *results, const vec3_t start, vec3_t mins, vec3_t maxs, co
 
 	clip.contentmask = contentmask;
 	clip.start = start;
+
 //	VectorCopy(clip.trace.endpos, clip.end);
 	VectorCopy(end, clip.end);
 

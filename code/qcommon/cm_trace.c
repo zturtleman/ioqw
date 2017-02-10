@@ -507,8 +507,7 @@ void CM_TraceThroughBrush(traceWork_t *tw, cbrush_t *brush) {
 
 	if (tw->sphere.use) {
 		// compare the trace against all planes of the brush
-		// find the latest time the trace crosses a plane towards the interior
-		// and the earliest time the trace crosses a plane towards the exterior
+		// find the latest time the trace crosses a plane towards the interior and the earliest time the trace crosses a plane towards the exterior
 		for (i = 0; i < brush->numsides; i++) {
 			side = brush->sides + i;
 			plane = side->plane;
@@ -570,8 +569,7 @@ void CM_TraceThroughBrush(traceWork_t *tw, cbrush_t *brush) {
 		}
 	} else {
 		// compare the trace against all planes of the brush
-		// find the latest time the trace crosses a plane towards the interior
-		// and the earliest time the trace crosses a plane towards the exterior
+		// find the latest time the trace crosses a plane towards the interior and the earliest time the trace crosses a plane towards the exterior
 		for (i = 0; i < brush->numsides; i++) {
 			side = brush->sides + i;
 			plane = side->plane;
@@ -837,7 +835,7 @@ void CM_TraceThroughVerticalCylinder(traceWork_t *tw, vec3_t origin, float radiu
 	VectorSet(start2d, start[0], start[1], 0);
 	VectorSet(end2d, end[0], end[1], 0);
 	VectorSet(org2d, origin[0], origin[1], 0);
-	// if between lower and upper cylinder bounds
+	// if start is between lower and upper cylinder bounds
 	if (start[2] <= origin[2] + halfheight && start[2] >= origin[2] - halfheight) {
 		// if inside the cylinder
 		VectorSubtract(start2d, org2d, dir);
