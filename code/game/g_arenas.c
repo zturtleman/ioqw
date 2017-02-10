@@ -113,7 +113,6 @@ void UpdateTournamentInfo(void) {
 			player->client->ps.persistant[PERS_IMPRESSIVE_COUNT], player->client->ps.persistant[PERS_EXCELLENT_COUNT], player->client->ps.persistant[PERS_DEFEND_COUNT],
 			player->client->ps.persistant[PERS_ASSIST_COUNT], player->client->ps.persistant[PERS_GAUNTLET_FRAG_COUNT], player->client->ps.persistant[PERS_SCORE],
 			perfect, score1, score2, level.time, player->client->ps.persistant[PERS_CAPTURES]);
-
 #else
 		perfect = (level.clients[playerClientNum].ps.persistant[PERS_RANK] == 0 && player->client->ps.persistant[PERS_KILLED] == 0) ? 1 : 0;
 

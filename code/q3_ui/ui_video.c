@@ -484,7 +484,7 @@ static void GraphicsOptions_GetInitialVideo(void) {
 	s_ivo.multisample = s_graphicsoptions.multisample.curvalue;
 	s_ivo.texturebits = s_graphicsoptions.texturebits.curvalue;
 #if 0
-	Com_Printf("DEBUG: s_ivo = { %d, %d, %d, %d, %d, %d, %d, %d, %s }\n", s_ivo.mode, s_ivo.fullscreen, s_ivo.tq, s_ivo.lighting, s_ivo.texturebits, s_ivo.geometry, s_ivo.filter, s_ivo.multisample, s_ivo.flares ? "qtrue" : "qfalse");
+	Com_Printf("DEBUG: s_ivo = {%d, %d, %d, %d, %d, %d, %d, %d, %s}\n", s_ivo.mode, s_ivo.fullscreen, s_ivo.tq, s_ivo.lighting, s_ivo.texturebits, s_ivo.geometry, s_ivo.filter, s_ivo.multisample, s_ivo.flares ? "qtrue" : "qfalse");
 #endif
 }
 

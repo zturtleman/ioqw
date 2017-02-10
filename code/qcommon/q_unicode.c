@@ -1,6 +1,6 @@
 /*
 =======================================================================================================================================
-Copyright(C) 2012-2013 Unvanquished Developers.
+Copyright (C) 2012-2013 Unvanquished Developers.
 
 This file is part of Spearmint Source Code.
 
@@ -63,7 +63,7 @@ int Q_UTF8_Width(const char *str) {
 
 	for (; *s && ewidth > 0; s++, ewidth--);
 
-	return s -(const unsigned char *)str + 1;
+	return s - (const unsigned char *)str + 1;
 }
 
 /*
@@ -72,6 +72,7 @@ Q_UTF8_WidthCP
 =======================================================================================================================================
 */
 int Q_UTF8_WidthCP(int ch) {
+
 	if (ch <= 0x007F) {
 		return 1;
 	}
@@ -138,7 +139,7 @@ Q_UTF8_ContByte
 =======================================================================================================================================
 */
 qboolean Q_UTF8_ContByte(char c) {
-	return (unsigned char)0x80 <= (unsigned char)c &&(unsigned char)c <= (unsigned char)0xBF;
+	return (unsigned char)0x80 <= (unsigned char)c && (unsigned char)c <= (unsigned char)0xBF;
 }
 
 /*
@@ -192,19 +193,19 @@ char *Q_UTF8_Encode(unsigned long codepoint) {
 		buf[0] = codepoint;
 		buf[1] = 0;
 	} else if (0x0080 <= codepoint && codepoint <= 0x07FF) {
-		buf[0] = 0xC0 | ((codepoint & 0x07C0) >> 6);
-		buf[1] = 0x80 | (codepoint & 0x003F);
+		buf[0] = 0xC0|((codepoint & 0x07C0) >> 6);
+		buf[1] = 0x80|(codepoint & 0x003F);
 		buf[2] = 0;
 	} else if (0x0800 <= codepoint && codepoint <= 0xFFFF) {
-		buf[0] = 0xE0 | ((codepoint & 0xF000) >> 12);
-		buf[1] = 0x80 | ((codepoint & 0x0FC0) >> 6);
-		buf[2] = 0x80 | (codepoint & 0x003F);
+		buf[0] = 0xE0|((codepoint & 0xF000) >> 12);
+		buf[1] = 0x80|((codepoint & 0x0FC0) >> 6);
+		buf[2] = 0x80|(codepoint & 0x003F);
 		buf[3] = 0;
 	} else if (0x010000 <= codepoint && codepoint <= 0x10FFFF) {
-		buf[0] = 0xF0 | ((codepoint & 0x1C0000) >> 18);
-		buf[1] = 0x80 | ((codepoint & 0x03F000) >> 12);
-		buf[2] = 0x80 | ((codepoint & 0x000FC0) >> 6);
-		buf[3] = 0x80 | (codepoint & 0x00003F);
+		buf[0] = 0xF0|((codepoint & 0x1C0000) >> 18);
+		buf[1] = 0x80|((codepoint & 0x03F000) >> 12);
+		buf[2] = 0x80|((codepoint & 0x000FC0) >> 6);
+		buf[3] = 0x80|(codepoint & 0x00003F);
 		buf[4] = 0;
 	} else {
 		buf[0] = 0;
@@ -222,7 +223,7 @@ Stores a single UTF8 char inside an int.
 */
 int Q_UTF8_Store(const char *s) {
 	int r = 0;
-	const uint8_t *us = (const uint8_t *) s;
+	const uint8_t *us = (const uint8_t *)s;
 
 	if (!us) {
 		return 0;
@@ -268,10 +269,11 @@ char *Q_UTF8_Unstore(int e) {
 	buf[3] = (e >> 24) & 0xFF;
 	buf[4] = 0;
 
-	return (char *) buf;
+	return (char *)buf;
 }
 
 #include "unicode_data.h"
+
 /*
 =======================================================================================================================================
 uc_search_range
@@ -279,7 +281,7 @@ uc_search_range
 */
 static int uc_search_range(const void *chp, const void *memb) {
 	int ch = *(int *)chp;
-	const ucs2_pair_t *item = (ucs2_pair_t *) memb;
+	const ucs2_pair_t *item = (ucs2_pair_t *)memb;
 
 	return (ch < item->c1) ? -1 : (ch >= item->c2) ? 1 : 0;
 }
@@ -321,15 +323,15 @@ uc_search_cp
 */
 static int uc_search_cp(const void *chp, const void *memb) {
 	int ch = *(int *)chp;
-	const ucs2_pair_t *item = (ucs2_pair_t *) memb;
+	const ucs2_pair_t *item = (ucs2_pair_t *)memb;
 
 	return (ch < item->c1) ? -1 : (ch > item->c1) ? 1 : 0;
 }
 
 #define Q_UC_TO(label, array) \
 	int Q_Unicode_To##label(int ch) \
-	{ \
-		const ucs2_pair_t *converted = (ucs2_pair_t *) bsearch(&ch, array, ARRAY_LEN(array), sizeof(array[0]), uc_search_cp); \
+	{\
+		const ucs2_pair_t *converted = (ucs2_pair_t *)bsearch(&ch, array, ARRAY_LEN(array), sizeof(array[0]), uc_search_cp); \
 		return converted ? converted->c2 : ch; \
 	}
 

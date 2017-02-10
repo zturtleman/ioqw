@@ -248,6 +248,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder) {
 		glConfig.displayWidth = desktopMode.w;
 		glConfig.displayHeight = desktopMode.h;
 		glConfig.displayAspect = (float)desktopMode.w / (float)desktopMode.h;
+
 		ri.Printf(PRINT_ALL, "Display aspect: %.3f\n", glConfig.displayAspect);
 	} else {
 		Com_Memset(&desktopMode, 0, sizeof(SDL_DisplayMode));

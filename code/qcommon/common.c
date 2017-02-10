@@ -3245,7 +3245,7 @@ void Field_CompleteCommand(char *cmd, qboolean doCommands, qboolean doCvars) {
 	} else
 		completionString = Cmd_Argv(completionArgument - 1);
 #ifndef DEDICATED
-	// Unconditionally add a '\' to the start of the buffer
+	// unconditionally add a '\' to the start of the buffer
 	if (completionField->buffer[0] && completionField->buffer[0] != '\\') {
 		if (completionField->buffer[0] != '/') {
 			// Buffer is full, refuse to complete
