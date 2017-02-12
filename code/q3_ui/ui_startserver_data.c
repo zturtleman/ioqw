@@ -204,7 +204,7 @@ typedef struct {
 
 ui_cvarTable_t ui_cvarTable[] = {
 	{"ui_gametype", "0"},
-//	{"ui_publicServer", "0"},
+	{"ui_publicServer", "0"},
 	{"ui_pureServer", "1"},
 	{"ui_inactivity", "0"},
 	{"ui_smoothclients", "1"},
@@ -2300,7 +2300,7 @@ static void StartServer_LoadServerScriptData(void) {
 	char *s, *t;
 	int gametype;
 
-//	s_scriptdata.server.publicServer = UI_GetSkirmishCvarIntClamp(0, 1, NULL, "ui_publicServer");
+	s_scriptdata.server.publicServer = UI_GetSkirmishCvarIntClamp(0, 1, NULL, "ui_publicServer");
 	s_scriptdata.server.pureServer = UI_GetSkirmishCvarIntClamp(0, 1, NULL, "ui_pureServer");
 	s_scriptdata.server.smoothclients = UI_GetSkirmishCvarIntClamp(0, 1, NULL, "ui_smoothclients");
 	s_scriptdata.server.syncClients = UI_GetSkirmishCvarIntClamp(0, 1, NULL, "ui_syncclients");
@@ -2393,7 +2393,7 @@ static void StartServer_SaveServerScriptData(void) {
 	char *s;
 	int friendly, gametype;
 
-//	UI_SetSkirmishCvarInt(NULL, "ui_publicServer", s_scriptdata.server.publicServer);
+	UI_SetSkirmishCvarInt(NULL, "ui_publicServer", s_scriptdata.server.publicServer);
 	UI_SetSkirmishCvarInt(NULL, "ui_pureServer", s_scriptdata.server.pureServer);
 	UI_SetSkirmishCvarInt(NULL, "ui_smoothclients", s_scriptdata.server.smoothclients);
 	UI_SetSkirmishCvarInt(NULL, "ui_syncclients", s_scriptdata.server.syncClients);

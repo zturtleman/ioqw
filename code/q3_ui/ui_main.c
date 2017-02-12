@@ -120,7 +120,7 @@ vmCvar_t ui_obelisk_friendly;
 vmCvar_t ui_harvester_capturelimit;
 vmCvar_t ui_harvester_timelimit;
 vmCvar_t ui_harvester_friendly;
-//vmCvar_t ui_publicServer;
+vmCvar_t ui_publicServer;
 vmCvar_t ui_arenasFile;
 vmCvar_t ui_botsFile;
 vmCvar_t ui_spScores1;
@@ -191,7 +191,7 @@ static cvarTable_t cvarTable[] = {
 	{&ui_harvester_capturelimit, "ui_harvester_capturelimit", "10", CVAR_ARCHIVE},
 	{&ui_harvester_timelimit, "ui_harvester_timelimit", "15", CVAR_ARCHIVE},
 	{&ui_harvester_friendly, "ui_harvester_friendly", "1", CVAR_ARCHIVE},
-//	{&ui_publicServer, "ui_publicServer", "0", CVAR_ARCHIVE},
+	{&ui_publicServer, "ui_publicServer", "0", CVAR_ARCHIVE},
 	{&ui_arenasFile, "g_arenasFile", "", CVAR_INIT|CVAR_ROM},
 	{&ui_botsFile, "g_botsFile", "", CVAR_INIT|CVAR_ROM},
 	{&ui_spScores1, "g_spScores1", "", CVAR_ARCHIVE},
