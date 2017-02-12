@@ -103,7 +103,7 @@ extern vmCvar_t ui_obelisk_friendly;
 extern vmCvar_t ui_harvester_capturelimit;
 extern vmCvar_t ui_harvester_timelimit;
 extern vmCvar_t ui_harvester_friendly;
-//extern vmCvar_t ui_publicServer;
+extern vmCvar_t ui_publicServer;
 extern vmCvar_t ui_arenasFile;
 extern vmCvar_t ui_botsFile;
 extern vmCvar_t ui_spScores1;

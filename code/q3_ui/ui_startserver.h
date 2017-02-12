@@ -421,7 +421,7 @@ typedef struct serverparameters_s {
 	int minPing;
 	int allowMaxPing;
 	int maxPing;
-//	int publicServer;
+	int publicServer;
 	int pureServer;
 	int preventConfigBug;
 	int dedicatedServer;
