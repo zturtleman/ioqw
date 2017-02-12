@@ -1119,7 +1119,7 @@ void TeamplayInfoMessage(gentity_t *ent) {
 				a = 0;
 			}
 
-			Com_sprintf(entry, sizeof(entry), " %i %i %i %i %i %i", i, player->client->pers.teamState.location, h, a, player->client->ps.weapon, player->s.powerups); // level.sortedClients[i], player->client->pers.teamState.location, h, a,
+			Com_sprintf(entry, sizeof(entry), " %i %i %i %i %i %i", i, player->client->pers.teamState.location, h, a, player->client->ps.weapon, player->s.powerups);
 			j = strlen(entry);
 
 			if (stringlength + j >= sizeof(string)) {

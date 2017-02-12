@@ -233,8 +233,8 @@ static void CG_OffsetThirdPersonView(void) {
 	vec3_t view;
 	vec3_t focusAngles;
 	trace_t trace;
-	static vec3_t mins = {-4, -4, -4};
-	static vec3_t maxs = {4, 4, 4};
+	static vec3_t mins = {-6, -6, -6};
+	static vec3_t maxs = {6, 6, 6};
 	vec3_t focusPoint;
 	float focusDist;
 	float forwardScale, sideScale;
@@ -268,7 +268,7 @@ static void CG_OffsetThirdPersonView(void) {
 
 	VectorMA(view, -cg_thirdPersonRange.value * forwardScale, forward, view);
 	VectorMA(view, -cg_thirdPersonRange.value * sideScale, right, view);
-	// trace a ray from the origin to the viewpoint to make sure the view isn't in a solid block. Use an 8 by 8 block to prevent the
+	// trace a ray from the origin to the viewpoint to make sure the view isn't in a solid block. Use a 12 by 12 block to prevent the
 	// view from near clipping anything
 	if (!cg_cameraMode.integer) {
 		CG_Trace(&trace, cg.refdef.vieworg, mins, maxs, view, cg.predictedPlayerState.clientNum, MASK_SOLID);
@@ -909,7 +909,7 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 	// update cg.predictedPlayerState
 	CG_PredictPlayerState();
 	// decide on third person view
-	cg.renderingThirdPerson = cg_thirdPerson.integer || (cg.snap->ps.stats[STAT_HEALTH] <= 0);
+	cg.renderingThirdPerson = cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR && (cg_thirdPerson.integer || (cg.snap->ps.stats[STAT_HEALTH] <= 0));
 	// build cg.refdef
 	inwater = CG_CalcViewValues();
 

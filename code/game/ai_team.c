@@ -141,7 +141,7 @@ int BotSortTeamMatesByBaseTravelTime(bot_state_t *bs, int *teammates, int maxtea
 		} else {
 			goal = &ctf_blueflag;
 		}
-	} else {
+	} else if (gametype == GT_OBELISK || gametype == GT_HARVESTER) {
 		if (BotTeam(bs) == TEAM_RED) {
 			goal = &redobelisk;
 		} else {

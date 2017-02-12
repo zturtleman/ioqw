@@ -1535,42 +1535,63 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 
 /*
 =======================================================================================================================================
-CG_BreathPuffs
+CG_BreathPuff
 =======================================================================================================================================
 */
-static void CG_BreathPuffs(centity_t *cent, refEntity_t *head) {
-	clientInfo_t *ci;
-	vec3_t up, origin;
+static void CG_BreathPuff(int clientNum, vec3_t origin, vec3_t *axis) {
 	int contents;
+	localEntity_t *puffs[3 + 5] = {0};
+
+	contents = CG_PointContents(origin, 0);
+
+	if (contents & (CONTENTS_WATER|CONTENTS_SLIME|CONTENTS_LAVA)) {
+		CG_SpawnBubbles(puffs, origin, 2, (int)(3 + random() * 5));
+	} else {
+		if (cg_enableBreath.integer) {
+			vec3_t up;
+
+			VectorSet(up, 0, 0, 8);
+
+			puffs[0] = CG_SmokePuff(origin, up, 16, 1, 1, 1, 0.66f, 1500, cg.time, cg.time + 400, LEF_PUFF_DONT_SCALE, cgs.media.shotgunSmokePuffShader);
+		}
+	}
+}
+
+/*
+=======================================================================================================================================
+CG_AddBreathPuffs
+=======================================================================================================================================
+*/
+static void CG_AddBreathPuffs(centity_t *cent, refEntity_t *head) {
+	clientInfo_t *ci;
+	vec3_t origin;
+
+	if (cent->currentState.number >= MAX_CLIENTS) {
+		return;
+	}
 
 	ci = &cgs.clientinfo[cent->currentState.number];
 
-	if (!cg_enableBreath.integer) {
-		return;
-	}
-
-	if (cent->currentState.number == cg.snap->ps.clientNum && !cg.renderingThirdPerson) {
-		return;
-	}
-
 	if (cent->currentState.eFlags & EF_DEAD) {
-		return;
-	}
-
-	contents = CG_PointContents(head->origin, 0);
-
-	if (contents & (CONTENTS_WATER|CONTENTS_SLIME|CONTENTS_LAVA)) {
 		return;
 	}
 
 	if (ci->breathPuffTime > cg.time) {
 		return;
 	}
+	// add first person effects
+	if (cent->currentState.number == cg.snap->ps.clientNum && !cg.renderingThirdPerson) {
+		VectorMA(cg.refdef.vieworg, 20, cg.refdef.viewaxis[0], origin);
+		VectorMA(origin, -4, cg.refdef.viewaxis[2], origin);
 
-	VectorSet(up, 0, 0, 8);
+		CG_BreathPuff(cent->currentState.number, origin, cg.refdef.viewaxis);
+	}
+	// add third person effects for mirrors/other clients
 	VectorMA(head->origin, 8, head->axis[0], origin);
 	VectorMA(origin, -4, head->axis[2], origin);
-	CG_SmokePuff(origin, up, 16, 1, 1, 1, 0.66f, 1500, cg.time, cg.time + 400, LEF_PUFF_DONT_SCALE, cgs.media.shotgunSmokePuffShader);
+
+	CG_BreathPuff(cent->currentState.number, origin, head->axis);
+
 	ci->breathPuffTime = cg.time + 2000;
 }
 
@@ -2508,7 +2529,7 @@ void CG_Player(centity_t *cent) {
 	head.renderfx = renderfx;
 
 	CG_AddRefEntityWithPowerups(&head, &cent->currentState);
-	CG_BreathPuffs(cent, &head);
+	CG_AddBreathPuffs(cent, &head);
 	CG_DustTrail(cent);
 	// add the gun / barrel / flash
 	CG_AddPlayerWeapon(&torso, NULL, cent, ci->team);

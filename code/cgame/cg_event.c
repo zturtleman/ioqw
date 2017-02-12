@@ -616,7 +616,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			// if the end was on a nomark surface, don't make an explosion
 			if (es->eventParm != 255) {
 				ByteToDir(es->eventParm, dir);
-				CG_MissileHitWall(es->weapon, es->clientNum, position, dir, IMPACTSOUND_DEFAULT);
+				CG_MissileHitWall(es->weapon, clientNum, position, dir, IMPACTSOUND_DEFAULT);
 			}
 
 			break;
@@ -678,18 +678,18 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			}
 
 			break;
-		case EV_GLOBAL_SOUND: // play from the player's head so it never diminishes
+		case EV_GLOBAL_SOUND: // play as a local sound so it never diminishes
 			DEBUGNAME("EV_GLOBAL_SOUND");
 
 			if (cgs.gameSounds[es->eventParm]) {
-				trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, cgs.gameSounds[es->eventParm]);
+				trap_S_StartLocalSound(cgs.gameSounds[es->eventParm], CHAN_AUTO);
 			} else {
 				s = CG_ConfigString(CS_SOUNDS + es->eventParm);
-				trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, CG_CustomSound(es->number, s));
+				trap_S_StartLocalSound(CG_CustomSound(es->number, s), CHAN_AUTO);
 			}
 
 			break;
-		case EV_GLOBAL_TEAM_SOUND: // play from the player's head so it never diminishes
+		case EV_GLOBAL_TEAM_SOUND: // play as a local sound so it never diminishes
 			{
 				DEBUGNAME("EV_GLOBAL_TEAM_SOUND");
 				switch (es->eventParm) {
@@ -1099,7 +1099,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 					break;
 				}
 				// powerup pickups are global
-				trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, cgs.media.itemPickupSounds[index]);
+				trap_S_StartLocalSound(cgs.media.itemPickupSounds[index], CHAN_AUTO);
 				// show icon and name on status bar
 				if (es->number == cg.snap->ps.clientNum) {
 					CG_ItemPickup(index);

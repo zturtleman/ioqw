@@ -190,6 +190,7 @@ typedef enum {
 	LE_FADE_RGB,
 	LE_FALL_SCALE_FADE,
 	LE_MOVE_SCALE_FADE,
+	LE_BUBBLE,
 	LE_SCOREPLUM
 #ifdef MISSIONPACK
 	, LE_SHOWREFENTITY
@@ -1193,6 +1194,7 @@ void CG_AddLocalEntities(void);
 // cg_effects.c
 localEntity_t *CG_SmokePuff(const vec3_t p, const vec3_t vel, float radius, float r, float g, float b, float a, float duration, int startTime, int fadeInTime, int leFlags, qhandle_t hShader);
 void CG_BubbleTrail(vec3_t start, vec3_t end, float spacing);
+int CG_SpawnBubbles(localEntity_t **bubbles, vec3_t origin, float baseSize, int numBubbles);
 void CG_SpawnEffect(vec3_t org);
 void CG_KamikazeEffect(vec3_t org);
 void CG_ObeliskExplode(vec3_t org, int entityNum);
