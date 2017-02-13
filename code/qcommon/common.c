@@ -97,6 +97,9 @@ cvar_t *com_legacyprotocol;
 cvar_t *com_basegame;
 cvar_t *com_homepath;
 cvar_t *com_busyWait;
+#ifndef DEDICATED
+cvar_t *con_autochat;
+#endif
 #if idx64
 	int (*Q_VMftol)(void);
 #elif id386
@@ -2644,7 +2647,9 @@ void Com_Init(char *commandLine) {
 	} else
 #endif
 		Cvar_Get("protocol", com_protocol->string, CVAR_ROM);
-
+#ifndef DEDICATED
+	con_autochat = Cvar_Get("con_autochat", "0", CVAR_ARCHIVE);
+#endif
 	Sys_Init();
 	Sys_InitPIDFile(FS_GetCurrentGameDir());
 	// Pick a random port value
@@ -2831,21 +2836,19 @@ int Com_ModifyMsec(int msec) {
 	if (msec < 1 && com_timescale->value) {
 		msec = 1;
 	}
-
-	if (com_dedicated->integer) {
-		// dedicated servers don't want to clamp for a much longer period, because it would mess up all the client's views of time.
-		if (com_sv_running->integer && msec > 500) {
+	// FIXME: Running non-dedicated network server on client should use longer clamp time, but loading renderer causes running too many
+	// server frames initially.
+	if (com_sv_running->integer && !com_dedicated->integer) {
+		// for local single player gaming we may want to clamp the time to prevent players from flying off edges when something hitches.
+		clampTime = 200;
+	} else {
+		// servers don't want to clamp for a much longer period, because it would mess up all the client's views of time.
+		// clients of remote servers do not want to clamp time, because it would skew their view of the server's time temporarily.
+		if (((com_sv_running->integer && com_dedicated->integer) || com_developer->integer) && msec > 500) {
 			Com_Printf("Hitch warning: %i msec frame time\n", msec);
 		}
 
 		clampTime = 5000;
-	} else if (!com_sv_running->integer) {
-		// clients of remote servers do not want to clamp time, because it would skew their view of the server's time temporarily
-		clampTime = 5000;
-	} else {
-		// for local single player gaming
-		// we may want to clamp the time to prevent players from flying off edges when something hitches.
-		clampTime = 200;
 	}
 
 	if (msec > clampTime) {
@@ -3244,8 +3247,8 @@ void Field_CompleteCommand(char *cmd, qboolean doCommands, qboolean doCvars) {
 	} else
 		completionString = Cmd_Argv(completionArgument - 1);
 #ifndef DEDICATED
-	// unconditionally add a '\' to the start of the buffer
-	if (completionField->buffer[0] && completionField->buffer[0] != '\\') {
+	// add a '\' to the start of the buffer if it might be sent as chat otherwise
+	if (con_autochat->integer && completionField->buffer[0] && completionField->buffer[0] != '\\') {
 		if (completionField->buffer[0] != '/') {
 			// Buffer is full, refuse to complete
 			if (strlen(completionField->buffer) + 1 >= sizeof(completionField->buffer)) {
