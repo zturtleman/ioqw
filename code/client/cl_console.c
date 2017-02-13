@@ -49,7 +49,6 @@ console_t con;
 
 cvar_t *con_conspeed;
 cvar_t *con_autoclear;
-cvar_t *con_autochat;
 cvar_t *con_notifytime;
 
 #define DEFAULT_CONSOLE_WIDTH 78
@@ -347,7 +346,6 @@ void Con_Init(void) {
 	con_notifytime = Cvar_Get("con_notifytime", "3", 0);
 	con_conspeed = Cvar_Get("scr_conspeed", "3", 0);
 	con_autoclear = Cvar_Get("con_autoclear", "1", CVAR_ARCHIVE);
-	con_autochat = Cvar_Get("con_autochat", "0", CVAR_ARCHIVE);
 
 	Field_Clear(&g_consoleField);
 
