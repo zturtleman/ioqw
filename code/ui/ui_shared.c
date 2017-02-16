@@ -713,7 +713,7 @@ void Window_Paint(Window *w, float fadeAmount, float fadeClamp, float fadeCycle)
 	}
 
 	if (w->style == WINDOW_STYLE_FILLED) {
-	// box, but possible a shader that needs filled
+		// box, but possible a shader that needs filled
 		if (w->background) {
 			Fade(&w->flags, &w->backColor[3], fadeClamp, &w->nextTime, fadeCycle, qtrue, fadeAmount);
 			DC->setColor(w->backColor);
@@ -1529,7 +1529,6 @@ void Script_SetCvar(itemDef_t *item, char **args) {
 	if (String_Parse(args, &cvar) && String_Parse(args, &val)) {
 		DC->setCVar(cvar, val);
 	}
-	
 }
 
 /*
@@ -1684,7 +1683,6 @@ qboolean Item_EnableShowViaCvar(itemDef_t *item, int flag) {
 		}
 
 		return (item->cvarFlags & flag) ? qfalse : qtrue;
-
 	}
 
 	return qtrue;
@@ -1703,6 +1701,7 @@ qboolean Item_SetFocus(itemDef_t *item, float x, float y) {
 	sfxHandle_t *sfx = &DC->Assets.itemFocusSound;
 	qboolean playSound = qfalse;
 	menuDef_t *parent;
+
 	// sanity check, non-null, not a decoration and does not already have the focus
 	if (item == NULL || item->window.flags & WINDOW_DECORATION || item->window.flags & WINDOW_HASFOCUS || !(item->window.flags & WINDOW_VISIBLE)) {
 		return qfalse;
@@ -2142,7 +2141,7 @@ itemDef_t *Menu_HitTest(menuDef_t *menu, float x, float y) {
 
 /*
 =======================================================================================================================================
-Item_SetMouseOver(
+Item_SetMouseOver
 =======================================================================================================================================
 */
 void Item_SetMouseOver(itemDef_t *item, qboolean focus) {
@@ -5650,7 +5649,7 @@ qboolean ItemParse_feeder(itemDef_t *item, int handle) {
 =======================================================================================================================================
 ItemParse_elementtype
 
-Elementtype, used to specify what type of elements a listbox contains uses textstyle for storage.
+Elementtype, used to specify what type of elements a listbox contains. Uses textstyle for storage.
 =======================================================================================================================================
 */
 qboolean ItemParse_elementtype(itemDef_t *item, int handle) {
@@ -7275,7 +7274,7 @@ void *Display_CaptureItem(int x, int y) {
 
 	for (i = 0; i < menuCount; i++) {
 		// turn off focus each item
-		// menu->items[i].window.flags &= ~WINDOW_HASFOCUS;
+		//menu->items[i].window.flags &= ~WINDOW_HASFOCUS;
 
 		if (Rect_ContainsPoint(&Menus[i].window.rect, x, y)) {
 			return &Menus[i];
@@ -7287,7 +7286,7 @@ void *Display_CaptureItem(int x, int y) {
 
 /*
 =======================================================================================================================================
-Display_CursorType
+Display_MouseMove
 
 FIXME!
 =======================================================================================================================================
@@ -7433,7 +7432,7 @@ static qboolean Menu_OverActiveItem(menuDef_t *menu, float x, float y) {
 
 			for (i = 0; i < menu->itemCount; i++) {
 				// turn off focus each item
-				// menu->items[i].window.flags &= ~WINDOW_HASFOCUS;
+				//menu->items[i].window.flags &= ~WINDOW_HASFOCUS;
 
 				if (!(menu->items[i]->window.flags &(WINDOW_VISIBLE|WINDOW_FORCED))) {
 					continue;

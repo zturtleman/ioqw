@@ -25,7 +25,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "ui_local.h"
 
 // arena and bot info
-
 int ui_numBots;
 static char *ui_botInfos[MAX_BOTS];
 static int ui_numArenas;
