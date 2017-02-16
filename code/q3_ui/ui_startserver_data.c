@@ -731,7 +731,7 @@ void UI_StartServer_LoadSkirmishCvars(void) {
 	skirmishCvarLoaded = qfalse;
 	skirmishCvarData[0] = '\0';
 	// load from cvars in memory or default values on list.
-	// The flags marked here don't override the existing ARCHIVE flag, which is set when the cvar is loaded from q3config.cfg
+	// The flags marked here don't override the existing ARCHIVE flag, which is set when the cvar is loaded from qwconfig.cfg
 	for (i = 0; i < ui_cvarTableSize; i++) {
 		trap_Cvar_Register(&cvar, ui_cvarTable[i].cvarName, ui_cvarTable[i].defaultString, CVAR_TEMP|CVAR_USER_CREATED);
 		UI_SetSkirmishCvar(NULL, ui_cvarTable[i].cvarName, cvar.string);

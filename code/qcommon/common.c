@@ -368,7 +368,11 @@ void Com_Quit_f(void) {
 		CL_Shutdown(p[0] ? p : "Client quit", qtrue, qtrue);
 		VM_Forced_Unload_Done();
 		Com_Shutdown();
+#ifdef NEW_FILESYSTEM
+		fs_close_all_handles();
+#else
 		FS_Shutdown(qtrue);
+#endif
 	}
 
 	Sys_Quit();
@@ -1588,13 +1592,14 @@ void Com_InitHunkMemory(void) {
 	cvar_t *cv;
 	int nMinAlloc;
 	char *pMsg = NULL;
-
+#ifndef NEW_FILESYSTEM
 	// make sure the file system has allocated and "not" freed any temp blocks
 	// this allows the config and product id files (journal files too) to be loaded by the file system without redunant routines in the
 	// file system utilizing different memory systems
 	if (FS_LoadStack() != 0) {
 		Com_Error(ERR_FATAL, "Hunk initialization failed. File system load stack not zero");
 	}
+#endif
 	// allocate the stack based hunk allocator
 	cv = Cvar_Get("com_hunkMegs", DEF_COMHUNKMEGS_S, CVAR_LATCH|CVAR_ARCHIVE);
 	Cvar_SetDescription(cv, "The size of the hunk memory segment");
@@ -2367,7 +2372,18 @@ For controlling environment variables.
 =======================================================================================================================================
 */
 void Com_ExecuteCfg(void) {
+#ifdef NEW_FILESYSTEM
+	fs_execute_config_file("default.cfg", FS_CONFIGTYPE_DEFAULT, EXEC_APPEND, qfalse);
 
+	if (!Com_SafeMode()) {
+		// skip the qwconfig.cfg and autoexec.cfg if "safe" is on the command line
+		fs_execute_config_file(QWCONFIG_CFG, FS_CONFIGTYPE_SETTINGS, EXEC_APPEND, qfalse);
+		fs_execute_config_file("autoexec.cfg", FS_CONFIGTYPE_SETTINGS, EXEC_APPEND, qfalse);
+	}
+
+	Cbuf_Execute();
+	Com_Printf("\n");
+#else
 	Cbuf_ExecuteText(EXEC_NOW, "exec default.cfg\n");
 	Cbuf_Execute(); // Always execute after exec to prevent text buffer overflowing
 
@@ -2378,6 +2394,7 @@ void Com_ExecuteCfg(void) {
 		Cbuf_ExecuteText(EXEC_NOW, "exec autoexec.cfg\n");
 		Cbuf_Execute();
 	}
+#endif
 }
 
 /*
@@ -2405,8 +2422,11 @@ void Com_GameRestart(int checksumFeed, qboolean disconnect) {
 
 			CL_Shutdown("Game directory changed", disconnect, qfalse);
 		}
-
+#ifdef NEW_FILESYSTEM
+		fs_set_mod_dir(Cvar_VariableString("fs_game"), qtrue);
+#else
 		FS_Restart(checksumFeed);
+#endif
 		// Clean out any user and VM created cvars
 		Cvar_Restart(qtrue);
 		Com_ExecuteCfg();
@@ -2435,7 +2455,16 @@ Expose possibility to change current running mod to the user.
 =======================================================================================================================================
 */
 void Com_GameRestart_f(void) {
+#ifdef NEW_FILESYSTEM
+	// this will get sanitized in fs_set_mod_dir during the restart
+	Cvar_Set("fs_game", Cmd_Argv(1));
+#ifndef DEDICATED
+	// make sure the specified fs_game doesn't get overriden by cl_oldGame
+	extern qboolean cl_oldGameSet;
 
+	cl_oldGameSet = qfalse;
+#endif
+#else
 	if (!FS_FilenameCompare(Cmd_Argv(1), com_basegame->string)) {
 		// This is the standard base game. Servers and clients should use "" and not the standard basegame name because this messes
 		// up pak file negotiation and lots of other stuff
@@ -2443,7 +2472,7 @@ void Com_GameRestart_f(void) {
 	} else {
 		Cvar_Set("fs_game", Cmd_Argv(1));
 	}
-
+#endif
 	Com_GameRestart(0, qtrue);
 }
 
@@ -2572,9 +2601,11 @@ void Com_Init(char *commandLine) {
 	if (!com_basegame->string[0]) {
 		Cvar_ForceReset("com_basegame");
 	}
-
+#ifdef NEW_FILESYSTEM
+	fs_startup();
+#else
 	FS_InitFilesystem();
-
+#endif
 	Com_InitJournaling();
 	// Add some commands here already so users can use them from config files
 	Cmd_AddCommand("setenv", Com_Setenv_f);
@@ -2594,6 +2625,9 @@ void Com_Init(char *commandLine) {
 	Com_ExecuteCfg();
 	// override anything from the config files with command line args
 	Com_StartupVariable(NULL);
+#ifdef NEW_FILESYSTEM
+	fs_cache_initialize();
+#endif
 	// get dedicated here for proper hunk megs initialization
 #ifdef DEDICATED
 	com_dedicated = Cvar_Get("dedicated", "1", CVAR_ROM);
@@ -2651,7 +2685,11 @@ void Com_Init(char *commandLine) {
 	con_autochat = Cvar_Get("con_autochat", "0", CVAR_ARCHIVE);
 #endif
 	Sys_Init();
+#ifdef NEW_FILESYSTEM
+	Sys_InitPIDFile(fs_pid_file_directory());
+#else
 	Sys_InitPIDFile(FS_GetCurrentGameDir());
+#endif
 	// Pick a random port value
 	Com_RandomBytes((byte *)&qport, sizeof(int));
 
@@ -2758,9 +2796,15 @@ Com_WriteConfigToFile
 */
 void Com_WriteConfigToFile(const char *filename) {
 	fileHandle_t f;
-
+#ifdef NEW_FILESYSTEM
+	if (!Q_stricmp(filename, QWCONFIG_CFG)) {
+		f = fs_open_settings_file_write(QWCONFIG_CFG);
+	} else {
+		f = FS_FOpenFileWrite(filename);
+	}
+#else
 	f = FS_FOpenFileWrite(filename);
-
+#endif
 	if (!f) {
 		Com_Printf("Couldn't write %s.\n", filename);
 		return;

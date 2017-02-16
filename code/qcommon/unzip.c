@@ -32,6 +32,7 @@ This file (appnote.txt) is distributed with the PKZIP program (even in the versi
  IO for uncompress .zip files using zlib.
 **************************************************************************************************************************************/
 
+#ifndef NEW_FILESYSTEM
 #include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
 #include "unzip.h"
@@ -1579,3 +1580,4 @@ extern int ZEXPORT unzSetOffset(file, pos)
 	s->current_file_ok = (err == UNZ_OK);
 	return err;
 }
+#endif // NEW_FILESYSTEM

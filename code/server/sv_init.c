@@ -385,7 +385,7 @@ static void SV_ClearServer(void) {
 
 	Com_Memset(&sv, 0, sizeof(sv));
 }
-
+#ifndef NEW_FILESYSTEM
 /*
 =======================================================================================================================================
 SV_TouchCGame
@@ -404,7 +404,7 @@ static void SV_TouchCGame(void) {
 		FS_FCloseFile(f);
 	}
 }
-
+#endif
 /*
 =======================================================================================================================================
 SV_SpawnServer
@@ -472,9 +472,9 @@ void SV_SpawnServer(char *server, qboolean killBots) {
 	Cvar_Set("cl_paused", "0");
 	// get a new checksum feed and restart the file system
 	sv.checksumFeed = (((int)rand() << 16) ^ rand()) ^ Com_Milliseconds();
-
+#ifndef NEW_FILESYSTEM
 	FS_Restart(sv.checksumFeed);
-
+#endif
 	CM_LoadMap(va("maps/%s.bsp", server), qfalse, &checksum);
 	// set serverinfo visible name
 	Cvar_Set("mapname", server);
@@ -558,6 +558,18 @@ void SV_SpawnServer(char *server, qboolean killBots) {
 	if (sv_pure->integer) {
 		// the server sends these to the clients so they will only load pk3s also loaded at the server
 		p = FS_LoadedPakChecksums();
+#ifdef NEW_FILESYSTEM
+		if (!*p) {
+			Com_Printf("WARNING: Setting sv_pure to 0 due to invalid loaded pak list.\nThis is usually caused by having too many pk3s installed.\n");
+			Cvar_Set("sv_pure", "0");
+			Cvar_Set("sv_paks", "");
+			Cvar_Set("sv_pakNames", "");
+		} else {
+			Cvar_Set("sv_paks", p);
+			p = FS_LoadedPakNames();
+			Cvar_Set("sv_pakNames", p);
+		}
+#else
 		Cvar_Set("sv_paks", p);
 
 		if (strlen(p) == 0) {
@@ -571,16 +583,21 @@ void SV_SpawnServer(char *server, qboolean killBots) {
 		if (com_dedicated->integer) {
 			SV_TouchCGame();
 		}
+#endif
 	} else {
 		Cvar_Set("sv_paks", "");
 		Cvar_Set("sv_pakNames", "");
 	}
 	// the server sends these to the clients so they can figure out which pk3s should be auto-downloaded
+#ifdef NEW_FILESYSTEM
+	fs_update_download_paks();
+#else
 	p = FS_ReferencedPakChecksums();
 	Cvar_Set("sv_referencedPaks", p);
 
 	p = FS_ReferencedPakNames();
 	Cvar_Set("sv_referencedPakNames", p);
+#endif
 	// save systeminfo and serverinfo strings
 	Q_strncpyz(systemInfo, Cvar_InfoString_Big(CVAR_SYSTEMINFO), sizeof(systemInfo));
 	cvar_modifiedFlags &= ~CVAR_SYSTEMINFO;

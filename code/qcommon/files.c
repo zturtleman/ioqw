@@ -26,6 +26,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  Handle based filesystem for Quake Wars.
 **************************************************************************************************************************************/
 
+#ifndef NEW_FILESYSTEM
 #include "q_shared.h"
 #include "qcommon.h"
 #include "unzip.h"
@@ -4127,3 +4128,4 @@ const char *FS_GetCurrentGameDir(void) {
 
 	return com_basegame->string;
 }
+#endif // NEW_FILESYSTEM

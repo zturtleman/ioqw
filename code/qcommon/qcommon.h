@@ -30,6 +30,9 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define _QCOMMON_H_
 
 #include "../qcommon/cm_public.h"
+#ifdef NEW_FILESYSTEM
+#include "../filesystem/fspublic.h"
+#endif
 // Ignore __attribute__ on non-gcc platforms
 #ifndef __GNUC__
 #ifndef __attribute__
@@ -458,7 +461,7 @@ void Cvar_CompleteCvarName(char *args, int argNum);
 extern int cvar_modifiedFlags;
 // whenever a cvar is modifed, its flags will be OR'd into this, so a single check can determine if any CVAR_USERINFO, CVAR_SERVERINFO,
 // etc, variables have been modified since the last check. The bit can then be cleared to allow another change detection.
-
+#ifndef NEW_FILESYSTEM
 /*
 =======================================================================================================================================
 
@@ -581,7 +584,7 @@ int FS_HomeRemove(const char *homePath);
 void FS_FilenameCompletion(const char *dir, const char *ext, qboolean stripExt, void(*callback)(const char *s), qboolean allowNonPureFilesOnDisk);
 const char *FS_GetCurrentGameDir(void);
 qboolean FS_Which(const char *filename, void *searchPath);
-
+#endif
 /*
 =======================================================================================================================================
 

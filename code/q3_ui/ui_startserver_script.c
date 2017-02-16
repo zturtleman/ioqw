@@ -1475,7 +1475,7 @@ static qboolean StartServer_WriteMapParams(void) {
 		}
 
 		if (s_scriptdata.server.preventConfigBug) {
-			AddScript("writeconfig q3config; ");
+			AddScript("writeconfig qwconfig; ");
 		}
 		// write map name
 		if (random_generate) {

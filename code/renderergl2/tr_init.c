@@ -1400,7 +1400,9 @@ void R_Init( void ) {
 	Com_Memset( &tr, 0, sizeof( tr ) );
 	Com_Memset( &backEnd, 0, sizeof( backEnd ) );
 	Com_Memset( &tess, 0, sizeof( tess ) );
-
+#ifdef NEW_FILESYSTEM
+	tr.new_filesystem = ri.Cvar_VariableIntegerValue("new_filesystem") ? qtrue : qfalse;
+#endif
 	if(sizeof(glconfig_t) != 35928)
 		ri.Error( ERR_FATAL, "Mod ABI incompatible: sizeof(glconfig_t) == %u != 35928", (unsigned int) sizeof(glconfig_t));
 

@@ -710,7 +710,52 @@ static void SV_BeginDownload_f(client_t *cl) {
 	// the file itself
 	Q_strncpyz(cl->downloadName, Cmd_Argv(1), sizeof(cl->downloadName));
 }
+#ifdef NEW_FILESYSTEM
+/*
+=======================================================================================================================================
+SV_OpenDownloadError
 
+Sends error message to client.
+=======================================================================================================================================
+*/
+static void SV_OpenDownloadError(client_t *cl, msg_t *msg, const char *errorMessage) {
+
+	MSG_WriteByte(msg, svc_download);
+	MSG_WriteShort(msg, 0); // client is expecting block zero
+	MSG_WriteLong(msg, -1); // illegal file size
+	MSG_WriteString(msg, errorMessage);
+}
+
+/*
+=======================================================================================================================================
+SV_OpenDownload
+
+Returns qtrue on success, qfalse otherwise.
+=======================================================================================================================================
+*/
+static qboolean SV_OpenDownload(client_t *cl, msg_t *msg) {
+	char pak_name[MAX_QPATH];
+
+	COM_StripExtension(cl->downloadName, pak_name, sizeof(pak_name));
+
+	if (!(sv_allowDownload->integer & DLF_ENABLE) ||(sv_allowDownload->integer & DLF_NO_UDP)) {
+		Com_Printf("clientDownload: %d : \"%s\" UDP download disabled by server sv_allowDownload setting\n", (int)(cl - svs.clients), cl->downloadName);
+		SV_OpenDownloadError(cl, msg, va("Could not download \"%s\" because autodownloading is disabled on the server.\nSet autodownload to No in your settings and you might be able to join the game anyway.\n", cl->downloadName));
+		return qfalse;
+	}
+
+	cl->download = fs_open_download_pak(cl->downloadName, (unsigned int *)&cl->downloadSize);
+
+	if (!cl->download) {
+		// this could happen if the map changed during a client's download sequence
+		Com_Printf("clientDownload: %d : \"%s\" failed to load download pk3\n", (int)(cl - svs.clients), cl->downloadName);
+		SV_OpenDownloadError(cl, msg, va("File \"%s\" not available on server for downloading.\nTry reconnecting to the server.\n", cl->downloadName));
+		return qfalse;
+	}
+
+	return qtrue;
+}
+#endif
 /*
 =======================================================================================================================================
 SV_WriteDownloadToClient
@@ -721,16 +766,23 @@ Fill up msg with data, return number of download blocks added.
 */
 int SV_WriteDownloadToClient(client_t *cl, msg_t *msg) {
 	int curindex;
+#ifndef NEW_FILESYSTEM
 	int unreferenced = 1;
 	char errorMessage[1024];
 	char pakbuf[MAX_QPATH], *pakptr;
 	int numRefPaks;
-
+#endif
 	if (!*cl->downloadName) {
 		return 0; // Nothing being downloaded
 	}
 
 	if (!cl->download) {
+#ifdef NEW_FILESYSTEM
+		if (!SV_OpenDownload(cl, msg)) {
+			*cl->downloadName = 0;
+			return 1;
+		}
+#else
 		qboolean idPack = qfalse;
 #ifndef STANDALONE
 		qboolean missionPack = qfalse;
@@ -811,7 +863,7 @@ int SV_WriteDownloadToClient(client_t *cl, msg_t *msg) {
 
 			return 1;
 		}
-
+#endif
 		Com_Printf("clientDownload: %d : beginning \"%s\"\n", (int)(cl - svs.clients), cl->downloadName);
 		// Init
 		cl->downloadCurrentBlock = cl->downloadClientBlock = cl->downloadXmitBlock = 0;
@@ -971,6 +1023,10 @@ This routine would be a bit simpler with a goto but i abstained.
 =======================================================================================================================================
 */
 static void SV_VerifyPaks_f(client_t *cl) {
+#ifdef NEW_FILESYSTEM
+	cl->gotCP = qtrue;
+	cl->pureAuthentic = qtrue;
+#else
 	int nChkSum1, nChkSum2, nClientPaks, nServerPaks, i, j, nCurArg;
 	int nClientChkSum[1024];
 	int nServerChkSum[1024];
@@ -1120,6 +1176,7 @@ static void SV_VerifyPaks_f(client_t *cl) {
 			SV_DropClient(cl, "Unpure client detected. Invalid .PK3 files referenced!");
 		}
 	}
+#endif
 }
 
 /*
