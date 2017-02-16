@@ -124,21 +124,14 @@ int Export_BotLibSetup(void) {
 //	Swap_Init();
 
 	if (botDeveloper) {
-		char *homedir, *gamedir, *basegame;
+		char *homedir, *gamedir;
 		char logfilename[MAX_OSPATH];
 
 		homedir = LibVarGetString("homedir");
 		gamedir = LibVarGetString("gamedir");
-		basegame = LibVarGetString("basegame");
 
-		if (*homedir) {
-			if (*gamedir) {
-				Com_sprintf(logfilename, sizeof(logfilename), "%s%c%s%cbotlib.log", homedir, PATH_SEP, gamedir, PATH_SEP);
-			} else if (*basegame) {
-				Com_sprintf(logfilename, sizeof(logfilename), "%s%c%s%cbotlib.log", homedir, PATH_SEP, basegame, PATH_SEP);
-			} else {
-				Com_sprintf(logfilename, sizeof(logfilename), "%s%c" BASEGAME "%cbotlib.log", homedir, PATH_SEP, PATH_SEP);
-			}
+		if (*homedir && *gamedir) {
+			Com_sprintf(logfilename, sizeof(logfilename), "%s%c%s%cbotlib.log", homedir, PATH_SEP, gamedir, PATH_SEP);
 		} else {
 			Com_sprintf(logfilename, sizeof(logfilename), "botlib.log");
 		}

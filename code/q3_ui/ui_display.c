@@ -36,6 +36,8 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define ART_FRAMER "menu/art/frame1_r"
 #define ART_BACK0 "menu/art/back_0"
 #define ART_BACK1 "menu/art/back_1"
+#define ART_ACCEPT0 "menu/art/accept_0"
+#define ART_ACCEPT1 "menu/art/accept_1"
 
 enum {
 	ID_GRAPHICS,
@@ -44,7 +46,10 @@ enum {
 	ID_NETWORK,
 	ID_BRIGHTNESS,
 	ID_SCREENSIZE,
-	ID_BACK
+	ID_ANAGLYPH,
+	ID_GREYSCALE,
+	ID_BACK,
+	ID_APPLY
 };
 
 typedef struct {
@@ -58,7 +63,11 @@ typedef struct {
 	menutext_s network;
 	menuslider_s brightness;
 	menuslider_s screensize;
+	menulist_s anaglyph;
+	menulist_s greyscale;
 	menubitmap_s back;
+	menubitmap_s apply;
+	int greyscale_default;
 } displayOptionsInfo_t;
 
 static displayOptionsInfo_t displayOptionsInfo;
@@ -95,10 +104,47 @@ static void UI_DisplayOptionsMenu_Event(void *ptr, int event) {
 		case ID_SCREENSIZE:
 			trap_Cvar_SetValue("cg_viewsize", displayOptionsInfo.screensize.curvalue * 10);
 			break;
+		case ID_ANAGLYPH:
+			trap_Cvar_SetValue("r_anaglyphMode", displayOptionsInfo.anaglyph.curvalue);
+			break;
+		case ID_GREYSCALE:
+			break;
 		case ID_BACK:
 			UI_PopMenu();
 			break;
+		case ID_APPLY:
+			trap_Cvar_SetValue("r_greyscale", displayOptionsInfo.greyscale.curvalue);
+			UI_ForceMenuOff();
+			trap_Cmd_ExecuteText(EXEC_APPEND, "vid_restart\n");
+			break;
 	}
+}
+
+/*
+=======================================================================================================================================
+DisplayOptions_UpdateMenuItems
+=======================================================================================================================================
+*/
+static void DisplayOptions_UpdateMenuItems(void) {
+
+	displayOptionsInfo.apply.generic.flags |= QMF_HIDDEN|QMF_INACTIVE;
+
+	if (displayOptionsInfo.greyscale_default != displayOptionsInfo.greyscale.curvalue) {
+		displayOptionsInfo.apply.generic.flags &= ~(QMF_HIDDEN|QMF_INACTIVE);
+	}
+}
+
+/*
+=======================================================================================================================================
+DisplayOptions_MenuDraw
+=======================================================================================================================================
+*/
+void DisplayOptions_MenuDraw(void) {
+
+	// APSFIX - rework this
+	DisplayOptions_UpdateMenuItems();
+
+	Menu_Draw(&displayOptionsInfo.menu);
 }
 
 /*
@@ -109,11 +155,33 @@ UI_DisplayOptionsMenu_Init
 static void UI_DisplayOptionsMenu_Init(void) {
 	int y;
 
+	static const char *anaglyph_names[] = {
+		"Off",
+		"Red-Cyan",
+		"Red-Blue",
+		"Red-Green",
+		"Green-Magenta",
+		"Cyan-Red",
+		"Blue-Red",
+		"Green-Red",
+		"Magenta-Green",
+		NULL
+	};
+
+	const int numAnaglyphModes = ARRAY_LEN(anaglyph_names) - 2;
+
+	static const char *offOn_names[] = {
+		"Off",
+		"On",
+		NULL
+	};
+
 	memset(&displayOptionsInfo, 0, sizeof(displayOptionsInfo));
 
 	UI_DisplayOptionsMenu_Cache();
 	displayOptionsInfo.menu.wrapAround = qtrue;
 	displayOptionsInfo.menu.fullscreen = qtrue;
+	displayOptionsInfo.menu.draw = DisplayOptions_MenuDraw;
 
 	displayOptionsInfo.banner.generic.type = MTYPE_BTEXT;
 	displayOptionsInfo.banner.generic.flags = QMF_CENTER_JUSTIFY;
@@ -179,7 +247,7 @@ static void UI_DisplayOptionsMenu_Init(void) {
 	displayOptionsInfo.network.style = UI_RIGHT;
 	displayOptionsInfo.network.color = color_red;
 
-	y = 240 - (BIGCHAR_HEIGHT + 2);
+	y = 240 - 2 * (BIGCHAR_HEIGHT + 2);
 	displayOptionsInfo.brightness.generic.type = MTYPE_SLIDER;
 	displayOptionsInfo.brightness.generic.name = "Brightness:";
 	displayOptionsInfo.brightness.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
@@ -205,6 +273,28 @@ static void UI_DisplayOptionsMenu_Init(void) {
 	displayOptionsInfo.screensize.minvalue = 3;
 	displayOptionsInfo.screensize.maxvalue = 10;
 
+	y += BIGCHAR_HEIGHT + 2;
+	// references/modifies "r_anaglyphMode"
+	displayOptionsInfo.anaglyph.generic.type = MTYPE_SPINCONTROL;
+	displayOptionsInfo.anaglyph.generic.name = "Anaglyph:";
+	displayOptionsInfo.anaglyph.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
+	displayOptionsInfo.anaglyph.generic.callback = UI_DisplayOptionsMenu_Event;
+	displayOptionsInfo.anaglyph.generic.id = ID_ANAGLYPH;
+	displayOptionsInfo.anaglyph.generic.x = 400;
+	displayOptionsInfo.anaglyph.generic.y = y;
+	displayOptionsInfo.anaglyph.itemnames = anaglyph_names;
+
+	y += BIGCHAR_HEIGHT + 2;
+	// references/modifies "r_greyscale"
+	displayOptionsInfo.greyscale.generic.type = MTYPE_SPINCONTROL;
+	displayOptionsInfo.greyscale.generic.name = "Grey Scale:";
+	displayOptionsInfo.greyscale.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
+	displayOptionsInfo.greyscale.generic.callback = UI_DisplayOptionsMenu_Event;
+	displayOptionsInfo.greyscale.generic.id = ID_GREYSCALE;
+	displayOptionsInfo.greyscale.generic.x = 400;
+	displayOptionsInfo.greyscale.generic.y = y;
+	displayOptionsInfo.greyscale.itemnames = offOn_names;
+
 	displayOptionsInfo.back.generic.type = MTYPE_BITMAP;
 	displayOptionsInfo.back.generic.name = ART_BACK0;
 	displayOptionsInfo.back.generic.flags = QMF_LEFT_JUSTIFY|QMF_PULSEIFFOCUS;
@@ -216,6 +306,17 @@ static void UI_DisplayOptionsMenu_Init(void) {
 	displayOptionsInfo.back.height = 64;
 	displayOptionsInfo.back.focuspic = ART_BACK1;
 
+	displayOptionsInfo.apply.generic.type = MTYPE_BITMAP;
+	displayOptionsInfo.apply.generic.name = ART_ACCEPT0;
+	displayOptionsInfo.apply.generic.flags = QMF_RIGHT_JUSTIFY|QMF_PULSEIFFOCUS|QMF_HIDDEN|QMF_INACTIVE;
+	displayOptionsInfo.apply.generic.callback = UI_DisplayOptionsMenu_Event;
+	displayOptionsInfo.apply.generic.id = ID_APPLY;
+	displayOptionsInfo.apply.generic.x = 640;
+	displayOptionsInfo.apply.generic.y = 480 - 64;
+	displayOptionsInfo.apply.width = 128;
+	displayOptionsInfo.apply.height = 64;
+	displayOptionsInfo.apply.focuspic = ART_ACCEPT1;
+
 	Menu_AddItem(&displayOptionsInfo.menu, (void *)&displayOptionsInfo.banner);
 	Menu_AddItem(&displayOptionsInfo.menu, (void *)&displayOptionsInfo.framel);
 	Menu_AddItem(&displayOptionsInfo.menu, (void *)&displayOptionsInfo.framer);
@@ -225,10 +326,22 @@ static void UI_DisplayOptionsMenu_Init(void) {
 	Menu_AddItem(&displayOptionsInfo.menu, (void *)&displayOptionsInfo.network);
 	Menu_AddItem(&displayOptionsInfo.menu, (void *)&displayOptionsInfo.brightness);
 	Menu_AddItem(&displayOptionsInfo.menu, (void *)&displayOptionsInfo.screensize);
+	Menu_AddItem(&displayOptionsInfo.menu, (void *)&displayOptionsInfo.anaglyph);
+	Menu_AddItem(&displayOptionsInfo.menu, (void *)&displayOptionsInfo.greyscale);
 	Menu_AddItem(&displayOptionsInfo.menu, (void *)&displayOptionsInfo.back);
+	Menu_AddItem(&displayOptionsInfo.menu, (void *)&displayOptionsInfo.apply);
 
 	displayOptionsInfo.brightness.curvalue = trap_Cvar_VariableValue("r_gamma") * 10;
 	displayOptionsInfo.screensize.curvalue = trap_Cvar_VariableValue("cg_viewsize") / 10;
+	displayOptionsInfo.anaglyph.curvalue = trap_Cvar_VariableValue("r_anaglyphMode");
+
+	if (displayOptionsInfo.anaglyph.curvalue < 0) {
+		displayOptionsInfo.anaglyph.curvalue = 0;
+	} else if (displayOptionsInfo.anaglyph.curvalue > numAnaglyphModes) {
+		displayOptionsInfo.anaglyph.curvalue = numAnaglyphModes;
+	}
+
+	displayOptionsInfo.greyscale.curvalue = displayOptionsInfo.greyscale_default = (trap_Cvar_VariableValue("r_greyscale") != 0);
 }
 
 /*
