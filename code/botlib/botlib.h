@@ -112,7 +112,6 @@ typedef struct bot_entitystate_s {
 	int flags;			// entity flags
 	vec3_t origin;		// origin of the entity
 	vec3_t angles;		// angles of the model
-	vec3_t old_origin;	// for lerping
 	vec3_t mins;		// bounding box minimums
 	vec3_t maxs;		// bounding box maximums
 	int groundent;		// ground entity

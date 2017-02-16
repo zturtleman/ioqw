@@ -226,6 +226,7 @@ typedef struct localEntity_s {
 	float lifeRate;				// 1.0 / (endTime - startTime)
 	trajectory_t pos;
 	trajectory_t angles;
+	int groundEntityNum;
 	float bounceFactor;			// 0.0 = no bounce, 1.0 = perfect
 	float color[4];
 	float radius;

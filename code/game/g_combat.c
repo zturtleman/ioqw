@@ -234,6 +234,11 @@ void GibEntity(gentity_t *self, int killer) {
 
 	// if this entity still has kamikaze
 	if (self->s.eFlags & EF_KAMIKAZE) {
+		self->s.eFlags &= ~EF_KAMIKAZE;
+
+		if (self->client) {
+			self->client->ps.eFlags &= ~EF_KAMIKAZE;
+		}
 		// check if there is a kamikaze timer around for this owner
 		for (i = 0; i < level.num_entities; i++) {
 			ent = &g_entities[i];
