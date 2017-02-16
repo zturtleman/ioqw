@@ -62,6 +62,12 @@ static const char *skillLevels[] = {
 
 static const int numSkillLevels = ARRAY_LEN(skillLevels);
 
+#define COLUMN_HOST		0
+#define COLUMN_MAP		1
+#define COLUMN_CLIENTS	2
+#define COLUMN_GAME		3
+#define COLUMN_PING		4
+
 #define UIAS_LOCAL		0
 #define UIAS_GLOBAL1	1
 #define UIAS_GLOBAL2	2
@@ -3396,14 +3402,40 @@ UI_ServersSort
 =======================================================================================================================================
 */
 void UI_ServersSort(int column, qboolean force) {
+	int sortKey;
+
+	switch (column) {
+		case COLUMN_HOST:
+			sortKey = SORT_HOST;
+			break;
+		case COLUMN_MAP:
+			sortKey = SORT_MAP;
+			break;
+		case COLUMN_CLIENTS:
+			if (ui_browserShowBots.integer == 0) {
+				sortKey = SORT_HUMANS;
+			} else {
+				sortKey = SORT_CLIENTS;
+			}
+
+			break;
+		case COLUMN_GAME:
+			sortKey = SORT_GAMETYPE;
+			break;
+		case COLUMN_PING:
+			sortKey = SORT_PING;
+			break;
+		default:
+			return;
+	}
 
 	if (!force) {
-		if (uiInfo.serverStatus.sortKey == column) {
+		if (uiInfo.serverStatus.sortKey == sortKey) {
 			return;
 		}
 	}
 
-	uiInfo.serverStatus.sortKey = column;
+	uiInfo.serverStatus.sortKey = sortKey;
 	qsort(&uiInfo.serverStatus.displayServers[0], uiInfo.serverStatus.numDisplayServers, sizeof(int), UI_ServersQsortCompare);
 }
 
@@ -4492,7 +4524,12 @@ static void UI_BuildServerDisplayList(int force) {
 		if (ping > 0 || ui_netSource.integer == UIAS_FAVORITES) {
 			trap_LAN_GetServerInfo(lanSource, i, info, MAX_STRING_CHARS);
 
-			clients = atoi(Info_ValueForKey(info, "clients"));
+			if (ui_browserShowBots.integer == 0) {
+				clients = atoi(Info_ValueForKey(info, "g_humanplayers"));
+			} else {
+				clients = atoi(Info_ValueForKey(info, "clients"));
+			}
+
 			uiInfo.serverStatus.numPlayersOnServers += clients;
 
 			if (ui_browserShowEmpty.integer == 0) {
@@ -5081,7 +5118,7 @@ static const char *UI_FeederItemText(float feederID, int index, int column, qhan
 			}
 
 			switch (column) {
-				case SORT_HOST:
+				case COLUMN_HOST:
 					if (ping <= 0) {
 						return Info_ValueForKey(info, "addr");
 					} else {
@@ -5099,12 +5136,22 @@ static const char *UI_FeederItemText(float feederID, int index, int column, qhan
 							return hostname;
 						}
 					}
-				case SORT_MAP:
+				case COLUMN_MAP:
 					return Info_ValueForKey(info, "mapname");
-				case SORT_CLIENTS:
-					Com_sprintf(clientBuff, sizeof(clientBuff), "%s(%s)", Info_ValueForKey(info, "clients"), Info_ValueForKey(info, "sv_maxclients"));
-					return clientBuff;
-				case SORT_GAME:
+				case COLUMN_CLIENTS:
+					{
+						char *clients;
+
+						if (ui_browserShowBots.integer == 0) {
+							clients = Info_ValueForKey(info, "g_humanplayers");
+						} else {
+							clients = Info_ValueForKey(info, "clients");
+						}
+
+						Com_sprintf(clientBuff, sizeof(clientBuff), "%s (%s)", clients, Info_ValueForKey(info, "sv_maxclients"));
+						return clientBuff;
+					}
+				case COLUMN_GAME:
 					game = atoi(Info_ValueForKey(info, "gametype"));
 
 					if (game >= 0 && game < numTeamArenaGameTypes) {
@@ -5112,7 +5159,7 @@ static const char *UI_FeederItemText(float feederID, int index, int column, qhan
 					} else {
 						return "Unknown";
 					}
-				case SORT_PING:
+				case COLUMN_PING:
 					if (ping <= 0) {
 						return "...";
 					} else {
@@ -6490,6 +6537,7 @@ vmCvar_t ui_browserMaster;
 vmCvar_t ui_browserGameType;
 vmCvar_t ui_browserShowFull;
 vmCvar_t ui_browserShowEmpty;
+vmCvar_t ui_browserShowBots;
 vmCvar_t ui_brassTime;
 vmCvar_t ui_drawCrosshair;
 vmCvar_t ui_drawCrosshairNames;
@@ -6600,6 +6648,7 @@ static cvarTable_t cvarTable[] = {
 	{&ui_browserGameType, "ui_browserGameType", "0", CVAR_ARCHIVE},
 	{&ui_browserShowFull, "ui_browserShowFull", "1", CVAR_ARCHIVE},
 	{&ui_browserShowEmpty, "ui_browserShowEmpty", "1", CVAR_ARCHIVE},
+	{&ui_browserShowBots, "ui_browserShowBots", "1", CVAR_ARCHIVE},
 	{&ui_brassTime, "cg_brassTime", "2500", CVAR_ARCHIVE},
 	{&ui_drawCrosshair, "cg_drawCrosshair", "2", CVAR_ARCHIVE},
 	{&ui_drawCrosshairNames, "cg_drawCrosshairNames", "1", CVAR_ARCHIVE},
