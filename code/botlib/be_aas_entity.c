@@ -78,7 +78,6 @@ int AAS_UpdateEntity(int entnum, bot_entitystate_t *state) {
 	ent->i.ltime = AAS_Time();
 
 	VectorCopy(ent->i.origin, ent->i.lastvisorigin);
-	VectorCopy(state->old_origin, ent->i.old_origin);
 
 	ent->i.solid = state->solid;
 	ent->i.groundent = state->groundent;

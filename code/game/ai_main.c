@@ -1655,7 +1655,6 @@ int BotAIStartFrame(int time) {
 				VectorCopy(ent->r.currentAngles, state.angles);
 			}
 
-			VectorCopy(ent->s.origin2, state.old_origin);
 			VectorCopy(ent->r.mins, state.mins);
 			VectorCopy(ent->r.maxs, state.maxs);
 
