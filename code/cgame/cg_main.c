@@ -153,7 +153,7 @@ vmCvar_t cg_zoomFov;
 vmCvar_t cg_thirdPerson;
 vmCvar_t cg_thirdPersonRange;
 vmCvar_t cg_thirdPersonAngle;
-vmCvar_t cg_lagometer;
+vmCvar_t cg_drawLagometer;
 vmCvar_t cg_drawAttacker;
 vmCvar_t cg_synchronousClients;
 vmCvar_t cg_singlePlayer;
@@ -233,6 +233,7 @@ static cvarTable_t cvarTable[] = {
 	{&cg_drawIcons, "cg_drawIcons", "1", CVAR_ARCHIVE},
 	{&cg_drawAmmoWarning, "cg_drawAmmoWarning", "1", CVAR_ARCHIVE},
 	{&cg_drawAttacker, "cg_drawAttacker", "1", CVAR_ARCHIVE},
+	{&cg_drawLagometer, "cg_drawLagometer", "0", CVAR_ARCHIVE},
 	{&cg_hitSounds, "cg_hitSounds", "0", CVAR_ARCHIVE},
 	{&cg_drawScores, "cg_drawScores", "1", CVAR_ARCHIVE},
 	{&cg_drawPickups, "cg_drawPickups", "1", CVAR_ARCHIVE},
@@ -246,7 +247,6 @@ static cvarTable_t cvarTable[] = {
 	{&cg_brassTime, "cg_brassTime", "2500", CVAR_ARCHIVE},
 	{&cg_simpleItems, "cg_simpleItems", "0", CVAR_ARCHIVE},
 	{&cg_addMarks, "cg_marks", "1", CVAR_ARCHIVE},
-	{&cg_lagometer, "cg_lagometer", "0", CVAR_ARCHIVE},
 	{&cg_railTrailTime, "cg_railTrailTime", "400", CVAR_ARCHIVE},
 	{&cg_gun_x, "cg_gunX", "0", CVAR_CHEAT},
 	{&cg_gun_y, "cg_gunY", "0", CVAR_CHEAT},
@@ -1924,12 +1924,18 @@ void CG_AssetCache(void) {
 	cgDC.Assets.gradientBar = trap_R_RegisterShaderNoMip(ASSET_GRADIENTBAR);
 	cgDC.Assets.fxBasePic = trap_R_RegisterShaderNoMip(ART_FX_BASE);
 	cgDC.Assets.fxPic[0] = trap_R_RegisterShaderNoMip(ART_FX_RED);
-	cgDC.Assets.fxPic[1] = trap_R_RegisterShaderNoMip(ART_FX_YELLOW);
-	cgDC.Assets.fxPic[2] = trap_R_RegisterShaderNoMip(ART_FX_GREEN);
-	cgDC.Assets.fxPic[3] = trap_R_RegisterShaderNoMip(ART_FX_TEAL);
-	cgDC.Assets.fxPic[4] = trap_R_RegisterShaderNoMip(ART_FX_BLUE);
-	cgDC.Assets.fxPic[5] = trap_R_RegisterShaderNoMip(ART_FX_CYAN);
-	cgDC.Assets.fxPic[6] = trap_R_RegisterShaderNoMip(ART_FX_WHITE);
+	cgDC.Assets.fxPic[1] = trap_R_RegisterShaderNoMip(ART_FX_ORANGE);
+	cgDC.Assets.fxPic[2] = trap_R_RegisterShaderNoMip(ART_FX_YELLOW);
+	cgDC.Assets.fxPic[3] = trap_R_RegisterShaderNoMip(ART_FX_LIME);
+	cgDC.Assets.fxPic[4] = trap_R_RegisterShaderNoMip(ART_FX_GREEN);
+	cgDC.Assets.fxPic[5] = trap_R_RegisterShaderNoMip(ART_FX_VIVIDGREEN);
+	cgDC.Assets.fxPic[6] = trap_R_RegisterShaderNoMip(ART_FX_TEAL);
+	cgDC.Assets.fxPic[7] = trap_R_RegisterShaderNoMip(ART_FX_LIGHTBLUE);
+	cgDC.Assets.fxPic[8] = trap_R_RegisterShaderNoMip(ART_FX_BLUE);
+	cgDC.Assets.fxPic[9] = trap_R_RegisterShaderNoMip(ART_FX_PURPLE);
+	cgDC.Assets.fxPic[10] = trap_R_RegisterShaderNoMip(ART_FX_CYAN);
+	cgDC.Assets.fxPic[11] = trap_R_RegisterShaderNoMip(ART_FX_PINK);
+	cgDC.Assets.fxPic[12] = trap_R_RegisterShaderNoMip(ART_FX_WHITE);
 	cgDC.Assets.scrollBar = trap_R_RegisterShaderNoMip(ASSET_SCROLLBAR);
 	cgDC.Assets.scrollBarArrowDown = trap_R_RegisterShaderNoMip(ASSET_SCROLLBAR_ARROWDOWN);
 	cgDC.Assets.scrollBarArrowUp = trap_R_RegisterShaderNoMip(ASSET_SCROLLBAR_ARROWUP);

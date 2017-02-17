@@ -191,8 +191,7 @@ void CG_Text_Paint(float x, float y, float scale, vec4_t color, const char *text
 
 		while (s && *s && count < len) {
 			glyph = &font->glyphs[*s & 255];
-			//int yadj = Assets.textFont.glyphs[text[i]].bottom + Assets.textFont.glyphs[text[i]].top;
-			//float yadj = scale * (Assets.textFont.glyphs[text[i]].imageHeight - Assets.textFont.glyphs[text[i]].height);
+
 			if (Q_IsColorString(s)) {
 				memcpy(newColor, g_color_table[ColorIndex(*(s + 1))], sizeof(newColor));
 				newColor[3] = color[3];
@@ -861,9 +860,9 @@ static float CG_DrawTimer(float y) {
 		s = va("%i:%s%i", mins, seconds < 10 ? "0" : "", seconds);
 	}
 
-	CG_DrawString(635, y + 2, s, UI_RIGHT|UI_DROPSHADOW|UI_SMALLFONT, NULL);
+	CG_DrawString(635, y + 2, s, UI_RIGHT|UI_DROPSHADOW|UI_BIGFONT, NULL);
 
-	return y + 2 + CG_DrawStringLineHeight(UI_SMALLFONT);
+	return y + 2 + CG_DrawStringLineHeight(UI_BIGFONT);
 }
 
 /*
@@ -1326,11 +1325,15 @@ static float CG_DrawPowerups(float y) {
 		if (i == PW_AMMOREGEN || i == PW_GUARD || i == PW_DOUBLER || i == PW_SCOUT) {
 			continue;
 		}
+		// ZOID--don't draw if the power up has unlimited time
+		// This is true of the CTF flags
+		if (ps->powerups[i] == INT_MAX) {
+			continue;
+		}
 
 		t = ps->powerups[i] - cg.time;
-		// ZOID--don't draw if the power up has unlimited time (999 seconds)
-		// This is true of the CTF flags
-		if (t < 0 || t > 999000) {
+
+		if (t <= 0) {
 			continue;
 		}
 		// insert into the list
@@ -1691,7 +1694,7 @@ static void CG_DrawLagometer(void) {
 	int color;
 	float vscale;
 
-	if (!cg_lagometer.integer || cgs.localServer) {
+	if (!cg_drawLagometer.integer || cgs.localServer) {
 		CG_DrawDisconnect();
 		return;
 	}

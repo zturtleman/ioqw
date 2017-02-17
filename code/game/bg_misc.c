@@ -2085,8 +2085,6 @@ BG_AddPredictableEventToPlayerstate
 Handles the sequence numbers.
 =======================================================================================================================================
 */
-void trap_Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize);
-
 void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerState_t *ps) {
 #ifdef _DEBUG
 	{

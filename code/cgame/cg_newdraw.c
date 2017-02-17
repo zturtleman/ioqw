@@ -259,14 +259,7 @@ static void CG_DrawPlayerArmorValue(rectDef_t *rect, float scale, vec4_t color, 
 		CG_Text_Paint(rect->x + (rect->w - value) / 2, rect->y + rect->h, scale, color, num, 0, 0, textStyle);
 	}
 }
-#ifndef MISSIONPACK
-static float healthColors[4][4] = {
-//	{0.2, 1.0, 0.2, 1.0}, {1.0, 0.2, 0.2, 1.0}, {0.5, 0.5, 0.5, 1}};
-	{1.0f, 0.69f, 0.0f, 1.0f}, // normal
-	{1.0f, 0.2f, 0.2f, 1.0f}, // low health
-	{0.5f, 0.5f, 0.5f, 1.0f}, // weapon firing
-	{1.0f, 1.0f, 1.0f, 1.0f}}; // health > 100
-#endif
+
 /*
 =======================================================================================================================================
 CG_DrawPlayerAmmoIcon
@@ -1090,11 +1083,15 @@ static void CG_DrawAreaPowerUp(rectDef_t *rect, int align, float special, float 
 		if (!ps->powerups[i]) {
 			continue;
 		}
+		// ZOID--don't draw if the power up has unlimited time
+		// This is true of the CTF flags
+		if (ps->powerups[i] == INT_MAX) {
+			continue;
+		}
 
 		t = ps->powerups[i] - cg.time;
-		// ZOID--don't draw if the power up has unlimited time (999 seconds)
-		// This is true of the CTF flags
-		if (t <= 0 || t >= 999000) {
+
+		if (t <= 0) {
 			continue;
 		}
 		// insert into the list
@@ -2143,23 +2140,6 @@ void CG_KeyEvent(int key, qboolean down) {
 			cgs.capturedItem = Display_CaptureItem(cgs.cursorX, cgs.cursorY);
 		}
 	}
-}
-
-/*
-=======================================================================================================================================
-CG_ClientNumFromName
-=======================================================================================================================================
-*/
-int CG_ClientNumFromName(const char *p) {
-	int i;
-
-	for (i = 0; i < cgs.maxclients; i++) {
-		if (cgs.clientinfo[i].infoValid && Q_stricmp(cgs.clientinfo[i].name, p) == 0) {
-			return i;
-		}
-	}
-
-	return -1;
 }
 
 /*
