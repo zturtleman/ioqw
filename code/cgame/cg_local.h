@@ -66,9 +66,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define TEAMCHAT_WIDTH 80
 #define TEAMCHAT_HEIGHT 8
 #define CENTERPRINT_HEIGHT 128
-// very large characters
-#define GIANT_WIDTH 32
-#define GIANT_HEIGHT 48
 #define NUM_CROSSHAIRS 5
 #define TEAM_OVERLAY_MAXNAME_WIDTH 12
 #define TEAM_OVERLAY_MAXLOCATION_WIDTH 16
@@ -353,10 +350,6 @@ typedef struct {
 	qhandle_t icon;
 } itemInfo_t;
 
-typedef struct {
-	int itemNum;
-} powerupInfo_t;
-
 #define MAX_SKULLTRAIL 10
 
 typedef struct {
@@ -528,7 +521,7 @@ typedef struct {
 /**************************************************************************************************************************************
 
 	All of the model, shader, and sound references that are loaded at gamestate time are stored in cgMedia_t. Other media that can be
-	tied to clients, weapons, or items are stored in the clientInfo_t, itemInfo_t, weaponInfo_t, and powerupInfo_t.
+	tied to clients, weapons, or items are stored in the clientInfo_t, weaponInfo_t, or itemInfo_t.
 
 **************************************************************************************************************************************/
 
@@ -962,7 +955,7 @@ extern vmCvar_t cg_zoomFov;
 extern vmCvar_t cg_thirdPersonRange;
 extern vmCvar_t cg_thirdPersonAngle;
 extern vmCvar_t cg_thirdPerson;
-extern vmCvar_t cg_lagometer;
+extern vmCvar_t cg_drawLagometer;
 extern vmCvar_t cg_drawAttacker;
 extern vmCvar_t cg_synchronousClients;
 extern vmCvar_t cg_singlePlayer;
