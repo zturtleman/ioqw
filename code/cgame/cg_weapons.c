@@ -1756,13 +1756,13 @@ static float CG_MachinegunSpinAngle(centity_t *cent) {
 CG_AddWeaponWithPowerups
 =======================================================================================================================================
 */
-static void CG_AddWeaponWithPowerups(refEntity_t *gun, int powerups) {
+static void CG_AddWeaponWithPowerups(refEntity_t *gun, int powerups, int team) {
 
 	// add powerup effects
 	if (powerups & (1 << PW_INVIS)) {
-		if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED) {
+		if (team == TEAM_RED) {
 			gun->customShader = cgs.media.invisRedShader;
-		} else if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE) {
+		} else if (team == TEAM_BLUE) {
 			gun->customShader = cgs.media.invisBlueShader;
 		} else {
 			gun->customShader = cgs.media.invisShader;
@@ -1867,7 +1867,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent,
 
 	gun.backlerp = parent->backlerp;
 
-	CG_AddWeaponWithPowerups(&gun, cent->currentState.powerups);
+	CG_AddWeaponWithPowerups(&gun, cent->currentState.powerups, ci->team);
 	// add the spinning barrel
 	if (weapon->barrelModel) {
 		memset(&barrel, 0, sizeof(barrel));
@@ -1884,7 +1884,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent,
 		AnglesToAxis(angles, barrel.axis);
 
 		CG_PositionRotatedEntityOnTag(&barrel, &gun, weapon->weaponModel, "tag_barrel");
-		CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups);
+		CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ci->team);
 	}
 	// if the index of the nonPredictedCent is not the same as the clientNum then this is a fake player (like on the single player podiums), so go ahead and use the cent
 	if ((nonPredictedCent - cg_entities) != cent->currentState.clientNum) {
@@ -1941,12 +1941,13 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent,
 
 /*
 =======================================================================================================================================
-CG_AddViewWeapon
+CG_DrawViewWeapon
 
-Add the weapon, and flash for the player's view.
+Draw the weapon and flash for the player's view.
 =======================================================================================================================================
 */
-void CG_AddViewWeapon(playerState_t *ps) {
+void CG_DrawViewWeapon(playerState_t *ps) {
+	refdef_t refdef;
 	refEntity_t hand;
 	centity_t *cent;
 	clientInfo_t *ci;
@@ -1983,20 +1984,20 @@ void CG_AddViewWeapon(playerState_t *ps) {
 	if (cg.testGun) {
 		return;
 	}
+	// copy world refdef and set weapon field of view
+	refdef = cg.refdef;
+	refdef.rdflags = RDF_NOWORLDMODEL;
+
+	CG_CalcFov(&refdef, qtrue);
 
 	VectorClear(fovOffset);
 
-	if (cg_fovGunAdjust.integer) {
-		if (cg.fov > 90) {
-			// drop gun lower at higher fov
-			fovOffset[2] = -0.2 * (cg.fov - 90) * cg.refdef.fov_x / cg.fov;
-		} else if (cg.fov < 90) {
-			// move gun forward at lowerer fov
-			fovOffset[0] = -0.2 * (cg.fov - 90) * cg.refdef.fov_x / cg.fov;
-		}
-	} else if (cg_fov.integer > 90) {
-		// Q3A's auto adjust
-		fovOffset[2] = -0.2 * (cg_fov.integer - 90);
+	if (cg.viewWeaponFov > 90) {
+		// drop gun lower at higher fov
+		fovOffset[2] = -0.2 * (cg.viewWeaponFov - 90) * cg.refdef.fov_x / cg.viewWeaponFov;
+	} else if ( cg.viewWeaponFov < 90 ) {
+		// move gun forward at lowerer fov
+		fovOffset[0] = -0.2 * (cg.viewWeaponFov - 90) * cg.refdef.fov_x / cg.viewWeaponFov;
 	}
 
 	cent = &cg.predictedPlayerEntity; // &cg_entities[cg.snap->ps.clientNum];
@@ -2028,9 +2029,11 @@ void CG_AddViewWeapon(playerState_t *ps) {
 	}
 
 	hand.hModel = weapon->handsModel;
-	hand.renderfx = RF_DEPTHHACK|RF_FIRST_PERSON|RF_MINLIGHT;
+	hand.renderfx = RF_DEPTHHACK|RF_FIRST_PERSON|RF_LIGHTING_GRID;
 	// add everything onto the hand
 	CG_AddPlayerWeapon(&hand, ps, &cg.predictedPlayerEntity, ps->persistant[PERS_TEAM]);
+
+	trap_R_RenderScene(&refdef);
 }
 
 /*
