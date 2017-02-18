@@ -30,9 +30,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include <ws2tcpip.h>
 #if WINVER < 0x501
 #ifdef __MINGW32__
-// wspiapi.h isn't available on MinGW, so if it's
-// present it's because the end user has added it
-// and we should look for it in our tree
+// wspiapi.h isn't available on MinGW, so if it's present it's because the end user has added it and we should look for it in our tree
 #include "wspiapi.h"
 #else
 #include <wspiapi.h>

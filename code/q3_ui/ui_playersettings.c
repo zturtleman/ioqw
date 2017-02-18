@@ -56,7 +56,6 @@ enum {
 	ID_EFFECTS2
 };
 
-
 #define MAX_NAMELENGTH 20
 
 typedef struct {

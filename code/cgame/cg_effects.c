@@ -642,8 +642,6 @@ void CG_LaunchExplode(vec3_t origin, vec3_t velocity, qhandle_t hModel) {
 /*
 =======================================================================================================================================
 CG_BigExplode
-
-Generated a bunch of gibs launching out from the bodies location.
 =======================================================================================================================================
 */
 void CG_BigExplode(vec3_t playerOrigin) {
