@@ -511,7 +511,7 @@ void SV_SpawnServer(char *server, qboolean killBots) {
 
 			if (svs.clients[i].netchan.remoteAddress.type == NA_BOT) {
 				if (killBots) {
-					SV_DropClient(&svs.clients[i], "");
+					SV_DropClient(&svs.clients[i], NULL);
 					continue;
 				}
 

@@ -108,7 +108,7 @@ static char *netnames[] = {
 };
 
 #ifndef MISSIONPACK
-static char quake3worldMessage[] = "Visit www.quake3world.com - News, Community, Events, Files";
+static char communityMessage[] = "Visit https://github.com/ioid3-games for News and Updates";
 #endif
 
 static int gamecodetoui[NUM_COLOR_EFFECTS] = {8, 4, 6, 0, 10, 2, 12, 1, 3, 5, 7, 9, 11};

@@ -3406,7 +3406,7 @@ void CL_Init(void) {
 	// userinfo
 	Cvar_Get("name", "UnnamedPlayer", CVAR_USERINFO|CVAR_ARCHIVE);
 	cl_rate = Cvar_Get("rate", "25000", CVAR_USERINFO|CVAR_ARCHIVE);
-	Cvar_Get("snaps", "60", CVAR_USERINFO|CVAR_ARCHIVE);
+	Cvar_Get("snaps", "", CVAR_USERINFO|CVAR_ARCHIVE);
 	Cvar_Get("model", "james", CVAR_USERINFO|CVAR_ARCHIVE);
 	Cvar_Get("headmodel", "*james", CVAR_USERINFO|CVAR_ARCHIVE);
 	Cvar_Get("team_model", "james", CVAR_USERINFO|CVAR_ARCHIVE);

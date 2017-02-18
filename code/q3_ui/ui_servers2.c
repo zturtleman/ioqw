@@ -146,15 +146,15 @@ static const char *sortkey_items[] = {
 };
 
 static char *gamenames[] = {
-	"SP ", // single player
-	"DM ", // deathmatch
-	"1v1", // tournament
-	"Team DM", // team deathmatch
-	"CTF", // capture the flag
-	"One Flag CTF", // one flag ctf
-	"OverLoad", // Overload
-	"Harvester", // Harvester
-	"???", // unknown
+	"SP ",			// Singleplayer
+	"DM ",			// Deathmatch
+	"1v1",			// Tournament
+	"Team DM",		// Team Deathmatch
+	"CTF",			// Capture the Flag
+	"One Flag CTF",	// One Flag CTF
+	"OverLoad",		// Overload
+	"Harvester",	// Harvester
+	"???",			// Unknown
 	NULL
 };
 
@@ -165,7 +165,7 @@ static char *netnames[] = {
 	NULL
 };
 
-static char quake3worldMessage[] = "Visit www.quake3world.com - News, Community, Events, Files";
+static char communityMessage[] = "Visit https://github.com/ioid3-games for News and Updates";
 
 typedef struct {
 	char adrstr[MAX_ADDRESSLENGTH];
@@ -460,7 +460,7 @@ static void ArenaServers_UpdateMenu(void) {
 			g_arenaservers.go.generic.flags &= ~QMF_GRAYED;
 			// update status bar
 			if (g_servertype >= UIAS_GLOBAL1 && g_servertype <= UIAS_GLOBAL5) {
-				g_arenaservers.statusbar.string = quake3worldMessage;
+				g_arenaservers.statusbar.string = communityMessage;
 			} else {
 				g_arenaservers.statusbar.string = "";
 			}
@@ -488,7 +488,7 @@ static void ArenaServers_UpdateMenu(void) {
 			}
 			// update status bar
 			if (g_servertype >= UIAS_GLOBAL1 && g_servertype <= UIAS_GLOBAL5) {
-				g_arenaservers.statusbar.string = quake3worldMessage;
+				g_arenaservers.statusbar.string = communityMessage;
 			} else {
 				g_arenaservers.statusbar.string = "";
 			}
@@ -553,7 +553,7 @@ static void ArenaServers_UpdateMenu(void) {
 		}
 
 		Com_sprintf(buff, MAX_LISTBOXWIDTH, "%-20.20s %-12.12s %2d/%2d %-8.8s %4s%s%3d " S_COLOR_YELLOW "",
-			servernodeptr->hostname, servernodeptr->mapname, servernodeptr->numclients, clients,
+			servernodeptr->hostname, servernodeptr->mapname, clients, servernodeptr->maxclients,
 			servernodeptr->gamename, netnames[servernodeptr->nettype], pingColor, servernodeptr->pingtime);
 		j++;
 	}
