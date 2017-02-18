@@ -239,7 +239,7 @@ void CG_AddFragment(localEntity_t *le) {
 		// sink into the ground if near the removal time
 		int t;
 		float oldZ;
-		
+
 		CG_AdjustPositionForMover(le->refEntity.origin, le->groundEntityNum, le->pos.trTime, cg.time, le->refEntity.origin, le->angles.trBase, le->angles.trBase);
 
 		AnglesToAxis(le->angles.trBase, le->refEntity.axis);
@@ -265,6 +265,7 @@ void CG_AddFragment(localEntity_t *le) {
 	BG_EvaluateTrajectory(&le->pos, cg.time, newOrigin, qfalse, -1);
 	// trace a line from previous position to new position
 	CG_Trace(&trace, le->refEntity.origin, NULL, NULL, newOrigin, -1, CONTENTS_SOLID);
+
 	if (trace.fraction == 1.0) {
 		// still in free fall
 		VectorCopy(newOrigin, le->refEntity.origin);
