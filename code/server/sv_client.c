@@ -178,7 +178,7 @@ void SV_DirectConnect(netadr_t from) {
 #ifdef LEGACY_PROTOCOL
 	qboolean compat = qfalse;
 #endif
-	Com_DPrintf("SVC_DirectConnect ()\n");
+	Com_DPrintf("SVC_DirectConnect()\n");
 	// Check whether this client is banned.
 	if (SV_IsBanned(&from, qfalse)) {
 		NET_OutOfBandPrint(NS_SERVER, from, "print\nYou are banned from this server.\n");
@@ -468,12 +468,18 @@ void SV_DropClient(client_t *drop, const char *reason) {
 	// Free all allocated data on the client structure
 	SV_FreeClient(drop);
 	// tell everyone why they got dropped
-	SV_SendServerCommand(NULL, "print \"%s" S_COLOR_WHITE " %s\n\"", drop->name, reason);
+	if (reason) {
+		SV_SendServerCommand(NULL, "print \"%s" S_COLOR_WHITE " %s\n\"", drop->name, reason);
+	}
 	// call the prog function for removing a client
 	// this will remove the body, among other things
 	VM_Call(gvm, GAME_CLIENT_DISCONNECT, drop - svs.clients);
 	// add the disconnect command
-	SV_SendServerCommand(drop, "disconnect \"%s\"", reason);
+	if (reason) {
+		SV_SendServerCommand(drop, "disconnect \"%s\"", reason);
+	} else {
+		SV_SendServerCommand(drop, "disconnect");
+	}
 
 	if (isBot) {
 		SV_BotFreeClient(drop - svs.clients);
@@ -1182,7 +1188,7 @@ void SV_UserinfoChanged(client_t *cl) {
 
 		i = 1000 / i;
 	} else {
-		i = 50;
+		i = 1000 / sv_fps->integer;
 	}
 
 	if (i != cl->snapshotMsec) {

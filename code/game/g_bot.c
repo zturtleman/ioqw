@@ -711,7 +711,7 @@ static void G_AddBot(const char *name, float skill, const char *team, int delay,
 
 	Info_SetValueForKey(userinfo, "name", botname);
 	Info_SetValueForKey(userinfo, "rate", "25000");
-	Info_SetValueForKey(userinfo, "snaps", "60");
+	Info_SetValueForKey(userinfo, "snaps", ""); // Tobias CHECK: https://github.com/zturtleman/spearmint/commit/1fdf598ff4643ca25712e506cd869f6dc27095ba
 	Info_SetValueForKey(userinfo, "skill", va("%.2f", skill));
 	Info_SetValueForKey(userinfo, "teampref", team);
 	// handicap

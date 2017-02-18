@@ -228,7 +228,7 @@ static void CG_DrawClientScore(int y, score_t *score, float *color, float fade, 
 	} else if (ci->teamLeader) {
 		Com_sprintf(string, sizeof(string), "Leader");
 	} else {
-		Com_sprintf(string, sizeof(string), "");
+		Com_sprintf(string, sizeof(string), NULL);
 	}
 
 	CG_DrawString(x, y, string, UI_LEFT|UI_DROPSHADOW|UI_DEFAULTFONT, color);
