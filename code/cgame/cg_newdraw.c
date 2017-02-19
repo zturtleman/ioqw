@@ -1514,22 +1514,7 @@ CG_GameTypeString
 =======================================================================================================================================
 */
 const char *CG_GameTypeString(void) {
-
-	if (cgs.gametype == GT_FFA) {
-		return "Free For All";
-	} else if (cgs.gametype == GT_TEAM) {
-		return "Team Deathmatch";
-	} else if (cgs.gametype == GT_CTF) {
-		return "Capture the Flag";
-	} else if (cgs.gametype == GT_1FCTF) {
-		return "One Flag CTF";
-	} else if (cgs.gametype == GT_OBELISK) {
-		return "Overload";
-	} else if (cgs.gametype == GT_HARVESTER) {
-		return "Harvester";
-	}
-
-	return "";
+	return cgs.gametypeName;
 }
 
 /*

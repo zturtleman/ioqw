@@ -853,6 +853,28 @@ Only in One Flag CTF games
 };
 
 int bg_numItems = ARRAY_LEN(bg_itemlist) - 1;
+// may not contain spaces, dpmaster will reject the server
+const char *bg_netGametypeNames[GT_MAX_GAME_TYPE] = {
+	"SP",
+	"FFA",
+	"Tournament",
+	"TeamDM",
+	"CTF",
+	"1FCTF",
+	"Overload",
+	"Harvester"
+};
+
+const char *bg_displayGametypeNames[GT_MAX_GAME_TYPE] = {
+	"Single Player",
+	"Free For All",
+	"Tournament",
+	"Team Deathmatch",
+	"Capture the Flag",
+	"One Flag CTF",
+	"Overload",
+	"Harvester"
+};
 
 /*
 =======================================================================================================================================

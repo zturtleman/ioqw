@@ -2379,49 +2379,27 @@ static void CG_DrawWarmup(void) {
 		cg.warmupCount = 0;
 		return;
 	}
-	// game type
-	switch (cgs.gametype) {
-		case GT_FFA:
-			s1 = "Free For All";
-			break;
-		case GT_TOURNAMENT:
-			// find the two active players
-			ci1 = NULL;
-			ci2 = NULL;
 
-			for (i = 0; i < cgs.maxclients; i++) {
-				if (cgs.clientinfo[i].infoValid && cgs.clientinfo[i].team == TEAM_FREE) {
-					if (!ci1) {
-						ci1 = &cgs.clientinfo[i];
-					} else {
-						ci2 = &cgs.clientinfo[i];
-					}
+	if (cgs.gametype == GT_TOURNAMENT) {
+		// find the two active players
+		ci1 = NULL;
+		ci2 = NULL;
+
+		for (i = 0; i < cgs.maxclients; i++) {
+			if (cgs.clientinfo[i].infoValid && cgs.clientinfo[i].team == TEAM_FREE) {
+				if (!ci1) {
+					ci1 = &cgs.clientinfo[i];
+				} else {
+					ci2 = &cgs.clientinfo[i];
 				}
 			}
+		}
 
-			if (ci1 && ci2) {
-				s1 = va("%s vs %s", ci1->name, ci2->name);
-			}
-
-			break;
-		case GT_TEAM:
-			s1 = "Team Deathmatch";
-			break;
-		case GT_CTF:
-			s1 = "Capture the Flag";
-			break;
-		case GT_1FCTF:
-			s1 = "One Flag CTF";
-			break;
-		case GT_OBELISK:
-			s1 = "Overload";
-			break;
-		case GT_HARVESTER:
-			s1 = "Harvester";
-			break;
-		default:
-			s1 = "Unknown Gametype";
-			break;
+		if (ci1 && ci2) {
+			s1 = va("%s vs %s", ci1->name, ci2->name);
+		}
+	} else {
+		s1 = cgs.gametypeName;
 	}
 
 	sec = (sec - cg.time) / 1000;
