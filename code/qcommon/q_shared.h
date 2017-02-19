@@ -1321,11 +1321,9 @@ typedef struct qtime_s {
 	int tm_isdst;	// daylight savings time flag
 } qtime_t;
 // server browser sources
-// TTimo: AS_MPLAYER is no longer used
 #define AS_LOCAL		0
-#define AS_MPLAYER		1
-#define AS_GLOBAL		2
-#define AS_FAVORITES	3
+#define AS_GLOBAL		1
+#define AS_FAVORITES	2
 // cinematic states
 typedef enum {
 	FMV_IDLE,
