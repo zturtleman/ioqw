@@ -77,6 +77,21 @@ static void CL_GetClipboardData(char *buf, int buflen) {
 
 /*
 =======================================================================================================================================
+CL_SetMapTitle
+=======================================================================================================================================
+*/
+void CL_SetMapTitle(const char *name) {
+
+	if (!name || !*name) {
+		clc.mapTitle[0] = '\0';
+		return;
+	}
+
+	Q_strncpyz(clc.mapTitle, name, sizeof(clc.mapTitle));
+}
+
+/*
+=======================================================================================================================================
 CL_GetUserCmd
 =======================================================================================================================================
 */
@@ -544,6 +559,9 @@ intptr_t CL_CgameSystemCalls(intptr_t *args) {
 			return 0;
 		case CG_SENDCLIENTCOMMAND:
 			CL_AddReliableCommand(VMA(1), qfalse);
+			return 0;
+		case CG_SETMAPTITLE:
+			CL_SetMapTitle(VMA(1));
 			return 0;
 		case CG_UPDATESCREEN:
 			// this is used during lengthy level loading, so pump message loop

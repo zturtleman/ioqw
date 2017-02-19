@@ -2025,6 +2025,8 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum) {
 	s = CG_ConfigString(CS_LEVEL_START_TIME);
 	cgs.levelStartTime = atoi(s);
 
+	trap_SetMapTitle(CG_ConfigString(CS_MESSAGE));
+
 	CG_ParseServerinfo();
 	// load the new map
 	CG_LoadingString("collision map");
