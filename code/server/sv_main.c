@@ -55,6 +55,8 @@ cvar_t *sv_dlRate;
 cvar_t *sv_minPing;
 cvar_t *sv_maxPing;
 cvar_t *sv_gametype;
+cvar_t *sv_gametypeName;
+cvar_t *sv_gametypeNetName;
 cvar_t *sv_pure;
 cvar_t *sv_floodProtect;
 cvar_t *sv_lanForceRate;	// dedicated 1 (LAN) server forces local client rates to 99999 (bug #491)
@@ -722,7 +724,7 @@ void SVC_Info(netadr_t from) {
 	Info_SetValueForKey(infostring, "clients", va("%i", count));
 	Info_SetValueForKey(infostring, "g_humanplayers", va("%i", humans));
 	Info_SetValueForKey(infostring, "sv_maxclients", va("%i", sv_maxclients->integer - sv_privateClients->integer));
-	Info_SetValueForKey(infostring, "gametype", va("%i", sv_gametype->integer));
+	Info_SetValueForKey(infostring, "gametype", sv_gametypeNetName->string);
 	Info_SetValueForKey(infostring, "pure", va("%i", sv_pure->integer));
 	Info_SetValueForKey(infostring, "g_needpass", va("%d", Cvar_VariableIntegerValue("g_needpass")));
 #ifdef USE_VOIP
