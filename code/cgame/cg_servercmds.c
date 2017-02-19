@@ -157,8 +157,7 @@ static void CG_ParseTeamInfo(void) {
 =======================================================================================================================================
 CG_ParseServerinfo
 
-This is called explicitly when the gamestate is first received, and whenever
-the server updates any serverinfo flagged cvars.
+This is called explicitly when the gamestate is first received, and whenever the server updates any serverinfo flagged cvars.
 =======================================================================================================================================
 */
 void CG_ParseServerinfo(void) {

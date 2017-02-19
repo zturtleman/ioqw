@@ -69,6 +69,7 @@ equ trap_GetCurrentCmdNumber			-155
 equ trap_GetUserCmd						-156
 equ trap_SetUserCmdValue				-157
 equ trap_SendClientCommand				-158
+equ trap_SetMapTitle					-159
 
 equ trap_CM_LoadMap						-201
 equ trap_CM_NumInlineModels				-202

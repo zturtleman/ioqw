@@ -1274,6 +1274,7 @@ qboolean trap_GetUserCmd(int cmdNumber, usercmd_t *ucmd);
 void trap_SetUserCmdValue(int stateValue, float sensitivityScale);
 // send a string to the server over the network
 void trap_SendClientCommand(const char *s);
+void trap_SetMapTitle(const char *name);
 // model collision
 void trap_CM_LoadMap(const char *mapname);
 int trap_CM_NumInlineModels(void);
