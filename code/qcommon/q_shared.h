@@ -333,7 +333,7 @@ typedef int fixed16_t;
 #define M_PI 3.14159265358979323846f // matches value in gcc v2 math.h
 #endif
 #ifndef M_PI_2
-#define M_PI_2 1.57079632679489661923f // pi / 2
+#define M_PI_2 1.57079632679489661923f // pi/2
 #endif
 #define NUMVERTEXNORMALS 162
 extern vec3_t bytedirs[NUMVERTEXNORMALS];
@@ -1004,9 +1004,9 @@ typedef enum {
 	CHAN_BODY,
 	CHAN_ITEM,
 	CHAN_VOICE,
-	CHAN_LOCAL,			// menu sounds, etc
-	CHAN_LOCAL_SOUND,	// chat messages, etc
-	CHAN_ANNOUNCER		// announcer voices, etc
+	CHAN_LOCAL,			// menu sounds, etc.
+	CHAN_LOCAL_SOUND,	// chat messages, etc.
+	CHAN_ANNOUNCER		// announcer voices, etc.
 } soundChannel_t;
 
 /*

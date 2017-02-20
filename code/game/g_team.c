@@ -1555,3 +1555,4 @@ qboolean CheckObeliskAttack(gentity_t *obelisk, gentity_t *attacker) {
 
 	return qfalse;
 }
+
