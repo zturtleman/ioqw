@@ -388,6 +388,15 @@ static void CG_NailTrail(centity_t *ent, const weaponInfo_t *wi) {
 
 /*
 =======================================================================================================================================
+CG_GrenadeTrail
+=======================================================================================================================================
+*/
+static void CG_GrenadeTrail(centity_t *ent, const weaponInfo_t *wi) {
+	CG_RocketTrail(ent, wi);
+}
+
+/*
+=======================================================================================================================================
 CG_RocketTrail
 =======================================================================================================================================
 */
@@ -442,105 +451,6 @@ static void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi) {
 		// use the optimized local entity add
 		smoke->leType = LE_SCALE_FADE;
 	}
-}
-
-/*
-=======================================================================================================================================
-CG_GrenadeTrail
-=======================================================================================================================================
-*/
-static void CG_GrenadeTrail(centity_t *ent, const weaponInfo_t *wi) {
-	CG_RocketTrail(ent, wi);
-}
-
-/*
-=======================================================================================================================================
-CG_PlasmaTrail
-=======================================================================================================================================
-*/
-static void CG_PlasmaTrail(centity_t *cent, const weaponInfo_t *wi) {
-	localEntity_t *le;
-	refEntity_t *re;
-	entityState_t *es;
-	vec3_t velocity, xvelocity, origin;
-	vec3_t offset, xoffset;
-	vec3_t v[3];
-
-	float waterScale = 1.0f;
-
-	if (cg_noProjectileTrail.integer || cg_oldPlasma.integer) {
-		return;
-	}
-
-	es = &cent->currentState;
-
-	BG_EvaluateTrajectory(&es->pos, cg.time, origin, qfalse, es->effect2Time);
-
-	le = CG_AllocLocalEntity();
-
-	re = &le->refEntity;
-
-	velocity[0] = 60 - 120 * crandom();
-	velocity[1] = 40 - 80 * crandom();
-	velocity[2] = 100 - 200 * crandom();
-
-	le->leType = LE_MOVE_SCALE_FADE;
-	le->leFlags = LEF_TUMBLE;
-	le->leBounceSoundType = LEBS_NONE;
-	le->leMarkType = LEMT_NONE;
-	le->startTime = cg.time;
-	le->endTime = le->startTime + 600;
-	le->pos.trType = TR_GRAVITY;
-	le->pos.trTime = cg.time;
-
-	AnglesToAxis(cent->lerpAngles, v);
-
-	offset[0] = 2;
-	offset[1] = 2;
-	offset[2] = 2;
-
-	xoffset[0] = offset[0] * v[0][0] + offset[1] * v[1][0] + offset[2] * v[2][0];
-	xoffset[1] = offset[0] * v[0][1] + offset[1] * v[1][1] + offset[2] * v[2][1];
-	xoffset[2] = offset[0] * v[0][2] + offset[1] * v[1][2] + offset[2] * v[2][2];
-
-	VectorAdd(origin, xoffset, re->origin);
-	VectorCopy(re->origin, le->pos.trBase);
-
-	if (CG_PointContents(re->origin, -1) & CONTENTS_WATER) {
-		waterScale = 0.10f;
-	}
-
-	xvelocity[0] = velocity[0] * v[0][0] + velocity[1] * v[1][0] + velocity[2] * v[2][0];
-	xvelocity[1] = velocity[0] * v[0][1] + velocity[1] * v[1][1] + velocity[2] * v[2][1];
-	xvelocity[2] = velocity[0] * v[0][2] + velocity[1] * v[1][2] + velocity[2] * v[2][2];
-
-	VectorScale(xvelocity, waterScale, le->pos.trDelta);
-	AxisCopy(axisDefault, re->axis);
-
-	re->shaderTime = cg.time / 1000.0f;
-	re->reType = RT_SPRITE;
-	re->radius = 0.25f;
-	re->customShader = cgs.media.railRingsShader;
-
-	le->bounceFactor = 0.3f;
-
-	re->shaderRGBA[0] = wi->flashDlightColor[0] * 63;
-	re->shaderRGBA[1] = wi->flashDlightColor[1] * 63;
-	re->shaderRGBA[2] = wi->flashDlightColor[2] * 63;
-	re->shaderRGBA[3] = 63;
-
-	le->color[0] = wi->flashDlightColor[0] * 0.2;
-	le->color[1] = wi->flashDlightColor[1] * 0.2;
-	le->color[2] = wi->flashDlightColor[2] * 0.2;
-	le->color[3] = 0.25f;
-	le->angles.trType = TR_LINEAR;
-	le->angles.trTime = cg.time;
-	le->angles.trBase[0] = rand()&31;
-	le->angles.trBase[1] = rand()&31;
-	le->angles.trBase[2] = rand()&31;
-	le->angles.trDelta[0] = 1;
-	le->angles.trDelta[1] = 0.5;
-	le->angles.trDelta[2] = 0;
 }
 
 /*
@@ -648,6 +558,96 @@ void CG_RailTrail(clientInfo_t *ci, vec3_t start, vec3_t end) {
 
 		j = (j + ROTATION) % 36;
 	}
+}
+
+/*
+=======================================================================================================================================
+CG_PlasmaTrail
+=======================================================================================================================================
+*/
+static void CG_PlasmaTrail(centity_t *cent, const weaponInfo_t *wi) {
+	localEntity_t *le;
+	refEntity_t *re;
+	entityState_t *es;
+	vec3_t velocity, xvelocity, origin;
+	vec3_t offset, xoffset;
+	vec3_t v[3];
+
+	float waterScale = 1.0f;
+
+	if (cg_noProjectileTrail.integer || cg_oldPlasma.integer) {
+		return;
+	}
+
+	es = &cent->currentState;
+
+	BG_EvaluateTrajectory(&es->pos, cg.time, origin, qfalse, es->effect2Time);
+
+	le = CG_AllocLocalEntity();
+
+	re = &le->refEntity;
+
+	velocity[0] = 60 - 120 * crandom();
+	velocity[1] = 40 - 80 * crandom();
+	velocity[2] = 100 - 200 * crandom();
+
+	le->leType = LE_MOVE_SCALE_FADE;
+	le->leFlags = LEF_TUMBLE;
+	le->leBounceSoundType = LEBS_NONE;
+	le->leMarkType = LEMT_NONE;
+	le->startTime = cg.time;
+	le->endTime = le->startTime + 600;
+	le->pos.trType = TR_GRAVITY;
+	le->pos.trTime = cg.time;
+
+	AnglesToAxis(cent->lerpAngles, v);
+
+	offset[0] = 2;
+	offset[1] = 2;
+	offset[2] = 2;
+
+	xoffset[0] = offset[0] * v[0][0] + offset[1] * v[1][0] + offset[2] * v[2][0];
+	xoffset[1] = offset[0] * v[0][1] + offset[1] * v[1][1] + offset[2] * v[2][1];
+	xoffset[2] = offset[0] * v[0][2] + offset[1] * v[1][2] + offset[2] * v[2][2];
+
+	VectorAdd(origin, xoffset, re->origin);
+	VectorCopy(re->origin, le->pos.trBase);
+
+	if (CG_PointContents(re->origin, -1) & CONTENTS_WATER) {
+		waterScale = 0.10f;
+	}
+
+	xvelocity[0] = velocity[0] * v[0][0] + velocity[1] * v[1][0] + velocity[2] * v[2][0];
+	xvelocity[1] = velocity[0] * v[0][1] + velocity[1] * v[1][1] + velocity[2] * v[2][1];
+	xvelocity[2] = velocity[0] * v[0][2] + velocity[1] * v[1][2] + velocity[2] * v[2][2];
+
+	VectorScale(xvelocity, waterScale, le->pos.trDelta);
+	AxisCopy(axisDefault, re->axis);
+
+	re->shaderTime = cg.time / 1000.0f;
+	re->reType = RT_SPRITE;
+	re->radius = 0.25f;
+	re->customShader = cgs.media.railRingsShader;
+
+	le->bounceFactor = 0.3f;
+
+	re->shaderRGBA[0] = wi->flashDlightColor[0] * 63;
+	re->shaderRGBA[1] = wi->flashDlightColor[1] * 63;
+	re->shaderRGBA[2] = wi->flashDlightColor[2] * 63;
+	re->shaderRGBA[3] = 63;
+
+	le->color[0] = wi->flashDlightColor[0] * 0.2;
+	le->color[1] = wi->flashDlightColor[1] * 0.2;
+	le->color[2] = wi->flashDlightColor[2] * 0.2;
+	le->color[3] = 0.25f;
+	le->angles.trType = TR_LINEAR;
+	le->angles.trTime = cg.time;
+	le->angles.trBase[0] = rand()&31;
+	le->angles.trBase[1] = rand()&31;
+	le->angles.trBase[2] = rand()&31;
+	le->angles.trDelta[0] = 1;
+	le->angles.trDelta[1] = 0.5;
+	le->angles.trDelta[2] = 0;
 }
 
 /*
