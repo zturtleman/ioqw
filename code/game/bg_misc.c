@@ -65,8 +65,9 @@ gitem_t bg_itemlist[] = {
 	}, // leave index 0 alone
 
 	//
-	// health
+	// HEALTH
 	//
+
 /*QUAKED item_health_small (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 */
 	{
@@ -780,6 +781,7 @@ gitem_t bg_itemlist[] = {
 	//
 	// TEAM ITEMS
 	//
+
 /*QUAKED team_CTF_redflag (1 0 0) (-16 -16 -16) (16 16 16)
 Only in CTF games
 */
@@ -810,7 +812,7 @@ Only in CTF games
 /* sounds */ ""
 	},
 
-	/*QUAKED team_CTF_neutralflag (0 0 1) (-16 -16 -16) (16 16 16)
+/*QUAKED team_CTF_neutralflag (0 0 1) (-16 -16 -16) (16 16 16)
 Only in One Flag CTF games
 */
 	{
@@ -825,6 +827,8 @@ Only in One Flag CTF games
 /* sounds */ ""
 	},
 
+/*QUAKED item_redcube (0 0 1) (-16 -16 -16) (16 16 16)
+*/
 	{
 		"item_redcube",
 		"sound/misc/am_pkup.wav",
@@ -837,6 +841,8 @@ Only in One Flag CTF games
 /* sounds */ ""
 	},
 
+/*QUAKED item_bluecube (0 0 1) (-16 -16 -16) (16 16 16)
+*/
 	{
 		"item_bluecube",
 		"sound/misc/am_pkup.wav",

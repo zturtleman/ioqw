@@ -1225,6 +1225,7 @@ static float CG_DrawScores(float y) {
 		}
 	} else {
 		qboolean spectator;
+
 		x = 640;
 		score = cg.snap->ps.persistant[PERS_SCORE];
 		spectator = (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR);
