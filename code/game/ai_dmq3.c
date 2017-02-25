@@ -44,7 +44,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "syn.h" // synonyms
 #include "match.h" // string matching types and vars
 // for the voice chats
-#include "bg_local.h" // sos001205 - for q3_ui also
+#include "bg_local.h" // sos001205 - for ui also
 // from aasfile.h
 #define AREACONTENTS_MOVER 1024
 #define AREACONTENTS_MODELNUMSHIFT 24
