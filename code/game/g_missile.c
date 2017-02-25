@@ -791,4 +791,3 @@ gentity_t *fire_missile(gentity_t *self, vec3_t start, vec3_t dir) {
 
 	return bolt;
 }
-
