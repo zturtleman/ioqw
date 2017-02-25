@@ -66,6 +66,31 @@ void QDECL Com_Printf(const char *msg, ...) {
 
 /*
 =======================================================================================================================================
+UI_StartMenuMusic
+=======================================================================================================================================
+*/
+void UI_StartMenuMusic(void) {
+
+	trap_S_StartBackgroundTrack("music/ui_music01.ogg", "music/ui_music02.ogg");
+	uis.playmusic = qtrue;
+}
+
+/*
+=======================================================================================================================================
+UI_StopMenuMusic
+=======================================================================================================================================
+*/
+void UI_StopMenuMusic(void) {
+
+	if (uis.playmusic == qtrue) {
+		trap_S_StopBackgroundTrack();
+	}
+
+	uis.playmusic = qfalse;
+}
+
+/*
+=======================================================================================================================================
 UI_PushMenu
 =======================================================================================================================================
 */
@@ -142,6 +167,10 @@ void UI_ForceMenuOff(void) {
 
 	uis.menusp = 0;
 	uis.activemenu = NULL;
+
+	if (!trap_Cvar_VariableValue("cl_paused")) {
+		UI_StopMenuMusic();
+	}
 
 	trap_Key_SetCatcher(trap_Key_GetCatcher() & ~KEYCATCH_UI);
 	trap_Cvar_SetValue("cl_paused", 0);
@@ -1307,6 +1336,7 @@ UI_Shutdown
 =======================================================================================================================================
 */
 void UI_Shutdown(void) {
+	UI_StopMenuMusic();
 }
 
 /*
@@ -1463,6 +1493,12 @@ void UI_Refresh(int realtime) {
 	}
 
 	UI_UpdateCvars();
+
+	if (!trap_Cvar_VariableValue("cl_paused")) {
+		if (!uis.playmusic) {
+			UI_StartMenuMusic();
+		}
+	}
 
 	if (uis.activemenu) {
 		if (uis.activemenu->fullscreen) {
