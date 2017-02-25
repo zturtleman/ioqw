@@ -22,7 +22,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 =======================================================================================================================================
 */
 
-#include "ui_local.h"
+#include "../q3_ui/ui_local.h"
 
 // this file is only included when building a dll
 // syscalls.asm is included instead when building a qvm
