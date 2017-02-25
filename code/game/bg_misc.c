@@ -915,19 +915,13 @@ qboolean BG_CheckSpawnEntity(const bgEntitySpawnInfo_t *info) {
 			return qfalse;
 		}
 	}
-#ifdef MISSIONPACK
+
 	info->spawnInt("notq3a", "0", &i);
 
 	if (i) {
 		return qfalse;
 	}
-#else
-	info->spawnInt("notta", "0", &i);
 
-	if (i) {
-		return qfalse;
-	}
-#endif
 	if (info->spawnString("!gametype", NULL, &value)) {
 		if (gametype >= 0 && gametype < GT_MAX_GAME_TYPE) {
 			gametypeName = gametypeNames[gametype];

@@ -2091,11 +2091,9 @@ void CG_DrawWeaponSelect(void) {
 	}
 
 	cg.bar_count = count;
-#ifdef MISSIONPACK
-	y = 380;
-#else
+
 	y = 420;
-#endif
+
 	if (count <= 0) {
 		return;
 	}
