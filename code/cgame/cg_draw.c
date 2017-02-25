@@ -27,203 +27,15 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 **************************************************************************************************************************************/
 
 #include "cg_local.h"
-#ifdef MISSIONPACK
-#include "../ui/ui_shared.h"
-// used for scoreboard
-extern displayContextDef_t cgDC;
-menuDef_t *menuScoreboard = NULL;
-#else
+
 int drawTeamOverlayModificationCount = -1;
-#endif
 int sortedTeamPlayers[TEAM_MAXOVERLAY];
 int numSortedTeamPlayers;
 
 char systemChat[256];
 char teamChat1[256];
 char teamChat2[256];
-#ifdef MISSIONPACK
-/*
-=======================================================================================================================================
-CG_Text_Width
-=======================================================================================================================================
-*/
-int CG_Text_Width(const char *text, float scale, int limit) {
-	int count, len;
-	float out;
-	glyphInfo_t *glyph;
-	float useScale;
-	const char *s = text;
-	fontInfo_t *font = &cgDC.Assets.textFont;
 
-	if (scale <= cg_smallFont.value) {
-		font = &cgDC.Assets.smallFont;
-	} else if (scale > cg_bigFont.value) {
-		font = &cgDC.Assets.bigFont;
-	}
-
-	useScale = scale * font->glyphScale;
-	out = 0;
-
-	if (text) {
-		len = strlen(text);
-
-		if (limit > 0 && len > limit) {
-			len = limit;
-		}
-
-		count = 0;
-
-		while (s && *s && count < len) {
-			if (Q_IsColorString(s)) {
-				s += 2;
-				continue;
-			} else {
-				glyph = &font->glyphs[*s & 255];
-				out += glyph->xSkip;
-				s++;
-				count++;
-			}
-		}
-	}
-
-	return out * useScale;
-}
-
-/*
-=======================================================================================================================================
-CG_Text_Height
-=======================================================================================================================================
-*/
-int CG_Text_Height(const char *text, float scale, int limit) {
-	int len, count;
-	float max;
-	glyphInfo_t *glyph;
-	float useScale;
-	const char *s = text;
-	fontInfo_t *font = &cgDC.Assets.textFont;
-
-	if (scale <= cg_smallFont.value) {
-		font = &cgDC.Assets.smallFont;
-	} else if (scale > cg_bigFont.value) {
-		font = &cgDC.Assets.bigFont;
-	}
-
-	useScale = scale * font->glyphScale;
-	max = 0;
-
-	if (text) {
-		len = strlen(text);
-
-		if (limit > 0 && len > limit) {
-			len = limit;
-		}
-
-		count = 0;
-
-		while (s && *s && count < len) {
-			if (Q_IsColorString(s)) {
-				s += 2;
-				continue;
-			} else {
-				glyph = &font->glyphs[*s & 255];
-
-				if (max < glyph->height) {
-					max = glyph->height;
-				}
-
-				s++;
-				count++;
-			}
-		}
-	}
-
-	return max * useScale;
-}
-
-/*
-=======================================================================================================================================
-CG_Text_PaintChar
-=======================================================================================================================================
-*/
-void CG_Text_PaintChar(float x, float y, float width, float height, float scale, float s, float t, float s2, float t2, qhandle_t hShader) {
-	float w, h;
-
-	w = width * scale;
-	h = height * scale;
-	CG_AdjustFrom640(&x, &y, &w, &h);
-	trap_R_DrawStretchPic(x, y, w, h, s, t, s2, t2, hShader);
-}
-
-/*
-=======================================================================================================================================
-CG_Text_Paint
-=======================================================================================================================================
-*/
-void CG_Text_Paint(float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit, int style) {
-	int len, count;
-	vec4_t newColor;
-	glyphInfo_t *glyph;
-	float useScale;
-	fontInfo_t *font = &cgDC.Assets.textFont;
-
-	if (scale <= cg_smallFont.value) {
-		font = &cgDC.Assets.smallFont;
-	} else if (scale > cg_bigFont.value) {
-		font = &cgDC.Assets.bigFont;
-	}
-
-	useScale = scale * font->glyphScale;
-
-	if (text) {
-		const char *s = text;
-
-		trap_R_SetColor(color);
-
-		memcpy(&newColor[0], &color[0], sizeof(vec4_t));
-
-		len = strlen(text);
-
-		if (limit > 0 && len > limit) {
-			len = limit;
-		}
-
-		count = 0;
-
-		while (s && *s && count < len) {
-			glyph = &font->glyphs[*s & 255];
-
-			if (Q_IsColorString(s)) {
-				memcpy(newColor, g_color_table[ColorIndex(*(s + 1))], sizeof(newColor));
-				newColor[3] = color[3];
-				trap_R_SetColor(newColor);
-				s += 2;
-				continue;
-			} else {
-				float yadj = useScale * glyph->top;
-
-				if (style == ITEM_TEXTSTYLE_SHADOWED || style == ITEM_TEXTSTYLE_SHADOWEDMORE) {
-					int ofs = style == ITEM_TEXTSTYLE_SHADOWED ? 1 : 2;
-
-					colorBlack[3] = newColor[3];
-					trap_R_SetColor(colorBlack);
-					CG_Text_PaintChar(x + ofs, y - yadj + ofs, glyph->imageWidth, glyph->imageHeight, useScale, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
-					colorBlack[3] = 1.0;
-					trap_R_SetColor(newColor);
-				}
-
-				CG_Text_PaintChar(x, y - yadj, glyph->imageWidth, glyph->imageHeight, useScale, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
-				// CG_DrawPic(x, y - yadj, scale * cgDC.Assets.textFont.glyphs[text[i]].imageWidth, scale * cgDC.Assets.textFont.glyphs[text[i]].imageHeight, cgDC.Assets.textFont.glyphs[text[i]].glyph);
-				x += (glyph->xSkip * useScale) + adjust;
-				s++;
-				count++;
-			}
-		}
-
-		trap_R_SetColor(NULL);
-	}
-}
-#endif
-#ifndef MISSIONPACK
 /*
 =======================================================================================================================================
 CG_DrawField
@@ -296,7 +108,7 @@ static void CG_DrawField(int x, int y, int width, int value, float *color) {
 
 	trap_R_SetColor(NULL);
 }
-#endif // MISSIONPACK
+
 /*
 =======================================================================================================================================
 CG_Draw3DModel
@@ -488,7 +300,7 @@ void CG_DrawFlagModel(float x, float y, float w, float h, int team, qboolean for
 		}
 	}
 }
-#ifndef MISSIONPACK
+
 /*
 =======================================================================================================================================
 CG_DrawStatusBarHead
@@ -549,7 +361,7 @@ static void CG_DrawStatusBarFlag(float x, int team) {
 
 	CG_DrawFlagModel(x + (1.0f - cg_statusScale.value) * ICON_SIZE * 0.5f, 480 - iconSize, iconSize, iconSize, team, qfalse);
 }
-#endif // MISSIONPACK
+
 /*
 =======================================================================================================================================
 CG_DrawTeamBackground
@@ -580,7 +392,7 @@ void CG_DrawTeamBackground(int x, int y, int w, int h, float alpha, int team) {
 
 	trap_R_SetColor(NULL);
 }
-#ifndef MISSIONPACK
+
 /*
 =======================================================================================================================================
 CG_DrawStatusBar
@@ -712,7 +524,7 @@ static void CG_DrawStatusBar(void) {
 		}
 	}
 }
-#endif
+
 /*
 =======================================================================================================================================
 
@@ -1090,7 +902,7 @@ static void CG_DrawUpperRight(stereoFrame_t stereoFrame) {
 
 =======================================================================================================================================
 */
-#ifndef MISSIONPACK
+
 /*
 =======================================================================================================================================
 CG_DrawScores
@@ -1393,7 +1205,7 @@ static float CG_DrawPowerups(float y) {
 
 	return y;
 }
-#endif
+
 /*
 =======================================================================================================================================
 CG_DrawLocalInfo
@@ -1421,18 +1233,17 @@ static void CG_DrawLowerRight(void) {
 	y = 480 - ICON_SIZE;
 
 	CG_SetScreenPlacement(PLACE_RIGHT, PLACE_BOTTOM);
-#ifndef MISSIONPACK
+
 	if (cgs.gametype > GT_TOURNAMENT && cg_drawTeamOverlay.integer == 2) {
 		y = CG_DrawTeamOverlay(y, qtrue, qfalse);
 	}
-#endif
+
 	y = CG_DrawLocalInfo(y);
-#ifndef MISSIONPACK
 	y = CG_DrawScores(y);
 	CG_DrawPowerups(y);
-#endif
+
 }
-#ifndef MISSIONPACK
+
 /*
 =======================================================================================================================================
 CG_DrawPickupItem
@@ -1584,7 +1395,7 @@ static void CG_DrawPersistantPowerup(void) {
 		CG_DrawPic(640 - ICON_SIZE, (SCREEN_HEIGHT - ICON_SIZE) / 2 - ICON_SIZE, ICON_SIZE, ICON_SIZE, cg_items[value].icon);
 	}
 }
-#endif
+
 /*
 =======================================================================================================================================
 
@@ -1702,13 +1513,9 @@ static void CG_DrawLagometer(void) {
 
 	CG_SetScreenPlacement(PLACE_RIGHT, PLACE_BOTTOM);
 	// draw the graph
-#ifdef MISSIONPACK
-	x = 640 - 48;
-	y = 480 - 144;
-#else
 	x = 640 - 48;
 	y = 480 - 48;
-#endif
+
 	CG_DrawPic(x, y, 48, 48, cgs.media.lagometerShader);
 
 	ax = x;
@@ -2157,70 +1964,7 @@ CG_DrawScoreboard
 =======================================================================================================================================
 */
 static qboolean CG_DrawScoreboard(void) {
-#ifdef MISSIONPACK
-	static qboolean firstTime = qtrue;
-
-	CG_SetScreenPlacement(PLACE_CENTER, PLACE_CENTER);
-
-	if (menuScoreboard) {
-		menuScoreboard->window.flags &= ~WINDOW_FORCED;
-	}
-
-	if (cg_paused.integer) {
-		cg.deferredPlayerLoading = 0;
-		firstTime = qtrue;
-		return qfalse;
-	}
-	// should never happen in Team Arena
-	if (cgs.gametype == GT_SINGLE_PLAYER && cg.predictedPlayerState.pm_type == PM_INTERMISSION) {
-		cg.deferredPlayerLoading = 0;
-		firstTime = qtrue;
-		return qfalse;
-	}
-	// don't draw scoreboard during death while warmup up
-	if (cg.warmup && !cg.showScores) {
-		return qfalse;
-	}
-
-	if (cg.showScores || cg.predictedPlayerState.pm_type == PM_DEAD || cg.predictedPlayerState.pm_type == PM_INTERMISSION) {
-
-	} else {
-		if (!CG_FadeColor(cg.scoreFadeTime, FADE_TIME)) {
-			// next time scoreboard comes up, don't print killer
-			cg.deferredPlayerLoading = 0;
-			cg.killerName[0] = 0;
-			firstTime = qtrue;
-			return qfalse;
-		}
-	}
-
-	if (menuScoreboard == NULL) {
-		if (cgs.gametype > GT_TOURNAMENT) {
-			menuScoreboard = Menus_FindByName("teamscore_menu");
-		} else {
-			menuScoreboard = Menus_FindByName("score_menu");
-		}
-	}
-
-	if (menuScoreboard) {
-		if (firstTime) {
-			CG_SetScoreSelection(menuScoreboard);
-			firstTime = qfalse;
-			// update time now to prevent spectator list from jumping.
-			cg.spectatorTime = trap_Milliseconds();
-		}
-
-		Menu_Paint(menuScoreboard, qtrue);
-	}
-	// load any models that have been deferred
-	if (++cg.deferredPlayerLoading > 10) {
-		CG_LoadDeferredPlayers();
-	}
-
-	return qtrue;
-#else
 	return CG_DrawOldScoreboard();
-#endif
 }
 
 /*
@@ -2229,18 +1973,12 @@ CG_DrawIntermission
 =======================================================================================================================================
 */
 static void CG_DrawIntermission(void) {
-//	int key;
-#ifdef MISSIONPACK
-	//if (cg_singlePlayer.integer) {
-	//	CG_DrawCenterString();
-	//	return;
-	//}
-#else
+
 	if (cgs.gametype == GT_SINGLE_PLAYER) {
 		CG_DrawCenterString();
 		return;
 	}
-#endif
+
 	cg.scoreFadeTime = cg.time;
 	cg.scoreBoardShowing = CG_DrawScoreboard();
 }
@@ -2299,7 +2037,7 @@ static void CG_DrawAmmoWarning(void) {
 
 	CG_DrawString(SCREEN_WIDTH / 2, 64, s, UI_CENTER|UI_DROPSHADOW|UI_BIGFONT, NULL);
 }
-#ifdef MISSIONPACK
+
 /*
 =======================================================================================================================================
 CG_DrawProxWarning
@@ -2334,7 +2072,7 @@ static void CG_DrawProxWarning(void) {
 
 	CG_DrawString(SCREEN_WIDTH / 2, 64 + lineHeight, s, UI_CENTER|UI_DROPSHADOW|UI_BIGFONT, g_color_table[ColorIndex(COLOR_RED)]);
 }
-#endif
+
 /*
 =======================================================================================================================================
 CG_DrawWarmup
@@ -2437,11 +2175,7 @@ CG_Draw2D
 =======================================================================================================================================
 */
 static void CG_Draw2D(stereoFrame_t stereoFrame) {
-#ifdef MISSIONPACK
-	if (cgs.orderPending && cg.time > cgs.orderTime) {
-		CG_CheckOrderPending();
-	}
-#endif
+
 	// if we are taking a levelshot for the menu, don't draw anything
 	if (cg.levelShot) {
 		return;
@@ -2471,52 +2205,32 @@ static void CG_Draw2D(stereoFrame_t stereoFrame) {
 	} else {
 		// don't draw any status if dead or the scoreboard is being explicitly shown
 		if (!cg.showScores && cg.snap->ps.stats[STAT_HEALTH] > 0) {
-#ifdef MISSIONPACK
-			if (cg_drawStatus.integer) {
-				CG_SetScreenPlacement(PLACE_CENTER, PLACE_BOTTOM);
-				CG_DrawTimedMenus();
-				Menu_PaintAll();
-			}
-#else
 			CG_DrawStatusBar();
-#endif
 			CG_DrawAmmoWarning();
-#ifdef MISSIONPACK
 			CG_DrawProxWarning();
-#endif
+
 			if (stereoFrame == STEREO_CENTER) {
 				CG_DrawCrosshair();
 			}
 
 			CG_DrawCrosshairNames();
 			CG_DrawWeaponSelect();
-#ifndef MISSIONPACK
 			CG_DrawHoldableItem();
 			CG_DrawPersistantPowerup();
-#endif
 		}
 
 		if (cgs.gametype > GT_TOURNAMENT) {
-#ifndef MISSIONPACK
 			CG_DrawTeamInfo();
-#endif
 		}
 	}
 
 	CG_DrawVote();
 	CG_DrawTeamVote();
 	CG_DrawLagometer();
-#ifdef MISSIONPACK
-	if (!cg_paused.integer) {
-		CG_DrawUpperRight(stereoFrame);
-	}
-#else
 	CG_DrawUpperRight(stereoFrame);
-#endif
 	CG_DrawLowerRight();
-#ifndef MISSIONPACK
 	CG_DrawLowerLeft();
-#endif
+
 	if (!CG_DrawFollow()) {
 		CG_DrawWarmup();
 	}

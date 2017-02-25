@@ -295,9 +295,7 @@ void BotReportStatus(bot_state_t *bs) {
 				strcpy(flagstatus, S_COLOR_BLUE "F");
 			}
 		}
-	}
-#ifdef MISSIONPACK
-	else if (gametype == GT_1FCTF) {
+	} else if (gametype == GT_1FCTF) {
 		if (Bot1FCTFCarryingFlag(bs)) {
 			if (BotTeam(bs) == TEAM_RED) {
 				strcpy(flagstatus, S_COLOR_RED "F");
@@ -314,7 +312,7 @@ void BotReportStatus(bot_state_t *bs) {
 			}
 		}
 	}
-#endif
+
 	switch (bs->ltgtype) {
 		case LTG_TEAMHELP:
 		{
@@ -1816,9 +1814,6 @@ int BotInitLibrary(void) {
 	}
 
 	trap_BotLibVarSet("bot_reloadcharacters", buf);
-#ifdef MISSIONPACK
-	trap_PC_AddGlobalDefine("MISSIONPACK");
-#endif
 	// setup the bot library
 	return trap_BotLibSetup();
 }

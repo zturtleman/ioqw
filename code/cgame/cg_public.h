@@ -55,7 +55,7 @@ typedef struct {
 	int serverCommandSequence;			// snapshot becomes current
 } snapshot_t;
 
-enum {
+enum { // Tobias: UNUSED!
 	CGAME_EVENT_NONE,
 	CGAME_EVENT_TEAMMENU,
 	CGAME_EVENT_SCOREBOARD,
