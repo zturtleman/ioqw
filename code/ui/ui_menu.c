@@ -32,6 +32,9 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #include "ui_local.h"
 
+#define MAIN_BANNER_MODEL "models/mapobjects/banner/banner5.md3"
+#define MAIN_MENU_VERTICAL_SPACING 34
+
 enum {
 	ID_SINGLEPLAYER,
 	ID_MULTIPLAYER,
@@ -41,11 +44,6 @@ enum {
 	ID_MODS,
 	ID_EXIT
 };
-
-#define MAIN_BANNER_MODEL "models/mapobjects/banner/banner5.md3"
-#define MAIN_MENU_VERTICAL_SPACING 34
-
-vec4_t color_translucent = {1.0f, 1.0f, 1.0f, 0.2f};
 
 typedef struct {
 	menuframework_s menu;
@@ -144,7 +142,7 @@ sfxHandle_t ErrorMessage_Key(int key) {
 =======================================================================================================================================
 Main_MenuDraw
 
-TTimo: this function is common to the main menu and errorMessage menu.
+This function is common to the main menu and errorMessage menu.
 =======================================================================================================================================
 */
 static void Main_MenuDraw(void) {

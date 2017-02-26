@@ -99,6 +99,7 @@ typedef struct {
 	const char *icon;
 	int game;
 } itemList_t;
+
 // the gauntlet, hand gun and machine gun are excluded from the list because they are the default weapons, maps usually don't have them as available for pickup.
 static itemList_t dm_itemList[] = {
 	{"Mega Health", "MH", "item_health_mega", qfalse, "ui_icons/iconh_mega", 0},
@@ -322,38 +323,6 @@ DynamicMenu_StringAtIndex
 */
 const char *DynamicMenu_StringAtIndex(int index) {
 	return s_dynamic.data[index].text;
-}
-
-/*
-=======================================================================================================================================
-DynamicMenu_SetFlags
-=======================================================================================================================================
-*/
-void DynamicMenu_SetFlags(int depth, int id, int flags) {
-	int i;
-
-	for (i = s_dynamic.start[depth - 1]; i < s_dynamic.end[depth - 1]; i++) {
-		if (s_dynamic.data[i].id == id) {
-			s_dynamic.item[i].generic.flags |= flags;
-			return;
-		}
-	}
-}
-
-/*
-=======================================================================================================================================
-DynamicMenu_RemoveFlags
-=======================================================================================================================================
-*/
-void DynamicMenu_RemoveFlags(int depth, int id, int flags) {
-	int i;
-
-	for (i = s_dynamic.start[depth - 1]; i < s_dynamic.end[depth - 1]; i++) {
-		if (s_dynamic.data[i].id == id) {
-			s_dynamic.item[i].generic.flags &= ~flags;
-			return;
-		}
-	}
 }
 
 /*
@@ -1297,14 +1266,6 @@ static void BotCommand_InitPrimaryMenu(void) {
 
 	DynamicMenu_AddBackground(INGAME_FRAME);
 	DynamicMenu_FinishSubMenuInit();
-}
-
-/*
-=======================================================================================================================================
-UI_BotCommand_Cache
-=======================================================================================================================================
-*/
-void UI_BotCommand_Cache(void) {
 }
 
 /*

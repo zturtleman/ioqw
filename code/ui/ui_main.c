@@ -74,25 +74,6 @@ Q_EXPORT intptr_t vmMain(int command, int arg0, int arg1, int arg2, int arg3, in
 	return -1;
 }
 
-#define MAX_VA_STRING 32000
-
-/*
-=======================================================================================================================================
-UI_TranslateString
-=======================================================================================================================================
-*/
-char *UI_TranslateString(const char *string) {
-	static char staticbuf[2][MAX_VA_STRING];
-	static int bufcount = 0;
-	char *buf;
-
-	buf = staticbuf[bufcount++ % 2];
-
-	trap_TranslateString(string, buf);
-
-	return buf;
-}
-
 typedef struct {
 	vmCvar_t *vmCvar;
 	char *cvarName;
@@ -159,7 +140,6 @@ vmCvar_t ui_server14;
 vmCvar_t ui_server15;
 vmCvar_t ui_server16;
 // UI conventional cvars
-vmCvar_t ui_animsfx;
 vmCvar_t ui_mapicons;
 vmCvar_t ui_autoclosebotmenu;
 vmCvar_t ui_ingame_dynamicmenu;
@@ -167,9 +147,7 @@ vmCvar_t ui_map_multisel;
 vmCvar_t ui_map_list;
 vmCvar_t ui_bot_multisel;
 vmCvar_t ui_bot_list;
-vmCvar_t ui_olditemmenu;
 vmCvar_t ui_firststart;
-vmCvar_t ui_ioq3;
 
 static cvarTable_t cvarTable[] = {
 	{&ui_friendlyFire, "g_friendlyFire", "1", CVAR_ARCHIVE},
@@ -234,13 +212,10 @@ static cvarTable_t cvarTable[] = {
 	{&ui_map_list, "ui_map_list", "0", CVAR_ROM|CVAR_ARCHIVE},
 	{&ui_bot_multisel, "ui_bot_multisel", "1", CVAR_ROM|CVAR_ARCHIVE},
 	{&ui_bot_list, "ui_bot_list", "1", CVAR_ROM|CVAR_ARCHIVE},
-	{&ui_ingame_dynamicmenu, "ui_ingame_dynamicmenu", "1", CVAR_ROM|CVAR_ARCHIVE},
-	{&ui_animsfx, "ui_s_animsfx", "1", CVAR_ROM|CVAR_ARCHIVE},
+	{&ui_ingame_dynamicmenu, "ui_ingame_dynamicmenu", "0", CVAR_ROM|CVAR_ARCHIVE},
 	{&ui_mapicons, "ui_mapicons", "0", CVAR_ROM|CVAR_ARCHIVE},
 	{&ui_autoclosebotmenu, "ui_autoclosebotmenu", "0", CVAR_ROM|CVAR_ARCHIVE},
-	{&ui_olditemmenu, "ui_olditemmenu", "0", CVAR_ARCHIVE},
-	{&ui_firststart, "ui_firststart", "1", CVAR_ARCHIVE},
-	{&ui_ioq3, "ui_ioq3", "1", CVAR_ROM}
+	{&ui_firststart, "ui_firststart", "1", CVAR_ARCHIVE}
 };
 
 static int cvarTableSize = ARRAY_LEN(cvarTable);
@@ -301,36 +276,17 @@ int UI_ServerGametype(void) {
 
 /*
 =======================================================================================================================================
-UI_ServerTimelimit
+UI_TranslateString
 =======================================================================================================================================
 */
-int UI_ServerTimelimit(void) {
-	char info[MAX_INFO_STRING];
+char *UI_TranslateString(const char *string) {
+	static char staticbuf[2][MAX_VA_STRING];
+	static int bufcount = 0;
+	char *buf;
 
-	trap_GetConfigString(CS_SERVERINFO, info, sizeof(info));
-	return atoi(Info_ValueForKey(info, "timelimit"));
-}
+	buf = staticbuf[bufcount++ % 2];
 
-/*
-=======================================================================================================================================
-UI_ServerFraglimit
-=======================================================================================================================================
-*/
-int UI_ServerFraglimit(void) {
-	char info[MAX_INFO_STRING];
+	trap_TranslateString(string, buf);
 
-	trap_GetConfigString(CS_SERVERINFO, info, sizeof(info));
-	return atoi(Info_ValueForKey(info, "fraglimit"));
-}
-
-/*
-=======================================================================================================================================
-UI_ServerCapturelimit
-=======================================================================================================================================
-*/
-int UI_ServerCapturelimit(void) {
-	char info[MAX_INFO_STRING];
-
-	trap_GetConfigString(CS_SERVERINFO, info, sizeof(info));
-	return atoi(Info_ValueForKey(info, "capturelimit"));
+	return buf;
 }

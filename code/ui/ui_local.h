@@ -32,18 +32,10 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "../client/keycodes.h"
 #include "../game/bg_public.h"
 
+#define MAX_UI_AWARDS 6
 // status bar text buffer
 #define MAX_STATUSBAR_TEXT 64
 #define STATUSBAR_FADETIME 1500
-// logo art, all are 128 * 32 but they view very well at 64 * 16
-#define UI_LOGO_POWERED "menu/ui_art/ui_powered"
-#define UI_LOGO_ASSISTED "menu/ui_art/ui_assisted"
-#define UI_LOGO_INCLUDE "menu/ui_art/ui_include"
-#define UI_LOGO_IMPROVED "menu/ui_art/ui_improved"
-#define UI_LOGO_USING "menu/ui_art/ui_using"
-
-#define UI_LOGO_X 570
-#define UI_LOGO_Y 400
 
 #define PT_FRIENDLY				1
 #define PT_ENEMY				2
@@ -63,8 +55,6 @@ void DynamicMenu_FinishSubMenuInit(void);
 void DynamicMenu_MenuInit(qboolean fullscreen, qboolean wraparound);
 void DynamicMenu_ClearFocus(int pos);
 void DynamicMenu_SetFocus(int pos);
-void DynamicMenu_SetFlags(int depth, int id, int flags);
-void DynamicMenu_RemoveFlags(int depth, int id, int flags);
 // information about the menu structure
 int DynamicMenu_Depth(void);
 // takes an index and returns data
@@ -80,8 +70,6 @@ const char *DynamicMenu_ItemShortname(int index);
 // core services
 void DynamicMenu_AddListOfPlayers(int type, createHandler crh, eventHandler evh);
 void DynamicMenu_AddListOfItems(int exclude, createHandler crh, eventHandler evh);
-
-typedef void (*voidfunc_f)(void);
 
 extern vmCvar_t ui_friendlyFire;
 extern vmCvar_t ui_ffa_fraglimit;
@@ -104,8 +92,6 @@ extern vmCvar_t ui_harvester_capturelimit;
 extern vmCvar_t ui_harvester_timelimit;
 extern vmCvar_t ui_harvester_friendly;
 extern vmCvar_t ui_publicServer;
-extern vmCvar_t ui_arenasFile;
-extern vmCvar_t ui_botsFile;
 extern vmCvar_t ui_spScores1;
 extern vmCvar_t ui_spScores2;
 extern vmCvar_t ui_spScores3;
@@ -144,10 +130,8 @@ extern vmCvar_t ui_server16;
 extern vmCvar_t ui_firststart;
 extern vmCvar_t ui_mapicons;
 extern vmCvar_t ui_ingame_dynamicmenu;
-extern vmCvar_t ui_ioq3;
+
 // ui_qmenu.c
-#define RCOLUMN_OFFSET (BIGCHAR_WIDTH)
-#define LCOLUMN_OFFSET (-BIGCHAR_WIDTH)
 #define SLIDER_RANGE 10
 
 #define MAX_EDIT_LINE 256
@@ -283,7 +267,6 @@ typedef struct {
 } menutext_s;
 
 extern void Menu_Cache(void);
-extern void Menu_Focus(menucommon_s *m);
 extern void Menu_AddItem(menuframework_s *menu, void *item);
 extern void Menu_AdjustCursor(menuframework_s *menu, int dir);
 extern void Menu_Draw(menuframework_s *menu);
@@ -303,11 +286,6 @@ extern sfxHandle_t menu_buzz_sound;
 extern sfxHandle_t menu_null_sound;
 extern sfxHandle_t weaponChangeSound;
 extern vec4_t menu_text_color;
-extern vec4_t menu_grayed_color;
-extern vec4_t menu_dark_color;
-extern vec4_t menu_highlight_color;
-extern vec4_t menu_red_color;
-extern vec4_t menu_black_color;
 extern vec4_t menu_dim_color;
 extern vec4_t color_black;
 extern vec4_t color_white;
@@ -315,10 +293,6 @@ extern vec4_t color_yellow;
 extern vec4_t color_blue;
 extern vec4_t color_orange;
 extern vec4_t color_red;
-extern vec4_t color_dim;
-extern vec4_t color_translucent;
-extern vec4_t name_color;
-extern vec4_t list_color;
 extern vec4_t listbar_color;
 extern vec4_t pulse_color;
 extern vec4_t text_color_disabled;
@@ -346,9 +320,6 @@ extern void UI_MainMenu(void);
 extern void UI_RegisterCvars(void);
 extern void UI_UpdateCvars(void);
 extern int UI_ServerGametype(void);
-extern int UI_ServerTimelimit(void);
-extern int UI_ServerFraglimit(void);
-extern int UI_ServerCapturelimit(void);
 // ui_firstconnect.c
 extern void FirstConnect_Cache(void);
 extern void UI_FirstConnectMenu(void);
@@ -358,10 +329,11 @@ extern void UI_CreditMenu(void);
 extern int UI_CurrentPlayerTeam(void);
 extern void InGame_Cache(void);
 extern void UI_InGameMenu(void);
-extern void UI_DynamicMenuCache(void);
 extern void UI_BotCommandMenu_f(void);
 // ui_ingame_callvote.c
 extern void UI_CallVoteMenu(void);
+// ui_ingame_callvote_timelimit.c
+extern void UI_VoteTimelimitMenu(void);
 // ui_ingame_callvote_fraglimit.c
 extern void UI_VoteFraglimitMenu(void);
 extern void UI_VoteCapturelimitMenu(void);
@@ -371,15 +343,12 @@ extern void UI_VoteGametypeMenu(void);
 extern void UI_VoteKickMenu(void);
 // ui_ingame_callvote_map.c
 extern void UI_VoteMapMenu(void);
-// ui_ingame_callvote_timelimit.c
-extern void UI_VoteTimelimitMenu(void);
 // ui_ingame_vote.c
 extern void UI_VoteMenu(void);
 // ui_confirm.c
 extern void ConfirmMenu_Cache(void);
 extern void UI_ConfirmMenu(const char *question, void (*draw)(void), void (*action)(qboolean result));
 extern void UI_ConfirmMenu_Style(const char *question, int style, void (*draw)(void), void (*action)(qboolean result));
-extern void UI_Message(const char **lines);
 // ui_setup.c
 extern void UI_SetupMenu_Cache(void);
 extern void UI_SetupMenu(void);

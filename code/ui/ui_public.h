@@ -27,6 +27,17 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #define UI_API_VERSION 7
 
+enum {
+	SORT_HOST,
+	SORT_MAP,
+	SORT_CLIENTS,
+	SORT_MAXCLIENTS,
+	SORT_HUMANS,
+	SORT_BOTS,
+	SORT_GAMETYPE,
+	SORT_PING
+};
+
 typedef struct {
 	connstate_t connState;
 	int connectPacketCount;
@@ -150,15 +161,6 @@ typedef enum {
 	UIMENU_TEAM,
 	UIMENU_POSTGAME
 } uiMenuCommand_t;
-
-#define SORT_HOST		0
-#define SORT_MAP		1
-#define SORT_CLIENTS	2
-#define SORT_MAXCLIENTS	3
-#define SORT_HUMANS		4
-#define SORT_BOTS		5
-#define SORT_GAMETYPE	6
-#define SORT_PING		7
 
 typedef enum {
 	UI_GETAPIVERSION = 0, // system reserved

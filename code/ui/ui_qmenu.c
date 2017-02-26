@@ -45,17 +45,14 @@ vec4_t color_black = {0.00f, 0.00f, 0.00f, 1.00f};
 vec4_t color_white = {1.00f, 1.00f, 1.00f, 1.00f};
 vec4_t color_yellow = {1.00f, 1.00f, 0.00f, 1.00f};
 vec4_t color_blue = {0.00f, 0.00f, 1.00f, 1.00f};
-vec4_t color_lightOrange = {1.00f, 0.68f, 0.00f, 1.00f};
 vec4_t color_orange = {1.00f, 0.43f, 0.00f, 1.00f};
 vec4_t color_red = {1.00f, 0.00f, 0.00f, 1.00f};
-vec4_t color_dim = {0.00f, 0.00f, 0.00f, 0.25f};
 // current color scheme
 vec4_t pulse_color = {1.00f, 1.00f, 1.00f, 1.00f};
 vec4_t text_color_disabled = {0.50f, 0.50f, 0.50f, 1.00f};	// light gray
 vec4_t text_color_normal = {1.00f, 0.43f, 0.00f, 1.00f};	// light orange
 vec4_t text_color_highlight = {1.00f, 1.00f, 0.00f, 1.00f};	// bright yellow
 vec4_t listbar_color = {1.00f, 0.43f, 0.00f, 0.30f};		// transluscent orange
-vec4_t text_color_status = {1.00f, 1.00f, 1.00f, 1.00f};	// bright white
 // action widget
 static void Action_Init(menuaction_s *a);
 static void Action_Draw(menuaction_s *a);
@@ -573,7 +570,7 @@ static sfxHandle_t Slider_Key(menuslider_s *s, int key) {
 
 	return (sound);
 }
-#if 1
+
 /*
 =======================================================================================================================================
 Slider_Draw
@@ -628,70 +625,7 @@ static void Slider_Draw(menuslider_s *s) {
 
 	UI_DrawHandlePic((int)(x + 2 * SMALLCHAR_WIDTH + (SLIDER_RANGE - 1) * SMALLCHAR_WIDTH * s->range) - 2, y - 2, 12, 20, button);
 }
-#else
-/*
-=======================================================================================================================================
-Slider_Draw
-=======================================================================================================================================
-*/
-static void Slider_Draw(menuslider_s *s) {
-	float *color;
-	int style;
-	int i;
-	int x;
-	int y;
-	qboolean focus;
 
-	x = s->generic.x;
-	y = s->generic.y;
-	focus = (s->generic.parent->cursor == s->generic.menuPosition);
-	style = UI_SMALLFONT;
-
-	if (s->generic.flags & QMF_GRAYED) {
-		color = text_color_disabled;
-	} else if (focus) {
-		color = text_color_highlight;
-		style |= UI_PULSE;
-	} else {
-		color = text_color_normal;
-	}
-
-	if (focus) {
-		// draw cursor
-		UI_FillRect(s->generic.left, s->generic.top, s->generic.right - s->generic.left + 1, s->generic.bottom - s->generic.top + 1, listbar_color);
-		UI_DrawChar(x, y, 13, UI_CENTER|UI_BLINK|UI_SMALLFONT, color);
-	}
-	// draw label
-	UI_DrawString(x - SMALLCHAR_WIDTH, y, s->generic.name, UI_RIGHT|style, color);
-	// draw slider
-	UI_DrawChar(x + SMALLCHAR_WIDTH, y, 128, UI_LEFT|style, color);
-
-	for (i = 0; i < SLIDER_RANGE; i++) {
-		UI_DrawChar(x + (i + 2) * SMALLCHAR_WIDTH, y, 129, UI_LEFT|style, color);
-	}
-
-	UI_DrawChar(x + (i + 2) * SMALLCHAR_WIDTH, y, 130, UI_LEFT|style, color);
-	// clamp thumb
-	if (s->maxvalue > s->minvalue) {
-		s->range = (s->curvalue - s->minvalue) / (float)(s->maxvalue - s->minvalue);
-
-		if (s->range < 0) {
-			s->range = 0;
-		} else if (s->range > 1) {
-			s->range = 1;
-		}
-	} else {
-		s->range = 0;
-	}
-	// draw thumb
-	if (style & UI_PULSE) {
-		style &= ~UI_PULSE;
-		style |= UI_BLINK;
-	}
-
-	UI_DrawChar((int)(x + 2 * SMALLCHAR_WIDTH + (SLIDER_RANGE - 1) * SMALLCHAR_WIDTH * s->range), y, 131, UI_LEFT|style, color);
-}
-#endif
 /*
 =======================================================================================================================================
 SpinControl_Init

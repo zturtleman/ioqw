@@ -54,16 +54,14 @@ typedef struct {
 	float value;
 } configcvar_t;
 
-#define SAVE_NOOP	0
-#define SAVE_YES	1
-#define SAVE_NO		2
-#define SAVE_CANCEL	3
 // control sections
-#define C_MOVEMENT	0
-#define C_LOOKING	1
-#define C_WEAPONS	2
-#define C_MISC		3
-#define C_MAX		4
+enum {
+	C_MOVEMENT,
+	C_LOOKING,
+	C_WEAPONS,
+	C_MISC,
+	C_MAX
+};
 
 enum {
 	ID_MOVEMENT,

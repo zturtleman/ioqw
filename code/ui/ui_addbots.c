@@ -85,6 +85,26 @@ typedef struct {
 
 static addBotsMenuInfo_t addBotsMenuInfo;
 
+static const char *skillNames[] = {
+	"I Can Win",
+	"Bring It On",
+	"Hurt Me Plenty",
+	"Hardcore",
+	"Nightmare!",
+	NULL
+};
+
+static const char *teamNames1[] = {
+	"Free",
+	NULL
+};
+
+static const char *teamNames2[] = {
+	"Red",
+	"Blue",
+	NULL
+};
+
 /*
 =======================================================================================================================================
 AddBots_SetBotIcon
@@ -372,26 +392,6 @@ static void UI_AddBotsMenu_Draw(void) {
 		UI_DrawString(x, y, va("%4.2f", f_skill), UI_SMALLFONT, color_orange);
 	}
 }
-
-static const char *skillNames[] = {
-	"I Can Win",
-	"Bring It On",
-	"Hurt Me Plenty",
-	"Hardcore",
-	"Nightmare!",
-	NULL
-};
-
-static const char *teamNames1[] = {
-	"Free",
-	NULL
-};
-
-static const char *teamNames2[] = {
-	"Red",
-	"Blue",
-	NULL
-};
 
 /*
 =======================================================================================================================================
