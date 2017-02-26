@@ -29,8 +29,17 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "ui_local.h"
 #include "../qcommon/q_unicode.h"
 
+#define MAX_WRAP_BYTES 1024
+#define MAX_WRAP_LINES 1024
+
+#define PROPB_GAP_WIDTH 4
+#define PROPB_SPACE_WIDTH 12
+#define PROPB_HEIGHT 48
+
 uiStatic_t uis;
 qboolean m_entersound; // after a frame, so caching won't disrupt the sound
+
+static vec4_t lastTextColor = {0, 0, 0, 1};
 
 /*
 =======================================================================================================================================
@@ -299,8 +308,6 @@ void UI_Text_PaintGlyph(float x, float y, float useScale, const glyphInfo_t *gly
 	}
 }
 
-static vec4_t lastTextColor = {0, 0, 0, 1};
-
 /*
 =======================================================================================================================================
 UI_Text_Paint
@@ -490,9 +497,6 @@ void UI_Text_PaintWithCursor(float x, float y, const fontInfo_t *font, float sca
 	trap_R_SetColor(NULL);
 }
 
-#define MAX_WRAP_BYTES 1024
-#define MAX_WRAP_LINES 1024
-
 /*
 =======================================================================================================================================
 UI_Text_Paint_AutoWrapped
@@ -670,10 +674,6 @@ void UI_Text_Paint_AutoWrapped(float x, float y, const fontInfo_t *font, float s
 
 =======================================================================================================================================
 */
-
-#define PROPB_GAP_WIDTH 4
-#define PROPB_SPACE_WIDTH 12
-#define PROPB_HEIGHT 48
 
 /*
 =======================================================================================================================================

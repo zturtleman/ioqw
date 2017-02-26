@@ -32,7 +32,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #include "ui_local.h"
 
-#define MAX_UI_AWARDS 6
 #define MAX_SCOREBOARD_CLIENTS 8
 #define AWARD_PRESENTATION_TIME 2000
 

@@ -37,6 +37,8 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define ART_BACK0 "menu/art/back_0"
 #define ART_BACK1 "menu/art/back_1"
 
+#define VERTICAL_SPACING 34
+
 enum {
 	ID_GRAPHICS,
 	ID_DISPLAY,
@@ -44,8 +46,6 @@ enum {
 	ID_NETWORK,
 	ID_BACK
 };
-
-#define VERTICAL_SPACING 34
 
 typedef struct {
 	menuframework_s menu;

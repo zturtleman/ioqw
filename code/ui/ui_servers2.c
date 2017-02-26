@@ -40,7 +40,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define MAX_LISTBOXITEMS 128
 #define MAX_LOCALSERVERS 128
 #define MAX_STATUSLENGTH 64
-#define MAX_LEAGUELENGTH 28
 #define MAX_LISTBOXWIDTH 68
 
 #define ART_BACK0 "menu/art/back_0"
@@ -92,15 +91,6 @@ enum {
 };
 
 #define UI_MAX_MASTER_SERVERS 5
-
-#define SORT_HOST		0
-#define SORT_MAP		1
-#define SORT_CLIENTS	2
-#define SORT_MAXCLIENTS	3
-#define SORT_HUMANS		4
-#define SORT_BOTS		5
-#define SORT_GAMETYPE	6
-#define SORT_PING		7
 
 enum {
 	GAMES_ALL,

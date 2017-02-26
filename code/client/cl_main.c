@@ -1112,20 +1112,6 @@ void CL_PlayDemo_f(void) {
 
 /*
 =======================================================================================================================================
-CL_StartDemoLoop
-
-Closing the main menu will restart the demo loop.
-=======================================================================================================================================
-*/
-void CL_StartDemoLoop(void) {
-
-	// start the demo loop again
-	Cbuf_AddText("d1\n");
-	Key_SetCatcher(0);
-}
-
-/*
-=======================================================================================================================================
 CL_NextDemo
 
 Called when a demo or cinematic finishes.
@@ -3360,7 +3346,7 @@ void CL_Init(void) {
 	cl_mouseAccelOffset = Cvar_Get("cl_mouseAccelOffset", "5", CVAR_ARCHIVE);
 	Cvar_CheckRange(cl_mouseAccelOffset, 0.001f, 50000.0f, qfalse);
 	cl_showMouseRate = Cvar_Get("cl_showmouserate", "0", 0);
-	cl_allowDownload = Cvar_Get("cl_allowDownload", "0", CVAR_ARCHIVE);
+	cl_allowDownload = Cvar_Get("cl_allowDownload", "1", CVAR_ARCHIVE);
 #ifdef USE_CURL_DLOPEN
 	cl_cURLLib = Cvar_Get("cl_cURLLib", DEFAULT_CURL_LIB, CVAR_ARCHIVE);
 #endif
@@ -4408,8 +4394,6 @@ void CL_GetMapTitle(char *buf, int bufLength) {
 */
 
 #define FILE_HASH_SIZE 1024
-#define MAX_VA_STRING 32000
-#define MAX_TRANS_STRING 4096
 
 typedef struct trans_s {
 	char original[MAX_TRANS_STRING];

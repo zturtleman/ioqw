@@ -169,7 +169,6 @@ UI_LoadArenas
 */
 static void UI_LoadArenas(void) {
 	int numdirs;
-	vmCvar_t arenasFile;
 	char filename[128];
 	char dirlist[2048];
 	char *dirptr;
@@ -181,13 +180,7 @@ static void UI_LoadArenas(void) {
 
 	ui_numArenas = 0;
 
-	trap_Cvar_Register(&arenasFile, "g_arenasFile", "", CVAR_INIT|CVAR_ROM);
-
-	if (*arenasFile.string) {
-		UI_LoadArenasFromFile(arenasFile.string);
-	} else {
-		UI_LoadArenasFromFile("scripts/arenas.txt");
-	}
+	UI_LoadArenasFromFile("scripts/arenas.txt");
 	// get all arenas from .arena files
 	numdirs = trap_FS_GetFileList("scripts", ".arena", dirlist, 2048);
 	dirptr = dirlist;
@@ -366,7 +359,6 @@ UI_LoadBots
 =======================================================================================================================================
 */
 static void UI_LoadBots(void) {
-	vmCvar_t botsFile;
 	int numdirs;
 	char filename[128];
 	char dirlist[1024];
@@ -390,13 +382,7 @@ static void UI_LoadBots(void) {
 
 	ui_numBots++;
 
-	trap_Cvar_Register(&botsFile, "g_botsFile", "", CVAR_INIT|CVAR_ROM);
-
-	if (*botsFile.string) {
-		UI_LoadBotsFromFile(botsFile.string);
-	} else {
-		UI_LoadBotsFromFile("scripts/bots.txt");
-	}
+	UI_LoadBotsFromFile("scripts/bots.txt");
 	// get all bots from .bot files
 	numdirs = trap_FS_GetFileList("scripts", ".bot", dirlist, 1024);
 	dirptr = dirlist;
@@ -464,21 +450,6 @@ int UI_GetBotNumByName(const char *name) {
 	}
 
 	return -1;
-}
-
-/*
-=======================================================================================================================================
-UI_GetBotNameByNumber
-=======================================================================================================================================
-*/
-char *UI_GetBotNameByNumber(int num) {
-	char *info = UI_GetBotInfoByNumber(num);
-
-	if (info) {
-		return Info_ValueForKey(info, "name");
-	}
-
-	return "Sarge";
 }
 
 // single player game info

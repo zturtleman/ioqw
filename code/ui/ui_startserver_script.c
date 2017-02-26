@@ -52,7 +52,6 @@ id Software at the address below.
 #define BEGIN_PARAMETER_BLOCK "BEGIN_UI_PARAMETER_BLOCK"
 #define END_PARAMETER_BLOCK "END_UI_PARAMETER_BLOCK"
 
-#define CVAR_BUFFER 64
 #define delay 2000
 // game parameters we need to save in a block for later recovery. Strings begining with a * are gametype specific.
 // ui_dedicated is deliberately missing to allow script loading in both Skirmish and Multiplayer versions of the browser.
@@ -188,6 +187,9 @@ static int addbot_primes[] = {7, 11, 17, 23};
 static int num_addbot_primes = sizeof(addbot_primes) / sizeof(addbot_primes[0]);
 static char lasterror_text[MAX_STATUSBAR_TEXT] = {'\0'};
 static char *bot_teamname[] = {"blue", "red"};
+static char ui_token[MAX_TOKEN_CHARS];
+static int ui_lines;
+
 
 /*
 =======================================================================================================================================
@@ -239,15 +241,6 @@ AddScript
 */
 static void AddScript(const char *scriptLine) {
 	Q_strcat(s_serverexec.server_script, SCRIPT_BUFFER, scriptLine);
-}
-
-/*
-=======================================================================================================================================
-StartServer_GetLastScriptError
-=======================================================================================================================================
-*/
-const char *StartServer_GetLastScriptError(void) {
-	return lasterror_text;
 }
 
 /*
@@ -1539,9 +1532,6 @@ static qboolean StartServer_WriteItemParams(void) {
 	return qtrue;
 }
 
-static char ui_token[MAX_TOKEN_CHARS];
-static int ui_lines;
-
 /*
 =======================================================================================================================================
 UI_Parse
@@ -1648,109 +1638,6 @@ char *UI_Parse(char **data_p) {
 	ui_token[len] = 0;
 	*data_p = (char *) data;
 	return ui_token;
-}
-
-/*
-=======================================================================================================================================
-StartServer_LoadFromConfig
-=======================================================================================================================================
-*/
-qboolean StartServer_LoadFromConfig(const char *filename) {
-	fileHandle_t handle;
-	char cvar[CVAR_BUFFER], *begin, *end, *ptr, *token;
-	int len, gametype;
-
-	// load the script, re-use the server script buffer
-	len = trap_FS_FOpenFile(filename, &handle, FS_READ);
-
-	if (len <= 0) {
-		Com_Printf("Config file not found: %s\n", filename);
-		return qfalse;
-	}
-
-	UI_StartServer_LoadSkirmishCvars();
-
-	if (len >= SCRIPT_BUFFER) {
-		len = SCRIPT_BUFFER - 1;
-	}
-
-	trap_FS_Read(s_serverexec.server_script, len, handle);
-	s_serverexec.server_script[len] = '\0';
-	trap_FS_FCloseFile(handle);
-	// find the begin and end of block terminators
-	begin = strstr(s_serverexec.server_script, BEGIN_PARAMETER_BLOCK);
-	end = strstr(s_serverexec.server_script, END_PARAMETER_BLOCK);
-
-	if (begin == 0) {
-		StartServer_PrintMessage(va("Config file %s has no BEGIN block\n", filename));
-		return qfalse;
-	}
-
-	if (end == 0) {
-		StartServer_PrintMessage(va("Config file %s has no END block\n", filename));
-		return qfalse;
-	}
-
-	if (begin > end) {
-		StartServer_PrintMessage(va("Config file %s has bad parameter block\n", filename));
-		return qfalse;
-	}
-	// scan in parameters
-	// first token will be BEGIN, after that we have
-	// Cvar/value pairs until we hit the END block
-	ptr = begin;
-	gametype = -1;
-
-	COM_Parse(&ptr); // drop BEGIN
-
-	do {
-		// grab Cvar name
-		token = UI_Parse(&ptr);
-
-		if (!token[0]) {
-			// should never happen, unless tampered with
-			StartServer_PrintMessage(va("Unexpected end of %s, possible corruption or tampering\n", filename));
-			return qtrue; // update anyway... fingers crossed
-		}
-		// backward compatibility with earlier cfg save data format
-		if (strlen(token) > 2 && token[0] == '/' && token[1] == '/') {
-			token += 2;
-		}
-
-		if (!Q_stricmp(token, END_PARAMETER_BLOCK)) {
-			break;
-		}
-
-		if (*token == '*') {
-			if (gametype == -1) {
-				StartServer_PrintMessage(va("Unknown gametype from %s, possible corruption or tampering\n", filename));
-				// restore last saved cvar list
-				UI_StartServer_LoadSkirmishCvars();
-				return qfalse; // don't update
-			}
-
-			Q_strncpyz(cvar, va(gametype_cvar_base[gametype_remap2[gametype]], token + 1), CVAR_BUFFER);
-		} else {
-			Q_strncpyz(cvar, token, CVAR_BUFFER);
-		}
-		// grab value
-		token = UI_Parse(&ptr);
-
-		if (uis.debug) {
-			Com_Printf("Cvar: %s = %s\n", cvar, token);
-		}
-
-		if (UI_SkirmishCvarExists(NULL, cvar)) {
-			UI_SetSkirmishCvar(NULL, cvar, token);
-		}
-		// must get gametype before we can process "*cvarName" Cvars
-		if (!Q_stricmp(cvar, "ui_gametype")) {
-			gametype = (int)Com_Clamp(0, MAX_GAME_TYPE - 1, atoi(token));
-		}
-	} while (qtrue);
-
-	UI_StartServer_SaveSkirmishCvars();
-	return qtrue;
 }
 
 /*

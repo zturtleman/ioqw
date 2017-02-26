@@ -1696,8 +1696,6 @@ void CG_KeysStringForBinding(const char *binding, char *string, int stringSize) 
 	}
 }
 
-#define MAX_VA_STRING 32000
-
 /*
 =======================================================================================================================================
 CG_TranslateString

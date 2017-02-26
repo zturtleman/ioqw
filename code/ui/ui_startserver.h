@@ -479,9 +479,7 @@ void StartServer_SaveScriptData(void);
 typedef char *(*String_Callback)(int index);
 void UI_LoadMultiArray(char *base, const char *key, String_Callback callback, int count, int size, char newnull);
 void UI_SaveMultiArray(char *base, const char *key, String_Callback callback, int count, int size, char newnull);
-qboolean StartServer_LoadFromConfig(const char *filename);
 qboolean StartServer_CreateServer(const char *scriptFile);
-const char *StartServer_GetLastScriptError(void);
 // ui_startserver_custommaps.c
 enum {
 	MAPICONS_ALL,

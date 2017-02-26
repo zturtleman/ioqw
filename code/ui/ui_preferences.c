@@ -80,10 +80,10 @@ typedef struct {
 static preferences_t s_preferences;
 
 static const char *teamoverlay_names[] = {
-	"off",
-	"upper right",
-	"lower right",
-	"lower left",
+	"Off",
+	"Upper right",
+	"Lower right",
+	"Lower left",
 	NULL
 };
 

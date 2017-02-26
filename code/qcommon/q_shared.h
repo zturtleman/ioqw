@@ -208,8 +208,10 @@ typedef int clipHandle_t;
 #define PITCH	0 // up / down
 #define YAW		1 // left / right
 #define ROLL	2 // fall over
-// the game guarantees that no string from the network will ever
-// exceed MAX_STRING_CHARS
+
+#define MAX_VA_STRING 32000
+#define MAX_TRANS_STRING 4096
+// the game guarantees that no string from the network will ever exceed MAX_STRING_CHARS
 #define MAX_STRING_CHARS 1024 // max length of a string passed to Cmd_TokenizeString
 #define MAX_STRING_TOKENS 1024 // max tokens resulting from Cmd_TokenizeString
 #define MAX_TOKEN_CHARS 1024 // max length of an individual token

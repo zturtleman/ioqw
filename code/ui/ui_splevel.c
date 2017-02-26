@@ -73,7 +73,6 @@ enum {
 
 #define PLAYER_Y 314
 #define AWARDS_Y (PLAYER_Y + 26)
-#define MAX_UI_AWARDS 6
 
 typedef struct {
 	menuframework_s menu;
@@ -547,14 +546,11 @@ static void UI_SPLevelMenu_CustomEvent(void *ptr, int notification) {
 UI_SPLevelMenu_MenuDraw
 =======================================================================================================================================
 */
-#define LEVEL_DESC_LEFT_MARGIN 332
-
 static void UI_SPLevelMenu_MenuDraw(void) {
 	int n, i;
 	int x, y;
 	vec4_t color;
 	int level;
-//	int fraglimit;
 	int pad;
 	char buf[MAX_INFO_VALUE];
 	char string[64];
@@ -657,9 +653,6 @@ static void UI_SPLevelMenu_MenuDraw(void) {
 
 	Com_sprintf(string, sizeof(string), "%s: %s", buf, Info_ValueForKey(levelMenuInfo.selectedArenaInfo, "longname"));
 	UI_DrawProportionalString(320, y, string, UI_CENTER|UI_SMALLFONT, color_orange);
-
-//	fraglimit = atoi(Info_ValueForKey(levelMenuInfo.selectedArenaInfo, "fraglimit"));
-//	UI_DrawString(18, 212, va("Frags %i", fraglimit), UI_LEFT|UI_SMALLFONT, color_orange);
 	// draw bot opponents
 	y += 24;
 	pad = (7 - levelMenuInfo.numBots) * (64 + 26) / 2;
