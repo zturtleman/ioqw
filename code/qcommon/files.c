@@ -1068,16 +1068,14 @@ qboolean FS_IsDemoExt(const char *filename, int namelen) {
 	return qfalse;
 }
 
+extern qboolean com_fullyInitialized;
 /*
 =======================================================================================================================================
 FS_FOpenFileReadDir
 
-Tries opening file "filename" in searchpath "search".
-Returns filesize and an open FILE pointer.
+Tries opening file "filename" in searchpath "search". Returns filesize and an open FILE pointer.
 =======================================================================================================================================
 */
-extern qboolean com_fullyInitialized;
-
 long FS_FOpenFileReadDir(const char *filename, searchpath_t *search, fileHandle_t *file, qboolean uniqueFILE, qboolean unpure) {
 	long hash;
 	pack_t *pak;
@@ -1268,8 +1266,7 @@ long FS_FOpenFileReadDir(const char *filename, searchpath_t *search, fileHandle_
 =======================================================================================================================================
 FS_FOpenFileRead
 
-Finds the file in the search path.
-Returns filesize and an open FILE pointer.
+Finds the file in the search path. Returns filesize and an open FILE pointer.
 Used for streaming data out of either a separate file or a ZIP file.
 =======================================================================================================================================
 */
@@ -1321,8 +1318,7 @@ In each searchpath try:
 
 Enable search for DLL by setting enableDll to FSVM_ENABLEDLL.
 
-Write found DLL or QVM to "found" and return VMI_NATIVE if DLL, VMI_COMPILED if QVM.
-Return the searchpath in "startSearch".
+Write found DLL or QVM to "found" and return VMI_NATIVE if DLL, VMI_COMPILED if QVM. Return the searchpath in "startSearch".
 =======================================================================================================================================
 */
 int FS_FindVM(void **startSearch, char *found, int foundlen, const char *name, int enableDll) {
@@ -1373,8 +1369,7 @@ int FS_FindVM(void **startSearch, char *found, int foundlen, const char *name, i
 			pack = search->pack;
 
 			if (lastSearch && lastSearch->pack) {
-				// make sure we only try loading one VM file per game dir
-				// i.e. if VM from pak7.pk3 fails we won't try one from pak6.pk3
+				// make sure we only try loading one VM file per game dir, i.e. if VM from pak7.pk3 fails we won't try one from pak6.pk3
 				if (!FS_FilenameCompare(lastSearch->pack->pakPathname, pack->pakPathname)) {
 					search = search->next;
 					continue;
