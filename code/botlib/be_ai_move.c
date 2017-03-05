@@ -1313,14 +1313,14 @@ int BotWalkInDirection(bot_movestate_t *ms, vec3_t dir, float speed, int type) {
 			gapdist = BotGapDistance(move.endpos, tmpdir, 100, ms->entitynum);
 
 			if (gapdist > 0) {
-				//botimport.Print(PRT_MESSAGE, "client %d: predicted frame %d of %d, hit ground near gap(move direction)\n", ms->client, move.frames, maxframes);
+				//botimport.Print(PRT_MESSAGE, "client %d: predicted frame %d of %d, hit ground near gap (move direction)\n", ms->client, move.frames, maxframes);
 				return qfalse;
 			}
 
 			gapdist = BotGapDistance(move.endpos, hordir, 100, ms->entitynum);
 
 			if (gapdist > 0) {
-				//botimport.Print(PRT_MESSAGE, "client %d: predicted frame %d of %d, hit ground near gap(desired direction)\n", ms->client, move.frames, maxframes);
+				//botimport.Print(PRT_MESSAGE, "client %d: predicted frame %d of %d, hit ground near gap (desired direction)\n", ms->client, move.frames, maxframes);
 				return qfalse;
 			}
 		}
@@ -2640,7 +2640,7 @@ bot_moveresult_t BotFinishTravel_FuncBobbing(bot_movestate_t *ms, aas_reachabili
 
 		dist = VectorNormalize(hordir);
 
-		if (dist > 5) {
+		if (dist > 50) {
 			// move to the center of the func_bobbing
 			if (dist > 100) {
 				dist = 100;

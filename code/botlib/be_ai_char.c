@@ -49,7 +49,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #define MAX_CHARACTERISTICS 64 // Tobias TODO: Reduce this to an adequate amount after we've added all the necessary characteristics.
 // interpolation requires 3 slots per-character plus 2 default character slots, and account for handle 0 being a dummy
-#define MAX_BOT_CHARACTERS (3 * MAX_CLIENTS + 2 + 1)
+#define MAX_BOT_CHARACTERS 195 // (3 * MAX_CLIENTS + 2 + 1)
 // characteristic value
 union cvalue {
 	int integer;

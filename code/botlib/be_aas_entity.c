@@ -34,16 +34,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "be_interface.h"
 #include "be_aas_def.h"
 
-// FIXME: these might change
-enum {
-	ET_GENERAL,
-	ET_PLAYER,
-	ET_MISSILE,
-	ET_TEAM,
-	ET_ITEM,
-	ET_MOVER
-};
-
 /*
 =======================================================================================================================================
 AAS_UpdateEntity
