@@ -91,22 +91,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #endif
 
 typedef enum {
-	GT_SINGLE_PLAYER,	// single player ffa
-	GT_FFA,				// free for all
-	GT_TOURNAMENT,		// one on one tournament
-	//-- team games go after this --
-	GT_TEAM,			// team deathmatch
-	GT_CTF,				// capture the flag
-	GT_1FCTF,
-	GT_OBELISK,
-	GT_HARVESTER,
-	GT_MAX_GAME_TYPE
-} gametype_t;
-
-extern const char *bg_netGametypeNames[GT_MAX_GAME_TYPE];
-extern const char *bg_displayGametypeNames[GT_MAX_GAME_TYPE];
-
-typedef enum {
 	GENDER_MALE,
 	GENDER_FEMALE,
 	GENDER_NEUTER
@@ -583,22 +567,6 @@ void FinalizeTracemapClamp(int *x, int *y);
 #define MASK_WATER			(CONTENTS_WATER|CONTENTS_LAVA|CONTENTS_SLIME)
 #define MASK_OPAQUE			(CONTENTS_SOLID|CONTENTS_SLIME|CONTENTS_LAVA)
 #define MASK_SHOT			(CONTENTS_SOLID|CONTENTS_BODY|CONTENTS_CORPSE)
-// entityState_t->eType
-typedef enum {
-	ET_GENERAL,
-	ET_PLAYER,
-	ET_MISSILE,
-	ET_TEAM,
-	ET_ITEM,
-	ET_MOVER,
-	ET_SPEAKER,
-	ET_PORTAL,
-	ET_BEAM,
-	ET_TELEPORT_TRIGGER,
-	ET_PUSH_TRIGGER,
-	ET_INVISIBLE,
-	ET_EVENTS // any of the EV_* events can be added freestanding by setting eType to ET_EVENTS + eventNum this avoids having to set eFlags and eventNum
-} entityType_t;
 
 void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qboolean isAngle, int splinePath);
 void BG_EvaluateTrajectoryDelta(const trajectory_t *tr, int atTime, vec3_t result, qboolean isAngle, int splineData);

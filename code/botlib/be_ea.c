@@ -36,7 +36,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "be_ea.h"
 
 #define MAX_USERMOVE 400
-#define MAX_COMMANDARGUMENTS 10
 
 bot_input_t *botinputs;
 

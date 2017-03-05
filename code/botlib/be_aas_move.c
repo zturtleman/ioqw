@@ -685,6 +685,7 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 			// trace a bounding box
 			trace = AAS_TraceClientBBox(org, end, presencetype, entnum, contentmask);
 //#ifdef AAS_MOVE_DEBUG
+#if 0 // ZTM: interfering with my testing
 			if (visualize) {
 				if (trace.startsolid) {
 					botimport.Print(PRT_MESSAGE, "PredictMovement: start solid\n");
@@ -692,6 +693,7 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 
 				AAS_DebugLine(org, trace.endpos, LINECOLOR_RED);
 			}
+#endif
 //#endif // AAS_MOVE_DEBUG
 			if (stopevent & (SE_ENTERAREA|SE_TOUCHJUMPPAD|SE_TOUCHTELEPORTER|SE_TOUCHCLUSTERPORTAL)) {
 				numareas = AAS_TraceAreas(org, trace.endpos, areas, points, 20);
@@ -817,6 +819,7 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 							left_test_vel[2] = 0;
 							frame_test_vel[2] = 0;
 //#ifdef AAS_MOVE_DEBUG
+#if 0 // ZTM: interfering with my testing
 							if (visualize) {
 								if (steptrace.endpos[2] - org[2] > 0.125) {
 									VectorCopy(org, start);
@@ -824,6 +827,7 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 									AAS_DebugLine(org, start, LINECOLOR_BLUE);
 								}
 							}
+#endif
 //#endif // AAS_MOVE_DEBUG
 							org[2] = steptrace.endpos[2];
 							step = qtrue;
@@ -889,6 +893,11 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 								move->endcontents = 0;
 								move->time = n * frametime;
 								move->frames = n;
+
+								if (visualize) {
+									AAS_DebugLine(origin, move->endpos, LINECOLOR_RED);
+								}
+
 								return qtrue;
 							}
 						}
@@ -945,6 +954,11 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 				move->endcontents = pc;
 				move->time = n * frametime;
 				move->frames = n;
+
+				if (visualize) {
+					AAS_DebugLine(origin, move->endpos, LINECOLOR_YELLOW);
+				}
+
 				return qtrue;
 			}
 		}
@@ -996,6 +1010,11 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 						move->endcontents = 0;
 						move->time = n * frametime;
 						move->frames = n;
+
+						if (visualize) {
+							AAS_DebugLine(origin, move->endpos, LINECOLOR_CYAN);
+						}
+
 						return qtrue;
 					}
 				}
@@ -1011,6 +1030,10 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 	move->endcontents = 0;
 	move->time = n * frametime;
 	move->frames = n;
+
+	if (visualize) {
+		AAS_DebugLine(origin, move->endpos, LINECOLOR_GREEN);
+	}
 
 	return qtrue;
 }

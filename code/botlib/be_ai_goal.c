@@ -79,19 +79,6 @@ typedef struct campspot_s {
 	float random;
 	struct campspot_s *next;
 } campspot_t;
-// FIXME: these are game specific
-typedef enum {
-	GT_SINGLE_PLAYER,	// single player tournament
-	GT_FFA,				// free for all
-	GT_TOURNAMENT,		// one on one tournament
-	//-- team games go after this --
-	GT_TEAM,			// team deathmatch
-	GT_CTF,				// capture the flag
-	GT_1FCTF,
-	GT_OBELISK,
-	GT_HARVESTER,
-	GT_MAX_GAME_TYPE
-} gametype_t;
 
 typedef struct levelitem_s {
 	int number;			// number of the level item
@@ -871,7 +858,9 @@ int BotGetLevelItemGoal(int index, char *name, bot_goal_t *goal) {
 			if (li->flags & IFL_NOTSINGLE) {
 				continue;
 			}
-		} else if (g_gametype > GT_TOURNAMENT) {
+		}
+
+		if (g_gametype > GT_TOURNAMENT) {
 			if (li->flags & IFL_NOTTEAM) {
 				continue;
 			}
@@ -1009,9 +998,6 @@ void BotFindEntityForLevelItem(levelitem_t *li) {
 BotUpdateEntityItems
 =======================================================================================================================================
 */
-// NOTE: enum entityType_t in bg_public.h
-#define ET_ITEM 4
-
 void BotUpdateEntityItems(void) {
 	int ent, i, modelindex;
 	vec3_t dir;
@@ -1096,7 +1082,9 @@ void BotUpdateEntityItems(void) {
 				if (li->flags & IFL_NOTSINGLE) {
 					continue;
 				}
-			} else if (g_gametype > GT_TOURNAMENT) {
+			}
+
+			if (g_gametype > GT_TOURNAMENT) {
 				if (li->flags & IFL_NOTTEAM) {
 					continue;
 				}
@@ -1359,7 +1347,9 @@ int BotChooseLTGItem(int goalstate, vec3_t origin, int *inventory, int travelfla
 			if (li->flags & IFL_NOTSINGLE) {
 				continue;
 			}
-		} else if (g_gametype > GT_TOURNAMENT) {
+		}
+
+		if (g_gametype > GT_TOURNAMENT) {
 			if (li->flags & IFL_NOTTEAM) {
 				continue;
 			}
@@ -1547,7 +1537,9 @@ int BotChooseNBGItem(int goalstate, vec3_t origin, int *inventory, int travelfla
 			if (li->flags & IFL_NOTSINGLE) {
 				continue;
 			}
-		} else if (g_gametype > GT_TOURNAMENT) {
+		}
+
+		if (g_gametype > GT_TOURNAMENT) {
 			if (li->flags & IFL_NOTTEAM) {
 				continue;
 			}

@@ -36,7 +36,6 @@ qboolean AAS_EntityCollision(int entnum, vec3_t start, vec3_t boxmins, vec3_t bo
 // for debugging
 void AAS_PrintFreeBSPLinks(char *str);
 #endif // AASINTERN
-#define MAX_EPAIRKEY 128
 // trace through the world
 bsp_trace_t AAS_Trace(vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, int passent, int contentmask);
 // returns the contents at the given point
