@@ -46,10 +46,14 @@ An item fires all of its targets when it is picked up. If the toucher can't carr
 "notfree" if set to 1, don't spawn in free for all games
 "notteam" if set to 1, don't spawn in team games
 "notsingle" if set to 1, don't spawn in single player games
-"wait"	override the default wait before respawning. -1 = never respawn automatically, which can be used with targeted spawning.
+"wait" override the default wait before respawning. -1 = never respawn automatically, which can be used with targeted spawning.
 "random" random number of plus or minus seconds varied from the respawn time
 "count" override quantity or duration on most items.
 */
+
+/**************************************************************************************************************************************
+	LEAVE INDEX 0 ALONE!
+**************************************************************************************************************************************/
 
 gitem_t bg_itemlist[] = {
 	{
@@ -62,11 +66,11 @@ gitem_t bg_itemlist[] = {
 		0,
 		0,
 /* sounds */ ""
-	}, // leave index 0 alone
+	},
 
-	//
-	// HEALTH
-	//
+/**************************************************************************************************************************************
+	HEALTH
+**************************************************************************************************************************************/
 
 /*QUAKED item_health_small (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 */
@@ -124,9 +128,9 @@ gitem_t bg_itemlist[] = {
 /* sounds */ ""
 	},
 
-	//
-	// ARMOR
-	//
+/**************************************************************************************************************************************
+	ARMOR
+**************************************************************************************************************************************/
 
 /*QUAKED item_armor_shard (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 */
@@ -184,9 +188,9 @@ gitem_t bg_itemlist[] = {
 /* sounds */ ""
 	},
 
-	//
-	// WEAPONS
-	//
+/**************************************************************************************************************************************
+	WEAPONS
+**************************************************************************************************************************************/
 
 /*QUAKED weapon_gauntlet (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 */
@@ -426,9 +430,9 @@ gitem_t bg_itemlist[] = {
 /* sounds */ ""
 	},
 
-	//
-	// AMMO ITEMS
-	//
+/**************************************************************************************************************************************
+	AMMO
+**************************************************************************************************************************************/
 
 /*QUAKED ammo_clip (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 */
@@ -466,7 +470,7 @@ gitem_t bg_itemlist[] = {
 		{"models/powerups/ammo/hmgunam.md3", NULL, NULL, NULL},
 /* icon */		"icons/icona_hmgun",
 /* pickup */	"HMG Bullets",
-		100,
+		80,
 		IT_AMMO,
 		WP_HEAVY_MACHINEGUN,
 /* sounds */ ""
@@ -508,7 +512,7 @@ gitem_t bg_itemlist[] = {
 		{"models/powerups/ammo/nailgunam.md3", NULL, NULL, NULL},
 /* icon */		"icons/icona_nailgun",
 /* pickup */	"Nails",
-		20,
+		5,
 		IT_AMMO,
 		WP_NAILGUN,
 /* sounds */ ""
@@ -536,7 +540,7 @@ gitem_t bg_itemlist[] = {
 		{"models/powerups/ammo/proxmineam.md3", NULL, NULL, NULL},
 /* icon */		"icons/icona_proxlauncher",
 /* pickup */	"Proximity Mines",
-		10,
+		5,
 		IT_AMMO,
 		WP_PROXLAUNCHER,
 /* sounds */ ""
@@ -648,15 +652,15 @@ gitem_t bg_itemlist[] = {
 		{"models/powerups/ammo/missileam.md3", NULL, NULL, NULL},
 /* icon */		"icons/icona_missile",
 /* pickup */	"Missiles",
-		4,
+		3,
 		IT_AMMO,
 		WP_MISSILELAUNCHER,
 /* sounds */ ""
 	},
 
-	//
-	// HOLDABLE ITEMS
-	//
+/**************************************************************************************************************************************
+	HOLDABLE ITEMS
+**************************************************************************************************************************************/
 
 /*QUAKED holdable_kamikaze (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 */
@@ -672,9 +676,9 @@ gitem_t bg_itemlist[] = {
 /* sounds */ "sound/items/kamikazerespawn.wav"
 	},
 
-	//
-	// POWERUP ITEMS
-	//
+/**************************************************************************************************************************************
+	POWERUP ITEMS
+**************************************************************************************************************************************/
 
 /*QUAKED item_quad (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 */
@@ -718,9 +722,9 @@ gitem_t bg_itemlist[] = {
 /* sounds */ "sound/items/regen.wav"
 	},
 
-	//
-	// PERSISTANT POWERUP ITEMS
-	//
+/**************************************************************************************************************************************
+	PERSISTANT POWERUP ITEMS
+**************************************************************************************************************************************/
 
 /*QUAKED item_ammoregen (.3 .3 1) (-16 -16 -16) (16 16 16) suspended redTeam blueTeam
 */
@@ -778,9 +782,9 @@ gitem_t bg_itemlist[] = {
 /* sounds */ ""
 	},
 
-	//
-	// TEAM ITEMS
-	//
+/**************************************************************************************************************************************
+	TEAM ITEMS
+**************************************************************************************************************************************/
 
 /*QUAKED team_CTF_redflag (1 0 0) (-16 -16 -16) (16 16 16)
 Only in CTF games
