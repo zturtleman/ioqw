@@ -1107,10 +1107,8 @@ qboolean BG_CanItemBeGrabbed(int gametype, const entityState_t *ent, const playe
 				return qfalse;
 			}
 			// check team only
-			if (gametype > GT_TEAM) {
-				if (ent->team != 255 && (ps->persistant[PERS_TEAM] != ent->team)) {
-					return qfalse;
-				}
+			if (ent->team != 255 && (ps->persistant[PERS_TEAM] != ent->team)) {
+				return qfalse;
 			}
 
 			return qtrue;
