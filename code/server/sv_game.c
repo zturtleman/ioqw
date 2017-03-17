@@ -435,7 +435,7 @@ intptr_t SV_GameSystemCalls(intptr_t *args) {
 				return 0;
 			}
 #endif
-			return FS_Read2(VMA(1), args[2], args[3]);
+			return FS_Read(VMA(1), args[2], args[3]);
 		case G_FS_WRITE:
 #ifdef NEW_FILESYSTEM
 			if (fs_handle_get_vm_owner(args[3]) != 4) {

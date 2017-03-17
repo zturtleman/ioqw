@@ -2989,7 +2989,7 @@ void CL_InitRef(void) {
 #endif
 	Com_Printf("----- Initializing Renderer ----\n");
 #ifdef USE_RENDERER_DLOPEN
-	cl_renderer = Cvar_Get("cl_renderer", "opengl2", CVAR_ARCHIVE|CVAR_LATCH);
+	cl_renderer = Cvar_Get("cl_renderer", "opengl2", CVAR_ARCHIVE|CVAR_LATCH|CVAR_PROTECTED);
 
 	Com_sprintf(dllName, sizeof(dllName), "renderer_%s_" ARCH_STRING DLL_EXT, cl_renderer->string);
 
@@ -3348,7 +3348,7 @@ void CL_Init(void) {
 	cl_showMouseRate = Cvar_Get("cl_showmouserate", "0", 0);
 	cl_allowDownload = Cvar_Get("cl_allowDownload", "1", CVAR_ARCHIVE);
 #ifdef USE_CURL_DLOPEN
-	cl_cURLLib = Cvar_Get("cl_cURLLib", DEFAULT_CURL_LIB, CVAR_ARCHIVE);
+	cl_cURLLib = Cvar_Get("cl_cURLLib", DEFAULT_CURL_LIB, CVAR_ARCHIVE|CVAR_PROTECTED);
 #endif
 	cl_conXOffset = Cvar_Get("cl_conXOffset", "0", 0);
 #ifdef __APPLE__
