@@ -813,7 +813,7 @@ intptr_t CL_UISystemCalls(intptr_t *args) {
 		case UI_FS_FOPENFILE:
 			return FS_FOpenFileByMode(VMA(1), VMA(2), args[3]);
 		case UI_FS_READ:
-			FS_Read2(VMA(1), args[2], args[3]);
+			FS_Read(VMA(1), args[2], args[3]);
 			return 0;
 		case UI_FS_WRITE:
 			FS_Write(VMA(1), args[2], args[3]);

@@ -522,7 +522,6 @@ int FS_FileIsInPAK(const char *filename, int *pChecksum);
 // returns 1 if a file is in the PAK file, otherwise -1
 int FS_Delete(char *filename); // only works inside the 'save' directory (for deleting savegames/images)
 int FS_Write(const void *buffer, int len, fileHandle_t f);
-int FS_Read2(void *buffer, int len, fileHandle_t f);
 int FS_Read(void *buffer, int len, fileHandle_t f);
 // properly handles partial reads and reads from other dlls
 void FS_FCloseFile(fileHandle_t f);
