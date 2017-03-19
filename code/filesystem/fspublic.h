@@ -1,7 +1,7 @@
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
-              2017 Noah Metzger (chomenor@gmail.com)
+Copyright (C) 2017 Noah Metzger (chomenor@gmail.com)
 
 This file is part of Quake III Arena source code.
 
@@ -139,6 +139,7 @@ typedef struct {
 #ifdef FSLOCAL
 extern cvar_t *fs_mod_settings;
 extern cvar_t *fs_index_cache;
+extern cvar_t *fs_search_inactive_mods;
 extern cvar_t *fs_reference_inactive_mods;
 extern cvar_t *fs_redownload_across_mods;
 extern cvar_t *fs_full_pure_validation;
@@ -224,14 +225,14 @@ int	FS_GetFileList(  const char *path, const char *extension, char *listbuf, int
 
 // Path Handling
 #ifdef FSLOCAL
+int fs_generate_path_sourcedir(int source_dir_id, const char *path1, const char *path2,
+		int path1_flags, int path2_flags, char *target, int target_size);
+#endif
 int fs_generate_path(const char *path1, const char *path2, const char *path3,
 		int path1_flags, int path2_flags, int path3_flags,
-		char *target, int target_size, qboolean allow_truncation);
-int fs_generate_path_sourcedir(int source_dir_id, const char *path1, const char *path2,
-		int path1_flags, int path2_flags, char *target, int target_size, qboolean allow_truncation);
-#endif
+		char *target, int target_size);
 int fs_generate_path_writedir(const char *path1, const char *path2, int path1_flags, int path2_flags,
-		char *target, int target_size, qboolean allow_truncation);
+		char *target, int target_size);
 
 // Direct file access
 #ifdef FSLOCAL
@@ -374,6 +375,7 @@ int fs_compare_file_name(const fsc_file_t *file1, const fsc_file_t *file2);
 #define FS_FILE_BUFFER_SIZE 512
 int fs_get_source_dir_id(const fsc_file_t *file);
 char *fs_get_source_dir_string(const fsc_file_t *file);
+qboolean fs_inactive_mod_file_disabled(const fsc_file_t *file, int level);
 void fs_file_to_stream(const fsc_file_t *file, fsc_stream_t *stream, qboolean include_source_dir,
 			qboolean include_mod, qboolean include_pk3_origin, qboolean include_size);
 void fs_file_to_buffer(const fsc_file_t *file, char *buffer, int buffer_size, qboolean include_source_dir,
@@ -386,6 +388,7 @@ void fs_print_file_location(const fsc_file_t *file);
 void fs_execute_config_file(const char *name, fs_config_type_t config_type, cbufExec_t exec_type, qboolean quiet);
 void *fs_load_game_dll(const char *name, intptr_t (QDECL **entryPoint)(int, ...),
 		intptr_t (QDECL *systemcalls)(intptr_t, ...));
+int fs_valid_md3_lods(int max_lods, const char *name, const char *extension);
 void FS_GetModDescription(const char *modDir, char *description, int descriptionLen);
 void FS_FilenameCompletion( const char *dir, const char *ext,
 		qboolean stripExt, void(*callback)(const char *s), qboolean allowNonPureFilesOnDisk );

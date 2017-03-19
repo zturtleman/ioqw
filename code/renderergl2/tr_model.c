@@ -46,7 +46,9 @@ qhandle_t R_RegisterMD3(const char *name, model_t *mod)
 	int			numLoaded;
 	char filename[MAX_QPATH], namebuf[MAX_QPATH+20];
 	char *fext, defex[] = "md3";
-
+#ifdef NEW_FILESYSTEM
+	int max_lods;
+#endif
 	numLoaded = 0;
 
 	strcpy(filename, name);
@@ -59,8 +61,14 @@ qhandle_t R_RegisterMD3(const char *name, model_t *mod)
 		*fext = '\0';
 		fext++;
 	}
-
+#ifdef NEW_FILESYSTEM
+	if(tr.new_filesystem) max_lods = ri.fs_valid_md3_lods(MD3_MAX_LODS, filename, fext);
+	else max_lods = MD3_MAX_LODS;
+	for(lod=0; lod<max_lods; ++lod)
+#else
 	for (lod = MD3_MAX_LODS - 1 ; lod >= 0 ; lod--)
+#endif
+
 	{
 		if(lod)
 			Com_sprintf(namebuf, sizeof(namebuf), "%s_%d.%s", filename, lod, fext);
@@ -69,8 +77,11 @@ qhandle_t R_RegisterMD3(const char *name, model_t *mod)
 
 		size = ri.FS_ReadFile( namebuf, &buf.v );
 		if(!buf.u)
+#ifdef NEW_FILESYSTEM
+			break;
+#else
 			continue;
-		
+#endif
 		ident = LittleLong(* (unsigned *) buf.u);
 		if (ident == MD3_IDENT)
 			loaded = R_LoadMD3(mod, lod, buf.u, size, name);
@@ -90,6 +101,7 @@ qhandle_t R_RegisterMD3(const char *name, model_t *mod)
 
 	if(numLoaded)
 	{
+#ifndef NEW_FILESYSTEM
 		// duplicate into higher lod spots that weren't
 		// loaded, in case the user changes r_lodbias on the fly
 		for(lod--; lod >= 0; lod--)
@@ -97,7 +109,7 @@ qhandle_t R_RegisterMD3(const char *name, model_t *mod)
 			mod->numLods++;
 			mod->mdv[lod] = mod->mdv[lod + 1];
 		}
-
+#endif 
 		return mod->index;
 	}
 

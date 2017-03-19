@@ -1,7 +1,7 @@
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
-              2017 Noah Metzger (chomenor@gmail.com)
+Copyright (C) 2017 Noah Metzger (chomenor@gmail.com)
 
 This file is part of Quake III Arena source code.
 
@@ -252,6 +252,22 @@ char *fs_get_source_dir_string(const fsc_file_t *file) {
 	if(id >= 0 && id < FS_SOURCEDIR_COUNT) return sourcedirs[id].name;
 	return "unknown"; }
 
+qboolean fs_inactive_mod_file_disabled(const fsc_file_t *file, int level) {
+	// Check if a file is disabled by inactive mod settings
+	if(level < 2) {
+		// Look for active mod dir match
+		const char *file_mod_dir = fsc_get_mod_dir(file, &fs);
+		if(!Q_stricmp(file_mod_dir, com_basegame->string)) return qfalse;
+		if(*current_mod_dir && !Q_stricmp(file_mod_dir, current_mod_dir)) return qfalse;
+		if(!Q_stricmp(file_mod_dir, "basemod")) return qfalse;
+		if(level == 1 && file->sourcetype == FSC_SOURCETYPE_PK3) {
+			// Also look for pure list or system pak match
+			unsigned int hash = ((fsc_file_direct_t *)STACKPTR(((fsc_file_frompk3_t *)file)->source_pk3))->pk3_hash;
+			if(pk3_list_lookup(&connected_server_pk3_list, hash, qfalse)) return qfalse;
+			if(system_pk3_position(hash)) return qfalse; }
+		return qtrue; }
+	return qfalse; }
+
 void fs_file_to_stream(const fsc_file_t *file, fsc_stream_t *stream, qboolean include_source_dir,
 			qboolean include_mod, qboolean include_pk3_origin, qboolean include_size) {
 	if(include_source_dir) {
@@ -354,6 +370,39 @@ void *fs_load_game_dll(const char *name, intptr_t (QDECL **entryPoint)(int, ...)
 		Com_Printf("Error: failed to load game dll\n"); }
 	fsc_free(dll_path_string);
 	return dll_handle; }
+
+int fs_valid_md3_lods(int max_lods, const char *name, const char *extension) {
+	// Returns number of valid md3 lods to attempt loading
+	// Ensures all lods are from the same location/pk3 to avoid inconsistencies
+	char namebuf[FSC_MAX_QPATH];
+	const fsc_file_t *base_file;
+	int lod;
+
+	for(lod=0; lod<max_lods; ++lod) {
+		// Get current_file
+		const fsc_file_t *current_file;
+		if(lod) Com_sprintf(namebuf, sizeof(namebuf), "%s_%d.%s", name, lod, extension);
+		else Com_sprintf(namebuf, sizeof(namebuf), "%s.%s", name, extension);
+		current_file = fs_general_lookup(namebuf, qtrue, qtrue, qfalse);
+		if(!current_file) return lod;
+
+		// If it's lod 0 save it as base file
+		if(!lod) base_file = current_file;
+
+		// Otherwise make sure it's compatible with base file
+		else {
+			if(current_file->sourcetype != base_file->sourcetype) {
+				if(com_developer->integer || fs_debug_lookup->integer)
+					Com_Printf("WARNING: Skipping md3 lod from different sourcetypes for %s\n", name);
+				return lod; }
+			if(current_file->sourcetype == FSC_SOURCETYPE_PK3 &&
+					((fsc_file_frompk3_t *)current_file)->source_pk3 !=
+					((fsc_file_frompk3_t *)base_file)->source_pk3) {
+				if(com_developer->integer || fs_debug_lookup->integer)
+					Com_Printf("WARNING: Skipping md3 lod from different paks for %s\n", name);
+				return lod; } } }
+
+	return max_lods; }
 
 void FS_GetModDescription(const char *modDir, char *description, int descriptionLen) {
 	char *descPath = va("%s/description.txt", modDir);

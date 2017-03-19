@@ -575,7 +575,7 @@ qboolean CL_CloseAVI(void) {
 	{
 		char path[FS_MAX_PATH];
 	
-		if (fs_generate_path_writedir(FS_GetCurrentGameDir(), idxFileName, 0, FS_ALLOW_SLASH, path, sizeof(path), qfalse)) {
+		if (fs_generate_path_writedir(FS_GetCurrentGameDir(), idxFileName, 0, FS_ALLOW_SLASH, path, sizeof(path))) {
 			afd.idxF = fs_direct_read_handle_open(0, path, (unsigned int *)&indexSize);
 		}
 	}

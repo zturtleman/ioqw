@@ -3066,6 +3066,7 @@ void CL_InitRef(void) {
 	ri.fs_shader_lookup = fs_shader_lookup;
 	ri.fs_read_shader = fs_read_shader;
 	ri.fs_file_extension = fs_file_extension;
+	ri.fs_valid_md3_lods = fs_valid_md3_lods;
 #endif
 	ret = GetRefAPI(REF_API_VERSION, &ri);
 #if defined __USEA3D && defined __A3D_GEOM

@@ -1,7 +1,7 @@
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
-              2017 Noah Metzger (chomenor@gmail.com)
+Copyright (C) 2017 Noah Metzger (chomenor@gmail.com)
 
 This file is part of Quake III Arena source code.
 
@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 cvar_t *fs_mod_settings;
 cvar_t *fs_index_cache;
+cvar_t *fs_search_inactive_mods;
 cvar_t *fs_reference_inactive_mods;
 cvar_t *fs_redownload_across_mods;
 cvar_t *fs_full_pure_validation;
@@ -128,7 +129,9 @@ void fs_disconnect_cleanup(void) {
 static void convert_mod_dir(const char *source, char *target) {
 	// Sanitizes mod dir, and replaces com_basegame with empty string
 	// Target should be size FSC_MAX_MODDIR
-	if(!fs_generate_path(source, 0, 0, 0, 0, 0, target, FSC_MAX_MODDIR, qtrue)) *target = 0;
+	char buffer[FSC_MAX_MODDIR];
+	Q_strncpyz(buffer, source, sizeof(buffer));
+	if(!fs_generate_path(buffer, 0, 0, 0, 0, 0, target, FSC_MAX_MODDIR)) *target = 0;
 	else if(!Q_stricmp(target, "basemod")) *target = 0;
 	else if(!Q_stricmp(target, com_basegame->string)) *target = 0; }
 
@@ -193,7 +196,7 @@ static qboolean prepare_writable_directory(char *directory) {
 	void *fp;
 
 	if(!fs_generate_path(directory, "writetest.dat", 0, FS_CREATE_DIRECTORIES|FS_NO_SANITIZE,
-			0, 0, path, sizeof(path), qfalse)) return qfalse;
+			0, 0, path, sizeof(path))) return qfalse;
 	fp = fs_open_file(path, "wb");
 	if(!fp) return qfalse;
 	fsc_fclose(fp);
@@ -352,7 +355,7 @@ void fs_auto_refresh(void) {
 
 static void *get_fscache_path(void) {
 	char path[FS_MAX_PATH];
-	if(!fs_generate_path_sourcedir(0, "fscache.dat", 0, 0, 0, path, sizeof(path), qfalse)) return 0;
+	if(!fs_generate_path_sourcedir(0, "fscache.dat", 0, 0, 0, path, sizeof(path))) return 0;
 	return fsc_string_to_os_path(path); }
 
 void fs_indexcache_write(void) {
@@ -403,6 +406,7 @@ void fs_startup(void) {
 
 	fs_mod_settings = Cvar_Get("fs_mod_settings", "0", CVAR_ARCHIVE);
 	fs_index_cache = Cvar_Get("fs_index_cache", "1", CVAR_INIT);
+	fs_search_inactive_mods = Cvar_Get("fs_search_inactive_mods", "2", CVAR_ARCHIVE);
 	fs_reference_inactive_mods = Cvar_Get("fs_reference_inactive_mods", "0", CVAR_ARCHIVE);
 	fs_redownload_across_mods = Cvar_Get("fs_redownload_across_mods", "1", CVAR_ARCHIVE);
 	fs_full_pure_validation = Cvar_Get("fs_full_pure_validation", "0", CVAR_ARCHIVE);
@@ -436,7 +440,7 @@ void fs_startup(void) {
 	fs_initialized = qtrue;
 
 #ifndef STANDALONE
-//	FS_CheckPak0();
+	FS_CheckPak0();
 #endif
 }
 
