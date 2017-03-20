@@ -88,7 +88,6 @@ vmCvar_t g_smoothClients;
 vmCvar_t pmove_fixed;
 vmCvar_t pmove_msec;
 vmCvar_t g_rankings;
-vmCvar_t g_listEntity;
 vmCvar_t g_singlePlayer;
 vmCvar_t g_obeliskHealth;
 vmCvar_t g_obeliskRegenPeriod;
@@ -153,7 +152,6 @@ static cvarTable_t gameCvarTable[] = {
 	{&g_voteMinFraglimit, "g_voteMinFraglimit", "0", CVAR_SERVERINFO|CVAR_ARCHIVE, 0, qfalse},
 	{&g_voteMaxCapturelimit, "g_voteMaxCapturelimit", "0", CVAR_SERVERINFO|CVAR_ARCHIVE, 0, qfalse},
 	{&g_voteMinCapturelimit, "g_voteMinCapturelimit", "0", CVAR_SERVERINFO|CVAR_ARCHIVE, 0, qfalse},
-	{&g_listEntity, "g_listEntity", "0", 0, 0, qfalse},
 	{&g_singlePlayer, "ui_singlePlayerActive", "0", CVAR_SYSTEMINFO|CVAR_ROM, 0, qfalse, qfalse},
 	{&g_obeliskHealth, "g_obeliskHealth", "2500", 0, 0, qfalse},
 	{&g_obeliskRegenPeriod, "g_obeliskRegenPeriod", "1", 0, 0, qfalse},
@@ -1766,6 +1764,77 @@ void G_RunThink(gentity_t *ent) {
 
 /*
 =======================================================================================================================================
+G_RunEntity
+=======================================================================================================================================
+*/
+void G_RunEntity(gentity_t *ent) {
+
+	if (ent->runthisframe) {
+		return;
+	}
+
+	ent->runthisframe = qtrue;
+
+	if (!ent->inuse) {
+		return;
+	}
+	// clear events that are too old
+	if (level.time - ent->eventTime > EVENT_VALID_MSEC) {
+		if (ent->s.event) {
+			ent->s.event = 0;
+			// Tobias NOTE: try to keep externalEvent?
+			if (ent->client) {
+				ent->client->ps.externalEvent = 0;
+			}
+		}
+
+		if (ent->freeAfterEvent) {
+			// tempEntities or dropped items completely go away after their event
+			G_FreeEntity(ent);
+			return;
+		} else if (ent->unlinkAfterEvent) {
+			// items that will respawn will hide themselves after their pickup event
+			ent->unlinkAfterEvent = qfalse;
+			trap_UnlinkEntity(ent);
+		}
+	}
+	// temporary entities don't think
+	if (ent->freeAfterEvent) {
+		return;
+	}
+
+	if (!ent->r.linked && ent->neverFree) {
+		return;
+	}
+
+	switch(ent->s.eType) {
+		case ET_MISSILE:
+			G_RunMissile(ent);
+			return;
+		default:
+			break;
+	}
+
+	if (ent->s.eType == ET_ITEM || ent->physicsObject) {
+		G_RunItem(ent);
+		return;
+	}
+
+	if (ent->s.eType == ET_MOVER) {
+		G_RunMover(ent);
+		return;
+	}
+
+	if (ent - g_entities < MAX_CLIENTS) {
+		G_RunClient(ent);
+		return;
+	}
+
+	G_RunThink(ent);
+}
+
+/*
+=======================================================================================================================================
 G_RunFrame
 
 Advances the non-player objects in the world.
@@ -1773,7 +1842,6 @@ Advances the non-player objects in the world.
 */
 void G_RunFrame(int levelTime) {
 	int i;
-	gentity_t *ent;
 
 	// if we are waiting for the level to restart, do nothing
 	if (level.restarted) {
@@ -1785,74 +1853,17 @@ void G_RunFrame(int levelTime) {
 	level.time = levelTime;
 	// get any cvar changes
 	G_UpdateCvars();
+
+	for (i = 0; i < level.num_entities; i++) {
+		g_entities[i].runthisframe = qfalse;
+	}
 	// go through all allocated objects
-	ent = &g_entities[0];
-
-	for (i = 0; i < level.num_entities; i++, ent++) {
-		if (!ent->inuse) {
-			continue;
-		}
-		// clear events that are too old
-		if (level.time - ent->eventTime > EVENT_VALID_MSEC) {
-			if (ent->s.event) {
-				ent->s.event = 0; // &= EV_EVENT_BITS;
-
-				if (ent->client) {
-					ent->client->ps.externalEvent = 0;
-					// predicted events should never be set to zero
-					//ent->client->ps.events[0] = 0;
-					//ent->client->ps.events[1] = 0;
-				}
-			}
-
-			if (ent->freeAfterEvent) {
-				// tempEntities or dropped items completely go away after their event
-				G_FreeEntity(ent);
-				continue;
-			} else if (ent->unlinkAfterEvent) {
-				// items that will respawn will hide themselves after their pickup event
-				ent->unlinkAfterEvent = qfalse;
-				trap_UnlinkEntity(ent);
-			}
-		}
-		// temporary entities don't think
-		if (ent->freeAfterEvent) {
-			continue;
-		}
-
-		if (!ent->r.linked && ent->neverFree) {
-			continue;
-		}
-
-		if (ent->s.eType == ET_MISSILE) {
-			G_RunMissile(ent);
-			continue;
-		}
-
-		if (ent->s.eType == ET_ITEM || ent->physicsObject) {
-			G_RunItem(ent);
-			continue;
-		}
-
-		if (ent->s.eType == ET_MOVER) {
-			G_RunMover(ent);
-			continue;
-		}
-
-		if (i < MAX_CLIENTS) {
-			G_RunClient(ent);
-			continue;
-		}
-
-		G_RunThink(ent);
+	for (i = 0; i < level.num_entities; i++) {
+		G_RunEntity(&g_entities[i]);
 	}
 	// perform final fixups on the players
-	ent = &g_entities[0];
-
-	for (i = 0; i < level.maxclients; i++, ent++) {
-		if (ent->inuse) {
-			ClientEndFrame(ent);
-		}
+	for (i = 0; i < level.numConnectedClients; i++) {
+		ClientEndFrame(&g_entities[level.sortedClients[i]]);
 	}
 	// see if it is time to do a tournament restart
 	CheckTournament();
@@ -1867,12 +1878,4 @@ void G_RunFrame(int levelTime) {
 	CheckTeamVote(TEAM_BLUE);
 	// for tracking changes
 	CheckCvars();
-
-	if (g_listEntity.integer) {
-		for (i = 0; i < MAX_GENTITIES; i++) {
-			G_Printf("%4i: %s\n", i, g_entities[i].classname);
-		}
-
-		trap_Cvar_SetValue("g_listEntity", 0);
-	}
 }
