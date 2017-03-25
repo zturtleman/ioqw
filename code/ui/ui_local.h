@@ -129,7 +129,6 @@ extern vmCvar_t ui_server15;
 extern vmCvar_t ui_server16;
 extern vmCvar_t ui_firststart;
 extern vmCvar_t ui_mapicons;
-extern vmCvar_t ui_ingame_dynamicmenu;
 
 // ui_qmenu.c
 #define SLIDER_RANGE 10
