@@ -349,7 +349,7 @@ void UI_VoteKickMenu(void) {
 
 	VoteMenu_Kick_EventCache();
 
-	memset(&s_callvotemenu_kick, 0 , sizeof(votemenu_kick_t));
+	memset(&s_callvotemenu_kick, 0, sizeof(votemenu_kick_t));
 
 	PopulatePlayerList();
 

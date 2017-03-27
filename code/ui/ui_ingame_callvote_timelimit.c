@@ -180,7 +180,7 @@ static void VoteMenu_Timelimit_Cache(void) {
 	int i;
 
 	// touch all our pics
-	for (i = 0; ; i++) {
+	for (i = 0;; i++) {
 		if (!callvotemenu_timelmit_artlist[i]) {
 			break;
 		}
@@ -270,7 +270,7 @@ void UI_VoteTimelimitMenu(void) {
 	char serverinfo[MAX_INFO_STRING];
 
 	// zero set all our globals
-	memset(&s_callvotemenu_timelmit, 0 , sizeof(callvotemenu_t));
+	memset(&s_callvotemenu_timelmit, 0, sizeof(callvotemenu_t));
 
 	trap_GetConfigString(CS_SERVERINFO, serverinfo, MAX_INFO_STRING);
 

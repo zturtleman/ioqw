@@ -295,7 +295,7 @@ void FirstConnect_MenuInit(void) {
 	int y;
 
 	// zero set all our globals
-	memset(&s_firstconnect, 0 , sizeof(firstconnect_t));
+	memset(&s_firstconnect, 0, sizeof(firstconnect_t));
 
 	FirstConnect_Cache();
 
