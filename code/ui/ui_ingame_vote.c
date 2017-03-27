@@ -115,7 +115,7 @@ static void VoteMenu_Cache(void) {
 	int i;
 
 	// touch all our pics
-	for (i = 0; ; i++) {
+	for (i = 0;; i++) {
 		if (!votemenu_artlist[i]) {
 			break;
 		}
@@ -211,7 +211,7 @@ UI_VoteMenu
 void UI_VoteMenu(void) {
 
 	// zero set all our globals
-	memset(&s_votemenu, 0 , sizeof(votemenu_t));
+	memset(&s_votemenu, 0, sizeof(votemenu_t));
 
 	UI_VoteMenuInternal();
 

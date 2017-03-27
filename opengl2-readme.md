@@ -381,7 +381,7 @@ they mean:
     - State how metallic this material is.  Metals typically have a high 
       specular and a low diffuse, so this is typically high for them, and low
       for other materials, such as plastic.  For typical values for various
-      materials, see http://refractiveindex.info , pick a material, then scroll
+      materials, see http://refractiveindex.info, pick a material, then scroll
       down to the reflection calculator and look up its reflectance.  Default
       is 0.04, since most materials aren't metallic.
   

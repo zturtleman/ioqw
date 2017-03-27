@@ -168,7 +168,7 @@ static void CallVoteMenu_Cache(void) {
 	int i;
 
 	// touch all our pics
-	for (i = 0; ; i++) {
+	for (i = 0;; i++) {
 		if (!callvotemenu_artlist[i]) {
 			break;
 		}
@@ -354,7 +354,7 @@ void UI_CallVoteMenu(void) {
 	int gametype;
 
 	// zero set all our globals
-	memset(&s_callvotemenu, 0 , sizeof(callvotemenu_t));
+	memset(&s_callvotemenu, 0, sizeof(callvotemenu_t));
 
 	trap_GetConfigString(CS_SERVERINFO, serverinfo, MAX_INFO_STRING);
 
