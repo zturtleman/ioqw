@@ -920,7 +920,7 @@ qboolean BG_CheckSpawnEntity(const bgEntitySpawnInfo_t *info) {
 		}
 	}
 
-	info->spawnInt("notq3a", "0", &i);
+	info->spawnInt("notta", "0", &i);
 
 	if (i) {
 		return qfalse;
