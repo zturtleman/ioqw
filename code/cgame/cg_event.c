@@ -600,6 +600,20 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			ByteToDir(es->eventParm, dir);
 			CG_MissileHitWall(es->weapon, 0, position, dir, IMPACTSOUND_METAL);
 			break;
+		case EV_PHOSPHORTRAIL:
+			DEBUGNAME("EV_PHOSPHORTRAIL");
+			cent->currentState.weapon = WP_PHOSPHORGUN;
+
+			VectorMA(es->origin2, 4, cg.refdef.viewaxis[1], es->origin2);
+
+			CG_PhosphorTrail(es->origin2, es->pos.trBase);
+			// if the end was on a nomark surface, don't make an explosion
+			if (es->eventParm != 255) {
+				ByteToDir(es->eventParm, dir);
+				CG_MissileHitWall(es->weapon, 0, position, dir, IMPACTSOUND_DEFAULT);
+			}
+
+			break;
 		case EV_RAILTRAIL:
 			DEBUGNAME("EV_RAILTRAIL");
 			cent->currentState.weapon = WP_RAILGUN;
@@ -894,13 +908,13 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 		case EV_PLAYER_TELEPORT_IN:
 			DEBUGNAME("EV_PLAYER_TELEPORT_IN");
 			trap_R_AddLightToScene(cent->lerpOrigin, 300, 1.0f, 1.0f, 0.9f);
-			CG_SpawnEffect(position);
+			CG_SpawnEffectDefault(position);
 			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.teleInSound);
 			break;
 		case EV_PLAYER_TELEPORT_OUT:
 			DEBUGNAME("EV_PLAYER_TELEPORT_OUT");
 			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.teleOutSound);
-			CG_SpawnEffect(position);
+			CG_SpawnEffectDefault(position);
 			break;
 		// weapon events
 		case EV_NOAMMO:
@@ -1044,6 +1058,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 		case EV_ITEM_RESPAWN:
 			DEBUGNAME("EV_ITEM_RESPAWN");
 			trap_R_AddLightToScene(cent->lerpOrigin, 100, 1.0f, 1.0f, 0.9f);
+			CG_SpawnEffectSmall(position);
 			cent->miscTime = cg.time; // scale up from this
 			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.respawnSound);
 			break;

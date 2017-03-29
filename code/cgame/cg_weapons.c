@@ -128,21 +128,14 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, imp
 
 			break;
 		case WP_PHOSPHORGUN:
-			mod = cgs.media.bulletFlashModel;
-			shader = cgs.media.bulletExplosionShader;
-			mark = cgs.media.bulletMarkShader;
-			markRadius = 8;
-			markDuration = 40000;
-			r = rand() & 3;
-
-			if (r == 0) {
-				sfx = cgs.media.sfx_nghit;
-			} else if (r == 1) {
-				sfx = cgs.media.sfx_nghit;
-			} else {
-				sfx = cgs.media.sfx_nghit;
-			}
-
+			mod = cgs.media.dishFlashModel;
+			light = 30;
+			shader = cgs.media.phosphorExplosionShader;
+			isSprite = qtrue;
+			mark = cgs.media.burnMarkShader;
+			markRadius = 10;
+			markDuration = 50000;
+			sfx = cgs.media.sfx_rockexp;
 			break;
 		case WP_PROXLAUNCHER:
 			mod = cgs.media.dishFlashModel;
@@ -326,6 +319,67 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 */
+
+/*
+=======================================================================================================================================
+CG_PhosphorTrail
+
+NOTE: Currently only a modified version of CG_Tracer
+=======================================================================================================================================
+*/
+void CG_PhosphorTrail(vec3_t start, vec3_t end) {
+	vec3_t forward, right, line, midpoint;
+	polyVert_t verts[4];
+
+	VectorSubtract(end, start, forward);
+
+	line[0] = DotProduct(forward, cg.refdef.viewaxis[1]);
+	line[1] = DotProduct(forward, cg.refdef.viewaxis[2]);
+
+	VectorScale(cg.refdef.viewaxis[1], line[1], right);
+	VectorMA(right, -line[0] * 0.15, cg.refdef.viewaxis[2], right);
+	VectorNormalize(right);
+
+	VectorMA(end, cg_tracerWidth.value, right, verts[0].xyz);
+	verts[0].st[0] = 1;
+	verts[0].st[1] = 1;
+	verts[0].modulate[0] = 255;
+	verts[0].modulate[1] = 255;
+	verts[0].modulate[2] = 255;
+	verts[0].modulate[3] = 255;
+
+	VectorMA(end, -cg_tracerWidth.value, right, verts[1].xyz);
+	verts[1].st[0] = 1;
+	verts[1].st[1] = 0;
+	verts[1].modulate[0] = 255;
+	verts[1].modulate[1] = 255;
+	verts[1].modulate[2] = 255;
+	verts[1].modulate[3] = 255;
+
+	VectorMA(start, -cg_tracerWidth.value, right, verts[2].xyz);
+	verts[2].st[0] = 0;
+	verts[2].st[1] = 0;
+	verts[2].modulate[0] = 255;
+	verts[2].modulate[1] = 255;
+	verts[2].modulate[2] = 255;
+	verts[2].modulate[3] = 255;
+
+	VectorMA(start, cg_tracerWidth.value, right, verts[3].xyz);
+	verts[3].st[0] = 0;
+	verts[3].st[1] = 1;
+	verts[3].modulate[0] = 255;
+	verts[3].modulate[1] = 255;
+	verts[3].modulate[2] = 255;
+	verts[3].modulate[3] = 255;
+
+	trap_R_AddPolyToScene(cgs.media.tracerShader, 4, verts);
+
+	midpoint[0] = (start[0] + end[0]) * 0.5;
+	midpoint[1] = (start[1] + end[1]) * 0.5;
+	midpoint[2] = (start[2] + end[2]) * 0.5;
+	// add the tracer sound
+	trap_S_StartSound(midpoint, ENTITYNUM_WORLD, CHAN_AUTO, cgs.media.tracerSound);
+}
 
 /*
 =======================================================================================================================================
@@ -1343,7 +1397,7 @@ void CG_RegisterWeapon(int weaponNum) {
 			weaponInfo->flashSound[2] = trap_S_RegisterSound("sound/weapons/phosphorgun/pf1.wav", qfalse);
 			weaponInfo->flashSound[3] = trap_S_RegisterSound("sound/weapons/phosphorgun/pf1.wav", qfalse);
 			weaponInfo->ejectBrassFunc = CG_ShotgunEjectBrass;
-			cgs.media.bulletExplosionShader = trap_R_RegisterShader("bulletExplosion");
+			cgs.media.phosphorExplosionShader = trap_R_RegisterShader("phosphorExplosion");
 			break;
 		case WP_PROXLAUNCHER:
 			weaponInfo->missileModel = trap_R_RegisterModel("models/weaphits/proxmine.md3");

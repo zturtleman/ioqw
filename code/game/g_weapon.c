@@ -406,7 +406,7 @@ void Weapon_Phosphorgun_Fire(gentity_t *ent) {
 	// snap the endpos to integers to save net bandwidth, but nudged towards the line
 	SnapVectorTowards(trace.endpos, muzzle);
 	// send railgun beam effect
-	tent = G_TempEntity(trace.endpos, EV_RAILTRAIL);
+	tent = G_TempEntity(trace.endpos, EV_PHOSPHORTRAIL);
 	// set player number for custom colors on the railtrail
 	tent->s.clientNum = ent->s.clientNum;
 
