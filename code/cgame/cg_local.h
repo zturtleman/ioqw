@@ -633,6 +633,7 @@ typedef struct {
 	qhandle_t bulletExplosionShader;
 	qhandle_t rocketExplosionShader;
 	qhandle_t grenadeExplosionShader;
+	qhandle_t phosphorExplosionShader;
 	qhandle_t bfgExplosionShader;
 	qhandle_t bloodExplosionShader;
 	// special effects models
@@ -1140,6 +1141,7 @@ void CG_MissileHitPlayer(int weapon, vec3_t origin, vec3_t dir, int entityNum);
 void CG_ShotgunFire(entityState_t *es);
 void CG_Bullet(vec3_t origin, int sourceEntityNum, vec3_t normal, qboolean flesh, int fleshEntityNum);
 void CG_RailTrail(clientInfo_t *ci, vec3_t start, vec3_t end);
+void CG_PhosphorTrail(vec3_t start, vec3_t end);
 void CG_AddViewWeapon(playerState_t *ps);
 void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent, int team);
 void CG_DrawWeaponSelect(void);
@@ -1156,7 +1158,8 @@ void CG_AddLocalEntities(void);
 localEntity_t *CG_SmokePuff(const vec3_t p, const vec3_t vel, float radius, float r, float g, float b, float a, float duration, int startTime, int fadeInTime, int leFlags, qhandle_t hShader);
 void CG_BubbleTrail(vec3_t start, vec3_t end, float spacing);
 int CG_SpawnBubbles(localEntity_t **bubbles, vec3_t origin, float baseSize, int numBubbles);
-void CG_SpawnEffect(vec3_t org);
+void CG_SpawnEffectDefault(vec3_t org);
+void CG_SpawnEffectSmall(vec3_t org);
 void CG_KamikazeEffect(vec3_t org);
 void CG_ObeliskExplode(vec3_t org, int entityNum);
 void CG_ObeliskPain(vec3_t org);

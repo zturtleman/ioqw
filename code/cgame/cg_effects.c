@@ -224,12 +224,46 @@ localEntity_t *CG_SmokePuff(const vec3_t p, const vec3_t vel, float radius, floa
 
 /*
 =======================================================================================================================================
-CG_SpawnEffect
+CG_SpawnEffectSmall
 
 Player teleporting in or out.
 =======================================================================================================================================
 */
-void CG_SpawnEffect(vec3_t org) {
+void CG_SpawnEffectSmall(vec3_t org) {
+	localEntity_t *le;
+	refEntity_t *re;
+
+	le = CG_AllocLocalEntity();
+	le->leFlags = 0;
+	le->leType = LE_FADE_RGB;
+	le->startTime = cg.time;
+	le->endTime = cg.time + 500;
+	le->lifeRate = 1.0 / (le->endTime - le->startTime);
+	le->color[0] = le->color[1] = le->color[2] = le->color[3] = 1.0;
+
+	re = &le->refEntity;
+
+	re->reType = RT_MODEL;
+	re->shaderTime = cg.time / 1000.0f;
+	re->customShader = cgs.media.teleportEffectShader;
+	re->hModel = cgs.media.teleportEffectModel;
+
+	AxisClear(re->axis);
+
+	VectorCopy(org, re->origin);
+	VectorScale(re->axis[2], 0.45, re->axis[2]); // Tobias HACK: decrease the size of the models until we have a models looking similar like the one from Alien Arena item respawn...
+
+	re->origin[2] -= 4;
+}
+
+/*
+=======================================================================================================================================
+CG_SpawnEffectDefault
+
+Player teleporting in or out.
+=======================================================================================================================================
+*/
+void CG_SpawnEffectDefault(vec3_t org) {
 	localEntity_t *le;
 	refEntity_t *re;
 
@@ -252,7 +286,7 @@ void CG_SpawnEffect(vec3_t org) {
 
 	VectorCopy(org, re->origin);
 
-	re->origin[2] -= 24;
+	re->origin[2] -= 4;
 }
 #ifdef MISSIONPACK
 /*
