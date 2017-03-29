@@ -39,8 +39,6 @@ int pcount[256];
 =======================================================================================================================================
 */
 
-static int oldsize = 0;
-
 void MSG_initHuffman(void);
 
 /*
@@ -156,7 +154,6 @@ Negative bit values include signs.
 void MSG_WriteBits(msg_t *msg, int value, int bits) {
 	int i;
 
-	oldsize += bits;
 	// this isn't an exact overflow check, but close enough
 	if (msg->maxsize - msg->cursize < 32) {
 		msg->overflowed = qtrue;
@@ -915,7 +912,6 @@ void MSG_WriteDeltaUsercmdKey(msg_t *msg, int key, usercmd_t *from, usercmd_t *t
 
 	if (from->angles[0] == to->angles[0] && from->angles[1] == to->angles[1] && from->angles[2] == to->angles[2] && from->forwardmove == to->forwardmove && from->rightmove == to->rightmove && from->upmove == to->upmove && from->buttons == to->buttons && from->wbuttons == to->wbuttons && from->weapon == to->weapon && from->flags == to->flags && from->identClient == to->identClient) {
 		MSG_WriteBits(msg, 0, 1); // no change
-		oldsize += 7;
 		return;
 	}
 
@@ -1218,8 +1214,6 @@ void MSG_WriteDeltaEntity(msg_t *msg, struct entityState_s *from, struct entityS
 	MSG_WriteBits(msg, 1, 1); // we have a delta
 	MSG_WriteByte(msg, lc); // # of changes
 
-	oldsize += numFields;
-
 	for (i = 0, field = entityStateFields; i < lc; i++, field++) {
 		fromF = (int *)((byte *)from + field->offset);
 		toF = (int *)((byte *)to + field->offset);
@@ -1238,7 +1232,6 @@ void MSG_WriteDeltaEntity(msg_t *msg, struct entityState_s *from, struct entityS
 
 			if (fullFloat == 0.0f) {
 				MSG_WriteBits(msg, 0, 1);
-				oldsize += FLOAT_INT_BITS;
 			} else {
 				MSG_WriteBits(msg, 1, 1);
 
@@ -1576,8 +1569,6 @@ void MSG_WriteDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct pl
 
 	MSG_WriteByte(msg, lc); // # of changes
 
-	oldsize += numFields - lc;
-
 	for (i = 0, field = playerStateFields; i < lc; i++, field++) {
 		fromF = (int *)((byte *)from + field->offset);
 		toF = (int *)((byte *)to + field->offset);
@@ -1698,7 +1689,6 @@ void MSG_WriteDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct pl
 		}
 	} else {
 		MSG_WriteBits(msg, 0, 1); // no change to any
-		oldsize += 4;
 	}
 	// split this into two groups using shorts so it wouldn't have to use a long every time ammo changed for any weap.
 	// this seemed like a much friendlier option than making it read/write a long for any ammo change.

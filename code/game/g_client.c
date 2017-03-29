@@ -836,6 +836,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot) {
 	memset(client, 0, sizeof(*client));
 
 	client->pers.connected = CON_CONNECTING;
+	client->pers.initialSpawn = qtrue;
 	// check for local client
 	value = Info_ValueForKey(userinfo, "ip");
 
@@ -864,10 +865,6 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot) {
 	if (firstTime) {
 		trap_SendServerCommand(-1, va("print \"%s" S_COLOR_WHITE " connected\n\"", client->pers.netname));
 	}
-
-	if (g_gametype.integer > GT_TOURNAMENT && client->sess.sessionTeam != TEAM_SPECTATOR) {
-		BroadcastTeamChange(client, -1);
-	}
 	// count current clients and rank for scoreboard
 	CalculateRanks();
 	// for statistics
@@ -891,6 +888,7 @@ void ClientBegin(int clientNum) {
 	gentity_t *ent;
 	gclient_t *client;
 	int flags;
+	int i;
 
 	ent = g_entities + clientNum;
 	client = level.clients + clientNum;
@@ -918,11 +916,26 @@ void ClientBegin(int clientNum) {
 	// locate ent at a spawn point
 	ClientSpawn(ent);
 
-	if (client->sess.sessionTeam != TEAM_SPECTATOR) {
-		if (g_gametype.integer != GT_TOURNAMENT) {
-			trap_SendServerCommand(-1, va("print \"%s" S_COLOR_WHITE " entered the game\n\"", client->pers.netname));
+	if (client->pers.initialSpawn && g_gametype.integer != GT_TOURNAMENT) {
+		// this is only sent to bots because for humans the "joining the battle" etc. make it clear that the player is now finished connecting.
+		// bots on the otherhand have "entered the game" hard coded in botfiles/match.c so continue to send it to them.
+		for (i = 0; i < level.maxclients; i++) {
+			if (level.clients[i].pers.connected == CON_DISCONNECTED) {
+				continue;
+			}
+
+			if (!(g_entities[i].r.svFlags & SVF_BOT)) {
+				continue;
+			}
+
+			trap_SendServerCommand(i, va("print \"%s" S_COLOR_WHITE " entered the game.\n\"", client->pers.netname));
 		}
+
+		BroadcastTeamChange(client, -1);
+
 	}
+
+	client->pers.initialSpawn = qfalse;
 
 	G_LogPrintf("ClientBegin: %i\n", clientNum);
 	// count current clients and rank for scoreboard
@@ -968,8 +981,7 @@ void ClientSpawn(gentity_t *ent) {
 		spawnPoint = SelectCTFSpawnPoint(client->sess.sessionTeam, client->pers.teamState.state, spawn_origin, spawn_angles, !!(ent->r.svFlags & SVF_BOT));
 	} else {
 		// the first spawn should be at a good looking spot
-		if (!client->pers.initialSpawn && client->pers.localClient) {
-			client->pers.initialSpawn = qtrue;
+		if (client->pers.initialSpawn && client->pers.localClient) {
 			spawnPoint = SelectInitialSpawnPoint(spawn_origin, spawn_angles, !!(ent->r.svFlags & SVF_BOT));
 		} else {
 			// don't spawn near existing origin if possible

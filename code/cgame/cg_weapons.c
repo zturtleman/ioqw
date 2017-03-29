@@ -1932,22 +1932,21 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent,
 	if (ps || cg.renderingThirdPerson || cent->currentState.number != cg.predictedPlayerState.clientNum) {
 		// add lightning bolt
 		CG_LightningBolt(nonPredictedCent, flash.origin);
-	}
 
-	if (weapon->flashDlightColor[0] || weapon->flashDlightColor[1] || weapon->flashDlightColor[2]) {
-		trap_R_AddLightToScene(flash.origin, 300 + (rand()&31), weapon->flashDlightColor[0], weapon->flashDlightColor[1], weapon->flashDlightColor[2]);
+		if (weapon->flashDlightColor[0] || weapon->flashDlightColor[1] || weapon->flashDlightColor[2]) {
+			trap_R_AddLightToScene(flash.origin, 100 + (rand()&31), weapon->flashDlightColor[0], weapon->flashDlightColor[1], weapon->flashDlightColor[2]);
+		}
 	}
 }
 
 /*
 =======================================================================================================================================
-CG_DrawViewWeapon
+CG_AddViewWeapon
 
-Draw the weapon and flash for the player's view.
+Add the weapon, and flash for the player's view.
 =======================================================================================================================================
 */
-void CG_DrawViewWeapon(playerState_t *ps) {
-	refdef_t refdef;
+void CG_AddViewWeapon(playerState_t *ps) {
 	refEntity_t hand;
 	centity_t *cent;
 	clientInfo_t *ci;
@@ -1984,20 +1983,20 @@ void CG_DrawViewWeapon(playerState_t *ps) {
 	if (cg.testGun) {
 		return;
 	}
-	// copy world refdef and set weapon field of view
-	refdef = cg.refdef;
-	refdef.rdflags = RDF_NOWORLDMODEL;
-
-	CG_CalcFov(&refdef, qtrue);
 
 	VectorClear(fovOffset);
 
-	if (cg.viewWeaponFov > 90) {
-		// drop gun lower at higher fov
-		fovOffset[2] = -0.2 * (cg.viewWeaponFov - 90) * cg.refdef.fov_x / cg.viewWeaponFov;
-	} else if ( cg.viewWeaponFov < 90 ) {
-		// move gun forward at lowerer fov
-		fovOffset[0] = -0.2 * (cg.viewWeaponFov - 90) * cg.refdef.fov_x / cg.viewWeaponFov;
+	if (cg_fovGunAdjust.integer) {
+		if (cg.fov > 90) {
+			// drop gun lower at higher fov
+			fovOffset[2] = -0.2 * (cg.fov - 90) * cg.refdef.fov_x / cg.fov;
+		} else if (cg.fov < 90) {
+			// move gun forward at lowerer fov
+			fovOffset[0] = -0.2 * (cg.fov - 90) * cg.refdef.fov_x / cg.fov;
+		}
+	} else if (cg_fov.integer > 90) {
+		// Q3A's auto adjust
+		fovOffset[2] = -0.2 * (cg_fov.integer - 90);
 	}
 
 	cent = &cg.predictedPlayerEntity; // &cg_entities[cg.snap->ps.clientNum];
@@ -2029,11 +2028,9 @@ void CG_DrawViewWeapon(playerState_t *ps) {
 	}
 
 	hand.hModel = weapon->handsModel;
-	hand.renderfx = RF_DEPTHHACK|RF_FIRST_PERSON|RF_LIGHTING_GRID;
+	hand.renderfx = RF_DEPTHHACK|RF_FIRST_PERSON|RF_MINLIGHT;
 	// add everything onto the hand
 	CG_AddPlayerWeapon(&hand, ps, &cg.predictedPlayerEntity, ps->persistant[PERS_TEAM]);
-
-	trap_R_RenderScene(&refdef);
 }
 
 /*

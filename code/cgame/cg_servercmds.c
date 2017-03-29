@@ -194,7 +194,7 @@ static void CG_ParseWarmup(void) {
 	if (warmup == 0 && cg.warmup) {
 
 	} else if (warmup > 0 && cg.warmup <= 0) {
-		if (cgs.gametype > GT_TEAM) {
+		if (cgs.gametype > GT_TOURNAMENT && cgs.gametype <= GT_HARVESTER) {
 			trap_S_StartLocalSound(cgs.media.countPrepareTeamSound, CHAN_ANNOUNCER);
 		} else {
 			trap_S_StartLocalSound(cgs.media.countPrepareSound, CHAN_ANNOUNCER);
