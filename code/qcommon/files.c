@@ -1282,7 +1282,7 @@ long FS_FOpenFileRead(const char *filename, fileHandle_t *file, qboolean uniqueF
 	isLocalConfig = !strcmp(filename, "autoexec.cfg") || !strcmp(filename, QWCONFIG_CFG);
 
 	for (search = fs_searchpaths; search; search = search->next) {
-		// autoexec.cfg and q3config.cfg can only be loaded outside of pk3 files.
+		// autoexec.cfg and qwconfig.cfg can only be loaded outside of pk3 files.
 		if (isLocalConfig && search->pack) {
 			continue;
 		}

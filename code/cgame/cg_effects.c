@@ -245,13 +245,14 @@ void CG_SpawnEffect(vec3_t org) {
 
 	re->reType = RT_MODEL;
 	re->shaderTime = cg.time / 1000.0f;
+	re->customShader = cgs.media.teleportEffectShader;
 	re->hModel = cgs.media.teleportEffectModel;
 
 	AxisClear(re->axis);
 
 	VectorCopy(org, re->origin);
 
-	re->origin[2] += 16;
+	re->origin[2] -= 24;
 }
 #ifdef MISSIONPACK
 /*

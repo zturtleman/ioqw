@@ -422,7 +422,7 @@ typedef struct {
 	// view rendering
 	refdef_t refdef;
 	vec3_t refdefViewAngles;		// will be converted to refdef.viewaxis
-	float viewWeaponFov;			// either range checked cg_weaponFov or forced value
+	float fov;						// either range checked cg_fov or forced value
 	// spawn variables
 	qboolean spawning;				// the CG_Spawn *() functions are valid
 	int numSpawnVars;
@@ -637,6 +637,7 @@ typedef struct {
 	qhandle_t bloodExplosionShader;
 	// special effects models
 	qhandle_t teleportEffectModel;
+	qhandle_t teleportEffectShader;
 	qhandle_t kamikazeEffectModel;
 	qhandle_t kamikazeShockWave;
 	qhandle_t kamikazeHeadModel;
@@ -935,7 +936,7 @@ extern vmCvar_t cg_simpleItems;
 extern vmCvar_t cg_fov;
 extern vmCvar_t cg_fovAspectAdjust;
 extern vmCvar_t cg_zoomFov;
-extern vmCvar_t cg_weaponFov;
+extern vmCvar_t cg_fovGunAdjust;
 extern vmCvar_t cg_thirdPersonRange;
 extern vmCvar_t cg_thirdPersonAngle;
 extern vmCvar_t cg_thirdPerson;
@@ -1013,7 +1014,6 @@ void CG_AddBufferedSound(sfxHandle_t sfx);
 void CG_SetupFrustum(void);
 qboolean CG_CullPoint(vec3_t pt);
 qboolean CG_CullPointAndRadius(const vec3_t pt, vec_t radius);
-qboolean CG_CalcFov(refdef_t *refdef, qboolean viewWeapon);
 void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoPlayback);
 // cg_drawtools.c
 typedef enum {
@@ -1140,7 +1140,7 @@ void CG_MissileHitPlayer(int weapon, vec3_t origin, vec3_t dir, int entityNum);
 void CG_ShotgunFire(entityState_t *es);
 void CG_Bullet(vec3_t origin, int sourceEntityNum, vec3_t normal, qboolean flesh, int fleshEntityNum);
 void CG_RailTrail(clientInfo_t *ci, vec3_t start, vec3_t end);
-void CG_DrawViewWeapon(playerState_t *ps);
+void CG_AddViewWeapon(playerState_t *ps);
 void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent, int team);
 void CG_DrawWeaponSelect(void);
 void CG_OutOfAmmoChange(void); // should this be in pmove?

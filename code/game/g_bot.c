@@ -150,6 +150,7 @@ G_LoadArenas
 */
 static void G_LoadArenas(void) {
 	int numdirs;
+	vmCvar_t arenasFile;
 	char filename[128];
 	char dirlist[1024];
 	char *dirptr;
@@ -158,7 +159,13 @@ static void G_LoadArenas(void) {
 
 	g_numArenas = 0;
 
-	G_LoadArenasFromFile("scripts/arenas.txt");
+	trap_Cvar_Register(&arenasFile, "g_arenasFile", "", CVAR_INIT|CVAR_ROM);
+
+	if (*arenasFile.string) {
+		G_LoadArenasFromFile(arenasFile.string);
+	} else {
+		G_LoadArenasFromFile("scripts/arenas.txt");
+	}
 	// get all arenas from .arena files
 	numdirs = trap_FS_GetFileList("scripts", ".arena", dirlist, 1024);
 	dirptr = dirlist;
@@ -287,7 +294,7 @@ int G_SelectRandomBotForAdd(int team) {
 	int botsInGame, bestSelection[MAX_BOTS], n, bestCount, bestNum;
 	char *value;
 
-	// To improve random bot selection when there are few bot types, duplicate bots are allowed on separate teams to try to keep each
+	// to improve random bot selection when there are few bot types, duplicate bots are allowed on separate teams to try to keep each
 	// team from having duplicate bots. If there are enough bot types to fill the server, avoid duplicating bots on any team.
 	if (g_numBots >= level.maxclients) {
 		team = -1;
@@ -336,7 +343,7 @@ void G_AddRandomBot(int team) {
 	float skill;
 
 	n = G_SelectRandomBotForAdd(team);
-	// Get name of selected bot.
+	// get name of selected bot.
 	value = Info_ValueForKey(g_botInfos[n], "name");
 	skill = trap_Cvar_VariableValue("g_spSkill");
 
@@ -969,6 +976,7 @@ G_LoadBots
 =======================================================================================================================================
 */
 static void G_LoadBots(void) {
+	vmCvar_t botsFile;
 	int numdirs;
 	char filename[128];
 	char dirlist[1024];
@@ -982,7 +990,13 @@ static void G_LoadBots(void) {
 
 	g_numBots = 0;
 
-	G_LoadBotsFromFile("scripts/bots.txt");
+	trap_Cvar_Register(&botsFile, "g_botsFile", "", CVAR_INIT|CVAR_ROM);
+
+	if (*botsFile.string) {
+		G_LoadBotsFromFile(botsFile.string);
+	} else {
+		G_LoadBotsFromFile("scripts/bots.txt");
+	}
 	// get all bots from .bot files
 	numdirs = trap_FS_GetFileList("scripts", ".bot", dirlist, 1024);
 	dirptr = dirlist;

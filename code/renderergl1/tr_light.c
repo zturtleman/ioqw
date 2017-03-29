@@ -313,8 +313,7 @@ void R_SetupEntityLighting( const trRefdef_t *refdef, trRefEntity_t *ent ) {
 	}
 
 	// if NOWORLDMODEL, only use dynamic lights (menu system, etc)
-	if ( ( !( refdef->rdflags & RDF_NOWORLDMODEL ) 
-		|| ( ent->e.renderfx & RF_LIGHTING_GRID ) )
+	if ( !(refdef->rdflags & RDF_NOWORLDMODEL ) 
 		&& tr.world->lightGridData ) {
 		R_SetupEntityLightingGrid( ent );
 	} else {

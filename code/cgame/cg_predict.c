@@ -271,7 +271,7 @@ static void CG_TouchItem(centity_t *cent) {
 	}
 
 	item = &bg_itemlist[cent->currentState.modelindex];
-	// Special case for flags. We don't predict touching our own flag
+	// special case for flags. we don't predict touching our own flag
 	if (cgs.gametype == GT_1FCTF) {
 		if (item->giType == IT_TEAM && item->giTag != PW_NEUTRALFLAG) {
 			return;

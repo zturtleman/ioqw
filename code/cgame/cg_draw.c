@@ -84,7 +84,7 @@ static void CG_DrawField(int x, int y, int width, int value, float *color) {
 	}
 
 	x += 2 + CHAR_WIDTH * (width - l);
-	// center x, move y to bottom.
+	// center x, move y to bottom
 	x += (1.0f - cg_statusScale.value) * l * CHAR_WIDTH * 0.5f;
 	y += (1.0f - cg_statusScale.value) * CHAR_HEIGHT;
 
@@ -1157,8 +1157,7 @@ static float CG_DrawPowerups(float y) {
 		if (i == PW_AMMOREGEN || i == PW_GUARD || i == PW_DOUBLER || i == PW_SCOUT) {
 			continue;
 		}
-		// ZOID--don't draw if the power up has unlimited time
-		// This is true of the CTF flags
+		// don't draw if the power up has unlimited time, this is true of the CTF flags
 		if (ps->powerups[i] == INT_MAX) {
 			continue;
 		}
@@ -1260,7 +1259,6 @@ static void CG_DrawLowerRight(void) {
 	y = CG_DrawLocalInfo(y);
 	y = CG_DrawScores(y);
 	CG_DrawPowerups(y);
-
 }
 
 /*
@@ -2329,8 +2327,6 @@ void CG_DrawActive(stereoFrame_t stereoView) {
 	CG_DrawMiscGamemodels();
 	// draw 3D view
 	trap_R_RenderScene(&cg.refdef);
-	// draw the 3D view weapon
-	CG_DrawViewWeapon(&cg.predictedPlayerState);
 	// draw status bar and other floating elements
 	CG_Draw2D(stereoView);
 }

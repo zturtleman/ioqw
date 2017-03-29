@@ -1177,7 +1177,7 @@ typedef struct usercmd_s {
 	byte flags;
 	int angles[3];
 	signed char forwardmove, rightmove, upmove;
-	// this can be any entity, and it's used as an array index, so make sure it's unsigned
+	// this can be any entity, and it is used as an array index, so make sure it's unsigned
 	byte identClient;
 } usercmd_t;
 // if entityState->solid == SOLID_BMODEL, modelindex is an inline model number

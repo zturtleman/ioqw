@@ -395,8 +395,7 @@ void CG_ParseEntitiesFromString(void) {
 	cg.numSpawnVars = 0;
 	cg.spawnEntityOffset = 0;
 	cg.numMiscGameModels = 0;
-	// the worldspawn is not an actual entity, but it still has a "spawn" function to perform any global setup needed by a level (setting
-	// configstrings or cvars, etc.)
+	// the worldspawn is not an actual entity, but it still has a "spawn" function to perform any global setup needed by a level (setting configstrings or cvars, etc.)
 	if (!CG_ParseSpawnVars()) {
 		CG_Error("ParseEntities: no entities");
 	}

@@ -632,7 +632,7 @@ void SetTeam(gentity_t *ent, const char *s) {
 	}
 	// get and distribute relevant parameters
 	ClientUserinfoChanged(clientNum);
-	// player hasn't spawned yet, they sent teampref or g_teamAutoJoin is enabled
+	// client hasn't spawned yet, they sent teampref or g_teamAutoJoin is enabled
 	if (client->pers.connected != CON_CONNECTED) {
 		return;
 	}
@@ -1308,7 +1308,7 @@ void Cmd_CallVote_f(gentity_t *ent) {
 	if (!Q_stricmp(arg1, "g_gametype")) {
 		i = atoi(arg2);
 
-		if (i == GT_SINGLE_PLAYER || i < 0 || i >= GT_MAX_GAME_TYPE) {
+		if (i <= GT_SINGLE_PLAYER || i >= GT_MAX_GAME_TYPE) {
 			trap_SendServerCommand(ent - g_entities, "print \"Invalid gametype.\n\"");
 			return;
 		}
