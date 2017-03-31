@@ -237,7 +237,7 @@ iteminfo "weapon_phosphorgun"
 
 iteminfo "weapon_prox_launcher"
 {
-	name		"Prox Launcher"
+	name		"Proximity mine launcher"
 	model		"models/weapons/proxmine/proxmine.md3"
 	modelindex	MODELINDEX_PROXLAUNCHER
 	type		ITEM_WEAPON
@@ -249,7 +249,7 @@ iteminfo "weapon_prox_launcher"
 
 iteminfo "weapon_grenadelauncher"
 {
-	name		"Grenade Launcher"
+	name		"Grenade launcher"
 	model		"models/weapons2/grenadel/grenadel.md3"
 	modelindex	MODELINDEX_GRENADELAUNCHER
 	type		ITEM_WEAPON
@@ -261,7 +261,7 @@ iteminfo "weapon_grenadelauncher"
 
 iteminfo "weapon_napalmlauncher"
 {
-	name		"Napalm Launcher"
+	name		"Napalm launcher"
 	model		"models/weapons2/napalml/napalml.md3"
 	modelindex	MODELINDEX_NAPALMLAUNCHER
 	type		ITEM_WEAPON
@@ -273,7 +273,7 @@ iteminfo "weapon_napalmlauncher"
 
 iteminfo "weapon_rocketlauncher"
 {
-	name		"Rocket Launcher"
+	name		"Rocket launcher"
 	model		"models/weapons2/rocketl/rocketl.md3"
 	modelindex	MODELINDEX_ROCKETLAUNCHER
 	type		ITEM_WEAPON
@@ -321,7 +321,7 @@ iteminfo "weapon_plasmagun"
 
 iteminfo "weapon_bfg"
 {
-	name		"BFG10K"
+	name		"BFG 10K"
 	model		"models/weapons2/bfg/bfg.md3"
 	modelindex	MODELINDEX_BFG10K
 	type		ITEM_WEAPON
@@ -333,7 +333,7 @@ iteminfo "weapon_bfg"
 
 iteminfo "weapon_missilelauncher"
 {
-	name		"Missile Launcher"
+	name		"Missile launcher"
 	model		"models/weapons2/missile/missilel.md3"
 	modelindex	MODELINDEX_MISSILELAUNCHER
 	type		ITEM_WEAPON
@@ -636,6 +636,17 @@ iteminfo "item_scout"
 //===================================
 // TEAM ITEMS
 //===================================
+iteminfo "team_CTF_redflag"
+{
+	name		"Red Flag"
+	model		"models/flags/r_flag.md3"
+	modelindex	MODELINDEX_REDFLAG
+	type		ITEM_FLAG
+	index		INVENTORY_REDFLAG
+	mins		{-15,-15,-15}
+	maxs		{15,15,15}
+}
+
 iteminfo "team_CTF_blueflag"
 {
 	name		"Blue Flag"
@@ -658,15 +669,15 @@ iteminfo "team_CTF_neutralflag"
 	maxs		{15,15,15}
 }
 
-iteminfo "team_CTF_redflag"
+iteminfo "team_redobelisk"
 {
-	name		"Red Flag"
-	model		"models/flags/r_flag.md3"
-	modelindex	MODELINDEX_REDFLAG
-	type		ITEM_FLAG
-	index		INVENTORY_REDFLAG
-	mins		{-15,-15,-15}
-	maxs		{15,15,15}
+	name		"Red Obelisk"
+	model		"models/powerups/obelisk/obelisk.md3"
+	modelindex	0
+	type		ITEM_NONE
+	index		0
+	mins		{-15, -15, 1}
+	maxs		{15, 15, 87}
 }
 
 iteminfo "team_blueobelisk"
@@ -691,15 +702,15 @@ iteminfo "team_neutralobelisk"
 	maxs		{15, 15, 87}
 }
 
-iteminfo "team_redobelisk"
+iteminfo "item_redcube"
 {
-	name		"Red Obelisk"
-	model		"models/powerups/obelisk/obelisk.md3"
-	modelindex	0
-	type		ITEM_NONE
-	index		0
-	mins		{-15, -15, 1}
-	maxs		{15, 15, 87}
+	name		"Red Cube"
+	model		"models/powerups/orb/r_orb.md3"
+	modelindex	MODELINDEX_REDCUBE
+	type		ITEM_FLAG
+	index		INVENTORY_REDCUBE
+	mins		{-15,-15,-15}
+	maxs		{15,15,15}
 }
 
 iteminfo "item_bluecube"
@@ -709,17 +720,6 @@ iteminfo "item_bluecube"
 	modelindex	MODELINDEX_BLUECUBE
 	type		ITEM_FLAG
 	index		INVENTORY_BLUECUBE
-	mins		{-15,-15,-15}
-	maxs		{15,15,15}
-}
-
-iteminfo "item_redcube"
-{
-	name		"Red Cube"
-	model		"models/powerups/orb/r_orb.md3"
-	modelindex	MODELINDEX_REDCUBE
-	type		ITEM_FLAG
-	index		INVENTORY_REDCUBE
 	mins		{-15,-15,-15}
 	maxs		{15,15,15}
 }

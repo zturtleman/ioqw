@@ -134,7 +134,7 @@ itemnode_t server_itemlist[ITEM_COUNT] = {
 	{ITEMGROUP_WEAPON, ITEM_SHOTGUN, "weapon_shotgun", "SG"},
 	{ITEMGROUP_WEAPON, ITEM_NAILGUN, "weapon_nailgun", "NG"},
 	{ITEMGROUP_WEAPON, ITEM_PHOSPHORGUN, "weapon_phosphorgun", "PPG"},
-	{ITEMGROUP_WEAPON, ITEM_PROXLAUNCHER, "weapon_prox_launcher", "PM"},
+	{ITEMGROUP_WEAPON, ITEM_PROXLAUNCHER, "weapon_prox_launcher", "Proxlauncher"},
 	{ITEMGROUP_WEAPON, ITEM_GRENADELAUNCHER, "weapon_grenadelauncher", "GL"},
 	{ITEMGROUP_WEAPON, ITEM_NAPALMLAUNCHER, "weapon_napalmlauncher", "NL"},
 	{ITEMGROUP_WEAPON, ITEM_ROCKETLAUNCHER, "weapon_rocketlauncher", "RL"},
@@ -177,10 +177,10 @@ itemnode_t server_itemlist[ITEM_COUNT] = {
 	{ITEMGROUP_POWERUPS, ITEM_INVIS, "item_invis", "Invis"},
 	{ITEMGROUP_POWERUPS, ITEM_REGEN, "item_regen", "Regen"},
 	// persistant powerups
-	{ITEMGROUP_PERSISTANT_POWERUPS, ITEM_AMMOREGEN, "item_ammoregen", "AG"},
-	{ITEMGROUP_PERSISTANT_POWERUPS, ITEM_GUARD, "item_guard", "GD"},
-	{ITEMGROUP_PERSISTANT_POWERUPS, ITEM_DOUBLER, "item_doubler", "DB"},
-	{ITEMGROUP_PERSISTANT_POWERUPS, ITEM_SCOUT, "item_scout", "SC"}
+	{ITEMGROUP_PERSISTANT_POWERUPS, ITEM_AMMOREGEN, "item_ammoregen", "Ammoregen"},
+	{ITEMGROUP_PERSISTANT_POWERUPS, ITEM_GUARD, "item_guard", "Guard"},
+	{ITEMGROUP_PERSISTANT_POWERUPS, ITEM_DOUBLER, "item_doubler", "Doubler"},
+	{ITEMGROUP_PERSISTANT_POWERUPS, ITEM_SCOUT, "item_scout", "Scout"}
 };
 
 /*

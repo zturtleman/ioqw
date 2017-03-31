@@ -213,7 +213,7 @@ weaponinfo
 }
 
 //===========================================================================
-// Prox Launcher
+// Proximity mine launcher
 //===========================================================================
 projectileinfo
 {
@@ -225,7 +225,7 @@ projectileinfo
 
 weaponinfo
 {
-	name			"Prox Launcher"
+	name			"Proximity mine launcher"
 	number			WEAPONINDEX_PROXLAUNCHER
 	projectile		"proxmine"
 	numprojectiles	1
@@ -235,7 +235,7 @@ weaponinfo
 }
 
 //===========================================================================
-// Grenade Launcher
+// Grenade launcher
 //===========================================================================
 projectileinfo
 {
@@ -248,7 +248,7 @@ projectileinfo
 
 weaponinfo
 {
-	name			"Grenade Launcher"
+	name			"Grenade launcher"
 	number			WEAPONINDEX_GRENADELAUNCHER
 	projectile		"grenade"
 	numprojectiles	1
@@ -258,7 +258,7 @@ weaponinfo
 }
 
 //===========================================================================
-// Napalm Launcher
+// Napalm launcher
 //===========================================================================
 projectileinfo
 {
@@ -271,7 +271,7 @@ projectileinfo
 
 weaponinfo
 {
-	name			"Napalm Launcher"
+	name			"Napalm launcher"
 	number			WEAPONINDEX_NAPALMLAUNCHER
 	projectile		"napalm"
 	numprojectiles	1
@@ -281,7 +281,7 @@ weaponinfo
 }
 
 //===========================================================================
-// Rocket Launcher
+// Rocket launcher
 //===========================================================================
 projectileinfo
 {
@@ -294,7 +294,7 @@ projectileinfo
 
 weaponinfo
 {
-	name			"Rocket Launcher"
+	name			"Rocket launcher"
 	number			WEAPONINDEX_ROCKETLAUNCHER
 	projectile		"rocket"
 	numprojectiles	1
@@ -371,7 +371,7 @@ weaponinfo
 }
 
 //===========================================================================
-// BFG10K
+// BFG 10K
 //===========================================================================
 projectileinfo
 {
@@ -384,7 +384,7 @@ projectileinfo
 
 weaponinfo
 {
-	name			"BFG10K"
+	name			"BFG 10K"
 	number			WEAPONINDEX_BFG
 	projectile		"bfg"
 	numprojectiles	1
@@ -394,7 +394,7 @@ weaponinfo
 }
 
 //===========================================================================
-// Missile Launcher
+// Missile launcher
 //===========================================================================
 projectileinfo
 {
@@ -407,7 +407,7 @@ projectileinfo
 
 weaponinfo
 {
-	name			"Missile Launcher"
+	name			"Missile launcher"
 	number			WEAPONINDEX_MISSILELAUNCHER
 	projectile		"missile"
 	numprojectiles	1

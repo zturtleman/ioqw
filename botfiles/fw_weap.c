@@ -262,7 +262,7 @@ weight "Phosphorgun"
 	}
 }
 
-weight "Prox Launcher"
+weight "Proximity mine launcher"
 {
 	switch (INVENTORY_PROXLAUNCHER)
 	{
@@ -285,7 +285,7 @@ weight "Prox Launcher"
 	}
 }
 
-weight "Grenade Launcher"
+weight "Grenade launcher"
 {
 	switch (INVENTORY_GRENADELAUNCHER)
 	{
@@ -308,7 +308,7 @@ weight "Grenade Launcher"
 	}
 }
 
-weight "Napalm Launcher"
+weight "Napalm launcher"
 {
 	switch (INVENTORY_NAPALMLAUNCHER)
 	{
@@ -345,7 +345,7 @@ weight "Napalm Launcher"
 	}
 }
 
-weight "Rocket Launcher"
+weight "Rocket launcher"
 {
 	switch (INVENTORY_ROCKETLAUNCHER)
 	{
@@ -487,7 +487,7 @@ weight "Plasma Gun"
 	}
 }
 
-weight "BFG10K"
+weight "BFG 10K"
 {
 	switch (INVENTORY_BFG10K)
 	{
@@ -517,7 +517,7 @@ weight "BFG10K"
 	}
 }
 
-weight "Missile Launcher"
+weight "Missile launcher"
 {
 	switch (INVENTORY_MISSILELAUNCHER)
 	{

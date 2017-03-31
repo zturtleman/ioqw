@@ -1352,16 +1352,16 @@ weapon = {
 	"Shotgun";
 	"Nailgun";
 	"Phosphorgun";
-	"Proxlauncher";
-	"Grenadelauncher";
-	"Napalmlauncher";
-	"Rocketlauncher";
-	"Lightninggun";
+	"Proximity mine launcher";
+	"Grenade launcher";
+	"Napalm launcher";
+	"Rocket launcher";
+	"Lightning Gun";
 	"Railgun";
-	"Plasmagun";
+	"Plasma Gun";
 	"BFG";
 	"BFG 10K";
-	"Missilelauncher";
+	"Missile launcher";
 }
 
 ponder = {
