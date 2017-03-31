@@ -863,32 +863,36 @@ static char *commandString[] = {
 
 enum {
 	BC_NULL,
-	BC_FOLLOW,
-	BC_HELP,
-	BC_GET,
-	BC_PATROL,
-	BC_CAMP,
-	BC_HUNT,
-	BC_DISMISS,
-	BC_REPORT,
-	BC_POINT,
 	BC_GETFLAG,
-	BC_DEFENDBASE
+	BC_ATTACKENEMYBASE,
+	BC_HARVEST,
+	BC_DEFENDBASE,
+	BC_HELP,
+	BC_FOLLOW,
+	BC_CAMP,
+	BC_PATROL,
+	BC_GET,
+	BC_HUNT,
+	BC_POINT,
+	BC_DISMISS,
+	BC_REPORT
 } botCommandId;
 
 static char *botCommandStrings[] = {
 	"",							// BC_NULL
-	"%s follow %s",				// BC_FOLLOW
+	"%s get the flag",			// BC_GETFLAG
+	"%s attack the enemy base",	// BC_ATTACKENEMYBASE
+	"%s collect skulls",		// BC_HARVEST
+	"%s defend the base",		// BC_DEFENDBASE
 	"%s help %s",				// BC_HELP
-	"%s get %s",				// BC_GET
-	"%s patrol from %s to %s",	// BC_PATROL
+	"%s follow %s",				// BC_FOLLOW
 	"%s camp %s",				// BC_CAMP
+	"%s patrol from %s to %s",	// BC_PATROL
+	"%s get %s",				// BC_GET
 	"%s kill %s",				// BC_HUNT
+	"%s lead the way",			// BC_POINT
 	"%s dismissed",				// BC_DISMISS
 	"%s report",				// BC_REPORT
-	"%s lead the way",			// BC_POINT
-	"%s get the flag",			// BC_GETFLAG
-	"%s defend the base",		// BC_DEFENDBASE
 	0
 };
 
@@ -1058,11 +1062,13 @@ static void DM_BotCommand_Event(int index) {
 	cmd = DynamicMenu_IdAtIndex(index);
 
 	switch (cmd) {
+		case BC_GETFLAG:
+		case BC_ATTACKENEMYBASE:
+		case BC_HARVEST:
+		case BC_DEFENDBASE:
+		case BC_POINT:
 		case BC_DISMISS:
 		case BC_REPORT:
-		case BC_POINT:
-		case BC_GETFLAG:
-		case BC_DEFENDBASE:
 			break;
 		default:
 			Com_Printf("BotCommand_Event: unknown command (%i)\n", cmd);
@@ -1223,21 +1229,27 @@ static void DM_CommandList_SubMenu(void) {
 
 	DynamicMenu_SubMenuInit();
 
-	DynamicMenu_AddItem("Report", BC_REPORT, (createHandler)NULL, DM_BotCommand_Event);
-	DynamicMenu_AddItem("Help", BC_HELP, DM_TeamList_SubMenu, (eventHandler)NULL);
+	if (botcommandmenu_gametype > GT_TEAM) {
+		if (botcommandmenu_gametype == GT_CTF || botcommandmenu_gametype == GT_1FCTF) {
+			DynamicMenu_AddItem("Capture the Flag", BC_GETFLAG, (createHandler)NULL, DM_BotCommand_Event);
+		} else if (botcommandmenu_gametype == GT_OBELISK) {
+			DynamicMenu_AddItem("Attack the enemy base", BC_ATTACKENEMYBASE, (createHandler)NULL, DM_BotCommand_Event);
+		} else {
+			DynamicMenu_AddItem("Collect skulls", BC_HARVEST, (createHandler)NULL, DM_BotCommand_Event);
+		}
 
-	if (botcommandmenu_gametype == GT_CTF) {
-		DynamicMenu_AddItem("Capture Flag", BC_GETFLAG, (createHandler)NULL, DM_BotCommand_Event);
-		DynamicMenu_AddItem("Defend Base", BC_DEFENDBASE, (createHandler)NULL, DM_BotCommand_Event);
+		DynamicMenu_AddItem("Defend the Base", BC_DEFENDBASE, (createHandler)NULL, DM_BotCommand_Event);
 	}
 
+	DynamicMenu_AddItem("Help", BC_HELP, DM_TeamList_SubMenu, (eventHandler)NULL);
 	DynamicMenu_AddItem("Follow", BC_FOLLOW, DM_TeamList_SubMenu, (eventHandler)NULL);
-	DynamicMenu_AddItem("Get", BC_GET, DM_ItemList_SubMenu, (eventHandler)NULL);
-	DynamicMenu_AddItem("Patrol", BC_PATROL, DM_ItemPatrol_SubMenu, (eventHandler)NULL);
 	DynamicMenu_AddItem("Camp", BC_CAMP, DM_CampItemList_SubMenu, (eventHandler)NULL);
+	DynamicMenu_AddItem("Patrol", BC_PATROL, DM_ItemPatrol_SubMenu, (eventHandler)NULL);
+	DynamicMenu_AddItem("Get", BC_GET, DM_ItemList_SubMenu, (eventHandler)NULL);
 	DynamicMenu_AddItem("Hunt", BC_HUNT, DM_EnemyList_SubMenu, (eventHandler)NULL);
-	DynamicMenu_AddItem("Point + ", BC_POINT, (createHandler)NULL, DM_BotCommand_Event);
+	DynamicMenu_AddItem("Point+", BC_POINT, (createHandler)NULL, DM_BotCommand_Event);
 	DynamicMenu_AddItem("Dismiss", BC_DISMISS, (createHandler)NULL, DM_BotCommand_Event);
+	DynamicMenu_AddItem("Report", BC_REPORT, (createHandler)NULL, DM_BotCommand_Event);
 
 	DynamicMenu_AddBackground(INGAME_FRAME);
 	DynamicMenu_FinishSubMenuInit();
@@ -1267,6 +1279,14 @@ static void BotCommand_InitPrimaryMenu(void) {
 	DynamicMenu_AddBackground(INGAME_FRAME);
 	DynamicMenu_FinishSubMenuInit();
 }
+
+/*
+=======================================================================================================================================
+
+	TEAM ORDERS
+
+=======================================================================================================================================
+*/
 
 /*
 =======================================================================================================================================
