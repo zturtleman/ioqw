@@ -707,7 +707,7 @@ void StartServer_LoadBotlessMaps(void) {
 	char mapname[MAPNAME_BUFFER];
 	fileHandle_t file;
 
-	StartServer_CreateMapType("NoBots", "ui_icons/noammo");
+	StartServer_CreateMapType("NoBots", "icons/noammo");
 
 	index = s_mapList.num_maptypes - 1;
 	s_mapList.noBotsIndex = index;

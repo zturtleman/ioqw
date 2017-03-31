@@ -301,27 +301,27 @@ char *BotWeaponNameForMeansOfDeath(int mod) {
 		case MOD_PHOSPHOR:
 			return "Phosphorgun";
 		case MOD_PROXIMITY_MINE:
-			return "Proximity Launcher";
+			return "Proximity mine launcher";
 		case MOD_GRENADE_SPLASH:
-			return "Grenade Launcher";
+			return "Grenade launcher";
 		case MOD_NAPALM_SPLASH:
-			return "Napalm Launcher";
+			return "Napalm launcher";
 		case MOD_ROCKET:
 		case MOD_ROCKET_SPLASH:
-			return "Rocket Launcher";
+			return "Rocket launcher";
 		case MOD_LIGHTNING:
 			return "Lightning Gun";
 		case MOD_RAILGUN:
 			return "Railgun";
 		case MOD_PLASMA:
 		case MOD_PLASMA_SPLASH:
-			return "Plasmagun";
+			return "Plasma Gun";
 		case MOD_BFG:
 		case MOD_BFG_SPLASH:
-			return "BFG10K";
+			return "BFG 10K";
 		case MOD_MISSILE:
 		case MOD_MISSILE_SPLASH:
-			return "Missile Launcher";
+			return "Missile launcher";
 		case MOD_KAMIKAZE:
 			return "Kamikaze";
 		default:
@@ -357,23 +357,23 @@ char *BotRandomWeaponName(void) {
 		case 7:
 			return "Phosphorgun";
 		case 8:
-			return "Proximity Launcher";
+			return "Proximity mine launcher";
 		case 9:
-			return "Grenade Launcher";
+			return "Grenade launcher";
 		case 10:
-			return "Napalm Launcher";
+			return "Napalm launcher";
 		case 11:
-			return "Rocket Launcher";
+			return "Rocket launcher";
 		case 12:
 			return "Lightning Gun";
 		case 13:
 			return "Railgun";
 		case 14:
-			return "Plasmagun";
+			return "Plasma Gun";
 		case 15:
-			return "BFG10K";
+			return "BFG 10K";
 		default:
-			return "Missile Launcher";
+			return "Missile launcher";
 	}
 }
 
