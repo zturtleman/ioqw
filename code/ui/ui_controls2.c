@@ -77,6 +77,7 @@ enum {
 enum {
 	// bindable actions
 	ID_SHOWSCORES,
+	ID_TEAMORDERS,
 	ID_USEITEM,
 	ID_SPEED,
 	ID_FORWARD,
@@ -114,7 +115,6 @@ enum {
 	ID_CHAT3,
 	ID_CHAT4,
 	ID_TOGGLEMENU,
-	ID_BOTMENU,
 	// all others
 	ID_FREELOOK,
 	ID_INVERTMOUSE,
@@ -235,6 +235,7 @@ static vec4_t controls_binding_color = {1.00f, 0.43f, 0.00f, 1.00f};
 
 static bind_t g_bindings[] = {
 	{"+scores",			"Show scores",		ID_SHOWSCORES,	ANIM_IDLE,		K_TAB,			-1, -1, -1},
+	{"teamorders",		"Team orders",		ID_TEAMORDERS,	ANIM_CHAT,		'b',			-1, -1, -1},
 	{"+button2",		"Use item",			ID_USEITEM,		ANIM_IDLE,		K_ENTER,		-1, -1, -1},
 	{"+speed",			"Run/Walk",			ID_SPEED,		ANIM_RUN,		K_SHIFT,		-1, -1, -1},
 	{"+forward",		"Walk forward",		ID_FORWARD,		ANIM_WALK,		K_UPARROW,		-1, -1, -1},
@@ -272,7 +273,6 @@ static bind_t g_bindings[] = {
 	{"messagemode3",	"Chat-Target",		ID_CHAT3,		ANIM_CHAT,		-1,				-1, -1, -1},
 	{"messagemode4",	"Chat-Attacker",	ID_CHAT4,		ANIM_CHAT,		-1,				-1, -1, -1},
 	{"togglemenu",		"Toggle menu",		ID_TOGGLEMENU,	ANIM_IDLE,		K_ESCAPE,		-1, -1, -1},
-	{"ui_teamorders",	"Bot command menu",	ID_BOTMENU,		ANIM_CHAT,		'b',			-1, -1, -1},
 	{(char *)NULL,		(char *)NULL,		0,				0,				-1,				-1, -1, -1},
 };
 
@@ -1499,7 +1499,7 @@ static void Controls_MenuInit(void) {
 	s_controls.botmenu.generic.flags = QMF_LEFT_JUSTIFY|QMF_PULSEIFFOCUS|QMF_GRAYED|QMF_HIDDEN;
 	s_controls.botmenu.generic.callback = Controls_ActionEvent;
 	s_controls.botmenu.generic.ownerdraw = Controls_DrawKeyBinding;
-	s_controls.botmenu.generic.id = ID_BOTMENU;
+	s_controls.botmenu.generic.id = ID_TEAMORDERS;
 
 	s_controls.joyenable.generic.type = MTYPE_RADIOBUTTON;
 	s_controls.joyenable.generic.flags = QMF_SMALLFONT;

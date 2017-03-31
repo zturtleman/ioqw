@@ -1312,7 +1312,7 @@ qboolean UI_ConsoleCommand(int realTime) {
 		return qtrue;
 	}
 
-	if (Q_stricmp(cmd, "ui_teamOrders") == 0) {
+	if (Q_stricmp(cmd, "teamorders") == 0) {
 		UI_BotCommandMenu_f();
 		return qtrue;
 	}
