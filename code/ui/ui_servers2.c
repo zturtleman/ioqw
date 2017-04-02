@@ -1417,7 +1417,7 @@ static void ArenaServers_MenuInit(void) {
 	ArenaServers_LoadFavorites();
 
 	g_arenaservers.master.curvalue = g_servertype = Com_Clamp(0, 6, ui_browserMaster.integer);
-	g_gametype = Com_Clamp(0, 4, ui_browserGameType.integer);
+	g_gametype = Com_Clamp(0, 7, ui_browserGameType.integer);
 	g_arenaservers.gametype.curvalue = g_gametype;
 	g_sortkey = Com_Clamp(0, 4, ui_browserSortKey.integer);
 	g_arenaservers.sortkey.curvalue = g_sortkey;
