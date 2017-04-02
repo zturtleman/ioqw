@@ -69,8 +69,9 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 // teamplay task preference
 #define TEAMTP_DEFENDER 1
 #define TEAMTP_ATTACKER 2
-// CTF strategy
-#define CTFS_AGRESSIVE 1
+// global team strategies
+#define CTFS_DEFENSIVE	1
+#define CTFS_AGRESSIVE	2
 // copied from the aas file header
 #define PRESENCE_NONE	1
 #define PRESENCE_NORMAL	2
