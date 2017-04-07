@@ -52,6 +52,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define HOMEPATH_NAME_MACOSX		HOMEPATH_NAME_WIN
 #define STEAMPATH_NAME				"Quake 3 Arena"
 #define STEAMPATH_APPID				"2200"
+#define GOGPATH_ID					"1441704920"
 #define GAMENAME_FOR_MASTER			"QuakeWars"
 #define CINEMATICS_LOGO				"idlogo.RoQ"
 #define CINEMATICS_INTRO			"intro.RoQ"
