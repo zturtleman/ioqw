@@ -30,7 +30,7 @@ ifndef BUILD_BASEGAME
   BUILD_BASEGAME =
 endif
 ifndef BUILD_MISSIONPACK
-  BUILD_MISSIONPACK=
+  BUILD_MISSIONPACK=0
 endif
 ifndef BUILD_RENDERER_OPENGL2
   BUILD_RENDERER_OPENGL2=
@@ -2570,7 +2570,6 @@ Q3UIOBJ_ = \
   $(B)/$(BASEGAME)/ui/ui_startserver_data.o \
   $(B)/$(BASEGAME)/ui/ui_startserver_map.o \
   $(B)/$(BASEGAME)/ui/ui_startserver_mapsel.o \
-  $(B)/$(BASEGAME)/ui/ui_startserver_quicklaunch.o \
   $(B)/$(BASEGAME)/ui/ui_startserver_script.o \
   $(B)/$(BASEGAME)/ui/ui_startserver_server.o \
   $(B)/$(BASEGAME)/ui/ui_team.o \
