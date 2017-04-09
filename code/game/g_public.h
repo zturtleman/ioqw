@@ -129,8 +129,6 @@ typedef enum {
 	G_FS_SEEK,
 	G_FS_FCLOSE_FILE,			// (fileHandle_t f);
 	G_FS_GETFILELIST,
-	G_FS_DELETE,				// (const void *path);
-	G_FS_RENAME,				// (const void *from, const void *to);
 	G_PC_ADD_GLOBAL_DEFINE,
 	G_PC_REMOVE_ALL_GLOBAL_DEFINES,
 	G_PC_LOAD_SOURCE,

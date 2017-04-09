@@ -825,10 +825,6 @@ intptr_t CL_UISystemCalls(intptr_t *args) {
 			return 0;
 		case UI_FS_GETFILELIST:
 			return FS_GetFileList(VMA(1), VMA(2), VMA(3), args[4]);
-		case UI_FS_DELETE:
-			return FS_Delete(VMA(1));
-		case UI_FS_RENAME:
-			return FS_Rename(VMA(1), VMA(2));
 		case UI_PC_ADD_GLOBAL_DEFINE:
 			return botlib_export->PC_AddGlobalDefine(VMA(1));
 		case UI_PC_REMOVE_ALL_GLOBAL_DEFINES:

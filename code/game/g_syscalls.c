@@ -253,8 +253,8 @@ int trap_FS_FOpenFile(const char *qpath, fileHandle_t *f, fsMode_t mode) {
 trap_FS_Read
 =======================================================================================================================================
 */
-int trap_FS_Read(void *buffer, int len, fileHandle_t f) {
-	return syscall(G_FS_READ, buffer, len, f);
+void trap_FS_Read(void *buffer, int len, fileHandle_t f) {
+	syscall(G_FS_READ, buffer, len, f);
 }
 
 /*
@@ -262,8 +262,8 @@ int trap_FS_Read(void *buffer, int len, fileHandle_t f) {
 trap_FS_Write
 =======================================================================================================================================
 */
-int trap_FS_Write(const void *buffer, int len, fileHandle_t f) {
-	return syscall(G_FS_WRITE, buffer, len, f);
+void trap_FS_Write(const void *buffer, int len, fileHandle_t f) {
+	syscall(G_FS_WRITE, buffer, len, f);
 }
 
 /*
@@ -291,24 +291,6 @@ trap_FS_GetFileList
 */
 int trap_FS_GetFileList(const char *path, const char *extension, char *listbuf, int bufsize) {
 	return syscall(G_FS_GETFILELIST, path, extension, listbuf, bufsize);
-}
-
-/*
-=======================================================================================================================================
-trap_FS_Delete
-=======================================================================================================================================
-*/
-int trap_FS_Delete(const char *path) {
-	return syscall(G_FS_DELETE, path);
-}
-
-/*
-=======================================================================================================================================
-trap_FS_Rename
-=======================================================================================================================================
-*/
-int trap_FS_Rename(const char *from, const char *to) {
-	return syscall(G_FS_RENAME, from, to);
 }
 
 /*

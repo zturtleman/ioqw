@@ -520,7 +520,6 @@ long FS_FOpenFileRead(const char *qpath, fileHandle_t *file, qboolean uniqueFILE
 // file IO goes through FS_ReadFile, which Does The Right Thing already.
 int FS_FileIsInPAK(const char *filename, int *pChecksum);
 // returns 1 if a file is in the PAK file, otherwise -1
-int FS_Delete(char *filename); // only works inside the 'save' directory (for deleting savegames/images)
 int FS_Write(const void *buffer, int len, fileHandle_t f);
 int FS_Read(void *buffer, int len, fileHandle_t f);
 // properly handles partial reads and reads from other dlls
@@ -574,9 +573,9 @@ void FS_PureServerSetLoadedPaks(const char *pakSums, const char *pakNames);
 qboolean FS_CheckDirTraversal(const char *checkdir);
 qboolean FS_idPak(char *pak, char *base, int numPaks);
 qboolean FS_ComparePaks(char *neededpaks, int len, qboolean dlstring);
-qboolean FS_Rename(const char *from, const char *to);
-int FS_Remove(const char *osPath);
-int FS_HomeRemove(const char *homePath);
+void FS_Rename(const char *from, const char *to);
+void FS_Remove(const char *osPath);
+void FS_HomeRemove(const char *homePath);
 void FS_FilenameCompletion(const char *dir, const char *ext, qboolean stripExt, void(*callback)(const char *s), qboolean allowNonPureFilesOnDisk);
 const char *FS_GetCurrentGameDir(void);
 qboolean FS_Which(const char *filename, void *searchPath);
@@ -875,9 +874,7 @@ qboolean Sys_IsLANAddress(netadr_t adr);
 void Sys_ShowIP(void);
 FILE *Sys_FOpen(const char *ospath, const char *mode);
 qboolean Sys_Mkdir(const char *path);
-qboolean Sys_Rmdir(const char *path);
 FILE *Sys_Mkfifo(const char *ospath);
-int Sys_StatFile(char *ospath);
 char *Sys_Cwd(void);
 void Sys_SetDefaultInstallPath(const char *path);
 char *Sys_DefaultInstallPath(void);

@@ -534,9 +534,11 @@ intptr_t CL_CgameSystemCalls(intptr_t *args) {
 		case CG_FS_FOPENFILE:
 			return FS_FOpenFileByMode(VMA(1), VMA(2), args[3]);
 		case CG_FS_READ:
-			return FS_Read(VMA(1), args[2], args[3]);
+			FS_Read(VMA(1), args[2], args[3]);
+			return 0;
 		case CG_FS_WRITE:
-			return FS_Write(VMA(1), args[2], args[3]);
+			FS_Write(VMA(1), args[2], args[3]);
+			return 0;
 		case CG_FS_SEEK:
 			return FS_Seek(args[1], args[2], args[3]);
 		case CG_FS_FCLOSEFILE:
@@ -544,10 +546,6 @@ intptr_t CL_CgameSystemCalls(intptr_t *args) {
 			return 0;
 		case CG_FS_GETFILELIST:
 			return FS_GetFileList(VMA(1), VMA(2), VMA(3), args[4]);
-		case CG_FS_DELETE:
-			return FS_Delete(VMA(1));
-		case CG_FS_RENAME:
-			return FS_Rename(VMA(1), VMA(2));
 		case CG_CMD_EXECUTETEXT:
 			Cbuf_ExecuteTextSafe(args[1], VMA(2));
 			return 0;

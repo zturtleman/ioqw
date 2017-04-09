@@ -45,15 +45,13 @@ equ trap_FS_Write							-44
 equ trap_FS_Seek							-45
 equ trap_FS_FCloseFile						-46
 equ trap_FS_GetFileList						-47
-equ trap_FS_Delete							-48
-equ trap_FS_Rename							-49
-equ trap_PC_AddGlobalDefine					-50
-equ trap_PC_RemoveAllGlobalDefines			-51
-equ trap_PC_LoadSource						-52
-equ trap_PC_FreeSource						-53
-equ trap_PC_ReadToken						-54
-equ trap_PC_UnreadToken						-55
-equ trap_PC_SourceFileAndLine				-56
+equ trap_PC_AddGlobalDefine					-48
+equ trap_PC_RemoveAllGlobalDefines			-49
+equ trap_PC_LoadSource						-50
+equ trap_PC_FreeSource						-51
+equ trap_PC_ReadToken						-52
+equ trap_PC_UnreadToken						-53
+equ trap_PC_SourceFileAndLine				-54
 
 equ trap_LocateGameData					-101
 equ trap_DropClient						-102
@@ -73,7 +71,7 @@ equ trap_InPVSIgnorePortals				-115
 equ trap_AdjustAreaPortalState			-116
 equ trap_AreasConnected					-117
 equ trap_LinkEntity						-118
-equ trap_UnlinkEntity					-129
+equ trap_UnlinkEntity					-119
 equ trap_EntitiesInBox					-120
 equ trap_EntityContact					-121
 equ trap_EntityContactCapsule			-122
