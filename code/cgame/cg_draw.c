@@ -85,7 +85,7 @@ static void CG_DrawField(int x, int y, int width, int value, float *color) {
 
 	x += 2 + CHAR_WIDTH * (width - l);
 	// center x, move y to bottom
-	x += (1.0f - cg_statusScale.value) * l * CHAR_WIDTH * 0.5f;
+	x += (1.0f - cg_statusScale.value) * CHAR_WIDTH * 0.5f;
 	y += (1.0f - cg_statusScale.value) * CHAR_HEIGHT;
 
 	trap_R_SetColor(color);
