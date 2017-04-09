@@ -70,8 +70,10 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define TEAMTP_DEFENDER 1
 #define TEAMTP_ATTACKER 2
 // global team strategies
-#define CTFS_DEFENSIVE	1
-#define CTFS_AGRESSIVE	2
+#define CTFS_MAX_DEFENSIVE	1
+#define CTFS_DEFENSIVE		2
+#define CTFS_AGGRESSIVE		3
+#define CTFS_MAX_AGGRESSIVE	4
 // copied from the aas file header
 #define PRESENCE_NONE	1
 #define PRESENCE_NORMAL	2
@@ -234,6 +236,7 @@ typedef struct bot_state_s {
 	float becometeamleader_time;			// time the bot will become the team leader
 	float teamgiveorders_time;				// time to give team orders
 	float lastflagcapture_time;				// last time a flag was captured
+	float lastteamscore_time;				// last time either the red team or the blue team was scoring
 	int numteammates;						// number of team mates
 	int redflagstatus;						// 0 = at base, 1 = not at base
 	int blueflagstatus;						// 0 = at base, 1 = not at base
