@@ -2287,6 +2287,14 @@ void CG_Player(centity_t *cent) {
 	memset(&head, 0, sizeof(head));
 	// get the rotation information
 	CG_PlayerAngles(cent, legs.axis, torso.axis, head.axis);
+// Tobias HACK: make player models (visually) bigger
+	VectorScale(legs.axis[0], 1.19, legs.axis[0]);
+	VectorScale(legs.axis[1], 1.19, legs.axis[1]);
+	VectorScale(legs.axis[2], 1.19, legs.axis[2]);
+
+	legs.nonNormalizedAxes = qtrue;
+	cent->lerpOrigin[2] += 4;
+// Tobias: end
 	// get the animation state (after rotation, to allow feet shuffle)
 	CG_PlayerAnimation(cent, &legs.oldframe, &legs.frame, &legs.backlerp, &torso.oldframe, &torso.frame, &torso.backlerp);
 

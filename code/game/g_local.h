@@ -73,6 +73,7 @@ struct gentity_s {
 	int flags;					// FL_* variables
 	char *model;
 	char *model2;
+	qboolean runthisframe;
 	int freetime;				// level.time when the object was freed
 	int eventTime;				// events will be cleared EVENT_VALID_MSEC after set
 	qboolean freeAfterEvent;

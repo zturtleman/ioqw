@@ -590,7 +590,14 @@ void PlayerDie(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int d
 	VectorCopy(self->s.angles, self->client->ps.viewangles);
 
 	self->s.loopSound = 0;
-	self->r.maxs[2] = -8;
+// Tobias FIXME: This outcommented code zeigt wie maxs[2] in ET ist, aber warum ist es so? Und warum trap_LinkEntity(self)?
+	self->r.maxs[2] = -8; // <- original Q3
+/*
+	self->r.maxs[2] = self->client->ps.crouchMaxZ; //% 0; // so bodies don't clip into world
+	self->client->ps.maxs[2] = self->client->ps.crouchMaxZ; //% 0; // so bodies don't clip into world
+	trap_LinkEntity(self);
+*/
+// Tobias: end
 	// don't allow respawn until the death anim is done
 	// g_forcerespawn may force spawning at some later time
 	self->client->respawnTime = level.time + 2000;

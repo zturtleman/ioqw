@@ -919,7 +919,13 @@ qboolean BG_CheckSpawnEntity(const bgEntitySpawnInfo_t *info) {
 			return qfalse;
 		}
 	}
+// Tobias HACK: until we have new maps...
+	info->spawnInt("notta", "0", &i);
 
+	if (i) {
+		return qfalse;
+	}
+// Tobias: end
 	if (info->spawnString("!gametype", NULL, &value)) {
 		if (gametype >= 0 && gametype < GT_MAX_GAME_TYPE) {
 			gametypeName = gametypeNames[gametype];
@@ -1661,15 +1667,13 @@ void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qb
 
 			VectorMA(tr->trBase, deltaTime, tr->trDelta, result);
 			break;
+// Tobias FIXME
 		case TR_GRAVITY:
-			if (atTime < tr->trTime) {
-				atTime = tr->trTime;
-			}
-
-			deltaTime = (atTime - tr->trTime) * 0.001f; // milliseconds to seconds
+			deltaTime = (atTime - tr->trTime) * 0.001; // milliseconds to seconds
 			VectorMA(tr->trBase, deltaTime, tr->trDelta, result);
-			result[2] -= 0.5f * gravity * deltaTime * deltaTime;
+			result[2] -= 0.5 * DEFAULT_GRAVITY * deltaTime * deltaTime; // FIXME: local gravity...
 			break;
+// Tobias: end
 		case TR_GRAVITY_FLOAT:
 			deltaTime = (atTime - tr->trTime) * 0.001f; // milliseconds to seconds
 			VectorMA(tr->trBase, deltaTime, tr->trDelta, result);
@@ -1948,11 +1952,13 @@ void BG_EvaluateTrajectoryDelta(const trajectory_t *tr, int atTime, vec3_t resul
 			deltaTime = tr->trDuration * 0.001f * ((float)cos(DEG2RAD(90.0f - (90.0f * ((float)atTime - tr->trTime) / (float)tr->trDuration))));
 			VectorScale(tr->trDelta, deltaTime, result);
 			break;
+// Tobias FIXME
 		case TR_GRAVITY:
-			deltaTime = (atTime - tr->trTime) * 0.001f; // milliseconds to seconds
+			deltaTime = (atTime - tr->trTime) * 0.001; // milliseconds to seconds
 			VectorCopy(tr->trDelta, result);
-			result[2] -= gravity * deltaTime;
+			result[2] -= DEFAULT_GRAVITY * deltaTime; // FIXME: local gravity...
 			break;
+// Tobias: end
 		case TR_GRAVITY_FLOAT:
 			deltaTime = (atTime - tr->trTime) * 0.001f; // milliseconds to seconds
 			VectorCopy(tr->trDelta, result);

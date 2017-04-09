@@ -134,7 +134,7 @@ void DefaultCfg(void)
 	cfg.bboxes[0].mins[2] = -24;
 	cfg.bboxes[0].maxs[0] = 15;
 	cfg.bboxes[0].maxs[1] = 15;
-	cfg.bboxes[0].maxs[2] = 32;
+	cfg.bboxes[0].maxs[2] = 48;
 	//bbox 1
 	cfg.bboxes[1].presencetype = PRESENCE_CROUCH;
 	cfg.bboxes[1].flags = 1;
@@ -143,7 +143,7 @@ void DefaultCfg(void)
 	cfg.bboxes[1].mins[2] = -24;
 	cfg.bboxes[1].maxs[0] = 15;
 	cfg.bboxes[1].maxs[1] = 15;
-	cfg.bboxes[1].maxs[2] = 16;
+	cfg.bboxes[1].maxs[2] = 32;
 	//
 	cfg.allpresencetypes = PRESENCE_NORMAL|PRESENCE_CROUCH;
 	cfg.phys_gravitydirection[0]	= 0;

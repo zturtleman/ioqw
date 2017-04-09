@@ -3478,7 +3478,7 @@ int BotSetupMoveAI(void) {
 	BotSetBrushModelTypes();
 
 	sv_maxstep = LibVar("sv_step", "18");
-	sv_maxbarrier = LibVar("sv_maxbarrier", "32");
+	sv_maxbarrier = LibVar("sv_maxbarrier", "43");
 	sv_gravity = LibVar("sv_gravity", "800");
 	weapindex_rocketlauncher = LibVar("weapindex_rocketlauncher", "12");
 	weapindex_bfg10k = LibVar("weapindex_bfg10k", "16");
