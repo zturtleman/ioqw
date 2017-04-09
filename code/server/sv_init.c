@@ -35,13 +35,7 @@ static void SV_SendConfigstring(client_t *client, int index) {
 	int maxChunkSize = MAX_STRING_CHARS - 24;
 	int len;
 
-	if (sv.configstrings[index].restricted && Com_ClientListContains(&sv.configstrings[index].clientList, client - svs.clients)) {
-		// send a blank config string for this client if it's listed
-		SV_SendServerCommand(client, "cs %i \"\"\n", index);
-		return;
-	}
-
-	len = strlen(sv.configstrings[index].s);
+	len = strlen(sv.configstrings[index]);
 
 	if (len >= maxChunkSize) {
 		int sent = 0;
@@ -58,7 +52,7 @@ static void SV_SendConfigstring(client_t *client, int index) {
 				cmd = "bcs1";
 			}
 
-			Q_strncpyz(buf, &sv.configstrings[index].s[sent], maxChunkSize);
+			Q_strncpyz(buf, &sv.configstrings[index][sent], maxChunkSize);
 
 			SV_SendServerCommand(client, "%s %i \"%s\"\n", cmd, index, buf);
 
@@ -67,7 +61,7 @@ static void SV_SendConfigstring(client_t *client, int index) {
 		}
 	} else {
 		// standard cs, just send it
-		SV_SendServerCommand(client, "cs %i \"%s\"\n", index, sv.configstrings[index].s);
+		SV_SendServerCommand(client, "cs %i \"%s\"\n", index, sv.configstrings[index]);
 	}
 }
 
@@ -115,13 +109,13 @@ void SV_SetConfigstring(int index, const char *val) {
 		val = "";
 	}
 	// don't bother broadcasting an update if no change
-	if (!strcmp(val, sv.configstrings[index].s)) {
+	if (!strcmp(val, sv.configstrings[index])) {
 		return;
 	}
 	// change the string in sv
-	Z_Free(sv.configstrings[index].s);
+	Z_Free(sv.configstrings[index]);
 
-	sv.configstrings[index].s = CopyString(val);
+	sv.configstrings[index] = CopyString(val);
 	// send it to all the clients if we aren't spawning a new server
 	if (sv.state == SS_GAME || sv.restarting) {
 		// send the data to all relevant clients
@@ -158,34 +152,12 @@ void SV_GetConfigstring(int index, char *buffer, int bufferSize) {
 		Com_Error(ERR_DROP, "SV_GetConfigstring: bad index %i", index);
 	}
 
-	if (!sv.configstrings[index].s) {
+	if (!sv.configstrings[index]) {
 		buffer[0] = 0;
 		return;
 	}
 
-	Q_strncpyz(buffer, sv.configstrings[index].s, bufferSize);
-}
-
-/*
-=======================================================================================================================================
-SV_SetConfigstringRestrictions
-=======================================================================================================================================
-*/
-void SV_SetConfigstringRestrictions(int index, const clientList_t *clientList) {
-	int i;
-	clientList_t oldClientList = sv.configstrings[index].clientList;
-
-	sv.configstrings[index].clientList = *clientList;
-	sv.configstrings[index].restricted = qtrue;
-
-	for (i = 0; i < sv_maxclients->integer; i++) {
-		if (svs.clients[i].state >= CS_CONNECTED) {
-			if (Com_ClientListContains(&oldClientList, i) != Com_ClientListContains(clientList, i)) {
-				// a client has left or joined the restricted list, so update
-				SV_SendConfigstring(&svs.clients[i], index);
-			}
-		}
-	}
+	Q_strncpyz(buffer, sv.configstrings[index], bufferSize);
 }
 
 /*
@@ -287,7 +259,7 @@ static void SV_Startup(void) {
 
 	svs.clients = Z_Malloc(sizeof(client_t) * sv_maxclients->integer);
 
-	if (!Com_GameIsSinglePlayer()) {
+	if (com_dedicated->integer) {
 		svs.numSnapshotEntities = sv_maxclients->integer * PACKET_BACKUP * MAX_SNAPSHOT_ENTITIES;
 	} else {
 		// we don't need nearly as many when playing locally
@@ -361,7 +333,7 @@ void SV_ChangeMaxClients(void) {
 	// free the old clients on the hunk
 	Hunk_FreeTempMemory(oldClients);
 	// allocate new snapshot entities
-	if (!Com_GameIsSinglePlayer()) {
+	if (com_dedicated->integer) {
 		svs.numSnapshotEntities = sv_maxclients->integer * PACKET_BACKUP * MAX_SNAPSHOT_ENTITIES;
 	} else {
 		// we don't need nearly as many when playing locally
@@ -378,8 +350,8 @@ static void SV_ClearServer(void) {
 	int i;
 
 	for (i = 0; i < MAX_CONFIGSTRINGS; i++) {
-		if (sv.configstrings[i].s) {
-			Z_Free(sv.configstrings[i].s);
+		if (sv.configstrings[i]) {
+			Z_Free(sv.configstrings[i]);
 		}
 	}
 
@@ -463,10 +435,7 @@ void SV_SpawnServer(char *server, qboolean killBots) {
 	SV_ClearServer();
 
 	for (i = 0; i < MAX_CONFIGSTRINGS; i++) {
-		sv.configstrings[i].s = CopyString("");
-		sv.configstrings[i].restricted = qfalse;
-
-		Com_Memset(&sv.configstrings[i].clientList, 0, sizeof(clientList_t));
+		sv.configstrings[i] = CopyString("");
 	}
 	// make sure we are not paused
 	Cvar_Set("cl_paused", "0");
@@ -667,8 +636,6 @@ void SV_Init(void) {
 	sv_mapChecksum = Cvar_Get("sv_mapChecksum", "", CVAR_ROM);
 	sv_lanForceRate = Cvar_Get("sv_lanForceRate", "1", CVAR_ARCHIVE);
 	sv_banFile = Cvar_Get("sv_banFile", "serverbans.dat", CVAR_ARCHIVE);
-	sv_public = Cvar_Get("sv_public", "0", 0);
-	Cvar_CheckRange(sv_public, -2, 1, qtrue);
 	// initialize bot cvars so they are listed and can be set before loading the botlib
 	SV_BotInitCvars();
 	// init the botlib here because we need the pre-compiler in the UI
@@ -747,7 +714,6 @@ void SV_Shutdown(char *finalmsg) {
 
 	Cvar_Set("sv_running", "0");
 	Cvar_Set("ui_singlePlayerActive", "0");
-	Cvar_Set("sv_public", "0");
 
 	Com_Printf("---------------------------\n");
 	// disconnect any local clients

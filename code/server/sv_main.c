@@ -61,11 +61,9 @@ cvar_t *sv_pure;
 cvar_t *sv_floodProtect;
 cvar_t *sv_lanForceRate;	// dedicated 1 (LAN) server forces local client rates to 99999 (bug #491)
 cvar_t *sv_banFile;
-cvar_t *sv_public;
 
 serverBan_t serverBans[SERVER_MAXBANS];
 int serverBansCount = 0;
-static netadr_t adr[MAX_MASTER_SERVERS][2]; // [2] for v4 and v6 address for the same address string.
 
 /*
 =======================================================================================================================================
@@ -227,68 +225,6 @@ void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...) {
 
 /*
 =======================================================================================================================================
-SV_RefreshMasterAdr
-=======================================================================================================================================
-*/
-qboolean SV_RefreshMasterAdr(int i) {
-	int res;
-	int netenabled;
-
-	if (i < 0 || i >= MAX_MASTER_SERVERS) {
-		return qfalse;
-	}
-
-	netenabled = Cvar_VariableIntegerValue("net_enabled");
-	// see if we haven't already resolved the name, resolving usually causes hitches on win95, so only do it when needed
-	if (sv_master[i]->modified || (adr[i][0].type == NA_BAD && adr[i][1].type == NA_BAD)) {
-		sv_master[i]->modified = qfalse;
-
-		if (netenabled & NET_ENABLEV4) {
-			Com_Printf("Resolving %s(IPv4)\n", sv_master[i]->string);
-			res = NET_StringToAdr(sv_master[i]->string, &adr[i][0], NA_IP);
-
-			if (res == 2) {
-				// if no port was specified, use the default master port
-				adr[i][0].port = BigShort(PORT_MASTER);
-			}
-
-			if (res) {
-				Com_Printf("%s resolved to %s\n", sv_master[i]->string, NET_AdrToStringwPort(adr[i][0]));
-			} else {
-				Com_Printf("%s has no IPv4 address.\n", sv_master[i]->string);
-			}
-		}
-
-		if (netenabled & NET_ENABLEV6) {
-			Com_Printf("Resolving %s(IPv6)\n", sv_master[i]->string);
-			res = NET_StringToAdr(sv_master[i]->string, &adr[i][1], NA_IP6);
-
-			if (res == 2) {
-				// if no port was specified, use the default master port
-				adr[i][1].port = BigShort(PORT_MASTER);
-			}
-
-			if (res) {
-				Com_Printf("%s resolved to %s\n", sv_master[i]->string, NET_AdrToStringwPort(adr[i][1]));
-			} else {
-				Com_Printf("%s has no IPv6 address.\n", sv_master[i]->string);
-			}
-		}
-
-		if (adr[i][0].type == NA_BAD && adr[i][1].type == NA_BAD) {
-			// if the address failed to resolve, clear it so we don't take repeated dns hits
-			Com_Printf("Couldn't resolve address: %s\n", sv_master[i]->string);
-			Cvar_Set(sv_master[i]->name, "");
-			sv_master[i]->modified = qfalse;
-			return qfalse;
-		}
-	}
-
-	return qtrue;
-}
-
-/*
-=======================================================================================================================================
 SV_MasterHeartbeat
 
 Send a message to the masters every few minutes to let it know we are alive, and log information.
@@ -298,7 +234,9 @@ or exit.
 */
 #define HEARTBEAT_MSEC 300000
 void SV_MasterHeartbeat(const char *message) {
+	static netadr_t adr[MAX_MASTER_SERVERS][2]; // [2] for v4 and v6 address for the same address string.
 	int i;
+	int res;
 	int netenabled;
 
 	// do not send heartbeats in single player.
@@ -307,13 +245,17 @@ void SV_MasterHeartbeat(const char *message) {
 	}
 
 	netenabled = Cvar_VariableIntegerValue("net_enabled");
-
-	if (!(netenabled &(NET_ENABLEV4|NET_ENABLEV6))) {
-		return; // only public servers send heartbeats
+	// "dedicated 1" is for lan play, "dedicated 2" is for inet public play
+	if (!com_dedicated || com_dedicated->integer != 2 || !(netenabled & (NET_ENABLEV4|NET_ENABLEV6))) {
+		return; // only dedicated servers send heartbeats
 	}
 	// if not time yet, don't send anything
 	if (svs.time < svs.nextHeartbeatTime) {
 		return;
+	}
+
+	if (!Q_stricmp(com_gamename->string, LEGACY_MASTER_GAMENAME)) {
+		message = LEGACY_HEARTBEAT_FOR_MASTER;
 	}
 
 	svs.nextHeartbeatTime = svs.time + HEARTBEAT_MSEC;
@@ -322,9 +264,50 @@ void SV_MasterHeartbeat(const char *message) {
 		if (!sv_master[i]->string[0]) {
 			continue;
 		}
+		// see if we haven't already resolved the name
+		// resolving usually causes hitches on win95, so only do it when needed
+		if (sv_master[i]->modified || (adr[i][0].type == NA_BAD && adr[i][1].type == NA_BAD)) {
+			sv_master[i]->modified = qfalse;
 
-		if (!SV_RefreshMasterAdr(i)) {
-			continue;
+			if (netenabled & NET_ENABLEV4) {
+				Com_Printf("Resolving %s (IPv4)\n", sv_master[i]->string);
+				res = NET_StringToAdr(sv_master[i]->string, &adr[i][0], NA_IP);
+
+				if (res == 2) {
+					// if no port was specified, use the default master port
+					adr[i][0].port = BigShort(PORT_MASTER);
+				}
+
+				if (res) {
+					Com_Printf("%s resolved to %s\n", sv_master[i]->string, NET_AdrToStringwPort(adr[i][0]));
+				} else {
+					Com_Printf("%s has no IPv4 address.\n", sv_master[i]->string);
+				}
+			}
+
+			if (netenabled & NET_ENABLEV6) {
+				Com_Printf("Resolving %s (IPv6)\n", sv_master[i]->string);
+				res = NET_StringToAdr(sv_master[i]->string, &adr[i][1], NA_IP6);
+
+				if (res == 2) {
+					// if no port was specified, use the default master port
+					adr[i][1].port = BigShort(PORT_MASTER);
+				}
+
+				if (res) {
+					Com_Printf("%s resolved to %s\n", sv_master[i]->string, NET_AdrToStringwPort(adr[i][1]));
+				} else {
+					Com_Printf("%s has no IPv6 address.\n", sv_master[i]->string);
+				}
+			}
+
+			if (adr[i][0].type == NA_BAD && adr[i][1].type == NA_BAD) {
+				// if the address failed to resolve, clear it so we don't take repeated dns hits
+				Com_Printf("Couldn't resolve address: %s\n", sv_master[i]->string);
+				Cvar_Set(sv_master[i]->name, "");
+				sv_master[i]->modified = qfalse;
+				continue;
+			}
 		}
 
 		Com_DPrintf("Sending heartbeat to %s\n", sv_master[i]->string);
@@ -341,39 +324,6 @@ void SV_MasterHeartbeat(const char *message) {
 
 /*
 =======================================================================================================================================
-SV_CheckPublicStatus
-
-Checks for change of public status, informs all masters that this server is going down or forces normal heartbeat if needed.
-=======================================================================================================================================
-*/
-void SV_CheckPublicStatus(void) {
-	static int publicOld = 0;
-
-	// check if public status changed.
-	if (sv_public->modified) {
-		// check if switched to or from public.
-		if (sv_public->integer > 0 || publicOld > 0) {
-			// send heartbeat
-			if (sv_public->integer != 1) {
-				// send shutdown server heartbeats
-				svs.nextHeartbeatTime = -9999;
-				SV_MasterHeartbeat(FLATLINE_FOR_MASTER);
-				svs.nextHeartbeatTime = -9999;
-				SV_MasterHeartbeat(FLATLINE_FOR_MASTER);
-			} else {
-				svs.nextHeartbeatTime = -9999;
-				// SV_MasterHeartbeat will be called as usual.
-			}
-		}
-
-		sv_public->modified = qfalse;
-	}
-
-	publicOld = sv_public->integer;
-}
-
-/*
-=======================================================================================================================================
 SV_MasterShutdown
 
 Informs all masters that this server is going down.
@@ -381,16 +331,12 @@ Informs all masters that this server is going down.
 */
 void SV_MasterShutdown(void) {
 
-	// "sv_public 1" is for internet public play
-	if (!sv_public || sv_public->integer != 1) {
-		return;
-	}
 	// send a heartbeat right now
 	svs.nextHeartbeatTime = -9999;
-	SV_MasterHeartbeat(FLATLINE_FOR_MASTER);
+	SV_MasterHeartbeat(HEARTBEAT_FOR_MASTER);
 	// send it again to minimize chance of drops
 	svs.nextHeartbeatTime = -9999;
-	SV_MasterHeartbeat(FLATLINE_FOR_MASTER);
+	SV_MasterHeartbeat(HEARTBEAT_FOR_MASTER);
 	// when the master tries to poll the server, it won't respond, so it will be removed from the list
 }
 
@@ -590,10 +536,6 @@ static void SVC_Status(netadr_t from) {
 	int playerLength;
 	char infostring[MAX_INFO_STRING];
 
-	// don't reply if sv_public is -1 or lower
-	if (sv_public->integer <= -1) {
-		return;
-	}
 	// ignore if we are in single player
 	if (Com_GameIsSinglePlayer()) {
 		return;
@@ -653,10 +595,6 @@ void SVC_Info(netadr_t from) {
 	char *gamedir;
 	char infostring[MAX_INFO_STRING];
 
-	// don't reply if sv_public is -1 or lower
-	if (sv_public->integer <= -1) {
-		return;
-	}
 	// ignore if we are in single player
 	if (Com_GameIsSinglePlayer()) {
 		return;
@@ -670,22 +608,6 @@ void SVC_Info(netadr_t from) {
 	if (SVC_RateLimit(&outboundLeakyBucket, 10, 100)) {
 		Com_DPrintf("SVC_Info: rate limit exceeded, dropping request\n");
 		return;
-	}
-	// if not a public server and request is from a master server, don't reply.
-	if (sv_public->integer != 1) {
-		// NOTE: the addresses will only have been resolved if sent a heartbeat
-		for (i = 0; i < MAX_MASTER_SERVERS; i++) {
-			if (!sv_master[i]->string[0]) {
-				continue;
-			}
-
-			for (count = 0; count < 2; count++) {
-				// from one of the master servers, server is not public so ignore it.
-				if (NET_CompareAdr(from, adr[i][count])) {
-					return;
-				}
-			}
-		}
 	}
 	// check whether Cmd_Argv(1) has a sane length. This was not done in the original Quake3 version which led to the Infostring bug
 	// discovered by Luigi Auriemma. See http://aluigi.altervista.org/ for the advisory.
@@ -1203,12 +1125,6 @@ void SV_Frame(int msec) {
 	// send messages back to the clients
 	SV_SendClientMessages();
 	// send a heartbeat to the master if needed
-	SV_CheckPublicStatus();
-	// "sv_public 1" is for internet public play
-	if (sv_public->integer != 1) {
-		return;
-	}
-
 	SV_MasterHeartbeat(HEARTBEAT_FOR_MASTER);
 }
 

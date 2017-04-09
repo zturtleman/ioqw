@@ -1350,10 +1350,6 @@ static void PM_BeginWeaponChange(int weapon) {
 	if (pm->ps->weaponstate == WEAPON_DROPPING) {
 		return;
 	}
-	// don't allow change during spinup
-	if (pm->ps->weaponDelay) {
-		return;
-	}
 
 	PM_AddEvent(EV_CHANGE_WEAPON);
 
@@ -1414,7 +1410,6 @@ Generates weapon events and modifes the weapon counter.
 =======================================================================================================================================
 */
 static void PM_Weapon(void) {
-	qboolean delayedFire;
 	int addTime;
 
 	// don't allow attack until all buttons are up
@@ -1441,34 +1436,19 @@ static void PM_Weapon(void) {
 	} else {
 		pm->ps->pm_flags &= ~PMF_USE_ITEM_HELD;
 	}
-
-	delayedFire = qfalse; // true if the delay time has just expired and this is the frame to send the fire event
-
-	if (pm->ps->weaponDelay > 0) {
-		pm->ps->weaponDelay -= pml.msec;
-
-		if (pm->ps->weaponDelay <= 0) {
-			pm->ps->weaponDelay = 0;
-			delayedFire = qtrue; // weapon delay has expired. Fire this frame.
-		}
-	}
 	// make weapon function
 	if (pm->ps->weaponTime > 0) {
 		pm->ps->weaponTime -= pml.msec;
 	}
-	// check for weapon change, can't change weapon during wind up or wind down state and can't change if weapon is firing or charging,
-	// but can change again if lowering or raising
-	if ((pm->ps->weaponTime <= 0 || ((pm->ps->weaponstate != WEAPON_FIRING) && pm->ps->weaponDelay <= 0)) && !delayedFire) {
+	// check for weapon change
+	// can't change if weapon is firing, but can change again if lowering or raising
+	if (pm->ps->weaponTime <= 0 || pm->ps->weaponstate != WEAPON_FIRING) {
 		if (pm->ps->weapon != pm->cmd.weapon) {
 			PM_BeginWeaponChange(pm->cmd.weapon);
 		}
 	}
-	// waiting for attack animation to complete (e.g.: Mortar)
-	if (pm->ps->weaponDelay > 0) {
-		return;
-	}
-	// check if weapon is busy
-	if (pm->ps->weaponTime > 0 || pm->ps->weaponDelay > 0) {
+
+	if (pm->ps->weaponTime > 0) {
 		return;
 	}
 	// change weapon if time
@@ -1489,60 +1469,23 @@ static void PM_Weapon(void) {
 		return;
 	}
 	// check for fire
-	// if not on fire button and there's not a delayed shot this frame...
-	if (!(pm->cmd.buttons & BUTTON_ATTACK) && !delayedFire) {
+	if (!(pm->cmd.buttons & BUTTON_ATTACK)) {
 		pm->ps->weaponTime = 0;
-		pm->ps->weaponDelay = 0;
 		pm->ps->weaponstate = WEAPON_READY;
 		return;
 	}
 	// start the animation even if out of ammo
-	switch (pm->ps->weapon) {
-		default:
-			if (pm->ps->weaponstate != WEAPON_FIRING) {
-				// delay so the weapon can get up into position before firing (and showing the flash)
-				pm->ps->weaponDelay = 0;
-			} else {
-				PM_StartTorsoAnim(TORSO_ATTACK);
-			}
+	if (pm->ps->weapon == WP_GAUNTLET) {
+		// the gauntlet only "fires" when it actually hits something
+		if (!pm->gauntletHit) {
+			pm->ps->weaponTime = 0;
+			pm->ps->weaponstate = WEAPON_READY;
+			return;
+		}
 
-			break;
-		// gauntlet
-		case WP_GAUNTLET:
-			// the gauntlet only "fires" when it actually hits something
-			if (!pm->gauntletHit) {
-				pm->ps->weaponTime = 0;
-				pm->ps->weaponstate = WEAPON_READY;
-				return;
-			}
-
-			PM_StartTorsoAnim(TORSO_ATTACK2);
-			break;
-		// machineguns should continue the anim, rather than start each fire
-		case WP_HEAVY_MACHINEGUN:
-			if (pm->ps->weaponstate != WEAPON_FIRING) {
-				pm->ps->weaponDelay = 40;
-			}
-
-			break;
-		case WP_CHAINGUN:
-			if (pm->ps->weaponstate != WEAPON_FIRING) {
-				pm->ps->weaponDelay = 100;
-			}
-
-			break;
-		case WP_BFG:
-			if (pm->ps->weaponstate != WEAPON_FIRING) {
-				pm->ps->weaponDelay = 50;
-			}
-
-			break;
-		case WP_MISSILELAUNCHER:
-			if (pm->ps->weaponstate != WEAPON_FIRING) {
-				pm->ps->weaponDelay = 250;
-			}
-
-			break;
+		PM_StartTorsoAnim(TORSO_ATTACK2);
+	} else {
+		PM_StartTorsoAnim(TORSO_ATTACK);
 	}
 
 	pm->ps->weaponstate = WEAPON_FIRING;
@@ -1550,13 +1493,6 @@ static void PM_Weapon(void) {
 	if (!pm->ps->ammo[pm->ps->weapon]) {
 		PM_AddEvent(EV_NOAMMO);
 		pm->ps->weaponTime += 500;
-		return;
-	}
-
-	if (pm->ps->weaponDelay > 0) {
-		// if it hits here, the 'fire' has just been hit and the weapon dictated a delay.
-		// animations have been started, weaponstate has been set, but no weapon events yet (except possibly EV_NOAMMO).
-		// checks for delayed weapons that have already been fired are return'ed above.
 		return;
 	}
 	// take an ammo away if not infinite

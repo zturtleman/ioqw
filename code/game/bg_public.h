@@ -77,15 +77,14 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define CS_INTERMISSION		22 // when 1, fraglimit/timelimit has been hit and intermission will start in a second or two
 #define CS_FLAGSTATUS		23 // string indicating flag status in CTF
 #define CS_SHADERSTATE		24
-#define CS_PLAYERS_READY	25 // players wishing to exit the intermission
+#define CS_BOTINFO			25
 #define CS_ITEMS			27 // string of 0's and 1's that tell which items are present
 #define CS_MODELS			32
 #define CS_SOUNDS			(CS_MODELS + MAX_MODELS)
 #define CS_PLAYERS			(CS_SOUNDS + MAX_SOUNDS)
 #define CS_LOCATIONS		(CS_PLAYERS + MAX_CLIENTS)
 #define CS_PARTICLES		(CS_LOCATIONS + MAX_LOCATIONS)
-#define CS_BOTINFO			(CS_PARTICLES + MAX_LOCATIONS)
-#define CS_MAX				(CS_BOTINFO + MAX_CLIENTS)
+#define CS_MAX				(CS_PARTICLES + MAX_LOCATIONS)
 #if (CS_MAX) > MAX_CONFIGSTRINGS
 #error overflow: (CS_MAX) > MAX_CONFIGSTRINGS
 #endif
@@ -180,6 +179,7 @@ typedef enum {
 	STAT_PERSISTANT_POWERUP,
 	STAT_HOLDABLE_ITEM,
 	STAT_DEAD_YAW,		// look this direction when dead (FIXME: get rid of?)
+	STAT_CLIENTS_READY,	// bit mask of clients wishing to exit the intermission (FIXME: configstring?)
 	STAT_MAX_HEALTH		// health/armor limit, changable by handicap
 } statIndex_t;
 

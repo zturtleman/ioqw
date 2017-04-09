@@ -2590,10 +2590,11 @@ void Com_Init(char *commandLine) {
 	Com_StartupVariable(NULL);
 	// get dedicated here for proper hunk megs initialization
 #ifdef DEDICATED
-	com_dedicated = Cvar_Get("dedicated", "1", CVAR_ROM);
+	com_dedicated = Cvar_Get("dedicated", "1", CVAR_INIT);
+	Cvar_CheckRange(com_dedicated, 1, 2, qtrue);
 #else
 	com_dedicated = Cvar_Get("dedicated", "0", CVAR_LATCH);
-	Cvar_CheckRange(com_dedicated, 0, 1, qtrue);
+	Cvar_CheckRange(com_dedicated, 0, 2, qtrue);
 #endif
 	// allocate the stack based hunk allocator
 	Com_InitHunkMemory();
@@ -2836,19 +2837,21 @@ int Com_ModifyMsec(int msec) {
 	if (msec < 1 && com_timescale->value) {
 		msec = 1;
 	}
-	// FIXME: Running non-dedicated network server on client should use longer clamp time, but loading renderer causes running too many
-	// server frames initially.
-	if (com_sv_running->integer && !com_dedicated->integer) {
-		// for local single player gaming we may want to clamp the time to prevent players from flying off edges when something hitches.
-		clampTime = 200;
-	} else {
-		// servers don't want to clamp for a much longer period, because it would mess up all the client's views of time.
-		// clients of remote servers do not want to clamp time, because it would skew their view of the server's time temporarily.
-		if (((com_sv_running->integer && com_dedicated->integer) || com_developer->integer) && msec > 500) {
+
+	if (com_dedicated->integer) {
+		// dedicated servers don't want to clamp for a much longer period, because it would mess up all the client's views of time.
+		if (com_sv_running->integer && msec > 500) {
 			Com_Printf("Hitch warning: %i msec frame time\n", msec);
 		}
 
 		clampTime = 5000;
+	} else if (!com_sv_running->integer) {
+		// clients of remote servers do not want to clamp time, because it would skew their view of the server's time temporarily
+		clampTime = 5000;
+	} else {
+		// for local single player gaming
+		// we may want to clamp the time to prevent players from flying off edges when something hitches.
+		clampTime = 200;
 	}
 
 	if (msec > clampTime) {

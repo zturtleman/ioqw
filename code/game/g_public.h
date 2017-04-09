@@ -151,7 +151,6 @@ typedef enum {
 	// All of the current configstrings are sent to clients when they connect, and changes are sent to all connected clients.
 	// All confgstrings are cleared at each level start.
 	G_GET_CONFIGSTRING,			// (int num, char *buffer, int bufferSize);
-	G_SET_CONFIGSTRING_RESTRICTIONS, // (int num, const clientList_t *clientList);
 	G_SET_USERINFO,				// (int num, const char *buffer);
 	G_GET_USERINFO,				// (int num, char *buffer, int bufferSize);
 	// userinfo strings are maintained by the server system, so they are persistant across level loads, while all other game visible data is completely reset

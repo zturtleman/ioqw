@@ -223,7 +223,7 @@ static void CG_DrawClientScore(int y, score_t *score, float *color, float fade, 
 	if (score->ping == -1) {
 		Com_sprintf(string, sizeof(string), "Connecting");
 	// add the "ready" marker for intermission exiting
-	} else if (Com_ClientListContains(&cg.readyPlayers, score->client)) {
+	} else if (cg.snap->ps.stats[STAT_CLIENTS_READY] & (1 << score->client)) {
 		Com_sprintf(string, sizeof(string), "Ready");
 	} else if (ci->teamLeader) {
 		Com_sprintf(string, sizeof(string), "Leader");

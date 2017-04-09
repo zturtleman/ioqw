@@ -59,7 +59,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #endif
 // Heartbeat for dpmaster protocol. You shouldn't change this unless you know what you're doing
 #define HEARTBEAT_FOR_MASTER		"DarkPlaces"
-#define FLATLINE_FOR_MASTER			HEARTBEAT_FOR_MASTER
 // When com_gamename is LEGACY_MASTER_GAMENAME, use quake3 master protocol.
 // You shouldn't change this unless you know what you're doing
 #define LEGACY_MASTER_GAMENAME		"Quake3Arena"
@@ -778,19 +777,6 @@ int QDECL Com_sprintf(char *dest, int size, const char *fmt, ...) __attribute__(
 char *Com_SkipTokens(char *s, int numTokens, char *sep);
 char *Com_SkipCharset(char *s, char *sep);
 void Com_RandomBytes(byte *string, int len);
-
-typedef struct {
-	unsigned int hi;
-	unsigned int lo;
-} clientList_t;
-
-qboolean Com_ClientListContains(const clientList_t *list, int clientNum);
-void Com_ClientListAdd(clientList_t *list, int clientNum);
-void Com_ClientListRemove(clientList_t *list, int clientNum);
-void Com_ClientListClear(clientList_t *list);
-void Com_ClientListAll(clientList_t *list);
-char *Com_ClientListString(const clientList_t *list);
-void Com_ClientListParse(clientList_t *list, const char *s);
 // mode parm for FS_FOpenFile
 typedef enum {
 	FS_READ,
