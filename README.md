@@ -12,7 +12,7 @@ Ioid3-qw is based on ioq3ztm. ioq3ztm was created by Zack Middleton to be a bett
 Ioid3-qw is licensed under a [modified version of the GNU GPLv3](COPYING.txt#L625) (or at your option, any later version). The license is also used by Return to Castle Wolfenstein, Wolfenstein: Enemy Territory, and Doom 3.
 
 
-## Contributors:<img src="https://raw.githubusercontent.com/KuehnhammerTobias/ioid3-game/31925f32426397b6b327611b280c614680b9a2ae/toku.png" align="right" width="128"><img src="https://raw.githubusercontent.com/KuehnhammerTobias/ioid3-game/31925f32426397b6b327611b280c614680b9a2ae/stavarin.png" align="right" width="128">
+## Contributors:<img src="https://raw.githubusercontent.com/KuehnhammerTobias/ioid3-game/31925f32426397b6b327611b280c614680b9a2ae/stavarin.png" align="right" width="128"><img src="https://raw.githubusercontent.com/KuehnhammerTobias/ioid3-game/31925f32426397b6b327611b280c614680b9a2ae/toku.png" align="right" width="128">
   * Tobias 'ToKu' Kuehnhammer
   * Alexandr 'Stavarin' Erikow
 
