@@ -2552,32 +2552,27 @@ A mod directory is a peer to base game with a pk3 in it. The directories are sea
 =======================================================================================================================================
 */
 int FS_GetModList(char *listbuf, int bufsize) {
-	int nMods, i, j, nTotal, nLen, nPaks, nPotential, nDescLen;
+	int nMods, i, j, k, nTotal, nLen, nPaks, nDirs, nPakDirs, nPotential, nDescLen;
 	char **pFiles = NULL;
 	char **pPaks = NULL;
+	char **pDirs = NULL;
 	char *name, *path;
 	char description[MAX_OSPATH];
 	int dummy;
 	char **pFiles0 = NULL;
-	char **pFiles1 = NULL;
-	char **pFiles2 = NULL;
-	char **pFiles3 = NULL;
-	char **pFiles4 = NULL;
-	char **pFiles5 = NULL;
 	qboolean bDrop = qfalse;
+
+	// paths to search for mods
+	const char * const paths[] = {fs_basepath->string, fs_homepath->string, fs_steampath->string, fs_gogpath->string};
 
 	*listbuf = 0;
 	nMods = nTotal = 0;
-
-	pFiles0 = Sys_ListFiles(fs_homepath->string, NULL, NULL, &dummy, qtrue);
-	pFiles1 = Sys_ListFiles(fs_basepath->string, NULL, NULL, &dummy, qtrue);
-	pFiles2 = Sys_ListFiles(fs_steampath->string, NULL, NULL, &dummy, qtrue);
-	pFiles3 = Sys_ListFiles(fs_gogpath->string, NULL, NULL, &dummy, qtrue);
-	// we searched for mods in the four paths
-	// it is likely that we have duplicate names now, which we will cleanup below
-	pFiles4 = Sys_ConcatenateFileLists(pFiles0, pFiles1);
-	pFiles5 = Sys_ConcatenateFileLists(pFiles2, pFiles3);
-	pFiles = Sys_ConcatenateFileLists(pFiles4, pFiles5);
+	// iterate through paths and get list of potential mods
+	for (i = 0; i < ARRAY_LEN(paths); i++) {
+		pFiles0 = Sys_ListFiles(paths[i], NULL, NULL, &dummy, qtrue);
+		// Sys_ConcatenateFileLists frees the lists so Sys_FreeFileList isn't required
+		pFiles = Sys_ConcatenateFileLists(pFiles, pFiles0);
+	}
 
 	nPotential = Sys_CountFileList(pFiles);
 
@@ -2596,60 +2591,50 @@ int FS_GetModList(char *listbuf, int bufsize) {
 				}
 			}
 		}
-
-		if (bDrop) {
+		// we also drop "Data" "." and ".."
+		if (bDrop || Q_stricmp(name, com_basegame->string) == 0 || Q_stricmpn(name, ".", 1) == 0) {
 			continue;
 		}
-		// we drop "Data" "." and ".."
-		if (Q_stricmp(name, com_basegame->string) && Q_stricmpn(name, ".", 1)) {
-			// now we need to find some .pk3 files to validate the mod
-			// NOTE TTimo: (actually I'm not sure why .. what if it's a mod under development with no .pk3?)
-			// we didn't keep the information when we merged the directory names, as to what OS Path it was found under
-			// so it could be in base path, cd path or home path
-			// we will try each three of them here (yes, it's a bit messy)
-			path = FS_BuildOSPath(fs_basepath->string, name, "");
-			nPaks = 0;
+		// in order to be a valid mod the directory must contain at least one .pk3 or .pk3dir
+		// we didn't keep the information when we merged the directory names, as to what OS Path it was found under
+		// so we will try each of them here
+		for (j = 0; j < ARRAY_LEN(paths); j++) {
+			path = FS_BuildOSPath(paths[j], name, "");
+			nPaks = nDirs = nPakDirs = 0;
 			pPaks = Sys_ListFiles(path, ".pk3", NULL, &nPaks, qfalse);
-			Sys_FreeFileList(pPaks); // we only use Sys_ListFiles to check whether .pk3 files are present
-			// try on home path
-			if (nPaks <= 0) {
-				path = FS_BuildOSPath(fs_homepath->string, name, "");
-				nPaks = 0;
-				pPaks = Sys_ListFiles(path, ".pk3", NULL, &nPaks, qfalse);
-				Sys_FreeFileList(pPaks);
-			}
-			// try on steam path
-			if (nPaks <= 0) {
-				path = FS_BuildOSPath(fs_steampath->string, name, "");
-				nPaks = 0;
-				pPaks = Sys_ListFiles(path, ".pk3", NULL, &nPaks, qfalse);
-				Sys_FreeFileList(pPaks);
-			}
-			// try on gog path
-			if (nPaks <= 0) {
-				path = FS_BuildOSPath(fs_gogpath->string, name, "");
-				nPaks = 0;
-				pPaks = Sys_ListFiles(path, ".pk3", NULL, &nPaks, qfalse);
-				Sys_FreeFileList(pPaks);
-			}
+			pDirs = Sys_ListFiles(path, "/", NULL, &nDirs, qfalse);
 
-			if (nPaks > 0) {
-				nLen = strlen(name) + 1;
-				// nLen is the length of the mod path
-				// we need to see if there is a description available
-				FS_GetModDescription(name, description, sizeof(description));
-				nDescLen = strlen(description) + 1;
-
-				if (nTotal + nLen + 1 + nDescLen + 1 < bufsize) {
-					strcpy(listbuf, name);
-					listbuf += nLen;
-					strcpy(listbuf, description);
-					listbuf += nDescLen;
-					nTotal += nLen + nDescLen;
-					nMods++;
-				} else {
-					break;
+			for (k = 0; k < nDirs; k++) {
+				// we only want to count directories ending with ".pk3dir"
+				if (FS_IsExt(pDirs[k], ".pk3dir", strlen(pDirs[k]))) {
+					nPakDirs++;
 				}
+			}
+			// we only use Sys_ListFiles to check whether files are present
+			Sys_FreeFileList(pPaks);
+			Sys_FreeFileList(pDirs);
+
+			if (nPaks > 0 || nPakDirs > 0) {
+				break;
+			}
+		}
+
+		if (nPaks > 0 || nPakDirs > 0) {
+			nLen = strlen(name) + 1;
+			// nLen is the length of the mod path
+			// we need to see if there is a description available
+			FS_GetModDescription(name, description, sizeof(description));
+			nDescLen = strlen(description) + 1;
+
+			if (nTotal + nLen + 1 + nDescLen + 1 < bufsize) {
+				strcpy(listbuf, name);
+				listbuf += nLen;
+				strcpy(listbuf, description);
+				listbuf += nDescLen;
+				nTotal += nLen + nDescLen;
+				nMods++;
+			} else {
+				break;
 			}
 		}
 	}
