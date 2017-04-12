@@ -18,7 +18,7 @@ Ioid3-qw is licensed under a [modified version of the GNU GPLv3](COPYING.txt#L62
   * Improved UI
 
 
-##  Contributors:<img src="https://raw.githubusercontent.com/KuehnhammerTobias/ioid3-game/31925f32426397b6b327611b280c614680b9a2ae/stavarin.png" align="right" width="128"><img src="https://raw.githubusercontent.com/KuehnhammerTobias/ioid3-game/31925f32426397b6b327611b280c614680b9a2ae/toku.png" align="right" width="128">
+##  Contributors:<img src="https://github.com/KuehnhammerTobias/ioid3-game/blob/pre-0.1/stavarin.png" align="right" width="128"><img src="https://github.com/KuehnhammerTobias/ioid3-game/blob/pre-0.1/toku.png" align="right" width="128">
   * Tobias 'ToKu' Kuehnhammer
   * Alexandr 'Stavarin' Erikow
 
