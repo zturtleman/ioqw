@@ -234,7 +234,7 @@ void CL_ParseSnapshot(msg_t *msg) {
 	}
 
 	newSnap.snapFlags = MSG_ReadByte(msg);
-	// If the frame is delta compressed from data that we no longer have available, we must suck up the rest of the frame, but not use
+	// if the frame is delta compressed from data that we no longer have available, we must suck up the rest of the frame, but not use
 	// it, then ask for a non-compressed message
 	if (newSnap.deltaNum <= 0) {
 		newSnap.valid = qtrue; // uncompressed frame
@@ -247,7 +247,7 @@ void CL_ParseSnapshot(msg_t *msg) {
 			// should never happen
 			Com_Printf("Delta from invalid frame (not supposed to happen!).\n");
 		} else if (old->messageNum != newSnap.deltaNum) {
-			// The frame that the server did the delta from is too old, so we can't reconstruct it properly.
+			// the frame that the server did the delta from is too old, so we can't reconstruct it properly.
 			Com_Printf("Delta frame too old.\n");
 		} else if (cl.parseEntitiesNum - old->parseEntitiesNum > MAX_PARSE_ENTITIES - MAX_SNAPSHOT_ENTITIES) {
 			Com_Printf("Delta parseEntitiesNum too old.\n");
@@ -714,13 +714,13 @@ static void CL_ParseVoip(msg_t *msg, qboolean ignoreData) {
 	} else if (sender >= MAX_CLIENTS) {
 		return; // bogus sender.
 	} else if (CL_ShouldIgnoreVoipSender(sender)) {
-		return; // Channel is muted, bail.
+		return; // channel is muted, bail.
 	}
 	// !!! FIXME: make sure data is narrowband? Does decoder handle this?
 	Com_DPrintf("VoIP: packet accepted!\n");
 
 	seqdiff = sequence - clc.voipIncomingSequence[sender];
-	// This is a new "generation" ... a new recording started, reset the bits.
+	// this is a new "generation" ... a new recording started, reset the bits.
 	if (generation != clc.voipIncomingGeneration[sender]) {
 		Com_DPrintf("VoIP: new generation %d!\n", generation);
 		opus_decoder_ctl(clc.opusDecoder[sender], OPUS_RESET_STATE);

@@ -116,7 +116,7 @@ vm_t *cgvm;
 char cl_reconnectArgs[MAX_OSPATH];
 char cl_oldGame[MAX_QPATH];
 qboolean cl_oldGameSet;
-// Structure containing functions exported from refresh DLL
+// structure containing functions exported from refresh DLL
 refexport_t re;
 #ifdef USE_RENDERER_DLOPEN
 static void *rendererLib = NULL;
@@ -134,7 +134,7 @@ typedef struct serverStatus_s {
 
 serverStatus_t cl_serverStatusList[MAX_SERVERSTATUSREQUESTS];
 #if defined __USEA3D && defined __A3D_GEOM
-	void hA3Dg_ExportRenderGeom(refexport_t *incoming_re);
+void hA3Dg_ExportRenderGeom(refexport_t *incoming_re);
 #endif
 static int noGameRestart = qfalse;
 extern void SV_BotFrame(int time);
@@ -387,7 +387,7 @@ static void CL_CaptureVoip(void) {
 		return;
 	}
 #endif
-	// If your data rate is too low, you'll get Connection Interrupted warnings when VoIP packets arrive, even if you have a broadband
+	// if your data rate is too low, you'll get Connection Interrupted warnings when VoIP packets arrive, even if you have a broadband
 	// connection. This might work on rates lower than 25000, but for safety's sake, we'll just demand it. Who doesn't have at least a
 	// DSL line now, anyhow? If you don't, you don't need VoIP.  :)
 	if (cl_voip->modified || cl_rate->modified) {
@@ -533,7 +533,7 @@ static void CL_CaptureVoip(void) {
 			}
 		}
 	}
-	// User requested we stop recording, and we've now processed the last of any previously-buffered data. Pause the capture device, etc.
+	// user requested we stop recording, and we've now processed the last of any previously-buffered data. Pause the capture device, etc.
 	if (finalFrame) {
 		S_StopCapture();
 		S_MasterGain(1.0f);
@@ -848,10 +848,10 @@ void CL_DemoCompleted(void) {
 		time = Sys_Milliseconds() - clc.timeDemoStart;
 
 		if (time > 0) {
-			// Millisecond times are frame durations: minimum/average/maximum/std deviation
+			// millisecond times are frame durations: minimum/average/maximum/std deviation
 			Com_sprintf(buffer, sizeof(buffer), "%i frames %3.1f seconds %3.1f fps %d.0/%.1f/%d.0/%.1f ms\n", clc.timeDemoFrames, time / 1000.0, clc.timeDemoFrames * 1000.0 / time, clc.timeDemoMinDuration, time / (float)clc.timeDemoFrames, clc.timeDemoMaxDuration, CL_DemoFrameDurationSDev());
 			Com_Printf("%s", buffer);
-			// Write a log of all the frame durations
+			// write a log of all the frame durations
 			if (cl_timedemoLog && strlen(cl_timedemoLog->string) > 0) {
 				int i;
 				int numFrames;
@@ -1114,8 +1114,7 @@ void CL_PlayDemo_f(void) {
 =======================================================================================================================================
 CL_NextDemo
 
-Called when a demo or cinematic finishes.
-If the "nextdemo" cvar is set, that command will be issued.
+Called when a demo or cinematic finishes. If the "nextdemo" cvar is set, that command will be issued.
 =======================================================================================================================================
 */
 void CL_NextDemo(void) {
@@ -1173,7 +1172,7 @@ void CL_ShutdownAll(qboolean shutdownRef) {
 
 /*
 =======================================================================================================================================
-CL_ClearMemory(
+CL_ClearMemory
 
 Called by Com_GameRestart.
 =======================================================================================================================================
@@ -1342,6 +1341,7 @@ void CL_Disconnect(qboolean showMainMenu) {
 #ifdef USE_VOIP
 	if (cl_voipSend->integer) {
 		int tmp = cl_voipUseVAD->integer;
+
 		cl_voipUseVAD->integer = 0; // disable this for a moment.
 		clc.voipOutgoingDataSize = 0; // dump any pending VoIP transmission.
 		Cvar_Set("cl_voipSend", "0");
@@ -1351,6 +1351,7 @@ void CL_Disconnect(qboolean showMainMenu) {
 
 	if (clc.voipCodecInitialized) {
 		int i;
+
 		opus_encoder_destroy(clc.opusEncoder);
 
 		for (i = 0; i < MAX_CLIENTS; i++) {
@@ -1390,7 +1391,7 @@ void CL_Disconnect(qboolean showMainMenu) {
 
 	clc.cURLReconnecting = qfalse;
 #else
-	// Remove pure paks
+	// remove pure paks
 	FS_PureServerSetLoadedPaks("", "");
 	FS_PureServerSetReferencedPaks("", "");
 #endif
@@ -1409,9 +1410,9 @@ void CL_Disconnect(qboolean showMainMenu) {
 	// not connected to voip server anymore.
 	clc.voipEnabled = qfalse;
 #endif
-	// Stop recording any video
+	// stop recording any video
 	if (CL_VideoRecording()) {
-		// Finish rendering current frame
+		// finish rendering current frame
 		SCR_UpdateScreen();
 		CL_CloseAVI();
 	}
@@ -1622,7 +1623,7 @@ void CL_Connect_f(void) {
 		clc.state = CA_CHALLENGING;
 	} else {
 		clc.state = CA_CONNECTING;
-		// Set a client challenge number that ideally is mirrored back by the server.
+		// set a client challenge number that ideally is mirrored back by the server.
 		clc.challenge = ((rand() << 16) ^ rand()) ^ Com_Milliseconds();
 	}
 
@@ -1643,7 +1644,7 @@ CL_CompleteRcon
 static void CL_CompleteRcon(char *args, int argNum) {
 
 	if (argNum == 2) {
-		// Skip "rcon"
+		// skip "rcon"
 		char *p = Com_SkipTokens(args, 1, " ");
 
 		if (p > args) {
@@ -1711,8 +1712,7 @@ void CL_Rcon_f(void) {
 	netadr_t to;
 
 	if (!rcon_client_password->string[0]) {
-		Com_Printf("You must set 'rconpassword' before\n"
-					"issuing an rcon command.\n");
+		Com_Printf("You must set 'rconpassword' before issuing an rcon command.\n");
 		return;
 	}
 
@@ -1776,14 +1776,12 @@ void CL_ResetPureClientAtServer(void) {
 =======================================================================================================================================
 CL_Vid_Restart_f
 
-Restart the video subsystem
-
-We also have to reload the UI and CGame because the renderer doesn't know what graphics to reload.
+Restart the video subsystem. We also have to reload the UI and CGame because the renderer doesn't know what graphics to reload.
 =======================================================================================================================================
 */
 void CL_Vid_Restart_f(void) {
 
-	// Settings may have changed so stop recording now
+	// settings may have changed so stop recording now
 	if (CL_VideoRecording()) {
 		CL_CloseAVI();
 	}
@@ -1857,8 +1855,7 @@ void CL_Snd_Shutdown(void) {
 =======================================================================================================================================
 CL_Snd_Restart_f
 
-Restart the sound subsystem.
-The cgame and game must also be forced to restart because handles will be invalid.
+Restart the sound subsystem. The cgame and game must also be forced to restart because handles will be invalid.
 =======================================================================================================================================
 */
 void CL_Snd_Restart_f(void) {
@@ -1917,6 +1914,7 @@ CL_Clientinfo_f
 =======================================================================================================================================
 */
 void CL_Clientinfo_f(void) {
+
 	Com_Printf("--------- Client Information ---------\n");
 	Com_Printf("state: %i\n", clc.state);
 	Com_Printf("Server: %s\n", clc.servername);
@@ -1990,6 +1988,7 @@ void CL_DownloadsComplete(void) {
 #endif
 	// initialize the CGame
 	cls.cgameStarted = qtrue;
+
 	CL_InitCGame();
 	// set pure checksums
 	CL_SendPureChecksums();
@@ -2018,7 +2017,7 @@ void CL_BeginDownload(const char *localName, const char *remoteName) {
 #else
 	Com_sprintf(clc.downloadTempName, sizeof(clc.downloadTempName), "%s.tmp", localName);
 #endif
-	// Set so UI gets access to it
+	// set so UI gets access to it
 #ifdef NEW_FILESYSTEM
 	Cvar_Set("cl_downloadName", localName);
 #else
@@ -2028,7 +2027,7 @@ void CL_BeginDownload(const char *localName, const char *remoteName) {
 	Cvar_Set("cl_downloadCount", "0");
 	Cvar_SetValue("cl_downloadTime", cls.realtime);
 
-	clc.downloadBlock = 0; // Starting new file
+	clc.downloadBlock = 0; // starting new file
 	clc.downloadCount = 0;
 
 	CL_AddReliableCommand(va("download %s", remoteName), qfalse);
@@ -2123,7 +2122,7 @@ void CL_NextDownload(void) {
 	char *remoteName, *localName;
 	qboolean useCURL = qfalse;
 
-	// A download has finished, check whether this matches a referenced checksum
+	// a download has finished, check whether this matches a referenced checksum
 	if (*clc.downloadName) {
 		char *zippath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), clc.downloadName, "");
 		zippath[strlen(zippath) - 1] = '\0';
@@ -2135,7 +2134,7 @@ void CL_NextDownload(void) {
 
 	*clc.downloadTempName = *clc.downloadName = 0;
 	Cvar_Set("cl_downloadName", "");
-	// We are looking to start a download here
+	// we are looking to start a download here
 	if (*clc.downloadList) {
 		s = clc.downloadList;
 		// format is: @remotename@localname@remotename@localname, etc.
@@ -2784,7 +2783,7 @@ void CL_Frame(int msec) {
 
 	if (cl_autoRecordDemo->integer) {
 		if (clc.state == CA_ACTIVE && !clc.demorecording && !clc.demoplaying) {
-			// If not recording a demo, and we should be, start one
+			// if not recording a demo, and we should be, start one
 			qtime_t now;
 			char *nowString;
 			char *p;
@@ -2795,7 +2794,7 @@ void CL_Frame(int msec) {
 			nowString = va("%04d%02d%02d%02d%02d%02d", 1900 + now.tm_year, 1 + now.tm_mon, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec);
 
 			Q_strncpyz(serverName, clc.servername, MAX_OSPATH);
-			// Replace the ":" in the address as it is not a valid file name character
+			// replace the ":" in the address as it is not a valid file name character
 			p = strstr(serverName, ":");
 
 			if (p) {
@@ -2807,7 +2806,7 @@ void CL_Frame(int msec) {
 
 			Cbuf_ExecuteText(EXEC_NOW, va("record %s-%s-%s", nowString, serverName, mapName));
 		} else if (clc.state != CA_ACTIVE && clc.demorecording) {
-			// Recording, but not CA_ACTIVE, so stop recording
+			// recording, but not CA_ACTIVE, so stop recording
 			CL_StopRecord_f();
 		}
 	}
@@ -2852,7 +2851,7 @@ void CL_Frame(int msec) {
 =======================================================================================================================================
 CL_RefPrintf
 
-DLL glue
+DLL glue.
 =======================================================================================================================================
 */
 static __attribute__((format(printf, 2, 3))) void QDECL CL_RefPrintf(int print_level, const char *fmt, ...) {
@@ -3143,8 +3142,8 @@ void CL_SetModel_f(void) {
 =======================================================================================================================================
 CL_Video_f
 
-video
-video [filename]
+video.
+video [filename].
 =======================================================================================================================================
 */
 void CL_Video_f(void) {
@@ -3353,7 +3352,7 @@ void CL_Init(void) {
 #endif
 	cl_conXOffset = Cvar_Get("cl_conXOffset", "0", 0);
 #ifdef __APPLE__
-	// In game video is REALLY slow in Mac OS X right now due to driver slowness
+	// in game video is REALLY slow in Mac OS X right now due to driver slowness
 	cl_inGameVideo = Cvar_Get("r_inGameVideo", "0", CVAR_ARCHIVE);
 #else
 	cl_inGameVideo = Cvar_Get("r_inGameVideo", "1", CVAR_ARCHIVE);
@@ -3423,7 +3422,7 @@ void CL_Init(void) {
 #endif
 	// cgame might not be initialized before menu is used
 	Cvar_Get("cg_viewsize", "100", CVAR_ARCHIVE);
-	// Make sure cg_stereoSeparation is zero as that variable is deprecated and should not be used anymore.
+	// make sure cg_stereoSeparation is zero as that variable is deprecated and should not be used anymore.
 	Cvar_Get("cg_stereoSeparation", "0", CVAR_ROM);
 	// register our commands
 	Cmd_AddCommand("cmd", CL_ForwardToServer_f);
@@ -3921,7 +3920,7 @@ void CL_LocalServers_f(void) {
 	}
 
 	Com_Memset(&to, 0, sizeof(to));
-	// The 'xxx' in the message is a challenge that will be echoed back by the server. We don't care about that here, but master servers
+	// the 'xxx' in the message is a challenge that will be echoed back by the server. We don't care about that here, but master servers
 	// can use that to prevent spoofed server responses from invalid ip
 	message = "\377\377\377\377getinfo xxx";
 	// send each message twice in case one is dropped

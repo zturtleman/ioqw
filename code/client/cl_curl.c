@@ -83,7 +83,7 @@ qboolean CL_cURL_Init() {
 
 	if (!(cURLLib = Sys_LoadDll(cl_cURLLib->string, qtrue))) {
 #ifdef ALTERNATE_CURL_LIB
-		// On some linux distributions there is no libcurl.so.3, but only libcurl.so.4. That one works too.
+		// on some linux distributions there is no libcurl.so.3, but only libcurl.so.4. That one works too.
 		if (!(cURLLib = Sys_LoadDll(ALTERNATE_CURL_LIB, qtrue)))
 #endif
 			return qfalse;
@@ -268,13 +268,13 @@ void CL_cURL_BeginDownload(const char *localName, const char *remoteURL) {
 #else
 	Com_sprintf(clc.downloadTempName, sizeof(clc.downloadTempName), "%s.tmp", localName);
 #endif
-	// Set so UI gets access to it
+	// set so UI gets access to it
 	Cvar_Set("cl_downloadName", localName);
 	Cvar_Set("cl_downloadSize", "0");
 	Cvar_Set("cl_downloadCount", "0");
 	Cvar_SetValue("cl_downloadTime", cls.realtime);
 
-	clc.downloadBlock = 0; // Starting new file
+	clc.downloadBlock = 0; // starting new file
 	clc.downloadCount = 0;
 	clc.downloadCURL = qcurl_easy_init();
 

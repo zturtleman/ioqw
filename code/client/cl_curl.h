@@ -50,7 +50,6 @@ extern void (*qcurl_easy_cleanup)(CURL *curl);
 extern CURLcode (*qcurl_easy_getinfo)(CURL *curl, CURLINFO info, ...);
 extern void (*qcurl_easy_reset)(CURL *curl);
 extern const char *(*qcurl_easy_strerror)(CURLcode);
-
 extern CURLM *(*qcurl_multi_init)(void);
 extern CURLMcode (*qcurl_multi_add_handle)(CURLM *multi_handle, CURL *curl_handle);
 extern CURLMcode (*qcurl_multi_remove_handle)(CURLM *multi_handle, CURL *curl_handle);
