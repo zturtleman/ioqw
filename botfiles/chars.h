@@ -127,30 +127,31 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define CHARACTERISTIC_AIM_ACCURACY_MISSILELAUNCHER	48 // float [0, 1]
 // how much the bot fires its weapon (continuous or bursts)
 #define CHARACTERISTIC_FIRETHROTTLE					49 // float [0, 1]
+#define CHARACTERISTIC_LEADER_STRATEGY				50 // integer [1, 4]
 //=====================================================================================================================================
 // CHAT
 //=====================================================================================================================================
 // tendency to insult/praise
-#define CHARACTERISTIC_CHAT_INSULT					50 // float [0, 1]
+#define CHARACTERISTIC_CHAT_INSULT					51 // float [0, 1]
 // tendency to chat about miscellaneous subject
-#define CHARACTERISTIC_CHAT_MISC					51 // float [0, 1]
+#define CHARACTERISTIC_CHAT_MISC					52 // float [0, 1]
 // tendency to chat at start or end of level
-#define CHARACTERISTIC_CHAT_STARTENDLEVEL			52 // float [0, 1]
+#define CHARACTERISTIC_CHAT_STARTENDLEVEL			53 // float [0, 1]
 // tendency to chat entering or exiting the game
-#define CHARACTERISTIC_CHAT_ENTEREXITGAME			53 // float [0, 1]
+#define CHARACTERISTIC_CHAT_ENTEREXITGAME			54 // float [0, 1]
 // tendency to chat when the character killed someone
-#define CHARACTERISTIC_CHAT_KILL					54 // float [0, 1]
+#define CHARACTERISTIC_CHAT_KILL					55 // float [0, 1]
 // tendency to chat when the character died
-#define CHARACTERISTIC_CHAT_DEATH					55 // float [0, 1]
+#define CHARACTERISTIC_CHAT_DEATH					56 // float [0, 1]
 // tendency to chat when enemy commits suicide
-#define CHARACTERISTIC_CHAT_ENEMYSUICIDE			56 // float [0, 1]
+#define CHARACTERISTIC_CHAT_ENEMYSUICIDE			57 // float [0, 1]
 // tendency to chat when hit while chatting
-#define CHARACTERISTIC_CHAT_HITTALKING				57 // float [0, 1]
+#define CHARACTERISTIC_CHAT_HITTALKING				58 // float [0, 1]
 // tendency to chat when bot was hit but didn't die
-#define CHARACTERISTIC_CHAT_HITNODEATH				58 // float [0, 1]
+#define CHARACTERISTIC_CHAT_HITNODEATH				59 // float [0, 1]
 // tendency to chat when bot hit the enemy but enemy didn't die
-#define CHARACTERISTIC_CHAT_HITNOKILL				59 // float [0, 1]
+#define CHARACTERISTIC_CHAT_HITNOKILL				60 // float [0, 1]
 // tendency to chat at random moments
-#define CHARACTERISTIC_CHAT_RANDOM					60 // float [0, 1]
+#define CHARACTERISTIC_CHAT_RANDOM					61 // float [0, 1]
 // tendency to reply to chats
-#define CHARACTERISTIC_CHAT_REPLY					61 // float [0, 1]
+#define CHARACTERISTIC_CHAT_REPLY					62 // float [0, 1]
