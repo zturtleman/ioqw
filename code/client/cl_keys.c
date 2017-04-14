@@ -478,7 +478,7 @@ void Field_KeyDownEvent(field_t *edit, int key) {
 		default:
 			break;
 	}
-	// Change scroll if cursor is no longer visible
+	// change scroll if cursor is no longer visible
 	if (edit->cursor < edit->scroll) {
 		edit->scroll = edit->cursor;
 	} else if (edit->cursor >= edit->scroll + edit->widthInChars && edit->cursor <= len) {
@@ -1048,7 +1048,7 @@ Key_CompleteUnbind
 static void Key_CompleteUnbind(char *args, int argNum) {
 
 	if (argNum == 2) {
-		// Skip "unbind"
+		// skip "unbind"
 		char *p = Com_SkipTokens(args, 1, " ");
 
 		if (p > args) {
@@ -1066,14 +1066,14 @@ static void Key_CompleteBind(char *args, int argNum) {
 	char *p;
 
 	if (argNum == 2) {
-		// Skip "bind"
+		// skip "bind"
 		p = Com_SkipTokens(args, 1, " ");
 
 		if (p > args) {
 			Field_CompleteKeyname();
 		}
 	} else if (argNum >= 3) {
-		// Skip "bind <key>"
+		// skip "bind <key>"
 		p = Com_SkipTokens(args, 2, " ");
 
 		if (p > args) {
@@ -1158,8 +1158,7 @@ void CL_ParseBinding(int key, qboolean down, unsigned time) {
 		}
 
 		if (*p == '+') {
-			// button commands add keynum and time as parameters
-			// so that multiple sources can be discriminated and subframe corrected
+			// button commands add keynum and time as parameters so that multiple sources can be discriminated and subframe corrected
 			if (allCommands || (allowUpCmds && !down)) {
 				char cmd[1024];
 				Com_sprintf(cmd, sizeof(cmd), "%c%s %d %d\n", (down) ? '+' : '-', p + 1, key, time);
@@ -1312,7 +1311,7 @@ void CL_KeyEvent(int key, qboolean down, unsigned time) {
 =======================================================================================================================================
 CL_CharEvent
 
-Normal keyboard characters, already shifted / capslocked / etc.
+Normal keyboard characters, already shifted/capslocked/etc.
 =======================================================================================================================================
 */
 void CL_CharEvent(int key) {
@@ -1397,7 +1396,7 @@ Key_SetCatcher
 */
 void Key_SetCatcher(int catcher) {
 
-	// If the catcher state is changing, clear all key states
+	// if the catcher state is changing, clear all key states
 	if (catcher != keyCatchers) {
 		Key_ClearStates();
 	}
@@ -1405,7 +1404,7 @@ void Key_SetCatcher(int catcher) {
 	keyCatchers = catcher;
 }
 
-// This must not exceed MAX_CMD_LINE
+// this must not exceed MAX_CMD_LINE
 #define MAX_CONSOLE_SAVE_BUFFER 1024
 #define CONSOLE_HISTORY_FILE "history"
 static char consoleSaveBuffer[MAX_CONSOLE_SAVE_BUFFER];

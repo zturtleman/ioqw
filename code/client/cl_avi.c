@@ -314,7 +314,7 @@ qboolean CL_OpenAVIForWriting(const char *fileName) {
 	}
 
 	Com_Memset(&afd, 0, sizeof(aviFileData_t));
-	// Don't start if a framerate has not been chosen
+	// don't start if a framerate has not been chosen
 	if (cl_aviFrameRate->integer <= 0) {
 		Com_Printf(S_COLOR_RED "cl_aviFrameRate must be >= 1\n");
 		return qfalse;
@@ -341,8 +341,8 @@ qboolean CL_OpenAVIForWriting(const char *fileName) {
 	} else {
 		afd.motionJpeg = qfalse;
 	}
-	// Buffers only need to store RGB pixels.
-	// Allocate a bit more space for the capture buffer to account for possible padding at the end of pixel lines, and padding for alignment
+	// buffers only need to store RGB pixels.
+	// allocate a bit more space for the capture buffer to account for possible padding at the end of pixel lines, and padding for alignment
 #define MAX_PACK_LEN 16
 	afd.cBuffer = Z_Malloc((afd.width * 3 + MAX_PACK_LEN - 1) * afd.height + MAX_PACK_LEN - 1);
 	// raw avi files have pixel lines start on 4-byte boundaries
@@ -376,7 +376,7 @@ qboolean CL_OpenAVIForWriting(const char *fileName) {
 		afd.audio = qfalse;
 		Com_Printf(S_COLOR_YELLOW "WARNING: Audio capture is not supported with OpenAL. Set s_useOpenAL to 0 for audio capture\n");
 	}
-	// This doesn't write a real header, but allocates the correct amount of space at the beginning of the file
+	// this doesn't write a real header, but allocates the correct amount of space at the beginning of the file
 	CL_WriteAVIHeader();
 
 	SafeFS_Write(buffer, bufIndex, afd.f);
@@ -386,7 +386,7 @@ qboolean CL_OpenAVIForWriting(const char *fileName) {
 	START_CHUNK("idx1");
 	SafeFS_Write(buffer, bufIndex, afd.idxF);
 
-	afd.moviSize = 4; // For the "movi"
+	afd.moviSize = 4; // for the "movi"
 	afd.fileOpen = qtrue;
 
 	return qtrue;
@@ -404,7 +404,7 @@ static qboolean CL_CheckFileSize(int bytesToAdd) {
 	newFileSize = afd.fileSize + bytesToAdd + (afd.numIndices * 16) + 4;
 	// I assume all the operating systems we target can handle a 2GB file
 	if (newFileSize > INT_MAX) {
-		// Close the current file...
+		// close the current file...
 		CL_CloseAVI();
 		// ...And open a new one
 		CL_OpenAVIForWriting(va("%s_", afd.fileName));
@@ -428,7 +428,7 @@ void CL_WriteAVIVideoFrame(const byte *imageBuffer, int size) {
 	if (!afd.fileOpen) {
 		return;
 	}
-	// Chunk header + contents + padding
+	// chunk header + contents + padding
 	if (CL_CheckFileSize(8 + size + 2)) {
 		return;
 	}
@@ -479,7 +479,7 @@ void CL_WriteAVIAudioFrame(const byte *pcmBuffer, int size) {
 	if (!afd.fileOpen) {
 		return;
 	}
-	// Chunk header + contents + padding
+	// chunk header + contents + padding
 	if (CL_CheckFileSize(8 + bytesInBuffer + size + 2)) {
 		return;
 	}
@@ -492,7 +492,7 @@ void CL_WriteAVIAudioFrame(const byte *pcmBuffer, int size) {
 	Com_Memcpy(&pcmCaptureBuffer[bytesInBuffer], pcmBuffer, size);
 
 	bytesInBuffer += size;
-	// Only write if we have a frame's worth of audio
+	// only write if we have a frame's worth of audio
 	if (bytesInBuffer >= (int)ceil((float)afd.a.rate / (float)afd.frameRate) * afd.a.sampleSize) {
 		int chunkOffset = afd.fileSize - afd.moviOffset - 8;
 		int chunkSize = 8 + bytesInBuffer;
@@ -512,7 +512,7 @@ void CL_WriteAVIAudioFrame(const byte *pcmBuffer, int size) {
 		afd.numAudioFrames++;
 		afd.moviSize += (chunkSize + paddingSize);
 		afd.a.totalBytes += bytesInBuffer;
-		// Index
+		// index
 		bufIndex = 0;
 
 		WRITE_STRING("01wb");			// dwIdentifier
@@ -567,16 +567,16 @@ qboolean CL_CloseAVI(void) {
 	WRITE_4BYTES(indexSize);
 	SafeFS_Write(buffer, bufIndex, afd.idxF);
 	FS_FCloseFile(afd.idxF);
-	// Write index
+	// write index
 
-	// Open the temp index file
+	// open the temp index file
 	if ((indexSize = FS_FOpenFileRead(idxFileName, &afd.idxF, qtrue)) <= 0) {
 		FS_FCloseFile(afd.f);
 		return qfalse;
 	}
 
 	indexRemainder = indexSize;
-	// Append index to end of avi file
+	// append index to end of avi file
 	while (indexRemainder > MAX_AVI_BUFFER) {
 		FS_Read(buffer, MAX_AVI_BUFFER, afd.idxF);
 		SafeFS_Write(buffer, MAX_AVI_BUFFER, afd.f);
@@ -588,9 +588,9 @@ qboolean CL_CloseAVI(void) {
 	SafeFS_Write(buffer, indexRemainder, afd.f);
 	afd.fileSize += indexRemainder;
 	FS_FCloseFile(afd.idxF);
-	// Remove temp index file
+	// remove temp index file
 	FS_HomeRemove(idxFileName);
-	// Write the real header
+	// write the real header
 	FS_Seek(afd.f, 0, FS_SEEK_SET);
 	CL_WriteAVIHeader();
 
@@ -598,7 +598,7 @@ qboolean CL_CloseAVI(void) {
 
 	WRITE_4BYTES(afd.fileSize - 8); // "RIFF" size
 
-	bufIndex = afd.moviOffset + 4; // Skip "LIST"
+	bufIndex = afd.moviOffset + 4; // skip "LIST"
 
 	WRITE_4BYTES(afd.moviSize);
 

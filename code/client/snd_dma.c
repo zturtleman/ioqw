@@ -1373,7 +1373,7 @@ void S_GetSoundtime(void) {
 
 /*
 =======================================================================================================================================
-S_Update
+S_Update_
 =======================================================================================================================================
 */
 void S_Update_(void) {
@@ -1389,7 +1389,7 @@ void S_Update_(void) {
 	}
 
 	thisTime = Com_Milliseconds();
-	// Updates s_soundtime
+	// updates s_soundtime
 	S_GetSoundtime();
 
 	if (s_soundtime == ot) {
@@ -1463,13 +1463,12 @@ S_OpenBackgroundStream
 */
 static void S_OpenBackgroundStream(const char *filename) {
 
-	// close the background track, but DON'T reset s_rawend
-	// if restarting the same back ground track
+	// close the background track, but DON'T reset s_rawend if restarting the same back ground track
 	if (s_backgroundStream) {
 		S_CodecCloseStream(s_backgroundStream);
 		s_backgroundStream = NULL;
 	}
-	// Open stream
+	// open stream
 	s_backgroundStream = S_CodecOpenStream(filename);
 
 	if (!s_backgroundStream) {
@@ -1548,7 +1547,7 @@ void S_UpdateBackgroundTrack(void) {
 			fileBytes = sizeof(raw);
 			fileSamples = fileBytes / (s_backgroundStream->info.width * s_backgroundStream->info.channels);
 		}
-		// Read
+		// read
 		r = S_CodecReadStream(s_backgroundStream, fileBytes, raw);
 
 		if (r < fileBytes) {

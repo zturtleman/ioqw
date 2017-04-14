@@ -51,7 +51,7 @@ typedef struct {
 	int serverTime;			// server time the message is valid for (in msec)
 	int messageNum;			// copied from netchan->incoming_sequence
 	int deltaNum;			// messageNum the delta is from
-	int ping;				// time from when cmdNum-1 was sent to time packet was received
+	int ping;				// time from when cmdNum - 1 was sent to time packet was received
 	byte areamask[MAX_MAP_AREA_BYTES]; // portalarea visibility bits
 	int cmdNum;				// the next cmdNum the server is expecting
 	playerState_t ps;		// complete information about the current player at this time
@@ -102,10 +102,10 @@ typedef struct {
 	// cgame communicates a few values to the client system
 	int cgameUserCmdValue;			// current weapon to add to usercmd_t
 	float cgameSensitivity;
-	// cmds[cmdNumber] is the predicted command, [cmdNumber-1] is the last
+	// cmds[cmdNumber] is the predicted command, [cmdNumber - 1] is the last
 	// properly generated command
 	usercmd_t cmds[CMD_BACKUP];		// each message will send several old cmds
-	int cmdNumber; // incremented each frame, because multiple frames may need to be packed into a single packet
+	int cmdNumber;					// incremented each frame, because multiple frames may need to be packed into a single packet
 	outPacket_t outPackets[PACKET_BACKUP];	// information about each packet we have sent out
 	// the client maintains its own idea of view angles, which are sent to the server each frame. It is cleared to 0 upon entering each
 	// level. The server sends a delta each frame which is added to the locally tracked view angles to account for standing on rotating
@@ -296,7 +296,7 @@ extern qboolean cl_oldGameSet;
 extern vm_t *cgvm;		// interface to cgame dll or vm
 extern vm_t *uivm;		// interface to ui dll or vm
 extern refexport_t re;	// interface to refresh .dll
-
+// cvars
 extern cvar_t *cl_nodelta;
 extern cvar_t *cl_debugMove;
 extern cvar_t *cl_noprint;
