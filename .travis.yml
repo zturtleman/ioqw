@@ -29,7 +29,7 @@ notifications:
 addons:
   coverity_scan:
     project:
-      name: "ioid3-games/ioqw"
+      name: "ioid3-games/ioid3-qw"
       description: "Build submitted via Travis CI"
     notification_email: false
     build_command_prepend: "make clean"

@@ -7,7 +7,7 @@
 Ioid3-qw is based on ioq3ztm. ioq3ztm was created by Zack Middleton to be a better (or alternative) base engine for developing new standalone id Tech 3 games. ioq3ztm, and therefore also Ioid3-qw, is not compatible with any other id Tech 3 game. Ioid3-qw also contains code from [Spearmint](http://spearmint.pw/) (the successor of ioq3ztm), and code from other repositories owned by [Zack Middleton](https://github.com/zturtleman?tab=repositories).
 
 
-## License
+## License:
 
 Ioid3-qw is licensed under a [modified version of the GNU GPLv3](COPYING.txt#L625) (or at your option, any later version). The license is also used by Return to Castle Wolfenstein, Wolfenstein: Enemy Territory, and Doom 3.
 
@@ -18,19 +18,14 @@ Ioid3-qw is licensed under a [modified version of the GNU GPLv3](COPYING.txt#L62
   * Improved UI
 
 
-##  Contributors:<img src="https://github.com/KuehnhammerTobias/ioid3-game/blob/pre-0.1/stavarin.png" align="right" width="128"><img src="https://github.com/KuehnhammerTobias/ioid3-game/blob/pre-0.1/toku.png" align="right" width="128">
-  * Tobias 'ToKu' Kuehnhammer
-  * Alexandr 'Stavarin' Erikow
-
-
-## Credits
+## Credits:
 
 * Zack Middleton
 * Robert Beckebans
 * Ian Jefferies
 * And other contributors
 
-Ioid3-qw is based on Ioq3ztm and also contains code from:
+  Ioid3-qw is based on ioq3ztm and also contains code from:
 * Spearmint - Zack Middleton
 * UI Enhanced - Ian Jefferies
 * RTCW SP - Gray Matter Interactive
