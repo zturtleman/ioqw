@@ -247,9 +247,9 @@ typedef enum {
 	K_MENU,
 	K_EURO,
 	K_UNDO,
-	// Gamepad controls
-	// Ordered to match SDL2 game controller buttons and axes
-	// Do not change this order without also changing IN_GamepadMove() in SDL_input.c
+	// gamepad controls
+	// ordered to match SDL2 game controller buttons and axes
+	// do not change this order without also changing IN_GamepadMove() in SDL_input.c
 	K_PAD0_A,
 	K_PAD0_B,
 	K_PAD0_X,
@@ -275,7 +275,7 @@ typedef enum {
 	K_PAD0_RIGHTSTICK_DOWN,
 	K_PAD0_LEFTTRIGGER,
 	K_PAD0_RIGHTTRIGGER,
-	// Pseudo-key that brings the console down
+	// pseudo-key that brings the console down
 	K_CONSOLE,
 
 	MAX_KEYS

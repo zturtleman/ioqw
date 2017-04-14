@@ -48,12 +48,12 @@ typedef struct snd_stream_s {
 	int pos;
 	void *ptr;
 } snd_stream_t;
-// Codec functions
+// codec functions
 typedef void *(*CODEC_LOAD)(const char *filename, snd_info_t *info);
 typedef snd_stream_t *(*CODEC_OPEN)(const char *filename);
 typedef int (*CODEC_READ)(snd_stream_t *stream, int bytes, void *buffer);
 typedef void (*CODEC_CLOSE)(snd_stream_t *stream);
-// Codec data structure
+// codec data structure
 struct snd_codec_s {
 	char *ext;
 	CODEC_LOAD load;
@@ -62,7 +62,7 @@ struct snd_codec_s {
 	CODEC_CLOSE close;
 	snd_codec_t *next;
 };
-// Codec management
+// codec management
 void S_CodecInit(void);
 void S_CodecShutdown(void);
 void S_CodecRegister(snd_codec_t *codec);
@@ -70,7 +70,7 @@ void *S_CodecLoad(const char *filename, snd_info_t *info);
 snd_stream_t *S_CodecOpenStream(const char *filename);
 void S_CodecCloseStream(snd_stream_t *stream);
 int S_CodecReadStream(snd_stream_t *stream, int bytes, void *buffer);
-// Util functions (used by codecs)
+// util functions (used by codecs)
 snd_stream_t *S_CodecUtilOpen(const char *filename, snd_codec_t *codec);
 void S_CodecUtilClose(snd_stream_t **stream);
 // WAV Codec

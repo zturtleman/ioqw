@@ -922,7 +922,7 @@ intptr_t CL_UISystemCalls(intptr_t *args) {
 		case UI_KEY_GETCATCHER:
 			return Key_GetCatcher();
 		case UI_KEY_SETCATCHER:
-			// Don't allow the ui module to close the console
+			// don't allow the ui module to close the console
 			Key_SetCatcher(args[1]|(Key_GetCatcher() & KEYCATCH_CONSOLE));
 			return 0;
 		case UI_KEY_GETKEY:

@@ -564,8 +564,7 @@ intptr_t CL_CgameSystemCalls(intptr_t *args) {
 		case CG_UPDATESCREEN:
 			// this is used during lengthy level loading, so pump message loop
 			// Com_EventLoop(); // FIXME: if a server restarts here, BAD THINGS HAPPEN!
-			// We can't call Com_EventLoop here, a restart will crash and this _does_ happen
-			// if there is a map change while we are downloading at pk3.
+			// we can't call Com_EventLoop here, a restart will crash and this _does_ happen if there is a map change while we are downloading at pk3.
 			SCR_UpdateScreen();
 			return 0;
 		case CG_TRANSLATE_STRING:
@@ -718,7 +717,7 @@ intptr_t CL_CgameSystemCalls(intptr_t *args) {
 		case CG_KEY_GETCATCHER:
 			return Key_GetCatcher();
 		case CG_KEY_SETCATCHER:
-			// Don't allow the cgame module to close the console
+			// don't allow the cgame module to close the console
 			Key_SetCatcher(args[1]|(Key_GetCatcher() & KEYCATCH_CONSOLE));
 			return 0;
 		case CG_KEY_GETKEY:
@@ -1117,7 +1116,7 @@ void CL_SetCGameTime(void) {
 
 		frameDuration = now - clc.timeDemoLastFrame;
 		clc.timeDemoLastFrame = now;
-		// Ignore the first measurement as it'll always be 0
+		// ignore the first measurement as it'll always be 0
 		if (clc.timeDemoFrames > 0) {
 			if (frameDuration > clc.timeDemoMaxDuration) {
 				clc.timeDemoMaxDuration = frameDuration;
