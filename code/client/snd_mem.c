@@ -29,7 +29,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "snd_local.h"
 #include "snd_codec.h"
 
-#define DEF_COMSOUNDMEGS "8"
+#define DEF_COMSOUNDMEGS "32"
 
 /*
 =======================================================================================================================================
