@@ -25,7 +25,9 @@ Ioid3-qw is licensed under a [modified version of the GNU GPLv3](COPYING.txt#L62
 * Ian Jefferies
 * And other contributors
 
-  Ioid3-qw is based on ioq3ztm and also contains code from:
+
+## Ioid3-qw is based on ioq3ztm and also contains code from:
+
 * Spearmint - Zack Middleton
 * UI Enhanced - Ian Jefferies
 * RTCW SP - Gray Matter Interactive
