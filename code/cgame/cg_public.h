@@ -44,7 +44,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define MAX_ENTITIES_IN_SNAPSHOT 256
 
 typedef struct {
-	int snapFlags;						// SNAPFLAG_RATE_DELAYED, etc
+	int snapFlags;						// SNAPFLAG_RATE_DELAYED, etc.
 	int ping;
 	int serverTime;						// server time the message is valid for (in msec)
 	byte areamask[MAX_MAP_AREA_BYTES];	// portalarea visibility bits

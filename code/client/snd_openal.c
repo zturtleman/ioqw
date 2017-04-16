@@ -569,12 +569,13 @@ typedef struct sentity_s {
 
 static sentity_t entityList[MAX_GENTITIES];
 
+#define S_AL_SanitiseVector(v) _S_AL_SanitiseVector(v, __LINE__)
+
 /*
 =======================================================================================================================================
-S_AL_SanitiseVector
+_S_AL_SanitiseVector
 =======================================================================================================================================
 */
-#define S_AL_SanitiseVector(v) _S_AL_SanitiseVector(v, __LINE__)
 static void _S_AL_SanitiseVector(vec3_t v, int line) {
 
 	if (Q_isnan(v[0]) || Q_isnan(v[1]) || Q_isnan(v[2])) {
@@ -960,8 +961,7 @@ static srcHandle_t S_AL_SrcAlloc(alSrcPriority_t priority, int entnum, int chann
 		if (curSource->isPlaying) {
 			if (weakest_isplaying && curSource->priority < priority && (curSource->priority < weakest_pri || (!curSource->isLooping && (curSource->scaleGain < weakest_gain || curSource->lastUsedTime < weakest_time)))) {
 				// if it has lower priority, is fainter or older, flag it as weak
-				// the last two values are only compared if it's not a looping sound, because we want to prevent two
-				// loops (loops are added EVERY frame) fighting for a slot
+				// the last two values are only compared if it's not a looping sound, because we want to prevent two loops (loops are added EVERY frame) fighting for a slot
 				weakest_pri = curSource->priority;
 				weakest_time = curSource->lastUsedTime;
 				weakest_gain = curSource->scaleGain;
@@ -2317,6 +2317,7 @@ qboolean S_AL_Init(soundInterface_t *si) {
 		const char *defaultdevice;
 #endif
 		int curlen;
+
 		// get all available devices + the default device name.
 		if (enumeration_all_ext) {
 			devicelist = qalcGetString(NULL, ALC_ALL_DEVICES_SPECIFIER);
@@ -2332,8 +2333,7 @@ qboolean S_AL_Init(soundInterface_t *si) {
 			enumeration_ext = qtrue;
 		}
 #ifdef _WIN32
-		// check whether the default device is generic hardware. If it is, change to
-		// generic Software as that one works more reliably with various sound systems.
+		// check whether the default device is generic hardware. If it is, change to generic Software as that one works more reliably with various sound systems.
 		// if it's not, use OpenAL's default selection as we don't want to ignore native hardware acceleration.
 		if (!device && defaultdevice && !strcmp(defaultdevice, "Generic Hardware")) {
 			device = "Generic Software";

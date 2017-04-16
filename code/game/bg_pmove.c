@@ -466,8 +466,8 @@ Flying out of the water.
 =======================================================================================================================================
 */
 static void PM_WaterJumpMove(void) {
-	// waterjump has no control, but falls
 
+	// waterjump has no control, but falls
 	PM_StepSlideMove(qtrue);
 
 	pm->ps->velocity[2] -= pm->ps->gravity * pml.frametime;
@@ -1118,7 +1118,7 @@ static void PM_GroundTrace(void) {
 =======================================================================================================================================
 PM_SetWaterLevel
 
-FIXME: avoid this twice? certainly if not moving.
+FIXME: Avoid this twice? Certainly if not moving.
 =======================================================================================================================================
 */
 static void PM_SetWaterLevel(void) {

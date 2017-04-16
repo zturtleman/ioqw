@@ -23,8 +23,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 */
 
 /**************************************************************************************************************************************
- Things that happen on snapshot transition, not necessarily every single
- rendered frame.
+ Things that happen on snapshot transition, not necessarily every single rendered frame.
 **************************************************************************************************************************************/
 
 #include "cg_local.h"
@@ -257,7 +256,7 @@ static snapshot_t *CG_ReadNextSnapshot(void) {
 
 		// record as a dropped packet
 		CG_AddLagometerSnapshotInfo(NULL);
-		// If there are additional snapshots, continue trying to read them.
+		// if there are additional snapshots, continue trying to read them.
 	}
 	// nothing left to read
 	return NULL;
@@ -292,8 +291,8 @@ void CG_ProcessSnapshots(void) {
 
 		cg.latestSnapshotNum = n;
 	}
-	// If we have yet to receive a snapshot, check for it.
-	// Once we have gotten the first snapshot, cg.snap will always have valid data for the rest of the game
+	// if we have yet to receive a snapshot, check for it.
+	// once we have gotten the first snapshot, cg.snap will always have valid data for the rest of the game
 	while (!cg.snap) {
 		snap = CG_ReadNextSnapshot();
 
