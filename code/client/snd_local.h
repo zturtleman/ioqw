@@ -31,8 +31,8 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "snd_public.h"
 
 #define PAINTBUFFER_SIZE 4096 // this is in samples
-#define SND_CHUNK_SIZE 1024 // samples
 
+#define SND_CHUNK_SIZE 1024 // samples
 #define SND_CHUNK_SIZE_FLOAT (SND_CHUNK_SIZE / 2) // floats
 #define SND_CHUNK_SIZE_BYTE (SND_CHUNK_SIZE * 2) // floats
 
@@ -221,11 +221,11 @@ extern int sfxScratchIndex;
 qboolean S_Base_Init(soundInterface_t *si);
 // OpenAL stuff
 typedef enum {
-	SRCPRI_AMBIENT = 0,	// Ambient sound effects
-	SRCPRI_ENTITY,		// Entity sound effects
-	SRCPRI_ONESHOT,		// One-shot sounds
-	SRCPRI_LOCAL,		// Local sounds
-	SRCPRI_STREAM		// Streams (music, cutscenes)
+	SRCPRI_AMBIENT = 0,	// ambient sound effects
+	SRCPRI_ENTITY,		// entity sound effects
+	SRCPRI_ONESHOT,		// one-shot sounds
+	SRCPRI_LOCAL,		// local sounds
+	SRCPRI_STREAM		// streams (music, cutscenes)
 } alSrcPriority_t;
 
 typedef int srcHandle_t;

@@ -257,8 +257,7 @@ void QDECL G_Error(const char *fmt, ...) {
 =======================================================================================================================================
 G_FindTeams
 
-Chain together all entities with a matching team field.
-Entity teams are used for item groups and multi-entity mover groups.
+Chain together all entities with a matching team field. Entity teams are used for item groups and multi-entity mover groups.
 
 All but the first will have the FL_TEAMSLAVE flag set and teammaster field set.
 All but the last will have the teamchain field set to the next one.
@@ -441,7 +440,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart) {
 
 	level.time = levelTime;
 	level.startTime = levelTime;
-	level.snd_fry = G_SoundIndex("sound/player/fry.wav"); // FIXME standing in lava / slime
+	level.snd_fry = G_SoundIndex("sound/player/fry.wav"); // FIXME standing in lava/slime
 
 	if (g_gametype.integer != GT_SINGLE_PLAYER && g_logfile.string[0]) {
 		if (g_logfileSync.integer) {
