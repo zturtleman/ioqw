@@ -439,7 +439,6 @@ char *G_AddSpawnVarToken(const char *string) {
 G_ParseSpawnVars
 
 Parses a brace bounded set of key/value pairs out of the level's entity strings into level.spawnVars[].
-
 This does not actually spawn an entity.
 =======================================================================================================================================
 */

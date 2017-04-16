@@ -205,6 +205,7 @@ gentity_t *G_Find(gentity_t *from, int fieldofs, const char *match) {
 	return NULL;
 }
 
+#define MAXCHOICES 32
 /*
 =======================================================================================================================================
 G_PickTarget
@@ -212,8 +213,6 @@ G_PickTarget
 Selects a random entity from among the targets.
 =======================================================================================================================================
 */
-#define MAXCHOICES 32
-
 gentity_t *G_PickTarget(char *targetname) {
 	gentity_t *ent = NULL;
 	int num_choices = 0;
@@ -401,7 +400,7 @@ G_Spawn
 
 Either finds a free entity, or allocates a new one.
 
-The slots from 0 to MAX_CLIENTS-1 are always reserved for clients, and will never be used by anything else.
+The slots from 0 to MAX_CLIENTS - 1 are always reserved for clients, and will never be used by anything else.
 
 Try to avoid reusing an entity that was recently freed, because it can cause the client to think the entity morphed into something else
 instead of being removed and recreated, which can cause interpolated angles and bad trails.

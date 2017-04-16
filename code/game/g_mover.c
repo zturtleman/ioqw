@@ -184,7 +184,7 @@ qboolean G_TryPushingEntity(gentity_t *check, gentity_t *pusher, vec3_t move, ve
 	}
 	// if it is ok to leave in the old position, do it
 	// this is only relevant for riding entities, not pushed
-	// Sliding trapdoors can cause this.
+	// sliding trapdoors can cause this.
 	VectorCopy((pushed_p - 1)->origin, check->s.pos.trBase);
 
 	if (check->client) {
@@ -279,7 +279,7 @@ qboolean G_MoverPush(gentity_t *pusher, vec3_t move, vec3_t amove, gentity_t **o
 
 	*obstacle = NULL;
 	// mins/maxs are the bounds at the destination
-	// totalMins / totalMaxs are the bounds for the entire move
+	// totalMins/totalMaxs are the bounds for the entire move
 	if (pusher->r.currentAngles[0] || pusher->r.currentAngles[1] || pusher->r.currentAngles[2] || amove[0] || amove[1] || amove[2]) {
 		float radius;
 
@@ -1287,17 +1287,17 @@ void Reached_Train(gentity_t *ent) {
 	length = VectorLength(move);
 
 	ent->s.pos.trDuration = length * 1000 / speed;
-	// Be sure to send to clients after any fast move case
+	// be sure to send to clients after any fast move case
 	ent->r.svFlags &= ~SVF_NOCLIENT;
-	// Fast move case
+	// fast move case
 	if (ent->s.pos.trDuration < 1) {
-		// As trDuration is used later in a division, we need to avoid that case now
-		// With null trDuration, the calculated rocks bounding box becomes infinite and the engine think for a short time
+		// as trDuration is used later in a division, we need to avoid that case now
+		// with null trDuration, the calculated rocks bounding box becomes infinite and the engine think for a short time
 		// any entity is riding that mover but not the world entity... In rare case, I found it can also stuck every map entities
 		// after func_door are used. The desired effect with very very big speed is to have instant move, so any not null duration
 		// lower than a frame duration should be sufficient. Afaik, the negative case don't have to be supported.
 		ent->s.pos.trDuration = 1;
-		// Don't send entity to clients so it becomes really invisible
+		// don't send entity to clients so it becomes really invisible
 		ent->r.svFlags |= SVF_NOCLIENT;
 	}
 	// looping sound
@@ -1340,8 +1340,7 @@ void Think_SetupTrainTargets(gentity_t *ent) {
 			G_Printf("Train corner at %s without a target\n", vtos(path->s.origin));
 			return;
 		}
-		// find a path_corner among the targets
-		// there may also be other targets that get fired when the corner is reached
+		// find a path_corner among the targets. There may also be other targets that get fired when the corner is reached
 		next = NULL;
 
 		do {

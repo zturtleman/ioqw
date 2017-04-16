@@ -880,7 +880,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot) {
 =======================================================================================================================================
 ClientBegin
 
-called when a client has finished connecting, and is ready to be placed into the level.
+Called when a client has finished connecting, and is ready to be placed into the level.
 This will happen every level load, and on transition between teams, but doesn't happen on respawns.
 =======================================================================================================================================
 */
