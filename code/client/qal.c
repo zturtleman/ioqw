@@ -63,6 +63,7 @@ LPALSOURCEF qalSourcef;
 LPALSOURCE3F qalSource3f;
 LPALSOURCEFV qalSourcefv;
 LPALSOURCEI qalSourcei;
+LPALSOURCE3I qalSource3i;
 LPALGETSOURCEF qalGetSourcef;
 LPALGETSOURCE3F qalGetSource3f;
 LPALGETSOURCEFV qalGetSourcefv;
@@ -106,6 +107,42 @@ LPALCCAPTURECLOSEDEVICE qalcCaptureCloseDevice;
 LPALCCAPTURESTART qalcCaptureStart;
 LPALCCAPTURESTOP qalcCaptureStop;
 LPALCCAPTURESAMPLES qalcCaptureSamples;
+// effect objects
+LPALGENEFFECTS qalGenEffects = NULL;
+LPALDELETEEFFECTS qalDeleteEffects = NULL;
+LPALISEFFECT qalIsEffect = NULL;
+LPALEFFECTI qalEffecti = NULL;
+LPALEFFECTIV qalEffectiv = NULL;
+LPALEFFECTF qalEffectf = NULL;
+LPALEFFECTFV qalEffectfv = NULL;
+LPALGETEFFECTI qalGetEffecti = NULL;
+LPALGETEFFECTIV qalGetEffectiv = NULL;
+LPALGETEFFECTF qalGetEffectf = NULL;
+LPALGETEFFECTFV qalGetEffectfv = NULL;
+// filter objects
+LPALGENFILTERS qalGenFilters = NULL;
+LPALDELETEFILTERS qalDeleteFilters = NULL;
+LPALISFILTER qalIsFilter = NULL;
+LPALFILTERI qalFilteri = NULL;
+LPALFILTERIV qalFilteriv = NULL;
+LPALFILTERF qalFilterf = NULL;
+LPALFILTERFV qalFilterfv = NULL;
+LPALGETFILTERI qalGetFilteri = NULL;
+LPALGETFILTERIV qalGetFilteriv = NULL;
+LPALGETFILTERF qalGetFilterf = NULL;
+LPALGETFILTERFV qalGetFilterfv = NULL;
+// auxiliary slot object
+LPALGENAUXILIARYEFFECTSLOTS qalGenAuxiliaryEffectSlots = NULL;
+LPALDELETEAUXILIARYEFFECTSLOTS qalDeleteAuxiliaryEffectSlots = NULL;
+LPALISAUXILIARYEFFECTSLOT qalIsAuxiliaryEffectSlot = NULL;
+LPALAUXILIARYEFFECTSLOTI qalAuxiliaryEffectSloti = NULL;
+LPALAUXILIARYEFFECTSLOTIV qalAuxiliaryEffectSlotiv = NULL;
+LPALAUXILIARYEFFECTSLOTF qalAuxiliaryEffectSlotf = NULL;
+LPALAUXILIARYEFFECTSLOTFV qalAuxiliaryEffectSlotfv = NULL;
+LPALGETAUXILIARYEFFECTSLOTI qalGetAuxiliaryEffectSloti = NULL;
+LPALGETAUXILIARYEFFECTSLOTIV qalGetAuxiliaryEffectSlotiv = NULL;
+LPALGETAUXILIARYEFFECTSLOTF qalGetAuxiliaryEffectSlotf = NULL;
+LPALGETAUXILIARYEFFECTSLOTFV qalGetAuxiliaryEffectSlotfv = NULL;
 
 static void *OpenALLib = NULL;
 static qboolean alinit_fail = qfalse;
@@ -178,6 +215,7 @@ qboolean QAL_Init(const char *libname) {
 	qalSource3f = GPA("alSource3f");
 	qalSourcefv = GPA("alSourcefv");
 	qalSourcei = GPA("alSourcei");
+	qalSource3i = GPA("alSource3i");
 	qalGetSourcef = GPA("alGetSourcef");
 	qalGetSource3f = GPA("alGetSource3f");
 	qalGetSourcefv = GPA("alGetSourcefv");
