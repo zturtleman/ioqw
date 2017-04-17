@@ -44,11 +44,23 @@ cvar_t *s_alInputDevice;
 cvar_t *s_alAvailableDevices;
 cvar_t *s_alAvailableInputDevices;
 
+#define NUM_MUSIC_BUFFERS 4
+#define MUSIC_BUFFER_SIZE 4096
+
+static qboolean musicPlaying = qfalse;
+static srcHandle_t musicSourceHandle = -1;
+static ALuint musicSource;
+static ALuint musicBuffers[NUM_MUSIC_BUFFERS];
+static snd_stream_t *mus_stream;
+static snd_stream_t *intro_stream;
+static char s_backgroundLoop[MAX_QPATH];
+static byte decode_buffer[MUSIC_BUFFER_SIZE];
 static qboolean enumeration_ext = qfalse;
 static qboolean enumeration_all_ext = qfalse;
 #ifdef USE_VOIP
 static qboolean capture_ext = qfalse;
 #endif
+
 /*
 =======================================================================================================================================
 S_AL_Format
@@ -610,6 +622,8 @@ Adapt the gain if necessary to get a quicker fadeout when the source is too far 
 static void S_AL_ScaleGain(src_t *chksrc, vec3_t origin) {
 	float distance;
 
+	distance = 0.0f;
+
 	if (!chksrc->local) {
 		distance = Distance(origin, lastListenerOrigin);
 	}
@@ -695,8 +709,7 @@ static qboolean S_AL_SrcInit(void) {
 
 		srcCount++;
 	}
-	// all done. Print this for informational purposes
-	Com_Printf("Allocated %d sources.\n", srcCount);
+
 	alSourcesInitialised = qtrue;
 	return qtrue;
 }
@@ -718,7 +731,8 @@ static void S_AL_SrcShutdown(void) {
 		curSource = &srcList[i];
 
 		if (curSource->isLocked) {
-			Com_DPrintf(S_COLOR_YELLOW "WARNING: Source %d is locked\n", i);
+			srcList[i].isLocked = qfalse;
+			Com_DPrintf(S_COLOR_YELLOW "WARNING: Source %d was locked\n", i);
 		}
 
 		if (curSource->entity > 0) {
@@ -1200,6 +1214,10 @@ static void S_AL_SrcLoop(alSrcPriority_t priority, sfxHandle_t sfx, const vec3_t
 	src_t *curSource;
 	vec3_t sorigin, svelocity;
 
+	if (entityNum < 0 || entityNum >= MAX_GENTITIES) {
+		return;
+	}
+
 	if (S_AL_CheckInput(entityNum, sfx)) {
 		return;
 	}
@@ -1503,7 +1521,7 @@ static void S_AL_AllocateStreamChannel(int stream, int entityNum) {
 	srcHandle_t cursrc;
 	ALuint alsrc;
 
-	if ((stream < 0) || (stream >= MAX_RAW_STREAMS)) {
+	if (stream < 0 || stream >= MAX_RAW_STREAMS) {
 		return;
 	}
 
@@ -1557,7 +1575,7 @@ S_AL_FreeStreamChannel
 */
 static void S_AL_FreeStreamChannel(int stream) {
 
-	if ((stream < 0) || (stream >= MAX_RAW_STREAMS)) {
+	if (stream < 0 || stream >= MAX_RAW_STREAMS) {
 		return;
 	}
 	// detach any buffers
@@ -1585,7 +1603,7 @@ static void S_AL_RawSamples(int stream, int samples, int rate, int width, int ch
 	ALuint buffer;
 	ALuint format;
 
-	if ((stream < 0) || (stream >= MAX_RAW_STREAMS)) {
+	if (stream < 0 || stream >= MAX_RAW_STREAMS) {
 		return;
 	}
 
@@ -1653,7 +1671,7 @@ static void S_AL_StreamUpdate(int stream) {
 	int numBuffers;
 	ALint state;
 
-	if ((stream < 0) || (stream >= MAX_RAW_STREAMS)) {
+	if (stream < 0 || stream >= MAX_RAW_STREAMS) {
 		return;
 	}
 
@@ -1693,7 +1711,7 @@ S_AL_StreamDie
 */
 static void S_AL_StreamDie(int stream) {
 
-	if ((stream < 0) || (stream >= MAX_RAW_STREAMS)) {
+	if (stream < 0 || stream >= MAX_RAW_STREAMS) {
 		return;
 	}
 
@@ -1706,18 +1724,6 @@ static void S_AL_StreamDie(int stream) {
 
 	S_AL_FreeStreamChannel(stream);
 }
-
-#define NUM_MUSIC_BUFFERS 4
-#define MUSIC_BUFFER_SIZE 4096
-
-static qboolean musicPlaying = qfalse;
-static srcHandle_t musicSourceHandle = -1;
-static ALuint musicSource;
-static ALuint musicBuffers[NUM_MUSIC_BUFFERS];
-static snd_stream_t *mus_stream;
-static snd_stream_t *intro_stream;
-static char s_backgroundLoop[MAX_QPATH];
-static byte decode_buffer[MUSIC_BUFFER_SIZE];
 
 /*
 =======================================================================================================================================
@@ -1972,12 +1978,24 @@ static cvar_t *s_alCapture;
 #ifdef _WIN32
 #define ALDRIVER_DEFAULT "OpenAL32.dll"
 #elif defined(__APPLE__)
-#define ALDRIVER_DEFAULT "/System/Library/Frameworks/OpenAL.framework/OpenAL"
+#define ALDRIVER_DEFAULT "libopenal.dylib"
 #elif defined(__OpenBSD__)
 #define ALDRIVER_DEFAULT "libopenal.so"
 #else
 #define ALDRIVER_DEFAULT "libopenal.so.1"
 #endif
+
+/*
+=======================================================================================================================================
+S_AL_ClearSoundBuffer
+=======================================================================================================================================
+*/
+static void S_AL_ClearSoundBuffer(void) {
+
+	S_AL_SrcShutdown();
+	S_AL_SrcInit();
+}
+
 /*
 =======================================================================================================================================
 S_AL_StopAllSounds
@@ -1992,6 +2010,8 @@ static void S_AL_StopAllSounds(void) {
 	for (i = 0; i < MAX_RAW_STREAMS; i++) {
 		S_AL_StreamDie(i);
 	}
+
+	S_AL_ClearSoundBuffer();
 }
 
 /*
@@ -2102,15 +2122,6 @@ static void S_AL_BeginRegistration(void) {
 
 /*
 =======================================================================================================================================
-S_AL_ClearSoundBuffer
-=======================================================================================================================================
-*/
-static void S_AL_ClearSoundBuffer(void) {
-
-}
-
-/*
-=======================================================================================================================================
 S_AL_SoundList
 =======================================================================================================================================
 */
@@ -2204,7 +2215,11 @@ static void S_AL_SoundInfo(void) {
 	}
 #ifdef USE_VOIP
 	if (capture_ext) {
+#ifdef __APPLE__
+		Com_Printf("  Input Device:   %s\n", qalcGetString(alCaptureDevice, ALC_CAPTURE_DEFAULT_DEVICE_SPECIFIER));
+#else
 		Com_Printf("  Input Device:   %s\n", qalcGetString(alCaptureDevice, ALC_CAPTURE_DEVICE_SPECIFIER));
+#endif
 		Com_Printf("  Available Input Devices:\n%s", s_alAvailableInputDevices->string);
 	}
 #endif
@@ -2288,9 +2303,13 @@ qboolean S_AL_Init(soundInterface_t *si) {
 	}
 	// load QAL
 	if (!QAL_Init(s_alDriver->string)) {
-		Com_Printf("Failed to load library: \"%s\".\n", s_alDriver->string);
-
+#if defined(_WIN32)
+		if (!Q_stricmp(s_alDriver->string, ALDRIVER_DEFAULT) && !QAL_Init("OpenAL64.dll")) {
+#elif defined(__APPLE__)
+		if (!Q_stricmp(s_alDriver->string, ALDRIVER_DEFAULT) && !QAL_Init("/System/Library/Frameworks/OpenAL.framework/OpenAL")) {
+#else
 		if (!Q_stricmp(s_alDriver->string, ALDRIVER_DEFAULT) || !QAL_Init(ALDRIVER_DEFAULT)) {
+#endif
 			return qfalse;
 		}
 	}
@@ -2378,6 +2397,8 @@ qboolean S_AL_Init(soundInterface_t *si) {
 	// initialize sources, buffers, music
 	S_AL_BufferInit();
 	S_AL_SrcInit();
+	// print this for informational purposes
+	Com_Printf("Allocated %d sources.\n", srcCount);
 	// set up OpenAL parameters (doppler, etc.)
 	qalDistanceModel(AL_INVERSE_DISTANCE_CLAMPED);
 	qalDopplerFactor(s_alDopplerFactor->value);
