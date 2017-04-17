@@ -44,6 +44,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include <AL/alc.h>
 #endif
 #endif
+#include "qal_efx.h"
 // Hack to enable compiling both on OpenAL SDK and OpenAL-soft.
 #ifndef ALC_ENUMERATE_ALL_EXT
 #define ALC_ENUMERATE_ALL_EXT 1
@@ -143,6 +144,42 @@ extern LPALCCAPTURECLOSEDEVICE qalcCaptureCloseDevice;
 extern LPALCCAPTURESTART qalcCaptureStart;
 extern LPALCCAPTURESTOP qalcCaptureStop;
 extern LPALCCAPTURESAMPLES qalcCaptureSamples;
+// effect objects
+extern LPALGENEFFECTS qalGenEffects;
+extern LPALDELETEEFFECTS qalDeleteEffects;
+extern LPALISEFFECT qalIsEffect;
+extern LPALEFFECTI qalEffecti;
+extern LPALEFFECTIV qalEffectiv;
+extern LPALEFFECTF qalEffectf;
+extern LPALEFFECTFV qalEffectfv;
+extern LPALGETEFFECTI qalGetEffecti;
+extern LPALGETEFFECTIV qalGetEffectiv;
+extern LPALGETEFFECTF qalGetEffectf;
+extern LPALGETEFFECTFV qalGetEffectfv;
+// filter objects
+extern LPALGENFILTERS qalGenFilters;
+extern LPALDELETEFILTERS qalDeleteFilters;
+extern LPALISFILTER qalIsFilter;
+extern LPALFILTERI qalFilteri;
+extern LPALFILTERIV qalFilteriv;
+extern LPALFILTERF qalFilterf;
+extern LPALFILTERFV qalFilterfv;
+extern LPALGETFILTERI qalGetFilteri;
+extern LPALGETFILTERIV qalGetFilteriv;
+extern LPALGETFILTERF qalGetFilterf;
+extern LPALGETFILTERFV qalGetFilterfv;
+// auxiliary slot object
+extern LPALGENAUXILIARYEFFECTSLOTS qalGenAuxiliaryEffectSlots;
+extern LPALDELETEAUXILIARYEFFECTSLOTS qalDeleteAuxiliaryEffectSlots;
+extern LPALISAUXILIARYEFFECTSLOT qalIsAuxiliaryEffectSlot;
+extern LPALAUXILIARYEFFECTSLOTI qalAuxiliaryEffectSloti;
+extern LPALAUXILIARYEFFECTSLOTIV qalAuxiliaryEffectSlotiv;
+extern LPALAUXILIARYEFFECTSLOTF qalAuxiliaryEffectSlotf;
+extern LPALAUXILIARYEFFECTSLOTFV qalAuxiliaryEffectSlotfv;
+extern LPALGETAUXILIARYEFFECTSLOTI qalGetAuxiliaryEffectSloti;
+extern LPALGETAUXILIARYEFFECTSLOTIV qalGetAuxiliaryEffectSlotiv;
+extern LPALGETAUXILIARYEFFECTSLOTF qalGetAuxiliaryEffectSlotf;
+extern LPALGETAUXILIARYEFFECTSLOTFV qalGetAuxiliaryEffectSlotfv;
 #else
 #define qalEnable alEnable
 #define qalDisable alDisable
