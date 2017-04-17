@@ -64,6 +64,100 @@ static qboolean enumeration_all_ext = qfalse;
 static qboolean capture_ext = qfalse;
 #endif
 
+typedef struct {
+	float flDensity;
+	float flDiffusion;
+	float flGain;
+	float flGainHF;
+	float flGainLF;
+	float flDecayTime;
+	float flDecayHFRatio;
+	float flDecayLFRatio;
+	float flReflectionsGain;
+	float flReflectionsDelay;
+	float flReflectionsPan[3];
+	float flLateReverbGain;
+	float flLateReverbDelay;
+	float flLateReverbPan[3];
+	float flEchoTime;
+	float flEchoDepth;
+	float flModulationTime;
+	float flModulationDepth;
+	float flAirAbsorptionGainHF;
+	float flHFReference;
+	float flLFReference;
+	float flRoomRolloffFactor;
+	int iDecayHFLimit;
+} reverb_t;
+
+typedef struct {
+	float gain;
+	float gainHF;
+} lowPass_t;
+
+typedef struct {
+	reverb_t current;
+	reverb_t from;
+	reverb_t to;
+	int changeTime;
+	ALuint alEffect;
+	ALuint alEffectSlot;
+} env_t;
+
+typedef struct {
+	lowPass_t current;
+	lowPass_t from;
+	lowPass_t to;
+	int changeTime;
+	ALuint alFilter;
+} water_t;
+
+typedef struct {
+	qboolean initialized;
+	env_t env;
+	water_t water;
+	int lastContents;
+} effects_t;
+
+static effects_t s_alEffects;
+
+#include "snd_alreverbs.h"
+
+typedef struct {
+	const char *name;
+	reverb_t data;
+} namedReverb_t;
+
+static const reverb_t s_alReverbUnderwater = REVERB_PRESET_UNDERWATER;
+
+static const namedReverb_t s_alReverbPresets[] = {
+	{"default", REVERB_PRESET_MIN,},
+	{"city", REVERB_PRESET_CITY,},
+	{"subway", REVERB_PRESET_CITY_SUBWAY,},
+	{"underpass", REVERB_PRESET_CITY_UNDERPASS,},
+	{"abandoned", REVERB_PRESET_CITY_ABANDONED,},
+	{"alley", REVERB_PRESET_ALLEY,},
+	{"parkinglot", REVERB_PRESET_PARKINGLOT,},
+	{"sewerpipe", REVERB_PRESET_SEWERPIPE,},
+	{"bathroom", REVERB_PRESET_BATHROOM,},
+	{"stoneroom", REVERB_PRESET_STONEROOM,},
+	{"dustyroom", REVERB_PRESET_DUSTYROOM,},
+	{"hallway", REVERB_PRESET_HALLWAY,},
+	{"chapel", REVERB_PRESET_CHAPEL,},
+	{"auditorium", REVERB_PRESET_AUDITORIUM,},
+	{"gymnasium", REVERB_PRESET_SPORT_GYMNASIUM,},
+	{"stadium", REVERB_PRESET_SPORT_EMPTYSTADIUM,},
+	{"arena", REVERB_PRESET_ARENA,},
+	{"hangar", REVERB_PRESET_HANGAR,},
+	{"tunnel", REVERB_PRESET_DRIVING_TUNNEL,},
+	{"mountains", REVERB_PRESET_MOUNTAINS,},
+	{"forest", REVERB_PRESET_FOREST,},
+	{"underwater", REVERB_PRESET_UNDERWATER,},
+	{"mood_heaven", REVERB_PRESET_MOOD_HEAVEN,},
+	{"mood_hell", REVERB_PRESET_MOOD_HELL,},
+	{"mood_memory", REVERB_PRESET_MOOD_MEMORY,},
+};
+
 /*
 =======================================================================================================================================
 S_AL_Format
@@ -1057,101 +1151,6 @@ static srcHandle_t S_AL_SrcFind(int entnum, int channel) {
 	return -1;
 }
 #endif
-
-typedef struct {
-	float flDensity;
-	float flDiffusion;
-	float flGain;
-	float flGainHF;
-	float flGainLF;
-	float flDecayTime;
-	float flDecayHFRatio;
-	float flDecayLFRatio;
-	float flReflectionsGain;
-	float flReflectionsDelay;
-	float flReflectionsPan[3];
-	float flLateReverbGain;
-	float flLateReverbDelay;
-	float flLateReverbPan[3];
-	float flEchoTime;
-	float flEchoDepth;
-	float flModulationTime;
-	float flModulationDepth;
-	float flAirAbsorptionGainHF;
-	float flHFReference;
-	float flLFReference;
-	float flRoomRolloffFactor;
-	int iDecayHFLimit;
-} reverb_t;
-
-typedef struct {
-	float gain;
-	float gainHF;
-} lowPass_t;
-
-typedef struct {
-	reverb_t current;
-	reverb_t from;
-	reverb_t to;
-	int changeTime;
-	ALuint alEffect;
-	ALuint alEffectSlot;
-} env_t;
-
-typedef struct {
-	lowPass_t current;
-	lowPass_t from;
-	lowPass_t to;
-	int changeTime;
-	ALuint alFilter;
-} water_t;
-
-typedef struct {
-	qboolean initialized;
-	env_t env;
-	water_t water;
-	int lastContents;
-} effects_t;
-
-static effects_t s_alEffects;
-
-#include "snd_alreverbs.h"
-
-typedef struct {
-	const char *name;
-	reverb_t data;
-} namedReverb_t;
-
-static const reverb_t s_alReverbUnderwater = REVERB_PRESET_UNDERWATER;
-
-static const namedReverb_t s_alReverbPresets[] = {
-	{"default", REVERB_PRESET_MIN,},
-	{"city", REVERB_PRESET_CITY,},
-	{"subway", REVERB_PRESET_CITY_SUBWAY,},
-	{"underpass", REVERB_PRESET_CITY_UNDERPASS,},
-	{"abandoned", REVERB_PRESET_CITY_ABANDONED,},
-	{"alley", REVERB_PRESET_ALLEY,},
-	{"parkinglot", REVERB_PRESET_PARKINGLOT,},
-	{"sewerpipe", REVERB_PRESET_SEWERPIPE,},
-	{"bathroom", REVERB_PRESET_BATHROOM,},
-	{"stoneroom", REVERB_PRESET_STONEROOM,},
-	{"dustyroom", REVERB_PRESET_DUSTYROOM,},
-	{"hallway", REVERB_PRESET_HALLWAY,},
-	{"chapel", REVERB_PRESET_CHAPEL,},
-	{"auditorium", REVERB_PRESET_AUDITORIUM,},
-	{"gymnasium", REVERB_PRESET_SPORT_GYMNASIUM,},
-	{"stadium", REVERB_PRESET_SPORT_EMPTYSTADIUM,},
-	{"arena", REVERB_PRESET_ARENA,},
-	{"hangar", REVERB_PRESET_HANGAR,},
-	{"tunnel", REVERB_PRESET_DRIVING_TUNNEL,},
-	{"mountains", REVERB_PRESET_MOUNTAINS,},
-	{"forest", REVERB_PRESET_FOREST,},
-	{"underwater", REVERB_PRESET_UNDERWATER,},
-	{"mood_heaven", REVERB_PRESET_MOOD_HEAVEN,},
-	{"mood_hell", REVERB_PRESET_MOOD_HELL,},
-	{"mood_memory", REVERB_PRESET_MOOD_MEMORY,},
-};
-
 /*
 =======================================================================================================================================
 S_AL_SrcLock
