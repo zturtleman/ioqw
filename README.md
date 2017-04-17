@@ -16,12 +16,14 @@ Ioid3-qw is licensed under a [modified version of the GNU GPLv3](COPYING.txt#L62
   * Enhanced BotAI
   * 64 weapon support
   * Improved UI
+  * Sound engine(s): environmental (underwater) sound effects
 
 
 ## Credits:
 
 * Zack Middleton
 * Robert Beckebans
+* p5yc0runn3r (for dmaHD SDL sound)
 * Ian Jefferies
 * And other contributors
 
