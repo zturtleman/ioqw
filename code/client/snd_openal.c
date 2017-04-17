@@ -1064,7 +1064,7 @@ static srcHandle_t S_AL_SrcAlloc(alSrcPriority_t priority, int entnum, int chann
 	int weakest = -1;
 	int weakest_time = Sys_Milliseconds();
 	int weakest_pri = 999;
-	float weakest_gain = 1000.0;
+	float weakest_gain = 1000.0f;
 	qboolean weakest_isplaying = qtrue;
 	int weakest_numloops = 0;
 	src_t *curSource;
@@ -2137,8 +2137,8 @@ static void S_AL_ChangeUnderWater(void) {
 		s_alEffects.water.to.gain = 0.25f;
 		s_alEffects.water.to.gainHF = 0.0625f;
 	} else {
-		s_alEffects.water.to.gain = 1.f;
-		s_alEffects.water.to.gainHF = 1.f;
+		s_alEffects.water.to.gain = 1.0f;
+		s_alEffects.water.to.gainHF = 1.0f;
 	}
 
 	s_alEffects.water.changeTime = Sys_Milliseconds();

@@ -204,7 +204,7 @@ dmaHD_InterpolateHermite4pt3oX
 =======================================================================================================================================
 */
 static float dmaHD_InterpolateHermite4pt3oX(float x0, float x1, float x2, float x3, float t) {
-	float c0, c1, c2, c3; c0 = x1; c1 = 0.5f * (x2 - x0); c2 = x0 - (2.5f * x1) + (2 * x2) - (0.5f * x3); c3= (0.5f * (x3 - x0)) + (1.5f * (x1 - x2));
+	float c0, c1, c2, c3; c0 = x1; c1 = 0.5f * (x2 - x0); c2 = x0 - (2.5f * x1) + (2 * x2) - (0.5f * x3); c3 = (0.5f * (x3 - x0)) + (1.5f * (x1 - x2));
 	return (((((c3 * t) + c2) * t) + c1) * t) + c0;
 }
 
