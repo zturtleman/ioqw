@@ -28,6 +28,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #include "snd_local.h"
 #include "snd_codec.h"
+#include "snd_dmahd.h"
 #include "client.h"
 
 void S_Update_(void);
@@ -51,15 +52,12 @@ channel_t s_channels[MAX_CHANNELS];
 channel_t loop_channels[MAX_CHANNELS];
 
 int numLoopChannels;
-static int s_soundStarted;
-static qboolean s_soundMuted;
-
+int s_soundStarted = 0;
+qboolean s_soundMuted = qfalse;
 dma_t dma;
-
-static int listener_number;
-static vec3_t listener_origin;
-static vec3_t listener_axis[3];
-
+int listener_number = 0;
+vec3_t listener_origin;
+vec3_t listener_axis[3];
 int s_soundtime; // sample PAIRS
 int s_paintedtime; // sample PAIRS
 // MAX_SFX may be larger than MAX_SOUNDS because
@@ -76,7 +74,7 @@ cvar_t *s_show;
 cvar_t *s_mixahead;
 cvar_t *s_mixPreStep;
 
-static loopSound_t loopSounds[MAX_GENTITIES];
+loopSound_t loopSounds[MAX_GENTITIES];
 static channel_t *freelist = NULL;
 
 int s_rawend[MAX_RAW_STREAMS];
@@ -1535,7 +1533,7 @@ void S_UpdateBackgroundTrack(void) {
 	while (s_rawend[0] < s_soundtime + MAX_RAW_SAMPLES) {
 		bufferSamples = MAX_RAW_SAMPLES - (s_rawend[0] - s_soundtime);
 		// decide how much data needs to be read from the file
-		fileSamples = bufferSamples * s_backgroundStream->info.rate / dma.speed;
+		fileSamples = (bufferSamples * dma.speed) / s_backgroundStream->info.rate;
 
 		if (!fileSamples) {
 			return;
@@ -1701,5 +1699,9 @@ qboolean S_Base_Init(soundInterface_t *si) {
 	si->StopCapture = S_Base_StopCapture;
 	si->MasterGain = S_Base_MasterGain;
 #endif
+	if (dmaHD_Enabled()) {
+		return dmaHD_Init(si);
+	}
+
 	return qtrue;
 }
