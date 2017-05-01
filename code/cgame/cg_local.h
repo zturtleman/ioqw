@@ -81,12 +81,6 @@ typedef enum {
 	FOOTSTEP_TOTAL
 } footstep_t;
 
-typedef enum {
-	IMPACTSOUND_DEFAULT,
-	IMPACTSOUND_METAL,
-	IMPACTSOUND_FLESH
-} impactSound_t;
-
 /**************************************************************************************************************************************
 
 	Player entities need to track more information than any other type of entity.
@@ -680,11 +674,7 @@ typedef struct {
 	sfxHandle_t sfx_plasmaexp;
 	sfxHandle_t sfx_proxexp;
 	sfxHandle_t sfx_nghit;
-	sfxHandle_t sfx_nghitflesh;
-	sfxHandle_t sfx_nghitmetal;
 	sfxHandle_t sfx_chghit;
-	sfxHandle_t sfx_chghitflesh;
-	sfxHandle_t sfx_chghitmetal;
 	sfxHandle_t sfx_chgstop;
 	sfxHandle_t sfx_hmgstop;
 	sfxHandle_t kamikazeExplodeSound;
@@ -787,8 +777,6 @@ typedef struct {
 	sfxHandle_t n_healthSound;
 	sfxHandle_t hgrenb1aSound;
 	sfxHandle_t hgrenb2aSound;
-	sfxHandle_t wstbimplSound;
-	sfxHandle_t wstbimpmSound;
 	sfxHandle_t wstbimpdSound;
 	sfxHandle_t wstbactvSound;
 } cgMedia_t;
@@ -1136,7 +1124,7 @@ void CG_Weapon_f(void);
 void CG_RegisterWeapon(int weaponNum);
 void CG_RegisterItemVisuals(int itemNum);
 void CG_FireWeapon(centity_t *cent);
-void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, impactSound_t soundType);
+void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir);
 void CG_MissileHitPlayer(int weapon, vec3_t origin, vec3_t dir, int entityNum);
 void CG_ShotgunFire(entityState_t *es);
 void CG_Bullet(vec3_t origin, int sourceEntityNum, vec3_t normal, qboolean flesh, int fleshEntityNum);
