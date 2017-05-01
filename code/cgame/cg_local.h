@@ -154,6 +154,8 @@ typedef enum {
 	FOOTSTEP_T2_SMALL_HARD,
 	// common footstep sounds (all characters use the same sound)
 	FOOTSTEP_SPLASH,
+	FOOTSTEP_WADE,
+	FOOTSTEP_SWIM,
 	FOOTSTEP_TOTAL
 } footstep_t;
 
