@@ -43,11 +43,13 @@ qboolean G_BounceMissile(gentity_t *ent, trace_t *trace) {
 
 	dot = DotProduct(velocity, trace->plane.normal);
 	VectorMA(velocity, -2 * dot, trace->plane.normal, ent->s.pos.trDelta);
-
+// Tobias FIXME: commented out (temporarily)
+/*
 	if (trace->surfaceFlags & SURF_DUST) {
 		ent->s.pos.trDelta[2] *= 0.65f;
 	}
-
+*/
+// Tobias: end
 	contents = trap_PointContents(ent->r.currentOrigin, -1);
 
 	if (contents & (CONTENTS_WATER|CONTENTS_SLIME|CONTENTS_LAVA)) {

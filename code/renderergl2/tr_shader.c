@@ -1693,16 +1693,16 @@ infoParm_t	infoParms[] = {
 	{"nomarks",		0,	SURF_NOMARKS,	0 },		// don't make impact marks, but still explode
 	{"ladder",		0,	SURF_LADDER,	0 },
 	{"nodamage",	0,	SURF_NODAMAGE,	0 },
-	{"metalsteps",	0,	SURF_METALSTEPS,0 },
-	{"flesh",		0,	SURF_FLESH,		0 },
+//	{"metalsteps",	0,	SURF_METALSTEPS,0 }, // Tobias: replaced by MAT_*
+//	{"flesh",		0,	SURF_FLESH,		0 }, // Tobias: replaced by MAT_*
 	{"nosteps",		0,	SURF_NOSTEPS,	0 },
 
 	// drawsurf attributes
 	{"nodraw",		0,	SURF_NODRAW,	0 },	// don't generate a drawsurface (or a lightmap)
 	{"pointlight",	0,	SURF_POINTLIGHT, 0 },	// sample lighting at vertexes
 	{"nolightmap",	0,	SURF_NOLIGHTMAP,0 },	// don't generate a lightmap
-	{"nodlight",	0,	SURF_NODLIGHT, 0 },		// don't ever add dynamic lights
-	{"dust",		0,	SURF_DUST, 0}			// leave a dust trail when walking on this surface
+	{"nodlight",	0,	SURF_NODLIGHT, 0 }		// don't ever add dynamic lights // Tobias: ,
+//	{"dust",		0,	SURF_DUST, 0}			// leave a dust trail when walking on this surface // Tobias: replaced by MAT_*
 };
 
 
