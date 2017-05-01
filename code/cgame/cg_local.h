@@ -385,7 +385,9 @@ typedef struct {
 	qboolean fixedlegs;		// true if legs yaw is always the same as torso yaw
 	qboolean fixedtorso;	// true if torso never changes yaw
 	vec3_t headOffset;		// move head in icon views
-	footstep_t footsteps;
+	footstep_t foottype;
+	footstep_t footsteps4;
+	footstep_t footsteps8;
 	gender_t gender;		// from model
 	qhandle_t legsModel;
 	qhandle_t legsSkin;
@@ -759,7 +761,8 @@ typedef struct {
 	sfxHandle_t selectSound;
 	sfxHandle_t useNothingSound;
 	sfxHandle_t wearOffSound;
-	sfxHandle_t footsteps[FOOTSTEP_TOTAL][4];
+	sfxHandle_t footsteps4[FOOTSTEP_TOTAL][4];
+	sfxHandle_t footsteps8[FOOTSTEP_TOTAL][8];
 	sfxHandle_t sfx_lghit1;
 	sfxHandle_t sfx_lghit2;
 	sfxHandle_t sfx_lghit3;

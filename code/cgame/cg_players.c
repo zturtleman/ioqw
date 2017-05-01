@@ -120,8 +120,9 @@ static qboolean CG_ParseAnimationFile(const char *filename, clientInfo_t *ci) {
 	text_p = text;
 	skip = 0; // quite the compiler warning
 
-	ci->footsteps = FOOTTYPE_DEFAULT;
 	VectorClear(ci->headOffset);
+
+	ci->foottype = FOOTTYPE_DEFAULT;
 	ci->gender = GENDER_MALE;
 	ci->fixedlegs = qfalse;
 	ci->fixedtorso = qfalse;
@@ -134,7 +135,7 @@ static qboolean CG_ParseAnimationFile(const char *filename, clientInfo_t *ci) {
 			break;
 		}
 
-		if (!Q_stricmp(token, "footsteps")) {
+		if (!Q_stricmp(token, "foottype")) {
 			token = COM_Parse(&text_p);
 
 			if (!token[0]) {
@@ -142,45 +143,45 @@ static qboolean CG_ParseAnimationFile(const char *filename, clientInfo_t *ci) {
 			}
 
 			if (!Q_stricmp(token, "default")) {
-				ci->footsteps = FOOTTYPE_DEFAULT;
+				ci->foottype = FOOTTYPE_DEFAULT;
 			} else if (!Q_stricmp(token, "boot_01")) {
-				ci->footsteps = FOOTTYPE_BOOT_01;
+				ci->foottype = FOOTTYPE_BOOT_01;
 			} else if (!Q_stricmp(token, "boot_02")) {
-				ci->footsteps = FOOTTYPE_BOOT_02;
+				ci->foottype = FOOTTYPE_BOOT_02;
 			} else if (!Q_stricmp(token, "boot_03")) {
-				ci->footsteps = FOOTTYPE_BOOT_03;
+				ci->foottype = FOOTTYPE_BOOT_03;
 			} else if (!Q_stricmp(token, "flesh_01")) {
-				ci->footsteps = FOOTTYPE_FLESH_01;
+				ci->foottype = FOOTTYPE_FLESH_01;
 			} else if (!Q_stricmp(token, "flesh_02")) {
-				ci->footsteps = FOOTTYPE_FLESH_02;
+				ci->foottype = FOOTTYPE_FLESH_02;
 			} else if (!Q_stricmp(token, "heels_01")) {
-				ci->footsteps = FOOTTYPE_HEELS_01;
+				ci->foottype = FOOTTYPE_HEELS_01;
 			} else if (!Q_stricmp(token, "heels_02")) {
-				ci->footsteps = FOOTTYPE_HEELS_02;
+				ci->foottype = FOOTTYPE_HEELS_02;
 			} else if (!Q_stricmp(token, "heels_03")) {
-				ci->footsteps = FOOTTYPE_HEELS_03;
+				ci->foottype = FOOTTYPE_HEELS_03;
 			} else if (!Q_stricmp(token, "sandals_01")) {
-				ci->footsteps = FOOTTYPE_SANDALS_01;
+				ci->foottype = FOOTTYPE_SANDALS_01;
 			} else if (!Q_stricmp(token, "step_01")) {
-				ci->footsteps = FOOTTYPE_STEP_01;
+				ci->foottype = FOOTTYPE_STEP_01;
 			} else if (!Q_stricmp(token, "step_02")) {
-				ci->footsteps = FOOTTYPE_STEP_02;
+				ci->foottype = FOOTTYPE_STEP_02;
 			} else if (!Q_stricmp(token, "step_03")) {
-				ci->footsteps = FOOTTYPE_STEP_03;
+				ci->foottype = FOOTTYPE_STEP_03;
 			} else if (!Q_stricmp(token, "strogg_01")) {
-				ci->footsteps = FOOTTYPE_STROGG_01;
+				ci->foottype = FOOTTYPE_STROGG_01;
 			} else if (!Q_stricmp(token, "klesk")) {
-				ci->footsteps = FOOTTYPE_SPEC_KLESK;
+				ci->foottype = FOOTTYPE_SPEC_KLESK;
 			} else if (!Q_stricmp(token, "sorlag")) {
-				ci->footsteps = FOOTTYPE_SPEC_SORLAG;
+				ci->foottype = FOOTTYPE_SPEC_SORLAG;
 			} else if (!Q_stricmp(token, "t2m")) {
-				ci->footsteps = FOOTTYPE_T2_MEDIUM;
+				ci->foottype = FOOTTYPE_T2_MEDIUM;
 			} else if (!Q_stricmp(token, "t2h")) {
-				ci->footsteps = FOOTTYPE_T2_HEAVY;
+				ci->foottype = FOOTTYPE_T2_HEAVY;
 			} else if (!Q_stricmp(token, "t2s")) {
-				ci->footsteps = FOOTTYPE_T2_SMALL;
+				ci->foottype = FOOTTYPE_T2_SMALL;
 			} else {
-				CG_Printf("Bad footsteps parm in %s: %s\n", filename, token);
+				CG_Printf("Bad foottype parm in %s: %s\n", filename, token);
 			}
 
 			continue;
@@ -843,7 +844,7 @@ static void CG_CopyClientInfoModel(clientInfo_t *from, clientInfo_t *to) {
 
 	VectorCopy(from->headOffset, to->headOffset);
 
-	to->footsteps = from->footsteps;
+	to->foottype = from->foottype;
 	to->gender = from->gender;
 	to->legsModel = from->legsModel;
 	to->legsSkin = from->legsSkin;
