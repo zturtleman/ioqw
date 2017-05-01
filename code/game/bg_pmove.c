@@ -1448,13 +1448,29 @@ static void PM_Footsteps(void) {
 
 	// calculate speed and cycle to be used for all cyclic walking effects
 	pm->xyspeed = sqrt(pm->ps->velocity[0] * pm->ps->velocity[0] + pm->ps->velocity[1] * pm->ps->velocity[1]);
+	// swimming
+	if (pm->waterlevel > 2 || (pm->waterlevel > 1 && pm->ps->groundEntityNum == ENTITYNUM_NONE)) {
+		PM_ContinueLegsAnim(LEGS_SWIM);
+		// don't play swimming sounds when completely underwater
+		if (pm->waterlevel < 3) {
+			if (pm->xyspeed < 5) {
+				pm->ps->bobCycle = 0; // start at beginning of cycle again
+			}
+			// check for swimming sounds
+			old = pm->ps->bobCycle;
+			pm->ps->bobCycle = (int)(old + 0.25f * pml.msec) & 255;
 
-	if (pm->ps->groundEntityNum == ENTITYNUM_NONE) {
-		// airborne leaves position in cycle intact, but doesn't advance
-		if (pm->waterlevel > 1) {
-			PM_ContinueLegsAnim(LEGS_SWIM);
+			if (old > pm->ps->bobCycle) {
+				// swimming at surface
+				PM_AddEvent(EV_SWIM);
+			}
 		}
 
+		return;
+	}
+	// in the air
+	if (pm->ps->groundEntityNum == ENTITYNUM_NONE) {
+		// airborne leaves position in cycle intact, but doesn't advance
 		return;
 	}
 	// if not trying to move
@@ -1515,7 +1531,7 @@ static void PM_Footsteps(void) {
 			}
 		}
 	}
-	// check for footstep / splash sounds
+	// check for footstep/splash sounds
 	old = pm->ps->bobCycle;
 	pm->ps->bobCycle = (int)(old + bobmove * pml.msec) & 255;
 	// if we just crossed a cycle boundary, play an appropriate footstep event
@@ -1529,8 +1545,8 @@ static void PM_Footsteps(void) {
 			// splashing
 			PM_AddEvent(EV_FOOTSPLASH);
 		} else if (pm->waterlevel == 2) {
-			// wading / swimming at surface
-			PM_AddEvent(EV_SWIM);
+			// wading
+			PM_AddEvent(EV_FOOTWADE);
 		} else if (pm->waterlevel == 3) {
 			// no sound when completely underwater
 		}
