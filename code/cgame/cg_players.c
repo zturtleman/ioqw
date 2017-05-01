@@ -1628,13 +1628,11 @@ static void CG_DustTrail(centity_t *cent) {
 	VectorCopy(cent->currentState.pos.trBase, end);
 	end[2] -= 64;
 	CG_Trace(&tr, cent->currentState.pos.trBase, NULL, NULL, end, cent->currentState.number, MASK_PLAYERSOLID);
-// Tobias FIXME: commented out (temporarily)
-/*
-	if (!(tr.surfaceFlags & SURF_DUST)) {
+
+	if ((tr.surfaceFlags & SURF_MATERIAL_MASK) != (MAT_SAND_GR_COL_01|MAT_SAND_GR_COL_02|MAT_SAND_GR_COL_03|MAT_SAND_GR_COL_04)) { // Tobias FIXME: do some simplfications here (like 'isSoftMaterial' etc.), after everything is done...
 		return;
 	}
-*/
-// Tobias: end
+
 	VectorCopy(cent->currentState.pos.trBase, end);
 	end[2] -= 16;
 

@@ -917,19 +917,355 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.selectSound);
 			break;
 		// movement generated events
-		case EV_FOOTSTEP:
-			DEBUGNAME("EV_FOOTSTEP");
+		case EV_FOOTSTEP_HARD:
+			DEBUGNAME("EV_FOOTSTEP_HARD");
 
 			if (cg_footsteps.integer) {
 				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[ci->footsteps][rand()&3]);
 			}
 
 			break;
-		case EV_FOOTSTEP_METAL:
-			DEBUGNAME("EV_FOOTSTEP_METAL");
+		case EV_FOOTSTEP_HARD_FROZEN:
+			DEBUGNAME("EV_FOOTSTEP_HARD_FROZEN");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_METAL][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_HARD_FROZEN][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_HARD_SNOW:
+			DEBUGNAME("EV_FOOTSTEP_HARD_SNOW");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_HARD_SNOW][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_HARD_SLUSH:
+			DEBUGNAME("EV_FOOTSTEP_HARD_SLUSH");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_HARD_SLUSH][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_PUDDLE:
+			DEBUGNAME("EV_FOOTSTEP_PUDDLE");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_PUDDLE][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_LEAVES:
+			DEBUGNAME("EV_FOOTSTEP_LEAVES");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_LEAVES][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_BUSH:
+			DEBUGNAME("EV_FOOTSTEP_BUSH");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_BUSH][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_GRASS:
+			DEBUGNAME("EV_FOOTSTEP_GRASS");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_GRASS][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_LONGGRASS:
+			DEBUGNAME("EV_FOOTSTEP_LONGGRASS");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_LONGGRASS][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_LONGGRASS_MUD:
+			DEBUGNAME("EV_FOOTSTEP_LONGGRASS_MUD");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_LONGGRASS_MUD][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_SAND:
+			DEBUGNAME("EV_FOOTSTEP_SAND");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_SAND][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_GRAVEL:
+			DEBUGNAME("EV_FOOTSTEP_GRAVEL");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_GRAVEL][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_RUBBLE:
+			DEBUGNAME("EV_FOOTSTEP_RUBBLE");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_RUBBLE][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_RUBBLE_WET:
+			DEBUGNAME("EV_FOOTSTEP_RUBBLE_WET");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_RUBBLE_WET][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_SOIL:
+			DEBUGNAME("EV_FOOTSTEP_SOIL");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_SOIL][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_MUD:
+			DEBUGNAME("EV_FOOTSTEP_MUD");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_MUD][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_SNOW_DEEP:
+			DEBUGNAME("EV_FOOTSTEP_SNOW_DEEP");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_SNOW_DEEP][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_ICE:
+			DEBUGNAME("EV_FOOTSTEP_ICE");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_ICE][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_METAL_HOLLOW:
+			DEBUGNAME("EV_FOOTSTEP_METAL_HOLLOW");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_METAL_HOLLOW][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_METAL_HOLLOW_FROZEN:
+			DEBUGNAME("EV_FOOTSTEP_METAL_HOLLOW_FROZEN");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_METAL_HOLLOW_FROZEN][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_METAL_HOLLOW_SNOW:
+			DEBUGNAME("EV_FOOTSTEP_METAL_HOLLOW_SNOW");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_METAL_HOLLOW_SNOW][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_METAL_HOLLOW_SLUSH:
+			DEBUGNAME("EV_FOOTSTEP_METAL_HOLLOW_SLUSH");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_METAL_HOLLOW_SLUSH][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_METAL_HOLLOW_SPLASH:
+			DEBUGNAME("EV_FOOTSTEP_METAL_HOLLOW_SPLASH");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_METAL_HOLLOW_SPLASH][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_GRATE_01:
+			DEBUGNAME("EV_FOOTSTEP_GRATE_01");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_GRATE_01][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_GRATE_02:
+			DEBUGNAME("EV_FOOTSTEP_GRATE_02");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_GRATE_02][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_DUCT:
+			DEBUGNAME("EV_FOOTSTEP_DUCT");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_DUCT][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_PLATE:
+			DEBUGNAME("EV_FOOTSTEP_PLATE");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_PLATE][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_FENCE:
+			DEBUGNAME("EV_FOOTSTEP_FENCE");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_FENCE][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_WOOD_HOLLOW:
+			DEBUGNAME("EV_FOOTSTEP_WOOD_HOLLOW");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_WOOD_HOLLOW][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_WOOD_HOLLOW_FROZEN:
+			DEBUGNAME("EV_FOOTSTEP_WOOD_HOLLOW_FROZEN");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_WOOD_HOLLOW_FROZEN][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_WOOD_HOLLOW_SNOW:
+			DEBUGNAME("EV_FOOTSTEP_WOOD_HOLLOW_SNOW");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_WOOD_HOLLOW_SNOW][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_WOOD_HOLLOW_SLUSH:
+			DEBUGNAME("EV_FOOTSTEP_WOOD_HOLLOW_SLUSH");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_WOOD_HOLLOW_SLUSH][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_WOOD_HOLLOW_SPLASH:
+			DEBUGNAME("EV_FOOTSTEP_WOOD_HOLLOW_SPLASH");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_WOOD_HOLLOW_SPLASH][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_WOOD_SOLID:
+			DEBUGNAME("EV_FOOTSTEP_WOOD_SOLID");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_WOOD_SOLID][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_WOOD_CREAKING:
+			DEBUGNAME("EV_FOOTSTEP_WOOD_CREAKING");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_WOOD_CREAKING][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_ROOF:
+			DEBUGNAME("EV_FOOTSTEP_ROOF");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_ROOF][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_SHINGLES:
+			DEBUGNAME("EV_FOOTSTEP_SHINGLES");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_SHINGLES][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_SOFT:
+			DEBUGNAME("EV_FOOTSTEP_SOFT");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_SOFT][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_GLASS_SHARDS:
+			DEBUGNAME("EV_FOOTSTEP_GLASS_SHARDS");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_GLASS_SHARDS][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_TRASH_GLASS:
+			DEBUGNAME("EV_FOOTSTEP_TRASH_GLASS");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_TRASH_GLASS][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_TRASH_DEBRIS:
+			DEBUGNAME("EV_FOOTSTEP_TRASH_DEBRIS");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_TRASH_DEBRIS][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_TRASH_WIRE:
+			DEBUGNAME("EV_FOOTSTEP_TRASH_WIRE");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_TRASH_WIRE][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_TRASH_PACKING:
+			DEBUGNAME("EV_FOOTSTEP_TRASH_PACKING");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_TRASH_PACKING][rand()&3]);
+			}
+
+			break;
+		case EV_FOOTSTEP_TRASH_PLASTIC:
+			DEBUGNAME("EV_FOOTSTEP_TRASH_PLASTIC");
+
+			if (cg_footsteps.integer) {
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps[FOOTSTEP_TRASH_PLASTIC][rand()&3]);
 			}
 
 			break;
