@@ -708,6 +708,9 @@ static void CG_RegisterSounds(void) {
 		// mission character (small)
 		Com_sprintf(name, sizeof(name), "snd/c/footsteps/t2s/hard%i.wav", i + 1);
 		cgs.media.footsteps8[FOOTSTEP_T2_SMALL_HARD][i] = trap_S_RegisterSound(name, qfalse);
+		// common (8) footstep sounds (all characters use the same sound)
+		Com_sprintf(name, sizeof(name), "snd/c/footsteps/splash%i.wav", i + 1);
+		cgs.media.footsteps8[FOOTSTEP_SPLASH][i] = trap_S_RegisterSound(name, qfalse);
 	}
 	// less dull footstep sounds, unique characters and/or rare surfaces materials use 4 sounds per character/surface
 	for (i = 0; i < 4; i++) {
@@ -819,9 +822,11 @@ static void CG_RegisterSounds(void) {
 		// sorlag
 		Com_sprintf(name, sizeof(name), "snd/c/footsteps/sorlag/hard%i.wav", i + 1);
 		cgs.media.footsteps4[FOOTSTEP_SPEC_SORLAG_HARD][i] = trap_S_RegisterSound(name, qfalse);
-		// common footstep sounds (all characters use the same sound)
-		Com_sprintf(name, sizeof(name), "snd/c/footsteps/splash%i.wav", i + 1);
-		cgs.media.footsteps4[FOOTSTEP_SPLASH][i] = trap_S_RegisterSound(name, qfalse);
+		// common (4) footstep sounds (all characters use the same sound)
+		Com_sprintf(name, sizeof(name), "snd/c/footsteps/wade%i.wav", i + 1);
+		cgs.media.footsteps4[FOOTSTEP_WADE][i] = trap_S_RegisterSound(name, qfalse);
+		Com_sprintf(name, sizeof(name), "snd/c/footsteps/swim%i.wav", i + 1);
+		cgs.media.footsteps4[FOOTSTEP_SWIM][i] = trap_S_RegisterSound(name, qfalse);
 	}
 	// only register the items that the server says we need
 	Q_strncpyz(items, CG_ConfigString(CS_ITEMS), sizeof(items));

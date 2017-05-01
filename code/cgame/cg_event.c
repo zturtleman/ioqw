@@ -1332,7 +1332,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSPLASH");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_SPLASH][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps8[FOOTSTEP_SPLASH][rand()&7]);
 			}
 
 			break;
@@ -1340,7 +1340,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTWADE");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_SPLASH][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_WADE][rand()&3]);
 			}
 
 			break;
@@ -1348,7 +1348,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_SWIM");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_SPLASH][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_SWIM][rand()&3]);
 			}
 
 			break;
