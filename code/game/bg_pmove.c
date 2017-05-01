@@ -860,11 +860,13 @@ static int PM_FootstepForSurface(void) {
 	if (pml.groundTrace.surfaceFlags & SURF_NOSTEPS) {
 		return 0;
 	}
-
+// Tobias FIXME: commented out (temporarily)
+/*
 	if (pml.groundTrace.surfaceFlags & SURF_METALSTEPS) {
 		return EV_FOOTSTEP_METAL;
 	}
-
+*/
+// Tobias: end
 	return EV_FOOTSTEP;
 }
 
