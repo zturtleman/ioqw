@@ -593,12 +593,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 		case EV_MISSILE_MISS:
 			DEBUGNAME("EV_MISSILE_MISS");
 			ByteToDir(es->eventParm, dir);
-			CG_MissileHitWall(es->weapon, 0, position, dir, IMPACTSOUND_DEFAULT);
-			break;
-		case EV_MISSILE_MISS_METAL:
-			DEBUGNAME("EV_MISSILE_MISS_METAL");
-			ByteToDir(es->eventParm, dir);
-			CG_MissileHitWall(es->weapon, 0, position, dir, IMPACTSOUND_METAL);
+			CG_MissileHitWall(es->weapon, 0, position, dir);
 			break;
 		case EV_PHOSPHORTRAIL:
 			DEBUGNAME("EV_PHOSPHORTRAIL");
@@ -610,7 +605,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			// if the end was on a nomark surface, don't make an explosion
 			if (es->eventParm != 255) {
 				ByteToDir(es->eventParm, dir);
-				CG_MissileHitWall(es->weapon, 0, position, dir, IMPACTSOUND_DEFAULT);
+				CG_MissileHitWall(es->weapon, 0, position, dir);
 			}
 
 			break;
@@ -630,7 +625,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			// if the end was on a nomark surface, don't make an explosion
 			if (es->eventParm != 255) {
 				ByteToDir(es->eventParm, dir);
-				CG_MissileHitWall(es->weapon, clientNum, position, dir, IMPACTSOUND_DEFAULT);
+				CG_MissileHitWall(es->weapon, clientNum, position, dir);
 			}
 
 			break;
@@ -640,15 +635,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			break;
 		case EV_PROXIMITY_MINE_STICK:
 			DEBUGNAME("EV_PROXIMITY_MINE_STICK");
-
-			if (es->eventParm & SURF_FLESH) {
-				trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.wstbimplSound);
-			} else if (es->eventParm & SURF_METALSTEPS) {
-				trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.wstbimpmSound);
-			} else {
-				trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.wstbimpdSound);
-			}
-
+			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.wstbimpdSound);
 			break;
 		case EV_PROXIMITY_MINE_TRIGGER:
 			DEBUGNAME("EV_PROXIMITY_MINE_TRIGGER");

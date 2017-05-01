@@ -315,7 +315,7 @@ gitem_t bg_itemlist[] = {
 		5,
 		IT_WEAPON,
 		WP_PROXLAUNCHER,
-/* sounds */ "sound/weapons/proxmine/wstbtick.wav sound/weapons/proxmine/wstbactv.wav sound/weapons/proxmine/wstbimpl.wav sound/weapons/proxmine/wstbimpm.wav sound/weapons/proxmine/wstbimpd.wav sound/weapons/proxmine/wstbactv.wav"
+/* sounds */ "sound/weapons/proxmine/wstbtick.wav sound/weapons/proxmine/wstbactv.wav sound/weapons/proxmine/wstbimpd.wav sound/weapons/proxmine/wstbactv.wav"
 	},
 
 /*QUAKED weapon_grenadelauncher (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -2039,7 +2039,6 @@ char *eventnames[] = {
 	"EV_BULLET_HIT_WALL",
 	"EV_MISSILE_HIT",
 	"EV_MISSILE_MISS",
-	"EV_MISSILE_MISS_METAL",
 	"EV_PHOSPHORTRAIL",
 	"EV_RAILTRAIL",
 	"EV_SHOTGUN",

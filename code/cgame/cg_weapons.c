@@ -43,7 +43,7 @@ CG_MissileHitWall
 Caused by an EV_MISSILE_MISS event, or directly by local bullet tracing.
 =======================================================================================================================================
 */
-void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, impactSound_t soundType) {
+void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir) {
 	qhandle_t mod;
 	qhandle_t mark;
 	qhandle_t shader;
@@ -95,15 +95,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, imp
 			mark = cgs.media.bulletMarkShader;
 			markRadius = 4;
 			markDuration = 30000;
-
-			if (soundType == IMPACTSOUND_FLESH) {
-				sfx = cgs.media.sfx_chghitflesh;
-			} else if (soundType == IMPACTSOUND_METAL) {
-				sfx = cgs.media.sfx_chghitmetal;
-			} else {
-				sfx = cgs.media.sfx_chghit;
-			}
-
+			sfx = cgs.media.sfx_chghit;
 			break;
 		case WP_SHOTGUN:
 			mod = cgs.media.bulletFlashModel;
@@ -117,15 +109,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, imp
 			mark = cgs.media.holeMarkShader;
 			markRadius = 4;
 			markDuration = 30000;
-
-			if (soundType == IMPACTSOUND_FLESH) {
-				sfx = cgs.media.sfx_nghitflesh;
-			} else if (soundType == IMPACTSOUND_METAL) {
-				sfx = cgs.media.sfx_nghitmetal;
-			} else {
-				sfx = cgs.media.sfx_nghit;
-			}
-
+			sfx = cgs.media.sfx_nghit;
 			break;
 		case WP_PHOSPHORGUN:
 			mod = cgs.media.dishFlashModel;
@@ -305,7 +289,7 @@ void CG_MissileHitPlayer(int weapon, vec3_t origin, vec3_t dir, int entityNum) {
 		case WP_PLASMAGUN:
 		case WP_BFG:
 		case WP_MISSILELAUNCHER:
-			CG_MissileHitWall(weapon, 0, origin, dir, IMPACTSOUND_FLESH);
+			CG_MissileHitWall(weapon, 0, origin, dir);
 			break;
 		default:
 			break;
@@ -1065,7 +1049,7 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 	if (flesh) {
 		CG_Bleed(end, fleshEntityNum);
 	} else {
-		CG_MissileHitWall(WP_MACHINEGUN, 0, end, normal, IMPACTSOUND_DEFAULT);
+		CG_MissileHitWall(WP_MACHINEGUN, 0, end, normal);
 	}
 }
 
@@ -1119,11 +1103,7 @@ static void CG_ShotgunPellet(vec3_t start, vec3_t end, int skipNum) {
 			return;
 		}
 
-		if (tr.surfaceFlags & SURF_METALSTEPS) {
-			CG_MissileHitWall(WP_SHOTGUN, 0, tr.endpos, tr.plane.normal, IMPACTSOUND_METAL);
-		} else {
-			CG_MissileHitWall(WP_SHOTGUN, 0, tr.endpos, tr.plane.normal, IMPACTSOUND_DEFAULT);
-		}
+		CG_MissileHitWall(WP_SHOTGUN, 0, tr.endpos, tr.plane.normal);
 	}
 }
 
