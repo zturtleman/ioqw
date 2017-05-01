@@ -1628,11 +1628,13 @@ static void CG_DustTrail(centity_t *cent) {
 	VectorCopy(cent->currentState.pos.trBase, end);
 	end[2] -= 64;
 	CG_Trace(&tr, cent->currentState.pos.trBase, NULL, NULL, end, cent->currentState.number, MASK_PLAYERSOLID);
-
+// Tobias FIXME: commented out (temporarily)
+/*
 	if (!(tr.surfaceFlags & SURF_DUST)) {
 		return;
 	}
-
+*/
+// Tobias: end
 	VectorCopy(cent->currentState.pos.trBase, end);
 	end[2] -= 16;
 
