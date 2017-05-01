@@ -941,7 +941,7 @@ static qboolean UI_ParseAnimationFile(const char *filename, animation_t *animati
 			break;
 		}
 
-		if (!Q_stricmp(token, "footsteps")) {
+		if (!Q_stricmp(token, "foottype")) {
 			token = COM_Parse(&text_p);
 
 			if (!token[0]) {
