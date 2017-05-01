@@ -378,10 +378,12 @@ static void CG_OffsetFirstPersonView(void) {
 
 	delta = DotProduct(predictedVelocity, cg.refdef.viewaxis[1]);
 	angles[ROLL] -= delta * cg_runroll.value;
-	// add angles based on bob
 
-	// make sure the bob is visible even at low speeds
+	delta = DotProduct(predictedVelocity, cg.refdef.viewaxis[0]);
+	angles[YAW] -= delta * cg_runyaw.value;
+	// add angles based on bob, make sure the bob is visible even at low speeds
 	speed = cg.xyspeed > 200 ? cg.xyspeed : 200;
+	// pitch
 	delta = cg.bobfracsin * cg_bobpitch.value * speed;
 
 	if (cg.predictedPlayerState.pm_flags & PMF_DUCKED) {
@@ -389,6 +391,7 @@ static void CG_OffsetFirstPersonView(void) {
 	}
 
 	angles[PITCH] += delta;
+	// roll
 	delta = cg.bobfracsin * cg_bobroll.value * speed;
 
 	if (cg.predictedPlayerState.pm_flags & PMF_DUCKED) {
@@ -400,6 +403,18 @@ static void CG_OffsetFirstPersonView(void) {
 	}
 
 	angles[ROLL] += delta;
+	// yaw
+	delta = cg.bobfracsin * cg_bobyaw.value * speed;
+
+	if (cg.predictedPlayerState.pm_flags & PMF_DUCKED) {
+		delta *= 2; // crouching accentuates roll
+	}
+
+	if (cg.bobcycle & 1) {
+		delta = -delta;
+	}
+
+	angles[YAW] += delta;
 	// add view height
 	origin[2] += cg.predictedPlayerState.viewheight;
 	// smooth out duck height changes
