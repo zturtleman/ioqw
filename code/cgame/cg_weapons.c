@@ -55,7 +55,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir) {
 	int r;
 	qboolean alphaFade;
 	qboolean isSprite;
-	int lightDuration, markDuration;
+	int lightDuration, markDuration, sfxRadius;
 	vec3_t sprOrg;
 	vec3_t sprVel;
 
@@ -69,6 +69,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir) {
 	lightDuration = 600;
 	isSprite = qfalse;
 	markDuration = -1; // keep -1 markDuration for temporary marks
+	sfxRadius = 128;
 
 	switch (weapon) {
 		case WP_HANDGUN:
@@ -120,6 +121,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir) {
 			markRadius = 10;
 			markDuration = 50000;
 			sfx = cgs.media.sfx_rockexp;
+			sfxRadius = 256;
 			break;
 		case WP_PROXLAUNCHER:
 			mod = cgs.media.dishFlashModel;
@@ -130,6 +132,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir) {
 			markRadius = 64;
 			markDuration = 50000;
 			sfx = cgs.media.sfx_proxexp;
+			sfxRadius = 256;
 			break;
 		case WP_GRENADELAUNCHER:
 			mod = cgs.media.dishFlashModel;
@@ -140,6 +143,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir) {
 			markRadius = 64;
 			markDuration = 50000;
 			sfx = cgs.media.sfx_rockexp;
+			sfxRadius = 256;
 			break;
 		case WP_NAPALMLAUNCHER:
 			mod = cgs.media.dishFlashModel;
@@ -160,6 +164,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir) {
 			markRadius = 64;
 			markDuration = 50000;
 			sfx = cgs.media.sfx_rockexp;
+			sfxRadius = 256;
 
 			if (cg_oldRocket.integer == 0) {
 				// explosion sprite animation
@@ -194,6 +199,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir) {
 			markRadius = 24;
 			markDuration = 50000;
 			sfx = cgs.media.sfx_plasmaexp;
+			sfxRadius = 256;
 			break;
 		case WP_PLASMAGUN:
 			mod = cgs.media.ringFlashModel;
@@ -230,6 +236,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir) {
 			markRadius = 512;
 			markDuration = 60000;
 			sfx = cgs.media.sfx_rockexp;
+			sfxRadius = 256;
 			// explosion sprite animation
 			VectorMA(origin, 24, dir, sprOrg);
 			VectorScale(dir, 64, sprVel);
@@ -266,7 +273,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir) {
 	}
 	// impact sound
 	if (sfx) {
-		trap_S_StartSound(origin, ENTITYNUM_WORLD, CHAN_AUTO, sfx, 64, 255);
+		trap_S_StartSound(origin, ENTITYNUM_WORLD, CHAN_AUTO, sfx, sfxRadius, 255);
 	}
 }
 
