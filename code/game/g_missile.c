@@ -43,11 +43,11 @@ qboolean G_BounceMissile(gentity_t *ent, trace_t *trace) {
 
 	dot = DotProduct(velocity, trace->plane.normal);
 	VectorMA(velocity, -2 * dot, trace->plane.normal, ent->s.pos.trDelta);
-
-	if ((trace->surfaceFlags & SURF_MATERIAL_MASK) == (MAT_SAND_GR_COL_01|MAT_SAND_GR_COL_02|MAT_SAND_GR_COL_03|MAT_SAND_GR_COL_04)) { // Tobias FIXME: do some simplfications here (like 'isSoftMaterial' etc.), after everything is done...
+// Tobias FIXME: do some simplifications here (like 'isSoftMaterial' etc.), after everything is done...
+	if ((trace->surfaceFlags & SURF_MATERIAL_MASK) == MAT_SAND_GR_COL_01 || (trace->surfaceFlags & SURF_MATERIAL_MASK) == MAT_SAND_GR_COL_02 || (trace->surfaceFlags & SURF_MATERIAL_MASK) == MAT_SAND_GR_COL_03 || (trace->surfaceFlags & SURF_MATERIAL_MASK) == MAT_SAND_GR_COL_04) {
 		ent->s.pos.trDelta[2] *= 0.65f;
 	}
-
+// Tobias: end
 	contents = trap_PointContents(ent->r.currentOrigin, -1);
 
 	if (contents & (CONTENTS_WATER|CONTENTS_SLIME|CONTENTS_LAVA)) {
