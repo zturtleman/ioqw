@@ -1086,6 +1086,8 @@ netField_t entityStateFields[] = {
 	{NETF(density), 10},
 	{NETF(onFireStart), 32},
 	{NETF(onFireEnd), 32},
+	{NETF(soundRange), 32},
+	{NETF(soundVolume), 32},
 	{NETF(nextWeapon), 8},
 	{NETF(effect1Time), 32},
 	{NETF(effect2Time), 32},

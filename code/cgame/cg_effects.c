@@ -382,7 +382,7 @@ void CG_ObeliskPain(vec3_t org) {
 		sfx = cgs.media.obeliskHitSound3;
 	}
 
-	trap_S_StartSound(org, ENTITYNUM_NONE, CHAN_BODY, sfx);
+	trap_S_StartSound(org, ENTITYNUM_NONE, CHAN_BODY, sfx, 64, 255);
 }
 
 /*

@@ -433,8 +433,8 @@ int trap_CM_MarkFragments(int numPoints, const vec3_t *points, const vec3_t proj
 trap_S_StartSound
 =======================================================================================================================================
 */
-void trap_S_StartSound(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx) {
-	syscall(CG_S_STARTSOUND, origin, entityNum, entchannel, sfx);
+void trap_S_StartSound(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx, int range, int volume) {
+	syscall(CG_S_STARTSOUND, origin, entityNum, entchannel, sfx, range, volume);
 }
 
 /*
@@ -469,8 +469,8 @@ void trap_S_ClearLoopingSounds(qboolean killall) {
 trap_S_AddLoopingSound
 =======================================================================================================================================
 */
-void trap_S_AddLoopingSound(int entityNum, const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx) {
-	syscall(CG_S_ADDLOOPINGSOUND, entityNum, origin, velocity, sfx);
+void trap_S_AddLoopingSound(int entityNum, const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx, int range, int volume) {
+	syscall(CG_S_ADDLOOPINGSOUND, entityNum, origin, velocity, sfx, range, volume);
 }
 
 /*
@@ -478,8 +478,8 @@ void trap_S_AddLoopingSound(int entityNum, const vec3_t origin, const vec3_t vel
 trap_S_AddRealLoopingSound
 =======================================================================================================================================
 */
-void trap_S_AddRealLoopingSound(int entityNum, const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx) {
-	syscall(CG_S_ADDREALLOOPINGSOUND, entityNum, origin, velocity, sfx);
+void trap_S_AddRealLoopingSound(int entityNum, const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx, int range, int volume) {
+	syscall(CG_S_ADDREALLOOPINGSOUND, entityNum, origin, velocity, sfx, range, volume);
 }
 
 /*

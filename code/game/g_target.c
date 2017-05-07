@@ -109,7 +109,7 @@ Use_Target_Delay
 =======================================================================================================================================
 */
 void Use_Target_Delay(gentity_t *ent, gentity_t *other, gentity_t *activator) {
-	ent->nextthink = level.time + (ent->wait + ent->random * crandom()) * 1000;
+	ent->nextthink = (int)(level.time + (ent->wait + ent->random * crandom()) * 1000);
 	ent->think = Think_Target_Delay;
 	ent->activator = activator;
 }
@@ -125,7 +125,7 @@ void SP_target_delay(gentity_t *ent) {
 		G_SpawnFloat("wait", "1", &ent->wait);
 	}
 
-	if (!ent->wait) {
+	if (ent->wait == 0.0f) {
 		ent->wait = 1;
 	}
 
@@ -235,7 +235,7 @@ void Target_Speaker_Multiple_Think(gentity_t *ent) {
 	}
 }
 
-/*QUAKED target_speaker (1 0 0) (-8 -8 -8) (8 8 8) LOOPED_ON LOOPED_OFF GLOBAL ACTIVATOR VIS_MULTIPLE
+/*QUAKED target_speaker (1 0 0) (-8 -8 -8) (8 8 8) LOOPED_ON LOOPED_OFF GLOBAL ACTIVATOR VIS_MULTIPLE NO_PVS
 "noise"		wav file to play
 
 A global sound will play full volume throughout the level.
@@ -244,8 +244,11 @@ Global and activator sounds can't be combined with looping.
 Normal sounds play each time the target is used.
 Looped sounds will be toggled by use functions.
 Multiple identical looping sounds will just increase volume without any speed cost.
-"wait" : Seconds between auto triggerings, 0 = don't auto trigger
-"random" wait variance, default is 0
+NO_PVS - this sound will not turn off when not in the player's PVS.
+"wait" : Seconds between auto triggerings, 0 = don't auto trigger.
+"random" wait variance, default is 0.
+"radius" radius control, 1250 is default.
+"volume" volume control, 255 is default.
 */
 void SP_target_speaker(gentity_t *ent) {
 	char buffer[MAX_QPATH];
@@ -269,22 +272,40 @@ void SP_target_speaker(gentity_t *ent) {
 	// a repeating speaker can be done completely client side
 	ent->s.eType = ET_SPEAKER;
 	ent->s.eventParm = ent->noise_index;
-	ent->s.frame = ent->wait * 10;
-	ent->s.clientNum = ent->random * 10;
+	ent->s.frame = (int)(ent->wait * 10);
+	ent->s.clientNum = (int)(ent->random * 10);
 	// check for prestarted looping sound
 	if (ent->spawnflags & 1) {
 		ent->s.loopSound = ent->noise_index;
 	}
 
 	ent->use = Use_Target_Speaker;
-
-	if (ent->spawnflags & 4) {
+	// GLOBAL
+	if (ent->spawnflags & (4|32)) {
 		ent->r.svFlags |= SVF_BROADCAST;
 	}
 
 	if (ent->spawnflags & 16) {
 		ent->think = Target_Speaker_Multiple_Think;
 		ent->nextthink = level.time + 50;
+	}
+	// NO_PVS
+	if (ent->spawnflags & 32) {
+		ent->s.density = 1;
+	} else {
+		ent->s.density = 0;
+	}
+	// radius control
+	G_SpawnInt("radius", "0", &ent->s.soundRange);
+
+	if (!ent->s.soundRange) {
+		ent->s.soundRange = SOUND_RANGE_DEFAULT;
+	}
+	// volume control
+	G_SpawnInt("volume", "0", &ent->s.soundVolume);
+
+	if (!ent->s.soundVolume) {
+		ent->s.soundVolume = SOUND_VOLUME_DEFAULT;
 	}
 
 	VectorCopy(ent->s.origin, ent->s.pos.trBase);
@@ -304,8 +325,8 @@ void Target_Laser_Think(gentity_t *self) {
 
 	// if pointed at another entity, set movedir to point at it
 	if (self->enemy) {
-		VectorMA(self->enemy->s.origin, 0.5, self->enemy->r.mins, point);
-		VectorMA(point, 0.5, self->enemy->r.maxs, point);
+		VectorMA(self->enemy->s.origin, 0.5f, self->enemy->r.mins, point);
+		VectorMA(point, 0.5f, self->enemy->r.maxs, point);
 		VectorSubtract(point, self->s.origin, self->movedir);
 		VectorNormalize(self->movedir);
 	}

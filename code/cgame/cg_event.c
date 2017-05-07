@@ -419,7 +419,7 @@ static void CG_UseItem(centity_t *cent) {
 	switch (itemNum) {
 		default:
 		case HI_NONE:
-			trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.useNothingSound);
+			trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.useNothingSound, 32, 255);
 			break;
 		case HI_KAMIKAZE:
 			break;
@@ -522,12 +522,12 @@ void CG_PainEvent(centity_t *cent, int health) {
 	// play a gurp sound instead of a normal pain sound
 	if (CG_WaterLevel(cent) == 3) {
 		if (rand()&1) {
-			trap_S_StartSound(NULL, cent->currentState.number, CHAN_VOICE, CG_CustomSound(cent->currentState.number, "snd/c/gurp1.wav"));
+			trap_S_StartSound(NULL, cent->currentState.number, CHAN_VOICE, CG_CustomSound(cent->currentState.number, "snd/c/gurp1.wav"), 64, 255);
 		} else {
-			trap_S_StartSound(NULL, cent->currentState.number, CHAN_VOICE, CG_CustomSound(cent->currentState.number, "snd/c/gurp2.wav"));
+			trap_S_StartSound(NULL, cent->currentState.number, CHAN_VOICE, CG_CustomSound(cent->currentState.number, "snd/c/gurp2.wav"), 64, 255);
 		}
 	} else {
-		trap_S_StartSound(NULL, cent->currentState.number, CHAN_VOICE, CG_CustomSound(cent->currentState.number, snd));
+		trap_S_StartSound(NULL, cent->currentState.number, CHAN_VOICE, CG_CustomSound(cent->currentState.number, snd), 64, 255);
 	}
 	// save pain time for programitic twitch animation
 	cent->pe.painTime = cg.time;
@@ -635,19 +635,19 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			break;
 		case EV_PROXIMITY_MINE_STICK:
 			DEBUGNAME("EV_PROXIMITY_MINE_STICK");
-			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.wstbimpdSound);
+			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.wstbimpdSound, 64, 255);
 			break;
 		case EV_PROXIMITY_MINE_TRIGGER:
 			DEBUGNAME("EV_PROXIMITY_MINE_TRIGGER");
-			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.wstbactvSound);
+			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.wstbactvSound, 64, 255);
 			break;
 		case EV_GRENADE_BOUNCE:
 			DEBUGNAME("EV_GRENADE_BOUNCE");
 
 			if (rand() & 1) {
-				trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.hgrenb1aSound);
+				trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.hgrenb1aSound, 64, 255);
 			} else {
-				trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.hgrenb2aSound);
+				trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.hgrenb2aSound, 64, 255);
 			}
 
 			break;
@@ -672,10 +672,10 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_GENERAL_SOUND");
 
 			if (cgs.gameSounds[es->eventParm]) {
-				trap_S_StartSound(NULL, es->number, CHAN_VOICE, cgs.gameSounds[es->eventParm]);
+				trap_S_StartSound(NULL, es->number, CHAN_VOICE, cgs.gameSounds[es->eventParm], es->soundRange, es->soundVolume);
 			} else {
 				s = CG_ConfigString(CS_SOUNDS + es->eventParm);
-				trap_S_StartSound(NULL, es->number, CHAN_VOICE, CG_CustomSound(es->number, s));
+				trap_S_StartSound(NULL, es->number, CHAN_VOICE, CG_CustomSound(es->number, s), es->soundRange, es->soundVolume);
 			}
 
 			break;
@@ -821,9 +821,9 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_DEATHx");
 
 			if (CG_WaterLevel(cent) == 3) {
-				trap_S_StartSound(NULL, es->number, CHAN_VOICE, CG_CustomSound(es->number, "*drown.wav"));
+				trap_S_StartSound(NULL, es->number, CHAN_VOICE, CG_CustomSound(es->number, "*drown.wav"), 48, 255);
 			} else {
-				trap_S_StartSound(NULL, es->number, CHAN_VOICE, CG_CustomSound(es->number, va("*death%i.wav", event - EV_DEATH1 + 1)));
+				trap_S_StartSound(NULL, es->number, CHAN_VOICE, CG_CustomSound(es->number, va("*death%i.wav", event - EV_DEATH1 + 1)), 64, 255);
 			}
 
 			break;
@@ -836,14 +836,14 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			// don't play gib sound when using the kamikaze because it interferes with the kamikaze sound, downside is that the gib sound
 			// will also not be played when someone is gibbed while just carrying the kamikaze
 			if (!(es->eFlags & EF_KAMIKAZE)) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.gibSound);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.gibSound, 64, 255);
 			}
 
 			CG_GibPlayer(cent->lerpOrigin);
 			break;
 		case EV_FALL_SHORT:
 			DEBUGNAME("EV_FALL_SHORT");
-			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.landSound);
+			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.landSound, 64, 255);
 
 			if (clientNum == cg.predictedPlayerState.clientNum) {
 				// smooth landing z changes
@@ -855,7 +855,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 		case EV_FALL_MEDIUM:
 			DEBUGNAME("EV_FALL_MEDIUM");
 			// use normal pain sound
-			trap_S_StartSound(NULL, es->number, CHAN_VOICE, CG_CustomSound(es->number, "*pain100_1.wav"));
+			trap_S_StartSound(NULL, es->number, CHAN_VOICE, CG_CustomSound(es->number, "*pain100_1.wav"), 64, 255);
 
 			if (clientNum == cg.predictedPlayerState.clientNum) {
 				// smooth landing z changes
@@ -866,7 +866,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			break;
 		case EV_FALL_FAR:
 			DEBUGNAME("EV_FALL_FAR");
-			trap_S_StartSound(NULL, es->number, CHAN_AUTO, CG_CustomSound(es->number, "*fall1.wav"));
+			trap_S_StartSound(NULL, es->number, CHAN_AUTO, CG_CustomSound(es->number, "*fall1.wav"), 64, 255);
 			cent->pe.painTime = cg.time; // don't play a pain sound right after this
 
 			if (clientNum == cg.predictedPlayerState.clientNum) {
@@ -878,7 +878,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			break;
 		case EV_JUMP:
 			DEBUGNAME("EV_JUMP");
-			trap_S_StartSound(NULL, es->number, CHAN_VOICE, CG_CustomSound(es->number, "*jump1.wav"));
+			trap_S_StartSound(NULL, es->number, CHAN_VOICE, CG_CustomSound(es->number, "*jump1.wav"), 64, 255);
 			break;
 		case EV_JUMP_PAD:
 			DEBUGNAME("EV_JUMP_PAD");
@@ -889,24 +889,24 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 				CG_SmokePuff(cent->lerpOrigin, up, 32, 1, 1, 1, 0.33f, 1000, cg.time, 0, LEF_PUFF_DONT_SCALE, cgs.media.smokePuffShader);
 			}
 			// boing sound at origin, jump sound on player
-			trap_S_StartSound(cent->lerpOrigin, -1, CHAN_VOICE, cgs.media.jumpPadSound);
-			trap_S_StartSound(NULL, es->number, CHAN_VOICE, CG_CustomSound(es->number, "*jump1.wav"));
+			trap_S_StartSound(cent->lerpOrigin, -1, CHAN_VOICE, cgs.media.jumpPadSound, 64, 255);
+			trap_S_StartSound(NULL, es->number, CHAN_VOICE, CG_CustomSound(es->number, "*jump1.wav"), 64, 255);
 			break;
 		case EV_PLAYER_TELEPORT_IN:
 			DEBUGNAME("EV_PLAYER_TELEPORT_IN");
 			trap_R_AddLightToScene(cent->lerpOrigin, 300, 1.0f, 1.0f, 0.9f);
 			CG_SpawnEffectDefault(position);
-			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.teleInSound);
+			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.teleInSound, 64, 255);
 			break;
 		case EV_PLAYER_TELEPORT_OUT:
 			DEBUGNAME("EV_PLAYER_TELEPORT_OUT");
-			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.teleOutSound);
+			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.teleOutSound, 64, 255);
 			CG_SpawnEffectDefault(position);
 			break;
 		// weapon events
 		case EV_NOAMMO:
 			DEBUGNAME("EV_NOAMMO");
-//			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.noAmmoSound);
+//			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.noAmmoSound, 64, 255);
 			if (es->number == cg.snap->ps.clientNum) {
 				CG_OutOfAmmoChange();
 			}
@@ -914,7 +914,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			break;
 		case EV_CHANGE_WEAPON:
 			DEBUGNAME("EV_CHANGE_WEAPON");
-			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.selectSound);
+			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.selectSound, 48, 255);
 			break;
 		// movement generated events
 		case EV_FOOTSTEP_HARD:
@@ -924,61 +924,61 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 				switch (ci->foottype) {
 					default:
 					case FOOTTYPE_DEFAULT:
-						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps8[FOOTSTEP_DEFAULT_HARD][rand()&7]);
+						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps8[FOOTSTEP_DEFAULT_HARD][rand()&7], 48, 255);
 						break;
 					case FOOTTYPE_BOOT_01:
-						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps8[FOOTSTEP_BOOT_01_HARD][rand()&7]);
+						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps8[FOOTSTEP_BOOT_01_HARD][rand()&7], 48, 255);
 						break;
 					case FOOTTYPE_BOOT_02:
-						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps8[FOOTSTEP_BOOT_02_HARD][rand()&7]);
+						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps8[FOOTSTEP_BOOT_02_HARD][rand()&7], 48, 255);
 						break;
 					case FOOTTYPE_BOOT_03:
-						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps8[FOOTSTEP_BOOT_03_HARD][rand()&7]);
+						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps8[FOOTSTEP_BOOT_03_HARD][rand()&7], 48, 255);
 						break;
 					case FOOTTYPE_FLESH_01:
-						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_FLESH_01_HARD][rand()&3]);
+						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_FLESH_01_HARD][rand()&3], 48, 255);
 						break;
 					case FOOTTYPE_FLESH_02:
-						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_FLESH_02_HARD][rand()&3]);
+						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_FLESH_02_HARD][rand()&3], 48, 255);
 						break;
 					case FOOTTYPE_HEELS_01:
-						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps8[FOOTSTEP_HEELS_01_HARD][rand()&7]);
+						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps8[FOOTSTEP_HEELS_01_HARD][rand()&7], 48, 255);
 						break;
 					case FOOTTYPE_HEELS_02:
-						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps8[FOOTSTEP_HEELS_02_HARD][rand()&7]);
+						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps8[FOOTSTEP_HEELS_02_HARD][rand()&7], 48, 255);
 						break;
 					case FOOTTYPE_HEELS_03:
-						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_HEELS_03_HARD][rand()&3]);
+						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_HEELS_03_HARD][rand()&3], 48, 255);
 						break;
 					case FOOTTYPE_SANDALS_01:
-						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_SANDALS_01_HARD][rand()&3]);
+						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_SANDALS_01_HARD][rand()&3], 48, 255);
 						break;
 					case FOOTTYPE_STEP_01:
-						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps8[FOOTSTEP_STEP_01_HARD][rand()&7]);
+						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps8[FOOTSTEP_STEP_01_HARD][rand()&7], 48, 255);
 						break;
 					case FOOTTYPE_STEP_02:
-						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_STEP_02_HARD][rand()&3]);
+						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_STEP_02_HARD][rand()&3], 48, 255);
 						break;
 					case FOOTTYPE_STEP_03:
-						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps8[FOOTSTEP_STEP_03_HARD][rand()&7]);
+						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps8[FOOTSTEP_STEP_03_HARD][rand()&7], 48, 255);
 						break;
 					case FOOTTYPE_STROGG_01:
-						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps8[FOOTSTEP_STROGG_01_HARD][rand()&7]);
+						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps8[FOOTSTEP_STROGG_01_HARD][rand()&7], 48, 255);
 						break;
 					case FOOTTYPE_SPEC_KLESK:
-						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_SPEC_KLESK_HARD][rand()&3]);
+						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_SPEC_KLESK_HARD][rand()&3], 48, 255);
 						break;
 					case FOOTTYPE_SPEC_SORLAG:
-						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_SPEC_SORLAG_HARD][rand()&3]);
+						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_SPEC_SORLAG_HARD][rand()&3], 48, 255);
 						break;
 					case FOOTTYPE_T2_MEDIUM:
-						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps8[FOOTSTEP_T2_MEDIUM_HARD][rand()&7]);
+						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps8[FOOTSTEP_T2_MEDIUM_HARD][rand()&7], 48, 255);
 						break;
 					case FOOTTYPE_T2_HEAVY:
-						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps8[FOOTSTEP_T2_HEAVY_HARD][rand()&7]);
+						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps8[FOOTSTEP_T2_HEAVY_HARD][rand()&7], 48, 255);
 						break;
 					case FOOTTYPE_T2_SMALL:
-						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps8[FOOTSTEP_T2_SMALL_HARD][rand()&7]);
+						trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps8[FOOTSTEP_T2_SMALL_HARD][rand()&7], 48, 255);
 						break;
 				}
 			}
@@ -988,7 +988,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_HARD_FROZEN");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_HARD_FROZEN][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_HARD_FROZEN][rand()&3], 48, 255);
 			}
 
 			break;
@@ -996,7 +996,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_HARD_SNOW");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_HARD_SNOW][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_HARD_SNOW][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1004,7 +1004,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_HARD_SLUSH");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_HARD_SLUSH][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_HARD_SLUSH][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1012,7 +1012,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_PUDDLE");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_PUDDLE][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_PUDDLE][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1020,7 +1020,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_LEAVES");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_LEAVES][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_LEAVES][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1028,7 +1028,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_BUSH");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_BUSH][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_BUSH][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1036,7 +1036,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_GRASS");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_GRASS][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_GRASS][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1044,7 +1044,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_LONGGRASS");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_LONGGRASS][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_LONGGRASS][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1052,7 +1052,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_LONGGRASS_MUD");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_LONGGRASS_MUD][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_LONGGRASS_MUD][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1060,7 +1060,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_SAND");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_SAND][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_SAND][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1068,7 +1068,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_GRAVEL");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_GRAVEL][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_GRAVEL][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1076,7 +1076,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_RUBBLE");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_RUBBLE][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_RUBBLE][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1084,7 +1084,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_RUBBLE_WET");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_RUBBLE_WET][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_RUBBLE_WET][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1092,7 +1092,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_SOIL");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_SOIL][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_SOIL][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1100,7 +1100,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_MUD");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_MUD][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_MUD][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1108,7 +1108,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_SNOW_DEEP");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_SNOW_DEEP][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_SNOW_DEEP][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1116,7 +1116,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_ICE");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_ICE][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_ICE][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1124,7 +1124,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_METAL_HOLLOW");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_METAL_HOLLOW][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_METAL_HOLLOW][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1132,7 +1132,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_METAL_HOLLOW_FROZEN");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_METAL_HOLLOW_FROZEN][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_METAL_HOLLOW_FROZEN][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1140,7 +1140,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_METAL_HOLLOW_SNOW");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_METAL_HOLLOW_SNOW][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_METAL_HOLLOW_SNOW][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1148,7 +1148,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_METAL_HOLLOW_SLUSH");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_METAL_HOLLOW_SLUSH][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_METAL_HOLLOW_SLUSH][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1156,7 +1156,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_METAL_HOLLOW_SPLASH");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_METAL_HOLLOW_SPLASH][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_METAL_HOLLOW_SPLASH][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1164,7 +1164,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_GRATE_01");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_GRATE_01][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_GRATE_01][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1172,7 +1172,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_GRATE_02");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_GRATE_02][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_GRATE_02][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1180,7 +1180,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_DUCT");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_DUCT][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_DUCT][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1188,7 +1188,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_PLATE");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_PLATE][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_PLATE][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1196,7 +1196,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_FENCE");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_FENCE][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_FENCE][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1204,7 +1204,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_WOOD_HOLLOW");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_WOOD_HOLLOW][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_WOOD_HOLLOW][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1212,7 +1212,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_WOOD_HOLLOW_FROZEN");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_WOOD_HOLLOW_FROZEN][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_WOOD_HOLLOW_FROZEN][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1220,7 +1220,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_WOOD_HOLLOW_SNOW");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_WOOD_HOLLOW_SNOW][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_WOOD_HOLLOW_SNOW][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1228,7 +1228,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_WOOD_HOLLOW_SLUSH");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_WOOD_HOLLOW_SLUSH][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_WOOD_HOLLOW_SLUSH][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1236,7 +1236,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_WOOD_HOLLOW_SPLASH");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_WOOD_HOLLOW_SPLASH][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_WOOD_HOLLOW_SPLASH][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1244,7 +1244,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_WOOD_SOLID");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_WOOD_SOLID][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_WOOD_SOLID][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1252,7 +1252,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_WOOD_CREAKING");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_WOOD_CREAKING][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_WOOD_CREAKING][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1260,7 +1260,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_ROOF");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_ROOF][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_ROOF][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1268,7 +1268,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_SHINGLES");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_SHINGLES][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_SHINGLES][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1276,7 +1276,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_SOFT");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_SOFT][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_SOFT][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1284,7 +1284,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_GLASS_SHARDS");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_GLASS_SHARDS][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_GLASS_SHARDS][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1292,7 +1292,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_TRASH_GLASS");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_TRASH_GLASS][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_TRASH_GLASS][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1300,7 +1300,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_TRASH_DEBRIS");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_TRASH_DEBRIS][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_TRASH_DEBRIS][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1308,7 +1308,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_TRASH_WIRE");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_TRASH_WIRE][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_TRASH_WIRE][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1316,7 +1316,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_TRASH_PACKING");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_TRASH_PACKING][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_TRASH_PACKING][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1324,7 +1324,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSTEP_TRASH_PLASTIC");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_TRASH_PLASTIC][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_DEFAULT_TRASH_PLASTIC][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1332,7 +1332,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTSPLASH");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps8[FOOTSTEP_SPLASH][rand()&7]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps8[FOOTSTEP_SPLASH][rand()&7], 48, 255);
 			}
 
 			break;
@@ -1340,7 +1340,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FOOTWADE");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_WADE][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_WADE][rand()&3], 48, 255);
 			}
 
 			break;
@@ -1348,29 +1348,29 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_SWIM");
 
 			if (cg_footsteps.integer) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_SWIM][rand()&3]);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.footsteps4[FOOTSTEP_SWIM][rand()&3], 48, 255);
 			}
 
 			break;
 		case EV_WATER_TOUCH:
 			DEBUGNAME("EV_WATER_TOUCH");
-			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.watrInSound);
+			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.watrInSound, 48, 255);
 			break;
 		case EV_WATER_LEAVE:
 			DEBUGNAME("EV_WATER_LEAVE");
-			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.watrOutSound);
+			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.watrOutSound, 48, 255);
 			break;
 		case EV_WATER_UNDER:
 			DEBUGNAME("EV_WATER_UNDER");
-			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.watrUnSound);
+			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.watrUnSound, 48, 255);
 			break;
 		case EV_WATER_CLEAR:
 			DEBUGNAME("EV_WATER_CLEAR");
-			trap_S_StartSound(NULL, es->number, CHAN_AUTO, CG_CustomSound(es->number, "*gasp.wav"));
+			trap_S_StartSound(NULL, es->number, CHAN_AUTO, CG_CustomSound(es->number, "*gasp.wav"), 64, 255);
 			break;
 		case EV_TAUNT:
 			DEBUGNAME("EV_TAUNT");
-			trap_S_StartSound(NULL, es->number, CHAN_VOICE, CG_CustomSound(es->number, "*taunt.wav"));
+			trap_S_StartSound(NULL, es->number, CHAN_VOICE, CG_CustomSound(es->number, "*taunt.wav"), 64, 255);
 			break;
 		case EV_TAUNT_YES:
 			DEBUGNAME("EV_TAUNT_YES");
@@ -1435,14 +1435,14 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 		// other events
 		case EV_ITEM_POP:
 			DEBUGNAME("EV_ITEM_POP");
-			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.respawnSound);
+			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.respawnSound, 64, 255);
 			break;
 		case EV_ITEM_RESPAWN:
 			DEBUGNAME("EV_ITEM_RESPAWN");
 			trap_R_AddLightToScene(cent->lerpOrigin, 100, 1.0f, 1.0f, 0.9f);
 			CG_SpawnEffectSmall(position);
 			cent->miscTime = cg.time; // scale up from this
-			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.respawnSound);
+			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.respawnSound, 64, 255);
 			break;
 		case EV_ITEM_PICKUP:
 			DEBUGNAME("EV_ITEM_PICKUP");
@@ -1459,24 +1459,24 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 				item = &bg_itemlist[index];
 				// powerups and team items will have a separate global sound, this one will be played at prediction time
 				if (item->giType == IT_POWERUP || item->giType == IT_TEAM) {
-					trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.n_healthSound);
+					trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.n_healthSound, 48, 255);
 				} else if (item->giType == IT_PERSISTANT_POWERUP) {
 					switch (item->giTag) {
 						case PW_AMMOREGEN:
-							trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.ammoregenSound);
+							trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.ammoregenSound, 48, 255);
 							break;
 						case PW_GUARD:
-							trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.guardSound);
+							trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.guardSound, 48, 255);
 							break;
 						case PW_DOUBLER:
-							trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.doublerSound);
+							trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.doublerSound, 48, 255);
 							break;
 						case PW_SCOUT:
-							trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.scoutSound);
+							trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.scoutSound, 48, 255);
 							break;
 					}
 				} else {
-					trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.itemPickupSounds[index]);
+					trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.itemPickupSounds[index], 48, 255);
 				}
 				// show icon and name on status bar
 				if (es->number == cg.snap->ps.clientNum) {
@@ -1513,7 +1513,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 				cg.powerupTime = cg.time;
 			}
 
-			trap_S_StartSound(NULL, es->number, CHAN_ITEM, cgs.media.quadSound);
+			trap_S_StartSound(NULL, es->number, CHAN_ITEM, cgs.media.quadSound, 48, 255);
 			break;
 		case EV_POWERUP_REGEN:
 			DEBUGNAME("EV_POWERUP_REGEN");
@@ -1523,7 +1523,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 				cg.powerupTime = cg.time;
 			}
 
-			trap_S_StartSound(NULL, es->number, CHAN_ITEM, cgs.media.regenSound);
+			trap_S_StartSound(NULL, es->number, CHAN_ITEM, cgs.media.regenSound, 48, 255);
 			break;
 		case EV_USE_ITEM0:
 			DEBUGNAME("EV_USE_ITEM0");
