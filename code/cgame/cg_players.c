@@ -1658,7 +1658,7 @@ static void CG_DustTrail(centity_t *cent) {
 	end[2] -= 64;
 	CG_Trace(&tr, cent->currentState.pos.trBase, NULL, NULL, end, cent->currentState.number, MASK_PLAYERSOLID);
 // Tobias FIXME: do some simplifications here (like 'isSoftMaterial' etc.), after everything is done...
-	if ((tr.surfaceFlags & SURF_MATERIAL_MASK) == MAT_SAND_GR_COL_01 || (tr.surfaceFlags & SURF_MATERIAL_MASK) == MAT_SAND_GR_COL_02 || (tr.surfaceFlags & SURF_MATERIAL_MASK) == MAT_SAND_GR_COL_03 || (tr.surfaceFlags & SURF_MATERIAL_MASK) == MAT_SAND_GR_COL_04) {
+	if ((tr.surfaceFlags & SURF_MATERIAL_MASK) != MAT_SAND_GR_COL_01 && (tr.surfaceFlags & SURF_MATERIAL_MASK) != MAT_SAND_GR_COL_02 && (tr.surfaceFlags & SURF_MATERIAL_MASK) != MAT_SAND_GR_COL_03 && (tr.surfaceFlags & SURF_MATERIAL_MASK) != MAT_SAND_GR_COL_04) {
 		return;
 	}
 // Tobias: end
