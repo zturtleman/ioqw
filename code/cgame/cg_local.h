@@ -862,6 +862,9 @@ typedef struct {
 	sfxHandle_t hgrenb1aSound;
 	sfxHandle_t hgrenb2aSound;
 	sfxHandle_t sfx_rockexp;
+	sfxHandle_t sfx_lghit1;
+	sfxHandle_t sfx_lghit2;
+	sfxHandle_t sfx_lghit3;
 	sfxHandle_t sfx_plasmaexp;
 	sfxHandle_t selectSound;
 	sfxHandle_t noAmmoSound;
@@ -880,12 +883,6 @@ typedef struct {
 	sfxHandle_t watrUnSound;
 	sfxHandle_t footsteps8[FOOTSTEP_TOTAL][8];
 	sfxHandle_t footsteps4[FOOTSTEP_TOTAL][4];
-// Tobias CHECK: why is it there, is this right? There is no fallSound?
-	sfxHandle_t sfx_lghit1;
-	sfxHandle_t sfx_lghit2;
-	sfxHandle_t sfx_lghit3;
-	sfxHandle_t fallSound;
-// Tobias: end
 } cgMedia_t;
 
 #define MAX_STATIC_GAMEMODELS 1024
