@@ -109,8 +109,6 @@ static int ms_lastgametype2 = -1;
 static int ms_allmaps2 = 0;
 static int ms_filter2 = MAPFILTER_OFF;
 static vec4_t color_nomap2 = {0.75, 0.0, 0.0, 1.0};
-int gametype, index;
-const char *mapname;
 
 typedef struct mapselect_s {
 	menubitmap_s blackborder;
@@ -1449,8 +1447,12 @@ UI_VoteMapMenu
 =======================================================================================================================================
 */
 void UI_VoteMapMenu(void) {
+	int gametype, index;
+	const char *mapname;
 
 	gametype = UI_ServerGametype();
+	index = 0;
+	mapname = NULL;
 
 	UI_LoadMapTypeInfo();
 
