@@ -884,31 +884,33 @@ static void CG_RegisterSounds(void) {
 		cgs.media.footsteps4[FOOTSTEP_SWIM][i] = trap_S_RegisterSound(name, qfalse);
 	}
 #ifdef MISSIONPACK
-	trap_S_RegisterSound("snd/c/james/death1.wav", qfalse);
-	trap_S_RegisterSound("snd/c/james/death2.wav", qfalse);
-	trap_S_RegisterSound("snd/c/james/death3.wav", qfalse);
-	trap_S_RegisterSound("snd/c/james/jump1.wav", qfalse);
-	trap_S_RegisterSound("snd/c/james/pain25_1.wav", qfalse);
-	trap_S_RegisterSound("snd/c/james/pain75_1.wav", qfalse);
-	trap_S_RegisterSound("snd/c/james/pain100_1.wav", qfalse);
-	trap_S_RegisterSound("snd/c/james/falling1.wav", qfalse);
-	trap_S_RegisterSound("snd/c/james/gasp.wav", qfalse);
-	trap_S_RegisterSound("snd/c/james/drown.wav", qfalse);
-	trap_S_RegisterSound("snd/c/james/fall1.wav", qfalse);
-	trap_S_RegisterSound("snd/c/james/taunt.wav", qfalse);
+	trap_S_RegisterSound("snd/c/james/dd1.wav", qfalse);
+	trap_S_RegisterSound("snd/c/james/dd2.wav", qfalse);
+	trap_S_RegisterSound("snd/c/james/dd3.wav", qfalse);
+	trap_S_RegisterSound("snd/c/james/dr1.wav", qfalse);
+	trap_S_RegisterSound("snd/c/james/ff1.wav", qfalse);
+	trap_S_RegisterSound("snd/c/james/fv1.wav", qfalse);
+	trap_S_RegisterSound("snd/c/james/gp1.wav", qfalse);
+	trap_S_RegisterSound("snd/c/james/jd1.wav", qfalse);
+	trap_S_RegisterSound("snd/c/james/pd1.wav", qfalse);
+	trap_S_RegisterSound("snd/c/james/pd2.wav", qfalse);
+	trap_S_RegisterSound("snd/c/james/pd3.wav", qfalse);
+	trap_S_RegisterSound("snd/c/james/pd4.wav", qfalse);
+	trap_S_RegisterSound("snd/c/james/ta1.wav", qfalse);
 
-	trap_S_RegisterSound("snd/c/janet/death1.wav", qfalse);
-	trap_S_RegisterSound("snd/c/janet/death2.wav", qfalse);
-	trap_S_RegisterSound("snd/c/janet/death3.wav", qfalse);
-	trap_S_RegisterSound("snd/c/janet/jump1.wav", qfalse);
-	trap_S_RegisterSound("snd/c/janet/pain25_1.wav", qfalse);
-	trap_S_RegisterSound("snd/c/janet/pain75_1.wav", qfalse);
-	trap_S_RegisterSound("snd/c/janet/pain100_1.wav", qfalse);
-	trap_S_RegisterSound("snd/c/janet/falling1.wav", qfalse);
-	trap_S_RegisterSound("snd/c/janet/gasp.wav", qfalse);
-	trap_S_RegisterSound("snd/c/janet/drown.wav", qfalse);
-	trap_S_RegisterSound("snd/c/janet/fall1.wav", qfalse);
-	trap_S_RegisterSound("snd/c/janet/taunt.wav", qfalse);
+	trap_S_RegisterSound("snd/c/janet/dd1.wav", qfalse);
+	trap_S_RegisterSound("snd/c/janet/dd2.wav", qfalse);
+	trap_S_RegisterSound("snd/c/janet/dd3.wav", qfalse);
+	trap_S_RegisterSound("snd/c/janet/dr1.wav", qfalse);
+	trap_S_RegisterSound("snd/c/janet/ff1.wav", qfalse);
+	trap_S_RegisterSound("snd/c/janet/fv1.wav", qfalse);
+	trap_S_RegisterSound("snd/c/janet/gp1.wav", qfalse);
+	trap_S_RegisterSound("snd/c/janet/jd1.wav", qfalse);
+	trap_S_RegisterSound("snd/c/janet/pd1.wav", qfalse);
+	trap_S_RegisterSound("snd/c/janet/pd2.wav", qfalse);
+	trap_S_RegisterSound("snd/c/janet/pd3.wav", qfalse);
+	trap_S_RegisterSound("snd/c/janet/pd4.wav", qfalse);
+	trap_S_RegisterSound("snd/c/janet/ta1.wav", qfalse);
 #endif
 }
 

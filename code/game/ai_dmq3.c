@@ -5864,7 +5864,7 @@ void BotCheckEvents(bot_state_t *bs, entityState_t *state) {
 				// check out the sound
 				trap_GetConfigstring(CS_SOUNDS + state->eventParm, buf, sizeof(buf));
 				// if falling into a death pit
-				if (!strcmp(buf, "*falling1.wav")) {
+				if (!strcmp(buf, "*fv1.wav")) {
 					// if the bot has a kamikaze
 					if (bs->inventory[INVENTORY_KAMIKAZE] > 0) {
 						// use the holdable item

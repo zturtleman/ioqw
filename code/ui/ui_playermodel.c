@@ -419,7 +419,7 @@ static void PlayerModel_BuildList(void) {
 			}
 
 			if (precache) {
-				trap_S_RegisterSound(va("snd/c/announce/%s_wins.wav", skinname), qfalse);
+				trap_S_RegisterSound(va("snd/v/%s_wins.wav", skinname), qfalse);
 			}
 		}
 	}
