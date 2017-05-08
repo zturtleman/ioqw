@@ -757,62 +757,26 @@ typedef struct {
 	qhandle_t medalCapture;
 	qhandle_t medalDefend;
 	qhandle_t medalAssist;
+	// flag shaders
+	qhandle_t flagShaders[3];
+	// task shaders
+	qhandle_t patrolShader;
+	qhandle_t assaultShader;
+	qhandle_t campShader;
+	qhandle_t followShader;
+	qhandle_t defendShader;
+	qhandle_t teamLeaderShader;
+	qhandle_t retrieveShader;
+	qhandle_t escortShader;
 	// sounds
-	sfxHandle_t itemPickupSounds[MAX_ITEMS];
-	sfxHandle_t quadSound;
-	sfxHandle_t tracerSound;
-	sfxHandle_t selectSound;
-	sfxHandle_t useNothingSound;
-	sfxHandle_t wearOffSound;
-	sfxHandle_t footsteps4[FOOTSTEP_TOTAL][4];
-	sfxHandle_t footsteps8[FOOTSTEP_TOTAL][8];
-	sfxHandle_t sfx_lghit1;
-	sfxHandle_t sfx_lghit2;
-	sfxHandle_t sfx_lghit3;
-	sfxHandle_t sfx_ric1;
-	sfxHandle_t sfx_ric2;
-	sfxHandle_t sfx_ric3;
-	//sfxHandle_t sfx_railg;
-	sfxHandle_t sfx_rockexp;
-	sfxHandle_t sfx_plasmaexp;
-	sfxHandle_t sfx_proxexp;
-	sfxHandle_t sfx_nghit;
-	sfxHandle_t sfx_chghit;
-	sfxHandle_t sfx_chgstop;
-	sfxHandle_t sfx_hmgstop;
-	sfxHandle_t kamikazeExplodeSound;
-	sfxHandle_t kamikazeImplodeSound;
-	sfxHandle_t kamikazeFarSound;
-	sfxHandle_t obeliskHitSound1;
-	sfxHandle_t obeliskHitSound2;
-	sfxHandle_t obeliskHitSound3;
-	sfxHandle_t obeliskRespawnSound[3];
-#ifdef MISSIONPACK
-	sfxHandle_t winnerSound;
-	sfxHandle_t loserSound;
-#endif
-	sfxHandle_t gibSound[12];
-	sfxHandle_t gibBounce1Sound;
-	sfxHandle_t gibBounce2Sound;
-	sfxHandle_t gibBounce3Sound;
-	sfxHandle_t teleInSound[3];
-	sfxHandle_t teleOutSound;
-	sfxHandle_t noAmmoSound;
-	sfxHandle_t respawnSound[3];
 	sfxHandle_t talkSound;
-	sfxHandle_t landSound;
-	sfxHandle_t fallSound;
-	sfxHandle_t jumpPadSound;
-	sfxHandle_t oneMinuteSound;
-	sfxHandle_t fiveMinuteSound;
-	sfxHandle_t suddenDeathSound;
-	sfxHandle_t threeFragSound;
-	sfxHandle_t twoFragSound;
-	sfxHandle_t oneFragSound;
 	sfxHandle_t hitSound;
 	sfxHandle_t hitSoundHighArmor;
 	sfxHandle_t hitSoundLowArmor;
-	sfxHandle_t hitTeamSound;
+	sfxHandle_t ammoregenSound;
+	sfxHandle_t doublerSound;
+	sfxHandle_t guardSound;
+	sfxHandle_t scoutSound;
 	sfxHandle_t impressiveSound;
 	sfxHandle_t excellentSound;
 	sfxHandle_t deniedSound;
@@ -828,10 +792,21 @@ typedef struct {
 	sfxHandle_t voteNow;
 	sfxHandle_t votePassed;
 	sfxHandle_t voteFailed;
-	sfxHandle_t watrInSound;
-	sfxHandle_t watrOutSound;
-	sfxHandle_t watrUnSound;
+	sfxHandle_t oneMinuteSound;
+	sfxHandle_t fiveMinuteSound;
+	sfxHandle_t suddenDeathSound;
+	sfxHandle_t oneFragSound;
+	sfxHandle_t twoFragSound;
+	sfxHandle_t threeFragSound;
+	// tournament sounds
+	sfxHandle_t count3Sound;
+	sfxHandle_t count2Sound;
+	sfxHandle_t count1Sound;
+	sfxHandle_t countFightSound;
+	sfxHandle_t countPrepareSound;
 	// teamplay sounds
+	sfxHandle_t hitTeamSound;
+	sfxHandle_t countPrepareTeamSound;
 	sfxHandle_t captureAwardSound;
 	sfxHandle_t redScoredSound;
 	sfxHandle_t blueScoredSound;
@@ -846,42 +821,71 @@ typedef struct {
 	sfxHandle_t takenOpponentSound;
 	sfxHandle_t redFlagReturnedSound;
 	sfxHandle_t blueFlagReturnedSound;
-	sfxHandle_t neutralFlagReturnedSound;
 	sfxHandle_t enemyTookYourFlagSound;
 	sfxHandle_t yourTeamTookEnemyFlagSound;
-	sfxHandle_t youHaveFlagSound;
-	sfxHandle_t enemyTookTheFlagSound;
+	sfxHandle_t neutralFlagReturnedSound;
 	sfxHandle_t yourTeamTookTheFlagSound;
-	sfxHandle_t yourBaseIsUnderAttackSound;
+	sfxHandle_t enemyTookTheFlagSound;
+	sfxHandle_t youHaveFlagSound;
 	sfxHandle_t holyShitSound;
-	// tournament sounds
-	sfxHandle_t count3Sound;
-	sfxHandle_t count2Sound;
-	sfxHandle_t count1Sound;
-	sfxHandle_t countFightSound;
-	sfxHandle_t countPrepareSound;
-	qhandle_t flagShaders[3];
-	sfxHandle_t countPrepareTeamSound;
-	sfxHandle_t ammoregenSound;
-	sfxHandle_t doublerSound;
-	sfxHandle_t guardSound;
-	sfxHandle_t scoutSound;
-	// task shaders
-	qhandle_t patrolShader;
-	qhandle_t assaultShader;
-	qhandle_t campShader;
-	qhandle_t followShader;
-	qhandle_t defendShader;
-	qhandle_t teamLeaderShader;
-	qhandle_t retrieveShader;
-	qhandle_t escortShader;
-
+	sfxHandle_t yourBaseIsUnderAttackSound;
+#ifdef MISSIONPACK
+	sfxHandle_t winnerSound;
+	sfxHandle_t loserSound;
+#endif
+	sfxHandle_t jumpPadSound; // Tobias CHECK: move this out from 'world' folder?
+	// item sounds
+	sfxHandle_t itemPickupSounds[MAX_ITEMS];
+	sfxHandle_t quadSound;
 	sfxHandle_t regenSound;
 	sfxHandle_t pickupSound;
-	sfxHandle_t hgrenb1aSound;
-	sfxHandle_t hgrenb2aSound;
+	sfxHandle_t wearOffSound;
+	sfxHandle_t useNothingSound;
+	sfxHandle_t kamikazeExplodeSound;
+	sfxHandle_t kamikazeImplodeSound;
+	sfxHandle_t kamikazeFarSound;
+	sfxHandle_t obeliskHitSound1;
+	sfxHandle_t obeliskHitSound2;
+	sfxHandle_t obeliskHitSound3;
+	// weapon sounds
+	sfxHandle_t sfx_ric1;
+	sfxHandle_t sfx_ric2;
+	sfxHandle_t sfx_ric3;
+	sfxHandle_t tracerSound;
+	sfxHandle_t sfx_hmgstop;
+	sfxHandle_t sfx_chghit;
+	sfxHandle_t sfx_chgstop;
+	sfxHandle_t sfx_nghit;
+	sfxHandle_t sfx_proxexp;
 	sfxHandle_t wstbimpdSound;
 	sfxHandle_t wstbactvSound;
+	sfxHandle_t hgrenb1aSound;
+	sfxHandle_t hgrenb2aSound;
+	sfxHandle_t sfx_rockexp;
+	sfxHandle_t sfx_plasmaexp;
+	sfxHandle_t selectSound;
+	sfxHandle_t noAmmoSound;
+	sfxHandle_t respawnSound[3];
+	sfxHandle_t obeliskRespawnSound[3];
+	// character sounds
+	sfxHandle_t teleInSound[3];
+	sfxHandle_t gibSound[12];
+	sfxHandle_t gibBounce1Sound;
+	sfxHandle_t gibBounce2Sound;
+	sfxHandle_t gibBounce3Sound;
+	sfxHandle_t teleOutSound;
+	sfxHandle_t landSound;
+	sfxHandle_t watrInSound;
+	sfxHandle_t watrOutSound;
+	sfxHandle_t watrUnSound;
+	sfxHandle_t footsteps8[FOOTSTEP_TOTAL][8];
+	sfxHandle_t footsteps4[FOOTSTEP_TOTAL][4];
+// Tobias CHECK: why is it there, is this right? There is no fallSound?
+	sfxHandle_t sfx_lghit1;
+	sfxHandle_t sfx_lghit2;
+	sfxHandle_t sfx_lghit3;
+	sfxHandle_t fallSound;
+// Tobias: end
 } cgMedia_t;
 
 #define MAX_STATIC_GAMEMODELS 1024
