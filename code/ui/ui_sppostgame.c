@@ -95,12 +95,12 @@ char *ui_medalPicNames[] = {
 };
 
 char *ui_medalSounds[] = {
-	"sound/feedback/accuracy.wav",
-	"sound/feedback/impressive_a.wav",
-	"sound/feedback/excellent_a.wav",
-	"sound/feedback/gauntlet.wav",
-	"sound/feedback/frags.wav",
-	"sound/feedback/perfect.wav"
+	"snd/v/voc_accuracy.wav",
+	"snd/v/voc_impressive_a.wav",
+	"snd/v/voc_excellent_a.wav",
+	"snd/v/voc_gauntlet.wav",
+	"snd/v/voc_frags.wav",
+	"snd/v/voc_perfect.wav"
 };
 
 /*

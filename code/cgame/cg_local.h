@@ -786,19 +786,19 @@ typedef struct {
 	sfxHandle_t obeliskHitSound1;
 	sfxHandle_t obeliskHitSound2;
 	sfxHandle_t obeliskHitSound3;
-	sfxHandle_t obeliskRespawnSound;
+	sfxHandle_t obeliskRespawnSound[3];
 #ifdef MISSIONPACK
 	sfxHandle_t winnerSound;
 	sfxHandle_t loserSound;
 #endif
-	sfxHandle_t gibSound;
+	sfxHandle_t gibSound[12];
 	sfxHandle_t gibBounce1Sound;
 	sfxHandle_t gibBounce2Sound;
 	sfxHandle_t gibBounce3Sound;
-	sfxHandle_t teleInSound;
+	sfxHandle_t teleInSound[3];
 	sfxHandle_t teleOutSound;
 	sfxHandle_t noAmmoSound;
-	sfxHandle_t respawnSound;
+	sfxHandle_t respawnSound[3];
 	sfxHandle_t talkSound;
 	sfxHandle_t landSound;
 	sfxHandle_t fallSound;
@@ -877,7 +877,7 @@ typedef struct {
 	qhandle_t escortShader;
 
 	sfxHandle_t regenSound;
-	sfxHandle_t n_healthSound;
+	sfxHandle_t pickupSound;
 	sfxHandle_t hgrenb1aSound;
 	sfxHandle_t hgrenb2aSound;
 	sfxHandle_t wstbimpdSound;

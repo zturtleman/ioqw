@@ -836,7 +836,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			// don't play gib sound when using the kamikaze because it interferes with the kamikaze sound, downside is that the gib sound
 			// will also not be played when someone is gibbed while just carrying the kamikaze
 			if (!(es->eFlags & EF_KAMIKAZE)) {
-				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.gibSound);
+				trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.gibSound[rand()&11]);
 			}
 
 			CG_GibPlayer(cent->lerpOrigin);
@@ -896,7 +896,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_PLAYER_TELEPORT_IN");
 			trap_R_AddLightToScene(cent->lerpOrigin, 300, 1.0f, 1.0f, 0.9f);
 			CG_SpawnEffectDefault(position);
-			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.teleInSound);
+			trap_S_StartSound(NULL, es->number, CHAN_AUTO,cgs.media.teleInSound[rand()&2]);
 			break;
 		case EV_PLAYER_TELEPORT_OUT:
 			DEBUGNAME("EV_PLAYER_TELEPORT_OUT");
@@ -1435,14 +1435,14 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 		// other events
 		case EV_ITEM_POP:
 			DEBUGNAME("EV_ITEM_POP");
-			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.respawnSound);
+			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.teleOutSound);
 			break;
 		case EV_ITEM_RESPAWN:
 			DEBUGNAME("EV_ITEM_RESPAWN");
 			trap_R_AddLightToScene(cent->lerpOrigin, 100, 1.0f, 1.0f, 0.9f);
 			CG_SpawnEffectSmall(position);
 			cent->miscTime = cg.time; // scale up from this
-			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.respawnSound);
+			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.respawnSound[rand()&2]);
 			break;
 		case EV_ITEM_PICKUP:
 			DEBUGNAME("EV_ITEM_PICKUP");
@@ -1459,7 +1459,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 				item = &bg_itemlist[index];
 				// powerups and team items will have a separate global sound, this one will be played at prediction time
 				if (item->giType == IT_POWERUP || item->giType == IT_TEAM) {
-					trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.n_healthSound);
+					trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.pickupSound);
 				} else if (item->giType == IT_PERSISTANT_POWERUP) {
 					switch (item->giTag) {
 						case PW_AMMOREGEN:

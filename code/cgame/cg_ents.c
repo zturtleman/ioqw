@@ -734,7 +734,7 @@ static void CG_TeamBase(centity_t *cent) {
 			// show the target
 			if (t > h) {
 				if (!cent->muzzleFlashTime) {
-					trap_S_StartSound(cent->lerpOrigin, ENTITYNUM_NONE, CHAN_BODY, cgs.media.obeliskRespawnSound);
+					trap_S_StartSound(cent->lerpOrigin, ENTITYNUM_NONE, CHAN_BODY, cgs.media.obeliskRespawnSound[rand()&2]);
 					cent->muzzleFlashTime = 1;
 				}
 

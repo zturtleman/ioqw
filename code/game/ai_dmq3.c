@@ -5893,10 +5893,10 @@ void BotCheckEvents(bot_state_t *bs, entityState_t *state) {
 				bs->blueflagstatus = 0;
 				bs->flagstatuschanged = qtrue;
 			} else*/
-			if (!strcmp(buf, "sound/items/kamikazerespawn.wav")) {
+			if (!strcmp(buf, "snd/i/kam_sp.wav")) {
 				// the kamikaze respawned so dont avoid it
 				BotDontAvoid(bs, "Kamikaze");
-			} else if (!strcmp(buf, "sound/items/poweruprespawn.wav")) {
+			} else if (!strcmp(buf, "snd/i/psp.wav")) {
 				// powerup respawned... go get it
 				BotGoForPowerups(bs);
 			}

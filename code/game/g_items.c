@@ -338,7 +338,7 @@ void RespawnItem(gentity_t *ent) {
 			te = G_TempEntity(ent->s.pos.trBase, EV_GLOBAL_SOUND);
 		}
 
-		te->s.eventParm = G_SoundIndex("sound/items/poweruprespawn.wav");
+		te->s.eventParm = G_SoundIndex("snd/i/psp.wav");
 		te->r.svFlags |= SVF_BROADCAST;
 	}
 
@@ -353,7 +353,7 @@ void RespawnItem(gentity_t *ent) {
 			te = G_TempEntity(ent->s.pos.trBase, EV_GLOBAL_SOUND);
 		}
 
-		te->s.eventParm = G_SoundIndex("sound/items/kamikazerespawn.wav");
+		te->s.eventParm = G_SoundIndex("snd/i/kam_sp.wav");
 		te->r.svFlags |= SVF_BROADCAST;
 	}
 	// play the normal respawn sound only to nearby clients
@@ -834,7 +834,7 @@ void G_SpawnItem(gentity_t *ent, gitem_t *item) {
 	ent->physicsBounce = 0.50; // items are bouncy
 
 	if (item->giType == IT_POWERUP) {
-		G_SoundIndex("sound/items/poweruprespawn.wav");
+		G_SoundIndex("snd/i/psp.wav");
 		G_SpawnFloat("noglobalsound", "0", &ent->speed);
 	}
 
