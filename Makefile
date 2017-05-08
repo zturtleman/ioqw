@@ -2571,7 +2571,6 @@ Q3UIOBJ_ = \
   $(B)/$(BASEGAME)/ui/ui_startserver_data.o \
   $(B)/$(BASEGAME)/ui/ui_startserver_map.o \
   $(B)/$(BASEGAME)/ui/ui_startserver_mapsel.o \
-  $(B)/$(BASEGAME)/ui/ui_startserver_quicklaunch.o \
   $(B)/$(BASEGAME)/ui/ui_startserver_script.o \
   $(B)/$(BASEGAME)/ui/ui_startserver_server.o \
   $(B)/$(BASEGAME)/ui/ui_team.o \
@@ -2580,6 +2579,12 @@ Q3UIOBJ_ = \
   $(B)/$(BASEGAME)/qcommon/q_math.o \
   $(B)/$(BASEGAME)/qcommon/q_shared.o \
   $(B)/$(BASEGAME)/qcommon/q_unicode.o
+
+# multiple definition of `StartServer_Cache'
+# multiple definition of `UI_StartServerMenu'
+# multiple definition of `ServerOptions_Cache'
+# multiple definition of `UI_BotSelectMenu'
+#  $(B)/$(BASEGAME)/ui/ui_startserver_quicklaunch.o \
 
 Q3UIOBJ = $(Q3UIOBJ_) $(B)/$(MISSIONPACK)/ui/ui_syscalls.o
 Q3UIVMOBJ = $(Q3UIOBJ_:%.o=%.asm)
