@@ -153,6 +153,7 @@ or configs will never get loaded from disk!
 
 // every time a new demo pk3 file is built, this checksum must be updated.
 // the easiest way to get it is to just run the game and see what it spits out
+#ifndef STANDALONE
 #define DEMO_PAK0_CHECKSUM 2985612116u
 static const unsigned int pak_checksums[] = {
 	1566731103u,
@@ -172,7 +173,7 @@ static const unsigned int missionpak_checksums[] = {
 	2662638993u,
 	1438664554u
 };
-
+#endif
 // if this is defined, the executable positively won't work with any paks other
 // than the demo pak, even if productid is present. This is only used for our
 // last demo release to prevent the mac and linux users from using the demo
@@ -560,7 +561,7 @@ ERR_FATAL if trying to maniuplate a file with the platform library, QVM, or pk3 
 static void FS_CheckFilenameIsMutable(const char *filename, const char *function) {
 
 	// Check if the filename ends with the library, QVM, or pk3 extension
-	if (COM_CompareExtension(filename, DLL_EXT) || COM_CompareExtension(filename, ".qvm") || COM_CompareExtension(filename, ".pk3")) {
+	if (Sys_DllExtension(filename) || COM_CompareExtension(filename, ".qvm") || COM_CompareExtension(filename, ".pk3")) {
 		Com_Error(ERR_FATAL, "%s: Not allowed to manipulate '%s' due to %s extension", function, filename, COM_GetExtension(filename));
 	}
 }

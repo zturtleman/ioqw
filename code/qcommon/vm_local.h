@@ -134,6 +134,7 @@ struct vm_s {
 	int instructionCount;
 	byte *dataBase;
 	int dataMask;
+	int dataAlloc;		// actually allocated
 	int stackBottom;	// if programStack < stackBottom, error
 	int numSymbols;
 	struct vmSymbol_s *symbols;

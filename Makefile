@@ -261,10 +261,10 @@ NDIR=$(MOUNT_DIR)/null
 UIDIR=$(MOUNT_DIR)/ui
 Q3UIDIR=$(MOUNT_DIR)/ui
 JPDIR=$(MOUNT_DIR)/jpeg-8c
-OGGDIR=$(MOUNT_DIR)/libogg-1.3.1
-VORBISDIR=$(MOUNT_DIR)/libvorbis-1.3.4
-OPUSDIR=$(MOUNT_DIR)/opus-1.1
-OPUSFILEDIR=$(MOUNT_DIR)/opusfile-0.5
+OGGDIR=$(MOUNT_DIR)/libogg-1.3.2
+VORBISDIR=$(MOUNT_DIR)/libvorbis-1.3.5
+OPUSDIR=$(MOUNT_DIR)/opus-1.1.4
+OPUSFILEDIR=$(MOUNT_DIR)/opusfile-0.8
 ZDIR=$(MOUNT_DIR)/zlib
 FTDIR=$(MOUNT_DIR)/freetype-2.7.1
 Q3ASMDIR=$(MOUNT_DIR)/tools/asm
@@ -417,7 +417,17 @@ ifeq ($(PLATFORM),darwin)
   RENDERER_LIBS=
   OPTIMIZEVM=
 
-  BASE_CFLAGS += -mmacosx-version-min=10.7 -DMAC_OS_X_VERSION_MIN_REQUIRED=1070
+  # Default minimum Mac OS X version
+  ifeq ($(MACOSX_VERSION_MIN),)
+    MACOSX_VERSION_MIN=10.7
+  endif
+
+  # Multiply by 100 and then remove decimal. 10.7 -> 1070.0 -> 1070
+  MAC_OS_X_VERSION_MIN_REQUIRED=$(shell echo '$(MACOSX_VERSION_MIN) * 100' | bc | cut -d. -f1)
+
+  LDFLAGS += -mmacosx-version-min=$(MACOSX_VERSION_MIN)
+  BASE_CFLAGS += -mmacosx-version-min=$(MACOSX_VERSION_MIN) \
+                 -DMAC_OS_X_VERSION_MIN_REQUIRED=$(MAC_OS_X_VERSION_MIN_REQUIRED)
 
   ifeq ($(ARCH),ppc)
     BASE_CFLAGS += -arch ppc -faltivec
@@ -433,7 +443,8 @@ ifeq ($(PLATFORM),darwin)
     BASE_CFLAGS += -arch i386 -m32 -mstackrealign
   endif
   ifeq ($(ARCH),x86_64)
-    OPTIMIZEVM += -arch x86_64 -mfpmath=sse
+    OPTIMIZEVM += -mfpmath=sse
+    BASE_CFLAGS += -arch x86_64
   endif
 
   # When compiling on OSX for OSX, we're not cross compiling as far as the
@@ -1012,7 +1023,7 @@ endif
 
 ifeq ($(NEED_OPUS),1)
   ifeq ($(USE_INTERNAL_OPUS),1)
-    OPUS_CFLAGS = -DOPUS_BUILD -DHAVE_LRINTF -DFLOATING_POINT -DUSE_ALLOCA \
+    OPUS_CFLAGS = -DOPUS_BUILD -DHAVE_LRINTF -DFLOATING_POINT -DFLOAT_APPROX -DUSE_ALLOCA \
       -I$(OPUSDIR)/include -I$(OPUSDIR)/celt -I$(OPUSDIR)/silk \
       -I$(OPUSDIR)/silk/float -I$(OPUSFILEDIR)/include
   else

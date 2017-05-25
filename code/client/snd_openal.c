@@ -2803,11 +2803,6 @@ qboolean S_AL_Init(soundInterface_t *si) {
 	s_alDriver = Cvar_Get("s_alDriver", ALDRIVER_DEFAULT, CVAR_ARCHIVE|CVAR_LATCH|CVAR_PROTECTED);
 	s_alInputDevice = Cvar_Get("s_alInputDevice", "", CVAR_ARCHIVE|CVAR_LATCH);
 	s_alDevice = Cvar_Get("s_alDevice", "", CVAR_ARCHIVE|CVAR_LATCH);
-
-	if (COM_CompareExtension(s_alDriver->string, ".pk3")) {
-		Com_Printf("Rejecting DLL named \"%s\"", s_alDriver->string);
-		return qfalse;
-	}
 	// load QAL
 	if (!QAL_Init(s_alDriver->string)) {
 #if defined(_WIN32)

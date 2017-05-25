@@ -856,6 +856,7 @@ void Sys_Init(void);
 // general development dll loading for virtual machine testing
 void *QDECL Sys_LoadGameDll(const char *name, intptr_t(QDECL **entryPoint)(int, ...), intptr_t(QDECL *systemcalls)(intptr_t, ...));
 void Sys_UnloadDll(void *dllHandle);
+qboolean Sys_DllExtension(const char *name);
 char *Sys_GetCurrentUser(void);
 void QDECL Sys_Error(const char *error, ...) __attribute__((noreturn, format(printf, 1, 2)));
 void Sys_Quit(void) __attribute__((noreturn));
