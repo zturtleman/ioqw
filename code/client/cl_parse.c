@@ -757,7 +757,7 @@ static void CL_ParseVoip(msg_t *msg, qboolean ignoreData) {
 	}
 
 	if (encio != NULL) {
-		fwrite(encoded, len, 1, encio);
+		fwrite(encoded, packetsize, 1, encio);
 		fflush(encio);
 	}
 
@@ -768,7 +768,7 @@ static void CL_ParseVoip(msg_t *msg, qboolean ignoreData) {
 	}
 
 	if (decio != NULL) {
-		fwrite(decoded + written, clc.speexFrameSize * 2, 1, decio);
+		fwrite(decoded + written, numSamples * 2, 1, decio);
 		fflush(decio);
 	}
 #endif
