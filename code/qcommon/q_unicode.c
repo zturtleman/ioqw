@@ -170,7 +170,8 @@ unsigned long Q_UTF8_CodePoint(const char **str) {
 		utf32 |= (*c++ & 0x3F) << 6;
 		utf32 |= (*c++ & 0x3F);
 	} else {
-		Com_Printf("Unrecognised UTF-8 lead byte: 0x%x\n", (unsigned int) *c); // Com_DPrintf // Tobias FIXME
+		// unrecognised UTF-8 lead byte.
+		// don't print a debug message as it may cause an infinite loop/segfault.
 		c++;
 	}
 
