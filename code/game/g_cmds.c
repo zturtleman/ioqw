@@ -1687,6 +1687,15 @@ void ClientCommand(int clientNum) {
 	ent = g_entities + clientNum;
 
 	if (!ent->client || ent->client->pers.connected != CON_CONNECTED) {
+		if (ent->client && ent->client->pers.localClient) {
+			// handle early team command sent by UI when starting a local team play game.
+			trap_Argv(0, cmd, sizeof(cmd));
+
+			if (Q_stricmp(cmd, "team") == 0) {
+				Cmd_Team_f(ent);
+			}
+		}
+
 		return; // not fully in game yet
 	}
 
