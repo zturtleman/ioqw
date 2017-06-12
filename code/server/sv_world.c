@@ -197,12 +197,12 @@ void SV_UnlinkEntity(sharedEntity_t *gEnt) {
 	Com_Printf("WARNING: SV_UnlinkEntity: not found in worldSector\n");
 }
 
+#define MAX_TOTAL_ENT_LEAFS 128
 /*
 =======================================================================================================================================
 SV_LinkEntity
 =======================================================================================================================================
 */
-#define MAX_TOTAL_ENT_LEAFS 128
 void SV_LinkEntity(sharedEntity_t *gEnt) {
 	worldSector_t *node;
 	int leafs[MAX_TOTAL_ENT_LEAFS];
@@ -360,8 +360,9 @@ void SV_LinkEntity(sharedEntity_t *gEnt) {
 
 	AREA QUERY
 
-	Fills in a list of all entities who's absmin / absmax intersects the given bounds. This does NOT mean that they actually touch in
-	the case of bmodels.
+	Fills in a list of all entities who's absmin/absmax intersects the given bounds. This does NOT mean that they actually touch in the
+	case of bmodels.
+
 =======================================================================================================================================
 */
 

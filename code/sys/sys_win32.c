@@ -208,12 +208,13 @@ char *Sys_GogPath(void) {
 	return gogPath;
 }
 
+int sys_timeBase;
+
 /*
 =======================================================================================================================================
 Sys_Milliseconds
 =======================================================================================================================================
 */
-int sys_timeBase;
 int Sys_Milliseconds(void) {
 	int sys_curtime;
 	static qboolean initialized = qfalse;

@@ -152,10 +152,9 @@ static void SV_WriteSnapshotToClient(client_t *client, msg_t *msg) {
 	// let the client know which reliable clientCommands we have received
 	//MSG_WriteLong(msg, client->lastClientCommand);
 
-	// send over the current server time so the client can drift
-	// its view of time to try to match
+	// send over the current server time so the client can drift its view of time to try to match
 	if (client->oldServerTime) {
-		// The server has not yet got an acknowledgement of the new gamestate from this client, so continue to send it
+		// the server has not yet got an acknowledgement of the new gamestate from this client, so continue to send it
 		// a time as if the server has not restarted. Note from the client's perspective this time is strictly speaking
 		// incorrect, but since it'll be busy loading a map at the time it doesn't really matter.
 		MSG_WriteLong(msg, sv.time + client->oldServerTime);

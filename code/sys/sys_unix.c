@@ -41,11 +41,11 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include <sys/wait.h>
 
 qboolean stdinIsATTY;
-// Used to determine where to store user-specific files
+// used to determine where to store user-specific files
 static char homePath[MAX_OSPATH] = {0};
-// Used to store the Steam Quake Wars installation path
+// used to store the Steam Quake Wars installation path
 static char steamPath[MAX_OSPATH] = {0};
-// Used to store the GOG Quake Wars installation path
+// used to store the GOG Quake Wars installation path
 static char gogPath[MAX_OSPATH] = {0};
 
 /*
@@ -86,8 +86,8 @@ Sys_SteamPath
 =======================================================================================================================================
 */
 char *Sys_SteamPath(void) {
-	// Disabled since Steam doesn't let you install Quake 3 on Mac/Linux
-#if 0 //#ifdef STEAMPATH_NAME
+	// disabled since Steam doesn't let you install Quake 3 on Mac/Linux
+#if 0 // #ifdef STEAMPATH_NAME
 	char *p;
 
 	if ((p = getenv("HOME")) != NULL) {
@@ -123,11 +123,11 @@ Sys_Milliseconds
  assuming this wraps every 0x7fffffff - ~68 years since the Epoch (1970) - we're safe till 2038
 */
 unsigned long sys_timeBase = 0;
-/* current time in ms, using sys_timeBase as origin
+/*
+current time in ms, using sys_timeBase as origin
  NOTE: sys_timeBase * 1000 + curtime -> ms since the Epoch
  0x7fffffff ms - ~24 days
- although timeval:tv_usec is an int, I'm not sure whether it is actually used as an unsigned int
- (which would affect the wrap period)
+ although timeval:tv_usec is an int, I'm not sure whether it is actually used as an unsigned int (which would affect the wrap period)
 */
 int curtime;
 
@@ -562,7 +562,7 @@ void Sys_Sleep(int msec) {
 			select(STDIN_FILENO + 1, &fdset, NULL, NULL, &timeout);
 		}
 	} else {
-		// With nothing to select() on, we can't wait indefinitely
+		// with nothing to select() on, we can't wait indefinitely
 		if (msec < 0) {
 			msec = 10;
 		}
@@ -592,7 +592,7 @@ void Sys_ErrorDialog(const char *error) {
 #ifndef DEDICATED
 	Sys_Dialog(DT_ERROR, va("%s. See \"%s\" for details.", error, ospath), "Error");
 #endif
-	// Make sure the write path for the crashlog exists...
+	// make sure the write path for the crashlog exists...
 	if (!Sys_Mkdir(homepath)) {
 		Com_Printf("ERROR: couldn't create path '%s' for crash log.\n", homepath);
 		return;
@@ -602,7 +602,7 @@ void Sys_ErrorDialog(const char *error) {
 		Com_Printf("ERROR: couldn't create path '%s' for crash log.\n", dirpath);
 		return;
 	}
-	// We might be crashing because we maxed out the Quake MAX_FILE_HANDLES, which will come through here, so we don't want to recurse
+	// we might be crashing because we maxed out the Quake MAX_FILE_HANDLES, which will come through here, so we don't want to recurse
 	// forever by calling FS_FOpenFileWrite()...use the Unix system APIs instead.
 	f = open(ospath, O_CREAT|O_TRUNC|O_WRONLY, 0640);
 
@@ -610,7 +610,7 @@ void Sys_ErrorDialog(const char *error) {
 		Com_Printf("ERROR: couldn't open %s\n", fileName);
 		return;
 	}
-	// We're crashing, so we don't care much if write() or close() fails.
+	// we're crashing, so we don't care much if write() or close() fails.
 	while ((size = CON_LogRead(buffer, sizeof(buffer))) > 0) {
 		if (write(f, buffer, size) != size) {
 			Com_Printf("ERROR: couldn't fully write to %s\n", fileName);
@@ -672,16 +672,16 @@ static int Sys_Exec(void) {
 	}
 
 	if (pid) {
-		// Parent
+		// parent
 		int exitCode;
 
 		wait(&exitCode);
 
 		return WEXITSTATUS(exitCode);
 	} else {
-		// Child
+		// child
 		execvp(execArgv[0], execArgv);
-		// Failed to execute
+		// failed to execute
 		exit(-1);
 
 		return -1;
@@ -811,7 +811,7 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 	commands[ZENITY] = &Sys_ZenityCommand;
 	commands[KDIALOG] = &Sys_KdialogCommand;
 	commands[XMESSAGE] = &Sys_XmessageCommand;
-	// This may not be the best way
+	// this may not be the best way
 	if (!Q_stricmp(session, "gnome")) {
 		preferredCommandType = ZENITY;
 	} else if (!Q_stricmp(session, "kde")) {
@@ -841,7 +841,7 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 			}
 
 			tried[i] = qtrue;
-			// The preference failed, so start again in order
+			// the preference failed, so start again in order
 			if (preferredCommandType != NONE) {
 				preferredCommandType = NONE;
 				i = NONE + 1;

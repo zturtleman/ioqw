@@ -61,12 +61,12 @@ void SV_GetChallenge(netadr_t from) {
 	if (Com_GameIsSinglePlayer()) {
 		return;
 	}
-	// Prevent using getchallenge as an amplifier
+	// prevent using getchallenge as an amplifier
 	if (SVC_RateLimitAddress(from, 10, 1000)) {
 		Com_DPrintf("SV_GetChallenge: rate limit from %s exceeded, dropping request\n", NET_AdrToString(from));
 		return;
 	}
-	// Allow getchallenge to be DoSed relatively easily, but prevent excess outbound bandwidth usage when being flooded inbound
+	// allow getchallenge to be DoSed relatively easily, but prevent excess outbound bandwidth usage when being flooded inbound
 	if (SVC_RateLimit(&outboundLeakyBucket, 10, 100)) {
 		Com_DPrintf("SV_GetChallenge: rate limit exceeded, dropping request\n");
 		return;
@@ -179,7 +179,7 @@ void SV_DirectConnect(netadr_t from) {
 	qboolean compat = qfalse;
 #endif
 	Com_DPrintf("SVC_DirectConnect()\n");
-	// Check whether this client is banned.
+	// check whether this client is banned.
 	if (SV_IsBanned(&from, qfalse)) {
 		NET_OutOfBandPrint(NS_SERVER, from, "print\nYou are banned from this server.\n");
 		return;
@@ -252,7 +252,7 @@ void SV_DirectConnect(netadr_t from) {
 		challengeptr = &svs.challenges[i];
 
 		if (challengeptr->wasrefused) {
-			// Return silently, so that error messages written by the server keep being displayed.
+			// return silently, so that error messages written by the server keep being displayed.
 			return;
 		}
 
@@ -689,7 +689,7 @@ static void SV_NextDownload_f(client_t *cl) {
 
 	if (block == cl->downloadClientBlock) {
 		Com_DPrintf("clientDownload: %d : client acknowledge of block %d\n", (int)(cl - svs.clients), block);
-		// Find out if we are done. A zero-length block indicates EOF
+		// find out if we are done. A zero-length block indicates EOF
 		if (cl->downloadBlockSize[cl->downloadClientBlock % MAX_DOWNLOAD_WINDOW] == 0) {
 			Com_Printf("clientDownload: %d : file \"%s\" completed\n", (int)(cl - svs.clients), cl->downloadName);
 			SV_CloseDownload(cl);
@@ -700,7 +700,7 @@ static void SV_NextDownload_f(client_t *cl) {
 		cl->downloadClientBlock++;
 		return;
 	}
-	// We aren't getting an acknowledge for the correct block, drop the client
+	// we aren't getting an acknowledge for the correct block, drop the client
 	// FIXME: this is bad... the client will never parse the disconnect message because the cgame isn't loaded yet
 	SV_DropClient(cl, "broken download");
 }
@@ -712,10 +712,9 @@ SV_BeginDownload_f
 */
 static void SV_BeginDownload_f(client_t *cl) {
 
-	// Kill any existing download
+	// kill any existing download
 	SV_CloseDownload(cl);
-	// cl->downloadName is non-zero now, SV_WriteDownloadToClient will see this and open
-	// the file itself
+	// cl->downloadName is non-zero now, SV_WriteDownloadToClient will see this and open the file itself
 	Q_strncpyz(cl->downloadName, Cmd_Argv(1), sizeof(cl->downloadName));
 }
 
@@ -735,7 +734,7 @@ int SV_WriteDownloadToClient(client_t *cl, msg_t *msg) {
 	int numRefPaks;
 
 	if (!*cl->downloadName) {
-		return 0; // Nothing being downloaded
+		return 0; // nothing being downloaded
 	}
 
 	if (!cl->download) {
@@ -743,17 +742,17 @@ int SV_WriteDownloadToClient(client_t *cl, msg_t *msg) {
 #ifndef STANDALONE
 		qboolean missionPack = qfalse;
 #endif
-		// Chop off filename extension.
+		// chop off filename extension.
 		Com_sprintf(pakbuf, sizeof(pakbuf), "%s", cl->downloadName);
 
 		pakptr = strrchr(pakbuf, '.');
 
 		if (pakptr) {
 			*pakptr = '\0';
-			// Check for pk3 filename extension
+			// check for pk3 filename extension
 			if (!Q_stricmp(pakptr + 1, "pk3")) {
 				const char *referencedPaks = FS_ReferencedPakNames();
-				// Check whether the file appears in the list of referenced paks to prevent downloading of arbitrary files.
+				// check whether the file appears in the list of referenced paks to prevent downloading of arbitrary files.
 				Cmd_TokenizeStringIgnoreQuotes(referencedPaks);
 
 				numRefPaks = Cmd_Argc();
@@ -774,7 +773,7 @@ int SV_WriteDownloadToClient(client_t *cl, msg_t *msg) {
 		}
 
 		cl->download = 0;
-		// We open the file here
+		// we open the file here
 		if (!(sv_allowDownload->integer & DLF_ENABLE) || (sv_allowDownload->integer & DLF_NO_UDP) || idPack || unreferenced || (cl->downloadSize = FS_SV_FOpenFileRead(cl->downloadName, &cl->download)) < 0) {
 			// cannot auto-download file
 			if (unreferenced) {
@@ -823,12 +822,12 @@ int SV_WriteDownloadToClient(client_t *cl, msg_t *msg) {
 		}
 
 		Com_Printf("clientDownload: %d : beginning \"%s\"\n", (int)(cl - svs.clients), cl->downloadName);
-		// Init
+		// init
 		cl->downloadCurrentBlock = cl->downloadClientBlock = cl->downloadXmitBlock = 0;
 		cl->downloadCount = 0;
 		cl->downloadEOF = qfalse;
 	}
-	// Perform any reads that we need to
+	// perform any reads that we need to
 	while (cl->downloadCurrentBlock - cl->downloadClientBlock < MAX_DOWNLOAD_WINDOW && cl->downloadSize != cl->downloadCount) {
 		curindex = (cl->downloadCurrentBlock % MAX_DOWNLOAD_WINDOW);
 
@@ -845,29 +844,29 @@ int SV_WriteDownloadToClient(client_t *cl, msg_t *msg) {
 		}
 
 		cl->downloadCount += cl->downloadBlockSize[curindex];
-		// Load in next block
+		// load in next block
 		cl->downloadCurrentBlock++;
 	}
-	// Check to see if we have eof condition and add the EOF block
+	// check to see if we have eof condition and add the EOF block
 	if (cl->downloadCount == cl->downloadSize && !cl->downloadEOF && cl->downloadCurrentBlock - cl->downloadClientBlock < MAX_DOWNLOAD_WINDOW) {
 		cl->downloadBlockSize[cl->downloadCurrentBlock % MAX_DOWNLOAD_WINDOW] = 0;
 		cl->downloadCurrentBlock++;
-		cl->downloadEOF = qtrue; // We have added the EOF block
+		cl->downloadEOF = qtrue; // we have added the EOF block
 	}
 
 	if (cl->downloadClientBlock == cl->downloadCurrentBlock) {
-		return 0; // Nothing to transmit
+		return 0; // nothing to transmit
 	}
-	// Write out the next section of the file, if we have already reached our window, automatically start retransmitting
+	// write out the next section of the file, if we have already reached our window, automatically start retransmitting
 	if (cl->downloadXmitBlock == cl->downloadCurrentBlock) {
-		// We have transmitted the complete window, should we start resending?
+		// we have transmitted the complete window, should we start resending?
 		if (svs.time - cl->downloadSendTime > 1000) {
 			cl->downloadXmitBlock = cl->downloadClientBlock;
 		} else {
 			return 0;
 		}
 	}
-	// Send current block
+	// send current block
 	curindex = (cl->downloadXmitBlock % MAX_DOWNLOAD_WINDOW);
 
 	MSG_WriteByte(msg, svc_download);
@@ -878,14 +877,14 @@ int SV_WriteDownloadToClient(client_t *cl, msg_t *msg) {
 	}
 
 	MSG_WriteShort(msg, cl->downloadBlockSize[curindex]);
-	// Write the block
+	// write the block
 	if (cl->downloadBlockSize[curindex]) {
 		MSG_WriteData(msg, cl->downloadBlocks[curindex], cl->downloadBlockSize[curindex]);
 	}
 
 	Com_DPrintf("clientDownload: %d : writing block %d\n", (int)(cl - svs.clients), cl->downloadXmitBlock);
-	// Move on to the next block
-	// It will get sent with next snap shot. The rate will keep us in line.
+	// move on to the next block
+	// it will get sent with next snap shot. The rate will keep us in line.
 	cl->downloadXmitBlock++;
 	cl->downloadSendTime = svs.time;
 	return 1;
@@ -1073,7 +1072,9 @@ static void SV_VerifyPaks_f(client_t *cl) {
 			}
 			// get the pure checksums of the pk3 files loaded by the server
 			pPaks = FS_LoadedPakPureChecksums();
+
 			Cmd_TokenizeString(pPaks);
+
 			nServerPaks = Cmd_Argc();
 
 			if (nServerPaks > 1024) {
@@ -1197,7 +1198,7 @@ void SV_UserinfoChanged(client_t *cl) {
 	}
 
 	if (i != cl->snapshotMsec) {
-		// Reset last sent snapshot so we avoid desync between server frame time and snapshot send time
+		// reset last sent snapshot so we avoid desync between server frame time and snapshot send time
 		cl->lastSnapshotTime = 0;
 		cl->snapshotMsec = i;
 	}
@@ -1587,7 +1588,7 @@ static void SV_UserVoip(client_t *cl, msg_t *msg, qboolean ignoreData) {
 		if (!(flags & (VOIP_SPATIAL|VOIP_DIRECT))) {
 			continue; // not addressed to this player.
 		}
-		// Transmit this packet to the client.
+		// transmit this packet to the client.
 		if (client->queuedVoipPackets >= ARRAY_LEN(client->voipPacket)) {
 			Com_Printf("Too many VoIP packets queued for client #%d\n", i);
 			continue; // no room for another packet right now.

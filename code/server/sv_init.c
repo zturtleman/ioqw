@@ -673,7 +673,7 @@ void SV_Init(void) {
 	SV_BotInitCvars();
 	// init the botlib here because we need the pre-compiler in the UI
 	SV_BotInitBotLib();
-	// Load saved bans
+	// load saved bans
 	Cbuf_AddText("rehashbans\n");
 }
 
@@ -700,6 +700,7 @@ void SV_FinalMessage(char *message) {
 				}
 				// force a snapshot to be sent
 				cl->lastSnapshotTime = 0;
+
 				SV_SendClientSnapshot(cl);
 			}
 		}

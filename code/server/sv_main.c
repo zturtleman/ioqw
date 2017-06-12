@@ -103,7 +103,7 @@ static char *SV_ExpandNewlines(char *in) {
 
 	return string;
 }
-
+#if 0 // unused
 /*
 =======================================================================================================================================
 SV_ReplacePendingServerCommands
@@ -111,7 +111,6 @@ SV_ReplacePendingServerCommands
 FIXME: This is ugly.
 =======================================================================================================================================
 */
-#if 0 // unused
 static int SV_ReplacePendingServerCommands(client_t *client, const char *cmd) {
 	int i, index, csnum1, csnum2;
 
@@ -465,7 +464,7 @@ static leakyBucket_t *SVC_BucketForAddress(netadr_t address, int burst, int peri
 
 		bucket = &buckets[i];
 		interval = now - bucket->lastTime;
-		// Reclaim expired buckets
+		// reclaim expired buckets
 		if (bucket->lastTime > 0 && (interval > (burst * period) || interval < 0)) {
 			if (bucket->prev != NULL) {
 				bucket->prev->next = bucket->next;
@@ -497,7 +496,7 @@ static leakyBucket_t *SVC_BucketForAddress(netadr_t address, int burst, int peri
 			bucket->lastTime = now;
 			bucket->burst = 0;
 			bucket->hash = hash;
-			// Add to the head of the relevant hash chain
+			// add to the head of the relevant hash chain
 			bucket->next = bucketHashes[hash];
 
 			if (bucketHashes[hash] != NULL) {
@@ -510,7 +509,7 @@ static leakyBucket_t *SVC_BucketForAddress(netadr_t address, int burst, int peri
 			return bucket;
 		}
 	}
-	// Couldn't allocate a bucket for this address
+	// couldn't allocate a bucket for this address
 	return NULL;
 }
 
@@ -761,7 +760,7 @@ static void SVC_RemoteCommand(netadr_t from, msg_t *msg) {
 	char sv_outputbuf[SV_OUTPUTBUF_LENGTH];
 	char *cmd_aux;
 
-	// Prevent using rcon as an amplifier and make dictionary attacks impractical
+	// prevent using rcon as an amplifier and make dictionary attacks impractical
 	if (SVC_RateLimitAddress(from, 10, 1000)) {
 		Com_DPrintf("SVC_RemoteCommand: rate limit from %s exceeded, dropping request\n", NET_AdrToString(from));
 		return;
@@ -770,7 +769,7 @@ static void SVC_RemoteCommand(netadr_t from, msg_t *msg) {
 	if (!strlen(sv_rconPassword->string) || strcmp(Cmd_Argv(1), sv_rconPassword->string)) {
 		static leakyBucket_t bucket;
 
-		// Make DoS via rcon impractical
+		// make DoS via rcon impractical
 		if (SVC_RateLimit(&bucket, 10, 1000)) {
 			Com_DPrintf("SVC_RemoteCommand: rate limit exceeded, dropping request\n");
 			return;
@@ -1104,9 +1103,9 @@ void SV_Frame(int msec) {
 	}
 
 	if (!com_sv_running->integer) {
-		// Running as a server, but no map loaded
+		// running as a server, but no map loaded
 #ifdef DEDICATED
-		// Block until something interesting happens
+		// block until something interesting happens
 		Sys_Sleep(-1);
 #endif
 		return;
@@ -1267,7 +1266,7 @@ int SV_SendQueuedPackets() {
 	static int dlNextRound = 0;
 	int timeVal = INT_MAX;
 
-	// Send out fragmented packets now that we're idle
+	// send out fragmented packets now that we're idle
 	delayT = SV_SendQueuedMessages();
 
 	if (delayT >= 0) {
@@ -1275,7 +1274,7 @@ int SV_SendQueuedPackets() {
 	}
 
 	if (sv_dlRate->integer) {
-		// Rate limiting. This is very imprecise for high download rates due to millisecond timedelta resolution
+		// rate limiting. This is very imprecise for high download rates due to millisecond timedelta resolution
 		dlStart = Sys_Milliseconds();
 		deltaT = dlNextRound - dlStart;
 
@@ -1287,13 +1286,13 @@ int SV_SendQueuedPackets() {
 			numBlocks = SV_SendDownloadMessages();
 
 			if (numBlocks) {
-				// There are active downloads
+				// there are active downloads
 				deltaT = Sys_Milliseconds() - dlStart;
 				delayT = 1000 * numBlocks * MAX_DOWNLOAD_BLKSIZE;
 				delayT /= sv_dlRate->integer * 1024;
 
 				if (delayT <= deltaT + 1) {
-					// Sending the last round of download messages took too long for given rate, don't wait for next round, but always
+					// sending the last round of download messages took too long for given rate, don't wait for next round, but always
 					// enforce a 1ms delay between DL message rounds so we don't hog all of the bandwidth. This will result in an
 					// effective maximum rate of 1MB/s per user, but the low download window size limits this anyways.
 					if (timeVal > 2) {

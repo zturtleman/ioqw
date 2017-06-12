@@ -782,6 +782,7 @@ static void SV_RankUserCBF(GR_LOGIN *gr_login, void *cbf_arg) {
 	Com_DPrintf("SV_RankUserCBF(%08X, %08X);\n", gr_login, cbf_arg);
 
 	ranked_player = (ranked_player_t *)cbf_arg;
+
 	assert(ranked_player);
 	assert(ranked_player->context);
 
@@ -927,7 +928,6 @@ static void SV_RankCleanupCBF(GR_STATUS *status, void *cbf_arg) {
 
 	assert(status != NULL);
 	// NULL cbf_arg means server is cleaning up
-
 	Com_DPrintf("SV_RankCleanupCBF(%08X, %08X);\n", status, cbf_arg);
 
 	if (*status != GR_STATUS_OK) {
