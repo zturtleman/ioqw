@@ -406,7 +406,7 @@ static qboolean CL_CheckFileSize(int bytesToAdd) {
 	if (newFileSize > INT_MAX) {
 		// close the current file...
 		CL_CloseAVI();
-		// ...And open a new one
+		// ...and open a new one
 		CL_OpenAVIForWriting(va("%s_", afd.fileName));
 		return qtrue;
 	}

@@ -438,7 +438,6 @@ SLOW			changes the damage rate to once per second
 NO_PROTECTION	*nothing* stops the damage
 
 "dmg"			default 5 (whole numbers only)
-
 */
 void SP_trigger_hurt(gentity_t *self) {
 

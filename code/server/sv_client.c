@@ -226,7 +226,7 @@ void SV_DirectConnect(netadr_t from) {
 	}
 
 	if ((strlen(ip) + strlen(userinfo) + 4) >= MAX_INFO_STRING) {
-		NET_OutOfBandPrint(NS_SERVER, from, "print\nUserinfo string length exceeded. Try removing setup cvars from your config.\n");
+		NET_OutOfBandPrint(NS_SERVER, from, "print\nUserinfo string length exceeded. Try removing setu cvars from your config.\n");
 		return;
 	}
 
@@ -275,6 +275,7 @@ void SV_DirectConnect(netadr_t from) {
 		}
 
 		Com_Printf("Client %i connecting with %i challenge ping\n", i, ping);
+
 		challengeptr->connected = qtrue;
 	}
 
@@ -492,6 +493,7 @@ void SV_DropClient(client_t *drop, const char *reason) {
 		drop->state = CS_FREE;
 	} else {
 		Com_DPrintf("Going to CS_ZOMBIE for %s\n", drop->name);
+
 		drop->state = CS_ZOMBIE; // become free in a few seconds
 	}
 	// if this was the last client on the server, send a heartbeat to the master so it is known the server is empty
@@ -743,6 +745,7 @@ int SV_WriteDownloadToClient(client_t *cl, msg_t *msg) {
 #endif
 		// Chop off filename extension.
 		Com_sprintf(pakbuf, sizeof(pakbuf), "%s", cl->downloadName);
+
 		pakptr = strrchr(pakbuf, '.');
 
 		if (pakptr) {
@@ -752,6 +755,7 @@ int SV_WriteDownloadToClient(client_t *cl, msg_t *msg) {
 				const char *referencedPaks = FS_ReferencedPakNames();
 				// Check whether the file appears in the list of referenced paks to prevent downloading of arbitrary files.
 				Cmd_TokenizeStringIgnoreQuotes(referencedPaks);
+
 				numRefPaks = Cmd_Argc();
 
 				for (curindex = 0; curindex < numRefPaks; curindex++) {
@@ -1134,6 +1138,7 @@ SV_ResetPureClient_f
 =======================================================================================================================================
 */
 static void SV_ResetPureClient_f(client_t *cl) {
+
 	cl->pureAuthentic = 0;
 	cl->gotCP = qfalse;
 }

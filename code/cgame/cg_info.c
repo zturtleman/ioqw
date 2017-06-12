@@ -69,8 +69,8 @@ CG_LoadingString
 =======================================================================================================================================
 */
 void CG_LoadingString(const char *s) {
-	Q_strncpyz(cg.infoScreenText, s, sizeof(cg.infoScreenText));
 
+	Q_strncpyz(cg.infoScreenText, s, sizeof(cg.infoScreenText));
 	trap_UpdateScreen();
 }
 
@@ -148,7 +148,7 @@ void CG_LoadingClient(int clientNum) {
 =======================================================================================================================================
 CG_DrawInformation
 
-Draw all the status / pacifier stuff during level loading.
+Draw all the status/pacifier stuff during level loading.
 =======================================================================================================================================
 */
 void CG_DrawInformation(void) {

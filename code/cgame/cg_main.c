@@ -1247,6 +1247,7 @@ void CG_StartMusic(void) {
 
 	// start the background music
 	s = (char *)CG_ConfigString(CS_MUSIC);
+
 	Q_strncpyz(parm1, COM_Parse(&s), sizeof(parm1));
 	Q_strncpyz(parm2, COM_Parse(&s), sizeof(parm2));
 
@@ -1333,7 +1334,6 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum) {
 	cgs.redflag = cgs.blueflag = -1; // For compatibily, default to unset for
 	cgs.flagStatus = -1;
 	// old servers
-
 	// get the rendering configuration from the client system
 	trap_GetGlconfig(&cgs.glconfig);
 

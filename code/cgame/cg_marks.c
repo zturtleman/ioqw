@@ -182,6 +182,7 @@ void CG_ImpactMark(qhandle_t markShader, const vec3_t origin, const vec3_t dir, 
 		polyVert_t *v;
 		polyVert_t verts[MAX_VERTS_ON_POLY];
 		markPoly_t *mark;
+
 		// we have an upper limit on the complexity of polygons that we store persistantly
 		if (mf->numPoints > MAX_VERTS_ON_POLY) {
 			mf->numPoints = MAX_VERTS_ON_POLY;

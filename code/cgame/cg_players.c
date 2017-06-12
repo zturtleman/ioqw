@@ -2064,7 +2064,7 @@ static qboolean CG_PlayerShadow(centity_t *cent, vec3_t start, float alphaMult, 
 	}
 	// fade the shadow out with height
 	alpha = (1.0 - trace.fraction) * alphaMult;
-	// hack / FPE - bogus planes?
+	// hack/FPE - bogus planes?
 	//assert(DotProduct(trace.plane.normal, trace.plane.normal) != 0.0f)
 	// add the mark as a temporary, so it goes directly to the renderer without taking a spot in the cg_marks array
 	CG_ImpactMark(cgs.media.shadowMarkShader, trace.endpos, trace.plane.normal, cent->pe.legs.yawAngle, alpha, alpha, alpha, 1, qfalse, 24, -1);

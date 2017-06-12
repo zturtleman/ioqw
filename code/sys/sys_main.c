@@ -478,8 +478,8 @@ First try to load library name from system library path, from executable path, t
 */
 void *Sys_LoadDll(const char *name, qboolean useSystemLib) {
 	void *dllhandle = NULL;
-	
-	if(!Sys_DllExtension(name)) {
+
+	if (!Sys_DllExtension(name)) {
 		Com_Printf("Refusing to attempt to load library \"%s\": Extension not allowed.\n", name);
 		return NULL;
 	}

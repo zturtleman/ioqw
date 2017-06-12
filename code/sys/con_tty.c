@@ -461,6 +461,7 @@ char *CON_Input(void) {
 
 		FD_ZERO(&fdset);
 		FD_SET(STDIN_FILENO, &fdset); // stdin
+
 		timeout.tv_sec = 0;
 		timeout.tv_usec = 0;
 

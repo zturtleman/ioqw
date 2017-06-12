@@ -1022,7 +1022,7 @@ static void CL_CompleteDemoName(char *args, int argNum) {
 =======================================================================================================================================
 CL_PlayDemo_f
 
-demo <demoname>
+demo <demoname>.
 =======================================================================================================================================
 */
 void CL_PlayDemo_f(void) {
@@ -1199,6 +1199,7 @@ Also called by Com_Error.
 =======================================================================================================================================
 */
 void CL_FlushMemory(void) {
+
 	CL_ClearMemory(qfalse);
 	CL_StartHunkUsers(qfalse);
 }
@@ -1730,6 +1731,7 @@ void CL_Rcon_f(void) {
 	}
 
 	NET_SendPacket(NS_CLIENT, strlen(message) + 1, message, to);
+
 	cls.rconAddress = to;
 }
 

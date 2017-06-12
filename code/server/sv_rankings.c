@@ -449,6 +449,7 @@ qboolean SV_RankUserValidate(int index, const char *player_id, const char *key, 
 		Com_DPrintf("SV_RankUserValidate(); s_ranked_players[%d].context=%d\n", index, init.context);
 		// uudecode player id and player token
 		ranked_player->player_id = SV_RankDecodePlayerID(player_id);
+
 		Com_DPrintf("SV_RankUserValidate(); ranked_player->player_id =%u\n", (uint32_t)ranked_player->player_id);
 		SV_RankDecodePlayerKey(key, ranked_player->token);
 		// save name and check for duplicates
@@ -753,6 +754,7 @@ static void SV_RankNewGameCBF(GR_NEWGAME *gr_newgame, void *cbf_arg) {
 		s_server_match = match.match;
 		// ready to go
 		s_rankings_active = qtrue;
+
 		Cvar_Set("sv_rankingsActive", "1");
 	} else if (gr_newgame->status == GR_STATUS_BADLEAGUE) {
 		SV_RankError("SV_RankNewGameCBF: Invalid League name");
@@ -973,6 +975,7 @@ static void SV_RankCloseContext(ranked_player_t *ranked_player) {
 
 	assert(s_rankings_contexts > 0);
 	s_rankings_contexts--;
+
 	Com_DPrintf("SV_RankCloseContext: s_rankings_contexts = %d\n", s_rankings_contexts);
 
 	if (s_rankings_contexts == 0) {
@@ -984,6 +987,7 @@ static void SV_RankCloseContext(ranked_player_t *ranked_player) {
 		}
 
 		s_rankings_active = qfalse;
+
 		Cvar_Set("sv_rankingsActive", "0");
 	}
 }
@@ -1095,6 +1099,7 @@ SV_RankEncodeGameID
 =======================================================================================================================================
 */
 static void SV_RankEncodeGameID(uint64_t game_id, char *result, int len) {
+
 	assert(result != NULL);
 
 	if (len < ((sizeof(game_id) * 4) / 3 + 2)) {
@@ -1119,8 +1124,10 @@ static uint64_t SV_RankDecodePlayerID(const char *string) {
 	assert(string != NULL);
 
 	len = strlen(string);
+
 	Com_DPrintf("SV_RankDecodePlayerID: string length %d\n", len);
 	SV_RankAsciiDecode(buffer, string, len);
+
 	player_id = LittleLong64(*(qint64*)buffer);
 	return *(uint64_t *)&player_id;
 }

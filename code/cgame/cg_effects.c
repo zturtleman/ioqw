@@ -51,6 +51,7 @@ void CG_BubbleTrail(vec3_t start, vec3_t end, float spacing) {
 	len = VectorNormalize(vec);
 	// advance a random amount first
 	i = rand() % (int)spacing;
+
 	VectorMA(move, i, vec, move);
 	VectorScale(vec, spacing, vec);
 
@@ -242,7 +243,6 @@ void CG_SpawnEffectSmall(vec3_t org) {
 	le->color[0] = le->color[1] = le->color[2] = le->color[3] = 1.0;
 
 	re = &le->refEntity;
-
 	re->reType = RT_MODEL;
 	re->shaderTime = cg.time / 1000.0f;
 	re->customShader = cgs.media.teleportEffectShader;
@@ -543,6 +543,8 @@ void CG_LaunchGib(vec3_t origin, vec3_t velocity, qhandle_t hModel) {
 	le->leMarkType = LEMT_BLOOD;
 }
 
+#define GIB_VELOCITY 250
+#define GIB_JUMP 250
 /*
 =======================================================================================================================================
 CG_GibPlayer
@@ -550,8 +552,6 @@ CG_GibPlayer
 Generated a bunch of gibs launching out from the bodies location.
 =======================================================================================================================================
 */
-#define GIB_VELOCITY 250
-#define GIB_JUMP 250
 void CG_GibPlayer(vec3_t playerOrigin) {
 	vec3_t origin, velocity;
 

@@ -370,6 +370,7 @@ static void SV_Kick_f(void) {
 				}
 
 				SV_DropClient(cl, "was kicked");
+
 				cl->lastPacketTime = svs.time; // in case there is a funny zombie
 			}
 		} else if (!Q_stricmp(Cmd_Argv(1), "allbots")) {
@@ -383,6 +384,7 @@ static void SV_Kick_f(void) {
 				}
 
 				SV_DropClient(cl, "was kicked");
+
 				cl->lastPacketTime = svs.time; // in case there is a funny zombie
 			}
 		}
@@ -396,6 +398,7 @@ static void SV_Kick_f(void) {
 	}
 
 	SV_DropClient(cl, "was kicked");
+
 	cl->lastPacketTime = svs.time; // in case there is a funny zombie
 }
 
@@ -426,6 +429,7 @@ static void SV_KickBots_f(void) {
 		}
 
 		SV_DropClient(cl, "was kicked");
+
 		cl->lastPacketTime = svs.time; // in case there is a funny zombie
 	}
 }
@@ -457,6 +461,7 @@ static void SV_KickAll_f(void) {
 		}
 
 		SV_DropClient(cl, "was kicked");
+
 		cl->lastPacketTime = svs.time; // in case there is a funny zombie
 	}
 }
@@ -494,6 +499,7 @@ static void SV_KickNum_f(void) {
 	}
 
 	SV_DropClient(cl, "was kicked");
+
 	cl->lastPacketTime = svs.time; // in case there is a funny zombie
 }
 
@@ -881,6 +887,7 @@ static void SV_ListBans_f(void) {
 
 		if (!ban->isexception) {
 			count++;
+
 			Com_Printf("Ban #%d: %s/%d\n", count, NET_AdrToString(ban->ip), ban->subnet);
 		}
 	}
@@ -890,6 +897,7 @@ static void SV_ListBans_f(void) {
 
 		if (ban->isexception) {
 			count++;
+
 			Com_Printf("Except #%d: %s/%d\n", count, NET_AdrToString(ban->ip), ban->subnet);
 		}
 	}
@@ -1004,7 +1012,9 @@ static void SV_Status_f(void) {
 		}
 
 		Com_Printf("%2i ", i);
+
 		ps = SV_GameClientNum(i);
+
 		Com_Printf("%5i ", ps->persistant[PERS_SCORE]);
 
 		if (cl->state == CS_CONNECTED) {
@@ -1027,7 +1037,9 @@ static void SV_Status_f(void) {
 		} while (j < l);
 		// TTimo adding a ^7 to reset the color
 		s = NET_AdrToString(cl->netchan.remoteAddress);
+
 		Com_Printf("^7%s", s);
+
 		l = 39 - strlen(s);
 		j = 0;
 

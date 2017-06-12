@@ -303,7 +303,7 @@ static void S_PaintChannelFrom16_altivec(channel_t *ch, const sfx_t *sc, int cou
 		i = 0;
 
 		while (i < count) {
-			// Try to align destination to 16-byte boundary
+			// try to align destination to 16-byte boundary
 			while (i < count && (((unsigned long)&samp[i] & 0x1f) || ((count - i) < 8) || ((SND_CHUNK_SIZE - sampleOffset) < 8))) {
 				data = samples[sampleOffset++];
 				samp[i].left += (data * leftvol) >> 8;
@@ -322,8 +322,8 @@ static void S_PaintChannelFrom16_altivec(channel_t *ch, const sfx_t *sc, int cou
 
 				i++;
 			}
-			// Destination is now aligned. Process as many 8-sample chunks as we can before we run out of room from the current sound chunk.
-			// We do 8 per loop to avoid extra source data reads.
+			// destination is now aligned. Process as many 8-sample chunks as we can before we run out of room from the current sound chunk.
+			// we do 8 per loop to avoid extra source data reads.
 			samplesLeft = count - i;
 			chunkSamplesLeft = SND_CHUNK_SIZE - sampleOffset;
 
@@ -342,7 +342,7 @@ static void S_PaintChannelFrom16_altivec(channel_t *ch, const sfx_t *sc, int cou
 				vector unsigned char samplePermute1 = VECCONST_UINT8(8, 9, 12, 13, 8, 9, 12, 13, 10, 11, 14, 15, 10, 11, 14, 15);
 				vector unsigned char loadPermute0, loadPermute1;
 
-				// Rather than permute the vectors after we load them to do the sample replication and rearrangement, we permute the alignment vector so
+				// rather than permute the vectors after we load them to do the sample replication and rearrangement, we permute the alignment vector so
 				// we do everything in one step below and avoid data shuffling.
 				tmp = vec_lvsl(0, &samples[sampleOffset]);
 				loadPermute0 = vec_perm(tmp, tmp, samplePermute0);
@@ -350,9 +350,9 @@ static void S_PaintChannelFrom16_altivec(channel_t *ch, const sfx_t *sc, int cou
 				s0 = *(vector short *)&samples[sampleOffset];
 
 				while (vectorCount) {
-					// Load up source (16-bit) sample data
+					// load up source (16-bit) sample data
 					s1 = *(vector short *)&samples[sampleOffset + 7];
-					// Load up destination sample data
+					// load up destination sample data
 					d0 = *(vector signed int *)&samp[i];
 					d1 = *(vector signed int *)&samp[i + 2];
 					d2 = *(vector signed int *)&samp[i + 4];
@@ -378,7 +378,7 @@ static void S_PaintChannelFrom16_altivec(channel_t *ch, const sfx_t *sc, int cou
 
 					d2 = vec_add(merge0, d2);
 					d3 = vec_add(merge1, d3);
-					// Store destination sample data
+					// store destination sample data
 					*(vector signed int *)&samp[i] = d0;
 					*(vector signed int *)&samp[i + 2] = d1;
 					*(vector signed int *)&samp[i + 4] = d2;

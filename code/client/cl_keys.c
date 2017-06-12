@@ -1274,8 +1274,10 @@ Called by CL_KeyEvent to handle a keyrelease.
 =======================================================================================================================================
 */
 void CL_KeyUpEvent(int key, unsigned time) {
+
 	keys[key].repeats = 0;
 	keys[key].down = qfalse;
+
 	anykeydown--;
 
 	if (anykeydown < 0) {
