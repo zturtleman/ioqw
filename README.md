@@ -4,7 +4,8 @@
 
 **A second breath of life for Xreal, based on Zack Middleton's ioq3ztm engine**
 
-Ioid3-qw is based on ioq3ztm. ioq3ztm was created by Zack Middleton to be a better (or alternative) base engine for developing new standalone id Tech 3 games. ioq3ztm, and therefore also Ioid3-qw, is not compatible with any other id Tech 3 game. Ioid3-qw also contains code from [Spearmint](http://spearmint.pw/) (the successor of ioq3ztm), and code from other repositories owned by [Zack Middleton](https://github.com/zturtleman?tab=repositories).
+Ioid3-qw is currently based on ioq3ztm and also contains code from [Spearmint](http://spearmint.pw/) (the successor of ioq3ztm), and code from other repositories owned by [Zack Middleton](https://github.com/zturtleman?tab=repositories).
+Some of the experimental changes made to this code repository will eventually find it's way into a standalone game based upon Spearmint (assuming Spearmint is alive and maintained).
 
 
 ## License:
@@ -13,9 +14,18 @@ Ioid3-qw is licensed under a [modified version of the GNU GPLv3](COPYING.txt#L62
 
 
 ## Main Features:
+
   * Enhanced BotAI
   * 64 weapon support
   * Improved UI
+
+
+## Goals (for a Spearmint based game):
+
+  * Enhanced BotAI with configurable bounding boxes (to allow variable sized monsters).
+  * Advanced bot order menu (with splitscreen support), currently there is no splitsreen support!
+  * Ragdoll physics.
+  * A modern rendering system (the 'real' Xreal renderer).
 
 
 ## Credits:
