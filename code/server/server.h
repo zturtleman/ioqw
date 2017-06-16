@@ -59,12 +59,6 @@ typedef enum {
 	SS_GAME		// actively running
 } serverState_t;
 
-typedef struct configString_s {
-	char *s;
-	qboolean restricted; // if true, don't send to clientList
-	clientList_t clientList;
-} configString_t;
-
 typedef struct {
 	serverState_t state;
 	qboolean restarting;	// if true, send configstring changes during SS_LOADING
@@ -77,7 +71,7 @@ typedef struct {
 	int snapshotCounter;	// incremented for each snapshot built
 	int timeResidual;		// <= 1000 / sv_frame->value
 	int nextFrameTime;		// when time > nextFrameTime, process world
-	configString_t configstrings[MAX_CONFIGSTRINGS];
+	char *configstrings[MAX_CONFIGSTRINGS];
 	svEntity_t svEntities[MAX_GENTITIES];
 	char *entityParsePoint;	// used during game VM init
 	// the game virtual machine will update these on init and changes
@@ -248,7 +242,6 @@ extern cvar_t *sv_pure;
 extern cvar_t *sv_floodProtect;
 extern cvar_t *sv_lanForceRate;
 extern cvar_t *sv_banFile;
-extern cvar_t *sv_public;
 
 extern serverBan_t serverBans[SERVER_MAXBANS];
 extern int serverBansCount;
@@ -285,7 +278,6 @@ int SV_RateMsec(client_t *client);
 // sv_init.c
 void SV_SetConfigstring(int index, const char *val);
 void SV_GetConfigstring(int index, char *buffer, int bufferSize);
-void SV_SetConfigstringRestrictions(int index, const clientList_t *clientList);
 void SV_UpdateConfigstrings(client_t *client);
 void SV_SetUserinfo(int index, const char *val);
 void SV_GetUserinfo(int index, char *buffer, int bufferSize);

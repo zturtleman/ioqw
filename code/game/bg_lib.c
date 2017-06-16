@@ -1527,49 +1527,6 @@ double fabs(double x) {
 }
 
 /*
-=======================================================================================================================================
-_hextoi
-=======================================================================================================================================
-*/
-unsigned int _hextoi(const char **stringPtr) {
-	unsigned int value;
-	int c;
-	int i;
-	const char *string;
-
-	string = *stringPtr;
-	// skip whitespace
-	while (*string <= ' ') {
-		if (!*string) {
-			return 0;
-		}
-
-		string++;
-	}
-
-	value = 0;
-	i = 0;
-
-	while (i++ < 8 && (c = *string++)) {
-		if (c >= '0' && c <= '9') {
-			value = value * 16 + c - '0';
-			continue;
-		} else if (c >= 'a' && c <= 'f') {
-			value = value * 16 + 10 + c - 'a';
-			continue;
-		} else if (c >= 'A' && c <= 'F') {
-			value = value * 16 + 10 + c - 'A';
-			continue;
-		} else {
-			break;
-		}
-	}
-
-	*stringPtr = string;
-	return value;
-}
-
-/*
  * New implementation by Patrick Powell and others for vsnprintf.
  * Supports length checking in strings.
 */
@@ -2379,9 +2336,6 @@ int sscanf(const char *buffer, const char *fmt, ...) {
 				break;
 			case 'f':
 				*(va_arg(ap, float *)) = _atof(&buffer);
-				break;
-			case 'x':
-				*(va_arg(ap, unsigned int *)) = _hextoi(&buffer);
 				break;
 			case 's':
 			{

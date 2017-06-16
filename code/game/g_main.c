@@ -517,8 +517,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart) {
 	}
 
 	G_RemapTeamShaders();
-	// clear ready players from intermission
-	trap_SetConfigstring(CS_PLAYERS_READY, "");
+
 	trap_SetConfigstring(CS_INTERMISSION, "");
 }
 
@@ -1073,8 +1072,7 @@ void ExitLevel(void) {
 
 		return;
 	}
-	// clear ready players from intermission
-	trap_SetConfigstring(CS_PLAYERS_READY, "");
+
 	trap_Cvar_VariableStringBuffer("nextmap", nextmap, sizeof(nextmap));
 	trap_Cvar_VariableStringBuffer("d1", d1, sizeof(d1));
 
@@ -1231,7 +1229,7 @@ void CheckIntermissionExit(void) {
 	int ready, notReady, playerCount;
 	int i;
 	gclient_t *cl;
-	clientList_t readyList;
+	int readyMask;
 
 	if (g_gametype.integer == GT_SINGLE_PLAYER) {
 		return;
@@ -1239,9 +1237,8 @@ void CheckIntermissionExit(void) {
 	// see which players are ready
 	ready = 0;
 	notReady = 0;
+	readyMask = 0;
 	playerCount = 0;
-
-	Com_ClientListClear(&readyList);
 
 	for (i = 0; i < g_maxclients.integer; i++) {
 		cl = level.clients + i;
@@ -1259,13 +1256,23 @@ void CheckIntermissionExit(void) {
 		if (cl->readyToExit) {
 			ready++;
 
-			Com_ClientListAdd(&readyList, i);
+			if (i < 16) {
+				readyMask |= 1 << i;
+			}
 		} else {
 			notReady++;
 		}
 	}
-	// update configstring so it can be displayed on the scoreboard
-	trap_SetConfigstring(CS_PLAYERS_READY, Com_ClientListString(&readyList));
+	// copy the readyMask to each player's stats so it can be displayed on the scoreboard
+	for (i = 0; i < g_maxclients.integer; i++) {
+		cl = level.clients + i;
+
+		if (cl->pers.connected != CON_CONNECTED) {
+			continue;
+		}
+
+		cl->ps.stats[STAT_CLIENTS_READY] = readyMask;
+	}
 	// never exit in less than five seconds
 	if (level.time < level.intermissiontime + 5000) {
 		return;

@@ -347,8 +347,6 @@ static void CG_ConfigStringModified(void) {
 		}
 	} else if (num == CS_SHADERSTATE) {
 		CG_ShaderStateChanged();
-	} else if (num == CS_PLAYERS_READY) {
-		Com_ClientListParse(&cg.readyPlayers, str);
 	}
 }
 

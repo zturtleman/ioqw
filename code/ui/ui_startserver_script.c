@@ -57,7 +57,6 @@ id Software at the address below.
 // ui_dedicated is deliberately missing to allow script loading in both Skirmish and Multiplayer versions of the browser.
 static const char *saveparam_list[] = {
 	"ui_gametype",
-	"ui_publicServer",
 	"ui_pureServer",
 	"ui_inactivity",
 	"ui_allowmaxrate",
@@ -347,12 +346,9 @@ static qboolean StartServer_WriteServerParams(void) {
 
 	if (s_scriptdata.multiplayer) {
 		AddScript(va("dedicated %i\n", s_scriptdata.server.dedicatedServer));
-		AddScript(va("sv_public %i\n", s_scriptdata.server.publicServer));
 		// LAN force rate
 		AddScript(va("sv_lanForceRate %i\n", s_scriptdata.server.lanForceRate));
 		AddScript(va("g_inactivity %i\n", s_scriptdata.server.inactivityTime));
-	} else {
-		AddScript("sv_public 0\n"); // Tobias CHECK: trap_Cvar_SetValue("sv_public", 0);
 	}
 
 	AddScript(va("set g_forcerespawn %i\n", s_scriptdata.server.forceRespawn));

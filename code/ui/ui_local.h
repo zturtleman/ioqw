@@ -91,7 +91,6 @@ extern vmCvar_t ui_obelisk_friendly;
 extern vmCvar_t ui_harvester_capturelimit;
 extern vmCvar_t ui_harvester_timelimit;
 extern vmCvar_t ui_harvester_friendly;
-extern vmCvar_t ui_publicServer;
 extern vmCvar_t ui_spScores1;
 extern vmCvar_t ui_spScores2;
 extern vmCvar_t ui_spScores3;

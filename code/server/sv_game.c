@@ -422,9 +422,11 @@ intptr_t SV_GameSystemCalls(intptr_t *args) {
 		case G_FS_FOPEN_FILE:
 			return FS_FOpenFileByMode(VMA(1), VMA(2), args[3]);
 		case G_FS_READ:
-			return FS_Read(VMA(1), args[2], args[3]);
+			FS_Read(VMA(1), args[2], args[3]);
+			return 0;
 		case G_FS_WRITE:
-			return FS_Write(VMA(1), args[2], args[3]);
+			FS_Write(VMA(1), args[2], args[3]);
+			return 0;
 		case G_FS_SEEK:
 			return FS_Seek(args[1], args[2], args[3]);
 		case G_FS_FCLOSE_FILE:
@@ -432,10 +434,6 @@ intptr_t SV_GameSystemCalls(intptr_t *args) {
 			return 0;
 		case G_FS_GETFILELIST:
 			return FS_GetFileList(VMA(1), VMA(2), VMA(3), args[4]);
-		case G_FS_DELETE:
-			return FS_Delete(VMA(1));
-		case G_FS_RENAME:
-			return FS_Rename(VMA(1), VMA(2));
 		case G_PC_ADD_GLOBAL_DEFINE:
 			return botlib_export->PC_AddGlobalDefine(VMA(1));
 		case G_PC_REMOVE_ALL_GLOBAL_DEFINES:
@@ -469,9 +467,6 @@ intptr_t SV_GameSystemCalls(intptr_t *args) {
 			return 0;
 		case G_GET_CONFIGSTRING:
 			SV_GetConfigstring(args[1], VMA(2), args[3]);
-			return 0;
-		case G_SET_CONFIGSTRING_RESTRICTIONS:
-			SV_SetConfigstringRestrictions(args[1], VMA(2));
 			return 0;
 		case G_SET_USERINFO:
 			SV_SetUserinfo(args[1], VMA(2));

@@ -53,10 +53,6 @@ void SV_GetChallenge(netadr_t from) {
 	char *gameName;
 	qboolean gameMismatch;
 
-	// don't allow players to connect if sv_public is -2
-	if (sv_public->integer <= -2) {
-		return;
-	}
 	// ignore if we are in single player
 	if (Com_GameIsSinglePlayer()) {
 		return;
@@ -548,10 +544,10 @@ static void SV_SendClientGameState(client_t *client) {
 	MSG_WriteLong(&msg, client->reliableSequence);
 	// write the configstrings
 	for (start = 0; start < MAX_CONFIGSTRINGS; start++) {
-		if (sv.configstrings[start].s[0]) {
+		if (sv.configstrings[start][0]) {
 			MSG_WriteByte(&msg, svc_configstring);
 			MSG_WriteShort(&msg, start);
-			MSG_WriteBigString(&msg, sv.configstrings[start].s);
+			MSG_WriteBigString(&msg, sv.configstrings[start]);
 		}
 	}
 	// write the baselines
@@ -1161,8 +1157,8 @@ void SV_UserinfoChanged(client_t *cl) {
 	Q_strncpyz(cl->name, Info_ValueForKey(cl->userinfo, "name"), sizeof(cl->name));
 	// rate command
 
-	// if the client is on the same subnet as the server, assume they don't need a rate choke
-	if (Sys_IsLANAddress(cl->netchan.remoteAddress) && sv_lanForceRate->integer == 1) {
+	// if the client is on the same subnet as the server and we aren't running an internet public server, assume they don't need a rate choke
+	if (Sys_IsLANAddress(cl->netchan.remoteAddress) && com_dedicated->integer != 2 && sv_lanForceRate->integer == 1) {
 		cl->rate = 99999; // lans should not rate limit
 	} else {
 		val = Info_ValueForKey(cl->userinfo, "rate");

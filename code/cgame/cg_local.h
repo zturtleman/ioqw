@@ -549,7 +549,6 @@ typedef struct {
 	char spectatorList[MAX_STRING_CHARS];	// list of names
 	int spectatorTime;						// last time offset
 	float spectatorOffset;					// current offset from start
-	clientList_t readyPlayers;
 	// skull trails
 	skulltrail_t skulltrails[MAX_CLIENTS];
 	// centerprinting
