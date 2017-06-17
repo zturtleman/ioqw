@@ -648,6 +648,7 @@ typedef struct {
 	menutext_s setup;
 	menutext_s restart;
 	menutext_s nextmap;
+	menutext_s startnew;
 	menutext_s leave;
 	menutext_s quit;
 //	menutext_s teamorders;

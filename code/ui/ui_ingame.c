@@ -44,6 +44,7 @@ enum {
 	ID_SERVERINFO,
 	ID_SETUP,
 	ID_RESTART,
+	ID_CREATE,
 	ID_NEXTMAP,
 	ID_LEAVEARENA,
 	ID_QUIT
@@ -173,6 +174,9 @@ void InGame_Event(void *ptr, int notification) {
 		case ID_NEXTMAP:
 			UI_ConfirmMenu("Next Arena?", 0, InGame_NextMap);
 			break;
+		case ID_CREATE:
+			UI_CreateServerMenu(qtrue);
+			break;
 		case ID_LEAVEARENA:
 			UI_ConfirmMenu("Leave Arena?", 0, InGame_LeaveAction);
 			break;
@@ -223,7 +227,7 @@ void InGame_MenuInit(void) {
 	s_ingame.frame.generic.x = 320 - 233;
 	s_ingame.frame.generic.y = 240 - 166;
 	s_ingame.frame.width = 466;
-	s_ingame.frame.height = 332;
+	s_ingame.frame.height = 356;
 
 	y = 88;
 	s_ingame.team.generic.type = MTYPE_PTEXT;
@@ -367,6 +371,21 @@ void InGame_MenuInit(void) {
 	}
 
 	y += INGAME_MENU_VERTICAL_SPACING;
+	s_ingame.startnew.generic.type = MTYPE_PTEXT;
+	s_ingame.startnew.generic.flags = QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+	s_ingame.startnew.generic.x = 320;
+	s_ingame.startnew.generic.y = y;
+	s_ingame.startnew.generic.id = ID_CREATE;
+	s_ingame.startnew.generic.callback = InGame_Event;
+	s_ingame.startnew.string = "Start new arena";
+	s_ingame.startnew.color = color_red;
+	s_ingame.startnew.style = UI_CENTER|UI_SMALLFONT;
+
+	if (!trap_Cvar_VariableValue( "sv_running") || (gametype == GT_SINGLE_PLAYER)) {
+		s_ingame.startnew.generic.flags |= QMF_GRAYED;
+	}
+
+	y += INGAME_MENU_VERTICAL_SPACING;
 	s_ingame.leave.generic.type = MTYPE_PTEXT;
 	s_ingame.leave.generic.flags = QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
 	s_ingame.leave.generic.x = 320;
@@ -399,6 +418,7 @@ void InGame_MenuInit(void) {
 	Menu_AddItem(&s_ingame.menu, &s_ingame.setup);
 	Menu_AddItem(&s_ingame.menu, &s_ingame.restart);
 	Menu_AddItem(&s_ingame.menu, &s_ingame.nextmap);
+	Menu_AddItem(&s_ingame.menu, &s_ingame.startnew);
 	Menu_AddItem(&s_ingame.menu, &s_ingame.leave);
 	Menu_AddItem(&s_ingame.menu, &s_ingame.quit);
 }
