@@ -58,8 +58,8 @@ id Software at the address below.
 =======================================================================================================================================
 */
 
-#define MAX_MAPPAGES 4
-#define NUMMAPS_PERPAGE 8
+#define MAX_MAPPAGES 2
+#define NUMMAPS_PERPAGE 16
 #define MAX_NUMMAPS (MAX_MAPPAGES * NUMMAPS_PERPAGE)
 #define MAX_LIMIT_BUF 4
 #define SHORTMAP_BUFFER 16
@@ -478,7 +478,7 @@ void CreateServer_SaveScriptData(void);
 typedef char *(*String_Callback)(int index);
 void UI_LoadMultiArray(char *base, const char *key, String_Callback callback, int count, int size, char newnull);
 void UI_SaveMultiArray(char *base, const char *key, String_Callback callback, int count, int size, char newnull);
-qboolean CreateServer_CreateServer(const char *scriptFile);
+qboolean CreateServer_ServerScript(const char *scriptFile);
 // ui_createserver_custommaps.c
 enum {
 	MAPICONS_ALL,

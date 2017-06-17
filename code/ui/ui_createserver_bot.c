@@ -1038,21 +1038,7 @@ static void CreateServer_BotPage_CommonEvent(void *ptr, int event) {
 			UI_PopMenu();
 			break;
 		case ID_SERVERCOMMON_FIGHT:
-			CreateServer_CreateServer(NULL);
-			break;
-		case ID_SINGLEPLAYER:
-			UI_PopMenu();
-			UI_SPLevelMenu();
-			break;
-		case ID_SERVERS:
-			UI_PopMenu();
-			UI_ArenaServersMenu();
-			break;
-		case ID_SPECIFY:
-			UI_PopMenu();
-			UI_SpecifyServerMenu();
-			break;
-		case ID_CREATE:
+			CreateServer_ServerScript(NULL);
 			break;
 	}
 }
@@ -1350,7 +1336,7 @@ static void CreateServer_BotPage_MenuDraw(void) {
 		excluded = qtrue;
 	}
 
-	CreateServer_BackgroundDraw(excluded);
+	//CreateServer_BackgroundDraw(excluded);
 	// draw bot icon
 	for (i = 0; i < PLAYER_SLOTS; i++) {
 		b = &s_botcontrols.slotType[i];

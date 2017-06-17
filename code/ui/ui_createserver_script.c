@@ -1731,12 +1731,12 @@ static qboolean CreateServer_ExecuteScript(const char *scriptFile) {
 
 /*
 =======================================================================================================================================
-CreateServer_CreateServer
+CreateServer_ServerScript
 
 Data for generating script must already be loaded and initialized.
 =======================================================================================================================================
 */
-qboolean CreateServer_CreateServer(const char *scriptFile) {
+qboolean CreateServer_ServerScript(const char *scriptFile) {
 	int i;
 	char *teamjoin;
 

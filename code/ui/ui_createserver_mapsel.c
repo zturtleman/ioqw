@@ -1255,7 +1255,7 @@ MapSelect_MenuDraw
 */
 static void MapSelect_MenuDraw(void) {
 
-	CreateServer_BackgroundDraw(qfalse);
+	//CreateServer_BackgroundDraw(qfalse);
 	// draw the controls
 	Menu_Draw(&s_mapselect.menu);
 

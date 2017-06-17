@@ -1031,21 +1031,7 @@ static void CreateServer_MapPage_CommonEvent(void *ptr, int event) {
 			UI_PopMenu();
 			break;
 		case ID_SERVERCOMMON_FIGHT:
-			CreateServer_CreateServer(NULL);
-			break;
-		case ID_SINGLEPLAYER:
-			UI_PopMenu();
-			UI_SPLevelMenu();
-			break;
-		case ID_SERVERS:
-			UI_PopMenu();
-			UI_ArenaServersMenu();
-			break;
-		case ID_SPECIFY:
-			UI_PopMenu();
-			UI_SpecifyServerMenu();
-			break;
-		case ID_CREATE:
+			CreateServer_ServerScript(NULL);
 			break;
 	}
 }
@@ -1170,7 +1156,7 @@ static void CreateServer_MapPage_MenuDraw(void) {
 		excluded = qtrue;
 	}
 
-	CreateServer_BackgroundDraw(excluded);
+	//CreateServer_BackgroundDraw(excluded);
 	// draw map picture
 	maxmaps = s_scriptdata.map.num_maps - s_mapcontrols.map_page * NUMMAPS_PERPAGE;
 

@@ -67,12 +67,13 @@ qboolean CreateServer_CheckFightReady(commoncontrols_t *c) {
 CreateServer_BackgroundDraw
 =======================================================================================================================================
 */
+/*
 void CreateServer_BackgroundDraw(qboolean excluded) {
 	static vec4_t dim = {1.0, 1.0, 1.0, 0.5};
 
 	trap_R_SetColor(dim);
-	// UI_DrawNamedPic(0, y, w, h, FRAME_LEFT);
-	UI_DrawNamedPic(-80, 40, 800, 400, FRAME_RIGHT);
+	UI_DrawNamedPic(0, 78, 256, 329, FRAME_LEFT);
+	UI_DrawNamedPic(376, 78, 256, 334, FRAME_RIGHT);
 
 	if (excluded) {
 		dim[3] = 0.25;
@@ -81,7 +82,7 @@ void CreateServer_BackgroundDraw(qboolean excluded) {
 
 	trap_R_SetColor(NULL);
 }
-
+*/
 /*
 =======================================================================================================================================
 CreateServer_SelectionDraw
@@ -163,49 +164,12 @@ void CreateServer_CommonControls_Init(menuframework_s *menuptr, commoncontrols_t
 
 	CreateServer_CommonControls_Cache();
 
-	common->singleplayer.generic.type = MTYPE_BITMAP;
-	common->singleplayer.generic.name = ART_SINGLEPLAYER0;
-	common->singleplayer.generic.flags = QMF_LEFT_JUSTIFY|QMF_PULSEIFFOCUS;
-	common->singleplayer.generic.callback = callback;
-	common->singleplayer.generic.id = ID_SINGLEPLAYER;
-	common->singleplayer.generic.x = 0;
-	common->singleplayer.generic.y = -5;
-	common->singleplayer.width = BUTTON_WIDTH;
-	common->singleplayer.height = BUTTON_HEIGHT;
-	common->singleplayer.focuspic = ART_SINGLEPLAYER1;
-
-	common->servers.generic.type = MTYPE_BITMAP;
-	common->servers.generic.name = ART_SERVERS0;
-	common->servers.generic.flags = QMF_LEFT_JUSTIFY|QMF_PULSEIFFOCUS;
-	common->servers.generic.callback = callback;
-	common->servers.generic.id = ID_SERVERS;
-	common->servers.generic.x = BUTTON_WIDTH + 4;
-	common->servers.generic.y = -5;
-	common->servers.width = BUTTON_WIDTH;
-	common->servers.height = BUTTON_HEIGHT;
-	common->servers.focuspic = ART_SERVERS1;
-
-	common->specify.generic.type = MTYPE_BITMAP;
-	common->specify.generic.name = ART_SPECIFY0;
-	common->specify.generic.flags = QMF_LEFT_JUSTIFY|QMF_PULSEIFFOCUS;
-	common->specify.generic.callback = callback;
-	common->specify.generic.id = ID_SPECIFY;
-	common->specify.generic.x = BUTTON_WIDTH * 2 + 8;
-	common->specify.generic.y = -5;
-	common->specify.width = BUTTON_WIDTH;
-	common->specify.height = BUTTON_HEIGHT;
-	common->specify.focuspic = ART_SPECIFY1;
-
-	common->create.generic.type = MTYPE_BITMAP;
-	common->create.generic.name = ART_CREATE0;
-	common->create.generic.flags = QMF_LEFT_JUSTIFY|QMF_HIGHLIGHT;
-	common->create.generic.callback = callback;
-	common->create.generic.id = ID_CREATE;
-	common->create.generic.x = BUTTON_WIDTH * 5.5;
-	common->create.generic.y = -5;
-	common->create.width = BUTTON_WIDTH;
-	common->create.height = BUTTON_HEIGHT;
-	common->create.focuspic = ART_CREATE1;
+	common->banner.generic.type = MTYPE_BTEXT;
+	common->banner.generic.x = 320;
+	common->banner.generic.y = 16;
+	common->banner.string = "CREATE SERVER";
+	common->banner.color = color_white;
+	common->banner.style = UI_CENTER;
 
 	common->back.generic.type = MTYPE_BITMAP;
 	common->back.generic.name = GAMESERVER_BACK0;
@@ -258,11 +222,9 @@ void CreateServer_CommonControls_Init(menuframework_s *menuptr, commoncontrols_t
 	common->server.width = BUTTON_WIDTH;
 	common->server.height = BUTTON_HEIGHT;
 	common->server.focuspic = GAMESERVER_SERVER1;
+
+	Menu_AddItem(menuptr, &common->banner);
 	// register controls
-	Menu_AddItem(menuptr, &common->servers);
-	Menu_AddItem(menuptr, &common->singleplayer);
-	Menu_AddItem(menuptr, &common->specify);
-	Menu_AddItem(menuptr, &common->create);
 	Menu_AddItem(menuptr, &common->back);
 	Menu_AddItem(menuptr, &common->fight);
 

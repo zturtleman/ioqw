@@ -1062,7 +1062,7 @@ VoteMenu_Map_Draw
 */
 static void VoteMenu_Map_Draw(void) {
 
-	CreateServer_BackgroundDraw(qfalse);
+	//CreateServer_BackgroundDraw(qfalse);
 	// draw the controls
 	Menu_Draw(&s_mapselect2.menu);
 

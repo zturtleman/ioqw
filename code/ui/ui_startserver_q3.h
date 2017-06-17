@@ -78,10 +78,6 @@ id Software at the address below.
 #define BUTTON_WIDTH 96
 #define BUTTON_HEIGHT 48
 
-#define ART_SINGLEPLAYER0 "menu/art/singleplayer0"
-#define ART_SINGLEPLAYER1 "menu/art/singleplayer1"
-#define ART_SERVERS0 "menu/art/servers0"
-#define ART_SERVERS1 "menu/art/servers1"
 #define ART_CREATE0 "menu/art/create_0"
 #define ART_CREATE1 "menu/art/create_1"
 #define ART_SPECIFY0 "menu/art/specify0"
@@ -132,6 +128,7 @@ typedef struct commoncontrols_s {
 	menubitmap_s items;
 	menubitmap_s maps;
 	menubitmap_s bots;
+	menutext_s banner;
 	menutext_s servertext;
 	menutext_s itemtext;
 	menutext_s maptext;
@@ -156,7 +153,7 @@ void UI_StartMapMenu(int gametype, int index, const char *mapname);
 // ui_createserver_common.c
 qboolean CreateServer_CheckFightReady(commoncontrols_t *c);
 void CreateServer_CommonControls_Init(menuframework_s *, commoncontrols_t *, CtrlCallback_t, int);
-void CreateServer_BackgroundDraw(qboolean excluded);
+//void CreateServer_BackgroundDraw(qboolean excluded);
 void CreateServer_SelectionDraw(void *self);
 // ui_createserver_map.c
 void CreateServer_MapPage_MenuInit(void);

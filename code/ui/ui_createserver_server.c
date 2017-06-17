@@ -397,21 +397,7 @@ static void CreateServer_ServerPage_CommonEvent(void *ptr, int event) {
 			UI_PopMenu();
 			break;
 		case ID_SERVERCOMMON_FIGHT:
-			CreateServer_CreateServer(NULL);
-			break;
-		case ID_SINGLEPLAYER:
-			UI_PopMenu();
-			UI_SPLevelMenu();
-			break;
-		case ID_SERVERS:
-			UI_PopMenu();
-			UI_ArenaServersMenu();
-			break;
-		case ID_SPECIFY:
-			UI_PopMenu();
-			UI_SpecifyServerMenu();
-			break;
-		case ID_CREATE:
+			CreateServer_ServerScript(NULL);
 			break;
 	}
 }
@@ -628,7 +614,7 @@ static void CreateServer_ServerPage_MenuDraw(void) {
 		CreateServer_ServerPage_UpdateInterface();
 	}
 
-	CreateServer_BackgroundDraw(qfalse);
+	//CreateServer_BackgroundDraw(qfalse);
 	// draw the controls
 	Menu_Draw(&s_servercontrols.menu);
 
