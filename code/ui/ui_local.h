@@ -126,7 +126,7 @@ extern vmCvar_t ui_server13;
 extern vmCvar_t ui_server14;
 extern vmCvar_t ui_server15;
 extern vmCvar_t ui_server16;
-extern vmCvar_t ui_firststart;
+extern vmCvar_t ui_firstrun;
 extern vmCvar_t ui_mapicons;
 
 // ui_qmenu.c
@@ -318,9 +318,9 @@ extern void UI_MainMenu(void);
 extern void UI_RegisterCvars(void);
 extern void UI_UpdateCvars(void);
 extern int UI_ServerGametype(void);
-// ui_firstconnect.c
-extern void FirstConnect_Cache(void);
-extern void UI_FirstConnectMenu(void);
+// ui_firstrun.c
+extern void FirstRun_Cache(void);
+extern void UI_FirstRunMenu(void);
 // ui_credits.c
 extern void UI_CreditMenu(void);
 // ui_ingame.c

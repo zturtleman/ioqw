@@ -145,7 +145,7 @@ vmCvar_t ui_map_multisel;
 vmCvar_t ui_map_list;
 vmCvar_t ui_bot_multisel;
 vmCvar_t ui_bot_list;
-vmCvar_t ui_firststart;
+vmCvar_t ui_firstrun;
 
 static cvarTable_t cvarTable[] = {
 	{&ui_friendlyFire, "g_friendlyFire", "1", CVAR_ARCHIVE},
@@ -211,7 +211,7 @@ static cvarTable_t cvarTable[] = {
 	{&ui_bot_list, "ui_bot_list", "1", CVAR_ARCHIVE},
 	{&ui_mapicons, "ui_mapicons", "0", CVAR_ARCHIVE},
 	{&ui_autoclosebotmenu, "ui_autoclosebotmenu", "0", CVAR_ARCHIVE},
-	{&ui_firststart, "ui_firststart", "1", CVAR_ARCHIVE}
+	{&ui_firstrun, "ui_firstrun", "1", CVAR_ARCHIVE}
 };
 
 static int cvarTableSize = ARRAY_LEN(cvarTable);

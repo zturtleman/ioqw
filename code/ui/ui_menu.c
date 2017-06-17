@@ -227,8 +227,8 @@ void UI_MainMenu(void) {
 
 	trap_Cvar_SetValue("sv_killserver", 1);
 
-	if (ui_firststart.integer) {
-		UI_FirstConnectMenu();
+	if (ui_firstrun.integer) {
+		UI_FirstRunMenu();
 		return;
 	}
 
