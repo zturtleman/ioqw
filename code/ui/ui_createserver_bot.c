@@ -203,10 +203,10 @@ const char *botCopyTo_items[BOT_CT_COUNT + 1] = {
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_UpdateButtonInterface
+CreateServer_BotPage_UpdateButtonInterface
 =======================================================================================================================================
 */
-static void StartServer_BotPage_UpdateButtonInterface(void) {
+static void CreateServer_BotPage_UpdateButtonInterface(void) {
 
 	if (s_scriptdata.gametype > GT_TOURNAMENT) {
 		s_botcontrols.swapArrows.generic.flags &= ~(QMF_INACTIVE|QMF_HIDDEN);
@@ -225,10 +225,10 @@ static void StartServer_BotPage_UpdateButtonInterface(void) {
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_SelectItem
+CreateServer_BotPage_SelectItem
 =======================================================================================================================================
 */
-static void StartServer_BotPage_SelectItem(int index) {
+static void CreateServer_BotPage_SelectItem(int index) {
 
 	if (index >= PLAYER_SLOTS) {
 		return;
@@ -251,26 +251,26 @@ static void StartServer_BotPage_SelectItem(int index) {
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_SetSkillRangeType
+CreateServer_BotPage_SetSkillRangeType
 =======================================================================================================================================
 */
-static void StartServer_BotPage_SetSkillRangeType(void) {
+static void CreateServer_BotPage_SetSkillRangeType(void) {
 
-	StartServer_SetBotSkillRangeType(s_botcontrols.skillType.curvalue);
+	CreateServer_SetBotSkillRangeType(s_botcontrols.skillType.curvalue);
 	s_botcontrols.skillType.curvalue = s_scriptdata.bot.skillType;
 }
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_UpdateInterface
+CreateServer_BotPage_UpdateInterface
 =======================================================================================================================================
 */
-static void StartServer_BotPage_UpdateInterface(void) {
+static void CreateServer_BotPage_UpdateInterface(void) {
 	int i, value, skill, last;
 	qboolean grayBots, hideTeam, hideBotType;
 	qboolean grayBotNumber, grayBotChange;
 
-	StartServer_SetIconFromGameType(&s_botcontrols.botGameTypeIcon, s_scriptdata.gametype, qfalse);
+	CreateServer_SetIconFromGameType(&s_botcontrols.botGameTypeIcon, s_scriptdata.gametype, qfalse);
 
 	hideTeam = qtrue;
 
@@ -334,7 +334,7 @@ static void StartServer_BotPage_UpdateInterface(void) {
 		s_botcontrols.teamLeft.generic.flags |= QMF_GRAYED;
 		s_botcontrols.teamRight.generic.flags |= QMF_GRAYED;
 
-		StartServer_BotPage_SelectItem(-1);
+		CreateServer_BotPage_SelectItem(-1);
 
 		s_botcontrols.actionDest.generic.flags |= QMF_GRAYED;
 		s_botcontrols.actionActivate.generic.flags |= QMF_GRAYED;
@@ -358,7 +358,7 @@ static void StartServer_BotPage_UpdateInterface(void) {
 		s_botcontrols.changeBots.generic.flags &= ~QMF_GRAYED;
 	}
 	// left/right arrow and del controls
-	StartServer_BotPage_UpdateButtonInterface();
+	CreateServer_BotPage_UpdateButtonInterface();
 	// slot skill type
 	skill = s_botcontrols.skillType.curvalue;
 
@@ -391,12 +391,12 @@ static void StartServer_BotPage_UpdateInterface(void) {
 			s_botcontrols.slotSkill[i].generic.flags |= (QMF_INACTIVE|QMF_HIDDEN);
 		}
 
-		if (value == SLOTTYPE_BOT || StartServer_IsRandomBotExclude(s_scriptdata.bot.typeSelect)) {
+		if (value == SLOTTYPE_BOT || CreateServer_IsRandomBotExclude(s_scriptdata.bot.typeSelect)) {
 			s_botcontrols.slotName[i].generic.flags &= ~(QMF_INACTIVE|QMF_HIDDEN);
-			StartServer_BotNameDrawn(i, qtrue);
+			CreateServer_BotNameDrawn(i, qtrue);
 		} else {
 			s_botcontrols.slotName[i].generic.flags |= (QMF_INACTIVE|QMF_HIDDEN);
-			StartServer_BotNameDrawn(i, qfalse);
+			CreateServer_BotNameDrawn(i, qfalse);
 		}
 
 		if (hideBotType) {
@@ -408,9 +408,9 @@ static void StartServer_BotPage_UpdateInterface(void) {
 		s_botcontrols.slotSelected[i].generic.flags &= ~(QMF_HIDDEN|QMF_INACTIVE);
 	}
 	// enable fight button if possible
-	StartServer_CheckFightReady(&s_botcontrols.common);
+	CreateServer_CheckFightReady(&s_botcontrols.common);
 	// deal with player when name is hidden by spectator enabled
-	if (StartServer_IsRandomBotExclude(s_scriptdata.bot.typeSelect)) {
+	if (CreateServer_IsRandomBotExclude(s_scriptdata.bot.typeSelect)) {
 		return;
 	}
 
@@ -439,10 +439,10 @@ static void StartServer_BotPage_UpdateInterface(void) {
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_CopySlotTypeToInterface
+CreateServer_BotPage_CopySlotTypeToInterface
 =======================================================================================================================================
 */
-static void StartServer_BotPage_CopySlotTypeToInterface(void) {
+static void CreateServer_BotPage_CopySlotTypeToInterface(void) {
 	int i;
 
 	// update slot type from script data
@@ -453,88 +453,88 @@ static void StartServer_BotPage_CopySlotTypeToInterface(void) {
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_MoveToOtherTeam
+CreateServer_BotPage_MoveToOtherTeam
 =======================================================================================================================================
 */
-static void StartServer_BotPage_MoveToOtherTeam(void) {
+static void CreateServer_BotPage_MoveToOtherTeam(void) {
 
-	StartServer_MoveBotToOtherTeam(s_botcontrols.selected);
-	StartServer_BotPage_CopySlotTypeToInterface();
+	CreateServer_MoveBotToOtherTeam(s_botcontrols.selected);
+	CreateServer_BotPage_CopySlotTypeToInterface();
 }
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_DeleteSlot
+CreateServer_BotPage_DeleteSlot
 =======================================================================================================================================
 */
-static void StartServer_BotPage_DeleteSlot(int index) {
+static void CreateServer_BotPage_DeleteSlot(int index) {
 
-	if (!StartServer_DeleteBotSlot(index)) {
+	if (!CreateServer_DeleteBotSlot(index)) {
 		return;
 	}
 	// update slot type from script data
-	StartServer_BotPage_CopySlotTypeToInterface();
+	CreateServer_BotPage_CopySlotTypeToInterface();
 
 	if (s_botcontrols.selected > index) {
-		StartServer_BotPage_SelectItem(s_botcontrols.selected - 1);
+		CreateServer_BotPage_SelectItem(s_botcontrols.selected - 1);
 	}
 }
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_InsertSlot
+CreateServer_BotPage_InsertSlot
 =======================================================================================================================================
 */
-static void StartServer_BotPage_InsertSlot(int index) {
+static void CreateServer_BotPage_InsertSlot(int index) {
 
-	if (!StartServer_InsertBotSlot(index)) {
+	if (!CreateServer_InsertBotSlot(index)) {
 		return;
 	}
 	// update slot type from script data
-	StartServer_BotPage_CopySlotTypeToInterface();
+	CreateServer_BotPage_CopySlotTypeToInterface();
 
 	if (index <= s_botcontrols.selected) {
-		StartServer_BotPage_SelectItem(s_botcontrols.selected + 1);
+		CreateServer_BotPage_SelectItem(s_botcontrols.selected + 1);
 	}
 }
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_SetPlayerNamedSlot
+CreateServer_BotPage_SetPlayerNamedSlot
 =======================================================================================================================================
 */
-static void StartServer_BotPage_SetPlayerNamedSlot(void) {
+static void CreateServer_BotPage_SetPlayerNamedSlot(void) {
 
-	if (StartServer_IsRandomBotExclude(s_scriptdata.bot.typeSelect)) {
+	if (CreateServer_IsRandomBotExclude(s_scriptdata.bot.typeSelect)) {
 		return;
 	}
 
 	if (s_scriptdata.bot.joinAs && s_scriptdata.bot.slotType[0] == SLOTTYPE_HUMAN) {
-		StartServer_BotPage_DeleteSlot(0);
-		StartServer_BotPage_UpdateInterface();
+		CreateServer_BotPage_DeleteSlot(0);
+		CreateServer_BotPage_UpdateInterface();
 		return;
 	}
 
 	if (s_scriptdata.bot.slotType[0] != SLOTTYPE_HUMAN) {
-		StartServer_BotPage_InsertSlot(0);
+		CreateServer_BotPage_InsertSlot(0);
 		s_scriptdata.bot.slotType[0] = SLOTTYPE_HUMAN;
 		s_botcontrols.slotType[0].curvalue = s_scriptdata.bot.slotType[0];
-		StartServer_BotPage_UpdateInterface();
+		CreateServer_BotPage_UpdateInterface();
 	}
 }
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_ValidateSlotCount
+CreateServer_BotPage_ValidateSlotCount
 =======================================================================================================================================
 */
-static void StartServer_BotPage_ValidateSlotCount(void) {
+static void CreateServer_BotPage_ValidateSlotCount(void) {
 	int bots, open;
 
 	bots = atoi(s_botcontrols.numberBots.field.buffer);
 	open = atoi(s_botcontrols.numberOpen.field.buffer);
 
-	StartServer_ValidateBotSlotCount(bots, open);
+	CreateServer_ValidateBotSlotCount(bots, open);
 
 	Q_strncpyz(s_botcontrols.numberBots.field.buffer, va("%i", s_scriptdata.bot.numberBots), 3);
 	Q_strncpyz(s_botcontrols.numberOpen.field.buffer, va("%i", s_scriptdata.bot.numberOpen), 3);
@@ -542,22 +542,22 @@ static void StartServer_BotPage_ValidateSlotCount(void) {
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_HandleGoAction
+CreateServer_BotPage_HandleGoAction
 =======================================================================================================================================
 */
-static void StartServer_BotPage_HandleGoAction(void) {
+static void CreateServer_BotPage_HandleGoAction(void) {
 
-	StartServer_DoBotAction(s_botcontrols.actionDest.curvalue, s_botcontrols.selected);
-	StartServer_BotPage_CopySlotTypeToInterface();
-	StartServer_BotPage_UpdateInterface();
+	CreateServer_DoBotAction(s_botcontrols.actionDest.curvalue, s_botcontrols.selected);
+	CreateServer_BotPage_CopySlotTypeToInterface();
+	CreateServer_BotPage_UpdateInterface();
 }
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_Cache
+CreateServer_BotPage_Cache
 =======================================================================================================================================
 */
-void StartServer_BotPage_Cache(void) {
+void CreateServer_BotPage_Cache(void) {
 
 	trap_R_RegisterShaderNoMip(BOTSELECT_SWAPARROWS0);
 	trap_R_RegisterShaderNoMip(BOTSELECT_SWAPARROWS1);
@@ -572,10 +572,10 @@ void StartServer_BotPage_Cache(void) {
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_SetTeamTitle
+CreateServer_BotPage_SetTeamTitle
 =======================================================================================================================================
 */
-static void StartServer_BotPage_SetTeamTitle(int swapped) {
+static void CreateServer_BotPage_SetTeamTitle(int swapped) {
 	int x, w;
 	menutext_s *red, *blue;
 	float sizeScale;
@@ -625,10 +625,10 @@ static void StartServer_BotPage_SetTeamTitle(int swapped) {
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_InitControlsFromScript
+CreateServer_BotPage_InitControlsFromScript
 =======================================================================================================================================
 */
-static void StartServer_BotPage_InitControlsFromScript(void) {
+static void CreateServer_BotPage_InitControlsFromScript(void) {
 
 	// method of selecting bots
 	s_botcontrols.botTypeSelect.curvalue = s_scriptdata.bot.typeSelect;
@@ -645,21 +645,21 @@ static void StartServer_BotPage_InitControlsFromScript(void) {
 	// join game as
 	s_botcontrols.joinAs.curvalue = s_scriptdata.bot.joinAs;
 	// nothing selected
-	StartServer_BotPage_SelectItem(-1);
+	CreateServer_BotPage_SelectItem(-1);
 	// swap teams
 	if (s_scriptdata.gametype > GT_TOURNAMENT) {
-		StartServer_BotPage_SetTeamTitle(s_scriptdata.bot.teamSwapped);
+		CreateServer_BotPage_SetTeamTitle(s_scriptdata.bot.teamSwapped);
 	}
 
-	StartServer_BotPage_CopySlotTypeToInterface();
+	CreateServer_BotPage_CopySlotTypeToInterface();
 }
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_InitSkillControl
+CreateServer_BotPage_InitSkillControl
 =======================================================================================================================================
 */
-static void StartServer_BotPage_InitSkillControl(menuskill_s *s) {
+static void CreateServer_BotPage_InitSkillControl(menuskill_s *s) {
 	int x, y, h;
 
 	x = s->generic.x;
@@ -678,50 +678,50 @@ static void StartServer_BotPage_InitSkillControl(menuskill_s *s) {
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_LoadBotNameList
+CreateServer_BotPage_LoadBotNameList
 
 Specialist interface init, used when user has toggled type of bot selection.
 =======================================================================================================================================
 */
-static void StartServer_BotPage_LoadBotNameList(int type) {
+static void CreateServer_BotPage_LoadBotNameList(int type) {
 
-	StartServer_LoadBotNameList(type);
-	// it is possible for StartServer_LoadBotNameList() to change the selection type, so we recover that change here
+	CreateServer_LoadBotNameList(type);
+	// it is possible for CreateServer_LoadBotNameList() to change the selection type, so we recover that change here
 	s_botcontrols.botTypeSelect.curvalue = s_scriptdata.bot.typeSelect;
 
-	StartServer_BotPage_CopySlotTypeToInterface();
+	CreateServer_BotPage_CopySlotTypeToInterface();
 }
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_Load
+CreateServer_BotPage_Load
 =======================================================================================================================================
 */
-static void StartServer_BotPage_Load(void) {
+static void CreateServer_BotPage_Load(void) {
 
 	s_botcontrols.botGameType.curvalue = gametype_remap2[s_scriptdata.gametype];
 
 	Q_strncpyz(s_botcontrols.playername, UI_Cvar_VariableString("name"), MAX_NAME_LENGTH);
 
-	StartServer_BotPage_InitControlsFromScript();
-	StartServer_BotPage_SetSkillRangeType();
+	CreateServer_BotPage_InitControlsFromScript();
+	CreateServer_BotPage_SetSkillRangeType();
 }
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_Save
+CreateServer_BotPage_Save
 =======================================================================================================================================
 */
-static void StartServer_BotPage_Save(void) {
-	StartServer_SaveScriptData();
+static void CreateServer_BotPage_Save(void) {
+	CreateServer_SaveScriptData();
 }
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_DrawStatusBarText
+CreateServer_BotPage_DrawStatusBarText
 =======================================================================================================================================
 */
-static void StartServer_BotPage_DrawStatusBarText(void) {
+static void CreateServer_BotPage_DrawStatusBarText(void) {
 	vec4_t color;
 	int fade;
 	float fadecol;
@@ -747,10 +747,10 @@ static void StartServer_BotPage_DrawStatusBarText(void) {
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_SetStatusBar
+CreateServer_BotPage_SetStatusBar
 =======================================================================================================================================
 */
-static void StartServer_BotPage_SetStatusBar(const char *text) {
+static void CreateServer_BotPage_SetStatusBar(const char *text) {
 
 	s_botcontrols.savetime = uis.realtime + STATUSBAR_FADETIME;
 
@@ -761,35 +761,35 @@ static void StartServer_BotPage_SetStatusBar(const char *text) {
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_StatusBar
+CreateServer_BotPage_StatusBar
 =======================================================================================================================================
 */
-static void StartServer_BotPage_StatusBar(void *ptr) {
+static void CreateServer_BotPage_StatusBar(void *ptr) {
 
 	switch (((menucommon_s *)ptr)->id) {
 		case ID_BOT_TYPE:
 			switch (s_scriptdata.bot.typeSelect) {
 				case BOTTYPE_SELECT:
-					StartServer_BotPage_SetStatusBar("Same bots for all maps");
+					CreateServer_BotPage_SetStatusBar("Same bots for all maps");
 					break;
 				case BOTTYPE_RANDOM:
-					StartServer_BotPage_SetStatusBar("Randomly picked bots for all maps");
+					CreateServer_BotPage_SetStatusBar("Randomly picked bots for all maps");
 					break;
 				case BOTTYPE_RANDOMEXCLUDE:
-					StartServer_BotPage_SetStatusBar("Randomly picked bots, but exclude least favourite");
+					CreateServer_BotPage_SetStatusBar("Randomly picked bots, but exclude least favourite");
 					break;
 				case BOTTYPE_RANDOMARENASCRIPT:
-					StartServer_BotPage_SetStatusBar("Replace map recommended bots with random ones");
+					CreateServer_BotPage_SetStatusBar("Replace map recommended bots with random ones");
 					break;
 				case BOTTYPE_ARENASCRIPT:
-					StartServer_BotPage_SetStatusBar("Use map recommended bots");
+					CreateServer_BotPage_SetStatusBar("Use map recommended bots");
 					break;
 			}
 
 			break;
 		case ID_BOT_BOTNUMBER:
-			if (StartServer_IsBotArenaScript(s_scriptdata.bot.typeSelect)) {
-				StartServer_BotPage_SetStatusBar("Number of bots if arena script has none");
+			if (CreateServer_IsBotArenaScript(s_scriptdata.bot.typeSelect)) {
+				CreateServer_BotPage_SetStatusBar("Number of bots if arena script has none");
 			}
 
 			break;
@@ -798,10 +798,10 @@ static void StartServer_BotPage_StatusBar(void *ptr) {
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_SkillOffset
+CreateServer_BotPage_SkillOffset
 =======================================================================================================================================
 */
-static int StartServer_BotPage_SkillOffset(qboolean range) {
+static int CreateServer_BotPage_SkillOffset(qboolean range) {
 
 	if (range) {
 		return (BOT_ICONX + 2 * SMALLCHAR_WIDTH);
@@ -812,10 +812,10 @@ static int StartServer_BotPage_SkillOffset(qboolean range) {
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_OverSkillHotspot
+CreateServer_BotPage_OverSkillHotspot
 =======================================================================================================================================
 */
-static int StartServer_BotPage_OverSkillHotspot(menuskill_s *s) {
+static int CreateServer_BotPage_OverSkillHotspot(menuskill_s *s) {
 	int x, y, h;
 
 	x = s->generic.left;
@@ -826,7 +826,7 @@ static int StartServer_BotPage_OverSkillHotspot(menuskill_s *s) {
 		return MSKILL_LEFT;
 	}
 
-	x += StartServer_BotPage_SkillOffset(s->data->range);
+	x += CreateServer_BotPage_SkillOffset(s->data->range);
 
 	if (UI_CursorInRect(x, y, BOT_ICONX + SMALLCHAR_WIDTH, h)) {
 		return MSKILL_RIGHT;
@@ -837,15 +837,15 @@ static int StartServer_BotPage_OverSkillHotspot(menuskill_s *s) {
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_SkillStatusBar
+CreateServer_BotPage_SkillStatusBar
 =======================================================================================================================================
 */
-static void StartServer_BotPage_SkillStatusBar(void *self) {
+static void CreateServer_BotPage_SkillStatusBar(void *self) {
 	menuskill_s *s;
 	int index, cursor;
 
 	s = (menuskill_s *)self;
-	cursor = StartServer_BotPage_OverSkillHotspot(s);
+	cursor = CreateServer_BotPage_OverSkillHotspot(s);
 
 	if (cursor == MSKILL_NONE) {
 		return;
@@ -861,16 +861,16 @@ static void StartServer_BotPage_SkillStatusBar(void *self) {
 		index = s->data->value;
 	}
 
-	StartServer_BotPage_SetStatusBar(skill_items[index]);
+	CreateServer_BotPage_SetStatusBar(skill_items[index]);
 //	UI_DrawString(140, s_botcontrols.statusbar_height, skill_items[index], UI_CENTER|UI_SMALLFONT, color_white);
 }
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_SkillDraw
+CreateServer_BotPage_SkillDraw
 =======================================================================================================================================
 */
-static void StartServer_BotPage_SkillDraw(void *self) {
+static void CreateServer_BotPage_SkillDraw(void *self) {
 	int skill;
 	menuskill_s *s;
 	int x, y, h;
@@ -896,7 +896,7 @@ static void StartServer_BotPage_SkillDraw(void *self) {
 
 	pulsecolor[3] = tempcolor[3];
 
-	cursor = StartServer_BotPage_OverSkillHotspot(s);
+	cursor = CreateServer_BotPage_OverSkillHotspot(s);
 	// draw left side of control
 	shader_y = y + (h - BOT_ICONY) / 2;
 
@@ -936,7 +936,7 @@ static void StartServer_BotPage_SkillDraw(void *self) {
 		s_botcontrols.hotspot = cursor;
 	}
 
-	x += StartServer_BotPage_SkillOffset(s->data->range);
+	x += CreateServer_BotPage_SkillOffset(s->data->range);
 	// draw right side of control (always drawn)
 	shader = trap_R_RegisterShaderNoMip(va("menu/art/skill%i", skill));
 
@@ -964,10 +964,10 @@ static void StartServer_BotPage_SkillDraw(void *self) {
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_SkillEvent
+CreateServer_BotPage_SkillEvent
 =======================================================================================================================================
 */
-static void StartServer_BotPage_SkillEvent(void *ptr, int event) {
+static void CreateServer_BotPage_SkillEvent(void *ptr, int event) {
 	int hit;
 	menuskill_s *s;
 	botskill_t *data;
@@ -984,7 +984,7 @@ static void StartServer_BotPage_SkillEvent(void *ptr, int event) {
 
 	s = (menuskill_s *)ptr;
 	data = s->data;
-	hit = StartServer_BotPage_OverSkillHotspot(s);
+	hit = CreateServer_BotPage_OverSkillHotspot(s);
 
 	if (hit == MSKILL_LEFT) {
 		s->data->low++;
@@ -1015,20 +1015,20 @@ static void StartServer_BotPage_SkillEvent(void *ptr, int event) {
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_CommonEvent
+CreateServer_BotPage_CommonEvent
 =======================================================================================================================================
 */
-static void StartServer_BotPage_CommonEvent(void *ptr, int event) {
+static void CreateServer_BotPage_CommonEvent(void *ptr, int event) {
 
 	if (event != QM_ACTIVATED) {
 		return;
 	}
 
-	StartServer_BotPage_Save();
+	CreateServer_BotPage_Save();
 
 	switch (((menucommon_s *)ptr)->id) {
 		case ID_SERVERCOMMON_SERVER:
-			StartServer_ServerPage_MenuInit();
+			CreateServer_ServerPage_MenuInit();
 			break;
 		case ID_SERVERCOMMON_MAPS:
 			UI_PopMenu();
@@ -1038,7 +1038,7 @@ static void StartServer_BotPage_CommonEvent(void *ptr, int event) {
 			UI_PopMenu();
 			break;
 		case ID_SERVERCOMMON_FIGHT:
-			StartServer_CreateServer(NULL);
+			CreateServer_CreateServer(NULL);
 			break;
 		case ID_SINGLEPLAYER:
 			UI_PopMenu();
@@ -1059,23 +1059,23 @@ static void StartServer_BotPage_CommonEvent(void *ptr, int event) {
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_SelectionEvent
+CreateServer_BotPage_SelectionEvent
 =======================================================================================================================================
 */
-static void StartServer_BotPage_SelectionEvent(void *ptr, int event) {
+static void CreateServer_BotPage_SelectionEvent(void *ptr, int event) {
 
 	if (event == QM_ACTIVATED) {
-		StartServer_BotPage_SelectItem(((menucommon_s *)ptr)->id);
-		StartServer_BotPage_UpdateInterface();
+		CreateServer_BotPage_SelectItem(((menucommon_s *)ptr)->id);
+		CreateServer_BotPage_UpdateInterface();
 	}
 }
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_NameDraw
+CreateServer_BotPage_NameDraw
 =======================================================================================================================================
 */
-static void StartServer_BotPage_NameDraw(void *self) {
+static void CreateServer_BotPage_NameDraw(void *self) {
 	int x, y, pulse, style;
 	vec4_t tempcolor;
 	float *color;
@@ -1131,10 +1131,10 @@ static void StartServer_BotPage_NameDraw(void *self) {
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_NameEvent
+CreateServer_BotPage_NameEvent
 =======================================================================================================================================
 */
-static void StartServer_BotPage_NameEvent(void *ptr, int event) {
+static void CreateServer_BotPage_NameEvent(void *ptr, int event) {
 	int index, i, botnum;
 	char botname[MAX_NAME_LENGTH], *bot;
 
@@ -1169,10 +1169,10 @@ static void StartServer_BotPage_NameEvent(void *ptr, int event) {
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_TypeEvent
+CreateServer_BotPage_TypeEvent
 =======================================================================================================================================
 */
-static void StartServer_BotPage_TypeEvent(void *ptr, int event) {
+static void CreateServer_BotPage_TypeEvent(void *ptr, int event) {
 	int index;
 	menulist_s *s;
 
@@ -1194,20 +1194,20 @@ static void StartServer_BotPage_TypeEvent(void *ptr, int event) {
 
 	s_scriptdata.bot.slotType[index] = s->curvalue;
 
-	StartServer_BotPage_UpdateInterface();
+	CreateServer_BotPage_UpdateInterface();
 }
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_MenuKey
+CreateServer_BotPage_MenuKey
 =======================================================================================================================================
 */
-static sfxHandle_t StartServer_BotPage_MenuKey(int key) {
+static sfxHandle_t CreateServer_BotPage_MenuKey(int key) {
 
 	switch (key) {
 		case K_MOUSE2:
 		case K_ESCAPE:
-			StartServer_BotPage_Save();
+			CreateServer_BotPage_Save();
 			UI_PopMenu();
 			break;
 	}
@@ -1217,10 +1217,10 @@ static sfxHandle_t StartServer_BotPage_MenuKey(int key) {
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_Event
+CreateServer_BotPage_Event
 =======================================================================================================================================
 */
-static void StartServer_BotPage_Event(void *ptr, int event) {
+static void CreateServer_BotPage_Event(void *ptr, int event) {
 
 	switch (((menucommon_s *)ptr)->id) {
 		// controls that change script data
@@ -1229,22 +1229,22 @@ static void StartServer_BotPage_Event(void *ptr, int event) {
 				return;
 			}
 			// make all changes before updating control page
-			StartServer_SaveScriptData();
-			StartServer_BotPage_SelectItem(-1);
-			StartServer_LoadScriptDataFromType(gametype_remap[s_botcontrols.botGameType.curvalue]);
-			StartServer_BotPage_InitControlsFromScript();
-			StartServer_BotPage_UpdateInterface();
+			CreateServer_SaveScriptData();
+			CreateServer_BotPage_SelectItem(-1);
+			CreateServer_LoadScriptDataFromType(gametype_remap[s_botcontrols.botGameType.curvalue]);
+			CreateServer_BotPage_InitControlsFromScript();
+			CreateServer_BotPage_UpdateInterface();
 			break;
 		case ID_BOT_TYPE:
 			if (event != QM_ACTIVATED) {
 				return;
 			}
 
-			StartServer_SaveBotNameList();
-			StartServer_BotPage_LoadBotNameList(s_botcontrols.botTypeSelect.curvalue);
-			StartServer_BotPage_SelectItem(-1);
-			StartServer_BotPage_SetSkillRangeType();
-			StartServer_BotPage_UpdateInterface();
+			CreateServer_SaveBotNameList();
+			CreateServer_BotPage_LoadBotNameList(s_botcontrols.botTypeSelect.curvalue);
+			CreateServer_BotPage_SelectItem(-1);
+			CreateServer_BotPage_SetSkillRangeType();
+			CreateServer_BotPage_UpdateInterface();
 			break;
 		case ID_BOT_LEFTTEAM:
 		case ID_BOT_RIGHTTEAM:
@@ -1252,23 +1252,23 @@ static void StartServer_BotPage_Event(void *ptr, int event) {
 				return;
 			}
 
-			StartServer_BotPage_SetTeamTitle(-1);
+			CreateServer_BotPage_SetTeamTitle(-1);
 			break;
 		case ID_BOT_DELETESLOT:
 			if (event != QM_ACTIVATED) {
 				return;
 			}
 
-			StartServer_BotPage_DeleteSlot(s_botcontrols.selected);
-			StartServer_BotPage_UpdateInterface();
+			CreateServer_BotPage_DeleteSlot(s_botcontrols.selected);
+			CreateServer_BotPage_UpdateInterface();
 			break;
 		case ID_BOT_SWAPARROWS:
 			if (event != QM_ACTIVATED) {
 				return;
 			}
 
-			StartServer_BotPage_MoveToOtherTeam();
-			StartServer_BotPage_UpdateInterface();
+			CreateServer_BotPage_MoveToOtherTeam();
+			CreateServer_BotPage_UpdateInterface();
 			break;
 		case ID_BOT_JOINAS:
 			if (event != QM_ACTIVATED) {
@@ -1277,13 +1277,13 @@ static void StartServer_BotPage_Event(void *ptr, int event) {
 
 			s_scriptdata.bot.joinAs = s_botcontrols.joinAs.curvalue;
 
-			StartServer_BotPage_SetPlayerNamedSlot();
-			StartServer_BotPage_UpdateInterface();
+			CreateServer_BotPage_SetPlayerNamedSlot();
+			CreateServer_BotPage_UpdateInterface();
 			break;
 		case ID_BOT_BOTNUMBER:
 		case ID_BOT_SLOTS:
 			if (event == QM_LOSTFOCUS) {
-				StartServer_BotPage_ValidateSlotCount();
+				CreateServer_BotPage_ValidateSlotCount();
 			}
 
 			break;
@@ -1292,7 +1292,7 @@ static void StartServer_BotPage_Event(void *ptr, int event) {
 				break;
 			}
 
-			StartServer_BotPage_HandleGoAction();
+			CreateServer_BotPage_HandleGoAction();
 			break;
 		case ID_BOT_SKILL:
 			if (event != QM_ACTIVATED) {
@@ -1301,8 +1301,8 @@ static void StartServer_BotPage_Event(void *ptr, int event) {
 
 			s_scriptdata.bot.skillType = s_botcontrols.skillType.curvalue;
 
-			StartServer_BotPage_SetSkillRangeType();
-			StartServer_BotPage_UpdateInterface();
+			CreateServer_BotPage_SetSkillRangeType();
+			CreateServer_BotPage_UpdateInterface();
 			break;
 		case ID_BOT_CHANGE:
 			if (event != QM_ACTIVATED) {
@@ -1311,7 +1311,7 @@ static void StartServer_BotPage_Event(void *ptr, int event) {
 
 			s_scriptdata.bot.changeBots = s_botcontrols.changeBots.curvalue;
 
-			StartServer_BotPage_UpdateInterface();
+			CreateServer_BotPage_UpdateInterface();
 			break;
 		case ID_BOT_SKILLBIAS:
 			if (event != QM_ACTIVATED) {
@@ -1320,7 +1320,7 @@ static void StartServer_BotPage_Event(void *ptr, int event) {
 
 			s_scriptdata.bot.skillBias = s_botcontrols.skillBias.curvalue;
 
-			StartServer_BotPage_UpdateInterface();
+			CreateServer_BotPage_UpdateInterface();
 			break;
 			// controls that just change something on the interface
 	}
@@ -1328,10 +1328,10 @@ static void StartServer_BotPage_Event(void *ptr, int event) {
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_MenuDraw
+CreateServer_BotPage_MenuDraw
 =======================================================================================================================================
 */
-static void StartServer_BotPage_MenuDraw(void) {
+static void CreateServer_BotPage_MenuDraw(void) {
 	qboolean excluded;
 	menulist_s *b;
 	menucommon_s *g;
@@ -1340,17 +1340,17 @@ static void StartServer_BotPage_MenuDraw(void) {
 	float f;
 
 	if (uis.firstdraw) {
-		StartServer_BotPage_Load();
-		StartServer_BotPage_UpdateInterface();
+		CreateServer_BotPage_Load();
+		CreateServer_BotPage_UpdateInterface();
 	}
 
 	excluded = qfalse;
 
-	if (StartServer_IsRandomBotExclude(s_scriptdata.bot.typeSelect)) {
+	if (CreateServer_IsRandomBotExclude(s_scriptdata.bot.typeSelect)) {
 		excluded = qtrue;
 	}
 
-	StartServer_BackgroundDraw(excluded);
+	CreateServer_BackgroundDraw(excluded);
 	// draw bot icon
 	for (i = 0; i < PLAYER_SLOTS; i++) {
 		b = &s_botcontrols.slotType[i];
@@ -1388,35 +1388,35 @@ static void StartServer_BotPage_MenuDraw(void) {
 	// draw the controls
 	Menu_Draw(&s_botcontrols.menu);
 
-	StartServer_BotPage_DrawStatusBarText();
+	CreateServer_BotPage_DrawStatusBarText();
 }
 
 /*
 =======================================================================================================================================
-StartServer_BotPage_MenuInit
+CreateServer_BotPage_MenuInit
 =======================================================================================================================================
 */
-void StartServer_BotPage_MenuInit(void) {
+void CreateServer_BotPage_MenuInit(void) {
 	menuframework_s *menuptr;
 	int y, i, list_y, colx, sel_colx;
 
 	memset(&s_botcontrols, 0, sizeof(botcontrols_t));
 
-	StartServer_BotPage_Cache();
+	CreateServer_BotPage_Cache();
 
 	menuptr = &s_botcontrols.menu;
-	menuptr->key = StartServer_BotPage_MenuKey;
+	menuptr->key = CreateServer_BotPage_MenuKey;
 	menuptr->wrapAround = qtrue;
 	menuptr->fullscreen = qtrue;
-	menuptr->draw = StartServer_BotPage_MenuDraw;
+	menuptr->draw = CreateServer_BotPage_MenuDraw;
 
-	StartServer_CommonControls_Init(menuptr, &s_botcontrols.common, StartServer_BotPage_CommonEvent, COMMONCTRL_BOTS);
+	CreateServer_CommonControls_Init(menuptr, &s_botcontrols.common, CreateServer_BotPage_CommonEvent, COMMONCTRL_BOTS);
 	// the user selected bots
 	y = GAMETYPEROW_Y;
 	s_botcontrols.botGameType.generic.type = MTYPE_SPINCONTROL;
 	s_botcontrols.botGameType.generic.id = ID_BOT_GAMETYPE;
 	s_botcontrols.botGameType.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
-	s_botcontrols.botGameType.generic.callback = StartServer_BotPage_Event;
+	s_botcontrols.botGameType.generic.callback = CreateServer_BotPage_Event;
 	s_botcontrols.botGameType.generic.x = GAMETYPECOLUMN_X;
 	s_botcontrols.botGameType.generic.y = y;
 	s_botcontrols.botGameType.generic.name = "Game Type:";
@@ -1433,8 +1433,8 @@ void StartServer_BotPage_MenuInit(void) {
 	s_botcontrols.botTypeSelect.generic.type = MTYPE_SPINCONTROL;
 	s_botcontrols.botTypeSelect.generic.id = ID_BOT_TYPE;
 	s_botcontrols.botTypeSelect.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
-	s_botcontrols.botTypeSelect.generic.callback = StartServer_BotPage_Event;
-	s_botcontrols.botTypeSelect.generic.statusbar = StartServer_BotPage_StatusBar;
+	s_botcontrols.botTypeSelect.generic.callback = CreateServer_BotPage_Event;
+	s_botcontrols.botTypeSelect.generic.statusbar = CreateServer_BotPage_StatusBar;
 	s_botcontrols.botTypeSelect.generic.x = GAMETYPECOLUMN_X;
 	s_botcontrols.botTypeSelect.generic.y = y;
 	s_botcontrols.botTypeSelect.generic.name = "Bot selection:";
@@ -1444,8 +1444,8 @@ void StartServer_BotPage_MenuInit(void) {
 	s_botcontrols.numberBots.generic.type = MTYPE_FIELD;
 	s_botcontrols.numberBots.generic.name = "Number of bots:";
 	s_botcontrols.numberBots.generic.id = ID_BOT_BOTNUMBER;
-	s_botcontrols.numberBots.generic.callback = StartServer_BotPage_Event;
-	s_botcontrols.numberBots.generic.statusbar = StartServer_BotPage_StatusBar;
+	s_botcontrols.numberBots.generic.callback = CreateServer_BotPage_Event;
+	s_botcontrols.numberBots.generic.statusbar = CreateServer_BotPage_StatusBar;
 	s_botcontrols.numberBots.generic.flags = QMF_SMALLFONT|QMF_PULSEIFFOCUS;
 	s_botcontrols.numberBots.generic.x = BOT_RIGHTCTRL;
 	s_botcontrols.numberBots.generic.y = y;
@@ -1455,7 +1455,7 @@ void StartServer_BotPage_MenuInit(void) {
 	s_botcontrols.skillType.generic.type = MTYPE_SPINCONTROL;
 	s_botcontrols.skillType.generic.id = ID_BOT_SKILL;
 	s_botcontrols.skillType.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
-	s_botcontrols.skillType.generic.callback = StartServer_BotPage_Event;
+	s_botcontrols.skillType.generic.callback = CreateServer_BotPage_Event;
 	s_botcontrols.skillType.generic.x = BOT_LEFTCTRL;
 	s_botcontrols.skillType.generic.y = y;
 	s_botcontrols.skillType.generic.name = "Skill:";
@@ -1463,19 +1463,19 @@ void StartServer_BotPage_MenuInit(void) {
 	// custom skill control
 	s_botcontrols.skillValue.generic.type = MTYPE_NULL;
 	s_botcontrols.skillValue.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT|QMF_NODEFAULTINIT|QMF_SILENT;
-	s_botcontrols.skillValue.generic.ownerdraw = StartServer_BotPage_SkillDraw;
-	s_botcontrols.skillValue.generic.statusbar = StartServer_BotPage_SkillStatusBar;
-	s_botcontrols.skillValue.generic.callback = StartServer_BotPage_SkillEvent;
+	s_botcontrols.skillValue.generic.ownerdraw = CreateServer_BotPage_SkillDraw;
+	s_botcontrols.skillValue.generic.statusbar = CreateServer_BotPage_SkillStatusBar;
+	s_botcontrols.skillValue.generic.callback = CreateServer_BotPage_SkillEvent;
 	s_botcontrols.skillValue.generic.x = BOT_LEFTCTRL + 13 * SMALLCHAR_WIDTH + BOT_ICONX;
 	s_botcontrols.skillValue.generic.y = y;
 	s_botcontrols.skillValue.data = &s_scriptdata.bot.globalSkill;
-	StartServer_BotPage_InitSkillControl(&s_botcontrols.skillValue);
+	CreateServer_BotPage_InitSkillControl(&s_botcontrols.skillValue);
 
 	y += LINE_HEIGHT;
 	s_botcontrols.changeBots.generic.type = MTYPE_SPINCONTROL;
 	s_botcontrols.changeBots.generic.id = ID_BOT_CHANGE;
 	s_botcontrols.changeBots.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
-	s_botcontrols.changeBots.generic.callback = StartServer_BotPage_Event;
+	s_botcontrols.changeBots.generic.callback = CreateServer_BotPage_Event;
 	s_botcontrols.changeBots.generic.x = BOT_RIGHTCTRL;
 	s_botcontrols.changeBots.generic.y = y;
 	s_botcontrols.changeBots.generic.name = "Change bots:";
@@ -1484,7 +1484,7 @@ void StartServer_BotPage_MenuInit(void) {
 	s_botcontrols.skillBias.generic.type = MTYPE_SPINCONTROL;
 	s_botcontrols.skillBias.generic.id = ID_BOT_SKILLBIAS;
 	s_botcontrols.skillBias.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
-	s_botcontrols.skillBias.generic.callback = StartServer_BotPage_Event;
+	s_botcontrols.skillBias.generic.callback = CreateServer_BotPage_Event;
 	s_botcontrols.skillBias.generic.x = BOT_LEFTCTRL;
 	s_botcontrols.skillBias.generic.y = y;
 	s_botcontrols.skillBias.generic.name = "Skill bias:";
@@ -1494,7 +1494,7 @@ void StartServer_BotPage_MenuInit(void) {
 	s_botcontrols.numberOpen.generic.type = MTYPE_FIELD;
 	s_botcontrols.numberOpen.generic.name = "Open slots:";
 	s_botcontrols.numberOpen.generic.id = ID_BOT_SLOTS;
-	s_botcontrols.numberOpen.generic.callback = StartServer_BotPage_Event;
+	s_botcontrols.numberOpen.generic.callback = CreateServer_BotPage_Event;
 	s_botcontrols.numberOpen.generic.flags = QMF_SMALLFONT|QMF_PULSEIFFOCUS;
 	s_botcontrols.numberOpen.generic.x = BOT_RIGHTCTRL;
 	s_botcontrols.numberOpen.generic.y = y;
@@ -1504,16 +1504,16 @@ void StartServer_BotPage_MenuInit(void) {
 	s_botcontrols.joinAs.generic.type = MTYPE_RADIOBUTTON;
 	s_botcontrols.joinAs.generic.id = ID_BOT_JOINAS;
 	s_botcontrols.joinAs.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
-	s_botcontrols.joinAs.generic.callback = StartServer_BotPage_Event;
+	s_botcontrols.joinAs.generic.callback = CreateServer_BotPage_Event;
 	s_botcontrols.joinAs.generic.x = BOT_LEFTCTRL;
 	s_botcontrols.joinAs.generic.y = y;
 	s_botcontrols.joinAs.generic.name = "Spectator:";
-	// re-initialized in StartServer_BotPage_SetTeamTitle()
+	// re-initialized in CreateServer_BotPage_SetTeamTitle()
 	y += (3 * LINE_HEIGHT) / 2;
 	s_botcontrols.teamLeft.generic.type = MTYPE_PTEXT;
 	s_botcontrols.teamLeft.generic.id = ID_BOT_LEFTTEAM;
 	s_botcontrols.teamLeft.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT|QMF_CENTER_JUSTIFY;
-	s_botcontrols.teamLeft.generic.callback = StartServer_BotPage_Event;
+	s_botcontrols.teamLeft.generic.callback = CreateServer_BotPage_Event;
 	s_botcontrols.teamLeft.generic.x = BOT_RIGHTCTRL;
 	s_botcontrols.teamLeft.generic.y = y;
 	s_botcontrols.teamLeft.string = "";
@@ -1523,7 +1523,7 @@ void StartServer_BotPage_MenuInit(void) {
 	s_botcontrols.teamRight.generic.type = MTYPE_PTEXT;
 	s_botcontrols.teamRight.generic.id = ID_BOT_RIGHTTEAM;
 	s_botcontrols.teamRight.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT|QMF_CENTER_JUSTIFY;
-	s_botcontrols.teamRight.generic.callback = StartServer_BotPage_Event;
+	s_botcontrols.teamRight.generic.callback = CreateServer_BotPage_Event;
 	s_botcontrols.teamRight.generic.x = BOT_LEFTCTRL;
 	s_botcontrols.teamRight.generic.y = y;
 	s_botcontrols.teamRight.string = "";
@@ -1537,7 +1537,7 @@ void StartServer_BotPage_MenuInit(void) {
 	s_botcontrols.swapArrows.generic.x = 320 - 18;
 	s_botcontrols.swapArrows.generic.y = y;
 	s_botcontrols.swapArrows.generic.id = ID_BOT_SWAPARROWS;
-	s_botcontrols.swapArrows.generic.callback = StartServer_BotPage_Event;
+	s_botcontrols.swapArrows.generic.callback = CreateServer_BotPage_Event;
 	s_botcontrols.swapArrows.width = 36;
 	s_botcontrols.swapArrows.height = 36;
 	s_botcontrols.swapArrows.focuspic = BOTSELECT_SWAPARROWS1;
@@ -1548,7 +1548,7 @@ void StartServer_BotPage_MenuInit(void) {
 	s_botcontrols.delBot.generic.x = 320 - 18;
 	s_botcontrols.delBot.generic.y = y + 48;
 	s_botcontrols.delBot.generic.id = ID_BOT_DELETESLOT;
-	s_botcontrols.delBot.generic.callback = StartServer_BotPage_Event;
+	s_botcontrols.delBot.generic.callback = CreateServer_BotPage_Event;
 	s_botcontrols.delBot.width = 36;
 	s_botcontrols.delBot.height = 72;
 	s_botcontrols.delBot.focuspic = BOTSELECT_DEL1;
@@ -1567,7 +1567,7 @@ void StartServer_BotPage_MenuInit(void) {
 		s_botcontrols.slotType[i].generic.type = MTYPE_SPINCONTROL;
 		s_botcontrols.slotType[i].generic.id = i;
 		s_botcontrols.slotType[i].generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
-		s_botcontrols.slotType[i].generic.callback = StartServer_BotPage_TypeEvent;
+		s_botcontrols.slotType[i].generic.callback = CreateServer_BotPage_TypeEvent;
 		s_botcontrols.slotType[i].generic.x = colx;
 		s_botcontrols.slotType[i].generic.y = list_y;
 		s_botcontrols.slotType[i].generic.name = 0;
@@ -1576,8 +1576,8 @@ void StartServer_BotPage_MenuInit(void) {
 		s_botcontrols.slotName[i].generic.type = MTYPE_TEXT;
 		s_botcontrols.slotName[i].generic.id = i;
 		s_botcontrols.slotName[i].generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT|QMF_NODEFAULTINIT;
-		s_botcontrols.slotName[i].generic.callback = StartServer_BotPage_NameEvent;
-		s_botcontrols.slotName[i].generic.ownerdraw = StartServer_BotPage_NameDraw;
+		s_botcontrols.slotName[i].generic.callback = CreateServer_BotPage_NameEvent;
+		s_botcontrols.slotName[i].generic.ownerdraw = CreateServer_BotPage_NameDraw;
 		s_botcontrols.slotName[i].generic.x = colx + BOTNAME_DX;
 		s_botcontrols.slotName[i].generic.y = list_y;
 		s_botcontrols.slotName[i].generic.left = s_botcontrols.slotName[i].generic.x;
@@ -1592,8 +1592,8 @@ void StartServer_BotPage_MenuInit(void) {
 		s_botcontrols.slotSelected[i].generic.x = sel_colx;
 		s_botcontrols.slotSelected[i].generic.y = list_y;
 		s_botcontrols.slotSelected[i].generic.id = i;
-		s_botcontrols.slotSelected[i].generic.callback = StartServer_BotPage_SelectionEvent;
-		s_botcontrols.slotSelected[i].generic.ownerdraw = StartServer_SelectionDraw;
+		s_botcontrols.slotSelected[i].generic.callback = CreateServer_BotPage_SelectionEvent;
+		s_botcontrols.slotSelected[i].generic.ownerdraw = CreateServer_SelectionDraw;
 		s_botcontrols.slotSelected[i].width = 16;
 		s_botcontrols.slotSelected[i].height = 16;
 		s_botcontrols.slotSelected[i].focuspic = GAMESERVER_SELECTED1;
@@ -1601,13 +1601,13 @@ void StartServer_BotPage_MenuInit(void) {
 		s_botcontrols.slotSkill[i].generic.type = MTYPE_NULL;
 		s_botcontrols.slotSkill[i].generic.id = i;
 		s_botcontrols.slotSkill[i].generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT|QMF_NODEFAULTINIT|QMF_SILENT;
-		s_botcontrols.slotSkill[i].generic.ownerdraw = StartServer_BotPage_SkillDraw;
-		s_botcontrols.slotSkill[i].generic.statusbar = StartServer_BotPage_SkillStatusBar;
-		s_botcontrols.slotSkill[i].generic.callback = StartServer_BotPage_SkillEvent;
+		s_botcontrols.slotSkill[i].generic.ownerdraw = CreateServer_BotPage_SkillDraw;
+		s_botcontrols.slotSkill[i].generic.statusbar = CreateServer_BotPage_SkillStatusBar;
+		s_botcontrols.slotSkill[i].generic.callback = CreateServer_BotPage_SkillEvent;
 		s_botcontrols.slotSkill[i].generic.x = colx + BOTSKILL_DX;
 		s_botcontrols.slotSkill[i].generic.y = list_y;
 		s_botcontrols.slotSkill[i].data = &s_scriptdata.bot.skill[i];
-		StartServer_BotPage_InitSkillControl(&s_botcontrols.slotSkill[i]);
+		CreateServer_BotPage_InitSkillControl(&s_botcontrols.slotSkill[i]);
 	}
 
 	y += 8 * (LINE_HEIGHT + 4) + LINE_HEIGHT;
@@ -1620,7 +1620,7 @@ void StartServer_BotPage_MenuInit(void) {
 	s_botcontrols.actionActivate.generic.type = MTYPE_BITMAP;
 	s_botcontrols.actionActivate.generic.name = GAMESERVER_ACTION0;
 	s_botcontrols.actionActivate.generic.flags = QMF_LEFT_JUSTIFY|QMF_PULSEIFFOCUS;
-	s_botcontrols.actionActivate.generic.callback = StartServer_BotPage_Event;
+	s_botcontrols.actionActivate.generic.callback = CreateServer_BotPage_Event;
 	s_botcontrols.actionActivate.generic.id = ID_BOT_ACTION;
 	s_botcontrols.actionActivate.generic.x = 240 - 64 - SMALLCHAR_WIDTH;
 	s_botcontrols.actionActivate.generic.y = y - (32 - SMALLCHAR_HEIGHT) / 2;

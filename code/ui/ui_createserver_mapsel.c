@@ -382,7 +382,7 @@ static qboolean MapSelect_FilteredMap(const char *mapname) {
 	}
 	// handle request for Id or non-Id map type
 	if (s_mapselect.filter.curvalue < MAPFILTER_MAX) {
-		idmap = StartServer_IsIdMap(mapname);
+		idmap = CreateServer_IsIdMap(mapname);
 
 		if (s_mapselect.filter.curvalue == MAPFILTER_NONID) {
 			if (idmap) {
@@ -396,7 +396,7 @@ static qboolean MapSelect_FilteredMap(const char *mapname) {
 	}
 	// check for specific map list
 	type = s_mapselect.filter.curvalue - MAPFILTER_MAX;
-	return StartServer_IsCustomMapType(mapname, type);
+	return CreateServer_IsCustomMapType(mapname, type);
 }
 
 /*
@@ -424,8 +424,8 @@ static void MapSelect_SetMapTypeIcons(void) {
 		icon_type = &s_mapselect.iconb;
 	}
 
-	StartServer_SetIconFromGameType(icon_type, gametype, qfalse);
-	StartServer_SetIconFromGameType(icon_custom, customtype, qtrue);
+	CreateServer_SetIconFromGameType(icon_type, gametype, qfalse);
+	CreateServer_SetIconFromGameType(icon_custom, customtype, qtrue);
 }
 
 /*
@@ -682,7 +682,7 @@ static void MapSelect_SetNewMapPics(void) {
 			break;
 		}
 
-		StartServer_InitMapPictureFromIndex(&s_mapselect.mapinfo[i], s_mapselect.index_maplist[top + i]);
+		CreateServer_InitMapPictureFromIndex(&s_mapselect.mapinfo[i], s_mapselect.index_maplist[top + i]);
 
 		s_mapselect.maptext_color[i] = color_orange;
 		// check if map has been used before
@@ -823,14 +823,14 @@ static void MapSelect_CommitSelection(void) {
 			return;
 		}
 		// replace first map, then insert the rest
-		StartServer_StoreMap(s_mapselect.index, s_mapselect.index_maplist[s_mapselect.multiselect[0]]);
+		CreateServer_StoreMap(s_mapselect.index, s_mapselect.index_maplist[s_mapselect.multiselect[0]]);
 
 		for (i = 1; i < s_mapselect.num_multisel; i++) {
-			StartServer_InsertMap(s_mapselect.index + i, s_mapselect.index_maplist[s_mapselect.multiselect[i]]);
+			CreateServer_InsertMap(s_mapselect.index + i, s_mapselect.index_maplist[s_mapselect.multiselect[i]]);
 		}
 	} else {
 		// overwrite existing map
-		StartServer_StoreMap(s_mapselect.index, s_mapselect.index_maplist[s_mapselect.currentmap]);
+		CreateServer_StoreMap(s_mapselect.index, s_mapselect.index_maplist[s_mapselect.currentmap]);
 	}
 }
 
@@ -1001,7 +1001,7 @@ static void MapSelect_DrawMapPic(void *self) {
 	w = b->width;
 	h = b->height;
 	id = b->generic.id;
-	StartServer_DrawMapPicture(x, y, w, h, &s_mapselect.mapinfo[id], NULL);
+	CreateServer_DrawMapPicture(x, y, w, h, &s_mapselect.mapinfo[id], NULL);
 
 	if (b->generic.flags & QMF_HIGHLIGHT) {
 		UI_DrawNamedPic(x, y, w, h, MAPSELECT_MAPSELECTED);
@@ -1243,7 +1243,7 @@ static void MapSelect_DrawListMapPic(void) {
 	UI_DrawNamedPic(x - (colw - MAPPIC_WIDTH) / 2, y - 8, colw, colh, MAPSELECT_SELECT);
 	trap_R_SetColor(NULL);
 
-	StartServer_DrawMapPicture(x, y, MAPPIC_WIDTH, MAPPIC_HEIGHT, &s_mapselect.mapinfo[index], colour);
+	CreateServer_DrawMapPicture(x, y, MAPPIC_WIDTH, MAPPIC_HEIGHT, &s_mapselect.mapinfo[index], colour);
 
 	UI_DrawString(320, y + MAPPIC_HEIGHT + 8, s_mapselect.maplongname[base + index], UI_CENTER|UI_SMALLFONT, colour);
 }
@@ -1255,7 +1255,7 @@ MapSelect_MenuDraw
 */
 static void MapSelect_MenuDraw(void) {
 
-	StartServer_BackgroundDraw(qfalse);
+	CreateServer_BackgroundDraw(qfalse);
 	// draw the controls
 	Menu_Draw(&s_mapselect.menu);
 
@@ -1411,7 +1411,7 @@ static void MapSelect_MenuInit(int gametype, int index, const char *mapname) {
 	// change map filter if needed
 	if (mapname && mapname[0]) {
 		if (ms_filter < MAPFILTER_MAX) {
-			if (StartServer_IsIdMap(mapname)) {
+			if (CreateServer_IsIdMap(mapname)) {
 				if (ms_filter == MAPFILTER_NONID) {
 					ms_filter = MAPFILTER_OFF;
 				}
@@ -1420,7 +1420,7 @@ static void MapSelect_MenuInit(int gametype, int index, const char *mapname) {
 					ms_filter = MAPFILTER_OFF;
 				}
 			}
-		} else if (!StartServer_IsCustomMapType(mapname, ms_filter - MAPFILTER_MAX)) {
+		} else if (!CreateServer_IsCustomMapType(mapname, ms_filter - MAPFILTER_MAX)) {
 			ms_filter = MAPFILTER_OFF;
 		}
 	}

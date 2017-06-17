@@ -48,12 +48,12 @@ vec4_t fading_red = {1.0, 0.0, 0.0, 0.0};
 
 /*
 =======================================================================================================================================
-StartServer_CheckFightReady
+CreateServer_CheckFightReady
 =======================================================================================================================================
 */
-qboolean StartServer_CheckFightReady(commoncontrols_t *c) {
+qboolean CreateServer_CheckFightReady(commoncontrols_t *c) {
 
-	if (StartServer_CanFight()) {
+	if (CreateServer_CanFight()) {
 		c->fight.generic.flags &= ~QMF_GRAYED;
 		return qtrue;
 	}
@@ -64,10 +64,10 @@ qboolean StartServer_CheckFightReady(commoncontrols_t *c) {
 
 /*
 =======================================================================================================================================
-StartServer_BackgroundDraw
+CreateServer_BackgroundDraw
 =======================================================================================================================================
 */
-void StartServer_BackgroundDraw(qboolean excluded) {
+void CreateServer_BackgroundDraw(qboolean excluded) {
 	static vec4_t dim = {1.0, 1.0, 1.0, 0.5};
 
 	trap_R_SetColor(dim);
@@ -84,10 +84,10 @@ void StartServer_BackgroundDraw(qboolean excluded) {
 
 /*
 =======================================================================================================================================
-StartServer_SelectionDraw
+CreateServer_SelectionDraw
 =======================================================================================================================================
 */
-void StartServer_SelectionDraw(void *self) {
+void CreateServer_SelectionDraw(void *self) {
 	float x, y, w, h, offset;
 	qhandle_t shader;
 	menubitmap_s *b;
@@ -134,10 +134,10 @@ void StartServer_SelectionDraw(void *self) {
 
 /*
 =======================================================================================================================================
-StartServer_CommonControls_Cache
+CreateServer_CommonControls_Cache
 =======================================================================================================================================
 */
-void StartServer_CommonControls_Cache(void) {
+void CreateServer_CommonControls_Cache(void) {
 
 	trap_R_RegisterShaderNoMip(GAMESERVER_BACK0);
 	trap_R_RegisterShaderNoMip(GAMESERVER_BACK1);
@@ -156,12 +156,12 @@ void StartServer_CommonControls_Cache(void) {
 
 /*
 =======================================================================================================================================
-StartServer_CommonControls_Init
+CreateServer_CommonControls_Init
 =======================================================================================================================================
 */
-void StartServer_CommonControls_Init(menuframework_s *menuptr, commoncontrols_t *common, CtrlCallback_t callback, int ctrlpage) {
+void CreateServer_CommonControls_Init(menuframework_s *menuptr, commoncontrols_t *common, CtrlCallback_t callback, int ctrlpage) {
 
-	StartServer_CommonControls_Cache();
+	CreateServer_CommonControls_Cache();
 
 	common->singleplayer.generic.type = MTYPE_BITMAP;
 	common->singleplayer.generic.name = ART_SINGLEPLAYER0;
@@ -291,15 +291,15 @@ void StartServer_CommonControls_Init(menuframework_s *menuptr, commoncontrols_t 
 
 /*
 =======================================================================================================================================
-StartServer_Cache
+CreateServer_Cache
 =======================================================================================================================================
 */
-void StartServer_Cache(void) {
+void CreateServer_Cache(void) {
 
-	StartServer_CommonControls_Cache();
-	StartServer_ServerPage_Cache();
-	StartServer_MapPage_Cache();
-	StartServer_BotPage_Cache();
+	CreateServer_CommonControls_Cache();
+	CreateServer_ServerPage_Cache();
+	CreateServer_MapPage_Cache();
+	CreateServer_BotPage_Cache();
 }
 
 /*

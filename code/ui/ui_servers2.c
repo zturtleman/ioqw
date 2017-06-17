@@ -1122,7 +1122,7 @@ static void ArenaServers_Event(void *ptr, int event) {
 			UI_SpecifyServerMenu();
 			break;
 		case ID_CREATE:
-			UI_StartServerMenu(qtrue);
+			UI_CreateServerMenu(qtrue);
 			break;
 		case ID_CONNECT:
 			ArenaServers_Go();

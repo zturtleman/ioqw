@@ -538,7 +538,7 @@ static void UI_SPLevelMenu_CustomEvent(void *ptr, int notification) {
 		return;
 	}
 
-	UI_StartServerMenu(qfalse);
+	UI_CreateServerMenu(qfalse);
 }
 
 /*

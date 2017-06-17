@@ -41,13 +41,13 @@ id Software at the address below.
 /*
 =======================================================================================================================================
 
-	START SERVER GLOBAL DATA USED BY UI AND SCRIPT
+	CREATE SERVER GLOBAL DATA USED BY UI AND SCRIPT
 
 =======================================================================================================================================
 */
 
 #include "ui_local.h"
-#include "ui_startserver.h"
+#include "ui_createserver.h"
 
 // global data
 scriptdata_t s_scriptdata;
@@ -516,7 +516,7 @@ qboolean UI_GetSkirmishCvar(char *base, const char *var_name, char *buffer, int 
 	}
 
 	if (!skirmishCvarLoaded) {
-		UI_StartServer_LoadSkirmishCvars();
+		UI_CreateServer_LoadSkirmishCvars();
 	}
 
 	if (base) {
@@ -654,13 +654,13 @@ void UI_SetSkirmishCvarInt(char *base, const char *name, int value) {
 
 /*
 =======================================================================================================================================
-UI_StartServer_MergeSkirmishCvars
+UI_CreateServer_MergeSkirmishCvars
 
 Convert from text format to internal NULL buffer terminated.
 May have been edited by a program that changes line terminator formats so we attempt to recover from this.
 =======================================================================================================================================
 */
-static void UI_StartServer_MergeSkirmishCvars(char *cvarList) {
+static void UI_CreateServer_MergeSkirmishCvars(char *cvarList) {
 	char *p, varname[MAX_TOKEN_CHARS], *data;
 
 	p = cvarList;
@@ -680,10 +680,10 @@ static void UI_StartServer_MergeSkirmishCvars(char *cvarList) {
 
 /*
 =======================================================================================================================================
-UI_StartServer_SaveSkirmishCvars
+UI_CreateServer_SaveSkirmishCvars
 =======================================================================================================================================
 */
-void UI_StartServer_SaveSkirmishCvars(void) {
+void UI_CreateServer_SaveSkirmishCvars(void) {
 	char *p;
 	fileHandle_t file;
 	int len;
@@ -716,10 +716,10 @@ void UI_StartServer_SaveSkirmishCvars(void) {
 
 /*
 =======================================================================================================================================
-UI_StartServer_LoadSkirmishCvars
+UI_CreateServer_LoadSkirmishCvars
 =======================================================================================================================================
 */
-void UI_StartServer_LoadSkirmishCvars(void) {
+void UI_CreateServer_LoadSkirmishCvars(void) {
 	int i, len;
 	vmCvar_t cvar;
 	fileHandle_t file;
@@ -756,8 +756,8 @@ void UI_StartServer_LoadSkirmishCvars(void) {
 	newCvars[len] = '\0';
 	skirmishCvarLoaded = qtrue;
 
-	UI_StartServer_MergeSkirmishCvars(newCvars);
-	UI_StartServer_SaveSkirmishCvars();
+	UI_CreateServer_MergeSkirmishCvars(newCvars);
+	UI_CreateServer_SaveSkirmishCvars();
 }
 
 /*
@@ -770,10 +770,10 @@ void UI_StartServer_LoadSkirmishCvars(void) {
 
 /*
 =======================================================================================================================================
-UI_StartServer_RegisterDisableCvars
+UI_CreateServer_RegisterDisableCvars
 =======================================================================================================================================
 */
-void UI_StartServer_RegisterDisableCvars(qboolean init) {
+void UI_CreateServer_RegisterDisableCvars(qboolean init) {
 	int i;
 	char *disable;
 
@@ -790,13 +790,13 @@ void UI_StartServer_RegisterDisableCvars(qboolean init) {
 
 /*
 =======================================================================================================================================
-StartServer_CanFight
+CreateServer_CanFight
 =======================================================================================================================================
 */
-qboolean StartServer_CanFight(void) {
+qboolean CreateServer_CanFight(void) {
 
 	// number of maps
-	if (StartServer_IsRandomGeneratedMapList(s_scriptdata.map.listSource)) {
+	if (CreateServer_IsRandomGeneratedMapList(s_scriptdata.map.listSource)) {
 		if (s_scriptdata.map.SourceCount == 0) {
 			return qfalse;
 		}
@@ -807,7 +807,7 @@ qboolean StartServer_CanFight(void) {
 	}
 	// number of bots
 	if (s_scriptdata.bot.typeSelect == BOTTYPE_SELECTARENASCRIPT) {
-		if (StartServer_ValidBotCount() == 0) {
+		if (CreateServer_ValidBotCount() == 0) {
 			return qfalse;
 		}
 	}
@@ -887,7 +887,7 @@ void UI_LoadMultiArray(char *base, const char *key, String_Callback callback, in
 =======================================================================================================================================
 */
 
-// additional map type strings are set in ui_startserver_custommaps.c
+// additional map type strings are set in ui_createserver_custommaps.c
 const char *randommaptype_items[MAP_RND_MAX + MAX_MAPTYPES + 1] = {
 	"(Any)",		// MAP_RND_ANY
 	"(Id only)",	// MAP_RND_ID
@@ -903,10 +903,10 @@ const char *randommaptype_items[MAP_RND_MAX + MAX_MAPTYPES + 1] = {
 
 /*
 =======================================================================================================================================
-StartServer_IsIdMap
+CreateServer_IsIdMap
 =======================================================================================================================================
 */
-qboolean StartServer_IsIdMap(const char *mapname) {
+qboolean CreateServer_IsIdMap(const char *mapname) {
 	const char *const *ptr;
 
 	// check list of idmaps
@@ -925,12 +925,12 @@ qboolean StartServer_IsIdMap(const char *mapname) {
 
 /*
 =======================================================================================================================================
-StartServer_IsRandomGeneratedMapList
+CreateServer_IsRandomGeneratedMapList
 
 Map generation will be from a list of randomly selected map names, not a user list of map name.
 =======================================================================================================================================
 */
-qboolean StartServer_IsRandomGeneratedMapList(int type) {
+qboolean CreateServer_IsRandomGeneratedMapList(int type) {
 
 	if (type == MAP_MS_RANDOM || type == MAP_MS_RANDOMEXCLUDE) {
 		return qtrue;
@@ -941,10 +941,10 @@ qboolean StartServer_IsRandomGeneratedMapList(int type) {
 
 /*
 =======================================================================================================================================
-StartServer_MapPageCount
+CreateServer_MapPageCount
 =======================================================================================================================================
 */
-int StartServer_MapPageCount(void) {
+int CreateServer_MapPageCount(void) {
 	int count;
 
 	count = 1 + (s_scriptdata.map.num_maps / NUMMAPS_PERPAGE);
@@ -958,10 +958,10 @@ int StartServer_MapPageCount(void) {
 
 /*
 =======================================================================================================================================
-StartServer_RangeClipMapIndex
+CreateServer_RangeClipMapIndex
 =======================================================================================================================================
 */
-int StartServer_RangeClipMapIndex(int index) {
+int CreateServer_RangeClipMapIndex(int index) {
 
 	if (index < 0) {
 		return 0;
@@ -1007,12 +1007,12 @@ static char *SSMP_TimeLimit_Callback(int index) {
 
 /*
 =======================================================================================================================================
-StartServer_LoadMapList
+CreateServer_LoadMapList
 
 Must be called after s_scriptdata.map.type has been set.
 =======================================================================================================================================
 */
-void StartServer_LoadMapList(void) {
+void CreateServer_LoadMapList(void) {
 	char *s, *ml;
 
 	ml = "maplist";
@@ -1027,10 +1027,10 @@ void StartServer_LoadMapList(void) {
 
 /*
 =======================================================================================================================================
-StartServer_SwapMaps
+CreateServer_SwapMaps
 =======================================================================================================================================
 */
-qboolean StartServer_SwapMaps(int from, int to) {
+qboolean CreateServer_SwapMaps(int from, int to) {
 	static mapdata_t tmp;
 
 	if (from < 0 || to < 0 || from == to) {
@@ -1050,17 +1050,17 @@ qboolean StartServer_SwapMaps(int from, int to) {
 
 /*
 =======================================================================================================================================
-StartServer_StoreMap
+CreateServer_StoreMap
 
 Places map data into the array, overwriting a previous entry.
 =======================================================================================================================================
 */
-void StartServer_StoreMap(int pos, int arena) {
+void CreateServer_StoreMap(int pos, int arena) {
 	const char *info;
 	char *shortname, *longname;
 	int len;
 
-	pos = StartServer_RangeClipMapIndex(pos);
+	pos = CreateServer_RangeClipMapIndex(pos);
 	info = UI_GetArenaInfoByNumber(arena);
 
 	shortname = Info_ValueForKey(info, "map");
@@ -1086,12 +1086,12 @@ void StartServer_StoreMap(int pos, int arena) {
 
 /*
 =======================================================================================================================================
-StartServer_InsertMap
+CreateServer_InsertMap
 
 Creates an empty slot for map data to be added.
 =======================================================================================================================================
 */
-void StartServer_InsertMap(int pos, int arena) {
+void CreateServer_InsertMap(int pos, int arena) {
 	int last, i;
 
 	// drop any maps that try to overflow
@@ -1099,7 +1099,7 @@ void StartServer_InsertMap(int pos, int arena) {
 		return;
 	}
 
-	pos = StartServer_RangeClipMapIndex(pos);
+	pos = CreateServer_RangeClipMapIndex(pos);
 	// quietly drop last map on list if we are inserting earlier
 	last = s_scriptdata.map.num_maps - 1;
 
@@ -1113,17 +1113,17 @@ void StartServer_InsertMap(int pos, int arena) {
 		memcpy(&s_scriptdata.map.data[i + 1], &s_scriptdata.map.data[i], sizeof(mapdata_t));
 	}
 
-	StartServer_StoreMap(pos, arena);
+	CreateServer_StoreMap(pos, arena);
 	Q_strncpyz(s_scriptdata.map.data[pos].fragLimit, va("%i", s_scriptdata.map.fragLimit), MAX_LIMIT_BUF);
 	Q_strncpyz(s_scriptdata.map.data[pos].timeLimit, va("%i", s_scriptdata.map.timeLimit), MAX_LIMIT_BUF);
 }
 
 /*
 =======================================================================================================================================
-StartServer_DeleteMap
+CreateServer_DeleteMap
 =======================================================================================================================================
 */
-void StartServer_DeleteMap(int index) {
+void CreateServer_DeleteMap(int index) {
 	int lines, i;
 
 	if (index < 0 || index >= MAX_NUMMAPS) {
@@ -1147,10 +1147,10 @@ void StartServer_DeleteMap(int index) {
 
 /*
 =======================================================================================================================================
-StartServer_RefreshMapNames
+CreateServer_RefreshMapNames
 =======================================================================================================================================
 */
-void StartServer_RefreshMapNames(void) {
+void CreateServer_RefreshMapNames(void) {
 	int i, j, count;
 	const char *info;
 	char *arena_mapname;
@@ -1179,7 +1179,7 @@ void StartServer_RefreshMapNames(void) {
 		}
 		// map not found, quietly delete it from list
 		if (j == count) {
-			StartServer_DeleteMap(i);
+			CreateServer_DeleteMap(i);
 			continue;
 		}
 
@@ -1191,10 +1191,10 @@ void StartServer_RefreshMapNames(void) {
 
 /*
 =======================================================================================================================================
-StartServer_GetArenaFragLimit
+CreateServer_GetArenaFragLimit
 =======================================================================================================================================
 */
-static const char *StartServer_GetArenaFragLimit(int map) {
+static const char *CreateServer_GetArenaFragLimit(int map) {
 	static char fraglimit[16];
 	const char *info, *infofrag;
 
@@ -1212,10 +1212,10 @@ static const char *StartServer_GetArenaFragLimit(int map) {
 
 /*
 =======================================================================================================================================
-StartServer_MapDoAction
+CreateServer_MapDoAction
 =======================================================================================================================================
 */
-void StartServer_MapDoAction(int src, int dest, int page, int selected) {
+void CreateServer_MapDoAction(int src, int dest, int page, int selected) {
 	int i, pageindex;
 	const char *fragsrc, *timesrc;
 
@@ -1223,7 +1223,7 @@ void StartServer_MapDoAction(int src, int dest, int page, int selected) {
 	// actions using src
 	if (src == MAP_CF_CLEARALL) {
 		while (s_scriptdata.map.num_maps) {
-			StartServer_DeleteMap(0);
+			CreateServer_DeleteMap(0);
 		}
 
 		return;
@@ -1231,7 +1231,7 @@ void StartServer_MapDoAction(int src, int dest, int page, int selected) {
 
 	if (src == MAP_CF_CLEARPAGE) {
 		for (i = 0; i < NUMMAPS_PERPAGE; i++) {
-			StartServer_DeleteMap(pageindex);
+			CreateServer_DeleteMap(pageindex);
 		}
 
 		return;
@@ -1241,21 +1241,21 @@ void StartServer_MapDoAction(int src, int dest, int page, int selected) {
 		switch (dest) {
 			case MAP_CT_SELECTED:
 				if (selected >= 0) {
-					fragsrc = StartServer_GetArenaFragLimit(pageindex + selected);
+					fragsrc = CreateServer_GetArenaFragLimit(pageindex + selected);
 					Q_strncpyz(s_scriptdata.map.data[pageindex + selected].fragLimit, fragsrc, MAX_LIMIT_BUF);
 				}
 
 				break;
 			case MAP_CT_PAGE:
 				for (i = 0; i < NUMMAPS_PERPAGE; i++) {
-					fragsrc = StartServer_GetArenaFragLimit(pageindex + i);
+					fragsrc = CreateServer_GetArenaFragLimit(pageindex + i);
 					Q_strncpyz(s_scriptdata.map.data[pageindex + i].fragLimit, fragsrc, MAX_LIMIT_BUF);
 				}
 
 				break;
 			case MAP_CT_ALL:
 				for (i = 0; i < s_scriptdata.map.num_maps; i++) {
-					fragsrc = StartServer_GetArenaFragLimit(i);
+					fragsrc = CreateServer_GetArenaFragLimit(i);
 					Q_strncpyz(s_scriptdata.map.data[i].fragLimit, fragsrc, MAX_LIMIT_BUF);
 				}
 
@@ -1322,10 +1322,10 @@ void StartServer_MapDoAction(int src, int dest, int page, int selected) {
 
 /*
 =======================================================================================================================================
-StartServer_BuildMapDistribution
+CreateServer_BuildMapDistribution
 =======================================================================================================================================
 */
-static void StartServer_BuildMapDistribution(void) {
+static void CreateServer_BuildMapDistribution(void) {
 	int i, j, count, maptype, gametype, matchbits, gamebits;
 	const char *info;
 	char *arena_mapname;
@@ -1352,7 +1352,7 @@ static void StartServer_BuildMapDistribution(void) {
 			continue;
 		}
 
-		if (StartServer_IsIdMap(arena_mapname)) {
+		if (CreateServer_IsIdMap(arena_mapname)) {
 			maptype = MAP_GROUP_ID;
 		} else {
 			maptype = MAP_GROUP_NONID;
@@ -1377,10 +1377,10 @@ static void StartServer_BuildMapDistribution(void) {
 
 /*
 =======================================================================================================================================
-StartServer_SaveMapList
+CreateServer_SaveMapList
 =======================================================================================================================================
 */
-void StartServer_SaveMapList(void) {
+void CreateServer_SaveMapList(void) {
 	char *s, *s1;
 
 	s1 = "maplist";
@@ -1396,12 +1396,12 @@ void StartServer_SaveMapList(void) {
 
 /*
 =======================================================================================================================================
-StartServer_LoadMapScriptData
+CreateServer_LoadMapScriptData
 
 Loads map specific gametype data.
 =======================================================================================================================================
 */
-static void StartServer_LoadMapScriptData(void) {
+static void CreateServer_LoadMapScriptData(void) {
 	char buf[64], *s, *f, *f2;
 	int i, max;
 
@@ -1429,7 +1429,7 @@ static void StartServer_LoadMapScriptData(void) {
 	s_scriptdata.map.listSource = UI_GetSkirmishCvarIntClamp(0, MAP_MS_MAX - 1, s, "MapSource");
 	// load maps
 	// must be after s_scriptdata.map.type is set
-	StartServer_LoadMapList();
+	CreateServer_LoadMapList();
 
 	s_scriptdata.map.Repeat = UI_GetSkirmishCvarIntClamp(0, 1, s, "MapRepeat");
 	s_scriptdata.map.SourceCount = UI_GetSkirmishCvarIntClamp(2, 99, s, "RandomMapCount");
@@ -1438,7 +1438,7 @@ static void StartServer_LoadMapScriptData(void) {
 
 	s_scriptdata.map.SourceType = (int)Com_Clamp(0, MAP_RND_MAX - 1, atoi(buf)); // non-numerical values give zero
 
-	max = StartServer_NumCustomMapTypes();
+	max = CreateServer_NumCustomMapTypes();
 
 	for (i = 0; i < max; i++) {
 		if (!Q_stricmp(buf, randommaptype_items[MAP_RND_MAX + i])) {
@@ -1447,17 +1447,17 @@ static void StartServer_LoadMapScriptData(void) {
 		}
 	}
 	// validate each of the map names
-	StartServer_RefreshMapNames();
+	CreateServer_RefreshMapNames();
 }
 
 /*
 =======================================================================================================================================
-StartServer_SaveMapScriptData
+CreateServer_SaveMapScriptData
 
 Saves map specific gametype data.
 =======================================================================================================================================
 */
-static void StartServer_SaveMapScriptData(void) {
+static void CreateServer_SaveMapScriptData(void) {
 	int type;
 	char *s, *f, *f2;
 
@@ -1475,7 +1475,7 @@ static void StartServer_SaveMapScriptData(void) {
 		UI_SetSkirmishCvarInt(s, "fraglimit", s_scriptdata.map.fragLimit);
 	}
 
-	StartServer_SaveMapList();
+	CreateServer_SaveMapList();
 
 	UI_SetSkirmishCvarInt(s, "MapSource", s_scriptdata.map.listSource);
 	// save custom frag/time values
@@ -1511,10 +1511,10 @@ static char botskill_tmpbuffer[PLAYER_SLOTS][BOT_TMPBUFFER]; // tmp used to load
 
 /*
 =======================================================================================================================================
-StartServer_IsBotArenaScript
+CreateServer_IsBotArenaScript
 =======================================================================================================================================
 */
-qboolean StartServer_IsBotArenaScript(int type) {
+qboolean CreateServer_IsBotArenaScript(int type) {
 
 	if (type == BOTTYPE_ARENASCRIPT || type == BOTTYPE_RANDOMARENASCRIPT || type == BOTTYPE_SELECTARENASCRIPT) {
 		return qtrue;
@@ -1525,10 +1525,10 @@ qboolean StartServer_IsBotArenaScript(int type) {
 
 /*
 =======================================================================================================================================
-StartServer_IsRandomBotExclude
+CreateServer_IsRandomBotExclude
 =======================================================================================================================================
 */
-qboolean StartServer_IsRandomBotExclude(int type) {
+qboolean CreateServer_IsRandomBotExclude(int type) {
 
 	if (type == BOTTYPE_RANDOMEXCLUDE || type == BOTTYPE_RANDOMARENASCRIPT) {
 		return qtrue;
@@ -1539,10 +1539,10 @@ qboolean StartServer_IsRandomBotExclude(int type) {
 
 /*
 =======================================================================================================================================
-StartServer_IsRandomBotList
+CreateServer_IsRandomBotList
 =======================================================================================================================================
 */
-qboolean StartServer_IsRandomBotList(int type) {
+qboolean CreateServer_IsRandomBotList(int type) {
 
 	if (type == BOTTYPE_RANDOM || type == BOTTYPE_RANDOMEXCLUDE || type == BOTTYPE_RANDOMARENASCRIPT) {
 		return qtrue;
@@ -1553,10 +1553,10 @@ qboolean StartServer_IsRandomBotList(int type) {
 
 /*
 =======================================================================================================================================
-StartServer_SetBotSkillValue
+CreateServer_SetBotSkillValue
 =======================================================================================================================================
 */
-static void StartServer_SetBotSkillValue(botskill_t *b, int value) {
+static void CreateServer_SetBotSkillValue(botskill_t *b, int value) {
 
 	value = (int)Com_Clamp(0, 999, value);
 	b->value = (int)Com_Clamp(0, 4, (value / 100) % 10);
@@ -1566,17 +1566,17 @@ static void StartServer_SetBotSkillValue(botskill_t *b, int value) {
 
 /*
 =======================================================================================================================================
-StartServer_SetBotSkillRangeType
+CreateServer_SetBotSkillRangeType
 
 Assumes s_scriptdata.bot.typeSelect is already initialized.
 =======================================================================================================================================
 */
-void StartServer_SetBotSkillRangeType(int skill) {
+void CreateServer_SetBotSkillRangeType(int skill) {
 	int i;
 	qboolean qbool;
 
 	// wrap skill early if selecting from random
-	if ((StartServer_IsRandomBotList(s_scriptdata.bot.typeSelect) || StartServer_IsBotArenaScript(s_scriptdata.bot.typeSelect)) && skill >= BOTSKILL_CUSTOMSINGLE) {
+	if ((CreateServer_IsRandomBotList(s_scriptdata.bot.typeSelect) || CreateServer_IsBotArenaScript(s_scriptdata.bot.typeSelect)) && skill >= BOTSKILL_CUSTOMSINGLE) {
 		skill = BOTSKILL_SAME;
 	}
 
@@ -1615,10 +1615,10 @@ static char *SSBP_BotBuffer_Callback(int index) {
 
 /*
 =======================================================================================================================================
-StartServer_ValidBotCount
+CreateServer_ValidBotCount
 =======================================================================================================================================
 */
-int StartServer_ValidBotCount(void) {
+int CreateServer_ValidBotCount(void) {
 	int count = 0, i;
 
 	for (i = 0; i < PLAYER_SLOTS; i++) {
@@ -1638,10 +1638,10 @@ int StartServer_ValidBotCount(void) {
 
 /*
 =======================================================================================================================================
-StartServer_BotOnSelectionList
+CreateServer_BotOnSelectionList
 =======================================================================================================================================
 */
-qboolean StartServer_BotOnSelectionList(const char *checkName) {
+qboolean CreateServer_BotOnSelectionList(const char *checkName) {
 	int i;
 
 	for (i = 0; i < PLAYER_SLOTS; i++) {
@@ -1659,10 +1659,10 @@ qboolean StartServer_BotOnSelectionList(const char *checkName) {
 
 /*
 =======================================================================================================================================
-StartServer_DeleteBotSlot
+CreateServer_DeleteBotSlot
 =======================================================================================================================================
 */
-qboolean StartServer_DeleteBotSlot(int index) {
+qboolean CreateServer_DeleteBotSlot(int index) {
 	int i, count, last;
 
 	if (index < 0 || index >= PLAYER_SLOTS) {
@@ -1671,7 +1671,7 @@ qboolean StartServer_DeleteBotSlot(int index) {
 	// number of slots to move
 	count = PLAYER_SLOTS - index - 1;
 
-	if (s_scriptdata.gametype > GT_TOURNAMENT && !StartServer_IsRandomBotExclude(s_scriptdata.bot.typeSelect) && index < PLAYER_SLOTS_PERCOL) {
+	if (s_scriptdata.gametype > GT_TOURNAMENT && !CreateServer_IsRandomBotExclude(s_scriptdata.bot.typeSelect) && index < PLAYER_SLOTS_PERCOL) {
 		count -= PLAYER_SLOTS_PERCOL;
 	}
 
@@ -1698,10 +1698,10 @@ qboolean StartServer_DeleteBotSlot(int index) {
 
 /*
 =======================================================================================================================================
-StartServer_InsertBotSlot
+CreateServer_InsertBotSlot
 =======================================================================================================================================
 */
-qboolean StartServer_InsertBotSlot(int index) {
+qboolean CreateServer_InsertBotSlot(int index) {
 	int i, count;
 
 	if (index < 0 || index >= PLAYER_SLOTS) {
@@ -1737,10 +1737,10 @@ qboolean StartServer_InsertBotSlot(int index) {
 
 /*
 =======================================================================================================================================
-StartServer_SetNamedBot
+CreateServer_SetNamedBot
 =======================================================================================================================================
 */
-void StartServer_SetNamedBot(int index, char *name) {
+void CreateServer_SetNamedBot(int index, char *name) {
 
 	if (index < 0 || index >= PLAYER_SLOTS || !name) {
 		return;
@@ -1756,25 +1756,25 @@ void StartServer_SetNamedBot(int index, char *name) {
 
 /*
 =======================================================================================================================================
-StartServer_InsertNamedBot
+CreateServer_InsertNamedBot
 =======================================================================================================================================
 */
-void StartServer_InsertNamedBot(int index, char *name) {
+void CreateServer_InsertNamedBot(int index, char *name) {
 
 	if (index < 0 || index >= PLAYER_SLOTS || !name) {
 		return;
 	}
 
-	StartServer_InsertBotSlot(index);
-	StartServer_SetNamedBot(index, name);
+	CreateServer_InsertBotSlot(index);
+	CreateServer_SetNamedBot(index, name);
 }
 
 /*
 =======================================================================================================================================
-StartServer_SlotTeam
+CreateServer_SlotTeam
 =======================================================================================================================================
 */
-int StartServer_SlotTeam(int index) {
+int CreateServer_SlotTeam(int index) {
 
 	if (index < 0) {
 		return SLOTTEAM_INVALID;
@@ -1799,10 +1799,10 @@ int StartServer_SlotTeam(int index) {
 
 /*
 =======================================================================================================================================
-StartServer_MoveBotToOtherTeam
+CreateServer_MoveBotToOtherTeam
 =======================================================================================================================================
 */
-void StartServer_MoveBotToOtherTeam(int selected) {
+void CreateServer_MoveBotToOtherTeam(int selected) {
 	int i, firstopen, dest, max, start;
 
 	if (selected < 0 || selected >= PLAYER_SLOTS) {
@@ -1850,24 +1850,24 @@ void StartServer_MoveBotToOtherTeam(int selected) {
 	s_scriptdata.bot.skill[dest].high = s_scriptdata.bot.skill[selected].high;
 	s_scriptdata.bot.skill[dest].low = s_scriptdata.bot.skill[selected].low;
 
-	StartServer_DeleteBotSlot(selected);
+	CreateServer_DeleteBotSlot(selected);
 }
 
 /*
 =======================================================================================================================================
-StartServer_BotNameDrawn
+CreateServer_BotNameDrawn
 =======================================================================================================================================
 */
-void StartServer_BotNameDrawn(int index, qboolean drawn) {
+void CreateServer_BotNameDrawn(int index, qboolean drawn) {
 	s_scriptdata.bot.drawName[index] = drawn;
 }
 
 /*
 =======================================================================================================================================
-StartServer_DoBotAction
+CreateServer_DoBotAction
 =======================================================================================================================================
 */
-void StartServer_DoBotAction(int action, int selected) {
+void CreateServer_DoBotAction(int action, int selected) {
 	int i, count, index, open, slot, bots_done;
 
 	switch (action) {
@@ -1875,7 +1875,7 @@ void StartServer_DoBotAction(int action, int selected) {
 			for (i = 0; i < PLAYER_SLOTS; i++) {
 				if (s_scriptdata.bot.slotType[i] == SLOTTYPE_BOT || s_scriptdata.bot.slotType[i] == SLOTTYPE_OPEN || s_scriptdata.bot.slotType[i] == SLOTTYPE_EMPTY) {
 					s_scriptdata.bot.slotType[i] = SLOTTYPE_EMPTY;
-					StartServer_BotNameDrawn(i, qfalse);
+					CreateServer_BotNameDrawn(i, qfalse);
 					memset(s_scriptdata.bot.name[i], 0, MAX_NAME_LENGTH);
 				}
 			}
@@ -1916,7 +1916,7 @@ void StartServer_DoBotAction(int action, int selected) {
 				count = PLAYER_SLOTS;
 				index = bots_done;
 
-				if (s_scriptdata.gametype > GT_TOURNAMENT && !StartServer_IsRandomBotExclude(s_scriptdata.bot.typeSelect)) {
+				if (s_scriptdata.gametype > GT_TOURNAMENT && !CreateServer_IsRandomBotExclude(s_scriptdata.bot.typeSelect)) {
 					count = PLAYER_SLOTS_PERCOL;
 				}
 				// compact all the bots, counting the open slots
@@ -1930,7 +1930,7 @@ void StartServer_DoBotAction(int action, int selected) {
 					if (slot == SLOTTYPE_BOT || slot == SLOTTYPE_HUMAN) {
 						index++;
 					} else {
-						StartServer_DeleteBotSlot(index);
+						CreateServer_DeleteBotSlot(index);
 					}
 
 					count--;
@@ -1948,10 +1948,10 @@ void StartServer_DoBotAction(int action, int selected) {
 
 /*
 =======================================================================================================================================
-StartServer_ValidateBotSlotCount
+CreateServer_ValidateBotSlotCount
 =======================================================================================================================================
 */
-void StartServer_ValidateBotSlotCount(int bots, int open) {
+void CreateServer_ValidateBotSlotCount(int bots, int open) {
 
 	if (bots < 0) {
 		bots = 0;
@@ -1979,24 +1979,24 @@ void StartServer_ValidateBotSlotCount(int bots, int open) {
 
 /*
 =======================================================================================================================================
-StartServer_AdjustBotSelectionFromGametype
+CreateServer_AdjustBotSelectionFromGametype
 
 Wraps the bot.typeSelect safely, based on the current gametype.
 =======================================================================================================================================
 */
-static void StartServer_AdjustBotSelectionFromGametype(void) {
+static void CreateServer_AdjustBotSelectionFromGametype(void) {
 
-	if (s_scriptdata.gametype > GT_TOURNAMENT && StartServer_IsBotArenaScript(s_scriptdata.bot.typeSelect)) {
+	if (s_scriptdata.gametype > GT_TOURNAMENT && CreateServer_IsBotArenaScript(s_scriptdata.bot.typeSelect)) {
 		s_scriptdata.bot.typeSelect = BOTTYPE_SELECT;
 	}
 }
 
 /*
 =======================================================================================================================================
-StartServer_LoadBotNameList
+CreateServer_LoadBotNameList
 =======================================================================================================================================
 */
-void StartServer_LoadBotNameList(int type) {
+void CreateServer_LoadBotNameList(int type) {
 	char *s, *s1;
 	int i;
 
@@ -2007,16 +2007,16 @@ void StartServer_LoadBotNameList(int type) {
 
 	for (i = 0; i < PLAYER_SLOTS; i++) {
 		s_scriptdata.bot.slotType[i] = SLOTTYPE_EMPTY;
-		StartServer_SetBotSkillValue(&s_scriptdata.bot.skill[i], 0);
+		CreateServer_SetBotSkillValue(&s_scriptdata.bot.skill[i], 0);
 	}
 
-	StartServer_AdjustBotSelectionFromGametype();
+	CreateServer_AdjustBotSelectionFromGametype();
 	// check if we need to load any bot data at all
 	if (s_scriptdata.bot.typeSelect == BOTTYPE_ARENASCRIPT) {
 		return;
 	}
 	// find the right type of bot data to load
-	if (StartServer_IsRandomBotExclude(s_scriptdata.bot.typeSelect)) {
+	if (CreateServer_IsRandomBotExclude(s_scriptdata.bot.typeSelect)) {
 		s1 = "botexclude";
 	} else {
 		s1 = "botname";
@@ -2024,7 +2024,7 @@ void StartServer_LoadBotNameList(int type) {
 	// do the load
 	UI_LoadMultiArray(s, s1, SSBP_BotName_Callback, PLAYER_SLOTS, MAX_NAME_LENGTH, ';');
 
-	if (StartServer_IsRandomBotExclude(s_scriptdata.bot.typeSelect)) {
+	if (CreateServer_IsRandomBotExclude(s_scriptdata.bot.typeSelect)) {
 		for (i = 0; i < PLAYER_SLOTS; i++) {
 			if (s_scriptdata.bot.name[i][0]) {
 				s_scriptdata.bot.slotType[i] = SLOTTYPE_BOT;
@@ -2032,7 +2032,7 @@ void StartServer_LoadBotNameList(int type) {
 				s_scriptdata.bot.slotType[i] = SLOTTYPE_EMPTY;
 			}
 
-			StartServer_SetBotSkillValue(&s_scriptdata.bot.skill[i], 0);
+			CreateServer_SetBotSkillValue(&s_scriptdata.bot.skill[i], 0);
 		}
 	} else {
 		UI_LoadMultiArray(s, "slottype", SSBP_BotBuffer_Callback, PLAYER_SLOTS, BOT_TMPBUFFER, ';');
@@ -2044,7 +2044,7 @@ void StartServer_LoadBotNameList(int type) {
 		UI_LoadMultiArray(s, "botskill", SSBP_BotBuffer_Callback, PLAYER_SLOTS, BOT_TMPBUFFER, ';');
 
 		for (i = 0; i < PLAYER_SLOTS; i++) {
-			StartServer_SetBotSkillValue(&s_scriptdata.bot.skill[i], atoi(botskill_tmpbuffer[i]));
+			CreateServer_SetBotSkillValue(&s_scriptdata.bot.skill[i], atoi(botskill_tmpbuffer[i]));
 		}
 
 		if (!s_scriptdata.bot.joinAs) {
@@ -2061,10 +2061,10 @@ void StartServer_LoadBotNameList(int type) {
 
 /*
 =======================================================================================================================================
-StartServer_SaveBotNameList
+CreateServer_SaveBotNameList
 =======================================================================================================================================
 */
-void StartServer_SaveBotNameList(void) {
+void CreateServer_SaveBotNameList(void) {
 	char *s, *s1;
 	int i;
 	botskill_t *b;
@@ -2072,7 +2072,7 @@ void StartServer_SaveBotNameList(void) {
 
 	s = gametype_cvar_base[gametype_remap2[s_scriptdata.gametype]];
 
-	if (StartServer_IsRandomBotExclude(s_scriptdata.bot.typeSelect)) {
+	if (CreateServer_IsRandomBotExclude(s_scriptdata.bot.typeSelect)) {
 		exclude = qtrue;
 		s1 = "botexclude";
 	} else {
@@ -2100,12 +2100,12 @@ void StartServer_SaveBotNameList(void) {
 
 /*
 =======================================================================================================================================
-StartServer_LoadBotScriptData
+CreateServer_LoadBotScriptData
 
 Loads bot specific gametype data.
 =======================================================================================================================================
 */
-void StartServer_LoadBotScriptData(void) {
+void CreateServer_LoadBotScriptData(void) {
 	char *s;
 
 	s = gametype_cvar_base[gametype_remap2[s_scriptdata.gametype]];
@@ -2115,7 +2115,7 @@ void StartServer_LoadBotScriptData(void) {
 	s_scriptdata.bot.joinAs = UI_GetSkirmishCvarIntClamp(0, 1, s, "PlayerJoinAs");
 	// skill selection method for bots
 	// assumes BotSelection method is already set in Start_Server_LoadBotNameList()
-	StartServer_SetBotSkillRangeType(UI_GetSkirmishCvarIntClamp(0, BOTSKILL_COUNT, s, "BotSkillType"));
+	CreateServer_SetBotSkillRangeType(UI_GetSkirmishCvarIntClamp(0, BOTSKILL_COUNT, s, "BotSkillType"));
 	// number of bots if randomly generated
 	s_scriptdata.bot.numberBots = UI_GetSkirmishCvarIntClamp(0, 99, s, "BotCount");
 	// frequency of bot changing on maps
@@ -2123,7 +2123,7 @@ void StartServer_LoadBotScriptData(void) {
 	// number of open slots if bots are randomly selected
 	s_scriptdata.bot.numberOpen = UI_GetSkirmishCvarIntClamp(0, 99, s, "OpenSlotCount");
 	// skill range values
-	StartServer_SetBotSkillValue(&s_scriptdata.bot.globalSkill, UI_GetSkirmishCvarInt(s, "BotSkillValue"));
+	CreateServer_SetBotSkillValue(&s_scriptdata.bot.globalSkill, UI_GetSkirmishCvarInt(s, "BotSkillValue"));
 	// skill bias
 	s_scriptdata.bot.skillBias = UI_GetSkirmishCvarIntClamp(0, SKILLBIAS_COUNT, s, "BotSkillBias");
 	// swap teams
@@ -2132,17 +2132,17 @@ void StartServer_LoadBotScriptData(void) {
 	}
 	// load bot stats
 	// requires bot.joinAs to be set
-	StartServer_LoadBotNameList(UI_GetSkirmishCvarIntClamp(0, BOTTYPE_MAX, s, "BotSelection"));
+	CreateServer_LoadBotNameList(UI_GetSkirmishCvarIntClamp(0, BOTTYPE_MAX, s, "BotSelection"));
 }
 
 /*
 =======================================================================================================================================
-StartServer_SaveBotScriptData
+CreateServer_SaveBotScriptData
 
 Saves bot specific gametype data.
 =======================================================================================================================================
 */
-static void StartServer_SaveBotScriptData(void) {
+static void CreateServer_SaveBotScriptData(void) {
 	char *s;
 	int value;
 	botskill_t *b;
@@ -2175,7 +2175,7 @@ static void StartServer_SaveBotScriptData(void) {
 	// bots
 
 	// save bot stats
-	StartServer_SaveBotNameList();
+	CreateServer_SaveBotNameList();
 }
 
 /*
@@ -2188,12 +2188,12 @@ static void StartServer_SaveBotScriptData(void) {
 
 /*
 =======================================================================================================================================
-StartServer_LoadDisabledItems
+CreateServer_LoadDisabledItems
 
 Loads item specific gametype data.
 =======================================================================================================================================
 */
-void StartServer_LoadDisabledItems(void) {
+void CreateServer_LoadDisabledItems(void) {
 	char *s, buffer[256], *ptr, *ptr_last;
 	int i;
 
@@ -2248,12 +2248,12 @@ void StartServer_LoadDisabledItems(void) {
 
 /*
 =======================================================================================================================================
-StartServer_SaveItemScriptData
+CreateServer_SaveItemScriptData
 
 Saves item specific gametype data.
 =======================================================================================================================================
 */
-static void StartServer_SaveItemScriptData(void) {
+static void CreateServer_SaveItemScriptData(void) {
 	char *s, buffer[256];
 	int i;
 
@@ -2290,12 +2290,12 @@ static void StartServer_SaveItemScriptData(void) {
 
 /*
 =======================================================================================================================================
-StartServer_LoadServerScriptData
+CreateServer_LoadServerScriptData
 
 Loads server specific gametype data.
 =======================================================================================================================================
 */
-static void StartServer_LoadServerScriptData(void) {
+static void CreateServer_LoadServerScriptData(void) {
 	char *s, *t;
 	int gametype;
 
@@ -2382,12 +2382,12 @@ static void StartServer_LoadServerScriptData(void) {
 
 /*
 =======================================================================================================================================
-StartServer_SaveServerScriptData
+CreateServer_SaveServerScriptData
 
 Saves server specific gametype data.
 =======================================================================================================================================
 */
-static void StartServer_SaveServerScriptData(void) {
+static void CreateServer_SaveServerScriptData(void) {
 	char *s;
 	int friendly, gametype;
 
@@ -2465,54 +2465,54 @@ static void StartServer_SaveServerScriptData(void) {
 
 /*
 =======================================================================================================================================
-StartServer_LoadScriptDataFromType
+CreateServer_LoadScriptDataFromType
 
 Loads script data for the give game type.
 =======================================================================================================================================
 */
-void StartServer_LoadScriptDataFromType(int gametype) {
+void CreateServer_LoadScriptDataFromType(int gametype) {
 
 	s_scriptdata.gametype = gametype;
 
-	StartServer_LoadMapScriptData();
-	StartServer_LoadBotScriptData();
-	StartServer_LoadServerScriptData();
+	CreateServer_LoadMapScriptData();
+	CreateServer_LoadBotScriptData();
+	CreateServer_LoadServerScriptData();
 }
 
 /*
 =======================================================================================================================================
-StartServer_InitScriptData
+CreateServer_InitScriptData
 
 Loads all script data.
 =======================================================================================================================================
 */
-void StartServer_InitScriptData(qboolean multiplayer) {
+void CreateServer_InitScriptData(qboolean multiplayer) {
 
 	memset(&s_scriptdata, 0, sizeof(scriptdata_t));
 
-	UI_StartServer_LoadSkirmishCvars();
+	UI_CreateServer_LoadSkirmishCvars();
 
 	s_scriptdata.multiplayer = multiplayer;
 
-	StartServer_LoadScriptDataFromType((int)Com_Clamp(0, MAX_GAME_TYPE, UI_GetSkirmishCvarInt(NULL, "ui_gametype")));
-	StartServer_BuildMapDistribution();
+	CreateServer_LoadScriptDataFromType((int)Com_Clamp(0, MAX_GAME_TYPE, UI_GetSkirmishCvarInt(NULL, "ui_gametype")));
+	CreateServer_BuildMapDistribution();
 }
 
 /*
 =======================================================================================================================================
-StartServer_SaveScriptData
+CreateServer_SaveScriptData
 
 Saves all script data.
 =======================================================================================================================================
 */
-void StartServer_SaveScriptData(void) {
+void CreateServer_SaveScriptData(void) {
 
 	UI_SetSkirmishCvarInt(NULL, "ui_gametype", s_scriptdata.gametype);
 
-	StartServer_SaveMapScriptData();
-	StartServer_SaveBotScriptData();
-	StartServer_SaveItemScriptData();
-	StartServer_SaveServerScriptData();
+	CreateServer_SaveMapScriptData();
+	CreateServer_SaveBotScriptData();
+	CreateServer_SaveItemScriptData();
+	CreateServer_SaveServerScriptData();
 
-	UI_StartServer_SaveSkirmishCvars();
+	UI_CreateServer_SaveSkirmishCvars();
 }

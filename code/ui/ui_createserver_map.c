@@ -41,7 +41,7 @@ id Software at the address below.
 /*
 =======================================================================================================================================
 
-	START SERVER MAP SELECT MENU
+	CREATE SERVER MAP SELECT MENU
 
 =======================================================================================================================================
 */
@@ -186,15 +186,15 @@ static const char *copyTo_items[MAP_CT_COUNT + 1] = {
 
 /*
 =======================================================================================================================================
-StartServer_MapPage_SetPageText
+CreateServer_MapPage_SetPageText
 =======================================================================================================================================
 */
-static void StartServer_MapPage_SetPageText(void) {
+static void CreateServer_MapPage_SetPageText(void) {
 	int pagecount, pagenum;
 	char *s;
 
 	s = "[Page %i of %i]";
-	pagecount = StartServer_MapPageCount();
+	pagecount = CreateServer_MapPageCount();
 
 	if (s_mapcontrols.map_page > pagecount - 1) {
 		s_mapcontrols.map_page = pagecount - 1;
@@ -214,10 +214,10 @@ static void StartServer_MapPage_SetPageText(void) {
 
 /*
 =======================================================================================================================================
-StartServer_MapPage_CopyCustomLimitsToControls
+CreateServer_MapPage_CopyCustomLimitsToControls
 =======================================================================================================================================
 */
-void StartServer_MapPage_CopyCustomLimitsToControls(void) {
+void CreateServer_MapPage_CopyCustomLimitsToControls(void) {
 	int i, base;
 
 	base = s_mapcontrols.map_page * NUMMAPS_PERPAGE;
@@ -233,10 +233,10 @@ void StartServer_MapPage_CopyCustomLimitsToControls(void) {
 
 /*
 =======================================================================================================================================
-StartServer_MapPage_UpdateActionControls
+CreateServer_MapPage_UpdateActionControls
 =======================================================================================================================================
 */
-static void StartServer_MapPage_UpdateActionControls(void) {
+static void CreateServer_MapPage_UpdateActionControls(void) {
 	int curvalue;
 	qboolean del;
 
@@ -253,7 +253,7 @@ static void StartServer_MapPage_UpdateActionControls(void) {
 		del = qfalse;
 	}
 	// prevent irrelevant options appearing in random map generation
-	if (StartServer_IsRandomGeneratedMapList(s_scriptdata.map.listSource) && !del) {
+	if (CreateServer_IsRandomGeneratedMapList(s_scriptdata.map.listSource) && !del) {
 		curvalue = MAP_CF_CLEARALL;
 		s_mapcontrols.actionSrc.curvalue = curvalue;
 		del = qtrue;
@@ -270,10 +270,10 @@ static void StartServer_MapPage_UpdateActionControls(void) {
 
 /*
 =======================================================================================================================================
-StartServer_MapPage_SetSelectedControl
+CreateServer_MapPage_SetSelectedControl
 =======================================================================================================================================
 */
-static void StartServer_MapPage_SetSelectedControl(int index) {
+static void CreateServer_MapPage_SetSelectedControl(int index) {
 
 	if (s_mapcontrols.map_selected != -1) {
 		s_mapcontrols.displaySelected[s_mapcontrols.map_selected].generic.flags &= ~(QMF_HIGHLIGHT);
@@ -299,19 +299,19 @@ static void StartServer_MapPage_SetSelectedControl(int index) {
 
 /*
 =======================================================================================================================================
-StartServer_MapPage_UpdateInterface
+CreateServer_MapPage_UpdateInterface
 =======================================================================================================================================
 */
-static void StartServer_MapPage_UpdateInterface(void) {
+static void CreateServer_MapPage_UpdateInterface(void) {
 	int i, value, mapcount, adjust;
 	qboolean hide;
 
 	// handle appearance/disappearance of controls, based on page values
 
 	// update icon
-	StartServer_SetIconFromGameType(&s_mapcontrols.gameTypeIcon, s_scriptdata.gametype, qfalse);
+	CreateServer_SetIconFromGameType(&s_mapcontrols.gameTypeIcon, s_scriptdata.gametype, qfalse);
 	// updates map_page to accurate value
-	StartServer_MapPage_SetPageText();
+	CreateServer_MapPage_SetPageText();
 	// offset by one so we display an empty map field if needed
 	// an empty field can have no custom time and frag fields, so we'll then adjust back by one
 	mapcount = 1 + s_scriptdata.map.num_maps - (s_mapcontrols.map_page * NUMMAPS_PERPAGE);
@@ -347,7 +347,7 @@ static void StartServer_MapPage_UpdateInterface(void) {
 		hide = qtrue;
 	}
 
-	if (StartServer_IsRandomGeneratedMapList(s_scriptdata.map.listSource)) {
+	if (CreateServer_IsRandomGeneratedMapList(s_scriptdata.map.listSource)) {
 		hide = qtrue;
 	}
 
@@ -386,7 +386,7 @@ static void StartServer_MapPage_UpdateInterface(void) {
 		hide = qtrue;
 	}
 
-	if (StartServer_IsRandomGeneratedMapList(s_scriptdata.map.listSource)) {
+	if (CreateServer_IsRandomGeneratedMapList(s_scriptdata.map.listSource)) {
 		hide = qtrue;
 	}
 
@@ -434,13 +434,13 @@ static void StartServer_MapPage_UpdateInterface(void) {
 		s_mapcontrols.mapPage.generic.flags &= ~QMF_GRAYED;
 	}
 
-	StartServer_MapPage_UpdateActionControls();
+	CreateServer_MapPage_UpdateActionControls();
 
-	if (StartServer_IsRandomGeneratedMapList(s_scriptdata.map.listSource)) {
+	if (CreateServer_IsRandomGeneratedMapList(s_scriptdata.map.listSource)) {
 		s_mapcontrols.mapSourceCount.generic.flags &= ~QMF_GRAYED;
 		s_mapcontrols.mapSourceType.generic.flags &= ~QMF_GRAYED;
 		// clear highlight
-		StartServer_MapPage_SetSelectedControl(-1);
+		CreateServer_MapPage_SetSelectedControl(-1);
 	} else {
 		s_mapcontrols.mapSourceCount.generic.flags |= QMF_GRAYED;
 		s_mapcontrols.mapSourceType.generic.flags |= QMF_GRAYED;
@@ -456,15 +456,15 @@ static void StartServer_MapPage_UpdateInterface(void) {
 		s_mapcontrols.actionDest.generic.flags &= ~QMF_GRAYED;
 	}
 	// enable fight button if possible
-	StartServer_CheckFightReady(&s_mapcontrols.common);
+	CreateServer_CheckFightReady(&s_mapcontrols.common);
 }
 
 /*
 =======================================================================================================================================
-StartServer_MapPage_Cache
+CreateServer_MapPage_Cache
 =======================================================================================================================================
 */
-void StartServer_MapPage_Cache(void) {
+void CreateServer_MapPage_Cache(void) {
 
 	trap_R_RegisterShaderNoMip(GAMESERVER_VARROWS);
 	trap_R_RegisterShaderNoMip(GAMESERVER_UP);
@@ -479,10 +479,10 @@ void StartServer_MapPage_Cache(void) {
 
 /*
 =======================================================================================================================================
-StartServer_MapPage_DrawMapName
+CreateServer_MapPage_DrawMapName
 =======================================================================================================================================
 */
-static void StartServer_MapPage_DrawMapName(void *item) {
+static void CreateServer_MapPage_DrawMapName(void *item) {
 	float *color;
 	int x, y, style, index;
 	qboolean focus;
@@ -539,26 +539,26 @@ static void StartServer_MapPage_DrawMapName(void *item) {
 
 /*
 =======================================================================================================================================
-StartServer_MapPage_DoAction
+CreateServer_MapPage_DoAction
 =======================================================================================================================================
 */
-static void StartServer_MapPage_DoAction(void) {
+static void CreateServer_MapPage_DoAction(void) {
 	int dest, src;
 
 	src = s_mapcontrols.actionSrc.curvalue;
 	dest = s_mapcontrols.actionDest.curvalue;
 
-	StartServer_MapDoAction(src, dest, s_mapcontrols.map_page, s_mapcontrols.map_selected);
-	StartServer_MapPage_CopyCustomLimitsToControls();
-	StartServer_MapPage_UpdateInterface();
+	CreateServer_MapDoAction(src, dest, s_mapcontrols.map_page, s_mapcontrols.map_selected);
+	CreateServer_MapPage_CopyCustomLimitsToControls();
+	CreateServer_MapPage_UpdateInterface();
 }
 
 /*
 =======================================================================================================================================
-StartServer_MapPage_InitControlsFromScript
+CreateServer_MapPage_InitControlsFromScript
 =======================================================================================================================================
 */
-static void StartServer_MapPage_InitControlsFromScript(void) {
+static void CreateServer_MapPage_InitControlsFromScript(void) {
 	int index;
 	menucommon_s *c;
 
@@ -594,18 +594,18 @@ static void StartServer_MapPage_InitControlsFromScript(void) {
 		s_mapcontrols.actionSrc.itemnames = copyFrom_items;
 	}
 
-	StartServer_MapPage_SetSelectedControl(-1);
-	StartServer_MapPage_CopyCustomLimitsToControls();
+	CreateServer_MapPage_SetSelectedControl(-1);
+	CreateServer_MapPage_CopyCustomLimitsToControls();
 }
 
 /*
 =======================================================================================================================================
-StartServer_MapPage_CheckLimitType
+CreateServer_MapPage_CheckLimitType
 =======================================================================================================================================
 */
-static void StartServer_MapPage_CheckLimitType(void) {
+static void CreateServer_MapPage_CheckLimitType(void) {
 
-	if (!StartServer_IsRandomGeneratedMapList(s_mapcontrols.mapSource.curvalue)) {
+	if (!CreateServer_IsRandomGeneratedMapList(s_mapcontrols.mapSource.curvalue)) {
 		return;
 	}
 	// random maps can't have custom frag limits
@@ -628,44 +628,44 @@ static void StartServer_MapPage_CheckLimitType(void) {
 
 /*
 =======================================================================================================================================
-StartServer_MapPage_Load
+CreateServer_MapPage_Load
 =======================================================================================================================================
 */
-static void StartServer_MapPage_Load(void) {
+static void CreateServer_MapPage_Load(void) {
 
 	s_mapcontrols.gameType.curvalue = gametype_remap2[s_scriptdata.gametype];
 
-	StartServer_MapPage_InitControlsFromScript();
-	StartServer_MapPage_CheckLimitType();
+	CreateServer_MapPage_InitControlsFromScript();
+	CreateServer_MapPage_CheckLimitType();
 }
 
 /*
 =======================================================================================================================================
-StartServer_MapPage_Save
+CreateServer_MapPage_Save
 =======================================================================================================================================
 */
-static void StartServer_MapPage_Save(void) {
-	StartServer_SaveScriptData();
+static void CreateServer_MapPage_Save(void) {
+	CreateServer_SaveScriptData();
 }
 
 /*
 =======================================================================================================================================
-StartServer_MapPage_SelectionEvent
+CreateServer_MapPage_SelectionEvent
 =======================================================================================================================================
 */
-static void StartServer_MapPage_SelectionEvent(void *ptr, int event) {
+static void CreateServer_MapPage_SelectionEvent(void *ptr, int event) {
 
 	if (event == QM_ACTIVATED) {
-		StartServer_MapPage_SetSelectedControl(((menucommon_s *)ptr)->id);
+		CreateServer_MapPage_SetSelectedControl(((menucommon_s *)ptr)->id);
 	}
 }
 
 /*
 =======================================================================================================================================
-StartServer_MapPage_SetStatusBarText
+CreateServer_MapPage_SetStatusBarText
 =======================================================================================================================================
 */
-static void StartServer_MapPage_SetStatusBarText(const char *text) {
+static void CreateServer_MapPage_SetStatusBarText(const char *text) {
 
 	if (!text || !text[0]) {
 		s_mapcontrols.statusbar_text[0] = 0;
@@ -677,10 +677,10 @@ static void StartServer_MapPage_SetStatusBarText(const char *text) {
 
 /*
 =======================================================================================================================================
-StartServer_MapPage_MapCount_callback
+CreateServer_MapPage_MapCount_callback
 =======================================================================================================================================
 */
-static qboolean StartServer_MapPage_MapCount_callback(const char *info) {
+static qboolean CreateServer_MapPage_MapCount_callback(const char *info) {
 	int subtype;
 	const char *mapname;
 
@@ -692,15 +692,15 @@ static qboolean StartServer_MapPage_MapCount_callback(const char *info) {
 
 	subtype -= MAP_RND_MAX;
 	mapname = Info_ValueForKey(info, "map");
-	return StartServer_IsCustomMapType(mapname, subtype);
+	return CreateServer_IsCustomMapType(mapname, subtype);
 }
 
 /*
 =======================================================================================================================================
-StartServer_MapPage_SetSourceTypeText
+CreateServer_MapPage_SetSourceTypeText
 =======================================================================================================================================
 */
-static void StartServer_MapPage_SetSourceTypeText(void) {
+static void CreateServer_MapPage_SetSourceTypeText(void) {
 	char *s, *t;
 	int id, nonid, total, count, remap, subtype;
 
@@ -721,7 +721,7 @@ static void StartServer_MapPage_SetSourceTypeText(void) {
 		subtype = s_mapcontrols.mapSourceType.curvalue - MAP_RND_MAX;
 
 		if (subtype >= 0) {
-			count = UI_BuildMapListByType(NULL, 0, s_scriptdata.gametype, StartServer_MapPage_MapCount_callback);
+			count = UI_BuildMapListByType(NULL, 0, s_scriptdata.gametype, CreateServer_MapPage_MapCount_callback);
 			s = va("%i of this type", count);
 		}
 
@@ -730,24 +730,24 @@ static void StartServer_MapPage_SetSourceTypeText(void) {
 		t = "No maps";
 	}
 
-	StartServer_MapPage_SetStatusBarText(t);
+	CreateServer_MapPage_SetStatusBarText(t);
 }
 
 /*
 =======================================================================================================================================
-StartServer_MapPage_LimitStatusbar
+CreateServer_MapPage_LimitStatusbar
 =======================================================================================================================================
 */
-static void StartServer_MapPage_LimitStatusbar(void *self) {
+static void CreateServer_MapPage_LimitStatusbar(void *self) {
 	UI_DrawString(140, s_mapcontrols.statusbar_height, "0 = Unlimited", UI_CENTER|UI_SMALLFONT, color_white);
 }
 
 /*
 =======================================================================================================================================
-StartServer_MapPage_TimeLimitEvent
+CreateServer_MapPage_TimeLimitEvent
 =======================================================================================================================================
 */
-static void StartServer_MapPage_TimeLimitEvent(void *ptr, int event) {
+static void CreateServer_MapPage_TimeLimitEvent(void *ptr, int event) {
 	int index, base;
 
 	base = s_mapcontrols.map_page * NUMMAPS_PERPAGE;
@@ -762,10 +762,10 @@ static void StartServer_MapPage_TimeLimitEvent(void *ptr, int event) {
 
 /*
 =======================================================================================================================================
-StartServer_MapPage_FragLimitEvent
+CreateServer_MapPage_FragLimitEvent
 =======================================================================================================================================
 */
-static void StartServer_MapPage_FragLimitEvent(void *ptr, int event) {
+static void CreateServer_MapPage_FragLimitEvent(void *ptr, int event) {
 	int index, base;
 
 	base = s_mapcontrols.map_page * NUMMAPS_PERPAGE;
@@ -780,10 +780,10 @@ static void StartServer_MapPage_FragLimitEvent(void *ptr, int event) {
 
 /*
 =======================================================================================================================================
-StartServer_MapPage_MenuEvent
+CreateServer_MapPage_MenuEvent
 =======================================================================================================================================
 */
-static void StartServer_MapPage_MenuEvent(void *ptr, int event) {
+static void CreateServer_MapPage_MenuEvent(void *ptr, int event) {
 	static char *buf;
 	static int num, index;
 
@@ -794,24 +794,24 @@ static void StartServer_MapPage_MenuEvent(void *ptr, int event) {
 				break;
 			}
 			// make all changes before updating control page
-			StartServer_SaveScriptData();
-			StartServer_LoadScriptDataFromType(gametype_remap[s_mapcontrols.gameType.curvalue]);
-			StartServer_MapPage_InitControlsFromScript();
-			StartServer_MapPage_UpdateInterface();
+			CreateServer_SaveScriptData();
+			CreateServer_LoadScriptDataFromType(gametype_remap[s_mapcontrols.gameType.curvalue]);
+			CreateServer_MapPage_InitControlsFromScript();
+			CreateServer_MapPage_UpdateInterface();
 			break;
 		case ID_MAP_MAPSOURCE:
 			if (event != QM_ACTIVATED) {
 				break;
 			}
 
-			StartServer_SaveMapList();
+			CreateServer_SaveMapList();
 
 			s_scriptdata.map.listSource = s_mapcontrols.mapSource.curvalue;
 
-			StartServer_LoadMapList();
-			StartServer_RefreshMapNames();
-			StartServer_MapPage_CheckLimitType();
-			StartServer_MapPage_UpdateInterface();
+			CreateServer_LoadMapList();
+			CreateServer_RefreshMapNames();
+			CreateServer_MapPage_CheckLimitType();
+			CreateServer_MapPage_UpdateInterface();
 			break;
 		case ID_MAP_SOURCECOUNT:
 			if (event == QM_LOSTFOCUS) {
@@ -837,12 +837,12 @@ static void StartServer_MapPage_MenuEvent(void *ptr, int event) {
 				break;
 			}
 
-			StartServer_MapPage_CheckLimitType();
+			CreateServer_MapPage_CheckLimitType();
 
 			s_scriptdata.map.fragLimitType = s_mapcontrols.fragLimitType.curvalue;
 			s_scriptdata.map.timeLimitType = s_mapcontrols.timeLimitType.curvalue;
 
-			StartServer_MapPage_UpdateInterface();
+			CreateServer_MapPage_UpdateInterface();
 			break;
 		case ID_MAP_TIMECOUNT:
 			if (event == QM_LOSTFOCUS) {
@@ -883,7 +883,7 @@ static void StartServer_MapPage_MenuEvent(void *ptr, int event) {
 
 			num = s_mapcontrols.map_page * NUMMAPS_PERPAGE;
 
-			StartServer_DeleteMap(num + index);
+			CreateServer_DeleteMap(num + index);
 			// end of list deleted, move up one place
 			if (num + index == s_scriptdata.map.num_maps) {
 				if (index == 0) { // move to previous page
@@ -897,11 +897,11 @@ static void StartServer_MapPage_MenuEvent(void *ptr, int event) {
 					index--;
 				}
 				// index is guaranteed to have changed
-				StartServer_MapPage_SetSelectedControl(index);
+				CreateServer_MapPage_SetSelectedControl(index);
 			}
 
-			StartServer_MapPage_CopyCustomLimitsToControls();
-			StartServer_MapPage_UpdateInterface();
+			CreateServer_MapPage_CopyCustomLimitsToControls();
+			CreateServer_MapPage_UpdateInterface();
 			break;
 		case ID_MAP_UP:
 			if (event != QM_ACTIVATED) {
@@ -916,7 +916,7 @@ static void StartServer_MapPage_MenuEvent(void *ptr, int event) {
 
 			num = s_mapcontrols.map_page * NUMMAPS_PERPAGE;
 
-			if (StartServer_SwapMaps(num + index, num + index - 1)) {
+			if (CreateServer_SwapMaps(num + index, num + index - 1)) {
 				if (index > 0) {
 					index--;
 				} else if (s_mapcontrols.map_page > 0) {
@@ -926,11 +926,11 @@ static void StartServer_MapPage_MenuEvent(void *ptr, int event) {
 				}
 			}
 
-			StartServer_MapPage_CopyCustomLimitsToControls();
-			StartServer_MapPage_UpdateInterface();
+			CreateServer_MapPage_CopyCustomLimitsToControls();
+			CreateServer_MapPage_UpdateInterface();
 
 			if (index != s_mapcontrols.map_selected) {
-				StartServer_MapPage_SetSelectedControl(index);
+				CreateServer_MapPage_SetSelectedControl(index);
 			}
 
 			break;
@@ -947,7 +947,7 @@ static void StartServer_MapPage_MenuEvent(void *ptr, int event) {
 
 			num = s_mapcontrols.map_page * NUMMAPS_PERPAGE;
 
-			if (StartServer_SwapMaps(num + index, num + index + 1)) {
+			if (CreateServer_SwapMaps(num + index, num + index + 1)) {
 				if (index < NUMMAPS_PERPAGE - 1) {
 					index++;
 				} else if (num + index + 1 < s_scriptdata.map.num_maps) {
@@ -957,11 +957,11 @@ static void StartServer_MapPage_MenuEvent(void *ptr, int event) {
 				}
 			}
 
-			StartServer_MapPage_CopyCustomLimitsToControls();
-			StartServer_MapPage_UpdateInterface();
+			CreateServer_MapPage_CopyCustomLimitsToControls();
+			CreateServer_MapPage_UpdateInterface();
 
 			if (index != s_mapcontrols.map_selected) {
-				StartServer_MapPage_SetSelectedControl(index);
+				CreateServer_MapPage_SetSelectedControl(index);
 			}
 
 			break;
@@ -973,34 +973,34 @@ static void StartServer_MapPage_MenuEvent(void *ptr, int event) {
 
 			s_mapcontrols.map_page++;
 
-			if (s_mapcontrols.map_page == StartServer_MapPageCount()) {
+			if (s_mapcontrols.map_page == CreateServer_MapPageCount()) {
 				s_mapcontrols.map_page = 0;
 			}
 
-			StartServer_MapPage_SetSelectedControl(-1);
-			StartServer_MapPage_CopyCustomLimitsToControls();
-			StartServer_MapPage_UpdateInterface();
+			CreateServer_MapPage_SetSelectedControl(-1);
+			CreateServer_MapPage_CopyCustomLimitsToControls();
+			CreateServer_MapPage_UpdateInterface();
 			break;
 		case ID_MAP_ACTIONTYPE:
 			if (event != QM_ACTIVATED) {
 				break;
 			}
 
-			StartServer_MapPage_UpdateActionControls();
+			CreateServer_MapPage_UpdateActionControls();
 			break;
 		case ID_MAP_ACTION:
 			if (event != QM_ACTIVATED) {
 				break;
 			}
 
-			StartServer_MapPage_DoAction();
+			CreateServer_MapPage_DoAction();
 			break;
 		case ID_MAP_SOURCETYPE:
 			if (event != QM_ACTIVATED) {
 				break;
 			}
 
-			StartServer_MapPage_SetSourceTypeText();
+			CreateServer_MapPage_SetSourceTypeText();
 			s_scriptdata.map.SourceType = s_mapcontrols.mapSourceType.curvalue;
 			break;
 	}
@@ -1008,30 +1008,30 @@ static void StartServer_MapPage_MenuEvent(void *ptr, int event) {
 
 /*
 =======================================================================================================================================
-StartServer_MapPage_CommonEvent
+CreateServer_MapPage_CommonEvent
 =======================================================================================================================================
 */
-static void StartServer_MapPage_CommonEvent(void *ptr, int event) {
+static void CreateServer_MapPage_CommonEvent(void *ptr, int event) {
 
 	if (event != QM_ACTIVATED) {
 		return;
 	}
 
-	StartServer_MapPage_Save();
+	CreateServer_MapPage_Save();
 
 	switch (((menucommon_s *)ptr)->id) {
 		case ID_SERVERCOMMON_SERVER:
-			StartServer_BotPage_MenuInit();
-			StartServer_ServerPage_MenuInit();
+			CreateServer_BotPage_MenuInit();
+			CreateServer_ServerPage_MenuInit();
 			break;
 		case ID_SERVERCOMMON_BOTS:
-			StartServer_BotPage_MenuInit();
+			CreateServer_BotPage_MenuInit();
 			break;
 		case ID_SERVERCOMMON_BACK:
 			UI_PopMenu();
 			break;
 		case ID_SERVERCOMMON_FIGHT:
-			StartServer_CreateServer(NULL);
+			CreateServer_CreateServer(NULL);
 			break;
 		case ID_SINGLEPLAYER:
 			UI_PopMenu();
@@ -1052,10 +1052,10 @@ static void StartServer_MapPage_CommonEvent(void *ptr, int event) {
 
 /*
 =======================================================================================================================================
-StartServer_MapPage_ChangeMapEvent
+CreateServer_MapPage_ChangeMapEvent
 =======================================================================================================================================
 */
-static void StartServer_MapPage_ChangeMapEvent(void *ptr, int event) {
+static void CreateServer_MapPage_ChangeMapEvent(void *ptr, int event) {
 	int index;
 
 	index = ((menucommon_s *)ptr)->id + (NUMMAPS_PERPAGE * s_mapcontrols.map_page);
@@ -1066,7 +1066,7 @@ static void StartServer_MapPage_ChangeMapEvent(void *ptr, int event) {
 			break;
 		case QM_GOTFOCUS:
 			if (index < s_scriptdata.map.num_maps) {
-				StartServer_InitMapPicture(&s_mapcontrols.mappic, s_scriptdata.map.data[index].shortName);
+				CreateServer_InitMapPicture(&s_mapcontrols.mappic, s_scriptdata.map.data[index].shortName);
 			}
 
 			break;
@@ -1075,10 +1075,10 @@ static void StartServer_MapPage_ChangeMapEvent(void *ptr, int event) {
 
 /*
 =======================================================================================================================================
-StartServer_MapPage_InitPageText
+CreateServer_MapPage_InitPageText
 =======================================================================================================================================
 */
-static void StartServer_MapPage_InitPageText(menutext_s *a) {
+static void CreateServer_MapPage_InitPageText(menutext_s *a) {
 	int len, cw, ch;
 
 	// calculate bounds
@@ -1104,10 +1104,10 @@ static void StartServer_MapPage_InitPageText(menutext_s *a) {
 
 /*
 =======================================================================================================================================
-StartServer_MapPage_DrawPageText
+CreateServer_MapPage_DrawPageText
 =======================================================================================================================================
 */
-static void StartServer_MapPage_DrawPageText(void *b) {
+static void CreateServer_MapPage_DrawPageText(void *b) {
 	float *color;
 	int x, y, style;
 	qboolean focus;
@@ -1141,27 +1141,27 @@ static void StartServer_MapPage_DrawPageText(void *b) {
 
 /*
 =======================================================================================================================================
-StartServer_MapPage_DrawStatusBarText
+CreateServer_MapPage_DrawStatusBarText
 =======================================================================================================================================
 */
-static void StartServer_MapPage_DrawStatusBarText(void *self) {
+static void CreateServer_MapPage_DrawStatusBarText(void *self) {
 	UI_DrawString(140, s_mapcontrols.statusbar_height, s_mapcontrols.statusbar_text, UI_CENTER|UI_SMALLFONT, color_white);
 }
 
 /*
 =======================================================================================================================================
-StartServer_MapPage_MenuDraw
+CreateServer_MapPage_MenuDraw
 =======================================================================================================================================
 */
-static void StartServer_MapPage_MenuDraw(void) {
+static void CreateServer_MapPage_MenuDraw(void) {
 	int i, maxmaps;
 	float f;
 	qboolean excluded;
 	menucommon_s *g;
 
 	if (uis.firstdraw) {
-		StartServer_MapPage_Load();
-		StartServer_MapPage_UpdateInterface();
+		CreateServer_MapPage_Load();
+		CreateServer_MapPage_UpdateInterface();
 	}
 
 	excluded = qfalse;
@@ -1170,7 +1170,7 @@ static void StartServer_MapPage_MenuDraw(void) {
 		excluded = qtrue;
 	}
 
-	StartServer_BackgroundDraw(excluded);
+	CreateServer_BackgroundDraw(excluded);
 	// draw map picture
 	maxmaps = s_scriptdata.map.num_maps - s_mapcontrols.map_page * NUMMAPS_PERPAGE;
 
@@ -1200,7 +1200,7 @@ static void StartServer_MapPage_MenuDraw(void) {
 		UI_DrawNamedPic(640 - 12 - 134, 24 - 7 + 20, 144, 106, MAPSELECT_SELECT);
 		trap_R_SetColor(NULL);
 
-		StartServer_DrawMapPicture(640 - 12 - 124, 24 + 20, 124, 85, &s_mapcontrols.mappic, pulsecolor);
+		CreateServer_DrawMapPicture(640 - 12 - 124, 24 + 20, 124, 85, &s_mapcontrols.mappic, pulsecolor);
 	}
 	// draw the controls
 	Menu_Draw(&s_mapcontrols.menu);
@@ -1208,23 +1208,23 @@ static void StartServer_MapPage_MenuDraw(void) {
 
 /*
 =======================================================================================================================================
-StartServer_MapPage_MenuInit
+CreateServer_MapPage_MenuInit
 =======================================================================================================================================
 */
-void StartServer_MapPage_MenuInit(void) {
+void CreateServer_MapPage_MenuInit(void) {
 	menuframework_s *menuptr;
 	int y, n;
 
 	memset(&s_mapcontrols, 0, sizeof(mapcontrols_t));
 
-	StartServer_MapPage_Cache();
+	CreateServer_MapPage_Cache();
 
 	menuptr = &s_mapcontrols.menu;
 	menuptr->wrapAround = qtrue;
 	menuptr->fullscreen = qtrue;
-	menuptr->draw = StartServer_MapPage_MenuDraw;
+	menuptr->draw = CreateServer_MapPage_MenuDraw;
 
-	StartServer_CommonControls_Init(menuptr, &s_mapcontrols.common, StartServer_MapPage_CommonEvent, COMMONCTRL_MAPS);
+	CreateServer_CommonControls_Init(menuptr, &s_mapcontrols.common, CreateServer_MapPage_CommonEvent, COMMONCTRL_MAPS);
 
 	s_mapcontrols.map_selected = -1;
 	// the user selected maps
@@ -1233,7 +1233,7 @@ void StartServer_MapPage_MenuInit(void) {
 	s_mapcontrols.gameType.generic.name = "Game Type:";
 	s_mapcontrols.gameType.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
 	s_mapcontrols.gameType.generic.id = ID_MAP_GAMETYPE;
-	s_mapcontrols.gameType.generic.callback = StartServer_MapPage_MenuEvent;
+	s_mapcontrols.gameType.generic.callback = CreateServer_MapPage_MenuEvent;
 	s_mapcontrols.gameType.generic.x = GAMETYPECOLUMN_X;
 	s_mapcontrols.gameType.generic.y = y;
 	s_mapcontrols.gameType.itemnames = gametype_items;
@@ -1250,7 +1250,7 @@ void StartServer_MapPage_MenuInit(void) {
 	s_mapcontrols.mapSource.generic.name = "Map Source:";
 	s_mapcontrols.mapSource.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
 	s_mapcontrols.mapSource.generic.id = ID_MAP_MAPSOURCE;
-	s_mapcontrols.mapSource.generic.callback = StartServer_MapPage_MenuEvent;
+	s_mapcontrols.mapSource.generic.callback = CreateServer_MapPage_MenuEvent;
 	s_mapcontrols.mapSource.generic.x = GAMETYPECOLUMN_X;
 	s_mapcontrols.mapSource.generic.y = y;
 	s_mapcontrols.mapSource.itemnames = mapSource_items;
@@ -1260,7 +1260,7 @@ void StartServer_MapPage_MenuInit(void) {
 	s_mapcontrols.timeLimitType.generic.name = "Time limit:";
 	s_mapcontrols.timeLimitType.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
 	s_mapcontrols.timeLimitType.generic.id = ID_MAP_TIMELIMIT;
-	s_mapcontrols.timeLimitType.generic.callback = StartServer_MapPage_MenuEvent;
+	s_mapcontrols.timeLimitType.generic.callback = CreateServer_MapPage_MenuEvent;
 	s_mapcontrols.timeLimitType.generic.x = MAPCOLUMN_LEFTX;
 	s_mapcontrols.timeLimitType.generic.y = y;
 	s_mapcontrols.timeLimitType.itemnames = timelimittype_items;
@@ -1271,8 +1271,8 @@ void StartServer_MapPage_MenuInit(void) {
 	s_mapcontrols.timeLimit.generic.x = MAPCOLUMN_LEFTX + 9 * SMALLCHAR_WIDTH;
 	s_mapcontrols.timeLimit.generic.y = y;
 	s_mapcontrols.timeLimit.generic.id = ID_MAP_TIMECOUNT;
-	s_mapcontrols.timeLimit.generic.callback = StartServer_MapPage_MenuEvent;
-	s_mapcontrols.timeLimit.generic.statusbar = StartServer_MapPage_LimitStatusbar;
+	s_mapcontrols.timeLimit.generic.callback = CreateServer_MapPage_MenuEvent;
+	s_mapcontrols.timeLimit.generic.statusbar = CreateServer_MapPage_LimitStatusbar;
 	s_mapcontrols.timeLimit.field.widthInChars = 3;
 	s_mapcontrols.timeLimit.field.maxchars = 3;
 
@@ -1282,7 +1282,7 @@ void StartServer_MapPage_MenuInit(void) {
 	s_mapcontrols.mapSourceCount.generic.x = MAPCOLUMN_RIGHTX;
 	s_mapcontrols.mapSourceCount.generic.y = y;
 	s_mapcontrols.mapSourceCount.generic.id = ID_MAP_SOURCECOUNT;
-	s_mapcontrols.mapSourceCount.generic.callback = StartServer_MapPage_MenuEvent;
+	s_mapcontrols.mapSourceCount.generic.callback = CreateServer_MapPage_MenuEvent;
 	s_mapcontrols.mapSourceCount.field.widthInChars = 3;
 	s_mapcontrols.mapSourceCount.field.maxchars = 2;
 
@@ -1292,8 +1292,8 @@ void StartServer_MapPage_MenuInit(void) {
 	s_mapcontrols.mapSourceType.generic.x = MAPCOLUMN_RIGHTX + (4 * SMALLCHAR_WIDTH);
 	s_mapcontrols.mapSourceType.generic.y = y;
 	s_mapcontrols.mapSourceType.generic.id = ID_MAP_SOURCETYPE;
-	s_mapcontrols.mapSourceType.generic.callback = StartServer_MapPage_MenuEvent;
-	s_mapcontrols.mapSourceType.generic.statusbar = StartServer_MapPage_DrawStatusBarText;
+	s_mapcontrols.mapSourceType.generic.callback = CreateServer_MapPage_MenuEvent;
+	s_mapcontrols.mapSourceType.generic.statusbar = CreateServer_MapPage_DrawStatusBarText;
 	s_mapcontrols.mapSourceType.itemnames = randommaptype_items;
 
 	y += LINE_HEIGHT;
@@ -1301,7 +1301,7 @@ void StartServer_MapPage_MenuInit(void) {
 	s_mapcontrols.fragLimitType.generic.name = 0;
 	s_mapcontrols.fragLimitType.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
 	s_mapcontrols.fragLimitType.generic.id = ID_MAP_FRAGLIMIT;
-	s_mapcontrols.fragLimitType.generic.callback = StartServer_MapPage_MenuEvent;
+	s_mapcontrols.fragLimitType.generic.callback = CreateServer_MapPage_MenuEvent;
 	s_mapcontrols.fragLimitType.generic.x = MAPCOLUMN_LEFTX;
 	s_mapcontrols.fragLimitType.generic.y = y;
 	s_mapcontrols.fragLimitType.itemnames = fraglimittype_items;
@@ -1312,8 +1312,8 @@ void StartServer_MapPage_MenuInit(void) {
 	s_mapcontrols.fragLimit.generic.x = MAPCOLUMN_LEFTX + 9 * SMALLCHAR_WIDTH;
 	s_mapcontrols.fragLimit.generic.y = y;
 	s_mapcontrols.fragLimit.generic.id = ID_MAP_FRAGCOUNT;
-	s_mapcontrols.fragLimit.generic.callback = StartServer_MapPage_MenuEvent;
-	s_mapcontrols.fragLimit.generic.statusbar = StartServer_MapPage_LimitStatusbar;
+	s_mapcontrols.fragLimit.generic.callback = CreateServer_MapPage_MenuEvent;
+	s_mapcontrols.fragLimit.generic.statusbar = CreateServer_MapPage_LimitStatusbar;
 	s_mapcontrols.fragLimit.field.widthInChars = 3;
 	s_mapcontrols.fragLimit.field.maxchars = 3;
 
@@ -1321,7 +1321,7 @@ void StartServer_MapPage_MenuInit(void) {
 	s_mapcontrols.mapRepeat.generic.name = "Repeat forever:";
 	s_mapcontrols.mapRepeat.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
 	s_mapcontrols.mapRepeat.generic.id = ID_MAP_MAPREPEAT;
-	s_mapcontrols.mapRepeat.generic.callback = StartServer_MapPage_MenuEvent;
+	s_mapcontrols.mapRepeat.generic.callback = CreateServer_MapPage_MenuEvent;
 	s_mapcontrols.mapRepeat.generic.x = MAPCOLUMN_RIGHTX;
 	s_mapcontrols.mapRepeat.generic.y = y;
 
@@ -1364,7 +1364,7 @@ void StartServer_MapPage_MenuInit(void) {
 
 	s_mapcontrols.up.generic.type = MTYPE_BITMAP;
 	s_mapcontrols.up.generic.flags = QMF_LEFT_JUSTIFY|QMF_PULSEIFFOCUS;
-	s_mapcontrols.up.generic.callback = StartServer_MapPage_MenuEvent;
+	s_mapcontrols.up.generic.callback = CreateServer_MapPage_MenuEvent;
 	s_mapcontrols.up.generic.id = ID_MAP_UP;
 	s_mapcontrols.up.generic.x = MAPBUTTONS_X;
 	s_mapcontrols.up.generic.y = y;
@@ -1374,7 +1374,7 @@ void StartServer_MapPage_MenuInit(void) {
 
 	s_mapcontrols.down.generic.type = MTYPE_BITMAP;
 	s_mapcontrols.down.generic.flags = QMF_LEFT_JUSTIFY|QMF_PULSEIFFOCUS;
-	s_mapcontrols.down.generic.callback = StartServer_MapPage_MenuEvent;
+	s_mapcontrols.down.generic.callback = CreateServer_MapPage_MenuEvent;
 	s_mapcontrols.down.generic.id = ID_MAP_DOWN;
 	s_mapcontrols.down.generic.x = MAPBUTTONS_X;
 	s_mapcontrols.down.generic.y = y + GAMESERVER_ARROWHEIGHT;
@@ -1385,7 +1385,7 @@ void StartServer_MapPage_MenuInit(void) {
 	s_mapcontrols.del.generic.type = MTYPE_BITMAP;
 	s_mapcontrols.del.generic.name = GAMESERVER_DEL0;
 	s_mapcontrols.del.generic.flags = QMF_LEFT_JUSTIFY|QMF_PULSEIFFOCUS;
-	s_mapcontrols.del.generic.callback = StartServer_MapPage_MenuEvent;
+	s_mapcontrols.del.generic.callback = CreateServer_MapPage_MenuEvent;
 	s_mapcontrols.del.generic.id = ID_MAP_DEL;
 	s_mapcontrols.del.generic.x = MAPBUTTONS_X;
 	s_mapcontrols.del.generic.y = y + 2 * GAMESERVER_ARROWHEIGHT;
@@ -1401,8 +1401,8 @@ void StartServer_MapPage_MenuInit(void) {
 		s_mapcontrols.displaySelected[n].generic.x = MAPARRAYCOLUMN_X - 20;
 		s_mapcontrols.displaySelected[n].generic.y = y;
 		s_mapcontrols.displaySelected[n].generic.id = n;
-		s_mapcontrols.displaySelected[n].generic.callback = StartServer_MapPage_SelectionEvent;
-		s_mapcontrols.displaySelected[n].generic.ownerdraw = StartServer_SelectionDraw;
+		s_mapcontrols.displaySelected[n].generic.callback = CreateServer_MapPage_SelectionEvent;
+		s_mapcontrols.displaySelected[n].generic.ownerdraw = CreateServer_SelectionDraw;
 		s_mapcontrols.displaySelected[n].width = 16;
 		s_mapcontrols.displaySelected[n].height = 16;
 		s_mapcontrols.displaySelected[n].focuspic = GAMESERVER_SELECTED1;
@@ -1412,8 +1412,8 @@ void StartServer_MapPage_MenuInit(void) {
 		s_mapcontrols.displayMapName[n].generic.x = MAPARRAYCOLUMN_X;
 		s_mapcontrols.displayMapName[n].generic.y = y;
 		s_mapcontrols.displayMapName[n].generic.id = n;
-		s_mapcontrols.displayMapName[n].generic.callback = StartServer_MapPage_ChangeMapEvent;
-		s_mapcontrols.displayMapName[n].generic.ownerdraw = StartServer_MapPage_DrawMapName;
+		s_mapcontrols.displayMapName[n].generic.callback = CreateServer_MapPage_ChangeMapEvent;
+		s_mapcontrols.displayMapName[n].generic.ownerdraw = CreateServer_MapPage_DrawMapName;
 		s_mapcontrols.displayMapName[n].generic.top = y;
 		s_mapcontrols.displayMapName[n].generic.bottom = y + SMALLCHAR_HEIGHT;
 		s_mapcontrols.displayMapName[n].generic.left = MAPARRAYCOLUMN_X - SMALLCHAR_WIDTH / 2;
@@ -1427,8 +1427,8 @@ void StartServer_MapPage_MenuInit(void) {
 		s_mapcontrols.displayFragLimit[n].generic.x = MAPARRAYCOLUMN_X + MAPFRAGS_DX;
 		s_mapcontrols.displayFragLimit[n].generic.y = y;
 		s_mapcontrols.displayFragLimit[n].generic.id = n;
-		s_mapcontrols.displayFragLimit[n].generic.callback = StartServer_MapPage_FragLimitEvent;
-		s_mapcontrols.displayFragLimit[n].generic.statusbar = StartServer_MapPage_LimitStatusbar;
+		s_mapcontrols.displayFragLimit[n].generic.callback = CreateServer_MapPage_FragLimitEvent;
+		s_mapcontrols.displayFragLimit[n].generic.statusbar = CreateServer_MapPage_LimitStatusbar;
 		s_mapcontrols.displayFragLimit[n].field.widthInChars = 3;
 		s_mapcontrols.displayFragLimit[n].field.maxchars = 3;
 
@@ -1438,8 +1438,8 @@ void StartServer_MapPage_MenuInit(void) {
 		s_mapcontrols.displayTimeLimit[n].generic.x = MAPARRAYCOLUMN_X + MAPTIME_DX;
 		s_mapcontrols.displayTimeLimit[n].generic.y = y;
 		s_mapcontrols.displayTimeLimit[n].generic.id = n;
-		s_mapcontrols.displayTimeLimit[n].generic.callback = StartServer_MapPage_TimeLimitEvent;
-		s_mapcontrols.displayTimeLimit[n].generic.statusbar = StartServer_MapPage_LimitStatusbar;
+		s_mapcontrols.displayTimeLimit[n].generic.callback = CreateServer_MapPage_TimeLimitEvent;
+		s_mapcontrols.displayTimeLimit[n].generic.statusbar = CreateServer_MapPage_LimitStatusbar;
 		s_mapcontrols.displayTimeLimit[n].field.widthInChars = 3;
 		s_mapcontrols.displayTimeLimit[n].field.maxchars = MAP_NUMBER_FIELD;
 	}
@@ -1447,21 +1447,21 @@ void StartServer_MapPage_MenuInit(void) {
 	y += 2 * LINE_HEIGHT;
 	s_mapcontrols.mapPage.generic.type = MTYPE_TEXT;
 	s_mapcontrols.mapPage.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
-	s_mapcontrols.mapPage.generic.callback = StartServer_MapPage_MenuEvent;
+	s_mapcontrols.mapPage.generic.callback = CreateServer_MapPage_MenuEvent;
 	s_mapcontrols.mapPage.generic.id = ID_MAP_PAGENUM;
 	s_mapcontrols.mapPage.generic.x = MAPARRAYCOLUMN_X;
 	s_mapcontrols.mapPage.generic.y = y;
-	s_mapcontrols.mapPage.generic.ownerdraw = StartServer_MapPage_DrawPageText;
+	s_mapcontrols.mapPage.generic.ownerdraw = CreateServer_MapPage_DrawPageText;
 	s_mapcontrols.mapPage.generic.name = s_mapcontrols.mappage_text;
 	s_mapcontrols.mapPage.color = text_color_normal;
 
-	StartServer_MapPage_SetPageText();
+	CreateServer_MapPage_SetPageText();
 
 	s_mapcontrols.actionSrc.generic.type = MTYPE_SPINCONTROL;
 	s_mapcontrols.actionSrc.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
 	s_mapcontrols.actionSrc.generic.id = ID_MAP_ACTIONTYPE;
 	s_mapcontrols.actionSrc.generic.name = ACTIONTYPE_DELETE;
-	s_mapcontrols.actionSrc.generic.callback = StartServer_MapPage_MenuEvent;
+	s_mapcontrols.actionSrc.generic.callback = CreateServer_MapPage_MenuEvent;
 	s_mapcontrols.actionSrc.generic.x = MAPACTIVATE_X;
 	s_mapcontrols.actionSrc.generic.y = y;
 	s_mapcontrols.actionSrc.itemnames = copyFrom_items;
@@ -1476,7 +1476,7 @@ void StartServer_MapPage_MenuInit(void) {
 	s_mapcontrols.actionActivate.generic.type = MTYPE_BITMAP;
 	s_mapcontrols.actionActivate.generic.name = GAMESERVER_ACTION0;
 	s_mapcontrols.actionActivate.generic.flags = QMF_LEFT_JUSTIFY|QMF_PULSEIFFOCUS;
-	s_mapcontrols.actionActivate.generic.callback = StartServer_MapPage_MenuEvent;
+	s_mapcontrols.actionActivate.generic.callback = CreateServer_MapPage_MenuEvent;
 	s_mapcontrols.actionActivate.generic.id = ID_MAP_ACTION;
 	s_mapcontrols.actionActivate.generic.x = MAPACTIVATE_X - 64 - 11 * SMALLCHAR_WIDTH;
 	s_mapcontrols.actionActivate.generic.y = y;
@@ -1504,7 +1504,7 @@ void StartServer_MapPage_MenuInit(void) {
 	Menu_AddItem(menuptr, &s_mapcontrols.fragsText);
 	Menu_AddItem(menuptr, &s_mapcontrols.timeText);
 
-	StartServer_MapPage_InitPageText(&s_mapcontrols.mapPage);
+	CreateServer_MapPage_InitPageText(&s_mapcontrols.mapPage);
 
 	Menu_AddItem(menuptr, &s_mapcontrols.mapPage);
 
@@ -1528,12 +1528,12 @@ void StartServer_MapPage_MenuInit(void) {
 
 /*
 =======================================================================================================================================
-UI_StartServerMenu
+UI_CreateServerMenu
 =======================================================================================================================================
 */
-void UI_StartServerMenu(qboolean multi) {
+void UI_CreateServerMenu(qboolean multi) {
 
-	StartServer_Cache();
-	StartServer_InitScriptData(multi);
-	StartServer_MapPage_MenuInit();
+	CreateServer_Cache();
+	CreateServer_InitScriptData(multi);
+	CreateServer_MapPage_MenuInit();
 }

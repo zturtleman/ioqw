@@ -48,10 +48,10 @@ id Software at the address below.
 
 /*
 	This file should only contain info and data that is used to draw/update or interact with the Q3 user interface.
-	Put UI INDEPENDENT stuff into ui_startserver.h
+	Put UI INDEPENDENT stuff into ui_createserver.h
 */
 
-#include "ui_startserver.h"
+#include "ui_createserver.h"
 
 #define GAMESERVER_BACK0 "menu/art/back_0"
 #define GAMESERVER_BACK1 "menu/art/back_1"
@@ -149,27 +149,27 @@ extern vec4_t pulsecolor;
 extern vec4_t fading_red;
 // declarations
 
-// ui_startserver_botsel.c
+// ui_createserver_botsel.c
 void UI_BotSelect_Index(char *bot, int index);
-// ui_startserver_mapsel.c
+// ui_createserver_mapsel.c
 void UI_StartMapMenu(int gametype, int index, const char *mapname);
-// ui_startserver_common.c
-qboolean StartServer_CheckFightReady(commoncontrols_t *c);
-void StartServer_CommonControls_Init(menuframework_s *, commoncontrols_t *, CtrlCallback_t, int);
-void StartServer_BackgroundDraw(qboolean excluded);
-void StartServer_SelectionDraw(void *self);
-// ui_startserver_map.c
-void StartServer_MapPage_MenuInit(void);
-void StartServer_MapPage_Cache(void);
-void StartServer_MapPage_CopyCustomLimitsToControls(void);
-// ui_startserver_bot.c
-void StartServer_BotPage_MenuInit(void);
-void StartServer_BotPage_Cache(void);
-// ui_startserver_server.c
-void StartServer_ServerPage_MenuInit(void);
-void StartServer_ServerPage_Cache(void);
-// ui_startserver_item.c
-void StartServer_BothItemMenus_Cache(void);
-void StartServer_ItemPage_MenuInit(void);
-// ui_startserver_item_old.c
-void StartServer_ItemPage_MenuInit_OldMenu(qboolean ingame);
+// ui_createserver_common.c
+qboolean CreateServer_CheckFightReady(commoncontrols_t *c);
+void CreateServer_CommonControls_Init(menuframework_s *, commoncontrols_t *, CtrlCallback_t, int);
+void CreateServer_BackgroundDraw(qboolean excluded);
+void CreateServer_SelectionDraw(void *self);
+// ui_createserver_map.c
+void CreateServer_MapPage_MenuInit(void);
+void CreateServer_MapPage_Cache(void);
+void CreateServer_MapPage_CopyCustomLimitsToControls(void);
+// ui_createserver_bot.c
+void CreateServer_BotPage_MenuInit(void);
+void CreateServer_BotPage_Cache(void);
+// ui_createserver_server.c
+void CreateServer_ServerPage_MenuInit(void);
+void CreateServer_ServerPage_Cache(void);
+// ui_createserver_item.c
+void CreateServer_BothItemMenus_Cache(void);
+void CreateServer_ItemPage_MenuInit(void);
+// ui_createserver_item_old.c
+void CreateServer_ItemPage_MenuInit_OldMenu(qboolean ingame);

@@ -283,7 +283,7 @@ static qboolean VoteMenu_Map_FilteredMap(const char *mapname) {
 	}
 	// handle request for Id or non-Id map type
 	if (s_mapselect2.filter.curvalue < MAPFILTER_MAX) {
-		idmap = StartServer_IsIdMap(mapname);
+		idmap = CreateServer_IsIdMap(mapname);
 
 		if (s_mapselect2.filter.curvalue == MAPFILTER_NONID) {
 			if (idmap) {
@@ -297,7 +297,7 @@ static qboolean VoteMenu_Map_FilteredMap(const char *mapname) {
 	}
 	// check for specific map list
 	type = s_mapselect2.filter.curvalue - MAPFILTER_MAX;
-	return StartServer_IsCustomMapType(mapname, type);
+	return CreateServer_IsCustomMapType(mapname, type);
 }
 
 /*
@@ -325,8 +325,8 @@ static void VoteMenu_Map_SetMapTypeIcons(void) {
 		icon_type = &s_mapselect2.iconb;
 	}
 
-	StartServer_SetIconFromGameType(icon_type, gametype, qfalse);
-	StartServer_SetIconFromGameType(icon_custom, customtype, qtrue);
+	CreateServer_SetIconFromGameType(icon_type, gametype, qfalse);
+	CreateServer_SetIconFromGameType(icon_custom, customtype, qtrue);
 }
 
 /*
@@ -567,7 +567,7 @@ static void VoteMenu_Map_SetNewMapPics(void) {
 			break;
 		}
 
-		StartServer_InitMapPictureFromIndex(&s_mapselect2.mapinfo[i], s_mapselect2.index_maplist[top + i]);
+		CreateServer_InitMapPictureFromIndex(&s_mapselect2.mapinfo[i], s_mapselect2.index_maplist[top + i]);
 
 		s_mapselect2.maptext_color[i] = color_orange;
 		// check if map has been used before
@@ -830,7 +830,7 @@ static void VoteMenu_Map_DrawMapPic(void *self) {
 	h = b->height;
 	id = b->generic.id;
 
-	StartServer_DrawMapPicture(x, y, w, h, &s_mapselect2.mapinfo[id], NULL);
+	CreateServer_DrawMapPicture(x, y, w, h, &s_mapselect2.mapinfo[id], NULL);
 
 	if (b->generic.flags & QMF_HIGHLIGHT) {
 		UI_DrawNamedPic(x, y, w, h, MAPSELECT_MAPSELECTED);
@@ -1050,7 +1050,7 @@ static void VoteMenu_Map_DrawListMapPic(void) {
 	UI_DrawNamedPic(x - (colw - MAPPIC_WIDTH) / 2 - 4, y - 7, colw + 6, colh + 12, MAPSELECT_SELECT);
 	trap_R_SetColor(NULL);
 
-	StartServer_DrawMapPicture(x, y, MAPPIC_WIDTH, MAPPIC_HEIGHT, &s_mapselect2.mapinfo[index], colour);
+	CreateServer_DrawMapPicture(x, y, MAPPIC_WIDTH, MAPPIC_HEIGHT, &s_mapselect2.mapinfo[index], colour);
 
 	UI_DrawString(320, y + MAPPIC_HEIGHT + 8, s_mapselect2.maplongname[base + index], UI_CENTER|UI_SMALLFONT, colour);
 }
@@ -1062,7 +1062,7 @@ VoteMenu_Map_Draw
 */
 static void VoteMenu_Map_Draw(void) {
 
-	StartServer_BackgroundDraw(qfalse);
+	CreateServer_BackgroundDraw(qfalse);
 	// draw the controls
 	Menu_Draw(&s_mapselect2.menu);
 
@@ -1214,7 +1214,7 @@ static void UI_VoteMapMenuInternal(int gametype, int index, const char *mapname)
 	// change map filter if needed
 	if (mapname && mapname[0]) {
 		if (ms_filter2 < MAPFILTER_MAX) {
-			if (StartServer_IsIdMap(mapname)) {
+			if (CreateServer_IsIdMap(mapname)) {
 				if (ms_filter2 == MAPFILTER_NONID) {
 					ms_filter2 = MAPFILTER_OFF;
 				}
@@ -1223,7 +1223,7 @@ static void UI_VoteMapMenuInternal(int gametype, int index, const char *mapname)
 					ms_filter2 = MAPFILTER_OFF;
 				}
 			}
-		} else if (!StartServer_IsCustomMapType(mapname, ms_filter2 - MAPFILTER_MAX)) {
+		} else if (!CreateServer_IsCustomMapType(mapname, ms_filter2 - MAPFILTER_MAX)) {
 			ms_filter2 = MAPFILTER_OFF;
 		}
 	}

@@ -2638,15 +2638,15 @@ Q3UIOBJ_ = \
   $(B)/$(BASEGAME)/ui/ui_splevel.o \
   $(B)/$(BASEGAME)/ui/ui_sppostgame.o \
   $(B)/$(BASEGAME)/ui/ui_spskill.o \
-  $(B)/$(BASEGAME)/ui/ui_startserver_bot.o \
-  $(B)/$(BASEGAME)/ui/ui_startserver_botsel.o \
-  $(B)/$(BASEGAME)/ui/ui_startserver_common.o \
-  $(B)/$(BASEGAME)/ui/ui_startserver_custommaps.o \
-  $(B)/$(BASEGAME)/ui/ui_startserver_data.o \
-  $(B)/$(BASEGAME)/ui/ui_startserver_map.o \
-  $(B)/$(BASEGAME)/ui/ui_startserver_mapsel.o \
-  $(B)/$(BASEGAME)/ui/ui_startserver_script.o \
-  $(B)/$(BASEGAME)/ui/ui_startserver_server.o \
+  $(B)/$(BASEGAME)/ui/ui_createserver_bot.o \
+  $(B)/$(BASEGAME)/ui/ui_createserver_botsel.o \
+  $(B)/$(BASEGAME)/ui/ui_createserver_common.o \
+  $(B)/$(BASEGAME)/ui/ui_createserver_custommaps.o \
+  $(B)/$(BASEGAME)/ui/ui_createserver_data.o \
+  $(B)/$(BASEGAME)/ui/ui_createserver_map.o \
+  $(B)/$(BASEGAME)/ui/ui_createserver_mapsel.o \
+  $(B)/$(BASEGAME)/ui/ui_createserver_script.o \
+  $(B)/$(BASEGAME)/ui/ui_createserver_server.o \
   $(B)/$(BASEGAME)/ui/ui_team.o \
   $(B)/$(BASEGAME)/ui/ui_video.o \
   \
@@ -2658,7 +2658,7 @@ Q3UIOBJ_ = \
 # multiple definition of `UI_StartServerMenu'
 # multiple definition of `ServerOptions_Cache'
 # multiple definition of `UI_BotSelectMenu'
-#  $(B)/$(BASEGAME)/ui/ui_startserver_quicklaunch.o \
+#  $(B)/$(BASEGAME)/ui/ui_createserver_quicklaunch.o \
 
 Q3UIOBJ = $(Q3UIOBJ_) $(B)/$(MISSIONPACK)/ui/ui_syscalls.o
 Q3UIVMOBJ = $(Q3UIOBJ_:%.o=%.asm)

@@ -41,7 +41,7 @@ id Software at the address below.
 /*
 =======================================================================================================================================
 
-	START SERVER MENU HEADER (Q3 INTERFACE INDEPENDENT DEFINTIONS/DATA)
+	CREATE SERVER MENU HEADER (Q3 INTERFACE INDEPENDENT DEFINTIONS/DATA)
 
 =======================================================================================================================================
 */
@@ -147,20 +147,20 @@ typedef struct mapparameters_s {
 // map data manipulation functions
 
 // map data based on list/exclude type
-void StartServer_LoadMapList(void);
-void StartServer_SaveMapList(void);
-void StartServer_RefreshMapNames(void);
+void CreateServer_LoadMapList(void);
+void CreateServer_SaveMapList(void);
+void CreateServer_RefreshMapNames(void);
 // map list manipulation
-void StartServer_StoreMap(int pos, int arena);
-void StartServer_InsertMap(int pos, int arena);
-void StartServer_DeleteMap(int index);
-qboolean StartServer_SwapMaps(int from, int to);
-void StartServer_MapDoAction(int src, int dest, int page, int selected);
+void CreateServer_StoreMap(int pos, int arena);
+void CreateServer_InsertMap(int pos, int arena);
+void CreateServer_DeleteMap(int index);
+qboolean CreateServer_SwapMaps(int from, int to);
+void CreateServer_MapDoAction(int src, int dest, int page, int selected);
 // map info
-int StartServer_MapPageCount(void);
-int StartServer_RangeClipMapIndex(int index);
-qboolean StartServer_IsRandomGeneratedMapList(int type);
-qboolean StartServer_IsIdMap(const char *mapname);
+int CreateServer_MapPageCount(void);
+int CreateServer_RangeClipMapIndex(int index);
+qboolean CreateServer_IsRandomGeneratedMapList(int type);
+qboolean CreateServer_IsIdMap(const char *mapname);
 
 /*
 =======================================================================================================================================
@@ -175,7 +175,7 @@ qboolean StartServer_IsIdMap(const char *mapname);
 
 #define MAX_SKILL 5
 // note restrictions on ordering below
-// see StartServer_BotPage_Event(), case ID_BOT_TYPE
+// see CreateServer_BotPage_Event(), case ID_BOT_TYPE
 enum {
 	BOTSKILL_SAME,			// must be first non-custom value
 	BOTSKILL_RANGE,			// must be last non-custom value
@@ -268,26 +268,26 @@ typedef struct botparameters_s {
 // bot data manipulation functions
 
 // bot list based on list/exclude type
-void StartServer_LoadBotNameList(int type);
-void StartServer_SaveBotNameList(void);
+void CreateServer_LoadBotNameList(int type);
+void CreateServer_SaveBotNameList(void);
 // bot list manipulation
-qboolean StartServer_InsertBotSlot(int index);
-qboolean StartServer_DeleteBotSlot(int index);
-void StartServer_MoveBotToOtherTeam(int selected);
-void StartServer_DoBotAction(int action, int selected);
-void StartServer_SetBotSkillRangeType(int skill);
-void StartServer_SetNamedBot(int index, char *name);
-void StartServer_InsertNamedBot(int index, char *name);
-void StartServer_BotNameDrawn(int index, qboolean drawn);
+qboolean CreateServer_InsertBotSlot(int index);
+qboolean CreateServer_DeleteBotSlot(int index);
+void CreateServer_MoveBotToOtherTeam(int selected);
+void CreateServer_DoBotAction(int action, int selected);
+void CreateServer_SetBotSkillRangeType(int skill);
+void CreateServer_SetNamedBot(int index, char *name);
+void CreateServer_InsertNamedBot(int index, char *name);
+void CreateServer_BotNameDrawn(int index, qboolean drawn);
 // bot info
-int StartServer_ValidBotCount(void);
-qboolean StartServer_BotOnSelectionList(const char *checkName);
-void StartServer_ValidateBotSlotCount(int bots, int open);
-int StartServer_SlotTeam(int index); // returns SLOTTEAM_* values
+int CreateServer_ValidBotCount(void);
+qboolean CreateServer_BotOnSelectionList(const char *checkName);
+void CreateServer_ValidateBotSlotCount(int bots, int open);
+int CreateServer_SlotTeam(int index); // returns SLOTTEAM_* values
 // list type info
-qboolean StartServer_IsRandomBotList(int type);
-qboolean StartServer_IsBotArenaScript(int type);
-qboolean StartServer_IsRandomBotExclude(int type);
+qboolean CreateServer_IsRandomBotList(int type);
+qboolean CreateServer_IsBotArenaScript(int type);
+qboolean CreateServer_IsRandomBotExclude(int type);
 
 /*
 =======================================================================================================================================
@@ -384,7 +384,7 @@ typedef struct itemparameters_s {
 // item data manipulation functions
 
 // item list based on gametype
-void StartServer_LoadDisabledItems(void);
+void CreateServer_LoadDisabledItems(void);
 
 /*
 =======================================================================================================================================
@@ -461,25 +461,25 @@ typedef struct scriptdata_s {
 extern scriptdata_t s_scriptdata;
 // global functions
 
-// ui_startserver_data.c
-qboolean StartServer_CanFight(void);
+// ui_createserver_data.c
+qboolean CreateServer_CanFight(void);
 void UI_SetSkirmishCvar(char *base, const char *var_name, const char *string);
 void UI_SetSkirmishCvarInt(char *base, const char *name, int value);
 qboolean UI_GetSkirmishCvar(char *base, const char *var_name, char *buffer, int buflen);
 int UI_GetSkirmishCvarInt(char *base, const char *name);
 int UI_GetSkirmishCvarIntClamp(int min, int max, char *base, const char *name);
-void UI_StartServer_SaveSkirmishCvars(void);
-void UI_StartServer_LoadSkirmishCvars(void);
+void UI_CreateServer_SaveSkirmishCvars(void);
+void UI_CreateServer_LoadSkirmishCvars(void);
 qboolean UI_SkirmishCvarExists(char *base, const char *var_name);
-// ui_startserver_script.c
-void StartServer_InitScriptData(qboolean multi);
-void StartServer_LoadScriptDataFromType(int gametype);
-void StartServer_SaveScriptData(void);
+// ui_createserver_script.c
+void CreateServer_InitScriptData(qboolean multi);
+void CreateServer_LoadScriptDataFromType(int gametype);
+void CreateServer_SaveScriptData(void);
 typedef char *(*String_Callback)(int index);
 void UI_LoadMultiArray(char *base, const char *key, String_Callback callback, int count, int size, char newnull);
 void UI_SaveMultiArray(char *base, const char *key, String_Callback callback, int count, int size, char newnull);
-qboolean StartServer_CreateServer(const char *scriptFile);
-// ui_startserver_custommaps.c
+qboolean CreateServer_CreateServer(const char *scriptFile);
+// ui_createserver_custommaps.c
 enum {
 	MAPICONS_ALL,
 	MAPICONS_CUSTOM,
@@ -498,14 +498,14 @@ typedef qboolean (*callbackMapList)(const char *);
 
 int GametypeBits(char *string);
 int UI_BuildMapListByType(int *list, int listmax, int gametype, callbackMapList);
-void StartServer_SetIconFromGameType(menubitmap_s *b, int gametype, qboolean custom);
-qboolean StartServer_MapSupportsBots(const char *mapname);
-int StartServer_NumCustomMapTypes(void);
-void StartServer_InitMapPictureFromIndex(mappic_t *mappic, int index);
-void StartServer_InitMapPicture(mappic_t *mappic, const char *mapname);
-void StartServer_DrawMapPicture(int x, int y, int w, int h, mappic_t *mappic, vec4_t color);
-qboolean StartServer_IsCustomMapType(const char *mapname, int type);
-const char *StartServer_MapIconFromType(int gametype, qboolean isCustomMap);
+void CreateServer_SetIconFromGameType(menubitmap_s *b, int gametype, qboolean custom);
+qboolean CreateServer_MapSupportsBots(const char *mapname);
+int CreateServer_NumCustomMapTypes(void);
+void CreateServer_InitMapPictureFromIndex(mappic_t *mappic, int index);
+void CreateServer_InitMapPicture(mappic_t *mappic, const char *mapname);
+void CreateServer_DrawMapPicture(int x, int y, int w, int h, mappic_t *mappic, vec4_t color);
+qboolean CreateServer_IsCustomMapType(const char *mapname, int type);
+const char *CreateServer_MapIconFromType(int gametype, qboolean isCustomMap);
 void UI_LoadMapTypeInfo(void);
 // global data
 extern const char *idmap_list[];

@@ -41,13 +41,13 @@ id Software at the address below.
 /*
 =======================================================================================================================================
 
-	START SERVER SCRIPT ENGINE
+	CREATE SERVER SCRIPT ENGINE
 
 =======================================================================================================================================
 */
 
 #include "ui_local.h"
-#include "ui_startserver.h"
+#include "ui_createserver.h"
 
 #define BEGIN_PARAMETER_BLOCK "BEGIN_UI_PARAMETER_BLOCK"
 #define END_PARAMETER_BLOCK "END_UI_PARAMETER_BLOCK"
@@ -244,25 +244,25 @@ static void AddScript(const char *scriptLine) {
 
 /*
 =======================================================================================================================================
-StartServer_PrintMessage
+CreateServer_PrintMessage
 =======================================================================================================================================
 */
-static void StartServer_PrintMessage(const char *error) {
+static void CreateServer_PrintMessage(const char *error) {
 
 	if (!error) {
 		return;
 	}
 
-	trap_Print(va(S_COLOR_RED "StartServer: %s", error));
+	trap_Print(va(S_COLOR_RED "CreateServer: %s", error));
 	Q_strncpyz(lasterror_text, error, MAX_STATUSBAR_TEXT);
 }
 
 /*
 =======================================================================================================================================
-StartServer_InitServerExec
+CreateServer_InitServerExec
 =======================================================================================================================================
 */
-static qboolean StartServer_InitServerExec(void) {
+static qboolean CreateServer_InitServerExec(void) {
 	int i, count, mapsource, index, botnum;
 
 	memset(&s_serverexec, 0, sizeof(serverexec_t));
@@ -270,7 +270,7 @@ static qboolean StartServer_InitServerExec(void) {
 	count = s_scriptdata.map.num_maps;
 	mapsource = s_scriptdata.map.listSource;
 
-	if (StartServer_IsRandomGeneratedMapList(mapsource)) {
+	if (CreateServer_IsRandomGeneratedMapList(mapsource)) {
 		count = s_scriptdata.map.SourceCount;
 	}
 
@@ -321,10 +321,10 @@ static qboolean StartServer_InitServerExec(void) {
 
 /*
 =======================================================================================================================================
-StartServer_WriteServerParams
+CreateServer_WriteServerParams
 =======================================================================================================================================
 */
-static qboolean StartServer_WriteServerParams(void) {
+static qboolean CreateServer_WriteServerParams(void) {
 	int i, value, open, botcount;
 	char *password;
 	qboolean useping;
@@ -402,7 +402,7 @@ static qboolean StartServer_WriteServerParams(void) {
 				value++;
 			}
 		}
-	} else if (StartServer_IsBotArenaScript(s_scriptdata.bot.typeSelect)) {
+	} else if (CreateServer_IsBotArenaScript(s_scriptdata.bot.typeSelect)) {
 		open = s_scriptdata.bot.numberOpen;
 		botcount = s_serverexec.botcount_firstmap;
 		value = s_serverexec.max_scripted_bots + open;
@@ -470,10 +470,10 @@ static qboolean StartServer_WriteServerParams(void) {
 
 /*
 =======================================================================================================================================
-StartServer_GetFracBotSkill
+CreateServer_GetFracBotSkill
 =======================================================================================================================================
 */
-static float StartServer_GetFracBotSkill(botskill_t *skill) {
+static float CreateServer_GetFracBotSkill(botskill_t *skill) {
 	int high, low;
 	float width, slope, area, target, result;
 	qboolean reverse;
@@ -517,10 +517,10 @@ static float StartServer_GetFracBotSkill(botskill_t *skill) {
 
 /*
 =======================================================================================================================================
-StartServer_GetIntBotSkill
+CreateServer_GetIntBotSkill
 =======================================================================================================================================
 */
-static int StartServer_GetIntBotSkill(botskill_t *skill) {
+static int CreateServer_GetIntBotSkill(botskill_t *skill) {
 	int i, low, high;
 	float value, step, bin[MAX_SKILL], selected;
 
@@ -577,10 +577,10 @@ static int StartServer_GetIntBotSkill(botskill_t *skill) {
 
 /*
 =======================================================================================================================================
-StartServer_GetBotSkill
+CreateServer_GetBotSkill
 =======================================================================================================================================
 */
-static char *StartServer_GetBotSkill(botskill_t *skill) {
+static char *CreateServer_GetBotSkill(botskill_t *skill) {
 	static char skill_out[10];
 
 	if (!skill->range) {
@@ -601,7 +601,7 @@ static char *StartServer_GetBotSkill(botskill_t *skill) {
 		case SKILLBIAS_FRAC_VHIGH:
 		case SKILLBIAS_FRACTIONAL:
 		{
-			float f_skill = StartServer_GetFracBotSkill(skill);
+			float f_skill = CreateServer_GetFracBotSkill(skill);
 
 			Q_strncpyz(skill_out, va("%4.2f", f_skill), sizeof(skill_out));
 			break;
@@ -613,7 +613,7 @@ static char *StartServer_GetBotSkill(botskill_t *skill) {
 		case SKILLBIAS_VHIGH:
 		case SKILLBIAS_NONE:
 		{
-			int i_skill = StartServer_GetIntBotSkill(skill);
+			int i_skill = CreateServer_GetIntBotSkill(skill);
 
 			Q_strncpyz(skill_out, va("%i", i_skill), sizeof(skill_out));
 			break;
@@ -628,10 +628,10 @@ static char *StartServer_GetBotSkill(botskill_t *skill) {
 
 /*
 =======================================================================================================================================
-StartServer_GetPlayerTeam
+CreateServer_GetPlayerTeam
 =======================================================================================================================================
 */
-static int StartServer_GetPlayerTeam(void) {
+static int CreateServer_GetPlayerTeam(void) {
 
 	if (s_scriptdata.bot.teamSwapped) {
 		return 1;
@@ -642,10 +642,10 @@ static int StartServer_GetPlayerTeam(void) {
 
 /*
 =======================================================================================================================================
-StartServer_WriteSelectedBotParams
+CreateServer_WriteSelectedBotParams
 =======================================================================================================================================
 */
-static void StartServer_WriteSelectedBotParams(void) {
+static void CreateServer_WriteSelectedBotParams(void) {
 	int i, team, left, right;
 	const char *skill;
 	qboolean custom;
@@ -660,7 +660,7 @@ static void StartServer_WriteSelectedBotParams(void) {
 
 	if (s_scriptdata.gametype > GT_TOURNAMENT) {
 		// team games: we must interleave red and blue in case we have team_forcebalance enabled
-		team = StartServer_GetPlayerTeam();
+		team = CreateServer_GetPlayerTeam();
 		left = 0;
 		right = PLAYER_SLOTS_PERCOL;
 		// find first free left bot
@@ -682,7 +682,7 @@ static void StartServer_WriteSelectedBotParams(void) {
 					skillrange = &s_scriptdata.bot.skill[left];
 				}
 
-				skill = StartServer_GetBotSkill(skillrange);
+				skill = CreateServer_GetBotSkill(skillrange);
 				AddScript(va("addbot %s %s %s %i; ", s_scriptdata.bot.name[left], skill, bot_teamname[team], delay));
 				left++;
 			}
@@ -707,7 +707,7 @@ static void StartServer_WriteSelectedBotParams(void) {
 					skillrange = &s_scriptdata.bot.skill[right];
 				}
 
-				skill = StartServer_GetBotSkill(skillrange);
+				skill = CreateServer_GetBotSkill(skillrange);
 				AddScript(va("addbot %s %s %s %i; ", s_scriptdata.bot.name[right], skill, bot_teamname[1 - team], delay));
 				right++;
 			}
@@ -727,7 +727,7 @@ static void StartServer_WriteSelectedBotParams(void) {
 				skillrange = &s_scriptdata.bot.skill[i];
 			}
 
-			skill = StartServer_GetBotSkill(skillrange);
+			skill = CreateServer_GetBotSkill(skillrange);
 
 			AddScript(va("addbot %s %s; ", s_scriptdata.bot.name[i], skill));
 		}
@@ -736,10 +736,10 @@ static void StartServer_WriteSelectedBotParams(void) {
 
 /*
 =======================================================================================================================================
-StartServer_RejectRandomBot
+CreateServer_RejectRandomBot
 =======================================================================================================================================
 */
-static qboolean StartServer_RejectRandomBot(int newbot, int *botlist, int max) {
+static qboolean CreateServer_RejectRandomBot(int newbot, int *botlist, int max) {
 	int i;
 	char botname[MAX_NAME_LENGTH], *bot;
 
@@ -749,7 +749,7 @@ static qboolean StartServer_RejectRandomBot(int newbot, int *botlist, int max) {
 		}
 	}
 	// compare only if we have an exclude list
-	if (StartServer_IsRandomBotExclude(s_scriptdata.bot.typeSelect)) {
+	if (CreateServer_IsRandomBotExclude(s_scriptdata.bot.typeSelect)) {
 		bot = UI_GetBotInfoByNumber(newbot);
 		Q_strncpyz(botname, Info_ValueForKey(bot, "name"), MAX_NAME_LENGTH);
 
@@ -765,10 +765,10 @@ static qboolean StartServer_RejectRandomBot(int newbot, int *botlist, int max) {
 
 /*
 =======================================================================================================================================
-StartServer_GenerateBotList
+CreateServer_GenerateBotList
 =======================================================================================================================================
 */
-static void StartServer_GenerateBotList(int *botlist, int listmax, int listnum) {
+static void CreateServer_GenerateBotList(int *botlist, int listmax, int listnum) {
 	int count, i, newbot;
 	qboolean repeat;
 
@@ -780,7 +780,7 @@ static void StartServer_GenerateBotList(int *botlist, int listmax, int listnum) 
 			repeat = qfalse;
 			newbot = Clamp_Random(listmax - 1);
 
-			if (StartServer_RejectRandomBot(newbot, botlist, i)) {
+			if (CreateServer_RejectRandomBot(newbot, botlist, i)) {
 				repeat = qtrue;
 			}
 
@@ -793,17 +793,17 @@ static void StartServer_GenerateBotList(int *botlist, int listmax, int listnum) 
 
 /*
 =======================================================================================================================================
-StartServer_WriteBotList
+CreateServer_WriteBotList
 =======================================================================================================================================
 */
-static void StartServer_WriteBotList(int *botlist, int listnum, qboolean kick) {
+static void CreateServer_WriteBotList(int *botlist, int listnum, qboolean kick) {
 	int i, team, player_team;
 	const char *skill;
 	char *bot, *funname, botname[MAX_NAME_LENGTH];
 	botskill_t *skillrange;
 
 	skillrange = &s_scriptdata.bot.globalSkill;
-	player_team = StartServer_GetPlayerTeam();
+	player_team = CreateServer_GetPlayerTeam();
 
 	for (i = 0; i < listnum; i++) {
 		bot = UI_GetBotInfoByNumber(botlist[i]);
@@ -821,7 +821,7 @@ static void StartServer_WriteBotList(int *botlist, int listnum, qboolean kick) {
 
 			AddScript(va("kick %s; ", botname));
 		} else {
-			skill = StartServer_GetBotSkill(skillrange);
+			skill = CreateServer_GetBotSkill(skillrange);
 
 			if (s_scriptdata.gametype > GT_TOURNAMENT) {
 				team = (player_team + i + 1) % 2; // start with opposite team
@@ -840,10 +840,10 @@ static void StartServer_WriteBotList(int *botlist, int listnum, qboolean kick) {
 
 /*
 =======================================================================================================================================
-StartServer_WriteRandomBotParams
+CreateServer_WriteRandomBotParams
 =======================================================================================================================================
 */
-static void StartServer_WriteRandomBotParams(void) {
+static void CreateServer_WriteRandomBotParams(void) {
 	int i, j, max, index, period, next, frequency, bots_perlevel, *kickbots, *addbots;
 
 	frequency = botChange_frequency[s_scriptdata.bot.changeBots];
@@ -860,8 +860,8 @@ static void StartServer_WriteRandomBotParams(void) {
 		AddScript("set "SERVER_ADDBOT"0 \"");
 
 		if (bots_perlevel > 0) {
-			StartServer_GenerateBotList(s_serverexec.usedBots, s_serverexec.maxBots, bots_perlevel);
-			StartServer_WriteBotList(s_serverexec.usedBots, bots_perlevel, qfalse);
+			CreateServer_GenerateBotList(s_serverexec.usedBots, s_serverexec.maxBots, bots_perlevel);
+			CreateServer_WriteBotList(s_serverexec.usedBots, bots_perlevel, qfalse);
 		}
 
 		AddScript("set "SERVER_ADDBOT" vstr "SERVER_ADDBOT"1\"\n");
@@ -870,7 +870,7 @@ static void StartServer_WriteRandomBotParams(void) {
 		AddScript("set "SERVER_ADDBOT"1 \"\"\n");
 	} else {
 		// bots that we need to delete when loop comes around again
-		StartServer_GenerateBotList(s_serverexec.lastBots, s_serverexec.maxBots, bots_perlevel);
+		CreateServer_GenerateBotList(s_serverexec.lastBots, s_serverexec.maxBots, bots_perlevel);
 		// to minimize the overlap and repeat of bot/map combinations the period of bot repeat is a prime number > than the number of maps
 		period = addbot_primes[num_addbot_primes - 1];
 
@@ -892,7 +892,7 @@ static void StartServer_WriteRandomBotParams(void) {
 			AddScript(va("set "SERVER_KICKBOT"%i \"", index));
 
 			if (bots_perlevel > 0) {
-				StartServer_WriteBotList(kickbots, bots_perlevel, qtrue);
+				CreateServer_WriteBotList(kickbots, bots_perlevel, qtrue);
 			}
 
 			AddScript(va("set "SERVER_KICKBOT" vstr "SERVER_KICKBOT"%i\"\n", next));
@@ -904,10 +904,10 @@ static void StartServer_WriteRandomBotParams(void) {
 					// make sure we add the correct bots that we kicked at the start of the cycle
 					addbots = s_serverexec.lastBots;
 				} else {
-					StartServer_GenerateBotList(addbots, s_serverexec.maxBots, bots_perlevel);
+					CreateServer_GenerateBotList(addbots, s_serverexec.maxBots, bots_perlevel);
 				}
 
-				StartServer_WriteBotList(addbots, bots_perlevel, qfalse);
+				CreateServer_WriteBotList(addbots, bots_perlevel, qfalse);
 				kickbots = s_serverexec.usedBots;
 			}
 
@@ -928,10 +928,10 @@ static void StartServer_WriteRandomBotParams(void) {
 
 /*
 =======================================================================================================================================
-StartServer_GenerateSelectedArenaBotList
+CreateServer_GenerateSelectedArenaBotList
 =======================================================================================================================================
 */
-static void StartServer_GenerateSelectedArenaBotList(int *bots, int botnum) {
+static void CreateServer_GenerateSelectedArenaBotList(int *bots, int botnum) {
 	int count, i, newbot;
 	qboolean repeat;
 
@@ -943,7 +943,7 @@ static void StartServer_GenerateSelectedArenaBotList(int *bots, int botnum) {
 			repeat = qfalse;
 			newbot = s_serverexec.bots_in_slots[Clamp_Random(s_serverexec.num_bots_in_slots - 1)];
 
-			if (StartServer_RejectRandomBot(newbot, bots, i)) {
+			if (CreateServer_RejectRandomBot(newbot, bots, i)) {
 				repeat = qtrue;
 			}
 
@@ -956,10 +956,10 @@ static void StartServer_GenerateSelectedArenaBotList(int *bots, int botnum) {
 
 /*
 =======================================================================================================================================
-StartServer_GenerateArenaBotList
+CreateServer_GenerateArenaBotList
 =======================================================================================================================================
 */
-static int StartServer_GenerateArenaBotList(int *bots, int max, const char *mapname) {
+static int CreateServer_GenerateArenaBotList(int *bots, int max, const char *mapname) {
 	const char *info, *botname;
 	char *p, botlist[MAX_INFO_STRING];
 	int num, botnum;
@@ -1007,13 +1007,13 @@ static int StartServer_GenerateArenaBotList(int *bots, int max, const char *mapn
 	// now build the list of bots
 	if (s_scriptdata.bot.typeSelect == BOTTYPE_SELECTARENASCRIPT) {
 		if (s_serverexec.num_bots_in_slots > 0) {
-			StartServer_GenerateSelectedArenaBotList(bots, num);
+			CreateServer_GenerateSelectedArenaBotList(bots, num);
 			return num;
 		}
 	}
 	// list built is randomly generated
 	if (num) {
-		StartServer_GenerateBotList(bots, UI_GetNumBots(), num);
+		CreateServer_GenerateBotList(bots, UI_GetNumBots(), num);
 	}
 
 	return num;
@@ -1021,12 +1021,12 @@ static int StartServer_GenerateArenaBotList(int *bots, int max, const char *mapn
 
 /*
 =======================================================================================================================================
-StartServer_GetArenaScriptMapName
+CreateServer_GetArenaScriptMapName
 
 Includes awareness of map ordering and random map generation. Copied into static buffer for safe keeping until next call.
 =======================================================================================================================================
 */
-static char *StartServer_GetArenaScriptMapName(int index) {
+static char *CreateServer_GetArenaScriptMapName(int index) {
 	static char mapname[SHORTMAP_BUFFER];
 	char *map_ptr;
 	const char *info;
@@ -1065,12 +1065,12 @@ static char *StartServer_GetArenaScriptMapName(int index) {
 
 /*
 =======================================================================================================================================
-StartServer_WriteArenaScriptBotParams
+CreateServer_WriteArenaScriptBotParams
 
 Includes awareness of map ordering and random map generation.
 =======================================================================================================================================
 */
-static void StartServer_WriteArenaScriptBotParams(void) {
+static void CreateServer_WriteArenaScriptBotParams(void) {
 	int i, count, period, bots_onlevel, lastlevel_numbots, *kickbots, *addbots, next;
 	char *mapname;
 
@@ -1081,8 +1081,8 @@ static void StartServer_WriteArenaScriptBotParams(void) {
 		count = s_serverexec.random_count;
 	}
 	// bots that we need to delete when loop comes around again
-	mapname = StartServer_GetArenaScriptMapName(count - 1);
-	lastlevel_numbots = StartServer_GenerateArenaBotList(s_serverexec.lastBots, s_serverexec.maxBots, mapname);
+	mapname = CreateServer_GetArenaScriptMapName(count - 1);
+	lastlevel_numbots = CreateServer_GenerateArenaBotList(s_serverexec.lastBots, s_serverexec.maxBots, mapname);
 	s_serverexec.max_scripted_bots = lastlevel_numbots;
 	// write the list
 	kickbots = s_serverexec.lastBots;
@@ -1095,7 +1095,7 @@ static void StartServer_WriteArenaScriptBotParams(void) {
 		AddScript(va("set "SERVER_KICKBOT"%i \"", i));
 
 		if (bots_onlevel > 0) {
-			StartServer_WriteBotList(kickbots, bots_onlevel, qtrue);
+			CreateServer_WriteBotList(kickbots, bots_onlevel, qtrue);
 		}
 
 		AddScript(va("set "SERVER_KICKBOT" vstr "SERVER_KICKBOT"%i\"\n", next));
@@ -1107,8 +1107,8 @@ static void StartServer_WriteArenaScriptBotParams(void) {
 			addbots = s_serverexec.lastBots;
 			bots_onlevel = lastlevel_numbots;
 		} else {
-			mapname = StartServer_GetArenaScriptMapName(i);
-			bots_onlevel = StartServer_GenerateArenaBotList(addbots, s_serverexec.maxBots, mapname);
+			mapname = CreateServer_GetArenaScriptMapName(i);
+			bots_onlevel = CreateServer_GenerateArenaBotList(addbots, s_serverexec.maxBots, mapname);
 		}
 
 		if (i == 0) {
@@ -1119,7 +1119,7 @@ static void StartServer_WriteArenaScriptBotParams(void) {
 			s_serverexec.max_scripted_bots = bots_onlevel;
 		}
 
-		StartServer_WriteBotList(addbots, bots_onlevel, qfalse);
+		CreateServer_WriteBotList(addbots, bots_onlevel, qfalse);
 
 		kickbots = s_serverexec.usedBots;
 
@@ -1129,12 +1129,12 @@ static void StartServer_WriteArenaScriptBotParams(void) {
 
 /*
 =======================================================================================================================================
-StartServer_WriteBotParams
+CreateServer_WriteBotParams
 
-May depend on map ordering list, so StartServer_WriteMapParams() must be called first.
+May depend on map ordering list, so CreateServer_WriteMapParams() must be called first.
 =======================================================================================================================================
 */
-static qboolean StartServer_WriteBotParams(void) {
+static qboolean CreateServer_WriteBotParams(void) {
 
 	AddScript("\n// WriteBotParams()\n\n");
 
@@ -1149,7 +1149,7 @@ static qboolean StartServer_WriteBotParams(void) {
 		AddScript("set "SERVER_ADDBOT" \"\"\n");
 		AddScript("set "SERVER_ADDBOT" \"");
 
-		StartServer_WriteSelectedBotParams();
+		CreateServer_WriteSelectedBotParams();
 		// no more bots added, so clear addbot
 		// last command in set SERVER_ADDBOT
 		AddScript("reset "SERVER_ADDBOT" \"\n");
@@ -1160,10 +1160,10 @@ static qboolean StartServer_WriteBotParams(void) {
 		return qtrue;
 	}
 
-	if (StartServer_IsBotArenaScript(s_scriptdata.bot.typeSelect)) {
-		StartServer_WriteArenaScriptBotParams();
+	if (CreateServer_IsBotArenaScript(s_scriptdata.bot.typeSelect)) {
+		CreateServer_WriteArenaScriptBotParams();
 	} else { // BOTTYPE_RANDOM or BOTTYPE_RANDOMEXCLUDE
-		StartServer_WriteRandomBotParams();
+		CreateServer_WriteRandomBotParams();
 	}
 	// setup bot add and kick commands
 	// we don't need to kick any bots on first connect
@@ -1176,10 +1176,10 @@ static qboolean StartServer_WriteBotParams(void) {
 
 /*
 =======================================================================================================================================
-StartServer_IsRecentMap
+CreateServer_IsRecentMap
 =======================================================================================================================================
 */
-static qboolean StartServer_IsRecentMap(int count, int index) {
+static qboolean CreateServer_IsRecentMap(int count, int index) {
 	int i, start, period;
 
 	period = s_serverexec.rnd_nummaps;
@@ -1205,10 +1205,10 @@ static qboolean StartServer_IsRecentMap(int count, int index) {
 
 /*
 =======================================================================================================================================
-StartServer_IsBiasedMap
+CreateServer_IsBiasedMap
 =======================================================================================================================================
 */
-static qboolean StartServer_IsBiasedMap(int idtype, int index) {
+static qboolean CreateServer_IsBiasedMap(int idtype, int index) {
 	const char *info;
 	qboolean idmap;
 
@@ -1217,7 +1217,7 @@ static qboolean StartServer_IsBiasedMap(int idtype, int index) {
 	}
 
 	info = UI_GetArenaInfoByNumber(index);
-	idmap = StartServer_IsIdMap(Info_ValueForKey(info, "map"));
+	idmap = CreateServer_IsIdMap(Info_ValueForKey(info, "map"));
 
 	if (idtype == MAP_RND_BIASID && idmap) {
 		return qfalse;
@@ -1236,10 +1236,10 @@ static qboolean StartServer_IsBiasedMap(int idtype, int index) {
 
 /*
 =======================================================================================================================================
-StartServer_ExcludeMap_callback
+CreateServer_ExcludeMap_callback
 =======================================================================================================================================
 */
-static qboolean StartServer_ExcludeMap_callback(const char *info) {
+static qboolean CreateServer_ExcludeMap_callback(const char *info) {
 	int i, idtype, subtype;
 	const char *mapname;
 	qboolean idmap;
@@ -1256,11 +1256,11 @@ static qboolean StartServer_ExcludeMap_callback(const char *info) {
 
 	mapname = Info_ValueForKey(info, "map");
 
-	if (!StartServer_MapSupportsBots(mapname)) {
+	if (!CreateServer_MapSupportsBots(mapname)) {
 		return qfalse;
 	}
 
-	idmap = StartServer_IsIdMap(mapname);
+	idmap = CreateServer_IsIdMap(mapname);
 
 	if (idmap && (idtype == MAP_RND_NONID)) {
 		return qfalse;
@@ -1270,7 +1270,7 @@ static qboolean StartServer_ExcludeMap_callback(const char *info) {
 		return qfalse;
 	}
 
-	if (subtype >= 0 && !StartServer_IsCustomMapType(mapname, subtype)) {
+	if (subtype >= 0 && !CreateServer_IsCustomMapType(mapname, subtype)) {
 		return qfalse;
 	}
 
@@ -1289,10 +1289,10 @@ static qboolean StartServer_ExcludeMap_callback(const char *info) {
 
 /*
 =======================================================================================================================================
-StartServer_GenerateRandomMaps
+CreateServer_GenerateRandomMaps
 =======================================================================================================================================
 */
-static qboolean StartServer_GenerateRandomMaps(int count) {
+static qboolean CreateServer_GenerateRandomMaps(int count) {
 	int i, map, failed, idtype, maplist[MAX_MAPS_LIST * 2];
 	callbackMapList callback;
 
@@ -1302,11 +1302,11 @@ static qboolean StartServer_GenerateRandomMaps(int count) {
 		idtype = MAP_RND_ANY;
 	}
 
-	callback = StartServer_ExcludeMap_callback;
+	callback = CreateServer_ExcludeMap_callback;
 	s_serverexec.rnd_nummaps = UI_BuildMapListByType(maplist, MAX_MAPS_LIST * 2, s_scriptdata.gametype, callback);
 
 	if (s_serverexec.rnd_nummaps == 0) {
-		StartServer_PrintMessage("No random maps available");
+		CreateServer_PrintMessage("No random maps available");
 		return qfalse;
 	}
 	// try to add the map, but not too hard
@@ -1316,11 +1316,11 @@ static qboolean StartServer_GenerateRandomMaps(int count) {
 		do {
 			map = Clamp_Random(s_serverexec.rnd_nummaps - 1);
 
-			if (StartServer_IsBiasedMap(idtype, maplist[map])) {
+			if (CreateServer_IsBiasedMap(idtype, maplist[map])) {
 				continue;
 			}
 
-		} while (StartServer_IsRecentMap(i, maplist[map]) && failed++ < 32);
+		} while (CreateServer_IsRecentMap(i, maplist[map]) && failed++ < 32);
 
 		s_serverexec.map_rnd_index[i] = maplist[map];
 	}
@@ -1330,10 +1330,10 @@ static qboolean StartServer_GenerateRandomMaps(int count) {
 
 /*
 =======================================================================================================================================
-StartServer_GenerateRandomMapOrder
+CreateServer_GenerateRandomMapOrder
 =======================================================================================================================================
 */
-static void StartServer_GenerateRandomMapOrder(int count, int avoid, int *map_rnd) {
+static void CreateServer_GenerateRandomMapOrder(int count, int avoid, int *map_rnd) {
 	int i, repeat, src, dest, value;
 
 	for (i = 0; i < count; i++) {
@@ -1363,10 +1363,10 @@ static void StartServer_GenerateRandomMapOrder(int count, int avoid, int *map_rn
 
 /*
 =======================================================================================================================================
-StartServer_WriteMapParams
+CreateServer_WriteMapParams
 =======================================================================================================================================
 */
-static qboolean StartServer_WriteMapParams(void) {
+static qboolean CreateServer_WriteMapParams(void) {
 	int i, value, count, index, lastmap, source, fraglimit, timelimit;
 	const char *info, *mapname;
 	qboolean random_order, random_generate;
@@ -1391,7 +1391,7 @@ static qboolean StartServer_WriteMapParams(void) {
 	source = s_scriptdata.map.listSource;
 	count = s_serverexec.cycle_count;
 
-	random_generate = StartServer_IsRandomGeneratedMapList(source);
+	random_generate = CreateServer_IsRandomGeneratedMapList(source);
 	random_order = (source == MAP_MS_RANDOMLIST || random_generate);
 
 	if (random_order) {
@@ -1413,7 +1413,7 @@ static qboolean StartServer_WriteMapParams(void) {
 	s_serverexec.random_order = random_order;
 	s_serverexec.random_count = count;
 
-	if (StartServer_IsRandomGeneratedMapList(source) && !StartServer_GenerateRandomMaps(s_serverexec.cycle_count)) {
+	if (CreateServer_IsRandomGeneratedMapList(source) && !CreateServer_GenerateRandomMaps(s_serverexec.cycle_count)) {
 		return qfalse;
 	}
 	// generate the random order before we do the output
@@ -1425,7 +1425,7 @@ static qboolean StartServer_WriteMapParams(void) {
 				lastmap = s_serverexec.map_rnd[i - 1];
 			}
 
-			StartServer_GenerateRandomMapOrder(s_serverexec.cycle_count, lastmap, &s_serverexec.map_rnd[i]);
+			CreateServer_GenerateRandomMapOrder(s_serverexec.cycle_count, lastmap, &s_serverexec.map_rnd[i]);
 		}
 	}
 	// build the script
@@ -1499,10 +1499,10 @@ static qboolean StartServer_WriteMapParams(void) {
 
 /*
 =======================================================================================================================================
-StartServer_WriteItemParams
+CreateServer_WriteItemParams
 =======================================================================================================================================
 */
-static qboolean StartServer_WriteItemParams(void) {
+static qboolean CreateServer_WriteItemParams(void) {
 	int i, type;
 	qboolean disable;
 
@@ -1638,10 +1638,10 @@ char *UI_Parse(char **data_p) {
 
 /*
 =======================================================================================================================================
-StartServer_WriteScriptCvar
+CreateServer_WriteScriptCvar
 =======================================================================================================================================
 */
-static void StartServer_WriteScriptCvar(const char *cvarTemplate) {
+static void CreateServer_WriteScriptCvar(const char *cvarTemplate) {
 	char *s, buffer[MAX_INFO_STRING];
 	const char *cvar;
 
@@ -1664,10 +1664,10 @@ static void StartServer_WriteScriptCvar(const char *cvarTemplate) {
 
 /*
 =======================================================================================================================================
-StartServer_WriteScriptParams
+CreateServer_WriteScriptParams
 =======================================================================================================================================
 */
-static qboolean StartServer_WriteScriptParams(void) {
+static qboolean CreateServer_WriteScriptParams(void) {
 	int i;
 
 	AddScript("\n// WriteScriptParams()\n\n");
@@ -1676,10 +1676,10 @@ static qboolean StartServer_WriteScriptParams(void) {
 	AddScript("// Don't edit the contents!!!\n");
 	AddScript("// "BEGIN_PARAMETER_BLOCK"\n");
 
-	UI_StartServer_LoadSkirmishCvars();
+	UI_CreateServer_LoadSkirmishCvars();
 	// save the common parameters
 	for (i = 0; saveparam_list[i]; i++) {
-		StartServer_WriteScriptCvar(saveparam_list[i]);
+		CreateServer_WriteScriptCvar(saveparam_list[i]);
 	}
 	// save the gametype specific parameters
 	/*
@@ -1690,7 +1690,7 @@ static qboolean StartServer_WriteScriptParams(void) {
 			continue;
 		}
 
-		StartServer_WriteScriptCvar(customsaveparam_list[i].param);
+		CreateServer_WriteScriptCvar(customsaveparam_list[i].param);
 	}
 	*/
 	// close off the block
@@ -1700,10 +1700,10 @@ static qboolean StartServer_WriteScriptParams(void) {
 
 /*
 =======================================================================================================================================
-StartServer_ExecuteScript
+CreateServer_ExecuteScript
 =======================================================================================================================================
 */
-static qboolean StartServer_ExecuteScript(const char *scriptFile) {
+static qboolean CreateServer_ExecuteScript(const char *scriptFile) {
 	fileHandle_t f;
 	int len;
 
@@ -1716,7 +1716,7 @@ static qboolean StartServer_ExecuteScript(const char *scriptFile) {
 		trap_FS_FOpenFile(scriptFile, &f, FS_WRITE);
 
 		if (!f) {
-			StartServer_PrintMessage(va("Can't open file (%s)", scriptFile));
+			CreateServer_PrintMessage(va("Can't open file (%s)", scriptFile));
 			return qfalse;
 		}
 
@@ -1731,16 +1731,16 @@ static qboolean StartServer_ExecuteScript(const char *scriptFile) {
 
 /*
 =======================================================================================================================================
-StartServer_CreateServer
+CreateServer_CreateServer
 
 Data for generating script must already be loaded and initialized.
 =======================================================================================================================================
 */
-qboolean StartServer_CreateServer(const char *scriptFile) {
+qboolean CreateServer_CreateServer(const char *scriptFile) {
 	int i;
 	char *teamjoin;
 
-	if (!StartServer_InitServerExec()) {
+	if (!CreateServer_InitServerExec()) {
 		return qfalse;
 	}
 
@@ -1751,27 +1751,27 @@ qboolean StartServer_CreateServer(const char *scriptFile) {
 		AddScript("// Q3 coding: http://www.planetquake.com/code3arena/\n\n");
 	}
 	// script recovery parameters
-	if (scriptFile && !StartServer_WriteScriptParams()) {
+	if (scriptFile && !CreateServer_WriteScriptParams()) {
 		return qfalse;
 	}
 	// item parameters
-	if (!StartServer_WriteItemParams()) {
+	if (!CreateServer_WriteItemParams()) {
 		return qfalse;
 	}
 	// map parameters
-	if (!StartServer_WriteMapParams()) {
+	if (!CreateServer_WriteMapParams()) {
 		return qfalse;
 	}
 	// bot parameters
 
 	// bot parameters written may depend on map ordering
-	if (!StartServer_WriteBotParams()) {
+	if (!CreateServer_WriteBotParams()) {
 		return qfalse;
 	}
 	// server parameters
 
 	// server parameters may depend on bot generation
-	if (!StartServer_WriteServerParams()) {
+	if (!CreateServer_WriteServerParams()) {
 		return qfalse;
 	}
 	// force player to join team/specs
@@ -1788,7 +1788,7 @@ qboolean StartServer_CreateServer(const char *scriptFile) {
 			teamjoin = "forceteam %i spectator";
 		} else if (s_scriptdata.gametype > GT_TOURNAMENT) {
 			// use %%i so a single %i is generated for player client
-			teamjoin = va("forceteam %%i %s", bot_teamname[StartServer_GetPlayerTeam()]);
+			teamjoin = va("forceteam %%i %s", bot_teamname[CreateServer_GetPlayerTeam()]);
 		} else if (s_scriptdata.gametype == GT_TOURNAMENT) {
 			for (i = 0; i < s_serverexec.player_client; i++) {
 				AddScript(va("forceteam %i spectator;", i));
@@ -1807,5 +1807,5 @@ qboolean StartServer_CreateServer(const char *scriptFile) {
 
 	AddScript("vstr m0\n");
 	// execute!
-	return StartServer_ExecuteScript(scriptFile);
+	return CreateServer_ExecuteScript(scriptFile);
 }

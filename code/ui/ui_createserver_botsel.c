@@ -185,14 +185,14 @@ static void UI_BotSelect_SetBotInfoInCaller(void) {
 
 	if (botSelectInfo.multisel.curvalue) {
 		index = botSelectInfo.index;
-		type = StartServer_SlotTeam(index);
+		type = CreateServer_SlotTeam(index);
 
 		if (type == SLOTTEAM_INVALID) {
 			return;
 		}
 
 		for (sel = 0; sel < botSelectInfo.numMultiSel; sel++, index++) {
-			if (StartServer_SlotTeam(index) != type) {
+			if (CreateServer_SlotTeam(index) != type) {
 				break;
 			}
 
@@ -200,9 +200,9 @@ static void UI_BotSelect_SetBotInfoInCaller(void) {
 			name = Info_ValueForKey(info, "name");
 
 			if (sel == 0) {
-				StartServer_SetNamedBot(index, name);
+				CreateServer_SetNamedBot(index, name);
 			} else {
-				StartServer_InsertNamedBot(index, name);
+				CreateServer_InsertNamedBot(index, name);
 			}
 		}
 	} else {
@@ -213,7 +213,7 @@ static void UI_BotSelect_SetBotInfoInCaller(void) {
 		info = UI_GetBotInfoByNumber(botSelectInfo.sortedBotNums[botSelectInfo.selectedbot]);
 		name = Info_ValueForKey(info, "name");
 
-		StartServer_SetNamedBot(botSelectInfo.index, name);
+		CreateServer_SetNamedBot(botSelectInfo.index, name);
 	}
 }
 
@@ -456,7 +456,7 @@ static void UI_BotSelect_UpdateView(void) {
 			Q_strncpyz(botSelectInfo.botnames[i], Info_ValueForKey(info, "name"), BOTNAME_LENGTH);
 			Q_CleanStr(botSelectInfo.botnames[i]);
 
-			if (botSelectInfo.index != -1 && StartServer_BotOnSelectionList(botSelectInfo.botnames[i])) {
+			if (botSelectInfo.index != -1 && CreateServer_BotOnSelectionList(botSelectInfo.botnames[i])) {
 				botSelectInfo.botcolor[i] = color_red;
 			} else {
 				botSelectInfo.botcolor[i] = color_orange;

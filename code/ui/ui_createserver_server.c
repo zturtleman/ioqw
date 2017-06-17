@@ -41,7 +41,7 @@ id Software at the address below.
 /*
 =======================================================================================================================================
 
-	START SERVER MENU
+	CREATE SERVER MENU
 
 =======================================================================================================================================
 */
@@ -204,10 +204,10 @@ static int InitMultiControls_Size = sizeof(InitMultiControls) / sizeof(InitMulti
 
 /*
 =======================================================================================================================================
-StartServer_ServerPage_SetControlState
+CreateServer_ServerPage_SetControlState
 =======================================================================================================================================
 */
-static void StartServer_ServerPage_SetControlState(menucommon_s *c, int type) {
+static void CreateServer_ServerPage_SetControlState(menucommon_s *c, int type) {
 
 	// set its appearance
 	switch (type) {
@@ -226,10 +226,10 @@ static void StartServer_ServerPage_SetControlState(menucommon_s *c, int type) {
 
 /*
 =======================================================================================================================================
-StartServer_ServerPage_SetControlFromId
+CreateServer_ServerPage_SetControlFromId
 =======================================================================================================================================
 */
-static void StartServer_ServerPage_SetControlFromId(int id, int type) {
+static void CreateServer_ServerPage_SetControlFromId(int id, int type) {
 	menucommon_s *c;
 	int i;
 
@@ -259,15 +259,15 @@ static void StartServer_ServerPage_SetControlFromId(int id, int type) {
 		return;
 	}
 
-	StartServer_ServerPage_SetControlState(c, type);
+	CreateServer_ServerPage_SetControlState(c, type);
 }
 
 /*
 =======================================================================================================================================
-StartServer_ServerPage_UpdateInterface
+CreateServer_ServerPage_UpdateInterface
 =======================================================================================================================================
 */
-static void StartServer_ServerPage_UpdateInterface(void) {
+static void CreateServer_ServerPage_UpdateInterface(void) {
 	int flag;
 
 	flag = 0;
@@ -276,44 +276,44 @@ static void StartServer_ServerPage_UpdateInterface(void) {
 		flag = QMF_HIDDEN;
 	}
 
-	StartServer_ServerPage_SetControlFromId(ID_SERVER_AUTOJOIN, flag);
-	StartServer_ServerPage_SetControlFromId(ID_SERVER_TEAMBALANCE, flag);
+	CreateServer_ServerPage_SetControlFromId(ID_SERVER_AUTOJOIN, flag);
+	CreateServer_ServerPage_SetControlFromId(ID_SERVER_TEAMBALANCE, flag);
 
-	StartServer_SetIconFromGameType(&s_servercontrols.gameTypeIcon, s_scriptdata.gametype, qfalse);
+	CreateServer_SetIconFromGameType(&s_servercontrols.gameTypeIcon, s_scriptdata.gametype, qfalse);
 
 	if (s_scriptdata.server.allowmaxrate) {
-		StartServer_ServerPage_SetControlFromId(ID_SERVER_MAXRATE, 0);
+		CreateServer_ServerPage_SetControlFromId(ID_SERVER_MAXRATE, 0);
 	} else {
-		StartServer_ServerPage_SetControlFromId(ID_SERVER_MAXRATE, QMF_HIDDEN);
+		CreateServer_ServerPage_SetControlFromId(ID_SERVER_MAXRATE, QMF_HIDDEN);
 	}
 
 	if (s_scriptdata.server.allowpass) {
-		StartServer_ServerPage_SetControlFromId(ID_SERVER_PASSWORD, 0);
+		CreateServer_ServerPage_SetControlFromId(ID_SERVER_PASSWORD, 0);
 	} else {
-		StartServer_ServerPage_SetControlFromId(ID_SERVER_PASSWORD, QMF_HIDDEN);
+		CreateServer_ServerPage_SetControlFromId(ID_SERVER_PASSWORD, QMF_HIDDEN);
 	}
 
 	if (s_scriptdata.server.allowMinPing) {
-		StartServer_ServerPage_SetControlFromId(ID_SERVER_MINPING, 0);
+		CreateServer_ServerPage_SetControlFromId(ID_SERVER_MINPING, 0);
 	} else {
-		StartServer_ServerPage_SetControlFromId(ID_SERVER_MINPING, QMF_HIDDEN);
+		CreateServer_ServerPage_SetControlFromId(ID_SERVER_MINPING, QMF_HIDDEN);
 	}
 
 	if (s_scriptdata.server.allowMaxPing) {
-		StartServer_ServerPage_SetControlFromId(ID_SERVER_MAXPING, 0);
+		CreateServer_ServerPage_SetControlFromId(ID_SERVER_MAXPING, 0);
 	} else {
-		StartServer_ServerPage_SetControlFromId(ID_SERVER_MAXPING, QMF_HIDDEN);
+		CreateServer_ServerPage_SetControlFromId(ID_SERVER_MAXPING, QMF_HIDDEN);
 	}
 	// enable fight button if possible
-	StartServer_CheckFightReady(&s_servercontrols.common);
+	CreateServer_CheckFightReady(&s_servercontrols.common);
 }
 
 /*
 =======================================================================================================================================
-StartServer_ServerPage_Cache
+CreateServer_ServerPage_Cache
 =======================================================================================================================================
 */
-void StartServer_ServerPage_Cache(void) {
+void CreateServer_ServerPage_Cache(void) {
 
 	trap_R_RegisterShaderNoMip(SERVER_SAVE0);
 	trap_R_RegisterShaderNoMip(SERVER_SAVE1);
@@ -321,19 +321,19 @@ void StartServer_ServerPage_Cache(void) {
 
 /*
 =======================================================================================================================================
-StartServer_ServerPage_Save
+CreateServer_ServerPage_Save
 =======================================================================================================================================
 */
-static void StartServer_ServerPage_Save(void) {
-	StartServer_SaveScriptData();
+static void CreateServer_ServerPage_Save(void) {
+	CreateServer_SaveScriptData();
 }
 
 /*
 =======================================================================================================================================
-StartServer_ServerPage_InitControlsFromScript
+CreateServer_ServerPage_InitControlsFromScript
 =======================================================================================================================================
 */
-static void StartServer_ServerPage_InitControlsFromScript(void) {
+static void CreateServer_ServerPage_InitControlsFromScript(void) {
 	int i;
 	radiobuttoncontrol_t *r;
 	textfieldcontrol_t *t;
@@ -360,28 +360,28 @@ static void StartServer_ServerPage_InitControlsFromScript(void) {
 
 /*
 =======================================================================================================================================
-StartServer_ServerPage_Load
+CreateServer_ServerPage_Load
 =======================================================================================================================================
 */
-static void StartServer_ServerPage_Load(void) {
+static void CreateServer_ServerPage_Load(void) {
 
 	s_servercontrols.gameType.curvalue = gametype_remap2[s_scriptdata.gametype];
 
-	StartServer_ServerPage_InitControlsFromScript();
+	CreateServer_ServerPage_InitControlsFromScript();
 }
 
 /*
 =======================================================================================================================================
-StartServer_ServerPage_CommonEvent
+CreateServer_ServerPage_CommonEvent
 =======================================================================================================================================
 */
-static void StartServer_ServerPage_CommonEvent(void *ptr, int event) {
+static void CreateServer_ServerPage_CommonEvent(void *ptr, int event) {
 
 	if (event != QM_ACTIVATED) {
 		return;
 	}
 
-	StartServer_ServerPage_Save();
+	CreateServer_ServerPage_Save();
 
 	switch (((menucommon_s *)ptr)->id) {
 		case ID_SERVERCOMMON_BOTS:
@@ -397,7 +397,7 @@ static void StartServer_ServerPage_CommonEvent(void *ptr, int event) {
 			UI_PopMenu();
 			break;
 		case ID_SERVERCOMMON_FIGHT:
-			StartServer_CreateServer(NULL);
+			CreateServer_CreateServer(NULL);
 			break;
 		case ID_SINGLEPLAYER:
 			UI_PopMenu();
@@ -418,10 +418,10 @@ static void StartServer_ServerPage_CommonEvent(void *ptr, int event) {
 
 /*
 =======================================================================================================================================
-StartServer_ServerPage_DrawStatusBarText
+CreateServer_ServerPage_DrawStatusBarText
 =======================================================================================================================================
 */
-static void StartServer_ServerPage_DrawStatusBarText(void) {
+static void CreateServer_ServerPage_DrawStatusBarText(void) {
 	vec4_t color;
 	int fade;
 	float fadecol;
@@ -447,15 +447,15 @@ static void StartServer_ServerPage_DrawStatusBarText(void) {
 
 /*
 =======================================================================================================================================
-StartServer_ServerPage_MenuKey
+CreateServer_ServerPage_MenuKey
 =======================================================================================================================================
 */
-static sfxHandle_t StartServer_ServerPage_MenuKey(int key) {
+static sfxHandle_t CreateServer_ServerPage_MenuKey(int key) {
 
 	switch (key) {
 		case K_MOUSE2:
 		case K_ESCAPE:
-			StartServer_ServerPage_Save();
+			CreateServer_ServerPage_Save();
 			UI_PopMenu();
 			UI_PopMenu();
 			UI_PopMenu();
@@ -467,10 +467,10 @@ static sfxHandle_t StartServer_ServerPage_MenuKey(int key) {
 
 /*
 =======================================================================================================================================
-StartServer_ServerPage_SetStatusBar
+CreateServer_ServerPage_SetStatusBar
 =======================================================================================================================================
 */
-static void StartServer_ServerPage_SetStatusBar(const char *text) {
+static void CreateServer_ServerPage_SetStatusBar(const char *text) {
 
 	s_servercontrols.savetime = uis.realtime + STATUSBAR_FADETIME;
 
@@ -481,10 +481,10 @@ static void StartServer_ServerPage_SetStatusBar(const char *text) {
 
 /*
 =======================================================================================================================================
-StartServer_ServerPage_Event
+CreateServer_ServerPage_Event
 =======================================================================================================================================
 */
-static void StartServer_ServerPage_Event(void *ptr, int event) {
+static void CreateServer_ServerPage_Event(void *ptr, int event) {
 
 	switch (((menucommon_s *)ptr)->id) {
 		case ID_SERVER_GAMETYPE:
@@ -492,10 +492,10 @@ static void StartServer_ServerPage_Event(void *ptr, int event) {
 				return;
 			}
 
-			StartServer_SaveScriptData();
-			StartServer_LoadScriptDataFromType(gametype_remap[s_servercontrols.gameType.curvalue]);
-			StartServer_ServerPage_InitControlsFromScript();
-			StartServer_ServerPage_UpdateInterface();
+			CreateServer_SaveScriptData();
+			CreateServer_LoadScriptDataFromType(gametype_remap[s_servercontrols.gameType.curvalue]);
+			CreateServer_ServerPage_InitControlsFromScript();
+			CreateServer_ServerPage_UpdateInterface();
 			break;
 		/*
 		case ID_SERVER_SAVE:
@@ -503,16 +503,16 @@ static void StartServer_ServerPage_Event(void *ptr, int event) {
 				return;
 			}
 
-			StartServer_ServerPage_Save();
-			UI_ConfigMenu("SAVE SCRIPT", qfalse, StartServer_ServerPage_SaveScript);
+			CreateServer_ServerPage_Save();
+			UI_ConfigMenu("SAVE SCRIPT", qfalse, CreateServer_ServerPage_SaveScript);
 			break;
 		case ID_SERVER_LOAD:
 			if (event != QM_ACTIVATED) {
 				return;
 			}
 
-			StartServer_ServerPage_Save();
-			UI_ConfigMenu("LOAD SCRIPT", qtrue, StartServer_ServerPage_LoadScript);
+			CreateServer_ServerPage_Save();
+			UI_ConfigMenu("LOAD SCRIPT", qtrue, CreateServer_ServerPage_LoadScript);
 			break;
 		*/
 	}
@@ -520,10 +520,10 @@ static void StartServer_ServerPage_Event(void *ptr, int event) {
 
 /*
 =======================================================================================================================================
-StartServer_ServerPage_CheckMinMaxFail
+CreateServer_ServerPage_CheckMinMaxFail
 =======================================================================================================================================
 */
-static qboolean StartServer_ServerPage_CheckMinMaxFail(controlinit_t *c) {
+static qboolean CreateServer_ServerPage_CheckMinMaxFail(controlinit_t *c) {
 	int value;
 
 	if (c->min == c->max) {
@@ -547,10 +547,10 @@ static qboolean StartServer_ServerPage_CheckMinMaxFail(controlinit_t *c) {
 
 /*
 =======================================================================================================================================
-StartServer_ServerPage_SpinEvent
+CreateServer_ServerPage_SpinEvent
 =======================================================================================================================================
 */
-static void StartServer_ServerPage_SpinEvent(void *ptr, int event) {
+static void CreateServer_ServerPage_SpinEvent(void *ptr, int event) {
 	int id;
 	spincontrol_t *s;
 
@@ -562,15 +562,15 @@ static void StartServer_ServerPage_SpinEvent(void *ptr, int event) {
 	s = &s_servercontrols.spin[id];
 	*(s->init->number) = s_servercontrols.spin[id].control.curvalue;
 
-	StartServer_ServerPage_UpdateInterface();
+	CreateServer_ServerPage_UpdateInterface();
 }
 
 /*
 =======================================================================================================================================
-StartServer_ServerPage_RadioEvent
+CreateServer_ServerPage_RadioEvent
 =======================================================================================================================================
 */
-static void StartServer_ServerPage_RadioEvent(void *ptr, int event) {
+static void CreateServer_ServerPage_RadioEvent(void *ptr, int event) {
 	int id;
 	radiobuttoncontrol_t *r;
 
@@ -582,15 +582,15 @@ static void StartServer_ServerPage_RadioEvent(void *ptr, int event) {
 	r = &s_servercontrols.radio[id];
 	*(r->init->number) = s_servercontrols.radio[id].control.curvalue;
 
-	StartServer_ServerPage_UpdateInterface();
+	CreateServer_ServerPage_UpdateInterface();
 }
 
 /*
 =======================================================================================================================================
-StartServer_ServerPage_FieldEvent
+CreateServer_ServerPage_FieldEvent
 =======================================================================================================================================
 */
-static void StartServer_ServerPage_FieldEvent(void *ptr, int event) {
+static void CreateServer_ServerPage_FieldEvent(void *ptr, int event) {
 	int id;
 	textfieldcontrol_t *r;
 	controlinit_t *c;
@@ -606,59 +606,59 @@ static void StartServer_ServerPage_FieldEvent(void *ptr, int event) {
 	if (c->type == SRVCTRL_NUMFIELD) {
 		*(c->number) = atoi(r->control.field.buffer);
 
-		if (StartServer_ServerPage_CheckMinMaxFail(c)) {
+		if (CreateServer_ServerPage_CheckMinMaxFail(c)) {
 			Q_strncpyz(r->control.field.buffer, va("%i", *(c->number)), c->arraysize);
 		}
 	} else if (c->type == SRVCTRL_TEXTFIELD) {
 		Q_strncpyz(c->array, r->control.field.buffer, c->arraysize);
 	}
 
-	StartServer_ServerPage_UpdateInterface();
+	CreateServer_ServerPage_UpdateInterface();
 }
 
 /*
 =======================================================================================================================================
-StartServer_ServerPage_MenuDraw
+CreateServer_ServerPage_MenuDraw
 =======================================================================================================================================
 */
-static void StartServer_ServerPage_MenuDraw(void) {
+static void CreateServer_ServerPage_MenuDraw(void) {
 
 	if (uis.firstdraw) {
-		StartServer_ServerPage_Load();
-		StartServer_ServerPage_UpdateInterface();
+		CreateServer_ServerPage_Load();
+		CreateServer_ServerPage_UpdateInterface();
 	}
 
-	StartServer_BackgroundDraw(qfalse);
+	CreateServer_BackgroundDraw(qfalse);
 	// draw the controls
 	Menu_Draw(&s_servercontrols.menu);
 
-	StartServer_ServerPage_DrawStatusBarText();
+	CreateServer_ServerPage_DrawStatusBarText();
 }
 
 /*
 =======================================================================================================================================
-StartServer_ServerPage_StatusBar
+CreateServer_ServerPage_StatusBar
 =======================================================================================================================================
 */
 /*
-static void StartServer_ServerPage_StatusBar(void *ptr) {
+static void CreateServer_ServerPage_StatusBar(void *ptr) {
 
 	switch (((menucommon_s *)ptr)->id) {
 		case ID_SERVER_SAVE:
-			StartServer_ServerPage_SetStatusBar("Create a script for later use with \\exec");
+			CreateServer_ServerPage_SetStatusBar("Create a script for later use with \\exec");
 			break;
 		case ID_SERVER_LOAD:
-			StartServer_ServerPage_SetStatusBar("Load a previously saved UI script");
+			CreateServer_ServerPage_SetStatusBar("Load a previously saved UI script");
 			break;
 	}
 }
 */
 /*
 =======================================================================================================================================
-StartServer_ServerPage_ControlListStatusBar
+CreateServer_ServerPage_ControlListStatusBar
 =======================================================================================================================================
 */
-static void StartServer_ServerPage_ControlListStatusBar(void *ptr) {
+static void CreateServer_ServerPage_ControlListStatusBar(void *ptr) {
 	menucommon_s *m;
 	controlinit_t *c;
 
@@ -681,35 +681,35 @@ static void StartServer_ServerPage_ControlListStatusBar(void *ptr) {
 
 	switch (c->id) {
 		case ID_SERVER_CONFIGBUG:
-			StartServer_ServerPage_SetStatusBar("prevents unexpected change of time and frag limits");
+			CreateServer_ServerPage_SetStatusBar("prevents unexpected change of time and frag limits");
 			return;
 		case ID_SERVER_ALLOWMAXRATE:
-			StartServer_ServerPage_SetStatusBar("max quantity of data sent to a single client");
+			CreateServer_ServerPage_SetStatusBar("max quantity of data sent to a single client");
 			return;
 		case ID_SERVER_MAXRATE:
-			StartServer_ServerPage_SetStatusBar("8000 or 10000 are typical, 0 = no limit");
+			CreateServer_ServerPage_SetStatusBar("8000 or 10000 are typical, 0 = no limit");
 			return;
 		case ID_SERVER_SMOOTHCLIENTS:
-			StartServer_ServerPage_SetStatusBar("on = server allows a client to predict other player movement");
+			CreateServer_ServerPage_SetStatusBar("on = server allows a client to predict other player movement");
 			return;
 		case ID_SERVER_SYNCCLIENTS:
-			StartServer_ServerPage_SetStatusBar("on = allows client to record demos, may affect performance");
+			CreateServer_ServerPage_SetStatusBar("on = allows client to record demos, may affect performance");
 			return;
 		case ID_SERVER_ALLOWMINPING:
 		case ID_SERVER_ALLOWMAXPING:
 		case ID_SERVER_MINPING:
 		case ID_SERVER_MAXPING:
-			StartServer_ServerPage_SetStatusBar("Client ping limit, tested on first connection");
+			CreateServer_ServerPage_SetStatusBar("Client ping limit, tested on first connection");
 			return;
 	}
 }
 
 /*
 =======================================================================================================================================
-StartServer_ServerPage_GetControlX
+CreateServer_ServerPage_GetControlX
 =======================================================================================================================================
 */
-static int StartServer_ServerPage_GetControlX(int type) {
+static int CreateServer_ServerPage_GetControlX(int type) {
 
 	switch (type) {
 		case SCRPOS_LEFT:
@@ -730,10 +730,10 @@ static int StartServer_ServerPage_GetControlX(int type) {
 
 /*
 =======================================================================================================================================
-StartServer_ServerPage_GetControlY
+CreateServer_ServerPage_GetControlY
 =======================================================================================================================================
 */
-static int StartServer_ServerPage_GetControlY(int type) {
+static int CreateServer_ServerPage_GetControlY(int type) {
 	int height, *cy;
 
 	cy = s_servercontrols.control_height;
@@ -780,10 +780,10 @@ static int StartServer_ServerPage_GetControlY(int type) {
 
 /*
 =======================================================================================================================================
-StartServer_ServerPage_InitSpinCtrl
+CreateServer_ServerPage_InitSpinCtrl
 =======================================================================================================================================
 */
-static void StartServer_ServerPage_InitSpinCtrl(controlinit_t *c) {
+static void CreateServer_ServerPage_InitSpinCtrl(controlinit_t *c) {
 	spincontrol_t *s;
 
 	if (s_servercontrols.num_spin == MAX_SERVER_SPIN_CONTROL) {
@@ -807,10 +807,10 @@ static void StartServer_ServerPage_InitSpinCtrl(controlinit_t *c) {
 	s->control.generic.name = c->title;
 	s->control.generic.id = s_servercontrols.num_spin; // self reference
 	s->control.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
-	s->control.generic.callback = StartServer_ServerPage_SpinEvent;
-	s->control.generic.statusbar = StartServer_ServerPage_ControlListStatusBar;
-	s->control.generic.x = StartServer_ServerPage_GetControlX(c->screenpos);
-	s->control.generic.y = StartServer_ServerPage_GetControlY(c->screenpos);
+	s->control.generic.callback = CreateServer_ServerPage_SpinEvent;
+	s->control.generic.statusbar = CreateServer_ServerPage_ControlListStatusBar;
+	s->control.generic.x = CreateServer_ServerPage_GetControlX(c->screenpos);
+	s->control.generic.y = CreateServer_ServerPage_GetControlY(c->screenpos);
 	s->control.itemnames = c->itemnames;
 	s->control.curvalue = *(c->number);
 	s_servercontrols.num_spin++;
@@ -818,10 +818,10 @@ static void StartServer_ServerPage_InitSpinCtrl(controlinit_t *c) {
 
 /*
 =======================================================================================================================================
-StartServer_ServerPage_InitRadioCtrl
+CreateServer_ServerPage_InitRadioCtrl
 =======================================================================================================================================
 */
-static void StartServer_ServerPage_InitRadioCtrl(controlinit_t *c) {
+static void CreateServer_ServerPage_InitRadioCtrl(controlinit_t *c) {
 	radiobuttoncontrol_t *r;
 
 	if (s_servercontrols.num_radio == MAX_SERVER_RADIO_CONTROL) {
@@ -840,10 +840,10 @@ static void StartServer_ServerPage_InitRadioCtrl(controlinit_t *c) {
 	r->control.generic.name = c->title;
 	r->control.generic.id = s_servercontrols.num_radio; // self reference
 	r->control.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
-	r->control.generic.callback = StartServer_ServerPage_RadioEvent;
-	r->control.generic.statusbar = StartServer_ServerPage_ControlListStatusBar;
-	r->control.generic.x = StartServer_ServerPage_GetControlX(c->screenpos);
-	r->control.generic.y = StartServer_ServerPage_GetControlY(c->screenpos);
+	r->control.generic.callback = CreateServer_ServerPage_RadioEvent;
+	r->control.generic.statusbar = CreateServer_ServerPage_ControlListStatusBar;
+	r->control.generic.x = CreateServer_ServerPage_GetControlX(c->screenpos);
+	r->control.generic.y = CreateServer_ServerPage_GetControlY(c->screenpos);
 	r->control.curvalue = *(c->number);
 
 	s_servercontrols.num_radio++;
@@ -851,10 +851,10 @@ static void StartServer_ServerPage_InitRadioCtrl(controlinit_t *c) {
 
 /*
 =======================================================================================================================================
-StartServer_ServerPage_InitFieldCtrl
+CreateServer_ServerPage_InitFieldCtrl
 =======================================================================================================================================
 */
-static void StartServer_ServerPage_InitFieldCtrl(controlinit_t *c) {
+static void CreateServer_ServerPage_InitFieldCtrl(controlinit_t *c) {
 	textfieldcontrol_t *f;
 	int flags;
 
@@ -884,11 +884,11 @@ static void StartServer_ServerPage_InitFieldCtrl(controlinit_t *c) {
 	f->control.generic.type = MTYPE_FIELD;
 	f->control.generic.name = c->title;
 	f->control.generic.id = s_servercontrols.num_field; // self reference
-	f->control.generic.callback = StartServer_ServerPage_FieldEvent;
-	f->control.generic.statusbar = StartServer_ServerPage_ControlListStatusBar;
+	f->control.generic.callback = CreateServer_ServerPage_FieldEvent;
+	f->control.generic.statusbar = CreateServer_ServerPage_ControlListStatusBar;
 	f->control.generic.flags = flags;
-	f->control.generic.x = StartServer_ServerPage_GetControlX(c->screenpos);
-	f->control.generic.y = StartServer_ServerPage_GetControlY(c->screenpos);
+	f->control.generic.x = CreateServer_ServerPage_GetControlX(c->screenpos);
+	f->control.generic.y = CreateServer_ServerPage_GetControlY(c->screenpos);
 	f->control.field.widthInChars = c->displaysize;
 	f->control.field.maxchars = c->arraysize;
 
@@ -903,23 +903,23 @@ static void StartServer_ServerPage_InitFieldCtrl(controlinit_t *c) {
 
 /*
 =======================================================================================================================================
-StartServer_ServerPage_InitControlList
+CreateServer_ServerPage_InitControlList
 =======================================================================================================================================
 */
-static void StartServer_ServerPage_InitControlList(controlinit_t *list, int size) {
+static void CreateServer_ServerPage_InitControlList(controlinit_t *list, int size) {
 	int i;
 
 	for (i = 0; i < size; i++) {
 		switch (list[i].type) {
 			case SRVCTRL_SPIN:
-				StartServer_ServerPage_InitSpinCtrl(&list[i]);
+				CreateServer_ServerPage_InitSpinCtrl(&list[i]);
 				break;
 			case SRVCTRL_RADIO:
-				StartServer_ServerPage_InitRadioCtrl(&list[i]);
+				CreateServer_ServerPage_InitRadioCtrl(&list[i]);
 				break;
 			case SRVCTRL_TEXTFIELD:
 			case SRVCTRL_NUMFIELD:
-				StartServer_ServerPage_InitFieldCtrl(&list[i]);
+				CreateServer_ServerPage_InitFieldCtrl(&list[i]);
 				break;
 			case SRVCTRL_BLANK:
 				s_servercontrols.control_height[list[i].screenpos] += LINE_HEIGHT;
@@ -930,30 +930,30 @@ static void StartServer_ServerPage_InitControlList(controlinit_t *list, int size
 
 /*
 =======================================================================================================================================
-StartServer_ServerPage_MenuInit
+CreateServer_ServerPage_MenuInit
 =======================================================================================================================================
 */
-void StartServer_ServerPage_MenuInit(void) {
+void CreateServer_ServerPage_MenuInit(void) {
 	menuframework_s *menuptr;
 	int y, ymax, i;
 
 	memset(&s_servercontrols, 0, sizeof(servercontrols_t));
 
-	StartServer_ServerPage_Cache();
+	CreateServer_ServerPage_Cache();
 
 	menuptr = &s_servercontrols.menu;
-	menuptr->key = StartServer_ServerPage_MenuKey;
+	menuptr->key = CreateServer_ServerPage_MenuKey;
 	menuptr->wrapAround = qtrue;
 	menuptr->fullscreen = qtrue;
-	menuptr->draw = StartServer_ServerPage_MenuDraw;
+	menuptr->draw = CreateServer_ServerPage_MenuDraw;
 
-	StartServer_CommonControls_Init(menuptr, &s_servercontrols.common, StartServer_ServerPage_CommonEvent, COMMONCTRL_SERVER);
+	CreateServer_CommonControls_Init(menuptr, &s_servercontrols.common, CreateServer_ServerPage_CommonEvent, COMMONCTRL_SERVER);
 	// the user controlled server params
 	y = GAMETYPEROW_Y;
 	s_servercontrols.gameType.generic.type = MTYPE_SPINCONTROL;
 	s_servercontrols.gameType.generic.id = ID_SERVER_GAMETYPE;
 	s_servercontrols.gameType.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
-	s_servercontrols.gameType.generic.callback = StartServer_ServerPage_Event;
+	s_servercontrols.gameType.generic.callback = CreateServer_ServerPage_Event;
 	s_servercontrols.gameType.generic.x = GAMETYPECOLUMN_X;
 	s_servercontrols.gameType.generic.y = y;
 	s_servercontrols.gameType.generic.name = "Game Type:";
@@ -976,7 +976,7 @@ void StartServer_ServerPage_MenuInit(void) {
 		s_servercontrols.control_height[i] = y;
 	}
 
-	StartServer_ServerPage_InitControlList(InitControls, InitControls_Size);
+	CreateServer_ServerPage_InitControlList(InitControls, InitControls_Size);
 
 	if (s_scriptdata.multiplayer) {
 		ymax = 0;
@@ -991,7 +991,7 @@ void StartServer_ServerPage_MenuInit(void) {
 			s_servercontrols.control_height[i] = ymax;
 		}
 
-		StartServer_ServerPage_InitControlList(InitMultiControls, InitMultiControls_Size);
+		CreateServer_ServerPage_InitControlList(InitMultiControls, InitMultiControls_Size);
 	}
 	/*
 	s_servercontrols.saveScript.generic.type = MTYPE_BITMAP;
@@ -1000,8 +1000,8 @@ void StartServer_ServerPage_MenuInit(void) {
 	s_servercontrols.saveScript.generic.x = 320 - 128;
 	s_servercontrols.saveScript.generic.y = 480 - 64;
 	s_servercontrols.saveScript.generic.id = ID_SERVER_SAVE;
-	s_servercontrols.saveScript.generic.callback = StartServer_ServerPage_Event;
-	s_servercontrols.saveScript.generic.statusbar = StartServer_ServerPage_StatusBar;
+	s_servercontrols.saveScript.generic.callback = CreateServer_ServerPage_Event;
+	s_servercontrols.saveScript.generic.statusbar = CreateServer_ServerPage_StatusBar;
 	s_servercontrols.saveScript.width = 128;
 	s_servercontrols.saveScript.height = 64;
 	s_servercontrols.saveScript.focuspic = SERVER_SAVE1;
@@ -1012,8 +1012,8 @@ void StartServer_ServerPage_MenuInit(void) {
 	s_servercontrols.loadScript.generic.x = 320;
 	s_servercontrols.loadScript.generic.y = 480 - 64;
 	s_servercontrols.loadScript.generic.id = ID_SERVER_LOAD;
-	s_servercontrols.loadScript.generic.callback = StartServer_ServerPage_Event;
-	s_servercontrols.loadScript.generic.statusbar = StartServer_ServerPage_StatusBar;
+	s_servercontrols.loadScript.generic.callback = CreateServer_ServerPage_Event;
+	s_servercontrols.loadScript.generic.statusbar = CreateServer_ServerPage_StatusBar;
 	s_servercontrols.loadScript.width = 128;
 	s_servercontrols.loadScript.height = 64;
 	s_servercontrols.loadScript.focuspic = SERVER_LOAD1;

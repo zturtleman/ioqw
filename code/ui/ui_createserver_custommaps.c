@@ -47,7 +47,7 @@ id Software at the address below.
 */
 
 #include "ui_local.h"
-#include "ui_startserver.h"
+#include "ui_createserver.h"
 
 #define MAX_MAPSLIST 2048
 
@@ -170,7 +170,7 @@ If list is NULL then we're just counting the number of maps that match gametype.
 
 gametype == -1
 
-Can be used externally to the ui_startserver.c subsystem.
+Can be used externally to the ui_createserver.c subsystem.
 =======================================================================================================================================
 */
 int UI_BuildMapListByType(int *list, int listmax, int gametype, callbackMapList callback) {
@@ -236,13 +236,13 @@ const char *UI_DefaultIconFromGameType(int gametype) {
 
 /*
 =======================================================================================================================================
-StartServer_SetIconFromGameType
+CreateServer_SetIconFromGameType
 
 gametype < 0 clears the bitmap so nothing is drawn. Modifies path to icon to get high quality Id version if needed.
 Note: these Id icons don't have the proper transparency behaviour.
 =======================================================================================================================================
 */
-void StartServer_SetIconFromGameType(menubitmap_s *b, int gametype, qboolean custom) {
+void CreateServer_SetIconFromGameType(menubitmap_s *b, int gametype, qboolean custom) {
 	const char *new_icon;
 
 	if (!b) {
@@ -255,7 +255,7 @@ void StartServer_SetIconFromGameType(menubitmap_s *b, int gametype, qboolean cus
 		return;
 	}
 
-	new_icon = StartServer_MapIconFromType(gametype, custom);
+	new_icon = CreateServer_MapIconFromType(gametype, custom);
 
 	if (new_icon != b->generic.name) {
 		b->generic.name = new_icon;
@@ -265,10 +265,10 @@ void StartServer_SetIconFromGameType(menubitmap_s *b, int gametype, qboolean cus
 
 /*
 =======================================================================================================================================
-StartServer_CreateMapType
+CreateServer_CreateMapType
 =======================================================================================================================================
 */
-static qboolean StartServer_CreateMapType(const char *name, const char *graphic) {
+static qboolean CreateServer_CreateMapType(const char *name, const char *graphic) {
 	int i;
 	qboolean duplicated;
 	char *ptr;
@@ -296,10 +296,10 @@ static qboolean StartServer_CreateMapType(const char *name, const char *graphic)
 
 /*
 =======================================================================================================================================
-StartServer_LoadCustomMapData
+CreateServer_LoadCustomMapData
 =======================================================================================================================================
 */
-static void StartServer_LoadCustomMapData(const char *filename, qboolean merge) {
+static void CreateServer_LoadCustomMapData(const char *filename, qboolean merge) {
 	qboolean indexgroup, groupfound, indexdone, groupused[MAX_MAPTYPES];
 	char buf[TMP_BUFSIZE], *text_p, *token, *ptr;
 	static char data[65000];
@@ -437,7 +437,7 @@ static void StartServer_LoadCustomMapData(const char *filename, qboolean merge) 
 				}
 			}
 			// found a type of map, with associated graphic
-			if (!StartServer_CreateMapType(buf, token)) {
+			if (!CreateServer_CreateMapType(buf, token)) {
 				Com_Printf("(%s):(%s) duplicated, ignored\n", filename, buf);
 			}
 
@@ -463,10 +463,10 @@ static void StartServer_LoadCustomMapData(const char *filename, qboolean merge) 
 
 /*
 =======================================================================================================================================
-StartServer_MapSupportsBots
+CreateServer_MapSupportsBots
 =======================================================================================================================================
 */
-qboolean StartServer_MapSupportsBots(const char *mapname) {
+qboolean CreateServer_MapSupportsBots(const char *mapname) {
 	int i, index, start, end;
 
 	index = s_mapList.noBotsIndex;
@@ -489,10 +489,10 @@ qboolean StartServer_MapSupportsBots(const char *mapname) {
 
 /*
 =======================================================================================================================================
-StartServer_AddMapType
+CreateServer_AddMapType
 =======================================================================================================================================
 */
-static void StartServer_AddMapType(mappic_t *mappic, int type) {
+static void CreateServer_AddMapType(mappic_t *mappic, int type) {
 	int i;
 
 	if (mappic->num_types == MAX_MAPTYPES) {
@@ -510,10 +510,10 @@ static void StartServer_AddMapType(mappic_t *mappic, int type) {
 
 /*
 =======================================================================================================================================
-StartServer_InitMapPictureFromIndex
+CreateServer_InitMapPictureFromIndex
 =======================================================================================================================================
 */
-void StartServer_InitMapPictureFromIndex(mappic_t *mappic, int index) {
+void CreateServer_InitMapPictureFromIndex(mappic_t *mappic, int index) {
 	int i, j, tmp;
 	const char *info;
 	char mapname[MAPNAME_BUFFER];
@@ -536,12 +536,12 @@ void StartServer_InitMapPictureFromIndex(mappic_t *mappic, int index) {
 		// find map in list
 		for (j = 0; j < s_mapList.num_maptypes; j++) {
 			if (i >= s_mapList.type_offset[j][MAPTYPE_MASTER_BEGIN] && i < s_mapList.type_offset[j][MAPTYPE_MASTER_END]) {
-				StartServer_AddMapType(mappic, j);
+				CreateServer_AddMapType(mappic, j);
 				break;
 			}
 
 			if (i >= s_mapList.type_offset[j][MAPTYPE_CUSTOM_BEGIN] && i < s_mapList.type_offset[j][MAPTYPE_CUSTOM_END]) {
-				StartServer_AddMapType(mappic, j);
+				CreateServer_AddMapType(mappic, j);
 				break;
 			}
 		}
@@ -563,10 +563,10 @@ void StartServer_InitMapPictureFromIndex(mappic_t *mappic, int index) {
 
 /*
 =======================================================================================================================================
-StartServer_InitMapPicture
+CreateServer_InitMapPicture
 =======================================================================================================================================
 */
-void StartServer_InitMapPicture(mappic_t *mappic, const char *mapname) {
+void CreateServer_InitMapPicture(mappic_t *mappic, const char *mapname) {
 	int i, nummaps;
 	const char *info;
 
@@ -587,17 +587,17 @@ void StartServer_InitMapPicture(mappic_t *mappic, const char *mapname) {
 			continue;
 		}
 
-		StartServer_InitMapPictureFromIndex(mappic, i);
+		CreateServer_InitMapPictureFromIndex(mappic, i);
 		return;
 	}
 }
 
 /*
 =======================================================================================================================================
-StartServer_DrawMapPicture
+CreateServer_DrawMapPicture
 =======================================================================================================================================
 */
-void StartServer_DrawMapPicture(int x, int y, int w, int h, mappic_t *mappic, vec4_t color) {
+void CreateServer_DrawMapPicture(int x, int y, int w, int h, mappic_t *mappic, vec4_t color) {
 	qhandle_t hpic;
 	int i, mapbits, colx, coly, icons;
 
@@ -696,18 +696,18 @@ void StartServer_DrawMapPicture(int x, int y, int w, int h, mappic_t *mappic, ve
 
 /*
 =======================================================================================================================================
-StartServer_LoadBotlessMaps
+CreateServer_LoadBotlessMaps
 
 Creates a special group of maps that don't have .aas bot support files.
 =======================================================================================================================================
 */
-void StartServer_LoadBotlessMaps(void) {
+void CreateServer_LoadBotlessMaps(void) {
 	int i, nummaps, len, index;
 	const char *info;
 	char mapname[MAPNAME_BUFFER];
 	fileHandle_t file;
 
-	StartServer_CreateMapType("NoBots", "icons/noammo");
+	CreateServer_CreateMapType("NoBots", "icons/noammo");
 
 	index = s_mapList.num_maptypes - 1;
 	s_mapList.noBotsIndex = index;
@@ -754,10 +754,10 @@ void UI_LoadMapTypeInfo(void) {
 	s_mapList.num_maps = 0;
 	s_mapList.noBotsIndex = -1;
 	// load all the maps that don't have bot route files
-	//StartServer_LoadBotlessMaps();
+	//CreateServer_LoadBotlessMaps();
 	// load data files
-	StartServer_LoadCustomMapData("mapdata.txt", qfalse);
-	StartServer_LoadCustomMapData("usermaps.txt", qtrue);
+	CreateServer_LoadCustomMapData("mapdata.txt", qfalse);
+	CreateServer_LoadCustomMapData("usermaps.txt", qtrue);
 	// update map selection list so we can put custom maps on screen
 	for (i = 0; i < s_mapList.num_maptypes; i++) {
 		mapfilter_items[MAPFILTER_MAX + i] = s_mapList.mapTypeName[i];
@@ -769,10 +769,10 @@ void UI_LoadMapTypeInfo(void) {
 
 /*
 =======================================================================================================================================
-StartServer_NumCustomMapTypes
+CreateServer_NumCustomMapTypes
 =======================================================================================================================================
 */
-int StartServer_NumCustomMapTypes(void) {
+int CreateServer_NumCustomMapTypes(void) {
 
 	if (!maplist_loaded) {
 		UI_LoadMapTypeInfo();
@@ -783,10 +783,10 @@ int StartServer_NumCustomMapTypes(void) {
 
 /*
 =======================================================================================================================================
-StartServer_MapIconFromType
+CreateServer_MapIconFromType
 =======================================================================================================================================
 */
-const char *StartServer_MapIconFromType(int gametype, qboolean isCustomMap) {
+const char *CreateServer_MapIconFromType(int gametype, qboolean isCustomMap) {
 
 	if (!maplist_loaded) {
 		UI_LoadMapTypeInfo();
@@ -805,10 +805,10 @@ const char *StartServer_MapIconFromType(int gametype, qboolean isCustomMap) {
 
 /*
 =======================================================================================================================================
-StartServer_IsCustomMapType
+CreateServer_IsCustomMapType
 =======================================================================================================================================
 */
-qboolean StartServer_IsCustomMapType(const char *mapname, int type) {
+qboolean CreateServer_IsCustomMapType(const char *mapname, int type) {
 	int i, end;
 
 	if (!maplist_loaded) {
