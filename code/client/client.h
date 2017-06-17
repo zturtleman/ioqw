@@ -283,6 +283,7 @@ typedef struct {
 	netadr_t updateServer;
 	char updateChallenge[MAX_TOKEN_CHARS];
 	char updateInfoString[MAX_INFO_STRING];
+	netadr_t rconAddress;
 	// rendering info
 	glconfig_t glconfig;
 	qhandle_t charSetShader;
