@@ -667,7 +667,7 @@ static void UI_SPLevelMenu_MenuDraw(void) {
 			UI_DrawProportionalString(x + 22, y + 18, "?", UI_BIGFONT, color_orange);
 		}
 
-		UI_DrawString(x, y + 64, levelMenuInfo.botNames[n], UI_SMALLFONT|UI_LEFT, color_orange);
+		UI_DrawString(320, y + 64, levelMenuInfo.botNames[n], UI_CENTER|UI_SMALLFONT, color_orange);
 	}
 }
 
