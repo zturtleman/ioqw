@@ -544,15 +544,15 @@ static void PlayerModel_MenuInit(void) {
 	s_playermodel.ports.generic.type = MTYPE_BITMAP;
 	s_playermodel.ports.generic.name = MODEL_PORTS;
 	s_playermodel.ports.generic.flags = QMF_LEFT_JUSTIFY|QMF_INACTIVE;
-	s_playermodel.ports.generic.x = 50;
-	s_playermodel.ports.generic.y = 59;
+	s_playermodel.ports.generic.x = 126;
+	s_playermodel.ports.generic.y = 107;
 	s_playermodel.ports.width = 274;
 	s_playermodel.ports.height = 274;
 
-	y = 59;
+	y = 107;
 
 	for (i = 0, k = 0; i < PLAYERGRID_ROWS; i++) {
-		x = 50;
+		x = 126;
 
 		for (j = 0; j < PLAYERGRID_COLS; j++, k++) {
 			s_playermodel.pics[k].generic.type = MTYPE_BITMAP;
@@ -619,8 +619,8 @@ static void PlayerModel_MenuInit(void) {
 	s_playermodel.arrows.generic.type = MTYPE_BITMAP;
 	s_playermodel.arrows.generic.name = MODEL_ARROWS;
 	s_playermodel.arrows.generic.flags = QMF_INACTIVE;
-	s_playermodel.arrows.generic.x = 125;
-	s_playermodel.arrows.generic.y = 340;
+	s_playermodel.arrows.generic.x = 271;
+	s_playermodel.arrows.generic.y = 388;
 	s_playermodel.arrows.width = 128;
 	s_playermodel.arrows.height = 32;
 
@@ -628,8 +628,8 @@ static void PlayerModel_MenuInit(void) {
 	s_playermodel.left.generic.flags = QMF_LEFT_JUSTIFY|QMF_PULSEIFFOCUS;
 	s_playermodel.left.generic.callback = PlayerModel_MenuEvent;
 	s_playermodel.left.generic.id = ID_PREVPAGE;
-	s_playermodel.left.generic.x = 125;
-	s_playermodel.left.generic.y = 340;
+	s_playermodel.left.generic.x = 271;
+	s_playermodel.left.generic.y = 388;
 	s_playermodel.left.width = 64;
 	s_playermodel.left.height = 32;
 	s_playermodel.left.focuspic = MODEL_ARROWSL;
@@ -638,8 +638,8 @@ static void PlayerModel_MenuInit(void) {
 	s_playermodel.right.generic.flags = QMF_LEFT_JUSTIFY|QMF_PULSEIFFOCUS;
 	s_playermodel.right.generic.callback = PlayerModel_MenuEvent;
 	s_playermodel.right.generic.id = ID_NEXTPAGE;
-	s_playermodel.right.generic.x = 125 + 61;
-	s_playermodel.right.generic.y = 340;
+	s_playermodel.right.generic.x = 271 + 61;
+	s_playermodel.right.generic.y = 388;
 	s_playermodel.right.width = 64;
 	s_playermodel.right.height = 32;
 	s_playermodel.right.focuspic = MODEL_ARROWSR;
@@ -656,18 +656,18 @@ static void PlayerModel_MenuInit(void) {
 	s_playermodel.back.focuspic = MODEL_BACK1;
 
 	Menu_AddItem(&s_playermodel.menu, &s_playermodel.banner);
-	Menu_AddItem(&s_playermodel.menu, &s_playermodel.framel);
-	Menu_AddItem(&s_playermodel.menu, &s_playermodel.framer);
 	Menu_AddItem(&s_playermodel.menu, &s_playermodel.ports);
-	Menu_AddItem(&s_playermodel.menu, &s_playermodel.playername);
-	Menu_AddItem(&s_playermodel.menu, &s_playermodel.modelname);
-	Menu_AddItem(&s_playermodel.menu, &s_playermodel.skinname);
 
 	for (i = 0; i < MAX_MODELSPERPAGE; i++) {
 		Menu_AddItem(&s_playermodel.menu, &s_playermodel.pics[i]);
 		Menu_AddItem(&s_playermodel.menu, &s_playermodel.picbuttons[i]);
 	}
 
+	Menu_AddItem(&s_playermodel.menu, &s_playermodel.framel);
+	Menu_AddItem(&s_playermodel.menu, &s_playermodel.framer);
+	Menu_AddItem(&s_playermodel.menu, &s_playermodel.playername);
+	Menu_AddItem(&s_playermodel.menu, &s_playermodel.modelname);
+	Menu_AddItem(&s_playermodel.menu, &s_playermodel.skinname);
 	Menu_AddItem(&s_playermodel.menu, &s_playermodel.player);
 	Menu_AddItem(&s_playermodel.menu, &s_playermodel.arrows);
 	Menu_AddItem(&s_playermodel.menu, &s_playermodel.left);
