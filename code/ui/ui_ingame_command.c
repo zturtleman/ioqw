@@ -33,7 +33,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "ui_local.h"
 
 #define INGAME_FRAME "menu/art/addbotframe"
-#define INGAME_SCROLL "menu/ui_art/separator"
+#define INGAME_SCROLL "menu/art/separator"
 
 #define MAX_DYNAMICDEPTH 6
 #define MAX_MENUSTRING 19
@@ -617,6 +617,7 @@ static void DynamicMenu_MenuItemDraw(void *self) {
 
 	if (dptr->icon) {
 		float icon_y = fy + 0.5 * (fh - MENUICON_HEIGHT * MENU_SCALE);
+
 		tmp_color[3] = 0.8;
 
 		if (t->generic.flags & QMF_GRAYED) {

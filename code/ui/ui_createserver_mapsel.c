@@ -58,7 +58,7 @@ id Software at the address below.
 #define MAPSELECT_CANCEL1 "menu/art/back_1"
 #define MAPSELECT_ACCEPT0 "menu/art/accept_0"
 #define MAPSELECT_ACCEPT1 "menu/art/accept_1"
-#define MAPSELECT_MAPFOCUS "menu/art/mapfocus"
+#define MAPSELECT_MAPFOCUS "menu/art/maps_select"
 #define MAPSELECT_MAPSELECTED "menu/art/maps_selected"
 #define MAPNAME_LONGBUFFER 64
 #define MAPSELECT_ERRORPIC "menu/art/unknownmap"

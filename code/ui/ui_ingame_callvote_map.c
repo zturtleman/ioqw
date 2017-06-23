@@ -52,17 +52,14 @@ id Software at the address below.
 #define BUTTON_WIDTH 96
 #define BUTTON_HEIGHT 48
 
-#define ART_BUTTONSBACKGROUND "textures/base_wall/redmet"
-#define ART_BLACKBORDER "menu/art/blackborder"
-
 #define MAPSELECT_HARROWS "menu/art/arrows_horz_0"
 #define MAPSELECT_NEXT "menu/art/arrows_horz_right"
 #define MAPSELECT_PREVIOUS "menu/art/arrows_horz_left"
 #define MAPSELECT_CANCEL0 "menu/art/back_0"
 #define MAPSELECT_CANCEL1 "menu/art/back_1"
-#define MAPSELECT_VOTE0 "menu/ui_art/vote_0"
-#define MAPSELECT_VOTE1 "menu/ui_art/vote_1"
-#define MAPSELECT_MAPFOCUS "menu/ui_art/mapfocus"
+#define MAPSELECT_VOTE0 "menu/art/vote_0"
+#define MAPSELECT_VOTE1 "menu/art/vote_1"
+#define MAPSELECT_MAPFOCUS "menu/art/maps_select"
 #define MAPSELECT_MAPSELECTED "menu/art/maps_selected"
 
 #define MAPNAME_LONGBUFFER 64
@@ -113,8 +110,6 @@ static vec4_t color_nomap2 = {0.75, 0.0, 0.0, 1.0};
 typedef struct mapselect_s {
 	menubitmap_s blackborder;
 	menubitmap_s blackborder2;
-	menubitmap_s buttonsbackground;
-	menubitmap_s buttonsbackground2;
 	menuframework_s menu;
 	menutext_s banner;
 	menubitmap_s mappics[MAX_GRIDMAPSPERPAGE];
@@ -1237,24 +1232,7 @@ static void UI_VoteMapMenuInternal(int gametype, int index, const char *mapname)
 	s_mapselect2.index = index;
 	s_mapselect2.menu.wrapAround = qtrue;
 	s_mapselect2.menu.fullscreen = qtrue;
-	s_mapselect2.menu.draw = VoteMenu_Map_Draw;
-
-	s_mapselect2.buttonsbackground.generic.type = MTYPE_BITMAP;
-	s_mapselect2.buttonsbackground.generic.name = ART_BUTTONSBACKGROUND;
-	s_mapselect2.buttonsbackground.generic.flags = QMF_INACTIVE;
-	s_mapselect2.buttonsbackground.generic.x = -150;
-	s_mapselect2.buttonsbackground.generic.y = 0;
-	s_mapselect2.buttonsbackground.width = 900;
-	s_mapselect2.buttonsbackground.height = BUTTON_HEIGHT;
-
-	s_mapselect2.buttonsbackground2.generic.type = MTYPE_BITMAP;
-	s_mapselect2.buttonsbackground2.generic.name = ART_BUTTONSBACKGROUND;
-	s_mapselect2.buttonsbackground2.generic.flags = QMF_INACTIVE;
-	s_mapselect2.buttonsbackground2.generic.x = -150;
-	s_mapselect2.buttonsbackground2.generic.y = 440;
-	s_mapselect2.buttonsbackground2.width = 900;
-	s_mapselect2.buttonsbackground2.height = BUTTON_HEIGHT;
-
+	
 	s_mapselect2.banner.generic.type = MTYPE_BTEXT;
 	s_mapselect2.banner.generic.x = 160;
 	s_mapselect2.banner.generic.y = 6;
@@ -1410,8 +1388,6 @@ static void UI_VoteMapMenuInternal(int gametype, int index, const char *mapname)
 
 	s_mapselect2.listview.curvalue = (int)Com_Clamp(0, 1, trap_Cvar_VariableValue("ui_map_list"));
 	// register for display
-	Menu_AddItem(&s_mapselect2.menu, &s_mapselect2.buttonsbackground);
-	Menu_AddItem(&s_mapselect2.menu, &s_mapselect2.buttonsbackground2);
 	Menu_AddItem(&s_mapselect2.menu, &s_mapselect2.banner);
 	Menu_AddItem(&s_mapselect2.menu, &s_mapselect2.arrows);
 	Menu_AddItem(&s_mapselect2.menu, &s_mapselect2.previous);

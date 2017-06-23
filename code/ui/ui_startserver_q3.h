@@ -110,7 +110,7 @@ id Software at the address below.
 #define GAMETYPEROW_Y (64 + (LINE_HEIGHT / 2))
 
 #define MAPPAGE_TEXT 16
-#define MAPSELECT_SELECT "menu/art/mapfocus"
+#define MAPSELECT_SELECT "menu/art/maps_select"
 #define MAP_FADETIME 1000
 
 #define TABCONTROLCENTER_Y (240 + LINE_HEIGHT)

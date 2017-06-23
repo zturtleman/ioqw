@@ -33,7 +33,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "ui_local.h"
 
 #define INGAME_FRAME "menu/art/addbotframe"
-#define INGAME_SCROLL "menu/ui_art/separator"
+#define INGAME_SCROLL "menu/art/separator"
 
 enum {
 	ID_TEAM,
