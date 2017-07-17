@@ -6263,6 +6263,7 @@ BotDeathmatchAI
 */
 void BotDeathmatchAI(bot_state_t *bs, float thinktime) {
 	char gender[144], name[144];
+	char userinfo[MAX_INFO_STRING];
 	int i;
 
 	// if the bot has just been setup
@@ -6274,6 +6275,10 @@ void BotDeathmatchAI(bot_state_t *bs, float thinktime) {
 		}
 		// get the gender characteristic
 		trap_Characteristic_String(bs->character, CHARACTERISTIC_GENDER, gender, sizeof(gender));
+		// set the bot gender
+		trap_GetUserinfo(bs->client, userinfo, sizeof(userinfo));
+		Info_SetValueForKey(userinfo, "sex", gender);
+		trap_SetUserinfo(bs->client, userinfo);
 		// set the chat gender
 		if (gender[0] == 'm') {
 			trap_BotSetChatGender(bs->cs, CHAT_GENDERMALE);

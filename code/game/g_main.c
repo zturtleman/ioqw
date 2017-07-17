@@ -80,6 +80,7 @@ vmCvar_t g_voteMinFraglimit;
 vmCvar_t g_voteMaxFraglimit;
 vmCvar_t g_voteMinCapturelimit;
 vmCvar_t g_voteMaxCapturelimit;
+vmCvar_t g_localTeamPref;
 vmCvar_t g_teamAutoJoin;
 vmCvar_t g_teamForceBalance;
 vmCvar_t g_banIPs;
@@ -119,9 +120,10 @@ static cvarTable_t gameCvarTable[] = {
 	{&g_capturelimit, "capturelimit", "8", CVAR_SERVERINFO|CVAR_ARCHIVE|CVAR_NORESTART, 0, qtrue},
 	{&g_synchronousClients, "g_synchronousClients", "0", CVAR_SYSTEMINFO, 0, qfalse},
 	{&g_friendlyFire, "g_friendlyFire", "1", CVAR_ARCHIVE, 0, qtrue},
+	{&g_localTeamPref, "g_localTeamPref", "", 0, 0, qfalse},
 	{&g_teamAutoJoin, "g_teamAutoJoin", "1", CVAR_ARCHIVE},
 	{&g_teamForceBalance, "g_teamForceBalance", "1", CVAR_ARCHIVE},
-	{&g_warmup, "g_warmup", "6", CVAR_ARCHIVE, 0, qtrue},
+	{&g_warmup, "g_warmup", "10", CVAR_ARCHIVE, 0, qtrue},
 	{&g_doWarmup, "g_doWarmup", "0", CVAR_ARCHIVE, 0, qtrue},
 	{&g_logfile, "g_log", "games.log", CVAR_ARCHIVE, 0, qfalse},
 	{&g_logfileSync, "g_logsync", "0", CVAR_ARCHIVE, 0, qfalse},

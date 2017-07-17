@@ -33,22 +33,24 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "ui_local.h"
 
 #define INGAME_FRAME "menu/art/addbotframe"
-#define INGAME_SCROLL "menu/art/separator"
 
 enum {
 	ID_TEAM,
 	ID_ADDBOTS,
 	ID_REMOVEBOTS,
+	ID_TEAMORDERS,
+	ID_SERVERINFO,
 	ID_CALLVOTE,
 	ID_VOTE,
-	ID_SERVERINFO,
 	ID_SETUP,
 	ID_RESTART,
-	ID_CREATE,
 	ID_NEXTMAP,
+	ID_CREATE,
 	ID_LEAVEARENA,
 	ID_QUIT
 };
+
+static ingamemenu_t s_ingame;
 
 /*
 =======================================================================================================================================
@@ -156,14 +158,17 @@ void InGame_Event(void *ptr, int notification) {
 		case ID_REMOVEBOTS:
 			UI_RemoveBotsMenu(RBM_KICKBOT);
 			break;
+		case ID_TEAMORDERS:
+			UI_TeamOrdersMenu();
+			break;
+		case ID_SERVERINFO:
+			UI_ServerInfoMenu();
+			break;
 		case ID_CALLVOTE:
 			UI_CallVoteMenu();
 			break;
 		case ID_VOTE:
 			UI_VoteMenu();
-			break;
-		case ID_SERVERINFO:
-			UI_ServerInfoMenu();
 			break;
 		case ID_SETUP:
 			UI_SetupMenu();
@@ -175,7 +180,7 @@ void InGame_Event(void *ptr, int notification) {
 			UI_ConfirmMenu("Next Arena?", 0, InGame_NextMap);
 			break;
 		case ID_CREATE:
-			UI_CreateServerMenu(qtrue);
+			UI_CreateServerMenu(qtrue); // Tobias: UI_CreateServerIngameMenu
 			break;
 		case ID_LEAVEARENA:
 			UI_ConfirmMenu("Leave Arena?", 0, InGame_LeaveAction);
@@ -184,22 +189,6 @@ void InGame_Event(void *ptr, int notification) {
 			UI_ConfirmMenu("Exit Game?", 0, InGame_QuitAction);
 			break;
 	}
-}
-
-static ingamemenu_t s_ingame;
-/*
-=======================================================================================================================================
-InGame_MenuDraw
-=======================================================================================================================================
-*/
-static void InGame_MenuDraw(void) {
-	int i;
-
-	for (i = 0; i < s_ingame.num_scrolls; i++) {
-		UI_DrawNamedPic(320 - 64, s_ingame.scroll_y[i], 128, SCROLL_HEIGHT, INGAME_SCROLL);
-	}
-	// draw the controls
-	Menu_Draw(&s_ingame.menu);
 }
 
 /*
@@ -219,7 +208,6 @@ void InGame_MenuInit(void) {
 
 	s_ingame.menu.wrapAround = qtrue;
 	s_ingame.menu.fullscreen = qfalse;
-	s_ingame.menu.draw = InGame_MenuDraw;
 
 	s_ingame.frame.generic.type = MTYPE_BITMAP;
 	s_ingame.frame.generic.flags = QMF_INACTIVE;
@@ -271,6 +259,34 @@ void InGame_MenuInit(void) {
 	}
 
 	y += INGAME_MENU_VERTICAL_SPACING;
+	s_ingame.teamorders.generic.type = MTYPE_PTEXT;
+	s_ingame.teamorders.generic.flags = QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+	s_ingame.teamorders.generic.x = 320;
+	s_ingame.teamorders.generic.y = y;
+	s_ingame.teamorders.generic.id = ID_TEAMORDERS;
+	s_ingame.teamorders.generic.callback = InGame_Event;
+	s_ingame.teamorders.string = "Team Orders";
+	s_ingame.teamorders.color = color_red;
+	s_ingame.teamorders.style = UI_CENTER|UI_SMALLFONT;
+
+	if (!(gametype > GT_TOURNAMENT)) {
+		s_ingame.teamorders.generic.flags |= QMF_GRAYED;
+	} else if (UI_CurrentPlayerTeam() == TEAM_SPECTATOR) {
+		s_ingame.teamorders.generic.flags |= QMF_GRAYED;
+	}
+
+	y += INGAME_MENU_VERTICAL_SPACING;
+	s_ingame.server.generic.type = MTYPE_PTEXT;
+	s_ingame.server.generic.flags = QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+	s_ingame.server.generic.x = 320;
+	s_ingame.server.generic.y = y;
+	s_ingame.server.generic.id = ID_SERVERINFO;
+	s_ingame.server.generic.callback = InGame_Event;
+	s_ingame.server.string = "Server Info";
+	s_ingame.server.color = color_red;
+	s_ingame.server.style = UI_CENTER|UI_SMALLFONT;
+
+	y += INGAME_MENU_VERTICAL_SPACING;
 	s_ingame.callvote.generic.type = MTYPE_PTEXT;
 	s_ingame.callvote.generic.flags = QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
 	s_ingame.callvote.generic.x = 320;
@@ -299,35 +315,6 @@ void InGame_MenuInit(void) {
 	if (UI_CurrentPlayerTeam() == TEAM_SPECTATOR || !trap_Cvar_VariableValue("g_allowVote") || (gametype == GT_SINGLE_PLAYER)) {
 		s_ingame.vote.generic.flags |= QMF_GRAYED;
 	}
-/*
-	y += INGAME_MENU_VERTICAL_SPACING;
-	s_ingame.teamorders.generic.type = MTYPE_PTEXT;
-	s_ingame.teamorders.generic.flags = QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
-	s_ingame.teamorders.generic.x = 320;
-	s_ingame.teamorders.generic.y = y;
-	s_ingame.teamorders.generic.id = ID_TEAMORDERS;
-	s_ingame.teamorders.generic.callback = InGame_Event;
-	s_ingame.teamorders.string = "Team Orders";
-	s_ingame.teamorders.color = color_red;
-	s_ingame.teamorders.style = UI_CENTER|UI_SMALLFONT;
-
-	if (!(gametype > GT_TOURNAMENT)) {
-		s_ingame.teamorders.generic.flags |= QMF_GRAYED;
-	} else if (UI_CurrentPlayerTeam() == TEAM_SPECTATOR) {
-		s_ingame.teamorders.generic.flags |= QMF_GRAYED;
-	}
-*/
-
-	y += INGAME_MENU_VERTICAL_SPACING;
-	s_ingame.server.generic.type = MTYPE_PTEXT;
-	s_ingame.server.generic.flags = QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
-	s_ingame.server.generic.x = 320;
-	s_ingame.server.generic.y = y;
-	s_ingame.server.generic.id = ID_SERVERINFO;
-	s_ingame.server.generic.callback = InGame_Event;
-	s_ingame.server.string = "Server Info";
-	s_ingame.server.color = color_red;
-	s_ingame.server.style = UI_CENTER|UI_SMALLFONT;
 
 	y += INGAME_MENU_VERTICAL_SPACING;
 	s_ingame.setup.generic.type = MTYPE_PTEXT;
@@ -411,10 +398,10 @@ void InGame_MenuInit(void) {
 	Menu_AddItem(&s_ingame.menu, &s_ingame.team);
 	Menu_AddItem(&s_ingame.menu, &s_ingame.addbots);
 	Menu_AddItem(&s_ingame.menu, &s_ingame.removebots);
+	Menu_AddItem(&s_ingame.menu, &s_ingame.teamorders);
+	Menu_AddItem(&s_ingame.menu, &s_ingame.server);
 	Menu_AddItem(&s_ingame.menu, &s_ingame.callvote);
 	Menu_AddItem(&s_ingame.menu, &s_ingame.vote);
-//	Menu_AddItem(&s_ingame.menu, &s_ingame.teamorders);
-	Menu_AddItem(&s_ingame.menu, &s_ingame.server);
 	Menu_AddItem(&s_ingame.menu, &s_ingame.setup);
 	Menu_AddItem(&s_ingame.menu, &s_ingame.restart);
 	Menu_AddItem(&s_ingame.menu, &s_ingame.nextmap);

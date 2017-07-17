@@ -579,8 +579,8 @@ PickTeam
 team_t PickTeam(int ignoreClientNum) {
 	int counts[TEAM_NUM_TEAMS];
 
-	counts[TEAM_BLUE] = TeamCount(ignoreClientNum, TEAM_BLUE);
 	counts[TEAM_RED] = TeamCount(ignoreClientNum, TEAM_RED);
+	counts[TEAM_BLUE] = TeamCount(ignoreClientNum, TEAM_BLUE);
 
 	if (counts[TEAM_BLUE] > counts[TEAM_RED]) {
 		return TEAM_RED;
@@ -714,6 +714,10 @@ void ClientUserinfoChanged(int clientNum) {
 	}
 
 	client->ps.stats[STAT_MAX_HEALTH] = client->pers.maxHealth;
+	// team task (0 = none, 1 = offence, 2 = defence)
+	teamTask = atoi(Info_ValueForKey(userinfo, "teamtask"));
+	// team Leader (1 = leader, 0 is normal player)
+	teamLeader = client->sess.teamLeader;
 	// set model
 	if (g_gametype.integer > GT_TOURNAMENT) {
 		Q_strncpyz(model, Info_ValueForKey(userinfo, "team_model"), sizeof(model));
@@ -753,20 +757,16 @@ void ClientUserinfoChanged(int clientNum) {
 		client->pers.pmoveFixed = qtrue;
 	}
 	*/
-	// team task (0 = none, 1 = offence, 2 = defence)
-	teamTask = atoi(Info_ValueForKey(userinfo, "teamtask"));
-	// team Leader (1 = leader, 0 is normal player)
-	teamLeader = client->sess.teamLeader;
 	// colors
 	strcpy(c1, Info_ValueForKey(userinfo, "color1"));
 	strcpy(c2, Info_ValueForKey(userinfo, "color2"));
 	// send over a subset of the userinfo keys so other clients can print scoreboards, display models, and play custom sounds
 	if (ent->r.svFlags & SVF_BOT) {
-		s = va("n\\%s\\t\\%i\\model\\%s\\hmodel\\%s\\c1\\%s\\c2\\%s\\hc\\%i\\w\\%i\\l\\%i\\skill\\%s\\tt\\%d\\tl\\%d",
-			client->pers.netname, client->sess.sessionTeam, model, headModel, c1, c2, client->pers.maxHealth, client->sess.wins, client->sess.losses, Info_ValueForKey(userinfo, "skill"), teamTask, teamLeader);
+		s = va("n\\%s\\t\\%i\\tt\\%d\\tl\\%d\\model\\%s\\hmodel\\%s\\c1\\%s\\c2\\%s\\hc\\%i\\w\\%i\\l\\%i\\skill\\%s",
+			client->pers.netname, client->sess.sessionTeam, teamTask, teamLeader, model, headModel, c1, c2, client->pers.maxHealth, client->sess.wins, client->sess.losses, Info_ValueForKey(userinfo, "skill"));
 	} else {
-		s = va("n\\%s\\t\\%i\\model\\%s\\hmodel\\%s\\c1\\%s\\c2\\%s\\hc\\%i\\w\\%i\\l\\%i\\tt\\%d\\tl\\%d",
-			client->pers.netname, client->sess.sessionTeam, model, headModel, c1, c2, client->pers.maxHealth, client->sess.wins, client->sess.losses, teamTask, teamLeader);
+		s = va("n\\%s\\t\\%i\\tt\\%d\\tl\\%d\\model\\%s\\hmodel\\%s\\c1\\%s\\c2\\%s\\hc\\%i\\w\\%i\\l\\%i",
+			client->pers.netname, client->sess.sessionTeam, teamTask, teamLeader, model, headModel, c1, c2, client->pers.maxHealth, client->sess.wins, client->sess.losses);
 	}
 
 	trap_SetConfigstring(CS_PLAYERS + clientNum, s);

@@ -118,6 +118,10 @@ vmCvar_t ui_browserSortKey;
 vmCvar_t ui_browserShowFull;
 vmCvar_t ui_browserShowEmpty;
 vmCvar_t ui_browserShowBots;
+vmCvar_t ui_map_list;
+vmCvar_t ui_map_multisel;
+vmCvar_t ui_bot_list;
+vmCvar_t ui_bot_multisel;
 vmCvar_t ui_brassTime;
 vmCvar_t ui_drawCrosshair;
 vmCvar_t ui_drawCrosshairNames;
@@ -140,11 +144,6 @@ vmCvar_t ui_server15;
 vmCvar_t ui_server16;
 // UI conventional cvars
 vmCvar_t ui_mapicons;
-vmCvar_t ui_autoclosebotmenu;
-vmCvar_t ui_map_multisel;
-vmCvar_t ui_map_list;
-vmCvar_t ui_bot_multisel;
-vmCvar_t ui_bot_list;
 vmCvar_t ui_firstrun;
 
 static cvarTable_t cvarTable[] = {
@@ -185,6 +184,10 @@ static cvarTable_t cvarTable[] = {
 	{&ui_browserShowFull, "ui_browserShowFull", "1", CVAR_ARCHIVE},
 	{&ui_browserShowEmpty, "ui_browserShowEmpty", "1", CVAR_ARCHIVE},
 	{&ui_browserShowBots, "ui_browserShowBots", "1", CVAR_ARCHIVE},
+	{&ui_map_list, "ui_map_list", "0", CVAR_ARCHIVE},
+	{&ui_map_multisel, "ui_map_multisel", "1", CVAR_ARCHIVE},
+	{&ui_bot_list, "ui_bot_list", "0", CVAR_ARCHIVE},
+	{&ui_bot_multisel, "ui_bot_multisel", "1", CVAR_ARCHIVE},
 	{&ui_brassTime, "cg_brassTime", "2500", CVAR_ARCHIVE},
 	{&ui_drawCrosshair, "cg_drawCrosshair", "2", CVAR_ARCHIVE},
 	{&ui_drawCrosshairNames, "cg_drawCrosshairNames", "0", CVAR_ARCHIVE},
@@ -205,13 +208,9 @@ static cvarTable_t cvarTable[] = {
 	{&ui_server14, "server14", "", CVAR_ARCHIVE},
 	{&ui_server15, "server15", "", CVAR_ARCHIVE},
 	{&ui_server16, "server16", "", CVAR_ARCHIVE},
-	{&ui_map_multisel, "ui_map_multisel", "1", CVAR_ARCHIVE},
-	{&ui_map_list, "ui_map_list", "0", CVAR_ARCHIVE},
-	{&ui_bot_multisel, "ui_bot_multisel", "1", CVAR_ARCHIVE},
-	{&ui_bot_list, "ui_bot_list", "1", CVAR_ARCHIVE},
 	{&ui_mapicons, "ui_mapicons", "0", CVAR_ARCHIVE},
-	{&ui_autoclosebotmenu, "ui_autoclosebotmenu", "0", CVAR_ARCHIVE},
-	{&ui_firstrun, "ui_firstrun", "1", CVAR_ARCHIVE}
+	{&ui_firstrun, "ui_firstrun", "1", CVAR_ARCHIVE},
+	{NULL, "g_localTeamPref", "", 0}
 };
 
 static int cvarTableSize = ARRAY_LEN(cvarTable);
@@ -240,34 +239,12 @@ void UI_UpdateCvars(void) {
 	cvarTable_t *cv;
 
 	for (i = 0, cv = cvarTable; i < cvarTableSize; i++, cv++) {
+		if (!cv->vmCvar) {
+			continue;
+		}
+
 		trap_Cvar_Update(cv->vmCvar);
 	}
-}
-
-/*
-=======================================================================================================================================
-UI_CurrentPlayerTeam
-=======================================================================================================================================
-*/
-int UI_CurrentPlayerTeam(void) {
-	static uiClientState_t cs;
-	static char info[MAX_INFO_STRING];
-
-	trap_GetClientState(&cs);
-	trap_GetConfigString(CS_PLAYERS + cs.clientNum, info, MAX_INFO_STRING);
-	return atoi(Info_ValueForKey(info, "t"));
-}
-
-/*
-=======================================================================================================================================
-UI_ServerGametype
-=======================================================================================================================================
-*/
-int UI_ServerGametype(void) {
-	char info[MAX_INFO_STRING];
-
-	trap_GetConfigString(CS_SERVERINFO, info, sizeof(info));
-	return atoi(Info_ValueForKey(info, "g_gametype"));
 }
 
 /*

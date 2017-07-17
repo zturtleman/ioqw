@@ -20,21 +20,6 @@ The UI Enhanced copyright owner permit free reuse of his code contained herein, 
 ---------------------------------------------------------------------------------------------------------------------------------------
 Ian Jefferies - HypoThermia (uie@planetquake.com)
 http://www.planetquake.com/uie
-
-This file is part of Spearmint Source Code.
-
-Spearmint Source Code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
-
-Spearmint Source Code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with Spearmint Source Code.
-If not, see <http://www.gnu.org/licenses/>.
-
-In addition, Spearmint Source Code is also subject to certain additional terms. You should have received a copy of these additional
-terms immediately following the terms and conditions of the GNU General Public License. If not, please request a copy in writing from
-id Software at the address below.
 =======================================================================================================================================
 */
 
@@ -51,9 +36,7 @@ id Software at the address below.
 
 // global data
 scriptdata_t s_scriptdata;
-// map game type to internal flags
-int gametype_remap[] = {GT_FFA, GT_TOURNAMENT, GT_TEAM, GT_CTF, GT_1FCTF, GT_OBELISK, GT_HARVESTER}; // matches gametype_items
-int gametype_remap2[] = {0, 0, 1, 2, 3, 4, 5, 6};
+
 // order must mach that of gametype_remap[]
 char *gametype_cvar_base[NUM_GAMETYPES] = {
 	"ui_ffa_%s",
@@ -109,17 +92,6 @@ const char *idmap_list[] = {
 	"pro-q3dm13",
 	"pro-q3tourney2",
 	"pro-q3tourney4",
-	0
-};
-
-const char *gametype_items[NUM_GAMETYPES + 1] = {
-	"Free For All",
-	"Tournament",
-	"Team Deathmatch",
-	"Capture the Flag",
-	"One Flag CTF",
-	"Overload",
-	"Harvester",
 	0
 };
 // individual items
@@ -256,8 +228,8 @@ ui_cvarTable_t ui_cvarTable[] = {
 	{"ui_ffa_ForceRespawn", "20"},
 	{"ui_ffa_itemGroups", ""},
 	{"ui_ffa_itemsHidden", ""},
-	{"ui_ffa_fraglimit", "30"},
-	{"ui_ffa_timelimit", "20"},
+	{"ui_ffa_fraglimit", "50"},
+	{"ui_ffa_timelimit", "15"},
 	{"ui_ffa_weaponrespawn", "5"},
 	// Tourney
 	{"ui_tourney_fragtype", "0"},
@@ -318,7 +290,7 @@ ui_cvarTable_t ui_cvarTable[] = {
 	{"ui_team_itemsHidden", ""},
 	{"ui_team_fraglimit", "0"},
 	{"ui_team_timelimit", "15"},
-	{"ui_team_weaponrespawn", "5"},
+	{"ui_team_weaponrespawn", "15"},
 	{"ui_team_friendly", "1"},
 	{"ui_team_TeamSwapped", "0"},
 	{"ui_team_AutoJoin", "1"},
@@ -414,7 +386,7 @@ ui_cvarTable_t ui_cvarTable[] = {
 	{"ui_obelisk_BotSkillValue", "200"},
 	{"ui_obelisk_BotSkillBias", "0"},
 	{"ui_obelisk_PlayerJoinAs", "0"},
-	{"ui_obelisk_hostname", "Quake Wars 1CTF Server"},
+	{"ui_obelisk_hostname", "Quake Wars Overload Server"},
 	{"ui_obelisk_ForceRespawn", "20"},
 	{"ui_obelisk_itemGroups", ""},
 	{"ui_obelisk_itemsHidden", ""},
@@ -425,9 +397,6 @@ ui_cvarTable_t ui_cvarTable[] = {
 	{"ui_obelisk_TeamSwapped", "0"},
 	{"ui_obelisk_AutoJoin", "1"},
 	{"ui_obelisk_TeamBalance", "1"},
-	{"ui_obelisk_capturelimit", "8"},
-	{"ui_obelisk_timelimit", "15"},
-	{"ui_obelisk_friendly", "1"},
 	// Harvester
 	{"ui_harvester_capturetype", "0"},
 	{"ui_harvester_timetype", "0"},
@@ -451,20 +420,17 @@ ui_cvarTable_t ui_cvarTable[] = {
 	{"ui_harvester_BotSkillValue", "200"},
 	{"ui_harvester_BotSkillBias", "0"},
 	{"ui_harvester_PlayerJoinAs", "0"},
-	{"ui_harvester_hostname", "Quake Wars 1CTF Server"},
+	{"ui_harvester_hostname", "Quake Wars Harvester Server"},
 	{"ui_harvester_ForceRespawn", "20"},
 	{"ui_harvester_itemGroups", ""},
 	{"ui_harvester_itemsHidden", ""},
-	{"ui_harvester_capturelimit", "8"},
+	{"ui_harvester_capturelimit", "10"},
 	{"ui_harvester_timelimit", "15"},
 	{"ui_harvester_weaponrespawn", "5"},
 	{"ui_harvester_friendly", "1"},
 	{"ui_harvester_TeamSwapped", "0"},
 	{"ui_harvester_AutoJoin", "1"},
 	{"ui_harvester_TeamBalance", "1"},
-	{"ui_harvester_capturelimit", "10"},
-	{"ui_harvester_timelimit", "15"},
-	{"ui_harvester_friendly", "1"}
 };
 
 static const int ui_cvarTableSize = sizeof(ui_cvarTable) / sizeof(ui_cvarTable[0]);
@@ -621,6 +587,7 @@ void UI_SetSkirmishCvar(char *base, const char *var_name, const char *string) {
 	if (old) {
 		oldlen = strlen(old) + 1;
 		lenmove = p -(old + oldlen) + 1;
+
 		memmove(old, old + oldlen, lenmove);
 
 		p -= oldlen;
@@ -1062,9 +1029,9 @@ void CreateServer_StoreMap(int pos, int arena) {
 
 	pos = CreateServer_RangeClipMapIndex(pos);
 	info = UI_GetArenaInfoByNumber(arena);
-
 	shortname = Info_ValueForKey(info, "map");
 	len = strlen(shortname) + 1;
+
 	Q_strncpyz(s_scriptdata.map.data[pos].shortName, shortname, len);
 
 	longname = Info_ValueForKey(info, "longname");
@@ -1074,6 +1041,7 @@ void CreateServer_StoreMap(int pos, int arena) {
 	}
 
 	len = strlen(longname) + 1;
+
 	Q_strncpyz(s_scriptdata.map.data[pos].longName, longname, len);
 	// increase map count if we put map into a previously empty slot
 	// set frag/time limits too
@@ -1114,6 +1082,7 @@ void CreateServer_InsertMap(int pos, int arena) {
 	}
 
 	CreateServer_StoreMap(pos, arena);
+
 	Q_strncpyz(s_scriptdata.map.data[pos].fragLimit, va("%i", s_scriptdata.map.fragLimit), MAX_LIMIT_BUF);
 	Q_strncpyz(s_scriptdata.map.data[pos].timeLimit, va("%i", s_scriptdata.map.timeLimit), MAX_LIMIT_BUF);
 }

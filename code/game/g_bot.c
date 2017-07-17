@@ -228,18 +228,18 @@ static void PlayerIntroSound(const char *modelAndSkin) {
 
 /*
 =======================================================================================================================================
-G_BotsInGame
+G_CountBotPlayersByName
 
-Returns number of bots named 'value' on team 'team' (or whole server if 'team' is -1).
+Check connected and connecting (delay join) bots.
+Returns number of bots with name on specified team or whole server if team is -1.
 =======================================================================================================================================
 */
-int G_BotsInGame(const char *value, int team) {
-	int i, total;
-	char userinfo[MAX_INFO_VALUE];
+int G_CountBotPlayersByName(const char *name, int team) {
+	int i, num;
 	gclient_t *cl;
 
-	total = 0;
-	// check if bot is connecting or connected
+	num = 0;
+
 	for (i = 0; i < g_maxclients.integer; i++) {
 		cl = level.clients + i;
 
@@ -255,53 +255,36 @@ int G_BotsInGame(const char *value, int team) {
 			continue;
 		}
 
-		if (!Q_stricmp(value, cl->pers.netname)) {
-			total++;
-		}
-	}
-	// check if bot is in spawn queue
-	for (i = 0; i < BOT_SPAWN_QUEUE_DEPTH; i++) {
-		if (!botSpawnQueue[i].spawnTime) {
+		if (name && Q_stricmp(name, cl->pers.netname)) {
 			continue;
 		}
 
-		if (botSpawnQueue[i].spawnTime > level.time) {
-			continue;
-		}
-
-		cl = level.clients + botSpawnQueue[i].clientNum;
-
-		if (team >= 0 && cl->sess.sessionTeam != team) {
-			continue;
-		}
-
-		trap_GetUserinfo(botSpawnQueue[i].clientNum, userinfo, sizeof(userinfo));
-
-		if (!Q_stricmp(value, Info_ValueForKey(userinfo, "name"))) {
-			total++;
-		}
+		num++;
 	}
 
-	return total;
+	return num;
 }
 
 /*
 =======================================================================================================================================
-G_SelectRandomBotForAdd
+G_SelectRandomBotInfo
+
+Get random least used bot info on team or whole server if team is -1.
 =======================================================================================================================================
 */
-int G_SelectRandomBotForAdd(int team) {
-	int botsInGame, bestSelection[MAX_BOTS], n, bestCount, bestNum;
+int G_SelectRandomBotInfo(int team) {
+	int selection[MAX_BOTS];
+	int n, num;
+	int count, bestCount;
 	char *value;
 
-	// to improve random bot selection when there are few bot types, duplicate bots are allowed on separate teams to try to keep each
-	// team from having duplicate bots. If there are enough bot types to fill the server, avoid duplicating bots on any team.
-	if (g_numBots >= level.maxclients) {
+	// don't add duplicate bots to the server if there are less bots than bot types
+	if (team != -1 && G_CountBotPlayersByName(NULL, -1) < g_numBots) {
 		team = -1;
 	}
-	// find least used bots on team
+
+	num = 0;
 	bestCount = MAX_CLIENTS;
-	bestNum = 0;
 
 	for (n = 0; n < g_numBots; n++) {
 		value = Info_ValueForKey(g_botInfos[n], "funname");
@@ -309,27 +292,29 @@ int G_SelectRandomBotForAdd(int team) {
 		if (!value[0]) {
 			value = Info_ValueForKey(g_botInfos[n], "name");
 		}
-		// get number of bots by name/team
-		botsInGame = G_BotsInGame(value, team);
 
-		if (botsInGame < bestCount) {
-			// reset selection
-			bestCount = botsInGame;
-			bestNum = 0;
+		count = G_CountBotPlayersByName(value, team);
+
+		if (count < bestCount) {
+			bestCount = count;
+			num = 0;
 		}
 
-		if (botsInGame == bestCount) {
-			// add bot
-			bestSelection[bestNum++] = n;
+		if (count == bestCount) {
+			selection[num++] = n;
+
+			if (num == MAX_BOTS) {
+				break;
+			}
 		}
 	}
-	// choose random least used bot on team
-	if (bestNum > 0) {
-		bestNum = random() * (bestNum - 1);
-		return bestSelection[bestNum];
+
+	if (num > 0) {
+		num = random() * (num - 1);
+		return selection[num];
 	}
 
-	return 0;
+	return -1;
 }
 
 /*
@@ -338,13 +323,9 @@ G_AddRandomBot
 =======================================================================================================================================
 */
 void G_AddRandomBot(int team) {
-	int n;
-	char *value, netname[36], *teamstr;
+	char *teamstr;
 	float skill;
 
-	n = G_SelectRandomBotForAdd(team);
-	// get name of selected bot.
-	value = Info_ValueForKey(g_botInfos[n], "name");
 	skill = trap_Cvar_VariableValue("g_spSkill");
 
 	if (team == TEAM_RED) {
@@ -355,10 +336,7 @@ void G_AddRandomBot(int team) {
 		teamstr = "free";
 	}
 
-	Q_strncpyz(netname, value, sizeof(netname));
-	Q_CleanStr(netname);
-
-	trap_Cmd_ExecuteText(EXEC_INSERT, va("addbot %s %f %s %i\n", netname, skill, teamstr, 0));
+	trap_Cmd_ExecuteText(EXEC_INSERT, va("addbot random %f %s %i\n", skill, teamstr, 0));
 }
 
 /*
@@ -427,10 +405,12 @@ int G_CountHumanPlayers(int team) {
 /*
 =======================================================================================================================================
 G_CountBotPlayers
+
+Check connected and connecting (delay join) bots.
 =======================================================================================================================================
 */
 int G_CountBotPlayers(int team) {
-	int i, n, num;
+	int i, num;
 	gclient_t *cl;
 
 	num = 0;
@@ -438,7 +418,7 @@ int G_CountBotPlayers(int team) {
 	for (i = 0; i < g_maxclients.integer; i++) {
 		cl = level.clients + i;
 
-		if (cl->pers.connected != CON_CONNECTED) {
+		if (cl->pers.connected == CON_DISCONNECTED) {
 			continue;
 		}
 
@@ -447,18 +427,6 @@ int G_CountBotPlayers(int team) {
 		}
 
 		if (team >= 0 && cl->sess.sessionTeam != team) {
-			continue;
-		}
-
-		num++;
-	}
-
-	for (n = 0; n < BOT_SPAWN_QUEUE_DEPTH; n++) {
-		if (!botSpawnQueue[n].spawnTime) {
-			continue;
-		}
-
-		if (botSpawnQueue[n].spawnTime > level.time) {
 			continue;
 		}
 
@@ -487,7 +455,9 @@ void G_CheckMinimumPlayers(void) {
 	}
 
 	checkminimumplayers_time = level.time;
+
 	trap_Cvar_Update(&bot_minplayers);
+
 	minplayers = bot_minplayers.integer;
 
 	if (minplayers <= 0) {
@@ -570,6 +540,7 @@ void G_CheckBotSpawn(void) {
 		}
 
 		ClientBegin(botSpawnQueue[n].clientNum);
+
 		botSpawnQueue[n].spawnTime = 0;
 
 		if (g_gametype.integer == GT_SINGLE_PLAYER) {
@@ -627,8 +598,8 @@ qboolean G_BotConnect(int clientNum, qboolean restart) {
 	char userinfo[MAX_INFO_STRING];
 
 	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
-
 	Q_strncpyz(settings.characterfile, Info_ValueForKey(userinfo, "characterfile"), sizeof(settings.characterfile));
+
 	settings.skill = atof(Info_ValueForKey(userinfo, "skill"));
 
 	if (!BotAISetupClient(clientNum, &settings, restart)) {
@@ -646,7 +617,8 @@ G_AddBot
 */
 static void G_AddBot(const char *name, float skill, const char *team, int delay, char *altname) {
 	int clientNum;
-	int t;
+	int teamNum;
+	int botinfoNum;
 	char *botinfo;
 	char *key;
 	char *s;
@@ -677,15 +649,25 @@ static void G_AddBot(const char *name, float skill, const char *team, int delay,
 	}
 	// get the botinfo from bots.txt
 	if (Q_stricmp(name, "random") == 0) {
-		if (Q_stricmp(team, "red") == 0) {
-			t = TEAM_RED;
-		} else if (Q_stricmp(team, "blue") == 0) {
-			t = TEAM_BLUE;
+		if (Q_stricmp(team, "red") == 0 || Q_stricmp(team, "r") == 0) {
+			teamNum = TEAM_RED;
+		} else if (Q_stricmp(team, "blue") == 0 || Q_stricmp(team, "b") == 0) {
+			teamNum = TEAM_BLUE;
+		} else if (!Q_stricmp(team, "spectator") || !Q_stricmp(team, "s")) {
+			teamNum = TEAM_SPECTATOR;
 		} else {
-			t = TEAM_FREE;
+			teamNum = TEAM_FREE;
+		}
+
+		botinfoNum = G_SelectRandomBotInfo(teamNum);
+
+		if (botinfoNum < 0) {
+			G_Printf(S_COLOR_RED "Error: Cannot add random bot, no bot info available.\n");
+			trap_BotFreeClient(clientNum);
+			return;
 		}
 		// get info of a randomly selected bot
-		botinfo = G_GetBotInfoByNumber(G_SelectRandomBotForAdd(t));
+		botinfo = G_GetBotInfoByNumber(botinfoNum);
 	} else {
 		// get info of the bot
 		botinfo = G_GetBotInfoByName(name);
@@ -819,7 +801,7 @@ void Svcmd_AddBot_f(void) {
 	if (!string[0]) {
 		skill = 3;
 	} else {
-		skill = atof(string);
+		skill = Com_Clamp(1, 5, atof(string));
 	}
 	// team
 	trap_Argv(3, team, sizeof(team));
@@ -911,6 +893,7 @@ static void G_SpawnBots(char *botList, int baseDelay) {
 	}
 
 	Q_strncpyz(bots, botList, sizeof(bots));
+
 	p = &bots[0];
 	delay = baseDelay;
 

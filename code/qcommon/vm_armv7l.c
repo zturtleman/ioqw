@@ -1,7 +1,7 @@
 /*
 =======================================================================================================================================
 Copyright (C) 2009 David S. Miller <davem@davemloft.net>.
-Copyright (C) 2013,2014 SUSE Linux Products GmbH.
+Copyright (C) 2013, 2014 SUSE Linux Products GmbH.
 
 This file is part of Spearmint Source Code.
 
@@ -49,9 +49,7 @@ ARMv7-A_ARMv7-R_DDI0406_2007.pdf
 #define R2 2
 #define R3 3
 #define R4 4
-
 #define R12 12
-
 #define FP 11
 #define SP 13
 #define LR 14
@@ -526,18 +524,17 @@ static unsigned short can_encode(unsigned val) {
 	(AL|(0b10) << 26|(1 << 25) /*I*/|(1 << 24) /*L*/|(i))
 // branch and exchange (register)
 #define BX(reg) \
-	(AL|0b00010010 << 20|0b1111 << 16|0b1111 << 12|0b1111 << 8| 0b0001 << 4|reg)
+	(AL|0b00010010 << 20|0b1111 << 16|0b1111 << 12|0b1111 << 8|0b0001 << 4|reg)
 // call subroutine (register)
 #define BLX(reg) \
-	(AL|0b00010010 << 20|0b1111 << 16|0b1111 << 12|0b1111 << 8| 0b0011 << 4|reg)
+	(AL|0b00010010 << 20|0b1111 << 16|0b1111 << 12|0b1111 << 8|0b0011 << 4|reg)
 
 #define PUSH(mask) (AL|(0b100100 << 22)|(0b10 << 20)|(0b1101 << 16)|mask)
 #define PUSH2(r1, r2) (AL|(0b100100 << 22)|(0b10 << 20)|(0b1101 << 16)|1 << r1|1 << r2)
 //#define PUSH1(reg) STRxiw(SP, reg, 4)
 #define POP(mask) (0xe8bd0000|mask)
-
 #define STM(base, regs) \
-	(AL|0b100 << 25|0 << 24/*P*/| 0 << 24/*U*/| 0 << 24/*S*/| 0 << 24/*W*/|(base << 16)|(regs&~(1 << 16)))
+	(AL|0b100 << 25|0 << 24/*P*/|0 << 24/*U*/|0 << 24/*S*/|0 << 24/*W*/|(base << 16)|(regs&~(1 << 16)))
 // note: op1 and op2 must not be the same
 #define MUL(op1, op2, op3) \
 	(AL|0b0000000 << 21|(1 << 20) /*S*/|(op1 << 16)|(op3 << 8)|0b1001 << 4|(op2))
@@ -558,9 +555,9 @@ static unsigned short can_encode(unsigned val) {
 		emit(NOP); \
 	} while (0)
 // arm core register -> singe precision register
-#define VMOVass(Vn, Rt) (AL|(0b1110 << 24)|(0b000 << 21)|(0 << 20)| ((Vn >> 1) << 16)|(Rt << 12)|(0b1010 << 8)|((Vn&1) << 7)|(1 << 4))
+#define VMOVass(Vn, Rt) (AL|(0b1110 << 24)|(0b000 << 21)|(0 << 20)|((Vn >> 1) << 16)|(Rt << 12)|(0b1010 << 8)|((Vn&1) << 7)|(1 << 4))
 // singe precision register -> arm core register
-#define VMOVssa(Rt, Vn) (AL|(0b1110 << 24)|(0b000 << 21)|(1 << 20)| ((Vn >> 1) << 16)|(Rt << 12)|(0b1010 << 8)|((Vn&1) << 7)|(1 << 4))
+#define VMOVssa(Rt, Vn) (AL|(0b1110 << 24)|(0b000 << 21)|(1 << 20)|((Vn >> 1) << 16)|(Rt << 12)|(0b1010 << 8)|((Vn&1) << 7)|(1 << 4))
 #define _VCVT_F(Vd, Vm, opc2, op) \
 	(AL|(0b11101 << 23)|((Vd&1) << 22)|(0b111 << 19)|(opc2 << 16)|((Vd >> 1) << 12)|(0b101 << 9)|(0 << 8)|(op << 7)|(1 << 6)|((Vm&1) << 5)|(Vm >> 1))
 #define VCVT_F32_U32(Sd, Sm) _VCVT_F(Sd, Sm, 0b000, 0 /* unsigned */)
@@ -579,11 +576,9 @@ static unsigned short can_encode(unsigned val) {
 	(AL|(0b11100 << 23)|((Vd&1) << 22)|(0b10 << 20)|((Vn >> 1) << 16)|((Vd >> 1) << 12)|(0b101) << 9|(0 << 8)|((Vn&1) << 7)|(0 << 6)|((Vm&1) << 5)|(Vm >> 1))
 #define VDIV_F32(Vd, Vn, Vm) \
 	(AL|(0b11101 << 23)|((Vd&1) << 22)|(0b00 << 20)|((Vn >> 1) << 16)|((Vd >> 1) << 12)|(0b101 << 9)|(0 << 8)|((Vn&1) << 7)|(0 << 6)|((Vm&1) << 5)|(Vm >> 1))
-
 #define _VCMP_F32(Vd, Vm, E) \
 	(AL|(0b11101 << 23)|((Vd&1) << 22)|(0b11 << 20)|((0b0100) << 16)|((Vd >> 1) << 12)|(0b101 << 9)|(0 << 8)|(E << 7)|(1 << 6)|((Vm&1) << 5)|(Vm >> 1))
 #define VCMP_F32(Vd, Vm) _VCMP_F32(Vd, Vm, 0)
-
 #define VMRS(Rt) \
 	(AL|(0b11101111 << 20)|(0b0001 << 16)|(Rt << 12)|(0b1010 << 8)|(1 << 4))
 // check if instruction in R0 is within range. Clobbers R1, R12
@@ -627,7 +622,6 @@ static unsigned short can_encode(unsigned val) {
 	emit(CMP(R1, R0)); \
 	emit(cond(comparator, Bi(j_rel(vm->instructionPointers[arg.i]-vm->codeLength)))); \
 } while (0)
-
 #define FJ(comparator) do { \
 	emit_MOVRxi(R0, arg.i); \
 	CHECK_JUMP; \
@@ -677,11 +671,11 @@ void VM_Compile(vm_t *vm, vmHeader_t *header) {
 	unsigned char *code;
 	int i_count, pc = 0;
 	int pass;
-	int codeoffsets[1024];
+	int codeoffsets[2]; // was 1024 but it's only used for OFF_CODE and OFF_IMMEDIATES
 
-#define j_rel(x) (pass?_j_rel(x, pc) : 0xBAD)
-#define OFFSET(i) (pass?(j_rel(codeoffsets[i]-vm->codeLength)) : (0xF000000F))
-#define new_offset() (offsidx++)
+#define j_rel(x) (pass ? _j_rel(x, pc) : 0xBAD)
+#define OFFSET(i) (pass ? (j_rel(codeoffsets[i] - vm->codeLength)) : (0xF000000F))
+//#define new_offset() (offsidx++)
 #define get_offset(i) (codeoffsets[i])
 #define save_offset(i) (codeoffsets[i] = vm->codeLength)
 #define OFF_CODE 0
@@ -692,10 +686,11 @@ void VM_Compile(vm_t *vm, vmHeader_t *header) {
 	vm->codeLength = 0;
 
 	for (pass = 0; pass < 2; ++pass) {
-		int offsidx = 0;
+//		int offsidx = 0;
+#ifdef CONST_OPTIMIZE
 		// const optimization
 		unsigned got_const = 0, const_value = 0;
-
+#endif
 		if (pass) {
 			vm->codeBase = mmap(NULL, vm->codeLength, PROT_WRITE, MAP_SHARED|MAP_ANONYMOUS, -1, 0);
 
@@ -705,6 +700,7 @@ void VM_Compile(vm_t *vm, vmHeader_t *header) {
 
 			vm->codeLength = 0;
 		}
+
 		//int (*entry)(vm_t *, int *, int *);
 		emit(PUSH((((1 << 8) - 1) << 4)|(1 << 14))); // push R4-R11, LR
 		emit(SUBi(SP, SP, 12)); // align stack!
@@ -728,8 +724,7 @@ void VM_Compile(vm_t *vm, vmHeader_t *header) {
 		emit(BKPT(0));
 
 		save_offset(OFF_CODE);
-		offsidx = OFF_IMMEDIATES + 1;
-
+//		offsidx = OFF_IMMEDIATES + 1;
 		code = (unsigned char *) header + header->codeOffset;
 		pc = 0;
 
@@ -801,9 +796,12 @@ void VM_Compile(vm_t *vm, vmHeader_t *header) {
 					emit_MOVR0i(i_count);
 					emit(STRa(R0, rDATABASE, rPSTACK)); // dataBase[pstack] = r0
 #endif
+#ifdef CONST_OPTIMIZE
 					if (got_const) {
 						NOTIMPL(op);
-					} else {
+					} else
+#endif
+					{
 						static int bytes_to_skip = -1;
 						static unsigned start_block = -1;
 						MAYBE_EMIT_CONST();
@@ -861,9 +859,12 @@ void VM_Compile(vm_t *vm, vmHeader_t *header) {
 					emit(STRaiw(R0, rOPSTACK, 4)); // opstack += 4; *opstack = r0
 					break;
 				case OP_JUMP:
+#ifdef CONST_OPTIMIZE
 					if (got_const) {
 						NOTIMPL(op);
-					} else {
+					} else
+#endif
+					{
 						emit(LDRTxi(R0, rOPSTACK, 4)); // r0 = *opstack; rOPSTACK -= 4
 						CHECK_JUMP;
 						emit_MOVRxi(R1, (unsigned)vm->instructionPointers);
@@ -1107,9 +1108,7 @@ void VM_Compile(vm_t *vm, vmHeader_t *header) {
 				case OP_ADDF:
 					MAYBE_EMIT_CONST();
 					emit(VLDRa(S14, rOPSTACK, 0)); // s14 = *((float *)opstack)
-					// vldr can't modify rOPSTACK so
-					// we'd either need to change it
-					// with sub or use regular ldr + vmov
+					// vldr can't modify rOPSTACK so we'd either need to change it with sub or use regular ldr + vmov
 					emit(LDRxiw(R0, rOPSTACK, 4)); // opstack -= 4; r1 = *opstack
 					emit(VMOVass(S15,R0)); // s15 = r0
 					emit(VADD_F32(S14, S15, S14)); // s14 = s14 + s15
@@ -1159,7 +1158,7 @@ void VM_Compile(vm_t *vm, vmHeader_t *header) {
 		emit(BKPT(0));
 	} // pass
 
-	if (mprotect(vm->codeBase, vm->codeLength, PROT_READ|PROT_EXEC/* |PROT_WRITE */)) {
+	if (mprotect(vm->codeBase, vm->codeLength, PROT_READ|PROT_EXEC/*|PROT_WRITE*/)) {
 		VM_Destroy_Compiled(vm);
 		DIE("mprotect failed");
 	}

@@ -38,7 +38,7 @@ void DeathmatchScoreboardMessage(gentity_t *ent) {
 	gclient_t *cl;
 	int numSorted, scoreFlags, accuracy, perfect;
 
-	// don't send scores to bots (bots don't parse them)
+	// don't send scores to bots, they don't parse it
 	if (ent->r.svFlags & SVF_BOT) {
 		return;
 	}
@@ -502,14 +502,14 @@ void BroadcastTeamChange(gclient_t *client, int oldTeam) {
 		return;
 	}
 
-	if (client->sess.sessionTeam == TEAM_SPECTATOR) {
-		trap_SendServerCommand(-1, va("print \"%s" S_COLOR_WHITE " joined the spectators.\n\"", client->pers.netname));
-	} else if (client->sess.sessionTeam == TEAM_FREE) {
-		trap_SendServerCommand(-1, va("print \"%s" S_COLOR_WHITE " joined the battle.\n\"", client->pers.netname));
-	} else if (client->sess.sessionTeam == TEAM_RED) {
+	if (client->sess.sessionTeam == TEAM_RED) {
 		trap_SendServerCommand(-1, va("print \"%s" S_COLOR_WHITE " joined the red team.\n\"", client->pers.netname));
 	} else if (client->sess.sessionTeam == TEAM_BLUE) {
 		trap_SendServerCommand(-1, va("print \"%s" S_COLOR_WHITE " joined the blue team.\n\"", client->pers.netname));
+	} else if (client->sess.sessionTeam == TEAM_FREE) {
+		trap_SendServerCommand(-1, va("print \"%s" S_COLOR_WHITE " joined the battle.\n\"", client->pers.netname));
+	} else if (client->sess.sessionTeam == TEAM_SPECTATOR) {
+		trap_SendServerCommand(-1, va("print \"%s" S_COLOR_WHITE " joined the spectators.\n\"", client->pers.netname));
 	} else {
 		trap_SendServerCommand(-1, va("print \"%s" S_COLOR_WHITE " joined the %s team.\n\"", client->pers.netname, TeamName(client->sess.sessionTeam)));
 	}
@@ -564,9 +564,9 @@ void SetTeam(gentity_t *ent, const char *s) {
 		if (g_teamForceBalance.integer && !client->pers.localClient && !(ent->r.svFlags & SVF_BOT)) {
 			int counts[TEAM_NUM_TEAMS];
 
-			counts[TEAM_BLUE] = TeamCount(clientNum, TEAM_BLUE);
 			counts[TEAM_RED] = TeamCount(clientNum, TEAM_RED);
-			// We allow a spread of two
+			counts[TEAM_BLUE] = TeamCount(clientNum, TEAM_BLUE);
+			// we allow a spread of two
 			if (team == TEAM_RED && counts[TEAM_RED] - counts[TEAM_BLUE] > 1) {
 				trap_SendServerCommand(clientNum, "cp \"Red team has too many players.\n\"");
 				return; // ignore the request
@@ -576,7 +576,7 @@ void SetTeam(gentity_t *ent, const char *s) {
 				trap_SendServerCommand(clientNum, "cp \"Blue team has too many players.\n\"");
 				return; // ignore the request
 			}
-			// It's ok, the team we are switching to has less or same number of players
+			// it's ok, the team we are switching to has less or same number of players
 		}
 	} else {
 		// force them to spectators if there aren't any spots free
@@ -604,7 +604,7 @@ void SetTeam(gentity_t *ent, const char *s) {
 	client->pers.teamState.state = TEAM_BEGIN;
 
 	if (oldTeam != TEAM_SPECTATOR) {
-		// Kill him (makes sure he loses flags, etc.)
+		// kill him (makes sure he loses flags, etc.)
 		ent->flags &= ~FL_GODMODE;
 		ent->client->ps.stats[STAT_HEALTH] = ent->health = 0;
 		PlayerDie(ent, ent, ent, 100000, MOD_SUICIDE_TEAM_CHANGE);
@@ -632,13 +632,12 @@ void SetTeam(gentity_t *ent, const char *s) {
 	}
 	// get and distribute relevant parameters
 	ClientUserinfoChanged(clientNum);
-	// client hasn't spawned yet, they sent teampref or g_teamAutoJoin is enabled
+	// client hasn't spawned yet, they sent an early team command, teampref userinfo, or g_teamAutoJoin is enabled
 	if (client->pers.connected != CON_CONNECTED) {
 		return;
 	}
 
 	BroadcastTeamChange(client, oldTeam);
-
 	ClientBegin(clientNum);
 }
 

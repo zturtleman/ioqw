@@ -515,6 +515,7 @@ extern vmCvar_t g_voteMinFraglimit;
 extern vmCvar_t g_voteMaxFraglimit;
 extern vmCvar_t g_voteMinCapturelimit;
 extern vmCvar_t g_voteMaxCapturelimit;
+extern vmCvar_t g_localTeamPref;
 extern vmCvar_t g_teamAutoJoin;
 extern vmCvar_t g_teamForceBalance;
 extern vmCvar_t g_banIPs;

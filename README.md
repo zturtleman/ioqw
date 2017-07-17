@@ -20,10 +20,10 @@ Ioid3-qw is licensed under a [modified version of the GNU GPLv3](COPYING.txt#L62
   * Improved UI
 
 
-## Goals (for a Spearmint based game):
+## Goals:
 
-  * Enhanced BotAI with configurable bounding boxes (to allow variable sized monsters).
-  * Advanced bot order menu (with splitscreen support), currently there is no splitscreen support!
+  * Enhanced BotAI.
+  * Advanced bot order menu.
   * Ragdoll physics.
   * A modern rendering system (the 'real' Xreal renderer).
 

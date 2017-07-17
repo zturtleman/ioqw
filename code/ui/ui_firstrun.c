@@ -149,7 +149,7 @@ FirstRun_StatusBar_Name
 =======================================================================================================================================
 */
 static void FirstRun_StatusBar_Name(void *ptr) {
-	UI_DrawString(320, 440, "Your nickname", UI_CENTER|UI_SMALLFONT, colorWhite);
+	UI_DrawString(320, 376, "Your nickname", UI_CENTER|UI_SMALLFONT, colorWhite);
 }
 
 /*
@@ -158,7 +158,7 @@ FirstRun_StatusBar_Rate
 =======================================================================================================================================
 */
 static void FirstRun_StatusBar_Rate(void *ptr) {
-	UI_DrawString(320, 440, "Your connection speed", UI_CENTER|UI_SMALLFONT, colorWhite);
+	UI_DrawString(320, 376, "Your connection speed", UI_CENTER|UI_SMALLFONT, colorWhite);
 }
 
 /*
@@ -167,7 +167,7 @@ FirstRun_StatusBar_Download
 =======================================================================================================================================
 */
 static void FirstRun_StatusBar_Download(void *ptr) {
-	UI_DrawString(320, 440, "Auto download missing maps and mods", UI_CENTER|UI_SMALLFONT, colorWhite);
+	UI_DrawString(320, 376, "Auto download missing maps and mods", UI_CENTER|UI_SMALLFONT, colorWhite);
 }
 
 /*
@@ -340,15 +340,15 @@ void FirstRun_MenuInit(void) {
 	s_firstrun.info.generic.x = 320;
 	s_firstrun.info.generic.y = 100;
 	s_firstrun.info.color = color_white;
-	s_firstrun.info.style = UI_CENTER|UI_TINYFONT;
-	s_firstrun.info.string = "Note: All settings can be changed later in SETUP";
+	s_firstrun.info.style = UI_CENTER|UI_SMALLFONT;
+	s_firstrun.info.string = "Please verify these settings!";
 
 	s_firstrun.info2.generic.type = MTYPE_TEXT;
 	s_firstrun.info2.generic.x = 320;
-	s_firstrun.info2.generic.y = 80;
+	s_firstrun.info2.generic.y = 408;
 	s_firstrun.info2.color = color_white;
 	s_firstrun.info2.style = UI_CENTER|UI_SMALLFONT;
-	s_firstrun.info2.string = "Please verify these settings";
+	s_firstrun.info2.string = "Note: All settings can be changed later in the SETUP menu!";
 
 	Menu_AddItem(&s_firstrun.menu, &s_firstrun.banner);
 	Menu_AddItem(&s_firstrun.menu, &s_firstrun.framel);

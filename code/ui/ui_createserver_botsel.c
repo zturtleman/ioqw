@@ -20,21 +20,6 @@ The UI Enhanced copyright owner permit free reuse of his code contained herein, 
 ---------------------------------------------------------------------------------------------------------------------------------------
 Ian Jefferies - HypoThermia (uie@planetquake.com)
 http://www.planetquake.com/uie
-
-This file is part of Spearmint Source Code.
-
-Spearmint Source Code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
-
-Spearmint Source Code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with Spearmint Source Code.
-If not, see <http://www.gnu.org/licenses/>.
-
-In addition, Spearmint Source Code is also subject to certain additional terms. You should have received a copy of these additional
-terms immediately following the terms and conditions of the GNU General Public License. If not, please request a copy in writing from
-id Software at the address below.
 =======================================================================================================================================
 */
 
@@ -57,7 +42,6 @@ id Software at the address below.
 #define BOTSELECT_ACCEPT1 "menu/art/accept_1"
 #define BOTSELECT_SELECT "menu/art/opponents_select"
 #define BOTSELECT_SELECTED "menu/art/opponents_selected"
-#define BOTSELECT_SMALLSELECTED "menu/art/opponents_smallselected"
 #define BOTSELECT_ARROWS "menu/art/arrows_horz_0"
 #define BOTSELECT_ARROWSL "menu/art/arrows_horz_left"
 #define BOTSELECT_ARROWSR "menu/art/arrows_horz_right"
@@ -124,9 +108,9 @@ typedef struct {
 	int multiSel[MAX_MULTISELECTED];
 	float *botcolor[MAX_MODELSPERPAGE];
 	const char *botalias[MAX_MODELSPERPAGE];
-} botSelectInfo_t;
+} botMultiSelectInfo_t;
 
-static botSelectInfo_t botSelectInfo;
+static botMultiSelectInfo_t botMultiSelectInfo;
 
 /*
 =======================================================================================================================================
@@ -157,17 +141,17 @@ UI_BotSelect_SelectedOnPage
 static qboolean UI_BotSelect_SelectedOnPage(void) {
 	int page;
 
-	if (botSelectInfo.selectedbot == -1) {
+	if (botMultiSelectInfo.selectedbot == -1) {
 		return qfalse;
 	}
 
-	page = botSelectInfo.page * botSelectInfo.maxBotsPerPage;
+	page = botMultiSelectInfo.page * botMultiSelectInfo.maxBotsPerPage;
 
-	if (botSelectInfo.selectedbot < page) {
+	if (botMultiSelectInfo.selectedbot < page) {
 		return qfalse;
 	}
 
-	if (botSelectInfo.selectedbot >= page + botSelectInfo.maxBotsPerPage) {
+	if (botMultiSelectInfo.selectedbot >= page + botMultiSelectInfo.maxBotsPerPage) {
 		return qfalse;
 	}
 
@@ -183,20 +167,20 @@ static void UI_BotSelect_SetBotInfoInCaller(void) {
 	char *info, *name;
 	int index, sel, type;
 
-	if (botSelectInfo.multisel.curvalue) {
-		index = botSelectInfo.index;
+	if (botMultiSelectInfo.multisel.curvalue) {
+		index = botMultiSelectInfo.index;
 		type = CreateServer_SlotTeam(index);
 
 		if (type == SLOTTEAM_INVALID) {
 			return;
 		}
 
-		for (sel = 0; sel < botSelectInfo.numMultiSel; sel++, index++) {
+		for (sel = 0; sel < botMultiSelectInfo.numMultiSel; sel++, index++) {
 			if (CreateServer_SlotTeam(index) != type) {
 				break;
 			}
 
-			info = UI_GetBotInfoByNumber(botSelectInfo.sortedBotNums[botSelectInfo.multiSel[sel]]);
+			info = UI_GetBotInfoByNumber(botMultiSelectInfo.sortedBotNums[botMultiSelectInfo.multiSel[sel]]);
 			name = Info_ValueForKey(info, "name");
 
 			if (sel == 0) {
@@ -206,14 +190,14 @@ static void UI_BotSelect_SetBotInfoInCaller(void) {
 			}
 		}
 	} else {
-		if (botSelectInfo.selectedbot == -1) {
+		if (botMultiSelectInfo.selectedbot == -1) {
 			return;
 		}
 
-		info = UI_GetBotInfoByNumber(botSelectInfo.sortedBotNums[botSelectInfo.selectedbot]);
+		info = UI_GetBotInfoByNumber(botMultiSelectInfo.sortedBotNums[botMultiSelectInfo.selectedbot]);
 		name = Info_ValueForKey(info, "name");
 
-		CreateServer_SetNamedBot(botSelectInfo.index, name);
+		CreateServer_SetNamedBot(botMultiSelectInfo.index, name);
 	}
 }
 
@@ -226,35 +210,35 @@ static void UI_BotSelect_AddBotSelection(int bot) {
 	int i, j;
 
 	// single selection only
-	if (!botSelectInfo.multisel.curvalue) {
-		if (botSelectInfo.selectedbot == bot) {
+	if (!botMultiSelectInfo.multisel.curvalue) {
+		if (botMultiSelectInfo.selectedbot == bot) {
 			// toggle current selection
-			botSelectInfo.selectedbot = -1;
+			botMultiSelectInfo.selectedbot = -1;
 		} else {
-			botSelectInfo.selectedbot = bot;
+			botMultiSelectInfo.selectedbot = bot;
 		}
 
 		return;
 	}
 	// check for presence in list already, and remove if found
-	for (i = 0; i < botSelectInfo.numMultiSel; i++) {
-		if (botSelectInfo.multiSel[i] == bot) {
-			for (j = i; j < botSelectInfo.numMultiSel - 1; j++) {
-				botSelectInfo.multiSel[j] = botSelectInfo.multiSel[j + 1];
+	for (i = 0; i < botMultiSelectInfo.numMultiSel; i++) {
+		if (botMultiSelectInfo.multiSel[i] == bot) {
+			for (j = i; j < botMultiSelectInfo.numMultiSel - 1; j++) {
+				botMultiSelectInfo.multiSel[j] = botMultiSelectInfo.multiSel[j + 1];
 			}
 
-			botSelectInfo.numMultiSel--;
+			botMultiSelectInfo.numMultiSel--;
 			return;
 		}
 	}
 	// add to list, if enough space
-	if (botSelectInfo.numMultiSel == MAX_MULTISELECTED) {
+	if (botMultiSelectInfo.numMultiSel == MAX_MULTISELECTED) {
 		return;
 	}
 
-	botSelectInfo.multiSel[botSelectInfo.numMultiSel] = bot;
-	botSelectInfo.numMultiSel++;
-	botSelectInfo.selectedbot = bot;
+	botMultiSelectInfo.multiSel[botMultiSelectInfo.numMultiSel] = bot;
+	botMultiSelectInfo.numMultiSel++;
+	botMultiSelectInfo.selectedbot = bot;
 }
 
 /*
@@ -264,32 +248,32 @@ UI_BotSelect_ToggleMultiSelect
 */
 static void UI_BotSelect_ToggleMultiSelect(void) {
 
-	trap_Cvar_SetValue("ui_bot_multisel", botSelectInfo.multisel.curvalue);
+	trap_Cvar_SetValue("ui_bot_multisel", botMultiSelectInfo.multisel.curvalue);
 
-	if (!botSelectInfo.multisel.curvalue) {
+	if (!botMultiSelectInfo.multisel.curvalue) {
 		// change to single sel
-		if (botSelectInfo.numMultiSel) {
-			botSelectInfo.selectedbot = botSelectInfo.multiSel[0];
+		if (botMultiSelectInfo.numMultiSel) {
+			botMultiSelectInfo.selectedbot = botMultiSelectInfo.multiSel[0];
 		} else {
-			botSelectInfo.selectedbot = -1;
+			botMultiSelectInfo.selectedbot = -1;
 		}
 
 		return;
 	}
 	// change to multiple sel
-	if (botSelectInfo.selectedbot == -1) {
-		botSelectInfo.numMultiSel = 0;
+	if (botMultiSelectInfo.selectedbot == -1) {
+		botMultiSelectInfo.numMultiSel = 0;
 		return;
 	}
 
-	if (botSelectInfo.numMultiSel == 0) {
-		UI_BotSelect_AddBotSelection(botSelectInfo.selectedbot);
+	if (botMultiSelectInfo.numMultiSel == 0) {
+		UI_BotSelect_AddBotSelection(botMultiSelectInfo.selectedbot);
 		return;
 	}
 
-	if (botSelectInfo.selectedbot != botSelectInfo.multiSel[0]) {
-		botSelectInfo.multiSel[0] = botSelectInfo.selectedbot;
-		botSelectInfo.numMultiSel = 1;
+	if (botMultiSelectInfo.selectedbot != botMultiSelectInfo.multiSel[0]) {
+		botMultiSelectInfo.multiSel[0] = botMultiSelectInfo.selectedbot;
+		botMultiSelectInfo.numMultiSel = 1;
 	}
 }
 
@@ -300,19 +284,19 @@ UI_BotSelect_SetViewType
 */
 static void UI_BotSelect_SetViewType(void) {
 
-	if (botSelectInfo.viewlist.curvalue) {
-		botSelectInfo.maxBotsPerPage = MAX_LISTMODELSPERPAGE;
+	if (botMultiSelectInfo.viewlist.curvalue) {
+		botMultiSelectInfo.maxBotsPerPage = MAX_LISTMODELSPERPAGE;
 	} else {
-		botSelectInfo.maxBotsPerPage = MAX_GRIDMODELSPERPAGE;
+		botMultiSelectInfo.maxBotsPerPage = MAX_GRIDMODELSPERPAGE;
 	}
 
-	botSelectInfo.numpages = botSelectInfo.numBots / botSelectInfo.maxBotsPerPage;
+	botMultiSelectInfo.numpages = botMultiSelectInfo.numBots / botMultiSelectInfo.maxBotsPerPage;
 
-	if (botSelectInfo.numBots % botSelectInfo.maxBotsPerPage) {
-		botSelectInfo.numpages++;
+	if (botMultiSelectInfo.numBots % botMultiSelectInfo.maxBotsPerPage) {
+		botMultiSelectInfo.numpages++;
 	}
 
-	trap_Cvar_SetValue("ui_bot_list", botSelectInfo.viewlist.curvalue);
+	trap_Cvar_SetValue("ui_bot_list", botMultiSelectInfo.viewlist.curvalue);
 }
 
 /*
@@ -323,13 +307,13 @@ UI_BotSelect_BuildList
 static void UI_BotSelect_BuildList(void) {
 	int n;
 
-	botSelectInfo.numBots = UI_GetNumBots();
+	botMultiSelectInfo.numBots = UI_GetNumBots();
 	// initialize the array
-	for (n = 0; n < botSelectInfo.numBots; n++) {
-		botSelectInfo.sortedBotNums[n] = n;
+	for (n = 0; n < botMultiSelectInfo.numBots; n++) {
+		botMultiSelectInfo.sortedBotNums[n] = n;
 	}
 	// now sort it
-	qsort(botSelectInfo.sortedBotNums, botSelectInfo.numBots, sizeof(botSelectInfo.sortedBotNums[0]), UI_BotSelect_SortCompare);
+	qsort(botMultiSelectInfo.sortedBotNums, botMultiSelectInfo.numBots, sizeof(botMultiSelectInfo.sortedBotNums[0]), UI_BotSelect_SortCompare);
 }
 
 /*
@@ -365,46 +349,46 @@ static void UI_BotSelect_UpdateGridInterface(void) {
 	int i, j, page, sel;
 
 	// clear out old values
-	j = botSelectInfo.page * botSelectInfo.maxBotsPerPage;
+	j = botMultiSelectInfo.page * botMultiSelectInfo.maxBotsPerPage;
 
 	for (i = 0; i < MAX_GRIDMODELSPERPAGE; i++, j++) {
-		botSelectInfo.picbuttons[i].generic.flags &= ~QMF_HIDDEN;
+		botMultiSelectInfo.picbuttons[i].generic.flags &= ~QMF_HIDDEN;
 
-		if (j < botSelectInfo.numBots) {
-			botSelectInfo.picbuttons[i].generic.flags &= ~QMF_INACTIVE;
-			botSelectInfo.picbuttons[i].generic.flags |= QMF_PULSEIFFOCUS;
+		if (j < botMultiSelectInfo.numBots) {
+			botMultiSelectInfo.picbuttons[i].generic.flags &= ~QMF_INACTIVE;
+			botMultiSelectInfo.picbuttons[i].generic.flags |= QMF_PULSEIFFOCUS;
 		} else {
 			// dead control
-			botSelectInfo.picbuttons[i].generic.flags |= QMF_INACTIVE;
+			botMultiSelectInfo.picbuttons[i].generic.flags |= QMF_INACTIVE;
 		}
 
-		botSelectInfo.picbuttons[i].generic.flags &= ~QMF_HIGHLIGHT;
+		botMultiSelectInfo.picbuttons[i].generic.flags &= ~QMF_HIGHLIGHT;
 	}
 	// set selected model(s), if visible
-	if (botSelectInfo.multisel.curvalue) {
-		for (i = 0; i < botSelectInfo.numMultiSel; i++) {
-			sel = botSelectInfo.multiSel[i];
-			page = sel / botSelectInfo.maxBotsPerPage;
+	if (botMultiSelectInfo.multisel.curvalue) {
+		for (i = 0; i < botMultiSelectInfo.numMultiSel; i++) {
+			sel = botMultiSelectInfo.multiSel[i];
+			page = sel / botMultiSelectInfo.maxBotsPerPage;
 
-			if (botSelectInfo.page != page) {
+			if (botMultiSelectInfo.page != page) {
 				continue;
 			}
 
-			sel %= botSelectInfo.maxBotsPerPage;
-			botSelectInfo.picbuttons[sel].generic.flags |= QMF_HIGHLIGHT;
-			botSelectInfo.picbuttons[sel].generic.flags &= ~QMF_PULSEIFFOCUS;
+			sel %= botMultiSelectInfo.maxBotsPerPage;
+			botMultiSelectInfo.picbuttons[sel].generic.flags |= QMF_HIGHLIGHT;
+			botMultiSelectInfo.picbuttons[sel].generic.flags &= ~QMF_PULSEIFFOCUS;
 		}
 	} else {
-		if (botSelectInfo.selectedbot == -1) {
+		if (botMultiSelectInfo.selectedbot == -1) {
 			return;
 		}
 
-		page = botSelectInfo.selectedbot / botSelectInfo.maxBotsPerPage;
+		page = botMultiSelectInfo.selectedbot / botMultiSelectInfo.maxBotsPerPage;
 
-		if (botSelectInfo.page == page) {
-			i = botSelectInfo.selectedbot % botSelectInfo.maxBotsPerPage;
-			botSelectInfo.picbuttons[i].generic.flags |= QMF_HIGHLIGHT;
-			botSelectInfo.picbuttons[i].generic.flags &= ~QMF_PULSEIFFOCUS;
+		if (botMultiSelectInfo.page == page) {
+			i = botMultiSelectInfo.selectedbot % botMultiSelectInfo.maxBotsPerPage;
+			botMultiSelectInfo.picbuttons[i].generic.flags |= QMF_HIGHLIGHT;
+			botMultiSelectInfo.picbuttons[i].generic.flags &= ~QMF_PULSEIFFOCUS;
 		}
 	}
 }
@@ -419,20 +403,20 @@ static void UI_BotSelect_CheckAcceptButton(void) {
 
 	enable = qfalse;
 
-	if (botSelectInfo.multisel.curvalue) {
-		if (botSelectInfo.numMultiSel > 0) {
+	if (botMultiSelectInfo.multisel.curvalue) {
+		if (botMultiSelectInfo.numMultiSel > 0) {
 			enable = qtrue;
 		}
 	} else {
-		if (botSelectInfo.selectedbot != -1) {
+		if (botMultiSelectInfo.selectedbot != -1) {
 			enable = qtrue;
 		}
 	}
 
 	if (enable) {
-		botSelectInfo.go.generic.flags &= ~(QMF_INACTIVE|QMF_GRAYED);
+		botMultiSelectInfo.go.generic.flags &= ~(QMF_INACTIVE|QMF_GRAYED);
 	} else {
-		botSelectInfo.go.generic.flags |= (QMF_INACTIVE|QMF_GRAYED);
+		botMultiSelectInfo.go.generic.flags |= (QMF_INACTIVE|QMF_GRAYED);
 	}
 }
 
@@ -447,69 +431,69 @@ static void UI_BotSelect_UpdateView(void) {
 	const char *info;
 	int i, j, pageBotCount;
 
-	j = botSelectInfo.page * botSelectInfo.maxBotsPerPage;
+	j = botMultiSelectInfo.page * botMultiSelectInfo.maxBotsPerPage;
 
-	for (i = 0; i < botSelectInfo.maxBotsPerPage; i++, j++) {
-		if (j < botSelectInfo.numBots) {
-			info = UI_GetBotInfoByNumber(botSelectInfo.sortedBotNums[j]);
-			UI_ServerPlayerIcon(Info_ValueForKey(info, "model"), botSelectInfo.boticons[i], MAX_QPATH);
-			Q_strncpyz(botSelectInfo.botnames[i], Info_ValueForKey(info, "name"), BOTNAME_LENGTH);
-			Q_CleanStr(botSelectInfo.botnames[i]);
+	for (i = 0; i < botMultiSelectInfo.maxBotsPerPage; i++, j++) {
+		if (j < botMultiSelectInfo.numBots) {
+			info = UI_GetBotInfoByNumber(botMultiSelectInfo.sortedBotNums[j]);
+			UI_ServerPlayerIcon(Info_ValueForKey(info, "model"), botMultiSelectInfo.boticons[i], MAX_QPATH);
+			Q_strncpyz(botMultiSelectInfo.botnames[i], Info_ValueForKey(info, "name"), BOTNAME_LENGTH);
+			Q_CleanStr(botMultiSelectInfo.botnames[i]);
 
-			if (botSelectInfo.index != -1 && CreateServer_BotOnSelectionList(botSelectInfo.botnames[i])) {
-				botSelectInfo.botcolor[i] = color_red;
+			if (botMultiSelectInfo.index != -1 && CreateServer_BotOnSelectionList(botMultiSelectInfo.botnames[i])) {
+				botMultiSelectInfo.botcolor[i] = color_red;
 			} else {
-				botSelectInfo.botcolor[i] = color_orange;
+				botMultiSelectInfo.botcolor[i] = color_orange;
 			}
 		} else {
 			// dead slot
-			botSelectInfo.botnames[i][0] = 0;
+			botMultiSelectInfo.botnames[i][0] = 0;
 		}
 	}
 	// update display details based on the view type
-	pageBotCount = botSelectInfo.numBots - botSelectInfo.page * botSelectInfo.maxBotsPerPage;;
+	pageBotCount = botMultiSelectInfo.numBots - botMultiSelectInfo.page * botMultiSelectInfo.maxBotsPerPage;;
 
-	if (pageBotCount > botSelectInfo.maxBotsPerPage) {
-		pageBotCount = botSelectInfo.maxBotsPerPage;
+	if (pageBotCount > botMultiSelectInfo.maxBotsPerPage) {
+		pageBotCount = botMultiSelectInfo.maxBotsPerPage;
 	}
 
-	if (!botSelectInfo.viewlist.curvalue) {
+	if (!botMultiSelectInfo.viewlist.curvalue) {
 		// grid display
 		UI_BotSelect_UpdateGridInterface();
-		botSelectInfo.botlist.generic.flags |= (QMF_INACTIVE|QMF_HIDDEN);
+		botMultiSelectInfo.botlist.generic.flags |= (QMF_INACTIVE|QMF_HIDDEN);
 	} else {
 		// list display
 		for (i = 0; i < MAX_GRIDMODELSPERPAGE; i++) {
-			botSelectInfo.picbuttons[i].generic.flags |= (QMF_HIDDEN|QMF_INACTIVE);
+			botMultiSelectInfo.picbuttons[i].generic.flags |= (QMF_HIDDEN|QMF_INACTIVE);
 		}
 
-		botSelectInfo.botlist.generic.flags &= ~(QMF_INACTIVE|QMF_HIDDEN);
+		botMultiSelectInfo.botlist.generic.flags &= ~(QMF_INACTIVE|QMF_HIDDEN);
 
 		if (UI_BotSelect_SelectedOnPage()) {
-			botSelectInfo.botlist.curvalue = botSelectInfo.selectedbot % botSelectInfo.maxBotsPerPage;
+			botMultiSelectInfo.botlist.curvalue = botMultiSelectInfo.selectedbot % botMultiSelectInfo.maxBotsPerPage;
 		} else {
-			botSelectInfo.botlist.curvalue = -1;
+			botMultiSelectInfo.botlist.curvalue = -1;
 		}
 
-		botSelectInfo.botlist.numitems = pageBotCount;
+		botMultiSelectInfo.botlist.numitems = pageBotCount;
 	}
 	// left/right controls
-	if (botSelectInfo.numpages > 1) {
-		if (botSelectInfo.page > 0) {
-			botSelectInfo.left.generic.flags &= ~QMF_INACTIVE;
+	if (botMultiSelectInfo.numpages > 1) {
+		if (botMultiSelectInfo.page > 0) {
+			botMultiSelectInfo.left.generic.flags &= ~QMF_INACTIVE;
 		} else {
-			botSelectInfo.left.generic.flags |= QMF_INACTIVE;
+			botMultiSelectInfo.left.generic.flags |= QMF_INACTIVE;
 		}
 
-		if (botSelectInfo.page < (botSelectInfo.numpages - 1)) {
-			botSelectInfo.right.generic.flags &= ~QMF_INACTIVE;
+		if (botMultiSelectInfo.page < (botMultiSelectInfo.numpages - 1)) {
+			botMultiSelectInfo.right.generic.flags &= ~QMF_INACTIVE;
 		} else {
-			botSelectInfo.right.generic.flags |= QMF_INACTIVE;
+			botMultiSelectInfo.right.generic.flags |= QMF_INACTIVE;
 		}
 	} else {
 		// hide left/right markers
-		botSelectInfo.left.generic.flags |= QMF_INACTIVE;
-		botSelectInfo.right.generic.flags |= QMF_INACTIVE;
+		botMultiSelectInfo.left.generic.flags |= QMF_INACTIVE;
+		botMultiSelectInfo.right.generic.flags |= QMF_INACTIVE;
 	}
 }
 
@@ -520,12 +504,12 @@ UI_BotSelect_SetPageFromSelected
 */
 static void UI_BotSelect_SetPageFromSelected(void) {
 
-	if (botSelectInfo.selectedbot == -1) {
-		botSelectInfo.page = 0;
+	if (botMultiSelectInfo.selectedbot == -1) {
+		botMultiSelectInfo.page = 0;
 		return;
 	}
 
-	botSelectInfo.page = botSelectInfo.selectedbot / botSelectInfo.maxBotsPerPage;
+	botMultiSelectInfo.page = botMultiSelectInfo.selectedbot / botMultiSelectInfo.maxBotsPerPage;
 }
 
 /*
@@ -537,11 +521,11 @@ static void UI_BotSelect_Default(char *bot) {
 	const char *botInfo, *test;
 	int n, i;
 
-	botSelectInfo.selectedbot = -1;
-	botSelectInfo.page = 0;
-	botSelectInfo.numMultiSel = 0;
+	botMultiSelectInfo.selectedbot = -1;
+	botMultiSelectInfo.page = 0;
+	botMultiSelectInfo.numMultiSel = 0;
 
-	for (n = 0; n < botSelectInfo.numBots; n++) {
+	for (n = 0; n < botMultiSelectInfo.numBots; n++) {
 		botInfo = UI_GetBotInfoByNumber(n);
 		test = Info_ValueForKey(botInfo, "name");
 
@@ -550,17 +534,17 @@ static void UI_BotSelect_Default(char *bot) {
 		}
 	}
 	// bot name not in list
-	if (n == botSelectInfo.numBots) {
+	if (n == botMultiSelectInfo.numBots) {
 		return;
 	}
 	// find in sorted list
-	for (i = 0; i < botSelectInfo.numBots; i++) {
-		if (botSelectInfo.sortedBotNums[i] == n) {
+	for (i = 0; i < botMultiSelectInfo.numBots; i++) {
+		if (botMultiSelectInfo.sortedBotNums[i] == n) {
 			break;
 		}
 	}
 	// not in sorted list
-	if (i == botSelectInfo.numBots) {
+	if (i == botMultiSelectInfo.numBots) {
 		return;
 	}
 	// found it!
@@ -581,7 +565,7 @@ static void UI_BotSelect_BotEvent(void *ptr, int event) {
 	}
 
 	i = ((menucommon_s *)ptr)->id;
-	i += botSelectInfo.page * botSelectInfo.maxBotsPerPage;
+	i += botMultiSelectInfo.page * botMultiSelectInfo.maxBotsPerPage;
 
 	UI_BotSelect_AddBotSelection(i);
 	UI_BotSelect_CheckAcceptButton();
@@ -610,15 +594,15 @@ static void UI_BotSelect_Event(void *ptr, int event) {
 			UI_BotSelect_UpdateView();
 			break;
 		case ID_BOTSELECT_LEFT:
-			if (botSelectInfo.page > 0) {
-				botSelectInfo.page--;
+			if (botMultiSelectInfo.page > 0) {
+				botMultiSelectInfo.page--;
 				UI_BotSelect_UpdateView();
 			}
 
 			break;
 		case ID_BOTSELECT_RIGHT:
-			if (botSelectInfo.page < botSelectInfo.numpages - 1) {
-				botSelectInfo.page++;
+			if (botMultiSelectInfo.page < botMultiSelectInfo.numpages - 1) {
+				botMultiSelectInfo.page++;
 				UI_BotSelect_UpdateView();
 			}
 
@@ -626,7 +610,7 @@ static void UI_BotSelect_Event(void *ptr, int event) {
 		case ID_BOTSELECT_ACCEPT:
 			UI_PopMenu();
 
-			if (botSelectInfo.index != -1) {
+			if (botMultiSelectInfo.index != -1) {
 				UI_BotSelect_SetBotInfoInCaller();
 			}
 
@@ -653,7 +637,6 @@ void UI_BotSelect_Cache(void) {
 	trap_R_RegisterShaderNoMip(BOTSELECT_ARROWS);
 	trap_R_RegisterShaderNoMip(BOTSELECT_ARROWSL);
 	trap_R_RegisterShaderNoMip(BOTSELECT_ARROWSR);
-	trap_R_RegisterShaderNoMip(BOTSELECT_SMALLSELECTED);
 }
 
 /*
@@ -689,7 +672,7 @@ static qboolean UI_BotSelect_HandleListKey(int key, sfxHandle_t *psfx) {
 
 	UI_BotSelect_ScrollList_LineSize(&charheight, &charwidth, &lineheight);
 
-	l = &botSelectInfo.botlist;
+	l = &botMultiSelectInfo.botlist;
 
 	switch (key) {
 		case K_MOUSE1:
@@ -719,7 +702,7 @@ static qboolean UI_BotSelect_HandleListKey(int key, sfxHandle_t *psfx) {
 							}
 						}
 
-						sel = botSelectInfo.page * botSelectInfo.maxBotsPerPage;
+						sel = botMultiSelectInfo.page * botMultiSelectInfo.maxBotsPerPage;
 						sel += l->curvalue;
 
 						UI_BotSelect_AddBotSelection(sel);
@@ -736,7 +719,7 @@ static qboolean UI_BotSelect_HandleListKey(int key, sfxHandle_t *psfx) {
 			return qtrue;
 		// keys that have the default action
 		case K_ESCAPE:
-			*psfx = Menu_DefaultKey(&botSelectInfo.menu, key);
+			*psfx = Menu_DefaultKey(&botMultiSelectInfo.menu, key);
 			return qtrue;
 	}
 
@@ -752,15 +735,15 @@ static sfxHandle_t UI_BotSelect_Key(int key) {
 	menulist_s *l;
 	sfxHandle_t sfx;
 
-	l = (menulist_s *)Menu_ItemAtCursor(&botSelectInfo.menu);
+	l = (menulist_s *)Menu_ItemAtCursor(&botMultiSelectInfo.menu);
 	sfx = menu_null_sound;
 
-	if (l == &botSelectInfo.botlist) {
+	if (l == &botMultiSelectInfo.botlist) {
 		if (!UI_BotSelect_HandleListKey(key, &sfx)) {
 			return menu_buzz_sound;
 		}
 	} else {
-		sfx = Menu_DefaultKey(&botSelectInfo.menu, key);
+		sfx = Menu_DefaultKey(&botMultiSelectInfo.menu, key);
 	}
 
 	return sfx;
@@ -827,7 +810,7 @@ static void UI_BotSelect_ScrollListDraw(void *ptr) {
 			}
 
 			style = UI_SMALLFONT;
-			color = botSelectInfo.botcolor[i];
+			color = botMultiSelectInfo.botcolor[i];
 
 			if (i == l->curvalue) {
 				UI_FillRect(x, y + (lineheight - BOTLIST_ICONSIZE) / 2, l->width * charwidth, BOTLIST_ICONSIZE, listbar_color);
@@ -847,29 +830,29 @@ static void UI_BotSelect_ScrollListDraw(void *ptr) {
 
 			index = -1;
 			selected = qfalse;
-			bot = i + botSelectInfo.page * botSelectInfo.maxBotsPerPage;
+			bot = i + botMultiSelectInfo.page * botMultiSelectInfo.maxBotsPerPage;
 
-			if (botSelectInfo.multisel.curvalue) {
-				for (j = 0; j < botSelectInfo.numMultiSel; j++) {
-					if (botSelectInfo.multiSel[j] == bot) {
+			if (botMultiSelectInfo.multisel.curvalue) {
+				for (j = 0; j < botMultiSelectInfo.numMultiSel; j++) {
+					if (botMultiSelectInfo.multiSel[j] == bot) {
 						index = j + 1;
 						selected = qtrue;
 						break;
 					}
 				}
 			} else {
-				if (botSelectInfo.selectedbot == bot) {
+				if (botMultiSelectInfo.selectedbot == bot) {
 					selected = qtrue;
 				}
 			}
 
 			trap_R_SetColor(transparent_color);
-			UI_DrawNamedPic(x, y + (lineheight - BOTLIST_ICONSIZE) / 2, BOTLIST_ICONSIZE, BOTLIST_ICONSIZE, botSelectInfo.boticons[i]);
+			UI_DrawNamedPic(x, y + (lineheight - BOTLIST_ICONSIZE) / 2, BOTLIST_ICONSIZE, BOTLIST_ICONSIZE, botMultiSelectInfo.boticons[i]);
 			trap_R_SetColor(NULL);
 
 			if (selected) {
 				trap_R_SetColor(colorRed);
-				UI_DrawNamedPic(x, y + (lineheight - BOTLIST_ICONSIZE) / 2, BOTLIST_ICONSIZE, BOTLIST_ICONSIZE, BOTSELECT_SMALLSELECTED);
+				UI_DrawNamedPic(x, y + (lineheight - BOTLIST_ICONSIZE) / 2, BOTLIST_ICONSIZE, BOTLIST_ICONSIZE, BOTSELECT_SELECTED);
 				trap_R_SetColor(NULL);
 			}
 
@@ -905,8 +888,8 @@ static void UI_BotSelect_BotGridDraw(void *ptr) {
 	w = b->generic.right - x;
 	h = b->generic.bottom - y;
 
-	if (botSelectInfo.botnames[index][0]) {
-		UI_DrawNamedPic(x, y, w, h, botSelectInfo.boticons[index]);
+	if (botMultiSelectInfo.botnames[index][0]) {
+		UI_DrawNamedPic(x, y, w, h, botMultiSelectInfo.boticons[index]);
 
 		if (b->generic.flags & QMF_HIGHLIGHT) {
 			trap_R_SetColor(color_red);
@@ -915,11 +898,11 @@ static void UI_BotSelect_BotGridDraw(void *ptr) {
 		}
 	}
 	// draw bot position in multi
-	if (botSelectInfo.multisel.curvalue) {
-		bot = index + botSelectInfo.page * botSelectInfo.maxBotsPerPage;
+	if (botMultiSelectInfo.multisel.curvalue) {
+		bot = index + botMultiSelectInfo.page * botMultiSelectInfo.maxBotsPerPage;
 
-		for (i = 0; i < botSelectInfo.numMultiSel; i++) {
-			if (botSelectInfo.multiSel[i] != bot) {
+		for (i = 0; i < botMultiSelectInfo.numMultiSel; i++) {
+			if (botMultiSelectInfo.multiSel[i] != bot) {
 				continue;
 			}
 
@@ -928,8 +911,8 @@ static void UI_BotSelect_BotGridDraw(void *ptr) {
 		}
 	}
 	// draw bot name text
-	if (botSelectInfo.botnames[index][0]) {
-		UI_DrawString(x + 32, y + 64, botSelectInfo.botnames[index], UI_CENTER|UI_SMALLFONT, botSelectInfo.botcolor[index]);
+	if (botMultiSelectInfo.botnames[index][0]) {
+		UI_DrawString(x + 32, y + 64, botMultiSelectInfo.botnames[index], UI_CENTER|UI_SMALLFONT, botMultiSelectInfo.botcolor[index]);
 	}
 	// draws pulse shader showing mouse over
 
@@ -1006,73 +989,73 @@ UI_BotSelect_MenuDraw
 */
 static void UI_BotSelect_MenuDraw(void) {
 
-//	UI_DrawString(0, 0, va("%i", botSelectInfo.selectedbot), UI_SMALLFONT, color_white);
+//	UI_DrawString(0, 0, va("%i", botMultiSelectInfo.selectedbot), UI_SMALLFONT, color_white);
 	// draw the controls
-	Menu_Draw(&botSelectInfo.menu);
+	Menu_Draw(&botMultiSelectInfo.menu);
 }
 
 /*
 =======================================================================================================================================
-UI_BotSelect_Init
+UI_BotMultiSelect_Init
 =======================================================================================================================================
 */
-static void UI_BotSelect_Init(char *bot, int index) {
+static void UI_BotMultiSelect_Init(char *bot, int index) {
 	int i, j, k, x, y;
 
-	memset(&botSelectInfo, 0, sizeof(botSelectInfo));
+	memset(&botMultiSelectInfo, 0, sizeof(botMultiSelectInfo));
 
-	botSelectInfo.menu.key = UI_BotSelect_Key;
-	botSelectInfo.menu.wrapAround = qtrue;
-	botSelectInfo.menu.fullscreen = qtrue;
-	botSelectInfo.menu.draw = UI_BotSelect_MenuDraw;
+	botMultiSelectInfo.menu.key = UI_BotSelect_Key;
+	botMultiSelectInfo.menu.wrapAround = qtrue;
+	botMultiSelectInfo.menu.fullscreen = qtrue;
+	botMultiSelectInfo.menu.draw = UI_BotSelect_MenuDraw;
 
 	UI_BotSelect_Cache();
 
-	botSelectInfo.index = index;
-	botSelectInfo.numMultiSel = 0;
+	botMultiSelectInfo.index = index;
+	botMultiSelectInfo.numMultiSel = 0;
 
-	botSelectInfo.banner.generic.type = MTYPE_BTEXT;
-	botSelectInfo.banner.generic.x = 320;
-	botSelectInfo.banner.generic.y = 16;
-	botSelectInfo.banner.string = "Select Bot";
-	botSelectInfo.banner.color = color_white;
-	botSelectInfo.banner.style = UI_CENTER;
+	botMultiSelectInfo.banner.generic.type = MTYPE_BTEXT;
+	botMultiSelectInfo.banner.generic.x = 320;
+	botMultiSelectInfo.banner.generic.y = 16;
+	botMultiSelectInfo.banner.string = "SELECT BOT";
+	botMultiSelectInfo.banner.color = color_white;
+	botMultiSelectInfo.banner.style = UI_CENTER;
 
-	botSelectInfo.viewlist.generic.type = MTYPE_RADIOBUTTON;
-	botSelectInfo.viewlist.generic.name = "View list:";
-	botSelectInfo.viewlist.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
-	botSelectInfo.viewlist.generic.id = ID_BOTSELECT_VIEWLIST;
-	botSelectInfo.viewlist.generic.callback = UI_BotSelect_Event;
-	botSelectInfo.viewlist.generic.x = 320 - 13 * SMALLCHAR_WIDTH;
-	botSelectInfo.viewlist.generic.y = 495 - 2 * LINE_HEIGHT;
+	botMultiSelectInfo.viewlist.generic.type = MTYPE_RADIOBUTTON;
+	botMultiSelectInfo.viewlist.generic.name = "View list:";
+	botMultiSelectInfo.viewlist.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
+	botMultiSelectInfo.viewlist.generic.id = ID_BOTSELECT_VIEWLIST;
+	botMultiSelectInfo.viewlist.generic.callback = UI_BotSelect_Event;
+	botMultiSelectInfo.viewlist.generic.x = 320 - 13 * SMALLCHAR_WIDTH;
+	botMultiSelectInfo.viewlist.generic.y = 495 - 2 * LINE_HEIGHT;
 
-	botSelectInfo.multisel.generic.type = MTYPE_RADIOBUTTON;
-	botSelectInfo.multisel.generic.name = "Multi-sel:";
-	botSelectInfo.multisel.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
-	botSelectInfo.multisel.generic.id = ID_BOTSELECT_MULTISEL;
-	botSelectInfo.multisel.generic.callback = UI_BotSelect_Event;
-	botSelectInfo.multisel.generic.x = 320 - 13 * SMALLCHAR_WIDTH;
-	botSelectInfo.multisel.generic.y = 497 - 3 * LINE_HEIGHT;
+	botMultiSelectInfo.multisel.generic.type = MTYPE_RADIOBUTTON;
+	botMultiSelectInfo.multisel.generic.name = "Multi-sel:";
+	botMultiSelectInfo.multisel.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
+	botMultiSelectInfo.multisel.generic.id = ID_BOTSELECT_MULTISEL;
+	botMultiSelectInfo.multisel.generic.callback = UI_BotSelect_Event;
+	botMultiSelectInfo.multisel.generic.x = 320 - 13 * SMALLCHAR_WIDTH;
+	botMultiSelectInfo.multisel.generic.y = 497 - 3 * LINE_HEIGHT;
 	// init based on previous value
-	botSelectInfo.viewlist.curvalue = (int)Com_Clamp(0, 1, trap_Cvar_VariableValue("ui_bot_list"));
-	botSelectInfo.multisel.curvalue = (int)Com_Clamp(0, 1, trap_Cvar_VariableValue("ui_bot_multisel"));
+	botMultiSelectInfo.viewlist.curvalue = (int)Com_Clamp(0, 1, trap_Cvar_VariableValue("ui_bot_list"));
+	botMultiSelectInfo.multisel.curvalue = (int)Com_Clamp(0, 1, trap_Cvar_VariableValue("ui_bot_multisel"));
 
 	for (i = 0; i < MAX_MODELSPERPAGE; i++) {
-		botSelectInfo.botalias[i] = botSelectInfo.botnames[i];
+		botMultiSelectInfo.botalias[i] = botMultiSelectInfo.botnames[i];
 	}
 
-	botSelectInfo.botlist.generic.type = MTYPE_SCROLLLIST;
-	botSelectInfo.botlist.generic.flags = QMF_PULSEIFFOCUS|QMF_NODEFAULTINIT;
-	botSelectInfo.botlist.generic.x = 21;
-	botSelectInfo.botlist.generic.y = 60;
-	botSelectInfo.botlist.generic.ownerdraw = UI_BotSelect_ScrollListDraw;
-	botSelectInfo.botlist.columns = BOTLIST_COLS;
-	botSelectInfo.botlist.seperation = 2;
-	botSelectInfo.botlist.height = BOTLIST_ROWS;
-	botSelectInfo.botlist.width = 14;
-	botSelectInfo.botlist.itemnames = botSelectInfo.botalias;
+	botMultiSelectInfo.botlist.generic.type = MTYPE_SCROLLLIST;
+	botMultiSelectInfo.botlist.generic.flags = QMF_PULSEIFFOCUS|QMF_NODEFAULTINIT;
+	botMultiSelectInfo.botlist.generic.x = 21;
+	botMultiSelectInfo.botlist.generic.y = 60;
+	botMultiSelectInfo.botlist.generic.ownerdraw = UI_BotSelect_ScrollListDraw;
+	botMultiSelectInfo.botlist.columns = BOTLIST_COLS;
+	botMultiSelectInfo.botlist.seperation = 2;
+	botMultiSelectInfo.botlist.height = BOTLIST_ROWS;
+	botMultiSelectInfo.botlist.width = 14;
+	botMultiSelectInfo.botlist.itemnames = botMultiSelectInfo.botalias;
 
-	UI_BotSelect_ScrollList_Init(&botSelectInfo.botlist);
+	UI_BotSelect_ScrollList_Init(&botMultiSelectInfo.botlist);
 
 	y = 80;
 
@@ -1080,21 +1063,21 @@ static void UI_BotSelect_Init(char *bot, int index) {
 		x = 180;
 
 		for (j = 0; j < BOTGRID_COLS; j++, k++) {
-			botSelectInfo.picbuttons[k].generic.type = MTYPE_BITMAP;
-			botSelectInfo.picbuttons[k].generic.flags = QMF_LEFT_JUSTIFY|QMF_NODEFAULTINIT|QMF_PULSEIFFOCUS;
-			botSelectInfo.picbuttons[k].generic.callback = UI_BotSelect_BotEvent;
-			botSelectInfo.picbuttons[k].generic.ownerdraw = UI_BotSelect_BotGridDraw;
-			botSelectInfo.picbuttons[k].generic.id = k;
-			botSelectInfo.picbuttons[k].generic.x = x - 16;
-			botSelectInfo.picbuttons[k].generic.y = y - 16;
-			botSelectInfo.picbuttons[k].generic.left = x;
-			botSelectInfo.picbuttons[k].generic.top = y;
-			botSelectInfo.picbuttons[k].generic.right = x + 64;
-			botSelectInfo.picbuttons[k].generic.bottom = y + 64;
-			botSelectInfo.picbuttons[k].width = 128;
-			botSelectInfo.picbuttons[k].height = 128;
-			botSelectInfo.picbuttons[k].focuspic = BOTSELECT_SELECT;
-			botSelectInfo.picbuttons[k].focuscolor = colorRed;
+			botMultiSelectInfo.picbuttons[k].generic.type = MTYPE_BITMAP;
+			botMultiSelectInfo.picbuttons[k].generic.flags = QMF_LEFT_JUSTIFY|QMF_NODEFAULTINIT|QMF_PULSEIFFOCUS;
+			botMultiSelectInfo.picbuttons[k].generic.callback = UI_BotSelect_BotEvent;
+			botMultiSelectInfo.picbuttons[k].generic.ownerdraw = UI_BotSelect_BotGridDraw;
+			botMultiSelectInfo.picbuttons[k].generic.id = k;
+			botMultiSelectInfo.picbuttons[k].generic.x = x - 16;
+			botMultiSelectInfo.picbuttons[k].generic.y = y - 16;
+			botMultiSelectInfo.picbuttons[k].generic.left = x;
+			botMultiSelectInfo.picbuttons[k].generic.top = y;
+			botMultiSelectInfo.picbuttons[k].generic.right = x + 64;
+			botMultiSelectInfo.picbuttons[k].generic.bottom = y + 64;
+			botMultiSelectInfo.picbuttons[k].width = 128;
+			botMultiSelectInfo.picbuttons[k].height = 128;
+			botMultiSelectInfo.picbuttons[k].focuspic = BOTSELECT_SELECT;
+			botMultiSelectInfo.picbuttons[k].focuscolor = colorRed;
 
 			x += (64 + 6);
 		}
@@ -1102,70 +1085,70 @@ static void UI_BotSelect_Init(char *bot, int index) {
 		y += (64 + SMALLCHAR_HEIGHT + 6);
 	}
 
-	botSelectInfo.arrows.generic.type = MTYPE_BITMAP;
-	botSelectInfo.arrows.generic.name = BOTSELECT_ARROWS;
-	botSelectInfo.arrows.generic.flags = QMF_INACTIVE;
-	botSelectInfo.arrows.generic.x = 320;
-	botSelectInfo.arrows.generic.y = 435;
-	botSelectInfo.arrows.width = 192;
-	botSelectInfo.arrows.height = 64;
+	botMultiSelectInfo.arrows.generic.type = MTYPE_BITMAP;
+	botMultiSelectInfo.arrows.generic.name = BOTSELECT_ARROWS;
+	botMultiSelectInfo.arrows.generic.flags = QMF_INACTIVE;
+	botMultiSelectInfo.arrows.generic.x = 320;
+	botMultiSelectInfo.arrows.generic.y = 435;
+	botMultiSelectInfo.arrows.width = 192;
+	botMultiSelectInfo.arrows.height = 64;
 
-	botSelectInfo.left.generic.type = MTYPE_BITMAP;
-	botSelectInfo.left.generic.flags = QMF_LEFT_JUSTIFY|QMF_PULSEIFFOCUS;
-	botSelectInfo.left.generic.callback = UI_BotSelect_Event;
-	botSelectInfo.left.generic.id = ID_BOTSELECT_LEFT;
-	botSelectInfo.left.generic.x = 320;
-	botSelectInfo.left.generic.y = 435;
-	botSelectInfo.left.width = 96;
-	botSelectInfo.left.height = 64;
-	botSelectInfo.left.focuspic = BOTSELECT_ARROWSL;
+	botMultiSelectInfo.left.generic.type = MTYPE_BITMAP;
+	botMultiSelectInfo.left.generic.flags = QMF_LEFT_JUSTIFY|QMF_PULSEIFFOCUS;
+	botMultiSelectInfo.left.generic.callback = UI_BotSelect_Event;
+	botMultiSelectInfo.left.generic.id = ID_BOTSELECT_LEFT;
+	botMultiSelectInfo.left.generic.x = 320;
+	botMultiSelectInfo.left.generic.y = 435;
+	botMultiSelectInfo.left.width = 96;
+	botMultiSelectInfo.left.height = 64;
+	botMultiSelectInfo.left.focuspic = BOTSELECT_ARROWSL;
 
-	botSelectInfo.right.generic.type = MTYPE_BITMAP;
-	botSelectInfo.right.generic.flags = QMF_LEFT_JUSTIFY|QMF_PULSEIFFOCUS;
-	botSelectInfo.right.generic.callback = UI_BotSelect_Event;
-	botSelectInfo.right.generic.id = ID_BOTSELECT_RIGHT;
-	botSelectInfo.right.generic.x = 320 + 96;
-	botSelectInfo.right.generic.y = 435;
-	botSelectInfo.right.width = 96;
-	botSelectInfo.right.height = 64;
-	botSelectInfo.right.focuspic = BOTSELECT_ARROWSR;
+	botMultiSelectInfo.right.generic.type = MTYPE_BITMAP;
+	botMultiSelectInfo.right.generic.flags = QMF_LEFT_JUSTIFY|QMF_PULSEIFFOCUS;
+	botMultiSelectInfo.right.generic.callback = UI_BotSelect_Event;
+	botMultiSelectInfo.right.generic.id = ID_BOTSELECT_RIGHT;
+	botMultiSelectInfo.right.generic.x = 320 + 96;
+	botMultiSelectInfo.right.generic.y = 435;
+	botMultiSelectInfo.right.width = 96;
+	botMultiSelectInfo.right.height = 64;
+	botMultiSelectInfo.right.focuspic = BOTSELECT_ARROWSR;
 
-	botSelectInfo.back.generic.type = MTYPE_BITMAP;
-	botSelectInfo.back.generic.name = BOTSELECT_BACK0;
-	botSelectInfo.back.generic.flags = QMF_LEFT_JUSTIFY|QMF_PULSEIFFOCUS;
-	botSelectInfo.back.generic.callback = UI_BotSelect_Event;
-	botSelectInfo.back.generic.id = ID_BOTSELECT_BACK;
-	botSelectInfo.back.generic.x = 0;
-	botSelectInfo.back.generic.y = 435;
-	botSelectInfo.back.width = BUTTON_WIDTH;
-	botSelectInfo.back.height = BUTTON_HEIGHT;
-	botSelectInfo.back.focuspic = BOTSELECT_BACK1;
+	botMultiSelectInfo.back.generic.type = MTYPE_BITMAP;
+	botMultiSelectInfo.back.generic.name = BOTSELECT_BACK0;
+	botMultiSelectInfo.back.generic.flags = QMF_LEFT_JUSTIFY|QMF_PULSEIFFOCUS;
+	botMultiSelectInfo.back.generic.callback = UI_BotSelect_Event;
+	botMultiSelectInfo.back.generic.id = ID_BOTSELECT_BACK;
+	botMultiSelectInfo.back.generic.x = 0;
+	botMultiSelectInfo.back.generic.y = 435;
+	botMultiSelectInfo.back.width = BUTTON_WIDTH;
+	botMultiSelectInfo.back.height = BUTTON_HEIGHT;
+	botMultiSelectInfo.back.focuspic = BOTSELECT_BACK1;
 
-	botSelectInfo.go.generic.type = MTYPE_BITMAP;
-	botSelectInfo.go.generic.name = BOTSELECT_ACCEPT0;
-	botSelectInfo.go.generic.flags = QMF_RIGHT_JUSTIFY|QMF_PULSEIFFOCUS;
-	botSelectInfo.go.generic.callback = UI_BotSelect_Event;
-	botSelectInfo.go.generic.id = ID_BOTSELECT_ACCEPT;
-	botSelectInfo.go.generic.x = 640;
-	botSelectInfo.go.generic.y = 435;
-	botSelectInfo.go.width = BUTTON_WIDTH;
-	botSelectInfo.go.height = BUTTON_HEIGHT;
-	botSelectInfo.go.focuspic = BOTSELECT_ACCEPT1;
+	botMultiSelectInfo.go.generic.type = MTYPE_BITMAP;
+	botMultiSelectInfo.go.generic.name = BOTSELECT_ACCEPT0;
+	botMultiSelectInfo.go.generic.flags = QMF_RIGHT_JUSTIFY|QMF_PULSEIFFOCUS;
+	botMultiSelectInfo.go.generic.callback = UI_BotSelect_Event;
+	botMultiSelectInfo.go.generic.id = ID_BOTSELECT_ACCEPT;
+	botMultiSelectInfo.go.generic.x = 640;
+	botMultiSelectInfo.go.generic.y = 435;
+	botMultiSelectInfo.go.width = BUTTON_WIDTH;
+	botMultiSelectInfo.go.height = BUTTON_HEIGHT;
+	botMultiSelectInfo.go.focuspic = BOTSELECT_ACCEPT1;
 
-	Menu_AddItem(&botSelectInfo.menu, &botSelectInfo.banner);
+	Menu_AddItem(&botMultiSelectInfo.menu, &botMultiSelectInfo.banner);
 
 	for (i = 0; i < MAX_GRIDMODELSPERPAGE; i++) {
-		Menu_AddItem(&botSelectInfo.menu, &botSelectInfo.picbuttons[i]);
+		Menu_AddItem(&botMultiSelectInfo.menu, &botMultiSelectInfo.picbuttons[i]);
 	}
 
-	Menu_AddItem(&botSelectInfo.menu, &botSelectInfo.arrows);
-	Menu_AddItem(&botSelectInfo.menu, &botSelectInfo.left);
-	Menu_AddItem(&botSelectInfo.menu, &botSelectInfo.right);
-	Menu_AddItem(&botSelectInfo.menu, &botSelectInfo.back);
-	Menu_AddItem(&botSelectInfo.menu, &botSelectInfo.go);
-	Menu_AddItem(&botSelectInfo.menu, &botSelectInfo.viewlist);
-	Menu_AddItem(&botSelectInfo.menu, &botSelectInfo.multisel);
-	Menu_AddItem(&botSelectInfo.menu, &botSelectInfo.botlist);
+	Menu_AddItem(&botMultiSelectInfo.menu, &botMultiSelectInfo.arrows);
+	Menu_AddItem(&botMultiSelectInfo.menu, &botMultiSelectInfo.left);
+	Menu_AddItem(&botMultiSelectInfo.menu, &botMultiSelectInfo.right);
+	Menu_AddItem(&botMultiSelectInfo.menu, &botMultiSelectInfo.back);
+	Menu_AddItem(&botMultiSelectInfo.menu, &botMultiSelectInfo.go);
+	Menu_AddItem(&botMultiSelectInfo.menu, &botMultiSelectInfo.viewlist);
+	Menu_AddItem(&botMultiSelectInfo.menu, &botMultiSelectInfo.multisel);
+	Menu_AddItem(&botMultiSelectInfo.menu, &botMultiSelectInfo.botlist);
 
 	UI_BotSelect_BuildList();
 	UI_BotSelect_SetViewType();
@@ -1181,17 +1164,17 @@ UI_BotSelect_Index
 */
 void UI_BotSelect_Index(char *bot, int index) {
 
-	UI_BotSelect_Init(bot, index);
-	UI_PushMenu(&botSelectInfo.menu);
+	UI_BotMultiSelect_Init(bot, index);
+	UI_PushMenu(&botMultiSelectInfo.menu);
 }
 
 /*
 =======================================================================================================================================
-UI_BotSelectMenu
+UI_BotMultiSelectMenu
 =======================================================================================================================================
 */
-void UI_BotSelectMenu(char *bot) {
+void UI_BotMultiSelectMenu(char *bot) {
 
-	UI_BotSelect_Init(bot, -1);
-	UI_PushMenu(&botSelectInfo.menu);
+	UI_BotMultiSelect_Init(bot, -1);
+	UI_PushMenu(&botMultiSelectInfo.menu);
 }

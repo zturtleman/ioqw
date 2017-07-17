@@ -26,6 +26,22 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 // arena and bot info
 #define POOLSIZE 128 * 1024
 
+// map game type to internal flags
+int gametype_remap[] = {GT_FFA, GT_TOURNAMENT, GT_TEAM, GT_CTF, GT_1FCTF, GT_OBELISK, GT_HARVESTER}; // matches gametype_items
+int gametype_remap2[] = {0, 0, 1, 2, 3, 4, 5, 6};
+
+
+const char *gametype_items[NUM_GAMETYPES + 1] = {
+	"Free For All",
+	"Tournament",
+	"Team Deathmatch",
+	"Capture the Flag",
+	"One Flag CTF",
+	"Overload",
+	"Harvester",
+	0
+};
+
 int ui_numBots;
 static char *ui_botInfos[MAX_BOTS];
 static int ui_numArenas;
@@ -169,6 +185,7 @@ UI_LoadArenas
 */
 static void UI_LoadArenas(void) {
 	int numdirs;
+	vmCvar_t arenasFile;
 	char filename[128];
 	char dirlist[2048];
 	char *dirptr;
@@ -180,7 +197,13 @@ static void UI_LoadArenas(void) {
 
 	ui_numArenas = 0;
 
-	UI_LoadArenasFromFile("scripts/arenas.txt");
+	trap_Cvar_Register(&arenasFile, "g_arenasFile", "", CVAR_INIT|CVAR_ROM);
+
+	if (*arenasFile.string) {
+		UI_LoadArenasFromFile(arenasFile.string);
+	} else {
+		UI_LoadArenasFromFile("scripts/arenas.txt");
+	}
 	// get all arenas from .arena files
 	numdirs = trap_FS_GetFileList("scripts", ".arena", dirlist, 2048);
 	dirptr = dirlist;
@@ -359,6 +382,7 @@ UI_LoadBots
 =======================================================================================================================================
 */
 static void UI_LoadBots(void) {
+	vmCvar_t botsFile;
 	int numdirs;
 	char filename[128];
 	char dirlist[1024];
@@ -382,7 +406,13 @@ static void UI_LoadBots(void) {
 
 	ui_numBots++;
 
-	UI_LoadBotsFromFile("scripts/bots.txt");
+	trap_Cvar_Register(&botsFile, "g_botsFile", "", CVAR_INIT|CVAR_ROM);
+
+	if (*botsFile.string) {
+		UI_LoadBotsFromFile(botsFile.string);
+	} else {
+		UI_LoadBotsFromFile("scripts/bots.txt");
+	}
 	// get all bots from .bot files
 	numdirs = trap_FS_GetFileList("scripts", ".bot", dirlist, 1024);
 	dirptr = dirlist;
@@ -450,6 +480,96 @@ int UI_GetBotNumByName(const char *name) {
 	}
 
 	return -1;
+}
+
+/*
+=======================================================================================================================================
+GametypeBits
+=======================================================================================================================================
+*/
+int GametypeBits(char *string) {
+	int bits;
+	char *p, *token;
+
+	bits = 0;
+	p = string;
+
+	while (1) {
+		token = COM_ParseExt(&p, qfalse);
+
+		if (!token[0]) {
+			break;
+		}
+
+		if (Q_stricmp(token, "single") == 0) {
+			bits |= 1 << GT_SINGLE_PLAYER;
+			continue;
+		}
+
+		if (Q_stricmp(token, "ffa") == 0) {
+			bits |= 1 << GT_FFA;
+			continue;
+		}
+
+		if (Q_stricmp(token, "tourney") == 0) {
+			bits |= 1 << GT_TOURNAMENT;
+			continue;
+		}
+
+		if (Q_stricmp(token, "team") == 0) {
+			bits |= 1 << GT_TEAM;
+			continue;
+		}
+
+		if (Q_stricmp(token, "ctf") == 0) {
+			bits |= 1 << GT_CTF;
+			continue;
+		}
+
+		if (Q_stricmp(token, "oneflag") == 0) {
+			bits |= 1 << GT_1FCTF;
+			continue;
+		}
+
+		if (Q_stricmp(token, "overload") == 0) {
+			bits |= 1 << GT_OBELISK;
+			continue;
+		}
+
+		if (Q_stricmp(token, "harvester") == 0) {
+			bits |= 1 << GT_HARVESTER;
+			continue;
+		}
+	}
+
+	return bits;
+}
+
+
+/*
+=======================================================================================================================================
+UI_CurrentPlayerTeam
+=======================================================================================================================================
+*/
+int UI_CurrentPlayerTeam(void) {
+	static uiClientState_t cs;
+	static char info[MAX_INFO_STRING];
+
+	trap_GetClientState(&cs);
+	trap_GetConfigString(CS_PLAYERS + cs.clientNum, info, MAX_INFO_STRING);
+	return atoi(Info_ValueForKey(info, "t"));
+}
+
+/*
+=======================================================================================================================================
+UI_ServerGametype
+=======================================================================================================================================
+*/
+int UI_ServerGametype(void) {
+	char info[MAX_INFO_STRING];
+
+	trap_GetConfigString(CS_SERVERINFO, info, sizeof(info));
+	return atoi(Info_ValueForKey(info, "g_gametype"));
 }
 
 // single player game info

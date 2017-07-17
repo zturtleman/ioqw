@@ -345,6 +345,7 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 	}
 
 	if (g_gametype.integer == GT_1FCTF) {
+		flag_pw = PW_NEUTRALFLAG;
 		enemy_flag_pw = PW_NEUTRALFLAG;
 	}
 	// did the attacker frag the flag carrier?
@@ -388,16 +389,6 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 
 	if (targ->client->pers.teamState.lasthurtcarrier && level.time - targ->client->pers.teamState.lasthurtcarrier < CTF_CARRIER_DANGER_PROTECT_TIMEOUT && !attacker->client->ps.powerups[flag_pw]) {
 		// attacker is on the same team as the flag carrier and fragged a guy who hurt our flag carrier
-		AddScore(attacker, targ->r.currentOrigin, CTF_CARRIER_DANGER_PROTECT_BONUS);
-
-		targ->client->pers.teamState.lasthurtcarrier = 0;
-		attacker->client->ps.persistant[PERS_DEFEND_COUNT]++;
-		attacker->client->rewardTime = level.time + REWARD_SPRITE_TIME;
-		return;
-	}
-
-	if (targ->client->pers.teamState.lasthurtcarrier && level.time - targ->client->pers.teamState.lasthurtcarrier < CTF_CARRIER_DANGER_PROTECT_TIMEOUT) {
-		// attacker is on the same team as the skull carrier and
 		AddScore(attacker, targ->r.currentOrigin, CTF_CARRIER_DANGER_PROTECT_BONUS);
 
 		targ->client->pers.teamState.lasthurtcarrier = 0;
@@ -475,7 +466,7 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 
 	if (carrier && carrier != attacker) {
 		VectorSubtract(targ->r.currentOrigin, carrier->r.currentOrigin, v1);
-		VectorSubtract(attacker->r.currentOrigin, carrier->r.currentOrigin, v1);
+		VectorSubtract(attacker->r.currentOrigin, carrier->r.currentOrigin, v2);
 
 		if (((VectorLength(v1) < CTF_ATTACKER_PROTECT_RADIUS && trap_InPVS(carrier->r.currentOrigin, targ->r.currentOrigin)) || (VectorLength(v2) < CTF_ATTACKER_PROTECT_RADIUS && trap_InPVS(carrier->r.currentOrigin, attacker->r.currentOrigin))) && attacker->client->sess.sessionTeam != targ->client->sess.sessionTeam) {
 			AddScore(attacker, targ->r.currentOrigin, CTF_CARRIER_PROTECT_BONUS);
@@ -505,6 +496,10 @@ void Team_CheckHurtCarrier(gentity_t *targ, gentity_t *attacker) {
 		flag_pw = PW_BLUEFLAG;
 	} else {
 		flag_pw = PW_REDFLAG;
+	}
+
+	if (g_gametype.integer == GT_1FCTF) {
+		flag_pw = PW_NEUTRALFLAG;
 	}
 	// flags
 	if (targ->client->ps.powerups[flag_pw] && targ->client->sess.sessionTeam != attacker->client->sess.sessionTeam) {
@@ -1356,6 +1351,8 @@ void ObeliskPain(gentity_t *self, gentity_t *attacker, int damage) {
 /*
 =======================================================================================================================================
 SpawnObelisk
+
+Spawn invisible damagable obelisk entity/harvester base trigger.
 =======================================================================================================================================
 */
 gentity_t *SpawnObelisk(vec3_t origin, vec3_t mins, vec3_t maxs, int team) {
@@ -1400,6 +1397,8 @@ gentity_t *SpawnObelisk(vec3_t origin, vec3_t mins, vec3_t maxs, int team) {
 /*
 =======================================================================================================================================
 ObeliskInit
+
+Setup entity for team base model/obelisk model.
 =======================================================================================================================================
 */
 void ObeliskInit(gentity_t *ent) {
@@ -1506,7 +1505,7 @@ void SP_team_neutralobelisk(gentity_t *ent) {
 
 	if (g_gametype.integer == GT_HARVESTER) {
 		neutralObelisk = SpawnObelisk(ent->s.origin, ent->r.mins, ent->r.maxs, TEAM_FREE);
-		neutralObelisk->spawnflags = TEAM_FREE;
+		neutralObelisk->activator = ent;
 	}
 
 	ent->s.modelindex = TEAM_FREE;

@@ -383,6 +383,7 @@ qboolean DynamicMenu_AddIconItem(const char *string, int id, const char *icon, c
 	s_dynamic.data[index].id = id;
 	s_dynamic.data[index].createSubMenu = crh;
 	s_dynamic.data[index].runEvent = evh;
+
 	Q_strncpyz(s_dynamic.data[index].text, string, MAX_MENUSTRING);
 
 	if (icon) {
@@ -473,7 +474,7 @@ void DynamicMenu_FinishSubMenuInit(void) {
 	scale = UI_ProportionalSizeScale(UI_SMALLFONT);
 
 	maxwidth *= scale;
-	maxwidth *= (MENU_SCALE * 1.2); // some adjustment for scaling of font used
+	maxwidth *= MENU_SCALE; // some adjustment for scaling of font used
 	maxwidth += MENUSPACE_X;
 
 	if (icon) {
@@ -651,7 +652,7 @@ static void DynamicMenu_MenuItemDraw(void *self) {
 
 	txt_y = fy + 0.5 * (fh - PROP_HEIGHT * MENU_SCALE * UI_ProportionalSizeScale(style));
 
-	UI_DrawProportionalString(fx, txt_y, t->string, style, color);
+	UI_DrawString(fx, txt_y, t->string, style, color);
 	// draw the cursor for submenu if needed
 	if (style & UI_SMALLFONT) {
 		charh = SMALLCHAR_HEIGHT;
@@ -1140,8 +1141,8 @@ static void DM_TeamList_SubMenu(void) {
 	DynamicMenu_SubMenuInit();
 
 	DynamicMenu_AddItem("me", 0, NULL, DM_BotPlayerTarget_Event);
-	DynamicMenu_AddListOfPlayers(PT_FRIENDLY|PT_EXCLUDEGRANDPARENT, NULL, DM_BotPlayerTarget_Event);
 
+	DynamicMenu_AddListOfPlayers(PT_FRIENDLY|PT_EXCLUDEGRANDPARENT, NULL, DM_BotPlayerTarget_Event);
 	DynamicMenu_AddBackground(INGAME_FRAME);
 	DynamicMenu_FinishSubMenuInit();
 }
@@ -1173,6 +1174,7 @@ DM_ItemPatrol_SubMenu
 static void DM_ItemPatrol_SubMenu(void) {
 
 	DynamicMenu_SubMenuInit();
+
 	DynamicMenu_AddListOfItems(-1, DM_ItemPatrol2_SubMenu, NULL);
 	DynamicMenu_AddBackground(INGAME_FRAME);
 	DynamicMenu_FinishSubMenuInit();
@@ -1203,6 +1205,7 @@ DM_ItemList_SubMenu
 void DM_ItemList_SubMenu(void) {
 
 	DynamicMenu_SubMenuInit();
+
 	DynamicMenu_AddListOfItems(-1, NULL, DM_BotItemTarget_Event);
 	DynamicMenu_AddBackground(INGAME_FRAME);
 	DynamicMenu_FinishSubMenuInit();
@@ -1216,6 +1219,7 @@ DM_EnemyList_SubMenu
 static void DM_EnemyList_SubMenu(void) {
 
 	DynamicMenu_SubMenuInit();
+
 	DynamicMenu_AddListOfPlayers(PT_ENEMY, NULL, DM_BotPlayerTarget_Event);
 	DynamicMenu_AddBackground(INGAME_FRAME);
 	DynamicMenu_FinishSubMenuInit();
@@ -1267,7 +1271,9 @@ static void BotCommand_InitPrimaryMenu(void) {
 
 	DynamicMenu_AddItem("Close!", 0, NULL, DM_Close_Event);
 	DynamicMenu_AddItem("Everyone", 0, DM_CommandList_SubMenu, NULL);
+
 	DynamicMenu_AddListOfPlayers(PT_FRIENDLY|PT_BOTONLY, DM_CommandList_SubMenu, NULL);
+
 	DynamicMenu_AddItem("Leader?", COM_WHOLEADER, NULL, DM_Command_Event);
 
 	if (botcommandmenu_gametype > GT_TEAM) {

@@ -20,21 +20,6 @@ The UI Enhanced copyright owner permit free reuse of his code contained herein, 
 ---------------------------------------------------------------------------------------------------------------------------------------
 Ian Jefferies - HypoThermia (uie@planetquake.com)
 http://www.planetquake.com/uie
-
-This file is part of Spearmint Source Code.
-
-Spearmint Source Code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
-
-Spearmint Source Code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with Spearmint Source Code.
-If not, see <http://www.gnu.org/licenses/>.
-
-In addition, Spearmint Source Code is also subject to certain additional terms. You should have received a copy of these additional
-terms immediately following the terms and conditions of the GNU General Public License. If not, please request a copy in writing from
-id Software at the address below.
 =======================================================================================================================================
 */
 
@@ -158,22 +143,22 @@ static const char *mapSource_items[MAP_MS_MAX + 1] = {
 };
 
 static const char *copyFrom_items[MAP_CF_COUNT + 1] = {
+	"maps from list",		// MAP_CF_CLEARALL
+	"maps on this page",	// MAP_CF_CLEARPAGE
 	"arena frag limit",		// MAP_CF_ARENASCRIPT
 	"time limit",			// MAP_CF_TIME
 	"frag limit",			// MAP_CF_FRAG
 	"frag and time limit",	// MAP_CF_BOTH
-	"maps from list",		// MAP_CF_CLEARALL
-	"maps on this page",	// MAP_CF_CLEARPAGE
 	0
 };
 
 static const char *copyFrom_ctf_items[MAP_CF_COUNT + 1] = {
+	"maps from list",		// MAP_CF_CLEARALL
+	"maps on this page",	// MAP_CF_CLEARPAGE
 	"<<never shown>>",		// MAP_CF_ARENASCRIPT
 	"time limit",			// MAP_CF_TIME
 	"caps limit",			// MAP_CF_FRAG
 	"frag and caps limits",	// MAP_CF_BOTH
-	"maps from list",		// MAP_CF_CLEARALL
-	"maps on this page",	// MAP_CF_CLEARPAGE
 	0
 };
 
@@ -1183,10 +1168,10 @@ static void CreateServer_MapPage_MenuDraw(void) {
 		fading_red[3] = f;
 
 		trap_R_SetColor(fading_red);
-		UI_DrawNamedPic(640 - 12 - 134, 24 - 7 + 20, 144, 106, MAPSELECT_SELECT);
+		UI_DrawNamedPic(640 - 13 - 86, 24 + 31, 88, 66, MAPSELECT_SELECTED);
 		trap_R_SetColor(NULL);
 
-		CreateServer_DrawMapPicture(640 - 12 - 124, 24 + 20, 124, 85, &s_mapcontrols.mappic, pulsecolor);
+		CreateServer_DrawMapPicture(640 - 12 - 86, 24 + 32, 86, 64, &s_mapcontrols.mappic, pulsecolor); // w (16:9) = 114
 	}
 	// draw the controls
 	Menu_Draw(&s_mapcontrols.menu);
@@ -1403,7 +1388,7 @@ void CreateServer_MapPage_MenuInit(void) {
 		s_mapcontrols.displayMapName[n].generic.top = y;
 		s_mapcontrols.displayMapName[n].generic.bottom = y + SMALLCHAR_HEIGHT;
 		s_mapcontrols.displayMapName[n].generic.left = MAPARRAYCOLUMN_X - SMALLCHAR_WIDTH / 2;
-		s_mapcontrols.displayMapName[n].generic.right = MAPARRAYCOLUMN_X + MAPFRAGS_DX - SMALLCHAR_WIDTH / 2;
+		s_mapcontrols.displayMapName[n].generic.right = MAPARRAYCOLUMN_X + MAPFRAGS_DX - SMALLCHAR_WIDTH / 2 + 103;
 		s_mapcontrols.displayMapName[n].style = UI_SMALLFONT;
 		s_mapcontrols.displayMapName[n].color = color_orange;
 
@@ -1464,10 +1449,10 @@ void CreateServer_MapPage_MenuInit(void) {
 	s_mapcontrols.actionActivate.generic.flags = QMF_LEFT_JUSTIFY|QMF_PULSEIFFOCUS;
 	s_mapcontrols.actionActivate.generic.callback = CreateServer_MapPage_MenuEvent;
 	s_mapcontrols.actionActivate.generic.id = ID_MAP_ACTION;
-	s_mapcontrols.actionActivate.generic.x = MAPACTIVATE_X - 64 - 11 * SMALLCHAR_WIDTH;
-	s_mapcontrols.actionActivate.generic.y = y;
-	s_mapcontrols.actionActivate.width = 64;
-	s_mapcontrols.actionActivate.height = 32;
+	s_mapcontrols.actionActivate.generic.x = MAPACTIVATE_X - 48 - 11 * SMALLCHAR_WIDTH;
+	s_mapcontrols.actionActivate.generic.y = y - 4;
+	s_mapcontrols.actionActivate.width = 48;
+	s_mapcontrols.actionActivate.height = 24;
 	s_mapcontrols.actionActivate.focuspic = GAMESERVER_ACTION1;
 
 	y += 16;

@@ -155,8 +155,6 @@ void TeamMain_MenuInit(void) {
 			s_teammain.joinblue.generic.flags |= QMF_GRAYED;
 			break;
 		default:
-		case GT_TEAM:
-		case GT_CTF:
 			s_teammain.joingame.generic.flags |= QMF_GRAYED;
 			break;
 	}

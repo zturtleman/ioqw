@@ -20,21 +20,6 @@ The UI Enhanced copyright owner permit free reuse of his code contained herein, 
 ---------------------------------------------------------------------------------------------------------------------------------------
 Ian Jefferies - HypoThermia (uie@planetquake.com)
 http://www.planetquake.com/uie
-
-This file is part of Spearmint Source Code.
-
-Spearmint Source Code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
-
-Spearmint Source Code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with Spearmint Source Code.
-If not, see <http://www.gnu.org/licenses/>.
-
-In addition, Spearmint Source Code is also subject to certain additional terms. You should have received a copy of these additional
-terms immediately following the terms and conditions of the GNU General Public License. If not, please request a copy in writing from
-id Software at the address below.
 =======================================================================================================================================
 */
 
@@ -98,69 +83,6 @@ static const char *maptype_icon[NUM_GAMETYPES] = {
 	"menu/art/gt6",	// GT_OBELISK
 	"menu/art/gt7"	// GT_HARVESTER
 };
-
-/*
-=======================================================================================================================================
-GametypeBits
-=======================================================================================================================================
-*/
-int GametypeBits(char *string) {
-	int bits;
-	char *p, *token;
-
-	bits = 0;
-	p = string;
-
-	while (1) {
-		token = COM_ParseExt(&p, qfalse);
-
-		if (!token[0]) {
-			break;
-		}
-
-		if (Q_stricmp(token, "single") == 0) {
-			bits |= 1 << GT_SINGLE_PLAYER;
-			continue;
-		}
-
-		if (Q_stricmp(token, "ffa") == 0) {
-			bits |= 1 << GT_FFA;
-			continue;
-		}
-
-		if (Q_stricmp(token, "tourney") == 0) {
-			bits |= 1 << GT_TOURNAMENT;
-			continue;
-		}
-
-		if (Q_stricmp(token, "team") == 0) {
-			bits |= 1 << GT_TEAM;
-			continue;
-		}
-
-		if (Q_stricmp(token, "ctf") == 0) {
-			bits |= 1 << GT_CTF;
-			continue;
-		}
-
-		if (Q_stricmp(token, "oneflag") == 0) {
-			bits |= 1 << GT_1FCTF;
-			continue;
-		}
-
-		if (Q_stricmp(token, "overload") == 0) {
-			bits |= 1 << GT_OBELISK;
-			continue;
-		}
-
-		if (Q_stricmp(token, "harvester") == 0) {
-			bits |= 1 << GT_HARVESTER;
-			continue;
-		}
-	}
-
-	return bits;
-}
 
 /*
 =======================================================================================================================================
@@ -332,6 +254,7 @@ static void CreateServer_LoadCustomMapData(const char *filename, qboolean merge)
 
 	trap_FS_Read(data, len, file);
 	trap_FS_FCloseFile(file);
+
 	data[len] = 0;
 	// parse the data file
 	groupfound = qfalse;

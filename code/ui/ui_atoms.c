@@ -1162,19 +1162,21 @@ UI_MouseEvent
 =======================================================================================================================================
 */
 void UI_MouseEvent(int dx, int dy) {
-	int i;
+	int i, bias;
 	menucommon_s *m;
 
 	if (!uis.activemenu) {
 		return;
 	}
+	// convert X bias to 640 coords
+	bias = uis.bias / uis.xscale;
 	// update mouse screen position
 	uis.cursorx += dx;
 
-	if (uis.cursorx < -uis.bias) {
-		uis.cursorx = -uis.bias;
-	} else if (uis.cursorx > SCREEN_WIDTH + uis.bias) {
-		uis.cursorx = SCREEN_WIDTH + uis.bias;
+	if (uis.cursorx < -bias) {
+		uis.cursorx = -bias;
+	} else if (uis.cursorx > SCREEN_WIDTH + bias) {
+		uis.cursorx = SCREEN_WIDTH + bias;
 	}
 
 	uis.cursory += dy;
@@ -1259,7 +1261,7 @@ void UI_Cache_f(void) {
 	ServerInfo_Cache();
 	SpecifyServer_Cache();
 	ArenaServers_Cache();
-//	StartServer_Cache();
+	StartServer_Cache();
 	CreateServer_Cache();
 	ServerOptions_Cache();
 	DriverInfo_Cache();
@@ -1276,7 +1278,7 @@ void UI_Cache_f(void) {
 	UI_SetupMenu_Cache();
 //	UI_LoadConfig_Cache();
 //	UI_SaveConfigMenu_Cache();
-//	UI_BotSelectMenu_Cache();
+	UI_BotSelectMenu_Cache();
 	UI_ModsMenu_Cache();
 }
 

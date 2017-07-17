@@ -20,21 +20,6 @@ The UI Enhanced copyright owner permit free reuse of his code contained herein, 
 ---------------------------------------------------------------------------------------------------------------------------------------
 Ian Jefferies - HypoThermia (uie@planetquake.com)
 http://www.planetquake.com/uie
-
-This file is part of Spearmint Source Code.
-
-Spearmint Source Code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
-
-Spearmint Source Code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with Spearmint Source Code.
-If not, see <http://www.gnu.org/licenses/>.
-
-In addition, Spearmint Source Code is also subject to certain additional terms. You should have received a copy of these additional
-terms immediately following the terms and conditions of the GNU General Public License. If not, please request a copy in writing from
-id Software at the address below.
 =======================================================================================================================================
 */
 
@@ -79,7 +64,6 @@ enum {
 #define BOT_FADETIME 1000
 /*
 	new control for skill input
-
 	override generic.ownerdraw and generic.callback
 	use QMF_NODEFAULTINIT
 	generic.type ignored
@@ -152,7 +136,7 @@ static const char *botTypeSel_list[BOTTYPE_MAX + 1] = {
 	0
 };
 
-static const char *botSkill_list[BOTSKILL_COUNT + 1] = {
+static const char *botSkill_options[BOTSKILL_COUNT + 1] = {
 	"Identical",		// BOTSKILL_SAME
 	"Ranged",			// BOTSKILL_RANGE
 	"Custom, single",	// BOTSKILL_CUSTOMSAME
@@ -913,6 +897,7 @@ static void CreateServer_BotPage_SkillDraw(void *self) {
 		} else if (cursor == MSKILL_LEFT) {
 			// mouse over control, "pulsing"
 			UI_FillRect(x, y, BOT_ICONX + SMALLCHAR_WIDTH + 1, h + 1, temp_bkcolor);
+
 			color = tempcolor;
 
 			trap_R_SetColor(pulsecolor);
@@ -949,6 +934,7 @@ static void CreateServer_BotPage_SkillDraw(void *self) {
 	} else if (cursor == MSKILL_RIGHT) {
 		// mouse over control, "pulsing"
 		UI_FillRect(x, y, BOT_ICONX + SMALLCHAR_WIDTH + 1, h + 1, temp_bkcolor);
+
 		color = tempcolor;
 
 		trap_R_SetColor(pulsecolor);
@@ -1072,7 +1058,6 @@ static void CreateServer_BotPage_NameDraw(void *self) {
 	x = t->generic.x;
 	y = t->generic.y;
 	style = UI_SMALLFONT;
-
 	pulse = ((t->generic.flags & QMF_PULSE) || (Menu_ItemAtCursor(t->generic.parent) == t));
 
 	if (t->generic.flags & QMF_GRAYED) {
@@ -1086,8 +1071,8 @@ static void CreateServer_BotPage_NameDraw(void *self) {
 		color = tempcolor;
 		style |= UI_PULSE;
 
-		UI_FillRect(x, y, t->generic.right - x + 1, t->generic.bottom - y + 1, listbar_color);
-		UI_DrawChar(x, y, 13, UI_CENTER|UI_BLINK|UI_SMALLFONT, color);
+		UI_FillRect(x - 16, y, t->generic.right - x + 1, t->generic.bottom - y + 1, listbar_color);
+		UI_DrawChar(x - 8, y, 13, UI_CENTER|UI_BLINK|UI_SMALLFONT, color);
 	} else {
 		color = text_color_normal;
 	}
@@ -1365,9 +1350,9 @@ static void CreateServer_BotPage_MenuDraw(void) {
 
 		if (pic) {
 			trap_R_SetColor(pulsecolor);
-			UI_DrawHandlePic(640 - 64 - 64, 48, 64, 64, pic);
+			UI_DrawHandlePic(640 - 64 - 64, 56, 64, 64, pic);
 			trap_R_SetColor(fading_red);
-			UI_DrawNamedPic(640 - 64 - 64 - 15, 48 - 16, 128, 128, BOTSELECT_SELECT);
+			UI_DrawNamedPic(640 - 64 - 64 - 15, 56 - 16, 127, 128, BOTSELECT_SELECT);
 			trap_R_SetColor(NULL);
 		}
 	}
@@ -1445,7 +1430,7 @@ void CreateServer_BotPage_MenuInit(void) {
 	s_botcontrols.skillType.generic.x = BOT_LEFTCTRL;
 	s_botcontrols.skillType.generic.y = y;
 	s_botcontrols.skillType.generic.name = "Skill:";
-	s_botcontrols.skillType.itemnames = botSkill_list;
+	s_botcontrols.skillType.itemnames = botSkill_options;
 	// custom skill control
 	s_botcontrols.skillValue.generic.type = MTYPE_NULL;
 	s_botcontrols.skillValue.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT|QMF_NODEFAULTINIT|QMF_SILENT;
@@ -1593,6 +1578,7 @@ void CreateServer_BotPage_MenuInit(void) {
 		s_botcontrols.slotSkill[i].generic.x = colx + BOTSKILL_DX;
 		s_botcontrols.slotSkill[i].generic.y = list_y;
 		s_botcontrols.slotSkill[i].data = &s_scriptdata.bot.skill[i];
+
 		CreateServer_BotPage_InitSkillControl(&s_botcontrols.slotSkill[i]);
 	}
 
@@ -1608,11 +1594,12 @@ void CreateServer_BotPage_MenuInit(void) {
 	s_botcontrols.actionActivate.generic.flags = QMF_LEFT_JUSTIFY|QMF_PULSEIFFOCUS;
 	s_botcontrols.actionActivate.generic.callback = CreateServer_BotPage_Event;
 	s_botcontrols.actionActivate.generic.id = ID_BOT_ACTION;
-	s_botcontrols.actionActivate.generic.x = 240 - 64 - SMALLCHAR_WIDTH;
-	s_botcontrols.actionActivate.generic.y = y - (32 - SMALLCHAR_HEIGHT) / 2;
-	s_botcontrols.actionActivate.width = 64;
-	s_botcontrols.actionActivate.height = 32;
+	s_botcontrols.actionActivate.generic.x = 240 - 48 - SMALLCHAR_WIDTH;
+	s_botcontrols.actionActivate.generic.y = y - (24 - SMALLCHAR_HEIGHT) / 2;
+	s_botcontrols.actionActivate.width = 48;
+	s_botcontrols.actionActivate.height = 24;
 	s_botcontrols.actionActivate.focuspic = GAMESERVER_ACTION1;
+
 	s_botcontrols.statusbar_height = y - 20;
 	// register page controls
 	Menu_AddItem(menuptr, &s_botcontrols.botGameType);

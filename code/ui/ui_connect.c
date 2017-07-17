@@ -211,7 +211,7 @@ void UI_DrawConnectScreen(qboolean overlay) {
 			s = va("Awaiting connection...%i", cstate.connectPacketCount);
 			break;
 		case CA_CONNECTED: {
-			char downloadName[MAX_INFO_VALUE];
+				char downloadName[MAX_INFO_VALUE];
 
 				trap_Cvar_VariableStringBuffer("cl_downloadName", downloadName, sizeof(downloadName));
 

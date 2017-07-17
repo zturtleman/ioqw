@@ -933,6 +933,7 @@ void CG_VoiceChatLocal(int mode, qboolean voiceOnly, int clientNum, int color, c
 		vchat.clientNum = clientNum;
 		vchat.snd = snd;
 		vchat.voiceOnly = voiceOnly;
+
 		Q_strncpyz(vchat.cmd, cmd, sizeof(vchat.cmd));
 
 		if (mode == SAY_TELL) {
@@ -1022,6 +1023,7 @@ static void CG_ServerCommand(void) {
 
 	if (!strcmp(cmd, "print")) {
 		CG_Printf("%s", CG_Argv(1));
+
 		cmd = CG_Argv(1); // yes, this is obviously a hack, but so is the way we hear about votes passing or failing
 
 		if (!Q_stricmpn(cmd, "vote failed", 11) || !Q_stricmpn(cmd, "team vote failed", 16)) {

@@ -32,6 +32,8 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "../client/keycodes.h"
 #include "../game/bg_public.h"
 
+#define MAX_GAME_TYPE GT_MAX_GAME_TYPE
+#define NUM_GAMETYPES 7
 #define MAX_UI_AWARDS 6
 // status bar text buffer
 #define MAX_STATUSBAR_TEXT 64
@@ -91,6 +93,8 @@ extern vmCvar_t ui_obelisk_friendly;
 extern vmCvar_t ui_harvester_capturelimit;
 extern vmCvar_t ui_harvester_timelimit;
 extern vmCvar_t ui_harvester_friendly;
+extern vmCvar_t ui_arenasFile;
+extern vmCvar_t ui_botsFile;
 extern vmCvar_t ui_spScores1;
 extern vmCvar_t ui_spScores2;
 extern vmCvar_t ui_spScores3;
@@ -533,6 +537,9 @@ extern char *UI_Cvar_VariableString(const char *var_name);
 extern void UI_Refresh(int time);
 extern qboolean m_entersound;
 extern uiStatic_t uis;
+extern int gametype_remap[NUM_GAMETYPES];
+extern int gametype_remap2[MAX_GAME_TYPE];
+extern const char *gametype_items[NUM_GAMETYPES + 1];
 // ui_spLevel.c
 void UI_SPLevelMenu_Cache(void);
 void UI_SPLevelMenu(void);
@@ -617,6 +624,31 @@ e_status trap_CIN_RunCinematic(int handle);
 void trap_CIN_DrawCinematic(int handle);
 // allows you to resize the animation dynamically
 void trap_CIN_SetExtents(int handle, int x, int y, int w, int h);
+
+#define INGAME_MENU_VERTICAL_SPACING 28
+#define MAX_INGAME_SCROLLS 6
+#define SCROLL_HEIGHT 16
+
+typedef struct {
+	menuframework_s menu;
+	menubitmap_s frame;
+	menutext_s team;
+	menutext_s addbots;
+	menutext_s removebots;
+	menutext_s teamorders;
+	menutext_s callvote;
+	menutext_s vote;
+	menutext_s server;
+	menutext_s setup;
+	menutext_s restart;
+	menutext_s nextmap;
+	menutext_s startnew;
+	menutext_s leave;
+	menutext_s quit;
+	int num_scrolls;
+	int scroll_y [MAX_INGAME_SCROLLS];
+} ingamemenu_t;
+
 // ui_addbots.c
 void UI_AddBots_Cache(void);
 void UI_AddBotsMenu(void);
@@ -629,33 +661,10 @@ enum {
 
 void UI_RemoveBots_Cache(void);
 void UI_RemoveBotsMenu(int menutype);
-// ui_ingame_callvote_map.c
-void UI_VoteMapMenu(void);
-
-#define INGAME_MENU_VERTICAL_SPACING 28
-#define MAX_INGAME_SCROLLS 6
-#define SCROLL_HEIGHT 16
-
-typedef struct {
-	menuframework_s menu;
-	menubitmap_s frame;
-	menutext_s team;
-	menutext_s addbots;
-	menutext_s removebots;
-	menutext_s callvote;
-	menutext_s vote;
-	menutext_s server;
-	menutext_s setup;
-	menutext_s restart;
-	menutext_s nextmap;
-	menutext_s startnew;
-	menutext_s leave;
-	menutext_s quit;
-//	menutext_s teamorders;
-	int num_scrolls;
-	int scroll_y [MAX_INGAME_SCROLLS];
-} ingamemenu_t;
-
+// ui_teamorders.c
+extern void UI_TeamOrdersMenu(void);
+extern void UI_TeamOrdersMenu_f(void);
+extern void UI_TeamOrdersMenu_Cache(void);
 // ui_loadconfig.c
 void UI_LoadConfig_Cache(void);
 void UI_LoadConfigMenu(void);
@@ -681,6 +690,7 @@ typedef enum {
 	AWARD_PERFECT
 } awardType_t;
 
+int GametypeBits(char *string);
 const char *UI_GetArenaInfoByNumber(int num);
 const char *UI_GetArenaInfoByMap(const char *map);
 const char *UI_GetSpecialArenaInfo(const char *tag);

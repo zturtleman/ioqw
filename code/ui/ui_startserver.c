@@ -83,70 +83,7 @@ typedef struct {
 } startserver_t;
 
 static startserver_t s_startserver;
-
-static const char *gametype_items[] = {
-	"Free For All",
-	"Team Deathmatch",
-	"Tournament",
-	"Capture the Flag",
-	NULL
-};
-
-static int gametype_remap[] = {GT_FFA, GT_TEAM, GT_TOURNAMENT, GT_CTF};
-static int gametype_remap2[] = {0, 2, 0, 1, 3};
-// use ui_servers2.c definition
-extern const char *punkbuster_items[];
-
 static void UI_ServerOptionsMenu(qboolean multiplayer);
-
-/*
-=======================================================================================================================================
-GametypeBits
-=======================================================================================================================================
-*/
-static int GametypeBits(char *string) {
-	int bits;
-	char *p;
-	char *token;
-
-	bits = 0;
-	p = string;
-
-	while (1) {
-		token = COM_ParseExt(&p, qfalse);
-
-		if (token[0] == 0) {
-			break;
-		}
-
-		if (Q_stricmp(token, "ffa") == 0) {
-			bits |= 1 << GT_FFA;
-			continue;
-		}
-
-		if (Q_stricmp(token, "tourney") == 0) {
-			bits |= 1 << GT_TOURNAMENT;
-			continue;
-		}
-
-		if (Q_stricmp(token, "single") == 0) {
-			bits |= 1 << GT_SINGLE_PLAYER;
-			continue;
-		}
-
-		if (Q_stricmp(token, "team") == 0) {
-			bits |= 1 << GT_TEAM;
-			continue;
-		}
-
-		if (Q_stricmp(token, "ctf") == 0) {
-			bits |= 1 << GT_CTF;
-			continue;
-		}
-	}
-
-	return bits;
-}
 
 /*
 =======================================================================================================================================
@@ -629,7 +566,6 @@ typedef struct {
 	qboolean newBot;
 	int newBotIndex;
 	char newBotName[16];
-	menulist_s punkbuster;
 } serveroptions_t;
 
 static serveroptions_t s_serveroptions;
@@ -746,6 +682,21 @@ static void ServerOptions_Start(void) {
 			trap_Cvar_SetValue("ui_ctf_timelimit", timelimit);
 			trap_Cvar_SetValue("ui_ctf_friendly", friendlyfire);
 			break;
+		case GT_1FCTF:
+			trap_Cvar_SetValue("ui_1flag_capturelimit", flaglimit);
+			trap_Cvar_SetValue("ui_1flag_timelimit", timelimit);
+			trap_Cvar_SetValue("ui_1flag_friendly", friendlyfire);
+			break;
+		case GT_OBELISK:
+			trap_Cvar_SetValue("ui_obelisk_capturelimit", flaglimit);
+			trap_Cvar_SetValue("ui_obelisk_timelimit", timelimit);
+			trap_Cvar_SetValue("ui_obelisk_friendly", friendlyfire);
+			break;
+		case GT_HARVESTER:
+			trap_Cvar_SetValue("ui_harvester_capturelimit", flaglimit);
+			trap_Cvar_SetValue("ui_harvester_timelimit", timelimit);
+			trap_Cvar_SetValue("ui_harvester_friendly", friendlyfire);
+			break;
 	}
 
 	trap_Cvar_SetValue("sv_maxclients", Com_Clamp(0, 12, maxclients));
@@ -756,7 +707,6 @@ static void ServerOptions_Start(void) {
 	trap_Cvar_SetValue("g_friendlyfire", friendlyfire);
 	trap_Cvar_SetValue("sv_pure", pure);
 	trap_Cvar_Set("sv_hostname", s_serveroptions.hostname.field.buffer);
-	trap_Cvar_SetValue("sv_punkbuster", s_serveroptions.punkbuster.curvalue);
 	// the wait commands will allow the dedicated to take effect
 	info = UI_GetArenaInfoByNumber(s_startserver.maplist[s_startserver.currentmap]);
 	trap_Cmd_ExecuteText(EXEC_APPEND, va("wait; wait; map %s\n", Info_ValueForKey(info, "map")));
@@ -786,7 +736,10 @@ static void ServerOptions_Start(void) {
 	}
 	// set player's team
 	if (dedicated == 0 && s_serveroptions.gametype >= GT_TEAM) {
+		// send team command for vanilla q3 game qvm
 		trap_Cmd_ExecuteText(EXEC_APPEND, va("wait 5; team %s\n", playerTeam_list[s_serveroptions.playerTeam[0].curvalue]));
+		// set g_localTeamPref for ioq3 game qvm
+		trap_Cvar_Set("g_localTeamPref", playerTeam_list[s_serveroptions.playerTeam[0].curvalue]);
 	}
 }
 
@@ -1122,6 +1075,21 @@ static void ServerOptions_SetMenuItems(void) {
 			Com_sprintf(s_serveroptions.timelimit.field.buffer, 4, "%i", (int)Com_Clamp(0, 999, trap_Cvar_VariableValue("ui_ctf_timelimit")));
 			s_serveroptions.friendlyfire.curvalue = (int)Com_Clamp(0, 1, trap_Cvar_VariableValue("ui_ctf_friendly"));
 			break;
+		case GT_1FCTF:
+			Com_sprintf(s_serveroptions.flaglimit.field.buffer, 4, "%i", (int)Com_Clamp(0, 100, trap_Cvar_VariableValue("ui_1flag_capturelimit")));
+			Com_sprintf(s_serveroptions.timelimit.field.buffer, 4, "%i", (int)Com_Clamp(0, 999, trap_Cvar_VariableValue("ui_1flag_timelimit")));
+			s_serveroptions.friendlyfire.curvalue = (int)Com_Clamp(0, 1, trap_Cvar_VariableValue("ui_1flag_friendly"));
+			break;
+		case GT_OBELISK:
+			Com_sprintf(s_serveroptions.flaglimit.field.buffer, 4, "%i", (int)Com_Clamp(0, 100, trap_Cvar_VariableValue("ui_obelisk_capturelimit")));
+			Com_sprintf(s_serveroptions.timelimit.field.buffer, 4, "%i", (int)Com_Clamp(0, 999, trap_Cvar_VariableValue("ui_obelisk_timelimit")));
+			s_serveroptions.friendlyfire.curvalue = (int)Com_Clamp(0, 1, trap_Cvar_VariableValue("ui_obelisk_friendly"));
+			break;
+		case GT_HARVESTER:
+			Com_sprintf(s_serveroptions.flaglimit.field.buffer, 4, "%i", (int)Com_Clamp(0, 100, trap_Cvar_VariableValue("ui_harvester_capturelimit")));
+			Com_sprintf(s_serveroptions.timelimit.field.buffer, 4, "%i", (int)Com_Clamp(0, 999, trap_Cvar_VariableValue("ui_harvester_timelimit")));
+			s_serveroptions.friendlyfire.curvalue = (int)Com_Clamp(0, 1, trap_Cvar_VariableValue("ui_harvester_friendly"));
+			break;
 	}
 
 	Q_strncpyz(s_serveroptions.hostname.field.buffer, UI_Cvar_VariableString("sv_hostname"), sizeof(s_serveroptions.hostname.field.buffer));
@@ -1198,7 +1166,6 @@ static void ServerOptions_MenuInit(qboolean multiplayer) {
 
 	s_serveroptions.multiplayer = multiplayer;
 	s_serveroptions.gametype = (int)Com_Clamp(0, ARRAY_LEN(gametype_remap2) - 1, trap_Cvar_VariableValue("g_gametype"));
-	s_serveroptions.punkbuster.curvalue = Com_Clamp(0, 1, trap_Cvar_VariableValue("sv_punkbuster"));
 
 	ServerOptions_Cache();
 
@@ -1231,7 +1198,7 @@ static void ServerOptions_MenuInit(qboolean multiplayer) {
 
 	y = 272;
 
-	if (s_serveroptions.gametype != GT_CTF) {
+	if (s_serveroptions.gametype < GT_CTF) {
 		s_serveroptions.fraglimit.generic.type = MTYPE_FIELD;
 		s_serveroptions.fraglimit.generic.name = "Frag Limit:";
 		s_serveroptions.fraglimit.generic.flags = QMF_NUMBERSONLY|QMF_PULSEIFFOCUS|QMF_SMALLFONT;
@@ -1300,15 +1267,6 @@ static void ServerOptions_MenuInit(qboolean multiplayer) {
 		s_serveroptions.hostname.field.maxchars = 64;
 	}
 
-	y += BIGCHAR_HEIGHT + 2;
-	s_serveroptions.punkbuster.generic.type = MTYPE_SPINCONTROL;
-	s_serveroptions.punkbuster.generic.name = "Punkbuster:";
-	s_serveroptions.punkbuster.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
-	s_serveroptions.punkbuster.generic.id = 0;
-	s_serveroptions.punkbuster.generic.x = OPTIONS_X;
-	s_serveroptions.punkbuster.generic.y = y;
-	s_serveroptions.punkbuster.itemnames = punkbuster_items;
-
 	y = 80;
 	s_serveroptions.botSkill.generic.type = MTYPE_SPINCONTROL;
 	s_serveroptions.botSkill.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
@@ -1316,7 +1274,7 @@ static void ServerOptions_MenuInit(qboolean multiplayer) {
 	s_serveroptions.botSkill.generic.x = 32 + (strlen(s_serveroptions.botSkill.generic.name) + 2) * SMALLCHAR_WIDTH;
 	s_serveroptions.botSkill.generic.y = y;
 	s_serveroptions.botSkill.itemnames = botSkill_list;
-	s_serveroptions.botSkill.curvalue = 1;
+	s_serveroptions.botSkill.curvalue = 2;
 
 	y += (2 * SMALLCHAR_HEIGHT);
 	s_serveroptions.player0.generic.type = MTYPE_TEXT;
@@ -1411,7 +1369,7 @@ static void ServerOptions_MenuInit(qboolean multiplayer) {
 		}
 	}
 
-	if (s_serveroptions.gametype != GT_CTF) {
+	if (s_serveroptions.gametype < GT_CTF) {
 		Menu_AddItem(&s_serveroptions.menu, &s_serveroptions.fraglimit);
 	} else {
 		Menu_AddItem(&s_serveroptions.menu, &s_serveroptions.flaglimit);
@@ -1436,7 +1394,6 @@ static void ServerOptions_MenuInit(qboolean multiplayer) {
 	Menu_AddItem(&s_serveroptions.menu, &s_serveroptions.back);
 	Menu_AddItem(&s_serveroptions.menu, &s_serveroptions.next);
 	Menu_AddItem(&s_serveroptions.menu, &s_serveroptions.go);
-	Menu_AddItem(&s_serveroptions.menu, (void *)&s_serveroptions.punkbuster);
 
 	ServerOptions_SetMenuItems();
 }
@@ -1736,6 +1693,7 @@ static void UI_BotSelectMenu_BotEvent(void *ptr, int event) {
 	}
 	// set selected
 	i = ((menucommon_s *)ptr)->id;
+
 	botSelectInfo.pics[i].generic.flags |= QMF_HIGHLIGHT;
 	botSelectInfo.picbuttons[i].generic.flags &= ~QMF_PULSEIFFOCUS;
 	botSelectInfo.selectedmodel = botSelectInfo.modelpage * MAX_MODELSPERPAGE + i;
@@ -1823,7 +1781,7 @@ static void UI_BotSelectMenu_Init(char *bot) {
 			botSelectInfo.pics[k].generic.flags = QMF_LEFT_JUSTIFY|QMF_INACTIVE;
 			botSelectInfo.pics[k].generic.x = x;
 			botSelectInfo.pics[k].generic.y = y;
- 			botSelectInfo.pics[k].generic.name = botSelectInfo.boticons[k];
+			botSelectInfo.pics[k].generic.name = botSelectInfo.boticons[k];
 			botSelectInfo.pics[k].width = 64;
 			botSelectInfo.pics[k].height = 64;
 			botSelectInfo.pics[k].focuspic = BOTSELECT_SELECTED;
@@ -1851,6 +1809,7 @@ static void UI_BotSelectMenu_Init(char *bot) {
 			botSelectInfo.picnames[k].string = botSelectInfo.botnames[k];
 			botSelectInfo.picnames[k].color = color_orange;
 			botSelectInfo.picnames[k].style = UI_CENTER|UI_SMALLFONT;
+
 			x += (64 + 6);
 		}
 

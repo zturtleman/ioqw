@@ -423,9 +423,7 @@ static void PlayerModel_BuildList(void) {
 			}
 		}
 	}
-
 	// APSFIXME - Degenerate no models case
-
 	s_playermodel.numpages = s_playermodel.nummodels / MAX_MODELSPERPAGE;
 
 	if (s_playermodel.nummodels % MAX_MODELSPERPAGE) {
@@ -674,7 +672,7 @@ static void PlayerModel_MenuInit(void) {
 	Menu_AddItem(&s_playermodel.menu, &s_playermodel.right);
 	Menu_AddItem(&s_playermodel.menu, &s_playermodel.back);
 	// find all available models
-//	PlayerModel_BuildList();
+	//PlayerModel_BuildList();
 	// set initial states
 	PlayerModel_SetMenuItems();
 	// update user interface

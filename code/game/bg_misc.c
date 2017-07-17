@@ -2126,7 +2126,7 @@ char *eventnames[] = {
 	"EV_ITEM_POP",
 	"EV_ITEM_RESPAWN",
 	"EV_ITEM_PICKUP",			// normal item pickups are predictable
-	"EV_GLOBAL_ITEM_PICKUP",	// powerup / team sounds are broadcast to everyone
+	"EV_GLOBAL_ITEM_PICKUP",	// powerup/team sounds are broadcast to everyone
 	"EV_POWERUP_QUAD",
 	"EV_POWERUP_REGEN",
 	"EV_USE_ITEM0",

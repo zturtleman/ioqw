@@ -1559,7 +1559,7 @@ static void CG_DrawLagometer(void) {
 			trap_R_DrawStretchPic(ax + aw - a, mid, 1, v, 0, 0, 0, 0, cgs.media.whiteShader);
 		}
 	}
-	// draw the snapshot latency / drop graph
+	// draw the snapshot latency/drop graph
 	range = ah / 2;
 	vscale = range / MAX_LAGOMETER_PING;
 

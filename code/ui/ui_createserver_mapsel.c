@@ -20,21 +20,6 @@ The UI Enhanced copyright owner permit free reuse of his code contained herein, 
 ---------------------------------------------------------------------------------------------------------------------------------------
 Ian Jefferies - HypoThermia (uie@planetquake.com)
 http://www.planetquake.com/uie
-
-This file is part of Spearmint Source Code.
-
-Spearmint Source Code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
-
-Spearmint Source Code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with Spearmint Source Code.
-If not, see <http://www.gnu.org/licenses/>.
-
-In addition, Spearmint Source Code is also subject to certain additional terms. You should have received a copy of these additional
-terms immediately following the terms and conditions of the GNU General Public License. If not, please request a copy in writing from
-id Software at the address below.
 =======================================================================================================================================
 */
 
@@ -71,7 +56,6 @@ enum {
 	ID_MAPSELECT_NEXT,
 	ID_MAPSELECT_PREV,
 	ID_MAPSELECT_OK,
-	ID_MAPSELECT_ALLMAPS,
 	ID_MAPSELECT_FILTERMAPS,
 	ID_MAPSELECT_MAPICONS,
 	ID_MAPSELECT_MULTISEL,
@@ -100,7 +84,6 @@ const char *mapicons_items[] = {
 };
 
 static int ms_lastgametype = -1;
-static int ms_allmaps = 0;
 static int ms_filter = MAPFILTER_OFF;
 
 static vec4_t color_nomap = {0.75, 0.0, 0.0, 1.0};
@@ -117,7 +100,6 @@ typedef struct mapselect_s {
 	menubitmap_s cancel;
 	menubitmap_s accept;
 	menutext_s maptype;
-	menuradiobutton_s allmaps;
 	menulist_s filter;
 	menulist_s mapicons;
 	menuradiobutton_s multisel;
@@ -317,59 +299,6 @@ static int MapSelect_MapIndex(const char *mapname) {
 
 /*
 =======================================================================================================================================
-MapSelect_MapSupportsGametype
-=======================================================================================================================================
-*/
-static qboolean MapSelect_MapSupportsGametype(const char *mapname) {
-	int i, count, matchbits, gamebits;
-	const char *info;
-	char *arena_mapname;
-
-	if (!mapname || !mapname[0]) {
-		return qtrue;
-	}
-
-	count = UI_GetNumArenas();
-
-	if (count > MAX_MAPS_LIST) {
-		count = MAX_MAPS_LIST;
-	}
-
-	matchbits = 1 << s_mapselect.gametype;
-
-	if (s_mapselect.gametype == GT_FFA) {
-		matchbits |= (1 << GT_SINGLE_PLAYER);
-	}
-
-	for (i = 0; i < count; i++) {
-		info = UI_GetArenaInfoByNumber(i);
-
-		if (!info) {
-			continue;
-		}
-
-		arena_mapname = Info_ValueForKey(info, "map");
-
-		if (!arena_mapname || arena_mapname[0] == '\0') {
-			continue;
-		}
-
-		gamebits = GametypeBits(Info_ValueForKey(info, "type"));
-
-		if (!(gamebits & matchbits)) {
-			continue;
-		}
-
-		if (Q_stricmp(mapname, arena_mapname) == 0) {
-			return qtrue;
-		}
-	}
-
-	return qfalse;
-}
-
-/*
-=======================================================================================================================================
 MapSelect_FilteredMap
 =======================================================================================================================================
 */
@@ -412,10 +341,6 @@ static void MapSelect_SetMapTypeIcons(void) {
 	icon_custom = &s_mapselect.iconb;
 	// using all maps, so don't set gametype icon
 	gametype = s_mapselect.gametype;
-
-	if (s_mapselect.allmaps.curvalue) {
-		gametype = -1;
-	}
 	// check for custom map icon, bump gametype icon to left if so
 	customtype = s_mapselect.filter.curvalue - MAPFILTER_MAX;
 
@@ -446,7 +371,7 @@ static qboolean MapSelect_ValidateMapForLoad(const char *info, int matchbits, qb
 
 	gamebits = GametypeBits(Info_ValueForKey(info, "type"));
 
-	if (!(gamebits & matchbits) && !s_mapselect.allmaps.curvalue) {
+	if (!(gamebits & matchbits)) {
 		return qfalse;
 	}
 
@@ -850,7 +775,6 @@ static void MapSelect_MenuEvent(void *ptr, int event) {
 			UI_PopMenu();
 			break;
 		case ID_MAPSELECT_OK:
-			ms_allmaps = s_mapselect.allmaps.curvalue;
 			ms_filter = s_mapselect.filter.curvalue;
 
 			MapSelect_CommitSelection();
@@ -871,7 +795,6 @@ static void MapSelect_MenuEvent(void *ptr, int event) {
 
 			break;
 		case ID_MAPSELECT_FILTERMAPS:
-		case ID_MAPSELECT_ALLMAPS:
 			MapSelect_FilterChanged();
 			// Very ugly but works, I couldn't do an infinite bucle
 			if ((s_mapselect.nomaps & s_mapselect.filter.numitems) > s_mapselect.filter.curvalue) {
@@ -1402,12 +1325,6 @@ static void MapSelect_MenuInit(int gametype, int index, const char *mapname) {
 	s_mapselect.menu.key = MapSelect_Key;
 
 	MapSelect_Cache();
-
-	if (gametype < GT_CTF && MapSelect_MapSupportsGametype(mapname)) {
-		s_mapselect.allmaps.curvalue = ms_allmaps;
-	} else {
-		s_mapselect.allmaps.curvalue = 0;
-	}
 	// change map filter if needed
 	if (mapname && mapname[0]) {
 		if (ms_filter < MAPFILTER_MAX) {
@@ -1473,13 +1390,6 @@ static void MapSelect_MenuInit(int gametype, int index, const char *mapname) {
 	s_mapselect.filter.generic.id = ID_MAPSELECT_FILTERMAPS;
 	s_mapselect.filter.generic.callback = MapSelect_MenuEvent;
 	s_mapselect.filter.itemnames = mapfilter_items;
-
-	s_mapselect.allmaps.generic.type = MTYPE_RADIOBUTTON;
-	s_mapselect.allmaps.generic.x = 480 - 8 * SMALLCHAR_WIDTH;
-	s_mapselect.allmaps.generic.y = 28 + LINE_HEIGHT + 8;
-	s_mapselect.allmaps.generic.name = "All maps:";
-	s_mapselect.allmaps.generic.id = ID_MAPSELECT_ALLMAPS;
-	s_mapselect.allmaps.generic.callback = MapSelect_MenuEvent;
 
 	s_mapselect.mapicons.generic.type = MTYPE_SPINCONTROL;
 	s_mapselect.mapicons.generic.x = 480 + 8 * SMALLCHAR_WIDTH;
@@ -1610,10 +1520,6 @@ static void MapSelect_MenuInit(int gametype, int index, const char *mapname) {
 	Menu_AddItem(&s_mapselect.menu, &s_mapselect.multisel);
 	Menu_AddItem(&s_mapselect.menu, &s_mapselect.listview);
 	Menu_AddItem(&s_mapselect.menu, &s_mapselect.maplist);
-
-	if (gametype < GT_CTF) {
-		Menu_AddItem(&s_mapselect.menu, &s_mapselect.allmaps);
-	}
 
 	for (i = 0; i < MAX_GRIDMAPSPERPAGE; i++) {
 		Menu_AddItem(&s_mapselect.menu, &s_mapselect.mappics[i]);

@@ -20,21 +20,6 @@ The UI Enhanced copyright owner permit free reuse of his code contained herein, 
 ---------------------------------------------------------------------------------------------------------------------------------------
 Ian Jefferies - HypoThermia (uie@planetquake.com)
 http://www.planetquake.com/uie
-
-This file is part of Spearmint Source Code.
-
-Spearmint Source Code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
-
-Spearmint Source Code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with Spearmint Source Code.
-If not, see <http://www.gnu.org/licenses/>.
-
-In addition, Spearmint Source Code is also subject to certain additional terms. You should have received a copy of these additional
-terms immediately following the terms and conditions of the GNU General Public License. If not, please request a copy in writing from
-id Software at the address below.
 =======================================================================================================================================
 */
 
@@ -74,7 +59,6 @@ enum {
 	ID_MAPSELECT_NEXT,
 	ID_MAPSELECT_PREV,
 	ID_MAPSELECT_OK,
-	ID_MAPSELECT_ALLMAPS,
 	ID_MAPSELECT_FILTERMAPS,
 	ID_MAPSELECT_MAPICONS,
 	ID_MAPSELECT_MULTISEL,
@@ -103,7 +87,6 @@ const char *mapicons_items2[] = {
 };
 
 static int ms_lastgametype2 = -1;
-static int ms_allmaps2 = 0;
 static int ms_filter2 = MAPFILTER_OFF;
 static vec4_t color_nomap2 = {0.75, 0.0, 0.0, 1.0};
 
@@ -121,7 +104,6 @@ typedef struct mapselect_s {
 	menubitmap_s cancel;
 	menubitmap_s accept;
 	menutext_s maptype;
-	menuradiobutton_s allmaps;
 	menulist_s filter;
 	menulist_s mapicons;
 	menuradiobutton_s listview;
@@ -308,10 +290,6 @@ static void VoteMenu_Map_SetMapTypeIcons(void) {
 	icon_custom = &s_mapselect2.iconb;
 	// using all maps, so don't set gametype icon
 	gametype = s_mapselect2.gametype;
-
-	if (s_mapselect2.allmaps.curvalue) {
-		gametype = -1;
-	}
 	// check for custom map icon, bump gametype icon to left if so
 	customtype = s_mapselect2.filter.curvalue - MAPFILTER_MAX;
 
@@ -342,7 +320,7 @@ static qboolean VoteMenu_Map_ValidateMapForLoad(const char *info, int matchbits,
 
 	gamebits = GametypeBits(Info_ValueForKey(info, "type"));
 
-	if (!(gamebits & matchbits) && !s_mapselect2.allmaps.curvalue) {
+	if (!(gamebits & matchbits)) {
 		return qfalse;
 	}
 
@@ -697,7 +675,6 @@ static void VoteMenu_Map_Event(void *ptr, int event) {
 			UI_PopMenu();
 			break;
 		case ID_MAPSELECT_OK:
-			ms_allmaps2 = s_mapselect2.allmaps.curvalue;
 			ms_filter2 = s_mapselect2.filter.curvalue;
 			VoteMenu_Map_CommitSelection();
 			break;
@@ -716,7 +693,6 @@ static void VoteMenu_Map_Event(void *ptr, int event) {
 
 			break;
 		case ID_MAPSELECT_FILTERMAPS:
-		case ID_MAPSELECT_ALLMAPS:
 			VoteMenu_Map_FilterChanged();
 			// very ugly but works, I couldn't do an infinite bucle
 			if ((s_mapselect2.nomaps & s_mapselect2.filter.numitems) > s_mapselect2.filter.curvalue) {
@@ -1107,6 +1083,7 @@ static qboolean VoteMenu_Map_HandleListKey(int key, sfxHandle_t *psfx) {
 					s_mapselect2.currentmap = sel;
 
 					VoteMenu_Map_UpdateAcceptInterface();
+
 					*psfx = (menu_move_sound);
 				}
 			}
@@ -1200,12 +1177,6 @@ static void UI_VoteMapMenuInternal(int gametype, int index, const char *mapname)
 	s_mapselect2.menu.key = VoteMenu_Map_Key;
 
 	VoteMenu_Map_Cache();
-
-	if (gametype < GT_CTF && VoteMenu_Map_SupportsGametype(mapname)) {
-		s_mapselect2.allmaps.curvalue = ms_allmaps2;
-	} else {
-		s_mapselect2.allmaps.curvalue = 0;
-	}
 	// change map filter if needed
 	if (mapname && mapname[0]) {
 		if (ms_filter2 < MAPFILTER_MAX) {
@@ -1270,13 +1241,6 @@ static void UI_VoteMapMenuInternal(int gametype, int index, const char *mapname)
 	s_mapselect2.filter.generic.id = ID_MAPSELECT_FILTERMAPS;
 	s_mapselect2.filter.generic.callback = VoteMenu_Map_Event;
 	s_mapselect2.filter.itemnames = mapfilter_items;
-
-	s_mapselect2.allmaps.generic.type = MTYPE_RADIOBUTTON;
-	s_mapselect2.allmaps.generic.x = 480 - 8 * SMALLCHAR_WIDTH;
-	s_mapselect2.allmaps.generic.y = 28 + LINE_HEIGHT + 8;
-	s_mapselect2.allmaps.generic.name = "All maps:";
-	s_mapselect2.allmaps.generic.id = ID_MAPSELECT_ALLMAPS;
-	s_mapselect2.allmaps.generic.callback = VoteMenu_Map_Event;
 
 	s_mapselect2.mapicons.generic.type = MTYPE_SPINCONTROL;
 	s_mapselect2.mapicons.generic.x = 480 + 8 * SMALLCHAR_WIDTH;
@@ -1385,7 +1349,6 @@ static void UI_VoteMapMenuInternal(int gametype, int index, const char *mapname)
 	s_mapselect2.listview.generic.name = "List view:";
 	s_mapselect2.listview.generic.id = ID_MAPSELECT_LISTVIEW;
 	s_mapselect2.listview.generic.callback = VoteMenu_Map_Event;
-
 	s_mapselect2.listview.curvalue = (int)Com_Clamp(0, 1, trap_Cvar_VariableValue("ui_map_list"));
 	// register for display
 	Menu_AddItem(&s_mapselect2.menu, &s_mapselect2.banner);
@@ -1401,10 +1364,6 @@ static void UI_VoteMapMenuInternal(int gametype, int index, const char *mapname)
 	Menu_AddItem(&s_mapselect2.menu, &s_mapselect2.iconb);
 	Menu_AddItem(&s_mapselect2.menu, &s_mapselect2.listview);
 	Menu_AddItem(&s_mapselect2.menu, &s_mapselect2.maplist);
-
-	if (gametype < GT_CTF) {
-		Menu_AddItem(&s_mapselect2.menu, &s_mapselect2.allmaps);
-	}
 
 	for (i = 0; i < MAX_GRIDMAPSPERPAGE; i++) {
 		Menu_AddItem(&s_mapselect2.menu, &s_mapselect2.mappics[i]);
@@ -1431,6 +1390,5 @@ void UI_VoteMapMenu(void) {
 	mapname = NULL;
 
 	UI_LoadMapTypeInfo();
-
 	UI_VoteMapMenuInternal(gametype, index, mapname);
 }

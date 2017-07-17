@@ -2568,7 +2568,7 @@ void CG_Player(centity_t *cent) {
 	CG_AddRefEntityWithPowerups(&head, &cent->currentState);
 	CG_AddBreathPuffs(cent, &head);
 	CG_DustTrail(cent);
-	// add the gun / barrel / flash
+	// add the gun/barrel/flash
 	CG_AddPlayerWeapon(&torso, NULL, cent, ci->team);
 	// add powerups floating behind the player
 	CG_PlayerPowerups(cent, &torso);
