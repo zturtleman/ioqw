@@ -86,7 +86,7 @@ Sys_SteamPath
 =======================================================================================================================================
 */
 char *Sys_SteamPath(void) {
-	// disabled since Steam doesn't let you install Quake 3 on Mac/Linux
+	// disabled since Steam doesn't let you install Quake Wars on Mac/Linux
 #if 0 // #ifdef STEAMPATH_NAME
 	char *p;
 
@@ -124,7 +124,7 @@ Sys_Milliseconds
 */
 unsigned long sys_timeBase = 0;
 /*
-current time in ms, using sys_timeBase as origin
+ current time in ms, using sys_timeBase as origin
  NOTE: sys_timeBase * 1000 + curtime -> ms since the Epoch
  0x7fffffff ms - ~24 days
  although timeval:tv_usec is an int, I'm not sure whether it is actually used as an unsigned int (which would affect the wrap period)
@@ -564,7 +564,7 @@ void Sys_ErrorDialog(const char *error) {
 		return;
 	}
 	// we might be crashing because we maxed out the Quake MAX_FILE_HANDLES, which will come through here, so we don't want to recurse
-	// forever by calling FS_FOpenFileWrite()...use the Unix system APIs instead.
+	// forever by calling FS_FOpenFileWrite() ...use the Unix system APIs instead.
 	f = open(ospath, O_CREAT|O_TRUNC|O_WRONLY, 0640);
 
 	if (f == -1) {

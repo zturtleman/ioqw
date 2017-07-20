@@ -57,15 +57,15 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define VOICECHAT_ONFOLLOW			"onfollow"			// I'm following
 #define VOICECHAT_ONCAMPING			"oncamp"			// I'm camping somewhere
 #define VOICECHAT_ONPATROL			"onpatrol"			// I'm on patrol (roaming)
+#define VOICECHAT_INPOSITION		"inposition"		// I'm in position
 #define VOICECHAT_IHAVEFLAG			"ihaveflag"			// I have the flag
 #define VOICECHAT_ENEMYHASFLAG		"enemyhasflag"		// the enemy has our flag (CTF)
 #define VOICECHAT_BASEATTACK		"baseattack"		// the base is under attack
-#define VOICECHAT_INPOSITION		"inposition"		// I'm in position
 #define VOICECHAT_PRAISE			"praise"			// you did something good
-#define VOICECHAT_KILLINSULT		"kill_insult"		// I just killed you
 #define VOICECHAT_TAUNT				"taunt"				// I want to taunt you
-#define VOICECHAT_DEATHINSULT		"death_insult"		// you just killed me
 #define VOICECHAT_KILLGAUNTLET		"kill_gauntlet"		// I just killed you with the gauntlet
+#define VOICECHAT_KILLINSULT		"kill_insult"		// I just killed you
+#define VOICECHAT_DEATHINSULT		"death_insult"		// you just killed me
 #define VOICECHAT_TRASH				"trash"				// lots of trash talk
 
 /**************************************************************************************************************************************

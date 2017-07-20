@@ -25,6 +25,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "g_local.h"
 
 #define POOLSIZE (1024 * 1024) // Tobias FIXME: Damned OpenAL source/memory management, increasing OpenAL sources will decrease number of available bots
+
 static char memoryPool[POOLSIZE];
 static int allocPoint;
 

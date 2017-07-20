@@ -994,34 +994,6 @@ void CG_NewClientInfo(int clientNum) {
 	// isolate the player's name
 	v = Info_ValueForKey(configstring, "n");
 	Q_strncpyz(newInfo.name, v, sizeof(newInfo.name));
-	// colors
-	v = Info_ValueForKey(configstring, "c1");
-	CG_ColorFromString(v, newInfo.color1);
-
-	newInfo.c1RGBA[0] = 255 * newInfo.color1[0];
-	newInfo.c1RGBA[1] = 255 * newInfo.color1[1];
-	newInfo.c1RGBA[2] = 255 * newInfo.color1[2];
-	newInfo.c1RGBA[3] = 255;
-
-	v = Info_ValueForKey(configstring, "c2");
-	CG_ColorFromString(v, newInfo.color2);
-
-	newInfo.c2RGBA[0] = 255 * newInfo.color2[0];
-	newInfo.c2RGBA[1] = 255 * newInfo.color2[1];
-	newInfo.c2RGBA[2] = 255 * newInfo.color2[2];
-	newInfo.c2RGBA[3] = 255;
-	// bot skill
-	v = Info_ValueForKey(configstring, "skill");
-	newInfo.botSkill = atoi(v);
-	// handicap
-	v = Info_ValueForKey(configstring, "hc");
-	newInfo.handicap = atoi(v);
-	// wins
-	v = Info_ValueForKey(configstring, "w");
-	newInfo.wins = atoi(v);
-	// losses
-	v = Info_ValueForKey(configstring, "l");
-	newInfo.losses = atoi(v);
 	// team
 	v = Info_ValueForKey(configstring, "t");
 	newInfo.team = atoi(v);
@@ -1145,6 +1117,34 @@ void CG_NewClientInfo(int clientNum) {
 			CG_LoadClientInfo(clientNum, &newInfo);
 		}
 	}
+	// colors
+	v = Info_ValueForKey(configstring, "c1");
+	CG_ColorFromString(v, newInfo.color1);
+
+	newInfo.c1RGBA[0] = 255 * newInfo.color1[0];
+	newInfo.c1RGBA[1] = 255 * newInfo.color1[1];
+	newInfo.c1RGBA[2] = 255 * newInfo.color1[2];
+	newInfo.c1RGBA[3] = 255;
+
+	v = Info_ValueForKey(configstring, "c2");
+	CG_ColorFromString(v, newInfo.color2);
+
+	newInfo.c2RGBA[0] = 255 * newInfo.color2[0];
+	newInfo.c2RGBA[1] = 255 * newInfo.color2[1];
+	newInfo.c2RGBA[2] = 255 * newInfo.color2[2];
+	newInfo.c2RGBA[3] = 255;
+	// handicap
+	v = Info_ValueForKey(configstring, "hc");
+	newInfo.handicap = atoi(v);
+	// wins
+	v = Info_ValueForKey(configstring, "w");
+	newInfo.wins = atoi(v);
+	// losses
+	v = Info_ValueForKey(configstring, "l");
+	newInfo.losses = atoi(v);
+	// bot skill
+	v = Info_ValueForKey(configstring, "skill");
+	newInfo.botSkill = atoi(v);
 	// replace whatever was there with the new one
 	newInfo.infoValid = qtrue;
 	*ci = newInfo;

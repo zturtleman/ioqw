@@ -109,17 +109,13 @@ void UpdateTournamentInfo(void) {
 			perfect = 0;
 		}
 
-		Com_sprintf(msg, sizeof(msg), "postgame %i %i %i %i %i %i %i %i %i %i %i %i %i %i", level.numNonSpectatorClients, playerClientNum, accuracy,
-			player->client->ps.persistant[PERS_IMPRESSIVE_COUNT], player->client->ps.persistant[PERS_EXCELLENT_COUNT], player->client->ps.persistant[PERS_DEFEND_COUNT],
-			player->client->ps.persistant[PERS_ASSIST_COUNT], player->client->ps.persistant[PERS_GAUNTLET_FRAG_COUNT], player->client->ps.persistant[PERS_SCORE],
-			perfect, score1, score2, level.time, player->client->ps.persistant[PERS_CAPTURES]);
+		Com_sprintf(msg, sizeof(msg), "postgame %i %i %i %i %i %i %i %i %i %i %i %i %i %i", level.numNonSpectatorClients, playerClientNum, player->client->ps.persistant[PERS_SCORE], score1, score2, level.time, accuracy, player->client->ps.persistant[PERS_EXCELLENT_COUNT],
+			player->client->ps.persistant[PERS_IMPRESSIVE_COUNT], player->client->ps.persistant[PERS_GAUNTLET_FRAG_COUNT], player->client->ps.persistant[PERS_CAPTURES], player->client->ps.persistant[PERS_DEFEND_COUNT], player->client->ps.persistant[PERS_ASSIST_COUNT], perfect);
 #else
 		perfect = (level.clients[playerClientNum].ps.persistant[PERS_RANK] == 0 && player->client->ps.persistant[PERS_KILLED] == 0) ? 1 : 0;
 
-		Com_sprintf(msg, sizeof(msg), "postgame %i %i %i %i %i %i %i %i", level.numNonSpectatorClients, playerClientNum, accuracy,
-			player->client->ps.persistant[PERS_IMPRESSIVE_COUNT], player->client->ps.persistant[PERS_EXCELLENT_COUNT],
-			player->client->ps.persistant[PERS_GAUNTLET_FRAG_COUNT], player->client->ps.persistant[PERS_SCORE],
-			perfect);
+		Com_sprintf(msg, sizeof(msg), "postgame %i %i %i %i %i %i %i %i", level.numNonSpectatorClients, playerClientNum, player->client->ps.persistant[PERS_SCORE], accuracy, player->client->ps.persistant[PERS_EXCELLENT_COUNT],
+			player->client->ps.persistant[PERS_IMPRESSIVE_COUNT], player->client->ps.persistant[PERS_GAUNTLET_FRAG_COUNT], perfect);
 #endif
 	}
 
@@ -127,7 +123,7 @@ void UpdateTournamentInfo(void) {
 
 	for (i = 0; i < level.numNonSpectatorClients; i++) {
 		n = level.sortedClients[i];
-		Com_sprintf(buf, sizeof(buf), " %i %i %i", n, level.clients[n].ps.persistant[PERS_RANK], level.clients[n].ps.persistant[PERS_SCORE]);
+		Com_sprintf(buf, sizeof(buf), " %i %i %i", n, level.clients[n].ps.persistant[PERS_SCORE], level.clients[n].ps.persistant[PERS_RANK]);
 		msglen += strlen(buf);
 
 		if (msglen >= sizeof(msg)) {

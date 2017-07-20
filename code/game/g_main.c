@@ -1157,7 +1157,7 @@ void LogExit(const char *string) {
 	gclient_t *cl;
 #ifdef MISSIONPACK
 	qboolean won = qtrue;
-	team_t team = TEAM_RED;
+	team_t team = TEAM_BLUE;
 #endif
 	G_LogPrintf("Exit: %s\n", string);
 
@@ -1496,8 +1496,8 @@ void CheckTournament(void) {
 		qboolean notEnough = qfalse;
 
 		if (g_gametype.integer > GT_TOURNAMENT) {
-			counts[TEAM_BLUE] = TeamCount(-1, TEAM_BLUE);
 			counts[TEAM_RED] = TeamCount(-1, TEAM_RED);
+			counts[TEAM_BLUE] = TeamCount(-1, TEAM_BLUE);
 
 			if (counts[TEAM_RED] < 1 || counts[TEAM_BLUE] < 1) {
 				notEnough = qtrue;

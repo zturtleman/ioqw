@@ -575,6 +575,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			DEBUGNAME("EV_FIRE_WEAPON");
 			CG_FireWeapon(cent);
 			break;
+		// bullet impacts
 		case EV_BULLET_HIT_FLESH:
 			DEBUGNAME("EV_BULLET_HIT_FLESH");
 			CG_Bullet(es->pos.trBase, es->otherEntityNum, dir, qtrue, es->eventParm);

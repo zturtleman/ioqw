@@ -1984,8 +1984,7 @@ void CG_AddViewWeapon(playerState_t *ps) {
 	refEntity_t hand;
 	centity_t *cent;
 	clientInfo_t *ci;
-	vec3_t fovOffset;
-	vec3_t angles;
+	vec3_t fovOffset, angles;
 	weaponInfo_t *weapon;
 
 	if (ps->persistant[PERS_TEAM] == TEAM_SPECTATOR) {

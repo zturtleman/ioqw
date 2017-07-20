@@ -101,7 +101,6 @@ static void CG_DrawField(int x, int y, int width, int value, float *color) {
 
 		CG_DrawPic(x, y, CHAR_WIDTH * cg_statusScale.value, CHAR_HEIGHT * cg_statusScale.value, cgs.media.numberShaders[frame]);
 		x += CHAR_WIDTH * cg_statusScale.value;
-
 		ptr++;
 		l--;
 	}
@@ -385,11 +384,9 @@ void CG_DrawTeamBackground(int x, int y, int w, int h, float alpha, int team) {
 	}
 
 	trap_R_SetColor(hcolor);
-
 	CG_SetScreenPlacement(PLACE_STRETCH, CG_GetScreenVerticalPlacement());
 	CG_DrawPic(x, y, w, h, cgs.media.teamStatusBar);
 	CG_PopScreenPlacement();
-
 	trap_R_SetColor(NULL);
 }
 
@@ -400,6 +397,7 @@ CG_DrawStatusBar
 */
 static void CG_DrawStatusBar(void) {
 	int color;
+	char *s;
 	centity_t *cent;
 	playerState_t *ps;
 	int value;
@@ -430,6 +428,8 @@ static void CG_DrawStatusBar(void) {
 
 	VectorClear(angles);
 	// draw any 3D icons first, so the changes back to 2D are minimized
+
+	// ammo
 	if (cent->currentState.weapon && cg_weapons[cent->currentState.weapon].ammoModel) {
 		origin[0] = 70;
 		origin[1] = 0;
@@ -438,7 +438,7 @@ static void CG_DrawStatusBar(void) {
 
 		CG_Draw3DModel(480 + CHAR_WIDTH * 3 + TEXT_ICON_SPACE, 480 - iconSize, iconSize, iconSize, cg_weapons[cent->currentState.weapon].ammoModel, 0, origin, angles);
 	}
-
+	// health
 	if (cg_drawStatusHead.integer == 2) {
 		origin[0] = 60;
 		origin[1] = 0;
@@ -453,15 +453,7 @@ static void CG_DrawStatusBar(void) {
 	} else if (cg_drawStatusHead.integer == 1) {
 		CG_DrawStatusBarHead(240 + CHAR_WIDTH * 3 + TEXT_ICON_SPACE);
 	}
-
-	if (cg.predictedPlayerState.powerups[PW_REDFLAG]) {
-		CG_DrawStatusBarFlag(240 + CHAR_WIDTH * 3 + TEXT_ICON_SPACE + ICON_SIZE, TEAM_RED);
-	} else if (cg.predictedPlayerState.powerups[PW_BLUEFLAG]) {
-		CG_DrawStatusBarFlag(240 + CHAR_WIDTH * 3 + TEXT_ICON_SPACE + ICON_SIZE, TEAM_BLUE);
-	} else if (cg.predictedPlayerState.powerups[PW_NEUTRALFLAG]) {
-		CG_DrawStatusBarFlag(240 + CHAR_WIDTH * 3 + TEXT_ICON_SPACE + ICON_SIZE, TEAM_FREE);
-	}
-
+	// armor
 	if (ps->stats[STAT_ARMOR]) {
 		origin[0] = 90;
 		origin[1] = 0;
@@ -469,6 +461,49 @@ static void CG_DrawStatusBar(void) {
 		angles[YAW] = (cg.time & 2047) * 360 / 2048.0;
 
 		CG_Draw3DModel(CHAR_WIDTH * 3 + TEXT_ICON_SPACE, 480 - iconSize, iconSize, iconSize, cgs.media.armorModel, 0, origin, angles);
+	}
+	// flags
+	if (cg.predictedPlayerState.powerups[PW_REDFLAG]) {
+		CG_DrawStatusBarFlag(240 + CHAR_WIDTH * 3 + TEXT_ICON_SPACE + ICON_SIZE, TEAM_RED);
+	} else if (cg.predictedPlayerState.powerups[PW_BLUEFLAG]) {
+		CG_DrawStatusBarFlag(240 + CHAR_WIDTH * 3 + TEXT_ICON_SPACE + ICON_SIZE, TEAM_BLUE);
+	} else if (cg.predictedPlayerState.powerups[PW_NEUTRALFLAG]) {
+		CG_DrawStatusBarFlag(240 + CHAR_WIDTH * 3 + TEXT_ICON_SPACE + ICON_SIZE, TEAM_FREE);
+	}
+	// skulls
+	if (cgs.gametype == GT_HARVESTER) {
+		value = ps->tokens;
+		s = va("%i", value);
+
+		if (value > 0) {
+			// if we didn't draw a 3D icon, draw a 2D icon for the skull
+			origin[0] = 80;
+			origin[1] = 0;
+			origin[2] = +10;
+			angles[YAW] = (cg.time & 2047) * 360 / 2048.0;
+
+			if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE) {
+				CG_Draw3DModel(185 + CHAR_WIDTH * 3 + TEXT_ICON_SPACE + ICON_SIZE, 480 - iconSize, iconSize, iconSize, cgs.media.redCubeModel, 0, origin, angles);
+			} else {
+				CG_Draw3DModel(185 + CHAR_WIDTH * 3 + TEXT_ICON_SPACE + ICON_SIZE, 480 - iconSize, iconSize, iconSize, cgs.media.blueCubeModel, 0, origin, angles);
+			}
+			// if we didn't draw a 3D icon, draw a 2D icon for health
+			if (!cg_draw3dIcons.integer && cg_drawIcons.integer) {
+				qhandle_t icon;
+
+				if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE) {
+					icon = cgs.media.redCubeIcon;
+				} else {
+					icon = cgs.media.blueCubeIcon;
+				}
+
+				CG_DrawPic(185 + CHAR_WIDTH * 3 + TEXT_ICON_SPACE + ICON_SIZE + 12, 480 - iconSize, iconSize * 0.5, iconSize * 0.5, icon);
+			}
+
+			trap_R_SetColor(colors[0]);
+			CG_DrawBigString(200 + CHAR_WIDTH * 3 + TEXT_ICON_SPACE + ICON_SIZE, 462, s, 1.0F);
+			trap_R_SetColor(NULL);
+		}
 	}
 	// ammo
 	if (cent->currentState.weapon) {
@@ -601,7 +636,7 @@ CG_DrawSnapshot
 static float CG_DrawSnapshot(float y) {
 	char *s;
 
-	s = va("Time: %i Snap: %i Cmd: %i", cg.snap->serverTime, cg.latestSnapshotNum, cgs.serverCommandSequence);
+	s = va("Time:%i Snap:%i Cmd:%i", cg.snap->serverTime, cg.latestSnapshotNum, cgs.serverCommandSequence);
 
 	CG_DrawString(635, y + 2, s, UI_RIGHT|UI_DROPSHADOW|UI_SMALLFONT, NULL);
 
@@ -643,7 +678,7 @@ static float CG_DrawFPS(float y) {
 		}
 
 		fps = 1000 * FPS_FRAMES / (float)total;
-		s = va("%i Fps", fps);
+		s = va("%iFps", fps);
 
 		CG_DrawString(635, y + 2, s, UI_RIGHT|UI_DROPSHADOW|UI_SMALLFONT, NULL);
 	}
@@ -1032,6 +1067,25 @@ static float CG_DrawScores(float y) {
 			s = va("%2i", v);
 			w = CG_DrawStrlen(s, UI_BIGFONT) + 8;
 			x -= w;
+
+			CG_DrawBigString(x + 4, y, s, 1.0f);
+		} else {
+			qboolean spectator;
+
+			score = cg.snap->ps.persistant[PERS_SCORE];
+			spectator = (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR);
+
+			s = va("%2i", score);
+			w = CG_DrawStrlen(s, UI_BIGFONT) + 8;
+			x -= w;
+
+			if (!spectator) {
+				color[0] = 0.5f;
+				color[1] = 0.5f;
+				color[2] = 0.5f;
+				color[3] = 0.33f;
+				CG_FillRect(x, y - 4, w, BIGCHAR_HEIGHT + 8, color);
+			}
 
 			CG_DrawBigString(x + 4, y, s, 1.0f);
 		}
@@ -2228,15 +2282,14 @@ static void CG_Draw2D(stereoFrame_t stereoFrame) {
 	CG_DrawUpperRight(stereoFrame);
 	CG_DrawLowerRight();
 	CG_DrawLowerLeft();
-
-	if (!CG_DrawFollow()) {
-		CG_DrawWarmup();
-	}
 	// don't draw center string if scoreboard is up
 	cg.scoreBoardShowing = CG_DrawScoreboard();
 
 	if (!cg.scoreBoardShowing) {
-		CG_DrawCenterString();
+		if (!CG_DrawFollow()) {
+			CG_DrawWarmup();
+			CG_DrawCenterString();
+		}
 	}
 }
 

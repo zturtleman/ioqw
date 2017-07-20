@@ -728,6 +728,15 @@ static void G_AddBot(const char *name, float skill, const char *team, int delay,
 	// team head model
 	key = "team_headmodel";
 	Info_SetValueForKey(userinfo, key, headmodel);
+	// gender
+	key = "gender";
+	s = Info_ValueForKey(botinfo, key);
+
+	if (!*s) {
+		s = "male";
+	}
+
+	Info_SetValueForKey(userinfo, "sex", s);
 	// color1
 	key = "color1";
 	s = Info_ValueForKey(botinfo, key);

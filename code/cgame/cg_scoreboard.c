@@ -164,14 +164,14 @@ static void CG_DrawClientScore(int y, score_t *score, float *color, float fade, 
 			// draw the class
 			// Tobias FIXME: player class (medic etc.)
 			// draw the flag
-			if (ci->powerups &(1 << PW_NEUTRALFLAG)) {
-				CG_DrawFlagModel(x, y, 16, 16, TEAM_FREE, qfalse);
-				x += 19;
-			} else if (ci->powerups &(1 << PW_REDFLAG)) {
+			if (ci->powerups &(1 << PW_REDFLAG)) {
 				CG_DrawFlagModel(x, y, 16, 16, TEAM_RED, qfalse);
 				x += 19;
 			} else if (ci->powerups &(1 << PW_BLUEFLAG)) {
 				CG_DrawFlagModel(x, y, 16, 16, TEAM_BLUE, qfalse);
+				x += 19;
+			} else if (ci->powerups &(1 << PW_NEUTRALFLAG)) {
+				CG_DrawFlagModel(x, y, 16, 16, TEAM_FREE, qfalse);
 				x += 19;
 			}
 		} else {

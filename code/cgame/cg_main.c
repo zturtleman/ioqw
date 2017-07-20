@@ -300,7 +300,7 @@ static cvarTable_t cvarTable[] = {
 	{&cg_timescaleFadeEnd, "cg_timescaleFadeEnd", "1", 0},
 	{&cg_timescaleFadeSpeed, "cg_timescaleFadeSpeed", "0", 0},
 	{&cg_timescale, "timescale", "1", 0},
-	{&cg_scorePlum, "cg_scorePlums", "0", CVAR_USERINFO|CVAR_ARCHIVE},
+	{&cg_scorePlum, "cg_scorePlum", "0", CVAR_USERINFO|CVAR_ARCHIVE},
 	{&cg_smoothClients, "cg_smoothClients", "1", CVAR_USERINFO|CVAR_ARCHIVE},
 	{&cg_cameraMode, "com_cameraMode", "0", CVAR_CHEAT},
 	{&pmove_fixed, "pmove_fixed", "0", CVAR_SYSTEMINFO},
@@ -1293,6 +1293,17 @@ static void CG_RunCinematicFrame(int handle) {
 #endif
 /*
 =======================================================================================================================================
+CG_InitTeamChat
+=======================================================================================================================================
+*/
+void CG_InitTeamChat(void) {
+	memset(teamChat1, 0, sizeof(teamChat1));
+	memset(teamChat2, 0, sizeof(teamChat2));
+	memset(systemChat, 0, sizeof(systemChat));
+}
+
+/*
+=======================================================================================================================================
 CG_Init
 
 Called after every level change or subsystem restart. Will perform callbacks to make the loading info screen update.
@@ -1396,9 +1407,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum) {
 	CG_SetConfigValues();
 	CG_StartMusic();
 	CG_LoadingString("");
-#ifdef MISSIONPACK
 	CG_InitTeamChat();
-#endif
 	CG_ShaderStateChanged();
 
 	trap_S_ClearLoopingSounds(qtrue);

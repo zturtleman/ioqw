@@ -335,12 +335,12 @@ typedef struct {
 	int time;
 	int scoreFlags;
 	int accuracy;
-	int impressiveCount;
 	int excellentCount;
+	int impressiveCount;
 	int gauntletCount;
+	int captures;
 	int defendCount;
 	int assistCount;
-	int captures;
 	qboolean perfect;
 	int team;
 } score_t;

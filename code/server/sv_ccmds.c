@@ -333,6 +333,7 @@ static void SV_MapRestart_f(void) {
 	}
 	// run another frame to allow things to look at all the players
 	VM_Call(gvm, GAME_RUN_FRAME, sv.time);
+
 	sv.time += 100;
 	svs.time += 100;
 }

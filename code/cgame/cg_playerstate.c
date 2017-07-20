@@ -321,8 +321,14 @@ void CG_CheckLocalSounds(playerState_t *ps, playerState_t *ops) {
 		return;
 	}
 	// reward sounds
-	if (ps->persistant[PERS_CAPTURES] != ops->persistant[PERS_CAPTURES]) {
-		trap_S_StartLocalSound(cgs.media.captureAwardSound, CHAN_ANNOUNCER);
+	if (ps->persistant[PERS_EXCELLENT_COUNT] != ops->persistant[PERS_EXCELLENT_COUNT]) {
+		if (ps->persistant[PERS_EXCELLENT_COUNT] == 1) {
+			sfx = cgs.media.firstExcellentSound;
+		} else {
+			sfx = cgs.media.excellentSound;
+		}
+
+		trap_S_StartLocalSound(sfx, CHAN_ANNOUNCER);
 	}
 
 	if (ps->persistant[PERS_IMPRESSIVE_COUNT] != ops->persistant[PERS_IMPRESSIVE_COUNT]) {
@@ -330,16 +336,6 @@ void CG_CheckLocalSounds(playerState_t *ps, playerState_t *ops) {
 			sfx = cgs.media.firstImpressiveSound;
 		} else {
 			sfx = cgs.media.impressiveSound;
-		}
-
-		trap_S_StartLocalSound(sfx, CHAN_ANNOUNCER);
-	}
-
-	if (ps->persistant[PERS_EXCELLENT_COUNT] != ops->persistant[PERS_EXCELLENT_COUNT]) {
-		if (ps->persistant[PERS_EXCELLENT_COUNT] == 1) {
-			sfx = cgs.media.firstExcellentSound;
-		} else {
-			sfx = cgs.media.excellentSound;
 		}
 
 		trap_S_StartLocalSound(sfx, CHAN_ANNOUNCER);
@@ -353,6 +349,10 @@ void CG_CheckLocalSounds(playerState_t *ps, playerState_t *ops) {
 		}
 
 		trap_S_StartLocalSound(sfx, CHAN_ANNOUNCER);
+	}
+
+	if (ps->persistant[PERS_CAPTURES] != ops->persistant[PERS_CAPTURES]) {
+		trap_S_StartLocalSound(cgs.media.captureAwardSound, CHAN_ANNOUNCER);
 	}
 
 	if (ps->persistant[PERS_DEFEND_COUNT] != ops->persistant[PERS_DEFEND_COUNT]) {

@@ -64,7 +64,7 @@ void Con_ToggleConsole_f(void) {
 	if (clc.state == CA_DISCONNECTED && Key_GetCatcher() == KEYCATCH_CONSOLE) {
 		return;
 	}
-	// persistent console input is more useful (added cvar)
+
 	if (con_autoclear->integer) {
 		Field_Clear(&g_consoleField);
 	}
@@ -656,12 +656,12 @@ void Con_DrawSolidConsole(float frac) {
 	}
 
 	color[0] = 1;
-	color[1] = 0;
-	color[2] = 0;
+	color[1] = 1;
+	color[2] = 1;
 	color[3] = 1;
 	SCR_FillRect(0, y, SCREEN_WIDTH, 2, color);
 	// draw the version number
-	re.SetColor(g_color_table[ColorIndex(COLOR_RED)]);
+	re.SetColor(g_color_table[ColorIndex(COLOR_WHITE)]);
 
 	i = strlen(QW_VERSION);
 
@@ -675,7 +675,7 @@ void Con_DrawSolidConsole(float frac) {
 	// draw from the bottom up
 	if (con.display != con.current) {
 		// draw arrows to show the buffer is backscrolled
-		re.SetColor(g_color_table[ColorIndex(COLOR_RED)]);
+		re.SetColor(g_color_table[ColorIndex(COLOR_WHITE)]);
 
 		for (x = 0; x < con.linewidth; x += 4) {
 			SCR_DrawSmallChar(con.xadjust + (x + 1) * SMALLCHAR_WIDTH, y, '^');

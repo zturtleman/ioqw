@@ -765,6 +765,13 @@ void ClientThink_Real(gentity_t *ent) {
 	}
 #endif
 	Pmove(&pm);
+	// prevent players from standing ontop of each other
+	if (ent->client->ps.groundEntityNum >= 0 && ent->client->ps.groundEntityNum < MAX_CLIENTS && VectorLength(ent->client->ps.velocity) < 200) {
+		// give them some random velocity
+		ent->client->ps.velocity[0] += crandom() * 100;
+		ent->client->ps.velocity[1] += crandom() * 100;
+		ent->client->ps.velocity[2] += 100;
+	}
 	// save results of pmove
 	if (ent->client->ps.eventSequence != oldEventSequence) {
 		ent->eventTime = level.time;

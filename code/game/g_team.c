@@ -151,7 +151,7 @@ static __attribute__((format(printf, 2, 3))) void QDECL PrintMsg(gentity_t *ent,
 AddTeamScore
 
 For gametype GT_TEAM this is called in AddScore in g_combat.c (checks fraglimit to win). For gametype > GT_TEAM this is called when
-gametype-specific scoring happens (checks capturelimit to win (e.g. capture flag, kill obelisk, return skulls)).
+gametype-specific scoring happens (checks capturelimit to win, e.g. capture flag, kill obelisk, return skulls).
 =======================================================================================================================================
 */
 void AddTeamScore(vec3_t origin, int team, int score) {

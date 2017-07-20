@@ -282,9 +282,9 @@ void LocateCamera(gentity_t *ent) {
 	}
 	// swing camera ?
 	if (owner->spawnflags & 4) {
-		// set to 0 for no rotation at all
 		ent->s.powerups = 1;
 	} else {
+		// set to 0 for no rotation at all
 		ent->s.powerups = 0;
 	}
 	// clientNum holds the rotate offset

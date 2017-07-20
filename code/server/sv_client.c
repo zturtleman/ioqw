@@ -364,6 +364,7 @@ gotnewcl:
 	// save the address
 #ifdef LEGACY_PROTOCOL
 	newcl->compat = compat;
+
 	Netchan_Setup(NS_SERVER, &newcl->netchan, from, qport, challenge, compat);
 #else
 	Netchan_Setup(NS_SERVER, &newcl->netchan, from, qport, challenge, qfalse);

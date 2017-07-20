@@ -3216,7 +3216,7 @@ void CL_Init(void) {
 	cl_mouseAccelOffset = Cvar_Get("cl_mouseAccelOffset", "5", CVAR_ARCHIVE);
 	Cvar_CheckRange(cl_mouseAccelOffset, 0.001f, 50000.0f, qfalse);
 	cl_showMouseRate = Cvar_Get("cl_showmouserate", "0", 0);
-	cl_allowDownload = Cvar_Get("cl_allowDownload", "1", CVAR_ARCHIVE);
+	cl_allowDownload = Cvar_Get("cl_allowDownload", "0", CVAR_ARCHIVE);
 #ifdef USE_CURL_DLOPEN
 	cl_cURLLib = Cvar_Get("cl_cURLLib", DEFAULT_CURL_LIB, CVAR_ARCHIVE|CVAR_PROTECTED);
 #endif
