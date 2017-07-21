@@ -3786,7 +3786,7 @@ void BotTeamAI(bot_state_t *bs) {
 
 	numteammates = BotNumTeamMates(bs);
 	// set default strategy
-	if (bs->ctfstrategy < 1 || bs->ctfstrategy > 4) { 
+	if (bs->ctfstrategy < 1 || bs->ctfstrategy > 4) {
 		bs->ctfstrategy = trap_Characteristic_BInteger(bs->character, CHARACTERISTIC_LEADER_STRATEGY, 1, 4);
 	}
 	// give orders

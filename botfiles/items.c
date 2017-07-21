@@ -165,7 +165,7 @@ iteminfo "weapon_handgun"
 
 iteminfo "weapon_machinegun"
 {
-	name		"Machinegun"
+	name		"Machine Gun"
 	model		"models/weapons2/machinegun/machinegun.md3"
 	modelindex	MODELINDEX_MACHINEGUN
 	type		ITEM_WEAPON
@@ -177,7 +177,7 @@ iteminfo "weapon_machinegun"
 
 iteminfo "weapon_heavy_machinegun"
 {
-	name		"Heavy Machinegun"
+	name		"Heavy Machine Gun"
 	model		"models/weapons2/heavy_machinegun/heavymgun.md3"
 	modelindex	MODELINDEX_HEAVY_MACHINEGUN
 	type		ITEM_WEAPON
@@ -189,7 +189,7 @@ iteminfo "weapon_heavy_machinegun"
 
 iteminfo "weapon_chaingun"
 {
-	name		"Chaingun"
+	name		"Chain Gun"
 	model		"models/weapons/vulcan/vulcan.md3"
 	modelindex	MODELINDEX_CHAINGUN
 	type		ITEM_WEAPON
@@ -213,7 +213,7 @@ iteminfo "weapon_shotgun"
 
 iteminfo "weapon_nailgun"
 {
-	name		"Nailgun"
+	name		"Nail Gun"
 	model		"models/weapons/nailgun/nailgun.md3"
 	modelindex	MODELINDEX_NAILGUN
 	type		ITEM_WEAPON
@@ -225,7 +225,7 @@ iteminfo "weapon_nailgun"
 
 iteminfo "weapon_phosphorgun"
 {
-	name		"Phosphorgun"
+	name		"Phosphor Gun"
 	model		"models/weapons/phosphorgun/phosphorgun.md3"
 	modelindex	MODELINDEX_PHOSPHORGUN
 	type		ITEM_WEAPON
@@ -237,7 +237,7 @@ iteminfo "weapon_phosphorgun"
 
 iteminfo "weapon_prox_launcher"
 {
-	name		"Proximity mine launcher"
+	name		"Proximity Launcher"
 	model		"models/weapons/proxmine/proxmine.md3"
 	modelindex	MODELINDEX_PROXLAUNCHER
 	type		ITEM_WEAPON
@@ -249,7 +249,7 @@ iteminfo "weapon_prox_launcher"
 
 iteminfo "weapon_grenadelauncher"
 {
-	name		"Grenade launcher"
+	name		"Grenade Launcher"
 	model		"models/weapons2/grenadel/grenadel.md3"
 	modelindex	MODELINDEX_GRENADELAUNCHER
 	type		ITEM_WEAPON
@@ -261,7 +261,7 @@ iteminfo "weapon_grenadelauncher"
 
 iteminfo "weapon_napalmlauncher"
 {
-	name		"Napalm launcher"
+	name		"Napalm Launcher"
 	model		"models/weapons2/napalml/napalml.md3"
 	modelindex	MODELINDEX_NAPALMLAUNCHER
 	type		ITEM_WEAPON
@@ -273,7 +273,7 @@ iteminfo "weapon_napalmlauncher"
 
 iteminfo "weapon_rocketlauncher"
 {
-	name		"Rocket launcher"
+	name		"Rocket Launcher"
 	model		"models/weapons2/rocketl/rocketl.md3"
 	modelindex	MODELINDEX_ROCKETLAUNCHER
 	type		ITEM_WEAPON
@@ -333,7 +333,7 @@ iteminfo "weapon_bfg"
 
 iteminfo "weapon_missilelauncher"
 {
-	name		"Missile launcher"
+	name		"Missile Launcher"
 	model		"models/weapons2/missile/missilel.md3"
 	modelindex	MODELINDEX_MISSILELAUNCHER
 	type		ITEM_WEAPON
@@ -384,7 +384,7 @@ iteminfo "ammo_hmg_bullets"
 
 iteminfo "ammo_belt"
 {
-	name		"Chaingun Belt"
+	name		"Chain Gun Belt"
 	model		"models/powerups/ammo/chaingunam.md3"
 	modelindex	MODELINDEX_BELT
 	type		ITEM_AMMO
@@ -480,7 +480,7 @@ iteminfo "ammo_rockets"
 
 iteminfo "ammo_lightning"
 {
-	name		"Lightning"
+	name		"Lightning Ammo"
 	model		"models/powerups/ammo/lightningam.md3"
 	modelindex	MODELINDEX_LIGHTNING_AMMO
 	type		ITEM_AMMO
@@ -516,7 +516,7 @@ iteminfo "ammo_cells"
 
 iteminfo "ammo_bfg"
 {
-	name		"Bfg ammo"
+	name		"Bfg Ammo"
 	model		"models/powerups/ammo/bfgam.md3"
 	modelindex	MODELINDEX_BFG_AMMO
 	type		ITEM_AMMO

@@ -82,7 +82,7 @@ void TossClientItems(gentity_t *self) {
 	int i;
 	gentity_t *drop;
 
-	// drop the weapon if not a gauntlet or machinegun
+	// drop the weapon if not a gauntlet or machine gun
 	weapon = self->s.weapon;
 	// make a special check to see if they are changing to a new weapon that isn't the mg or gauntlet. Without this, a client can pick
 	// up a weapon, be killed, and not drop the weapon because their weapon change hasn't completed yet and they are still holding the MG.

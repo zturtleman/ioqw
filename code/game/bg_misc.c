@@ -227,7 +227,7 @@ gitem_t bg_itemlist[] = {
 		"snd/i/puw.wav",
 		{"models/weapons2/machinegun/machinegun.md3", NULL, NULL, NULL},
 /* icon */		"icons/iconw_machinegun",
-/* pickup */	"Machinegun",
+/* pickup */	"Machine Gun",
 		40,
 		IT_WEAPON,
 		WP_MACHINEGUN,
@@ -241,7 +241,7 @@ gitem_t bg_itemlist[] = {
 		"snd/i/puw.wav",
 		{"models/weapons2/heavy_machinegun/heavymgun.md3", NULL, NULL, NULL},
 /* icon */		"icons/iconw_hmgun",
-/* pickup */	"Heavy Machinegun",
+/* pickup */	"Heavy Machine Gun",
 		100,
 		IT_WEAPON,
 		WP_HEAVY_MACHINEGUN,
@@ -255,7 +255,7 @@ gitem_t bg_itemlist[] = {
 		"snd/i/puw.wav",
 		{"models/weapons/vulcan/vulcan.md3", NULL, NULL, NULL},
 /* icon */		"icons/iconw_chaingun",
-/* pickup */	"Chaingun",
+/* pickup */	"Chain Gun",
 		80,
 		IT_WEAPON,
 		WP_CHAINGUN,
@@ -283,7 +283,7 @@ gitem_t bg_itemlist[] = {
 		"snd/i/puw.wav",
 		{"models/weapons/nailgun/nailgun.md3", NULL, NULL, NULL},
 /* icon */		"icons/iconw_nailgun",
-/* pickup */	"Nailgun",
+/* pickup */	"Nail Gun",
 		10,
 		IT_WEAPON,
 		WP_NAILGUN,
@@ -297,7 +297,7 @@ gitem_t bg_itemlist[] = {
 		"snd/i/puw.wav",
 		{"models/weapons/phosphorgun/phosphorgun.md3", NULL, NULL, NULL},
 /* icon */		"icons/iconw_phosphorgun",
-/* pickup */	"Phosphorgun",
+/* pickup */	"Phosphor Gun",
 		50,
 		IT_WEAPON,
 		WP_PHOSPHORGUN,
@@ -483,7 +483,7 @@ gitem_t bg_itemlist[] = {
 		"snd/i/pum.wav",
 		{"models/powerups/ammo/chaingunam.md3", NULL, NULL, NULL},
 /* icon */		"icons/icona_chaingun",
-/* pickup */	"Chaingun Belt",
+/* pickup */	"Chain Gun Belt",
 		80,
 		IT_AMMO,
 		WP_CHAINGUN,
@@ -595,7 +595,7 @@ gitem_t bg_itemlist[] = {
 		"snd/i/pum.wav",
 		{"models/powerups/ammo/lightningam.md3", NULL, NULL, NULL},
 /* icon */		"icons/icona_lightning",
-/* pickup */	"Lightning",
+/* pickup */	"Lightning Ammo",
 		50,
 		IT_AMMO,
 		WP_LIGHTNING,
@@ -1107,6 +1107,20 @@ qboolean BG_CanItemBeGrabbed(int gametype, const entityState_t *ent, const playe
 
 			return qtrue;
 		case IT_TEAM: // team items, such as flags
+			if (gametype == GT_CTF) {
+				// ent->modelindex2 is non-zero on items if they are dropped
+				// we need to know this because we can pick up our dropped flag (and return it) but we can't pick up our flag at base
+				if (ps->persistant[PERS_TEAM] == TEAM_RED) {
+					if (item->giTag == PW_BLUEFLAG || (item->giTag == PW_REDFLAG && ent->modelindex2) || (item->giTag == PW_REDFLAG && ps->powerups[PW_BLUEFLAG])) {
+						return qtrue;
+					}
+				} else if (ps->persistant[PERS_TEAM] == TEAM_BLUE) {
+					if (item->giTag == PW_REDFLAG || (item->giTag == PW_BLUEFLAG && ent->modelindex2) || (item->giTag == PW_BLUEFLAG && ps->powerups[PW_REDFLAG])) {
+						return qtrue;
+					}
+				}
+			}
+
 			if (gametype == GT_1FCTF) {
 				// neutral flag can always be picked up
 				if (item->giTag == PW_NEUTRALFLAG) {
@@ -1119,20 +1133,6 @@ qboolean BG_CanItemBeGrabbed(int gametype, const entityState_t *ent, const playe
 					}
 				} else if (ps->persistant[PERS_TEAM] == TEAM_BLUE) {
 					if (item->giTag == PW_REDFLAG && ps->powerups[PW_NEUTRALFLAG]) {
-						return qtrue;
-					}
-				}
-			}
-
-			if (gametype == GT_CTF) {
-				// ent->modelindex2 is non-zero on items if they are dropped
-				// we need to know this because we can pick up our dropped flag (and return it) but we can't pick up our flag at base
-				if (ps->persistant[PERS_TEAM] == TEAM_RED) {
-					if (item->giTag == PW_BLUEFLAG || (item->giTag == PW_REDFLAG && ent->modelindex2) || (item->giTag == PW_REDFLAG && ps->powerups[PW_BLUEFLAG])) {
-						return qtrue;
-					}
-				} else if (ps->persistant[PERS_TEAM] == TEAM_BLUE) {
-					if (item->giTag == PW_REDFLAG || (item->giTag == PW_BLUEFLAG && ent->modelindex2) || (item->giTag == PW_BLUEFLAG && ps->powerups[PW_REDFLAG])) {
 						return qtrue;
 					}
 				}

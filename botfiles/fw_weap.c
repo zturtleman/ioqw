@@ -31,7 +31,7 @@ weight "Gauntlet"
 	}
 }
 
-weight "Handgun"
+weight "Trusty .44"
 {
 	switch (INVENTORY_HANDGUN)
 	{
@@ -61,7 +61,7 @@ weight "Handgun"
 	}
 }
 
-weight "Machinegun"
+weight "Machine Gun"
 {
 	switch (INVENTORY_MACHINEGUN)
 	{
@@ -91,7 +91,7 @@ weight "Machinegun"
 	}
 }
 
-weight "Heavy Machinegun"
+weight "Heavy Machine Gun"
 {
 	switch (INVENTORY_HEAVY_MACHINEGUN)
 	{
@@ -121,7 +121,7 @@ weight "Heavy Machinegun"
 	}
 }
 
-weight "Chaingun"
+weight "Chain Gun"
 {
 	switch (INVENTORY_CHAINGUN)
 	{
@@ -195,7 +195,7 @@ weight "Shotgun"
 	}
 }
 
-weight "Nailgun"
+weight "Nail Gun"
 {
 	switch (INVENTORY_NAILGUN)
 	{
@@ -232,7 +232,7 @@ weight "Nailgun"
 	}
 }
 
-weight "Phosphorgun"
+weight "Phosphor Gun"
 {
 	switch (INVENTORY_PHOSPHORGUN)
 	{
@@ -262,7 +262,7 @@ weight "Phosphorgun"
 	}
 }
 
-weight "Proximity mine launcher"
+weight "Proximity Launcher"
 {
 	switch (INVENTORY_PROXLAUNCHER)
 	{
@@ -285,7 +285,7 @@ weight "Proximity mine launcher"
 	}
 }
 
-weight "Grenade launcher"
+weight "Grenade Launcher"
 {
 	switch (INVENTORY_GRENADELAUNCHER)
 	{
@@ -308,7 +308,7 @@ weight "Grenade launcher"
 	}
 }
 
-weight "Napalm launcher"
+weight "Napalm Launcher"
 {
 	switch (INVENTORY_NAPALMLAUNCHER)
 	{
@@ -345,7 +345,7 @@ weight "Napalm launcher"
 	}
 }
 
-weight "Rocket launcher"
+weight "Rocket Launcher"
 {
 	switch (INVENTORY_ROCKETLAUNCHER)
 	{
@@ -517,7 +517,7 @@ weight "BFG 10K"
 	}
 }
 
-weight "Missile launcher"
+weight "Missile Launcher"
 {
 	switch (INVENTORY_MISSILELAUNCHER)
 	{

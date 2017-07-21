@@ -306,7 +306,7 @@ static void CG_Obituary(entityState_t *ent) {
 				break;
 			case MOD_CHAINGUN:
 				message = "got lead poisoning from";
-				message2 = "'s Chaingun";
+				message2 = "'s chain gun";
 				break;
 			case MOD_SHOTGUN:
 				message = "was gunned down by";
@@ -328,7 +328,7 @@ static void CG_Obituary(entityState_t *ent) {
 				break;
 			case MOD_NAPALM_SPLASH:
 				message = "roasted to a nice golden brown by";
-				message2 = "'s Napalm launcher";
+				message2 = "'s napalm launcher";
 				break;
 			case MOD_ROCKET:
 				message = "ate";
@@ -346,7 +346,7 @@ static void CG_Obituary(entityState_t *ent) {
 				break;
 			case MOD_PLASMA:
 				message = "got burned by";
-				message2 = "'s Plasma Gun";
+				message2 = "'s plasma gun";
 				break;
 			case MOD_PLASMA_SPLASH:
 				message = "was melted by";

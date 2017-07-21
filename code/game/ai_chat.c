@@ -289,17 +289,17 @@ char *BotWeaponNameForMeansOfDeath(int mod) {
 		case MOD_HANDGUN:
 			return "Trusty .44";
 		case MOD_MACHINEGUN:
-			return "Machinegun";
+			return "Machine Gun";
 		case MOD_HEAVY_MACHINEGUN:
-			return "Heavy Machinegun";
+			return "Heavy Machine Gun";
 		case MOD_CHAINGUN:
-			return "Chaingun";
+			return "Chain Gun";
 		case MOD_SHOTGUN:
 			return "Shotgun";
 		case MOD_NAIL:
-			return "Nailgun";
+			return "Nail Gun";
 		case MOD_PHOSPHOR:
-			return "Phosphorgun";
+			return "Phosphor Gun";
 		case MOD_PROXIMITY_MINE:
 			return "Proximity Launcher";
 		case MOD_GRENADE_SPLASH:
@@ -345,17 +345,17 @@ char *BotRandomWeaponName(void) {
 		case 1:
 			return "Trusty .44";
 		case 2:
-			return "Machinegun";
+			return "Machine Gun";
 		case 3:
-			return "Heavy Machinegun";
+			return "Heavy Machine Gun";
 		case 4:
-			return "Chaingun";
+			return "Chain Gun";
 		case 5:
 			return "Shotgun";
 		case 6:
-			return "Nailgun";
+			return "Nail Gun";
 		case 7:
-			return "Phosphorgun";
+			return "Phosphor Gun";
 		case 8:
 			return "Proximity Launcher";
 		case 9:

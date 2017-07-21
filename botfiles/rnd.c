@@ -1344,24 +1344,24 @@ language = {
 }
 
 weapon = {
-	"Gauntlet";
-	"Handgun";
-	"Machinegun";
-	"Heavy Machinegun";
-	"Chaingun";
-	"Shotgun";
-	"Nailgun";
-	"Phosphorgun";
-	"Proximity mine launcher";
-	"Grenade launcher";
-	"Napalm launcher";
-	"Rocket launcher";
-	"Lightning Gun";
-	"Railgun";
-	"Plasma Gun";
+	"gauntlet";
+	"handgun";
+	"machine gun";
+	"heavy machine gun";
+	"chain gun";
+	"shotgun";
+	"nail gun";
+	"phosphor gun";
+	"proximity launcher";
+	"grenade launcher";
+	"napalm launcher";
+	"rocket launcher";
+	"lightning gun";
+	"railgun";
+	"plasma gun";
 	"BFG";
 	"BFG 10K";
-	"Missile launcher";
+	"missile launcher";
 }
 
 ponder = {
@@ -2363,7 +2363,7 @@ one_liners = {
 	"~Did you see that? I didn't think so.";
 	"~Have a double-ought forget-me-not.";
 	"~It's dangerous sneaking up behind a cyborg.";
-	"~Didn't your mother teach you never to run with a ~rail gun?";
+	"~Didn't your mother teach you never to run with a ~railgun?";
 	"I thought I told you to shut up.";
 	"I'm sure I told you to shut up.";
 	"Hey, little kitty-cat, I have a treat for you.";

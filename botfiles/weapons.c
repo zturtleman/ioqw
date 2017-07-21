@@ -71,7 +71,7 @@ projectileinfo
 
 weaponinfo
 {
-	name			"Handgun"
+	name			"Trusty .44"
 	number			WEAPONINDEX_HANDGUN
 	projectile		"handgunbullet"
 	numprojectiles	1
@@ -81,7 +81,7 @@ weaponinfo
 }
 
 //===========================================================================
-// Machinegun
+// Machine Gun
 //===========================================================================
 projectileinfo
 {
@@ -93,7 +93,7 @@ projectileinfo
 
 weaponinfo
 {
-	name			"Machinegun"
+	name			"Machine Gun"
 	number			WEAPONINDEX_MACHINEGUN
 	projectile		"machinegunbullet"
 	numprojectiles	1
@@ -103,7 +103,7 @@ weaponinfo
 }
 
 //===========================================================================
-// Heavy Machinegun
+// Heavy Machine Gun
 //===========================================================================
 projectileinfo
 {
@@ -115,7 +115,7 @@ projectileinfo
 
 weaponinfo
 {
-	name			"Heavy Machinegun"
+	name			"Heavy Machine Gun"
 	number			WEAPONINDEX_HEAVY_MACHINEGUN
 	projectile		"hmgbullet"
 	numprojectiles	1
@@ -125,7 +125,7 @@ weaponinfo
 }
 
 //===========================================================================
-// Chaingun
+// Chain Gun
 //===========================================================================
 projectileinfo
 {
@@ -137,7 +137,7 @@ projectileinfo
 
 weaponinfo
 {
-	name			"Chaingun"
+	name			"Chain Gun"
 	number			WEAPONINDEX_CHAINGUN
 	projectile		"chaingunbullet"
 	numprojectiles	1
@@ -169,7 +169,7 @@ weaponinfo
 }
 
 //===========================================================================
-// Nailgun
+// Nail Gun
 //===========================================================================
 projectileinfo
 {
@@ -181,7 +181,7 @@ projectileinfo
 
 weaponinfo
 {
-	name			"Nailgun"
+	name			"Nail Gun"
 	number			WEAPONINDEX_NAILGUN
 	projectile		"nail"
 	numprojectiles	15
@@ -191,7 +191,7 @@ weaponinfo
 }
 
 //===========================================================================
-// Phosphorgun
+// Phosphor Gun
 //===========================================================================
 projectileinfo
 {
@@ -203,7 +203,7 @@ projectileinfo
 
 weaponinfo
 {
-	name			"Phosphorgun"
+	name			"Phosphor Gun"
 	number			WEAPONINDEX_PHOSPHORGUN
 	projectile		"capsule"
 	numprojectiles	1
@@ -213,7 +213,7 @@ weaponinfo
 }
 
 //===========================================================================
-// Proximity mine launcher
+// Proximity Launcher
 //===========================================================================
 projectileinfo
 {
@@ -225,7 +225,7 @@ projectileinfo
 
 weaponinfo
 {
-	name			"Proximity mine launcher"
+	name			"Proximity Launcher"
 	number			WEAPONINDEX_PROXLAUNCHER
 	projectile		"proxmine"
 	numprojectiles	1
@@ -235,7 +235,7 @@ weaponinfo
 }
 
 //===========================================================================
-// Grenade launcher
+// Grenade Launcher
 //===========================================================================
 projectileinfo
 {
@@ -248,7 +248,7 @@ projectileinfo
 
 weaponinfo
 {
-	name			"Grenade launcher"
+	name			"Grenade Launcher"
 	number			WEAPONINDEX_GRENADELAUNCHER
 	projectile		"grenade"
 	numprojectiles	1
@@ -258,7 +258,7 @@ weaponinfo
 }
 
 //===========================================================================
-// Napalm launcher
+// Napalm Launcher
 //===========================================================================
 projectileinfo
 {
@@ -271,7 +271,7 @@ projectileinfo
 
 weaponinfo
 {
-	name			"Napalm launcher"
+	name			"Napalm Launcher"
 	number			WEAPONINDEX_NAPALMLAUNCHER
 	projectile		"napalm"
 	numprojectiles	1
@@ -281,7 +281,7 @@ weaponinfo
 }
 
 //===========================================================================
-// Rocket launcher
+// Rocket Launcher
 //===========================================================================
 projectileinfo
 {
@@ -294,7 +294,7 @@ projectileinfo
 
 weaponinfo
 {
-	name			"Rocket launcher"
+	name			"Rocket Launcher"
 	number			WEAPONINDEX_ROCKETLAUNCHER
 	projectile		"rocket"
 	numprojectiles	1
@@ -304,7 +304,7 @@ weaponinfo
 }
 
 //===========================================================================
-// Lightning
+// Lightning Gun
 //===========================================================================
 projectileinfo
 {
@@ -394,7 +394,7 @@ weaponinfo
 }
 
 //===========================================================================
-// Missile launcher
+// Missile Launcher
 //===========================================================================
 projectileinfo
 {
@@ -407,7 +407,7 @@ projectileinfo
 
 weaponinfo
 {
-	name			"Missile launcher"
+	name			"Missile Launcher"
 	number			WEAPONINDEX_MISSILELAUNCHER
 	projectile		"missile"
 	numprojectiles	1

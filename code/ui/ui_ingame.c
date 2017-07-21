@@ -368,7 +368,7 @@ void InGame_MenuInit(void) {
 	s_ingame.startnew.color = color_red;
 	s_ingame.startnew.style = UI_CENTER|UI_SMALLFONT;
 
-	if (!trap_Cvar_VariableValue( "sv_running") || (gametype == GT_SINGLE_PLAYER)) {
+	if (!trap_Cvar_VariableValue("sv_running") || (gametype == GT_SINGLE_PLAYER)) {
 		s_ingame.startnew.generic.flags |= QMF_GRAYED;
 	}
 

@@ -2391,27 +2391,27 @@ qboolean BotAggression(bot_state_t *bs) {
 	if (bs->inventory[INVENTORY_SCOUT]) {
 		return qtrue;
 	}
-	// if the bot can use the heavy machinegun.
+	// if the bot can use the heavy machine gun.
 	if (bs->inventory[INVENTORY_HEAVY_MACHINEGUN] > 0 && bs->inventory[INVENTORY_HMG_BULLETS] > 80) {
 		return qtrue;
 	}
-	// if the bot can use the chaingun.
+	// if the bot can use the chain gun.
 	if (bs->inventory[INVENTORY_CHAINGUN] > 0 && bs->inventory[INVENTORY_BELT] > 50) {
 		return qtrue;
 	}
-	// if the bot can use the shotgun.
+	// if the bot can use the shot gun.
 	if (bs->inventory[INVENTORY_SHOTGUN] > 0 && bs->inventory[INVENTORY_SHELLS] > 5) {
 		return qtrue;
 	}
-	// if the bot can use the nailgun.
+	// if the bot can use the nail gun.
 	if (bs->inventory[INVENTORY_NAILGUN] > 0 && bs->inventory[INVENTORY_NAILS] > 5) {
 		return qtrue;
 	}
-	// if the bot can use the phosphorgun.
+	// if the bot can use the phosphor gun.
 	if (bs->inventory[INVENTORY_PHOSPHORGUN] > 0 && bs->inventory[INVENTORY_CAPSULES] > 30) {
 		return qtrue;
 	}
-	// if the bot can use the rocketlauncher.
+	// if the bot can use the rocket launcher.
 	if (bs->inventory[INVENTORY_ROCKETLAUNCHER] > 0 && bs->inventory[INVENTORY_ROCKETS] > 5) {
 		return qtrue;
 	}
@@ -2423,7 +2423,7 @@ qboolean BotAggression(bot_state_t *bs) {
 	if (bs->inventory[INVENTORY_RAILGUN] > 0 && bs->inventory[INVENTORY_SLUGS] > 3) {
 		return qtrue;
 	}
-	// if the bot can use the plasmagun.
+	// if the bot can use the plasma gun.
 	if (bs->inventory[INVENTORY_PLASMAGUN] > 0 && bs->inventory[INVENTORY_CELLS] > 40) {
 		return qtrue;
 	}
@@ -2431,7 +2431,7 @@ qboolean BotAggression(bot_state_t *bs) {
 	if (bs->inventory[INVENTORY_BFG10K] > 0 && bs->inventory[INVENTORY_BFG_AMMO] > 5) {
 		return qtrue;
 	}
-	// if the bot can use the missilelauncher.
+	// if the bot can use the missile launcher.
 	if (bs->inventory[INVENTORY_MISSILELAUNCHER] > 0 && bs->inventory[INVENTORY_MISSILES] > 1) {
 		return qtrue;
 	}
@@ -2664,27 +2664,27 @@ int BotHasPersistantPowerupAndWeapon(bot_state_t *bs) {
 			return qfalse;
 		}
 	}
-	// if the bot can use the heavy machinegun
+	// if the bot can use the heavy machine gun
 	if (bs->inventory[INVENTORY_HEAVY_MACHINEGUN] > 0 && bs->inventory[INVENTORY_HMG_BULLETS] > 80) {
 		return qtrue;
 	}
-	// if the bot can use the chaingun
+	// if the bot can use the chain gun
 	if (bs->inventory[INVENTORY_CHAINGUN] > 0 && bs->inventory[INVENTORY_BELT] > 80) {
 		return qtrue;
 	}
-	// if the bot can use the nailgun
+	// if the bot can use the nail gun
 	if (bs->inventory[INVENTORY_NAILGUN] > 0 && bs->inventory[INVENTORY_NAILS] > 5) {
 		return qtrue;
 	}
-	// if the bot can use the phosphorgun
+	// if the bot can use the phosphor gun
 	if (bs->inventory[INVENTORY_PHOSPHORGUN] > 0 && bs->inventory[INVENTORY_CAPSULES] > 50) {
 		return qtrue;
 	}
-	// if the bot can use the napalmlauncher
+	// if the bot can use the napalm launcher
 	if (bs->inventory[INVENTORY_NAPALMLAUNCHER] > 0 && bs->inventory[INVENTORY_CANISTERS] > 5) {
 		return qtrue;
 	}
-	// if the bot can use the rocketlauncher
+	// if the bot can use the rocket launcher
 	if (bs->inventory[INVENTORY_ROCKETLAUNCHER] > 0 && bs->inventory[INVENTORY_ROCKETS] > 5) {
 		return qtrue;
 	}
@@ -2696,7 +2696,7 @@ int BotHasPersistantPowerupAndWeapon(bot_state_t *bs) {
 	if (bs->inventory[INVENTORY_RAILGUN] > 0 && bs->inventory[INVENTORY_SLUGS] > 5) {
 		return qtrue;
 	}
-	// if the bot can use the plasmagun
+	// if the bot can use the plasma gun
 	if (bs->inventory[INVENTORY_PLASMAGUN] > 0 && bs->inventory[INVENTORY_CELLS] > 20) {
 		return qtrue;
 	}
@@ -2704,7 +2704,7 @@ int BotHasPersistantPowerupAndWeapon(bot_state_t *bs) {
 	if (bs->inventory[INVENTORY_BFG10K] > 0 && bs->inventory[INVENTORY_BFG_AMMO] > 7) {
 		return qtrue;
 	}
-	// if the bot can use the missilelauncher
+	// if the bot can use the missile launcher
 	if (bs->inventory[INVENTORY_MISSILELAUNCHER] > 0 && bs->inventory[INVENTORY_MISSILES] > 2) {
 		return qtrue;
 	}
