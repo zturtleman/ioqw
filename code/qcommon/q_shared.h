@@ -63,7 +63,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 // You shouldn't change this unless you know what you're doing
 #define LEGACY_MASTER_GAMENAME		"Quake3Arena"
 #define LEGACY_HEARTBEAT_FOR_MASTER	"QuakeArena-1"
-#define BASETA						"missionpack"
 #ifndef PRODUCT_VERSION
 #define PRODUCT_VERSION				"1.00"
 #endif

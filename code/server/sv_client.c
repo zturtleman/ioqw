@@ -735,10 +735,8 @@ int SV_WriteDownloadToClient(client_t *cl, msg_t *msg) {
 	}
 
 	if (!cl->download) {
-		qboolean idPack = qfalse;
-#ifndef STANDALONE
-		qboolean missionPack = qfalse;
-#endif
+		qboolean qwPack = qfalse;
+
 		// chop off filename extension.
 		Com_sprintf(pakbuf, sizeof(pakbuf), "%s", cl->downloadName);
 
@@ -758,11 +756,7 @@ int SV_WriteDownloadToClient(client_t *cl, msg_t *msg) {
 					if (!FS_FilenameCompare(Cmd_Argv(curindex), pakbuf)) {
 						unreferenced = 0;
 						// now that we know the file is referenced, check whether it's legal to download it.
-#ifndef STANDALONE
-						missionPack = FS_idPak(pakbuf, BASETA, NUM_TA_PAKS);
-						idPack = missionPack;
-#endif
-						idPack = idPack || FS_idPak(pakbuf, BASEGAME, NUM_ID_PAKS);
+						qwPack = qwPack || FS_qwPak(pakbuf, BASEGAME, NUM_QW_PAKS);
 						break;
 					}
 				}
@@ -771,22 +765,14 @@ int SV_WriteDownloadToClient(client_t *cl, msg_t *msg) {
 
 		cl->download = 0;
 		// we open the file here
-		if (!(sv_allowDownload->integer & DLF_ENABLE) || (sv_allowDownload->integer & DLF_NO_UDP) || idPack || unreferenced || (cl->downloadSize = FS_SV_FOpenFileRead(cl->downloadName, &cl->download)) < 0) {
+		if (!(sv_allowDownload->integer & DLF_ENABLE) || (sv_allowDownload->integer & DLF_NO_UDP) || qwPack || unreferenced || (cl->downloadSize = FS_SV_FOpenFileRead(cl->downloadName, &cl->download)) < 0) {
 			// cannot auto-download file
 			if (unreferenced) {
 				Com_Printf("clientDownload: %d : \"%s\" is not referenced and cannot be downloaded.\n", (int)(cl - svs.clients), cl->downloadName);
 				Com_sprintf(errorMessage, sizeof(errorMessage), "File \"%s\" is not referenced and cannot be downloaded.", cl->downloadName);
-			} else if (idPack) {
+			} else if (qwPack) {
 				Com_Printf("clientDownload: %d : \"%s\" cannot download id pk3 files\n", (int)(cl - svs.clients), cl->downloadName);
-#ifndef STANDALONE
-				if (missionPack) {
-					Com_sprintf(errorMessage, sizeof(errorMessage), "Cannot autodownload Team Arena file \"%s\"\n"
-						"The Team Arena mission pack can be found in your local game store.", cl->downloadName);
-				} else
-#endif
-				{
-					Com_sprintf(errorMessage, sizeof(errorMessage), "Cannot autodownload id pk3 file \"%s\"", cl->downloadName);
-				}
+				Com_sprintf(errorMessage, sizeof(errorMessage), "Cannot autodownload id pk3 file \"%s\"", cl->downloadName);
 			} else if (!(sv_allowDownload->integer & DLF_ENABLE) || (sv_allowDownload->integer & DLF_NO_UDP)) {
 				Com_Printf("clientDownload: %d : \"%s\" download disabled\n", (int)(cl - svs.clients), cl->downloadName);
 

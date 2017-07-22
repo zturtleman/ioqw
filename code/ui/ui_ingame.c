@@ -213,11 +213,11 @@ void InGame_MenuInit(void) {
 	s_ingame.frame.generic.flags = QMF_INACTIVE;
 	s_ingame.frame.generic.name = INGAME_FRAME;
 	s_ingame.frame.generic.x = 320 - 233;
-	s_ingame.frame.generic.y = 240 - 166;
+	s_ingame.frame.generic.y = 240 - 194;
 	s_ingame.frame.width = 466;
-	s_ingame.frame.height = 356;
+	s_ingame.frame.height = 384;
 
-	y = 88;
+	y = 60;
 	s_ingame.team.generic.type = MTYPE_PTEXT;
 	s_ingame.team.generic.flags = QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
 	s_ingame.team.generic.x = 320;

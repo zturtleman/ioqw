@@ -475,9 +475,7 @@ extern int cvar_modifiedFlags;
 #define FS_UI_REF		0x02
 #define FS_CGAME_REF	0x04
 // number of id paks that will never be autodownloaded from base game/missionpack
-#define NUM_ID_PAKS 9
-#define NUM_TA_PAKS 4
-
+#define NUM_QW_PAKS 4
 #define MAX_FILE_HANDLES 64
 #ifdef DEDICATED
 #define QWCONFIG_CFG "qwconfig_server.cfg"
@@ -571,7 +569,7 @@ void FS_PureServerSetLoadedPaks(const char *pakSums, const char *pakNames);
 // separated checksums will be checked for files, with the
 // sole exception of .cfg files.
 qboolean FS_CheckDirTraversal(const char *checkdir);
-qboolean FS_idPak(char *pak, char *base, int numPaks);
+qboolean FS_qwPak(char *pak, char *base, int numPaks);
 qboolean FS_ComparePaks(char *neededpaks, int len, qboolean dlstring);
 void FS_Rename(const char *from, const char *to);
 void FS_Remove(const char *osPath);
