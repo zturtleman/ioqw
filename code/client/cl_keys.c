@@ -1489,7 +1489,7 @@ void CL_LoadConsoleHistory(void) {
 =======================================================================================================================================
 CL_SaveConsoleHistory
 
-Save the console history into the cvar cl_consoleHistory so that it persists across invocations of q3.
+Save the console history into the cvar cl_consoleHistory so that it persists across invocations of qw.
 =======================================================================================================================================
 */
 void CL_SaveConsoleHistory(void) {

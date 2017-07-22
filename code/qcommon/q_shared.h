@@ -29,20 +29,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #ifndef __Q_SHARED_H
 #define __Q_SHARED_H
 
-#ifdef STANDALONE
-#define PRODUCT_NAME				"Quake Wars"
-#define BASEGAME					"foobar"
-#define CLIENT_WINDOW_TITLE			"Quake Wars"
-#define CLIENT_WINDOW_MIN_TITLE		"QW"
-#define HOMEPATH_NAME_UNIX			".quakewars"
-#define HOMEPATH_NAME_WIN			"Quake Wars"
-#define HOMEPATH_NAME_MACOSX		HOMEPATH_NAME_WIN
-// #define STEAMPATH_NAME			"Foo Bar"
-// #define STEAMPATH_APPID			""
-#define GAMENAME_FOR_MASTER			"QuakeWars" // must NOT contain whitespace
-#define CINEMATICS_LOGO				"foologo.roq"
-#define CINEMATICS_INTRO			"intro.roq"
-#else
 #define PRODUCT_NAME				"Quake Wars"
 #define BASEGAME					"Data"
 #define CLIENT_WINDOW_TITLE			"Quake Wars"
@@ -50,13 +36,12 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define HOMEPATH_NAME_UNIX			".quakewars"
 #define HOMEPATH_NAME_WIN			"Quake Wars"
 #define HOMEPATH_NAME_MACOSX		HOMEPATH_NAME_WIN
-#define STEAMPATH_NAME				"Quake 3 Arena"
-#define STEAMPATH_APPID				"2200"
-#define GOGPATH_ID					"1441704920"
-#define GAMENAME_FOR_MASTER			"QuakeWars"
-#define CINEMATICS_LOGO				"idlogo.RoQ"
+#define STEAMPATH_NAME				"Quake Wars"
+#define STEAMPATH_APPID				""
+#define GOGPATH_ID					"Quake Wars"
+#define GAMENAME_FOR_MASTER			""
+#define CINEMATICS_LOGO				"qwlogo.RoQ"
 #define CINEMATICS_INTRO			"intro.RoQ"
-#endif
 // Heartbeat for dpmaster protocol. You shouldn't change this unless you know what you're doing
 #define HEARTBEAT_FOR_MASTER		"DarkPlaces"
 // When com_gamename is LEGACY_MASTER_GAMENAME, use quake3 master protocol.

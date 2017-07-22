@@ -151,24 +151,21 @@ or configs will never get loaded from disk!
 =======================================================================================================================================
 */
 
-// every time a new demo pk3 file is built, this checksum must be updated.
+// every time a new pk3 file is built, this checksum must be updated.
 // the easiest way to get it is to just run the game and see what it spits out
-#ifndef STANDALONE
 static const unsigned int pak_checksums[] = {
 	2031733575u,
 	2694105287u,
 	1798944979u,
 	2846686680u
 };
-#endif
+
 // if this is defined, the executable positively won't work with any paks other
 // than the demo pak, even if productid is present. This is only used for our
 // last demo release to prevent the mac and linux users from using the demo
 // executable with the production windows pak before the mac/linux products
 // hit the shelves a little later
 // NOW defined in build files
-//#define PRE_RELEASE_TADEMO
-
 #define MAX_ZPATH 256
 #define MAX_SEARCH_PATHS 4096
 #define MAX_FILEHASH_SIZE 1024
@@ -3247,16 +3244,9 @@ static void FS_Startup(const char *gameName) {
 	Com_Printf("%d files in pk3 files\n", fs_packFiles);
 }
 
-#ifndef STANDALONE
 /*
 =======================================================================================================================================
 FS_CheckPak0
-
-Check whether any of the original id pak files is present, and start up in standalone mode, if there are none and a different
-com_basegame was set.
-
-NOTE: If you're building a game that doesn't depend on the Q3 media pak0.pk3, you'll want to remove this by defining STANDALONE in
-q_shared.h.
 =======================================================================================================================================
 */
 static void FS_CheckPak0(void) {
@@ -3292,19 +3282,14 @@ static void FS_CheckPak0(void) {
 		}
 	}
 
-	if (!foundPak && Q_stricmp(com_basegame->string, BASEGAME)) {
-		Cvar_Set("com_standalone", "1");
-	} else {
-		Cvar_Set("com_standalone", "0");
-	}
-	if (!com_standalone->integer && (foundPak & 0x0f) != 0x0f) {
+	if ((foundPak & 0x0f) != 0x0f) {
 		char errorText[MAX_STRING_CHARS] = "";
 
 		Q_strcat(errorText, sizeof(errorText), va("Missing files. Please re-install Quake Wars. Also check that your Quake Wars executable is in the correct place and that every file in the \"%s\" directory is present and readable", BASEGAME));
 		Com_Error(ERR_FATAL, "%s", errorText);
 	}
 }
-#endif
+
 /*
 =======================================================================================================================================
 FS_LoadedPakChecksums
@@ -3648,9 +3633,7 @@ void FS_InitFilesystem(void) {
 	}
 	// try to start up normally
 	FS_Startup(com_basegame->string);
-#ifndef STANDALONE
 	FS_CheckPak0();
-#endif
 	// if we can't find default.cfg, assume that the paths are busted and error out now, rather than getting an unreadable graphics
 	// screen when the font fails to load
 	if (FS_ReadFile("default.cfg", NULL) <= 0) {
@@ -3679,9 +3662,7 @@ void FS_Restart(int checksumFeed) {
 	FS_ClearPakReferences(0);
 	// try to start up normally
 	FS_Startup(com_basegame->string);
-#ifndef STANDALONE
 	FS_CheckPak0();
-#endif
 	// if we can't find default.cfg, assume that the paths are busted and error out now, rather than getting an unreadable graphics
 	// screen when the font fails to load
 	if (FS_ReadFile("default.cfg", NULL) <= 0) {
