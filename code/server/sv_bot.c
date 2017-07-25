@@ -488,8 +488,7 @@ int SV_BotLibSetup(void) {
 =======================================================================================================================================
 SV_BotLibShutdown
 
-Called when either the entire server is being killed, or it is changing to a
-different game directory.
+Called when either the entire server is being killed, or it is changing to a different game directory.
 =======================================================================================================================================
 */
 int SV_BotLibShutdown(void) {

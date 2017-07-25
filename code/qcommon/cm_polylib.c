@@ -408,6 +408,7 @@ void ClipWindingEpsilon(winding_t *in, vec3_t normal, vec_t dist, vec_t epsilon,
 
 		VectorCopy(mid, f->p[f->numpoints]);
 		f->numpoints++;
+
 		VectorCopy(mid, b->p[b->numpoints]);
 		b->numpoints++;
 	}
@@ -471,6 +472,7 @@ void ChopWindingInPlace(winding_t **inout, vec3_t normal, vec_t dist, vec_t epsi
 	}
 
 	maxpts = in->numpoints + 4; // cant use counts[0] + 2 because of fp grouping errors
+
 	f = AllocWinding(maxpts);
 
 	for (i = 0; i < in->numpoints; i++) {
@@ -505,6 +507,7 @@ void ChopWindingInPlace(winding_t **inout, vec3_t normal, vec_t dist, vec_t epsi
 		}
 
 		VectorCopy(mid, f->p[f->numpoints]);
+
 		f->numpoints++;
 	}
 
@@ -524,8 +527,7 @@ void ChopWindingInPlace(winding_t **inout, vec3_t normal, vec_t dist, vec_t epsi
 =======================================================================================================================================
 ChopWinding
 
-Returns the fragment of in that is on the front side of the cliping plane.
-The original is freed.
+Returns the fragment of in that is on the front side of the cliping plane. The original is freed.
 =======================================================================================================================================
 */
 winding_t *ChopWinding(winding_t *in, vec3_t normal, vec_t dist) {
@@ -584,6 +586,7 @@ void CheckWinding(winding_t *w) {
 		}
 		// check the edge isnt degenerate
 		p2 = w->p[j];
+
 		VectorSubtract(p2, p1, dir);
 
 		if (VectorLength(dir) < ON_EPSILON) {
@@ -592,6 +595,7 @@ void CheckWinding(winding_t *w) {
 
 		CrossProduct(facenormal, dir, edgenormal);
 		VectorNormalize2(edgenormal, edgenormal);
+
 		edgedist = DotProduct(p1, edgenormal);
 		edgedist += ON_EPSILON;
 		// all other points must be on front side
@@ -655,6 +659,7 @@ int WindingOnPlaneSide(winding_t *w, vec3_t normal, vec_t dist) {
 	return SIDE_ON;
 }
 
+#define MAX_HULL_POINTS 128
 /*
 =======================================================================================================================================
 AddWindingToConvexHull
@@ -662,7 +667,6 @@ AddWindingToConvexHull
 Both w and *hull are on the same plane.
 =======================================================================================================================================
 */
-#define MAX_HULL_POINTS 128
 void AddWindingToConvexHull(winding_t *w, winding_t **hull, vec3_t normal) {
 	int i, j, k;
 	float *p, *copy;

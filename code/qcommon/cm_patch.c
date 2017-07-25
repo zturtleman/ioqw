@@ -73,9 +73,9 @@ typedef struct {
 	vec3_t points[MAX_GRID_SIZE][MAX_GRID_SIZE]; // [width][height]
 } cGrid_t;
 
-#define SUBDIVIDE_DISTANCE	16 //4 // never more than this units away from curve
-#define PLANE_TRI_EPSILON	0.1
-#define WRAP_POINT_EPSILON	0.1
+#define SUBDIVIDE_DISTANCE 16 //4 // never more than this units away from curve
+#define PLANE_TRI_EPSILON 0.1
+#define WRAP_POINT_EPSILON 0.1
 */
 
 int c_totalPatchBlocks;
@@ -93,6 +93,7 @@ CM_ClearLevelPatches
 =======================================================================================================================================
 */
 void CM_ClearLevelPatches(void) {
+
 	debugPatchCollide = NULL;
 	debugFacet = NULL;
 }
@@ -170,6 +171,7 @@ static qboolean CM_NeedsSubdivision(vec3_t a, vec3_t b, vec3_t c) {
 	}
 	// see if the curve is far enough away from the linear mid
 	VectorSubtract(cmid, lmid, delta);
+
 	dist = VectorLength(delta);
 
 	return dist >= SUBDIVIDE_DISTANCE;
@@ -335,12 +337,12 @@ static void CM_SubdivideGridColumns(cGrid_t *grid) {
 	}
 }
 
+#define POINT_EPSILON 0.1
 /*
 =======================================================================================================================================
 CM_ComparePoints
 =======================================================================================================================================
 */
-#define POINT_EPSILON 0.1
 static qboolean CM_ComparePoints(float *a, float *b) {
 	float d;
 
@@ -482,11 +484,12 @@ int CM_FindPlane2(float plane[4], int *flipped) {
 	}
 
 	Vector4Copy(plane, planes[numPlanes].plane);
-	planes[numPlanes].signbits = CM_SignbitsForNormal(plane);
 
+	planes[numPlanes].signbits = CM_SignbitsForNormal(plane);
 	numPlanes++;
 
 	*flipped = qfalse;
+
 	return numPlanes - 1;
 }
 
@@ -535,9 +538,10 @@ static int CM_FindPlane(float *p1, float *p2, float *p3) {
 	}
 
 	Vector4Copy(plane, planes[numPlanes].plane);
-	planes[numPlanes].signbits = CM_SignbitsForNormal(plane);
 
+	planes[numPlanes].signbits = CM_SignbitsForNormal(plane);
 	numPlanes++;
+
 	return numPlanes - 1;
 }
 
@@ -745,6 +749,7 @@ static void CM_SetBorderInward(facet_t *facet, cGrid_t *grid, int gridPlanes[MAX
 
 			if (!debugBlock) {
 				debugBlock = qtrue;
+
 				VectorCopy(grid->points[i][j], debugBlockPoints[0]);
 				VectorCopy(grid->points[i + 1][j], debugBlockPoints[1]);
 				VectorCopy(grid->points[i + 1][j + 1], debugBlockPoints[2]);
@@ -913,7 +918,9 @@ void CM_AddFacetBevels(facet_t *facet) {
 			for (dir = -1; dir <= 1; dir += 2) {
 				// construct a plane
 				VectorClear(vec2);
+
 				vec2[axis] = dir;
+
 				CrossProduct(vec, vec2, plane);
 
 				if (VectorNormalize(plane) < 0.5) {
@@ -1460,7 +1467,9 @@ void CM_TraceThroughPatchCollide(traceWork_t *tw, const struct patchCollide_s *p
 		leaveFrac = 1.0;
 		hitnum = -1;
 		planes = &pc->planes[facet->surfacePlane];
+
 		VectorCopy(planes->plane, plane);
+
 		plane[3] = planes->plane[3];
 
 		if (tw->sphere.use) {
@@ -1519,6 +1528,7 @@ void CM_TraceThroughPatchCollide(traceWork_t *tw, const struct patchCollide_s *p
 				// NOTE: this works even though the plane might be flipped because the bbox is centered
 				offset = DotProduct(tw->offsets[planes->signbits], plane);
 				plane[3] += fabs(offset);
+
 				VectorCopy(tw->start, startp);
 				VectorCopy(tw->end, endp);
 			}
@@ -1529,6 +1539,7 @@ void CM_TraceThroughPatchCollide(traceWork_t *tw, const struct patchCollide_s *p
 
 			if (hit) {
 				hitnum = j;
+
 				Vector4Copy(plane, bestplane);
 			}
 		}
@@ -1557,7 +1568,9 @@ void CM_TraceThroughPatchCollide(traceWork_t *tw, const struct patchCollide_s *p
 				}
 #endif // BSPC
 				tw->trace.fraction = enterFrac;
+
 				VectorCopy(bestplane, tw->trace.plane.normal);
+
 				tw->trace.plane.dist = bestplane[3];
 			}
 		}
@@ -1808,11 +1821,13 @@ void CM_DrawDebugSurface(void (*drawPoly)(int color, int numPoints, float *point
 		VectorCopy(debugBlockPoints[0], v[0]);
 		VectorCopy(debugBlockPoints[1], v[1]);
 		VectorCopy(debugBlockPoints[2], v[2]);
+
 		drawPoly(2, 3, v[0]);
 
 		VectorCopy(debugBlockPoints[2], v[0]);
 		VectorCopy(debugBlockPoints[3], v[1]);
 		VectorCopy(debugBlockPoints[0], v[2]);
+
 		drawPoly(2, 3, v[0]);
 	}
 #if 0

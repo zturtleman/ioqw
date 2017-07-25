@@ -102,7 +102,7 @@ static void CON_Back(void) {
 =======================================================================================================================================
 CON_Hide
 
-Clear the display of the line currently edited bring cursor back to beginning of line.
+Clear the display of the line currently edited. Bring cursor back to beginning of line.
 =======================================================================================================================================
 */
 static void CON_Hide(void) {
@@ -290,6 +290,7 @@ void CON_Init(void) {
 
 	Field_Clear(&TTY_con);
 	tcgetattr(STDIN_FILENO, &TTY_tc);
+
 	TTY_erase = TTY_tc.c_cc[VERASE];
 	TTY_eof = TTY_tc.c_cc[VEOF];
 	tc = TTY_tc;

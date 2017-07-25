@@ -511,8 +511,7 @@ void SV_DropClient(client_t *drop, const char *reason) {
 =======================================================================================================================================
 SV_SendClientGameState
 
-Sends the first message from the server to a connected client.
-This will be sent on the initial connection and upon each new map load.
+Sends the first message from the server to a connected client. This will be sent on the initial connection and upon each new map load.
 It will be resent if the client acknowledges a later message but has the wrong gamestate.
 =======================================================================================================================================
 */
@@ -747,6 +746,7 @@ int SV_WriteDownloadToClient(client_t *cl, msg_t *msg) {
 			// check for pk3 filename extension
 			if (!Q_stricmp(pakptr + 1, "pk3")) {
 				const char *referencedPaks = FS_ReferencedPakNames();
+
 				// check whether the file appears in the list of referenced paks to prevent downloading of arbitrary files.
 				Cmd_TokenizeStringIgnoreQuotes(referencedPaks);
 

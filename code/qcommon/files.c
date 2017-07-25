@@ -154,10 +154,10 @@ or configs will never get loaded from disk!
 // every time a new pk3 file is built, this checksum must be updated.
 // the easiest way to get it is to just run the game and see what it spits out
 static const unsigned int pak_checksums[] = {
-	2031733575u,
-	2694105287u,
-	1798944979u,
-	2846686680u
+	2854918896u,
+	2290497875u,
+	3448304105u,
+	2421778206u
 };
 
 // if this is defined, the executable positively won't work with any paks other

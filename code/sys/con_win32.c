@@ -63,6 +63,7 @@ static WORD CON_ColorCharToAttrib(char color) {
 		attrib = qconsole_attrib;
 	} else {
 		float *rgba = g_color_table[ColorIndex(color)];
+
 		// set foreground color
 		attrib = (rgba[0] >= 0.5 ? FOREGROUND_RED : 0)|(rgba[1] >= 0.5 ? FOREGROUND_GREEN : 0)|(rgba[2] >= 0.5 ? FOREGROUND_BLUE : 0)|(rgba[3] >= 0.5 ? FOREGROUND_INTENSITY : 0);
 		// use console's background color
@@ -374,6 +375,7 @@ char *CON_Input(void) {
 			Q_strncpyz(f.buffer, qconsole_line, sizeof(f.buffer));
 			Field_AutoComplete(&f);
 			Q_strncpyz(qconsole_line, f.buffer, sizeof(qconsole_line));
+
 			qconsole_linelen = strlen(qconsole_line);
 			qconsole_cursor = qconsole_linelen;
 			break;

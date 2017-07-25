@@ -57,6 +57,7 @@ void GLimp_SetGamma(unsigned char red[256], unsigned char green[256], unsigned c
 		OSVERSIONINFO vinfo;
 
 		vinfo.dwOSVersionInfoSize = sizeof(vinfo);
+
 		GetVersionEx(&vinfo);
 
 		if (vinfo.dwMajorVersion >= 5 && vinfo.dwPlatformId == VER_PLATFORM_WIN32_NT) {
