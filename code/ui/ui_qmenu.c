@@ -1129,6 +1129,7 @@ void ScrollList_Draw(menulist_s *l) {
 				}
 
 				UI_FillRect(u, y, l->width * SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT + 2, listbar_color);
+
 				color = text_color_highlight;
 
 				if (hasfocus) {

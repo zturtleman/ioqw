@@ -360,7 +360,7 @@ void Com_Quit_f(void) {
 	char *p = Cmd_Args();
 
 	if (!com_errorEntered) {
-		// Some VMs might execute "quit" command directly, which would trigger an unload of active VM error.
+		// some VMs might execute "quit" command directly, which would trigger an unload of active VM error.
 		// Sys_Quit will kill this process anyways, so a corrupt call stack makes no difference
 		VM_Forced_Unload_Start();
 		SV_Shutdown(p[0] ? p : "Server quit");
@@ -402,6 +402,7 @@ Break it up into multiple console lines.
 */
 void Com_ParseCommandLine(char *commandLine) {
 	int inq = 0;
+
 	com_consoleLines[0] = commandLine;
 	com_numConsoleLines = 1;
 
@@ -483,9 +484,7 @@ void Com_StartupVariable(const char *match) {
 =======================================================================================================================================
 Com_AddStartupCommands
 
-Adds command line parameters as script statements.
-Commands are separated by + signs.
-
+Adds command line parameters as script statements. Commands are separated by + signs.
 Returns qtrue if any late commands were added, which will keep the demoloop from immediately starting.
 =======================================================================================================================================
 */
@@ -1147,8 +1146,10 @@ void Z_LogZoneHeap(memzone_t *zone, char *name) {
 			}
 
 			dump[j] = '\0';
+
 			Com_sprintf(buf, sizeof(buf), "size = %8d: %s, line: %d (%s) [%s]\r\n", block->d.allocSize, block->d.file, block->d.line, block->d.label, dump);
 			FS_Write(buf, strlen(buf), logfile);
+
 			allocSize += block->d.allocSize;
 #endif
 			size += block->size;
@@ -1163,6 +1164,7 @@ void Z_LogZoneHeap(memzone_t *zone, char *name) {
 #endif
 	Com_sprintf(buf, sizeof(buf), "%d %s memory in %d blocks\r\n", size, name, numBlocks);
 	FS_Write(buf, strlen(buf), logfile);
+
 	Com_sprintf(buf, sizeof(buf), "%d %s memory overhead\r\n", size - allocSize, name);
 	FS_Write(buf, strlen(buf), logfile);
 }
@@ -1201,7 +1203,7 @@ memstatic_t numberstring[] = {
 =======================================================================================================================================
 CopyString
 
-NOTE: Never write over the memory CopyString returns because memory from a memstatic_t might be returned.
+NOTE: never write over the memory CopyString returns because memory from a memstatic_t might be returned.
 =======================================================================================================================================
 */
 char *CopyString(const char *in) {
@@ -1439,6 +1441,7 @@ Com_InitSmallZoneMemory
 =======================================================================================================================================
 */
 void Com_InitSmallZoneMemory(void) {
+
 	s_smallZoneTotal = 512 * 1024;
 	smallzone = calloc(s_smallZoneTotal, 1);
 
@@ -1614,6 +1617,7 @@ void Com_InitHunkMemory(void) {
 	}
 	// cacheline align
 	s_hunkData = (byte *)(((intptr_t)s_hunkData + 31) & ~31);
+
 	Hunk_Clear();
 
 	Cmd_AddCommand("meminfo", Com_Meminfo_f);
@@ -1648,6 +1652,7 @@ The server calls this after the level and game VM have been loaded.
 =======================================================================================================================================
 */
 void Hunk_SetMark(void) {
+
 	hunk_low.mark = hunk_low.permanent;
 	hunk_high.mark = hunk_high.permanent;
 }
@@ -1660,6 +1665,7 @@ The client calls this before starting a vid_restart or snd_restart.
 =======================================================================================================================================
 */
 void Hunk_ClearToMark(void) {
+
 	hunk_low.permanent = hunk_low.temp = hunk_low.mark;
 	hunk_high.permanent = hunk_high.temp = hunk_high.mark;
 }
@@ -1712,6 +1718,7 @@ void Hunk_Clear(void) {
 	hunk_temp = &hunk_high;
 
 	Com_Printf("Hunk_Clear: reset the hunk ok\n");
+
 	VM_Clear();
 #ifdef HUNK_DEBUG
 	hunkblocks = NULL;
@@ -2362,7 +2369,7 @@ For controlling environment variables.
 void Com_ExecuteCfg(void) {
 
 	Cbuf_ExecuteText(EXEC_NOW, "exec default.cfg\n");
-	Cbuf_Execute(); // Always execute after exec to prevent text buffer overflowing
+	Cbuf_Execute(); // always execute after exec to prevent text buffer overflowing
 
 	if (!Com_SafeMode()) {
 		// skip the qwconfig.cfg and autoexec.cfg if "safe" is on the command line
@@ -2400,12 +2407,12 @@ void Com_GameRestart(int checksumFeed, qboolean disconnect) {
 		}
 
 		FS_Restart(checksumFeed);
-		// Clean out any user and VM created cvars
+		// clean out any user and VM created cvars
 		Cvar_Restart(qtrue);
 		Com_ExecuteCfg();
 
 		if (disconnect) {
-			// We don't want to change any network settings if gamedir change was triggered by a connect to server because the
+			// we don't want to change any network settings if gamedir change was triggered by a connect to server because the
 			// new network settings might make the connection fail.
 			NET_Restart_f();
 		}
@@ -2447,7 +2454,7 @@ Com_DetectAltivec
 */
 static void Com_DetectAltivec(void) {
 
-	// Only detect if user hasn't forcibly disabled it.
+	// only detect if user hasn't forcibly disabled it.
 	if (com_altivec->integer) {
 		static qboolean altivec = qfalse;
 		static qboolean detected = qfalse;
@@ -2463,6 +2470,7 @@ static void Com_DetectAltivec(void) {
 	}
 }
 
+#if id386 || idx64
 /*
 =======================================================================================================================================
 Com_DetectSSE
@@ -2470,7 +2478,6 @@ Com_DetectSSE
 Find out whether we have SSE support for Q_ftol function.
 =======================================================================================================================================
 */
-#if id386 || idx64
 static void Com_DetectSSE(void) {
 #if !idx64
 	cpuFeatures_t feat;
@@ -2533,25 +2540,22 @@ void Com_Init(char *commandLine) {
 	if (setjmp(abortframe)) {
 		Sys_Error("Error during initialization");
 	}
-	// Clear queues
+	// clear queues
 	Com_Memset(&eventQueue[0], 0, MAX_QUEUED_EVENTS * sizeof(sysEvent_t));
 	// initialize the weak pseudo-random number generator for use later.
 	Com_InitRand();
 	// do this before anything else decides to push events
 	Com_InitPushEvent();
 	Com_InitSmallZoneMemory();
-
 	Cvar_Init();
 	// prepare enough of the subsystems to handle cvar and command buffer management
 	Com_ParseCommandLine(commandLine);
 //	Swap_Init();
 	Cbuf_Init();
-
 	Com_DetectSSE();
 	// override anything from the config files with command line args
 	Com_StartupVariable(NULL);
 	Com_InitZoneMemory();
-
 	Cmd_Init();
 	// get the developer cvar set as early as possible
 	com_developer = Cvar_Get("developer", "0", CVAR_TEMP);
@@ -2566,9 +2570,8 @@ void Com_Init(char *commandLine) {
 	}
 
 	FS_InitFilesystem();
-
 	Com_InitJournaling();
-	// Add some commands here already so users can use them from config files
+	// add some commands here already so users can use them from config files
 	Cmd_AddCommand("setenv", Com_Setenv_f);
 
 	if (com_developer && com_developer->integer) {
@@ -2582,7 +2585,6 @@ void Com_Init(char *commandLine) {
 	Cmd_AddCommand("writeconfig", Com_WriteConfig_f);
 	Cmd_SetCommandCompletionFunc("writeconfig", Cmd_CompleteCfgName);
 	Cmd_AddCommand("game_restart", Com_GameRestart_f);
-
 	Com_ExecuteCfg();
 	// override anything from the config files with command line args
 	Com_StartupVariable(NULL);
@@ -2645,11 +2647,9 @@ void Com_Init(char *commandLine) {
 #endif
 	Sys_Init();
 	Sys_InitPIDFile(FS_GetCurrentGameDir());
-	// Pick a random port value
+	// pick a random port value
 	Com_RandomBytes((byte *)&qport, sizeof(int));
-
 	Netchan_Init(qport & 0xffff);
-
 	VM_Init();
 	SV_Init();
 
@@ -2908,7 +2908,7 @@ void Com_Frame(void) {
 	if (com_speeds->integer) {
 		timeBeforeFirstEvents = Sys_Milliseconds();
 	}
-	// Figure out how much time we have
+	// figure out how much time we have
 	if (!com_timedemo->integer) {
 		if (com_dedicated->integer) {
 			minMsec = SV_FrameMsec();
@@ -2929,7 +2929,7 @@ void Com_Frame(void) {
 			if (bias > minMsec) {
 				bias = minMsec;
 			}
-			// Adjust minMsec if previous frame took too long to render so that framerate is stable at the requested value.
+			// adjust minMsec if previous frame took too long to render so that framerate is stable at the requested value.
 			minMsec -= bias;
 		}
 	} else {
@@ -2974,7 +2974,7 @@ void Com_Frame(void) {
 
 	SV_Frame(msec);
 	// if "dedicated" has been modified, start up or shut down the client system.
-	// Do this after the server may have started, but before the client tries to auto-connect
+	// do this after the server may have started, but before the client tries to auto-connect
 	if (com_dedicated->modified) {
 		// get the latched value
 		Cvar_Get("dedicated", "0", 0);
@@ -3032,6 +3032,7 @@ void Com_Frame(void) {
 		extern int c_pointcontents;
 
 		Com_Printf("%4i traces (%ib %ip) %4i points\n", c_traces, c_brush_traces, c_patch_traces, c_pointcontents);
+
 		c_traces = 0;
 		c_brush_traces = 0;
 		c_patch_traces = 0;
@@ -3236,12 +3237,12 @@ Field_CompleteCommand
 void Field_CompleteCommand(char *cmd, qboolean doCommands, qboolean doCvars) {
 	int completionArgument = 0;
 
-	// Skip leading whitespace and quotes
+	// skip leading whitespace and quotes
 	cmd = Com_SkipCharset(cmd, " \"");
 
 	Cmd_TokenizeStringIgnoreQuotes(cmd);
 	completionArgument = Cmd_Argc();
-	// If there is trailing whitespace on the cmd
+	// if there is trailing whitespace on the cmd
 	if (*(cmd + strlen(cmd) - 1) == ' ') {
 		completionString = "";
 		completionArgument++;
@@ -3252,7 +3253,7 @@ void Field_CompleteCommand(char *cmd, qboolean doCommands, qboolean doCvars) {
 	// add a '\' to the start of the buffer if it might be sent as chat otherwise
 	if (con_autochat->integer && completionField->buffer[0] && completionField->buffer[0] != '\\') {
 		if (completionField->buffer[0] != '/') {
-			// Buffer is full, refuse to complete
+			// buffer is full, refuse to complete
 			if (strlen(completionField->buffer) + 1 >= sizeof(completionField->buffer)) {
 				return;
 			}
@@ -3268,13 +3269,13 @@ void Field_CompleteCommand(char *cmd, qboolean doCommands, qboolean doCvars) {
 		const char *baseCmd = Cmd_Argv(0);
 		char *p;
 #ifndef DEDICATED
-		// This should always be true
+		// this should always be true
 		if (baseCmd[0] == '\\' || baseCmd[0] == '/') {
 			baseCmd++;
 		}
 #endif
 		if ((p = Field_FindFirstSeparator(cmd))) {
-			Field_CompleteCommand(p + 1, qtrue, qtrue); // Compound command
+			Field_CompleteCommand(p + 1, qtrue, qtrue); // compound command
 		} else {
 			Cmd_CompleteArgument(baseCmd, cmd, completionArgument);
 		}

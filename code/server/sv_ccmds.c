@@ -890,7 +890,6 @@ static void SV_ListBans_f(void) {
 
 		if (!ban->isexception) {
 			count++;
-
 			Com_Printf("Ban #%d: %s/%d\n", count, NET_AdrToString(ban->ip), ban->subnet);
 		}
 	}
@@ -900,7 +899,6 @@ static void SV_ListBans_f(void) {
 
 		if (ban->isexception) {
 			count++;
-
 			Com_Printf("Except #%d: %s/%d\n", count, NET_AdrToString(ban->ip), ban->subnet);
 		}
 	}
@@ -1087,6 +1085,7 @@ static void SV_ConSay_f(void) {
 
 	strcat(text, p);
 
+	Com_Printf("%s\n", text);
 	SV_SendServerCommand(NULL, "chat \"%s\"", text);
 }
 
@@ -1127,6 +1126,7 @@ static void SV_ConTell_f(void) {
 
 	strcat(text, p);
 
+	Com_Printf("%s\n", text);
 	SV_SendServerCommand(cl, "chat \"%s\"", text);
 }
 
@@ -1191,6 +1191,7 @@ static void SV_ConSayto_f(void) {
 
 	strcat(text, p);
 
+	Com_Printf("%s\n", text);
 	SV_SendServerCommand(saytocl, "chat \"%s\"", text);
 }
 

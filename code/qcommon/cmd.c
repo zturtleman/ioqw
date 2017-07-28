@@ -496,7 +496,7 @@ void Cmd_Args_Sanitize(void) {
 Cmd_TokenizeString2
 
 Parses the given string into command line tokens. The text is copied to a separate buffer and 0 characters are inserted in the
-appropriate place, The argv array will point into this temporary buffer.
+appropriate place. The argv array will point into this temporary buffer.
 =======================================================================================================================================
 */
 // NOTE TTimo define that to track tokenization issues

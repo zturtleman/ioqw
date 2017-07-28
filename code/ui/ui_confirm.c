@@ -159,6 +159,7 @@ void UI_ConfirmMenu_Style(const char *question, int style, void (*draw)(void), v
 	s_confirm.draw = draw;
 	s_confirm.action = action;
 	s_confirm.style = style;
+
 	s_confirm.menu.draw = ConfirmMenu_Draw;
 	s_confirm.menu.key = ConfirmMenu_Key;
 	s_confirm.menu.wrapAround = qtrue;

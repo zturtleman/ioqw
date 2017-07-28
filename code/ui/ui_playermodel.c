@@ -576,6 +576,7 @@ static void PlayerModel_MenuInit(void) {
 			s_playermodel.picbuttons[k].height = 128;
 			s_playermodel.picbuttons[k].focuspic = MODEL_SELECT;
 			s_playermodel.picbuttons[k].focuscolor = colorRed;
+
 			x += 64 + 6;
 		}
 

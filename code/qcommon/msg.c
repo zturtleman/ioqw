@@ -82,6 +82,7 @@ MSG_Clear
 =======================================================================================================================================
 */
 void MSG_Clear(msg_t *buf) {
+
 	buf->cursize = 0;
 	buf->overflowed = qfalse;
 	buf->bit = 0; // <- in bits
@@ -102,6 +103,7 @@ MSG_BeginReading
 =======================================================================================================================================
 */
 void MSG_BeginReading(msg_t *msg) {
+
 	msg->readcount = 0;
 	msg->bit = 0;
 	msg->oob = qfalse;
@@ -113,6 +115,7 @@ MSG_BeginReadingOOB
 =======================================================================================================================================
 */
 void MSG_BeginReadingOOB(msg_t *msg) {
+
 	msg->readcount = 0;
 	msg->bit = 0;
 	msg->oob = qtrue;
@@ -204,6 +207,7 @@ void MSG_WriteBits(msg_t *msg, int value, int bits) {
 
 		if (bits&7) {
 			int nbits;
+
 			nbits = bits&7;
 
 			for (i = 0; i < nbits; i++) {
@@ -946,6 +950,7 @@ void MSG_ReadDeltaUsercmdKey(msg_t *msg, int key, usercmd_t *from, usercmd_t *to
 
 	if (MSG_ReadBits(msg, 1)) {
 		key ^= to->serverTime;
+
 		to->angles[0] = MSG_ReadDeltaKey(msg, key, from->angles[0], 16);
 		to->angles[1] = MSG_ReadDeltaKey(msg, key, from->angles[1], 16);
 		to->angles[2] = MSG_ReadDeltaKey(msg, key, from->angles[2], 16);

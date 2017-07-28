@@ -383,7 +383,6 @@ static void UI_SPPostgameMenu_MenuDraw(void) {
 		postgameMenuInfo.item_menu.generic.flags &= ~QMF_INACTIVE;
 
 		UI_SPPostgameMenu_DrawAwardsMedals(postgameMenuInfo.numAwards);
-
 		Menu_Draw(&postgameMenuInfo.menu);
 	}
 	// draw the scoreboard
@@ -529,10 +528,12 @@ void UI_SPPostgameMenu_f(void) {
 	memset(&postgameMenuInfo, 0, sizeof(postgameMenuInfo));
 
 	trap_GetConfigString(CS_SYSTEMINFO, info, sizeof(info));
+
 	postgameMenuInfo.serverId = atoi(Info_ValueForKey(info, "sv_serverid"));
 
 	trap_GetConfigString(CS_SERVERINFO, info, sizeof(info));
 	Q_strncpyz(map, Info_ValueForKey(info, "mapname"), sizeof(map));
+
 	arena = UI_GetArenaInfoByMap(map);
 
 	if (!arena) {

@@ -490,7 +490,6 @@ void SV_DropClient(client_t *drop, const char *reason) {
 		drop->state = CS_FREE;
 	} else {
 		Com_DPrintf("Going to CS_ZOMBIE for %s\n", drop->name);
-
 		drop->state = CS_ZOMBIE; // become free in a few seconds
 	}
 	// if this was the last client on the server, send a heartbeat to the master so it is known the server is empty
@@ -1529,6 +1528,7 @@ static void SV_UserVoip(client_t *cl, msg_t *msg, qboolean ignoreData) {
 			}
 
 			MSG_ReadData(msg, encoded, br);
+
 			bytesleft -= br;
 		}
 

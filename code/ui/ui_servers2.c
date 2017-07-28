@@ -1025,6 +1025,7 @@ int ArenaServers_SetType(int type) {
 		// avoid slow operation, use existing results
 		g_arenaservers.currentping = *g_arenaservers.numservers;
 		g_arenaservers.numqueriedservers = *g_arenaservers.numservers;
+
 		ArenaServers_UpdateMenu();
 		strcpy(g_arenaservers.status.string, "hit refresh to update");
 	}

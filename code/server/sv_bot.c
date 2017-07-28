@@ -384,6 +384,7 @@ BotImport_DebugLineCreate
 */
 static int BotImport_DebugLineCreate(void) {
 	vec3_t points[1];
+
 	return BotImport_DebugPolygonCreate(0, 0, points);
 }
 

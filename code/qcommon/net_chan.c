@@ -151,8 +151,7 @@ void Netchan_TransmitNextFragment(netchan_t *chan) {
 =======================================================================================================================================
 Netchan_Transmit
 
-Sends a message to a connection, fragmenting if necessary.
-A 0 length will still generate a packet.
+Sends a message to a connection, fragmenting if necessary. A 0 length will still generate a packet.
 =======================================================================================================================================
 */
 void Netchan_Transmit(netchan_t *chan, int length, const byte *data) {
@@ -203,7 +202,6 @@ void Netchan_Transmit(netchan_t *chan, int length, const byte *data) {
 Netchan_Process
 
 Returns qfalse if the message should not be processed due to being out of order or a fragment.
-
 Msg must be large enough to hold MAX_MSGLEN, because if this is the final fragment of a multi-part message, the entire thing will be
 copied out.
 =======================================================================================================================================
@@ -270,7 +268,6 @@ qboolean Netchan_Process(netchan_t *chan, msg_t *msg) {
 	}
 	// if this is the final framgent of a reliable message, bump incoming_reliable_sequence
 	if (fragmented) {
-		// TTimo
 		// make sure we add the fragments in correct order
 		// either a packet was dropped, or we received this one too soon
 		// we don't reconstruct the fragments. we will wait till this fragment gets to us again
@@ -467,8 +464,10 @@ void NET_FlushPacketQueue(void) {
 		}
 
 		Sys_SendPacket(packetQueue->length, packetQueue->data, packetQueue->to);
+
 		last = packetQueue;
 		packetQueue = packetQueue->next;
+
 		Z_Free(last->data);
 		Z_Free(last);
 	}
@@ -556,6 +555,7 @@ void QDECL NET_OutOfBandData(netsrc_t sock, netadr_t adr, byte *format, int len)
 
 	mbuf.data = string;
 	mbuf.cursize = len + 4;
+
 	Huff_Compress(&mbuf, 12);
 	// send the datagram
 	NET_SendPacket(sock, mbuf.cursize, mbuf.data, adr);
@@ -575,6 +575,7 @@ int NET_StringToAdr(const char *s, netadr_t *a, netadrtype_t family) {
 
 	if (!strcmp(s, "localhost")) {
 		Com_Memset(a, 0, sizeof(*a));
+
 		a->type = NA_LOOPBACK;
 		// as NA_LOOPBACK doesn't require ports report port was given.
 		return 1;

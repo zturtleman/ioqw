@@ -293,6 +293,7 @@ static void PlayerSettings_DrawPlayer(void *self) {
 		viewangles[YAW] = 180 - 30;
 		viewangles[PITCH] = 0;
 		viewangles[ROLL] = 0;
+
 		UI_PlayerInfo_SetInfo(&s_playersettings.playerinfo, LEGS_IDLE, TORSO_STAND, viewangles, vec3_origin, WP_MACHINEGUN, qfalse);
 	}
 

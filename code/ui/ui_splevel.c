@@ -209,6 +209,7 @@ static void UI_SPLevelMenu_SetBots(void) {
 		}
 
 		Q_CleanStr(levelMenuInfo.botNames[levelMenuInfo.numBots]);
+
 		levelMenuInfo.numBots++;
 	}
 }
@@ -413,7 +414,6 @@ static void UI_SPLevelMenu_LevelEvent(void *ptr, int notification) {
 	levelMenuInfo.selectedArenaInfo = UI_GetArenaInfoByNumber(selectedArenaSet * ARENAS_PER_TIER + selectedArena);
 
 	UI_SPLevelMenu_SetBots();
-
 	trap_Cvar_SetValue("ui_spSelection", selectedArenaSet * ARENAS_PER_TIER + selectedArena);
 }
 

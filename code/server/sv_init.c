@@ -552,6 +552,7 @@ void SV_SpawnServer(char *server, qboolean killBots) {
 	Cvar_Set("sv_referencedPakNames", p);
 	// save systeminfo and serverinfo strings
 	Q_strncpyz(systemInfo, Cvar_InfoString_Big(CVAR_SYSTEMINFO), sizeof(systemInfo));
+
 	cvar_modifiedFlags &= ~CVAR_SYSTEMINFO;
 
 	SV_SetConfigstring(CS_SYSTEMINFO, systemInfo);

@@ -128,6 +128,7 @@ void CG_Draw3DModel(float x, float y, float w, float h, qhandle_t model, qhandle
 
 	AnglesToAxis(angles, ent.axis);
 	VectorCopy(origin, ent.origin);
+
 	ent.hModel = model;
 	ent.customSkin = skin;
 	ent.renderfx = RF_NOSHADOW; // no stencil shadows
@@ -1084,6 +1085,7 @@ static float CG_DrawScores(float y) {
 				color[1] = 0.5f;
 				color[2] = 0.5f;
 				color[3] = 0.33f;
+
 				CG_FillRect(x, y - 4, w, BIGCHAR_HEIGHT + 8, color);
 			}
 
@@ -1110,6 +1112,7 @@ static float CG_DrawScores(float y) {
 				color[1] = 0.0f;
 				color[2] = 0.0f;
 				color[3] = 0.33f;
+
 				CG_FillRect(x, y - 4, w, scoreHeight, color);
 				CG_DrawPic(x, y - 4, w, scoreHeight, cgs.media.selectShader);
 			} else {
@@ -1117,6 +1120,7 @@ static float CG_DrawScores(float y) {
 				color[1] = 0.5f;
 				color[2] = 0.5f;
 				color[3] = 0.33f;
+
 				CG_FillRect(x, y - 4, w, scoreHeight, color);
 			}
 
@@ -1140,6 +1144,7 @@ static float CG_DrawScores(float y) {
 				color[1] = 0.5f;
 				color[2] = 0.5f;
 				color[3] = 0.33f;
+
 				CG_FillRect(x, y - 4, w, scoreHeight, color);
 			}
 
@@ -1240,6 +1245,7 @@ static float CG_DrawPowerups(float y) {
 				f = (float)(t - cg.time) / POWERUP_BLINK_TIME;
 				f -= (int)f;
 				modulate[0] = modulate[1] = modulate[2] = modulate[3] = f;
+
 				trap_R_SetColor(modulate);
 			}
 
@@ -1293,6 +1299,7 @@ static void CG_DrawLowerRight(void) {
 
 	y = CG_DrawLocalInfo(y);
 	y = CG_DrawScores(y);
+
 	CG_DrawPowerups(y);
 }
 
@@ -1488,7 +1495,6 @@ void CG_AddLagometerFrameInfo(void) {
 CG_AddLagometerSnapshotInfo
 
 Each time a snapshot is received, log its ping time and the number of snapshots that were dropped before it.
-
 Pass NULL for a dropped packet.
 =======================================================================================================================================
 */
@@ -1530,6 +1536,7 @@ static void CG_DrawDisconnect(void) {
 	CG_SetScreenPlacement(PLACE_CENTER, PLACE_CENTER);
 	// also add text in center of screen
 	s = "Connection Interrupted!";
+
 	CG_DrawString(SCREEN_WIDTH / 2, 100, s, UI_CENTER|UI_DROPSHADOW|UI_BIGFONT, NULL);
 	// blink the icon
 	if ((cg.time >> 9) & 1) {
@@ -1809,13 +1816,13 @@ static void CG_DrawCrosshair3D(void) {
 	zProj = atof(rendererinfos);
 
 	trap_Cvar_VariableStringBuffer("r_stereoSeparation", rendererinfos, sizeof(rendererinfos));
-	stereoSep = zProj / atof(rendererinfos);
 
+	stereoSep = zProj / atof(rendererinfos);
 	xmax = zProj * tan(cg.refdef.fov_x * M_PI / 360.0f);
 	// let the trace run through until a change in stereo separation of the crosshair becomes less than one pixel.
 	maxdist = cgs.glconfig.vidWidth * stereoSep * zProj / (2 * xmax);
-	VectorMA(cg.refdef.vieworg, maxdist, cg.refdef.viewaxis[0], endpos);
 
+	VectorMA(cg.refdef.vieworg, maxdist, cg.refdef.viewaxis[0], endpos);
 	CG_Trace(&trace, cg.refdef.vieworg, NULL, NULL, endpos, 0, MASK_SHOT);
 
 	memset(&ent, 0, sizeof(ent));

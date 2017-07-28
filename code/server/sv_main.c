@@ -713,11 +713,9 @@ static void SVC_RemoteCommand(netadr_t from, msg_t *msg) {
 		}
 
 		valid = qfalse;
-
 		Com_Printf("Bad rcon from %s: %s\n", NET_AdrToString(from), Cmd_ArgsFrom(2));
 	} else {
 		valid = qtrue;
-
 		Com_Printf("Rcon from %s: %s\n", NET_AdrToString(from), Cmd_ArgsFrom(2));
 	}
 	// start redirecting all print outputs to the packet
@@ -1130,6 +1128,8 @@ void SV_Frame(int msec) {
 	SV_MasterHeartbeat(HEARTBEAT_FOR_MASTER);
 }
 
+#define UDPIP_HEADER_SIZE 28
+#define UDPIP6_HEADER_SIZE 48
 /*
 =======================================================================================================================================
 SV_RateMsec
@@ -1137,9 +1137,6 @@ SV_RateMsec
 Return the number of msec until another message can be sent to a client based on its rate settings.
 =======================================================================================================================================
 */
-#define UDPIP_HEADER_SIZE 28
-#define UDPIP6_HEADER_SIZE 48
-
 int SV_RateMsec(client_t *client) {
 	int rate, rateMsec;
 	int messageSize;

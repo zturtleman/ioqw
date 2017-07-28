@@ -880,7 +880,9 @@ void BotChangeViewAngles(bot_state_t *bs, float thinktime) {
 		//BotAI_Print(PRT_MESSAGE, "ideal_angles %f %f\n", bs->ideal_viewangles[0], bs->ideal_viewangles[1], bs->ideal_viewangles[2]);
 		//bs->viewangles[i] = bs->ideal_viewangles[i];
 	}
+
 	//bs->viewangles[PITCH] = 0;
+
 	if (bs->viewangles[PITCH] > 180) {
 		bs->viewangles[PITCH] -= 360;
 	}
@@ -1602,6 +1604,7 @@ int BotAIStartFrame(int time) {
 	// update the bot library
 	if (botlib_residual >= thinktime) {
 		botlib_residual -= thinktime;
+
 		trap_BotLibStartFrame((float)time / 1000);
 
 		if (!trap_AAS_Initialized()) {

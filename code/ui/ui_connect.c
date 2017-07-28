@@ -136,14 +136,15 @@ static void UI_DisplayDownloadInfo(const char *downloadName) {
 		}
 
 		UI_ReadableSize(xferRateBuf, sizeof xferRateBuf, xferRate);
-		// Extrapolate estimated completion time
+		// extrapolate estimated completion time
 		if (downloadSize && xferRate) {
 			int n = downloadSize / xferRate; // estimated time for entire d/l in secs
-			// We do it in K (/1024) because we'd overflow around 4MB
+
+			// we do it in K (/1024) because we'd overflow around 4MB
 			n = (n - (((downloadCount / 1024) * n) / (downloadSize / 1024))) * 1000;
 
 			UI_PrintTime(dlTimeBuf, sizeof dlTimeBuf, n);
-			// (n - (((downloadCount / 1024) * n) / (downloadSize / 1024))) * 1000);
+			//(n - (((downloadCount / 1024) * n) / (downloadSize / 1024))) * 1000);
 			UI_DrawProportionalString(leftWidth, 160, dlTimeBuf, style, color_white);
 			UI_DrawProportionalString(leftWidth, 192, va("(%s of %s copied)", dlSizeBuf, totalSizeBuf), style, color_white);
 		} else {

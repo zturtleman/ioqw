@@ -118,8 +118,8 @@ static void UI_SPSkillMenu_SkillEvent(void *ptr, int notification) {
 
 	id = ((menucommon_s *)ptr)->id;
 	skill = id - ID_BABY + 1;
-	trap_Cvar_SetValue("g_spSkill", skill);
 
+	trap_Cvar_SetValue("g_spSkill", skill);
 	SetSkillColor(skill, color_white);
 
 	skillMenuInfo.art_skillPic.shader = skillMenuInfo.skillpics[skill - 1];
