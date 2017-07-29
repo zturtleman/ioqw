@@ -452,6 +452,7 @@ void Svcmd_ForceTeam_f(void) {
 	}
 	// find the player
 	trap_Argv(1, str, sizeof(str));
+
 	cl = ClientForString(str);
 
 	if (!cl) {

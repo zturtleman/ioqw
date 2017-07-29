@@ -107,7 +107,6 @@ markPoly_t *CG_AllocMark(void) {
 	}
 
 	le = cg_freeMarkPolys;
-
 	cg_freeMarkPolys = cg_freeMarkPolys->nextMark;
 
 	memset(le, 0, sizeof(*le));
@@ -192,8 +191,8 @@ void CG_ImpactMark(qhandle_t markShader, const vec3_t origin, const vec3_t dir, 
 			vec3_t delta;
 
 			VectorCopy(markPoints[mf->firstPoint + j], v->xyz);
-
 			VectorSubtract(v->xyz, origin, delta);
+
 			v->st[0] = 0.5 + DotProduct(delta, axis[1]) * texCoordScale;
 			v->st[1] = 0.5 + DotProduct(delta, axis[2]) * texCoordScale;
 			*(int *)v->modulate = *(int *)colors;

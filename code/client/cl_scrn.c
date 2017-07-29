@@ -458,6 +458,7 @@ void SCR_DrawDebugGraph(void) {
 		}
 
 		h = (int)v % cl_graphheight->integer;
+
 		re.DrawStretchPic(x + w - 1 - a, y - h, 1, h, 0, 0, 0, 0, cls.whiteShader);
 	}
 }

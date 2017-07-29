@@ -249,7 +249,6 @@ void CG_SpawnEffectSmall(vec3_t org) {
 	re->hModel = cgs.media.teleportEffectModel;
 
 	AxisClear(re->axis);
-
 	VectorCopy(org, re->origin);
 	VectorScale(re->axis[2], 0.45, re->axis[2]); // Tobias HACK: decrease the size of the models until we have a models looking similar like the one from Alien Arena item respawn...
 

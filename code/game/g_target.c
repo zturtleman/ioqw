@@ -53,6 +53,7 @@ void Use_Target_Give(gentity_t *ent, gentity_t *other, gentity_t *activator) {
 		Touch_Item(t, activator, &trace);
 		// make sure it isn't going to respawn or show any events
 		t->nextthink = 0;
+
 		trap_UnlinkEntity(t);
 	}
 }
@@ -109,6 +110,7 @@ Use_Target_Delay
 =======================================================================================================================================
 */
 void Use_Target_Delay(gentity_t *ent, gentity_t *other, gentity_t *activator) {
+
 	ent->nextthink = level.time + (ent->wait + ent->random * crandom()) * 1000;
 	ent->think = Think_Target_Delay;
 	ent->activator = activator;
@@ -536,7 +538,7 @@ static void Target_Location_Linkup(gentity_t *ent) {
 			level.locationHead = ent;
 		}
 	}
-	// All linked together now
+	// all linked together now
 }
 
 /*QUAKED target_location (0 0.5 0) (-8 -8 -8) (8 8 8)
@@ -557,7 +559,7 @@ in site, closest in distance
 void SP_target_location(gentity_t *self) {
 
 	self->think = Target_Location_Linkup;
-	self->nextthink = level.time + 200; // Let them all spawn first
+	self->nextthink = level.time + 200; // let them all spawn first
 
 	G_SetOrigin(self, self->s.origin);
 }

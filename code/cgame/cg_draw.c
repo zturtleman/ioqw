@@ -614,6 +614,7 @@ static float CG_DrawAttacker(float y) {
 	angles[PITCH] = 0;
 	angles[YAW] = 180;
 	angles[ROLL] = 0;
+
 	CG_DrawHead(640 - size, y, size, size, clientNum, angles);
 
 	info = CG_ConfigString(CS_PLAYERS + clientNum);

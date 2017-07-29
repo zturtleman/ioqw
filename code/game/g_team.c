@@ -353,7 +353,6 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 		attacker->client->pers.teamState.lastfraggedcarrier = level.time;
 
 		AddScore(attacker, targ->r.currentOrigin, CTF_FRAG_CARRIER_BONUS);
-
 		PrintMsg(NULL, "%s" S_COLOR_WHITE " fragged %s's flag carrier!\n", attacker->client->pers.netname, TeamName(team));
 		// the target had the flag, clear the hurt carrier field on the other team
 		for (i = 0; i < g_maxclients.integer; i++) {
@@ -373,7 +372,6 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 		attacker->client->pers.teamState.lastfraggedcarrier = level.time;
 
 		AddScore(attacker, targ->r.currentOrigin, CTF_FRAG_CARRIER_BONUS * tokens * tokens);
-
 		PrintMsg(NULL, "%s" S_COLOR_WHITE " fragged %s's skull carrier!\n", attacker->client->pers.netname, TeamName(team));
 		// the target had the flag, clear the hurt carrier field on the other team
 		for (i = 0; i < g_maxclients.integer; i++) {
@@ -710,7 +708,7 @@ void Team_DroppedFlagThink(gentity_t *ent) {
 	}
 
 	Team_ReturnFlagSound(Team_ResetFlag(team), team);
-	// Reset Flag will delete this entity
+	// 'Reset Flag' will delete this entity
 }
 
 /*
@@ -761,7 +759,7 @@ int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team) {
 	other->client->ps.persistant[PERS_CAPTURES]++;
 	// other gets another 10 frag bonus
 	AddScore(other, ent->r.currentOrigin, CTF_CAPTURE_BONUS);
-	// Ok, let's do the player loop, hand out the bonuses
+	// ok, let's do the player loop, hand out the bonuses
 	for (i = 0; i < g_maxclients.integer; i++) {
 		player = &g_entities[i];
 		// also make sure we don't award assist bonuses to the flag carrier himself.
@@ -801,7 +799,7 @@ int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team) {
 	Team_CaptureFlagSound(ent, team);
 	Team_ForceGesture(other->client->sess.sessionTeam);
 
-	return 0; // Do not respawn this automatically
+	return 0; // do not respawn this automatically
 }
 
 /*
@@ -837,7 +835,7 @@ int Team_TouchEnemyFlag(gentity_t *ent, gentity_t *other, int team) {
 	AddScore(other, ent->r.currentOrigin, CTF_FLAG_BONUS);
 	Team_TakeFlagSound(ent, team);
 
-	return -1; // Do not respawn this automatically, but do delete it if it was FL_DROPPED
+	return -1; // do not respawn this automatically, but do delete it if it was FL_DROPPED
 }
 
 /*
@@ -1093,7 +1091,7 @@ void TeamplayInfoMessage(gentity_t *ent) {
 			clients[cnt++] = level.sortedClients[i];
 		}
 	}
-	// We have the top eight players, sort them by clientNum
+	// we have the top eight players, sort them by clientNum
 	qsort(clients, cnt, sizeof(clients[0]), SortClients);
 	// send the latest information on all clients
 	string[0] = 0;
@@ -1115,6 +1113,7 @@ void TeamplayInfoMessage(gentity_t *ent) {
 			}
 
 			Com_sprintf(entry, sizeof(entry), " %i %i %i %i %i %i", i, player->client->pers.teamState.location, h, a, player->client->ps.weapon, player->s.powerups);
+
 			j = strlen(entry);
 
 			if (stringlength + j >= sizeof(string)) {
@@ -1363,7 +1362,6 @@ gentity_t *SpawnObelisk(vec3_t origin, vec3_t mins, vec3_t maxs, int team) {
 	VectorCopy(origin, ent->s.origin);
 	VectorCopy(origin, ent->s.pos.trBase);
 	VectorCopy(origin, ent->r.currentOrigin);
-
 	VectorCopy(mins, ent->r.mins);
 	VectorCopy(maxs, ent->r.maxs);
 
@@ -1425,6 +1423,7 @@ void ObeliskInit(gentity_t *ent) {
 			G_Printf("SpawnObelisk: %s startsolid at %s\n", ent->classname, vtos(ent->s.origin));
 
 			ent->s.groundEntityNum = ENTITYNUM_NONE;
+
 			G_SetOrigin(ent, ent->s.origin);
 		} else {
 			// allow to ride movers

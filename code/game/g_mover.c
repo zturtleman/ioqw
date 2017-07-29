@@ -75,6 +75,7 @@ G_CreateRotationMatrix
 =======================================================================================================================================
 */
 void G_CreateRotationMatrix(vec3_t angles, vec3_t matrix[3]) {
+
 	AngleVectors(angles, matrix[0], matrix[1], matrix[2]);
 	VectorInverse(matrix[1]);
 }
@@ -103,6 +104,7 @@ void G_RotatePoint(vec3_t point, vec3_t matrix[3]) {
 	vec3_t tvec;
 
 	VectorCopy(point, tvec);
+
 	point[0] = DotProduct(matrix[0], tvec);
 	point[1] = DotProduct(matrix[1], tvec);
 	point[2] = DotProduct(matrix[2], tvec);
@@ -315,7 +317,6 @@ qboolean G_MoverPush(gentity_t *pusher, vec3_t move, vec3_t amove, gentity_t **o
 	// move the pusher to its final position
 	VectorAdd(pusher->r.currentOrigin, move, pusher->r.currentOrigin);
 	VectorAdd(pusher->r.currentAngles, amove, pusher->r.currentAngles);
-
 	trap_LinkEntity(pusher);
 	// see if any solid entities are inside the final position
 	for (e = 0; e < listedEntities; e++) {
@@ -748,13 +749,14 @@ void InitMover(gentity_t *ent) {
 	ent->s.eType = ET_MOVER;
 
 	VectorCopy(ent->pos1, ent->r.currentOrigin);
-
 	trap_LinkEntity(ent);
 
 	ent->s.pos.trType = TR_STATIONARY;
+
 	VectorCopy(ent->pos1, ent->s.pos.trBase);
 	// calculate time to reach second position from speed
 	VectorSubtract(ent->pos2, ent->pos1, move);
+
 	distance = VectorLength(move);
 
 	if (!ent->speed) {
@@ -762,6 +764,7 @@ void InitMover(gentity_t *ent) {
 	}
 
 	VectorScale(move, ent->speed, ent->s.pos.trDelta);
+
 	ent->s.pos.trDuration = distance * 1000 / ent->speed;
 
 	if (ent->s.pos.trDuration <= 0) {
@@ -909,7 +912,6 @@ void Think_SpawnNewDoorTrigger(gentity_t *ent) {
 	other->count = best;
 
 	trap_LinkEntity(other);
-
 	MatchTeam(ent, ent->moverState, level.time);
 }
 
@@ -965,7 +967,6 @@ void SP_func_door(gentity_t *ent) {
 	VectorCopy(ent->s.origin, ent->pos1);
 	// calculate second position
 	trap_SetBrushModel(ent, ent->model);
-
 	G_SetMovedir(ent->s.angles, ent->movedir);
 
 	abs_movedir[0] = fabs(ent->movedir[0]);
@@ -973,7 +974,9 @@ void SP_func_door(gentity_t *ent) {
 	abs_movedir[2] = fabs(ent->movedir[2]);
 
 	VectorSubtract(ent->r.maxs, ent->r.mins, size);
+
 	distance = DotProduct(abs_movedir, size) - lip;
+
 	VectorMA(ent->pos1, distance, ent->movedir, ent->pos2);
 	// if "start_open", reverse position 1 and 2
 	if (ent->spawnflags & 1) {
@@ -1199,7 +1202,6 @@ void SP_func_button(gentity_t *ent) {
 	VectorCopy(ent->s.origin, ent->pos1);
 	// calculate second position
 	trap_SetBrushModel(ent, ent->model);
-
 	G_SpawnFloat("lip", "4", &lip);
 	G_SetMovedir(ent->s.angles, ent->movedir);
 
@@ -1208,7 +1210,9 @@ void SP_func_button(gentity_t *ent) {
 	abs_movedir[2] = fabs(ent->movedir[2]);
 
 	VectorSubtract(ent->r.maxs, ent->r.mins, size);
+
 	distance = abs_movedir[0] * size[0] + abs_movedir[1] * size[1] + abs_movedir[2] * size[2] - lip;
+
 	VectorMA(ent->pos1, distance, ent->movedir, ent->pos2);
 
 	if (ent->health) {
@@ -1242,6 +1246,7 @@ The wait time at a corner has completed, so start moving again.
 =======================================================================================================================================
 */
 void Think_BeginMoving(gentity_t *ent) {
+
 	ent->s.pos.trTime = level.time;
 	ent->s.pos.trType = TR_LINEAR_STOP;
 }
@@ -1285,7 +1290,6 @@ void Reached_Train(gentity_t *ent) {
 	VectorSubtract(ent->pos2, ent->pos1, move);
 
 	length = VectorLength(move);
-
 	ent->s.pos.trDuration = length * 1000 / speed;
 	// be sure to send to clients after any fast move case
 	ent->r.svFlags &= ~SVF_NOCLIENT;
@@ -1520,7 +1524,6 @@ void SP_func_bobbing(gentity_t *ent) {
 	G_SpawnFloat("phase", "0", &phase);
 
 	trap_SetBrushModel(ent, ent->model);
-
 	InitMover(ent);
 
 	VectorCopy(ent->s.origin, ent->s.pos.trBase);
@@ -1549,7 +1552,7 @@ void SP_func_bobbing(gentity_t *ent) {
 
 /*QUAKED func_pendulum (0 .5 .8) ?
 You need to have an origin brush as part of this entity.
-Pendulums always swing north / south on unrotated models. Add an angles field to the model to allow rotation in other directions.
+Pendulums always swing north/south on unrotated models. Add an angles field to the model to allow rotation in other directions.
 Pendulum frequency is a physical constant based on the length of the beam and gravity.
 "model2"	.md3 model to also draw
 "speed"		the number of degrees each way the pendulum swings, (30 default)
@@ -1567,7 +1570,6 @@ void SP_func_pendulum(gentity_t *ent) {
 	G_SpawnFloat("speed", "30", &speed);
 	G_SpawnInt("dmg", "2", &ent->damage);
 	G_SpawnFloat("phase", "0", &phase);
-
 	trap_SetBrushModel(ent, ent->model);
 	// find pendulum length
 	length = fabs(ent->r.mins[2]);
@@ -1577,7 +1579,6 @@ void SP_func_pendulum(gentity_t *ent) {
 	}
 
 	freq = 1 / (M_PI * 2) * sqrt(g_gravity.value / (3 * length));
-
 	ent->s.pos.trDuration = (1000 / freq);
 
 	InitMover(ent);

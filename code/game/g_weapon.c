@@ -82,11 +82,8 @@ qboolean CheckGauntletAttack(gentity_t *ent) {
 
 	// set aiming directions
 	AngleVectors(ent->client->ps.viewangles, forward, right, up);
-
 	CalcMuzzlePoint(ent, forward, right, up, muzzle);
-
 	VectorMA(muzzle, 32, forward, end);
-
 	trap_Trace(&tr, muzzle, NULL, NULL, end, ent->s.number, MASK_SHOT);
 
 	if (tr.surfaceFlags & SURF_NOIMPACT) {
@@ -240,6 +237,7 @@ qboolean ShotgunPellet(vec3_t start, vec3_t end, gentity_t *ent) {
 
 	for (i = 0; i < 10; i++) {
 		trap_Trace(&tr, tr_start, NULL, NULL, tr_end, passent, MASK_SHOT);
+
 		traceEnt = &g_entities[tr.entityNum];
 		// send bullet impact
 		if (tr.surfaceFlags & SURF_NOIMPACT) {
@@ -845,7 +843,6 @@ void FireWeapon(gentity_t *ent) {
 	}
 	// set aiming directions
 	AngleVectors(ent->client->ps.viewangles, forward, right, up);
-
 	CalcMuzzlePointOrigin(ent, ent->client->oldOrigin, forward, right, up, muzzle);
 	// fire the specific weapon
 	switch (ent->s.weapon) {
@@ -1021,9 +1018,11 @@ static void KamikazeShockWave(vec3_t origin, gentity_t *attacker, float damage, 
 //		if (CanDamage(ent, origin)) {
 			VectorSubtract(ent->r.currentOrigin, origin, dir);
 			dir[2] += 24;
+
 			G_Damage(ent, NULL, attacker, dir, origin, damage, DAMAGE_RADIUS|DAMAGE_NO_TEAM_PROTECTION, MOD_KAMIKAZE);
 
 			dir[2] = 0;
+
 			VectorNormalize(dir);
 
 			if (ent->client) {

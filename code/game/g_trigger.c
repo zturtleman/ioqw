@@ -135,7 +135,6 @@ void SP_trigger_multiple(gentity_t *ent) {
 	ent->use = Use_Multi;
 
 	InitTrigger(ent);
-
 	trap_LinkEntity(ent);
 }
 
@@ -153,6 +152,7 @@ Trigger_Always_Think
 =======================================================================================================================================
 */
 void Trigger_Always_Think(gentity_t *ent) {
+
 	G_UseTargets(ent, ent);
 	G_FreeEntity(ent);
 }
@@ -287,7 +287,6 @@ void SP_target_push(gentity_t *self) {
 	}
 
 	G_SetMovedir(self->s.angles, self->s.origin2);
-
 	VectorScale(self->s.origin2, self->speed, self->s.origin2);
 
 	if (self->spawnflags & 1) {

@@ -163,7 +163,6 @@ void CG_DrawInformation(void) {
 
 	info = CG_ConfigString(CS_SERVERINFO);
 	sysInfo = CG_ConfigString(CS_SYSTEMINFO);
-
 	s = Info_ValueForKey(info, "mapname");
 	levelshot = trap_R_RegisterShaderNoMip(va("levelshots/%s.tga", s));
 

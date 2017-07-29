@@ -104,6 +104,7 @@ Replaces the current view weapon with the given model.
 void CG_TestGun_f(void) {
 
 	CG_TestModel_f();
+
 	cg.testGun = qtrue;
 	cg.testModelEntity.renderfx = RF_MINLIGHT|RF_DEPTHHACK|RF_FIRST_PERSON;
 }
@@ -116,6 +117,7 @@ CG_TestModelNextFrame_f
 void CG_TestModelNextFrame_f(void) {
 
 	cg.testModelEntity.frame++;
+
 	CG_Printf("frame %i\n", cg.testModelEntity.frame);
 }
 
@@ -143,6 +145,7 @@ CG_TestModelNextSkin_f
 void CG_TestModelNextSkin_f(void) {
 
 	cg.testModelEntity.skinNum++;
+
 	CG_Printf("skin %i\n", cg.testModelEntity.skinNum);
 }
 
@@ -222,12 +225,12 @@ static void CG_CalcVrect(void) {
 	cg.refdef.y = (cgs.glconfig.vidHeight - cg.refdef.height) / 2;
 }
 
+#define FOCUS_DISTANCE 512
 /*
 =======================================================================================================================================
 CG_OffsetThirdPersonView
 =======================================================================================================================================
 */
-#define FOCUS_DISTANCE 512
 static void CG_OffsetThirdPersonView(void) {
 	vec3_t forward, right, up;
 	vec3_t view;
@@ -285,6 +288,7 @@ static void CG_OffsetThirdPersonView(void) {
 	VectorCopy(view, cg.refdef.vieworg);
 	// select pitch to look at focus point from vieword
 	VectorSubtract(focusPoint, cg.refdef.vieworg, focusPoint);
+
 	focusDist = sqrt(focusPoint[0] * focusPoint[0] + focusPoint[1] * focusPoint[1]);
 
 	if (focusDist < 1) {

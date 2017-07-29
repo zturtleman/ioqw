@@ -131,6 +131,7 @@ char *ConcatArgs(int start) {
 
 	for (i = start; i < c; i++) {
 		trap_Argv(i, arg, sizeof(arg));
+
 		tlen = strlen(arg);
 
 		if (len + tlen >= MAX_STRING_CHARS - 1) {
@@ -180,8 +181,7 @@ qboolean StringIsInteger(const char *s) {
 =======================================================================================================================================
 ClientNumberFromString
 
-Returns a player number for either a number or name string.
-Returns -1 if invalid.
+Returns a player number for either a number or name string. Returns -1 if invalid.
 =======================================================================================================================================
 */
 int ClientNumberFromString(gentity_t *to, char *s, qboolean checkNums, qboolean checkNames) {

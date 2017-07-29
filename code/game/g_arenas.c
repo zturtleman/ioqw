@@ -123,7 +123,9 @@ void UpdateTournamentInfo(void) {
 
 	for (i = 0; i < level.numNonSpectatorClients; i++) {
 		n = level.sortedClients[i];
+
 		Com_sprintf(buf, sizeof(buf), " %i %i %i", n, level.clients[n].ps.persistant[PERS_SCORE], level.clients[n].ps.persistant[PERS_RANK]);
+
 		msglen += strlen(buf);
 
 		if (msglen >= sizeof(msg)) {
@@ -157,7 +159,7 @@ static gentity_t *SpawnModelOnVictoryPad(gentity_t *pad, vec3_t offset, gentity_
 	body->client = ent->client;
 	body->s = ent->s;
 	body->s.eType = ET_PLAYER; // could be ET_INVISIBLE
-	body->s.eFlags = 0; // clear EF_TALK, etc
+	body->s.eFlags = 0; // clear EF_TALK, etc.
 	body->s.powerups = 0; // clear powerups
 	body->s.loopSound = 0; // clear lava burning
 	body->s.number = body - g_entities;
@@ -203,7 +205,6 @@ static gentity_t *SpawnModelOnVictoryPad(gentity_t *pad, vec3_t offset, gentity_
 	VectorMA(vec, offset[2], u, vec);
 
 	G_SetOrigin(body, vec);
-
 	trap_LinkEntity(body);
 
 	body->count = place;

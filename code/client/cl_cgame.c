@@ -147,6 +147,7 @@ CL_GetCurrentSnapshotNumber
 =======================================================================================================================================
 */
 void CL_GetCurrentSnapshotNumber(int *snapshotNumber, int *serverTime) {
+
 	*snapshotNumber = cl.snap.messageNum;
 	*serverTime = cl.snap.serverTime;
 }
@@ -425,6 +426,7 @@ void CL_ShutdownCGame(void) {
 
 	VM_Call(cgvm, CG_SHUTDOWN);
 	VM_Free(cgvm);
+
 	cgvm = NULL;
 }
 
@@ -885,6 +887,7 @@ void CL_CGameRendering(stereoFrame_t stereo) {
 	VM_Debug(0);
 }
 
+#define RESET_TIME 500
 /*
 =======================================================================================================================================
 CL_AdjustTimeDelta
@@ -900,8 +903,6 @@ Adjustments are only made when a new snapshot arrives with a rational latency, w
 and prevents massive overadjustment during times of significant packet loss or bursted delayed packets.
 =======================================================================================================================================
 */
-#define RESET_TIME 500
-
 void CL_AdjustTimeDelta(void) {
 	int newDelta;
 	int deltaDelta;

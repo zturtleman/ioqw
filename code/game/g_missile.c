@@ -42,6 +42,7 @@ qboolean G_BounceMissile(gentity_t *ent, trace_t *trace) {
 	BG_EvaluateTrajectoryDelta(&ent->s.pos, hitTime, velocity, qfalse, ent->s.effect2Time);
 
 	dot = DotProduct(velocity, trace->plane.normal);
+
 	VectorMA(velocity, -2 * dot, trace->plane.normal, ent->s.pos.trDelta);
 // Tobias FIXME: do some simplifications here (like 'isSoftMaterial' etc.), after everything is done...
 	if ((trace->surfaceFlags & SURF_MATERIAL_MASK) == MAT_SAND_GR_COL_01 || (trace->surfaceFlags & SURF_MATERIAL_MASK) == MAT_SAND_GR_COL_02 || (trace->surfaceFlags & SURF_MATERIAL_MASK) == MAT_SAND_GR_COL_03 || (trace->surfaceFlags & SURF_MATERIAL_MASK) == MAT_SAND_GR_COL_04) {
@@ -136,6 +137,7 @@ ProximityMine_Die
 =======================================================================================================================================
 */
 static void ProximityMine_Die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, int mod) {
+
 	ent->think = ProximityMine_Explode;
 	ent->nextthink = level.time + 1;
 }
@@ -319,9 +321,10 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace) {
 
 		SnapVectorTowards(trace->endpos, ent->s.pos.trBase);
 		G_SetOrigin(ent, trace->endpos);
-		ent->s.pos.trType = TR_STATIONARY;
-		VectorClear(ent->s.pos.trDelta);
 
+		ent->s.pos.trType = TR_STATIONARY;
+
+		VectorClear(ent->s.pos.trDelta);
 		G_AddEvent(ent, EV_PROXIMITY_MINE_STICK, trace->surfaceFlags);
 
 		ent->think = ProximityMine_Activate;
@@ -354,7 +357,6 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace) {
 	ent->s.eType = ET_GENERAL;
 
 	SnapVectorTowards(trace->endpos, ent->s.pos.trBase); // save net bandwidth
-
 	G_SetOrigin(ent, trace->endpos);
 	// splash damage (doesn't apply to person directly hit)
 	if (ent->splashDamage) {

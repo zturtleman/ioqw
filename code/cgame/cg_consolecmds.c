@@ -94,6 +94,7 @@ static void CG_ScoresDown_f(void) {
 	if (cg.scoresRequestTime + 2000 < cg.time) {
 		// the scores are more than two seconds out of data, so request new ones
 		cg.scoresRequestTime = cg.time;
+
 		trap_SendClientCommand("score");
 		// leave the current scores up if they were already displayed, but if this is the first hit, clear them out
 		if (!cg.showScores) {

@@ -165,7 +165,6 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir) {
 				// explosion sprite animation
 				VectorMA(origin, 24, dir, sprOrg);
 				VectorScale(dir, 64, sprVel);
-
 				CG_ParticleExplosion("explode1", sprOrg, sprVel, 1400, 20, 30);
 			}
 
@@ -542,7 +541,9 @@ void CG_RailTrail(clientInfo_t *ci, vec3_t start, vec3_t end) {
 
 	VectorCopy(start, move);
 	VectorSubtract(end, start, vec);
+
 	len = VectorNormalize(vec);
+
 	PerpendicularVector(temp, vec);
 
 	for (i = 0; i < 36; i++) {
@@ -558,7 +559,9 @@ void CG_RailTrail(clientInfo_t *ci, vec3_t start, vec3_t end) {
 	for (i = 0; i < len; i += SPACING) {
 		if (i != skip) {
 			skip = i + SPACING;
+
 			le = CG_AllocLocalEntity();
+
 			re = &le->refEntity;
 
 			le->leFlags = LEF_PUFF_DONT_SCALE;
@@ -983,7 +986,9 @@ static qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle) {
 
 	if (entityNum == cg.snap->ps.clientNum) {
 		VectorCopy(cg.snap->ps.origin, muzzle);
+
 		muzzle[2] += cg.snap->ps.viewheight;
+
 		AngleVectors(cg.snap->ps.viewangles, forward, NULL, NULL);
 		VectorMA(muzzle, 14, forward, muzzle);
 		return qtrue;
@@ -1128,6 +1133,7 @@ static void CG_ShotgunPattern(vec3_t origin, vec3_t origin2, int seed, int other
 	for (i = 0; i < DEFAULT_SHOTGUN_COUNT; i++) {
 		r = Q_crandom(&seed) * DEFAULT_SHOTGUN_SPREAD * 16;
 		u = Q_crandom(&seed) * DEFAULT_SHOTGUN_SPREAD * 16;
+
 		VectorMA(origin, 131072, forward, end);
 		VectorMA(end, r, right, end);
 		VectorMA(end, u, up, end);
@@ -1668,6 +1674,7 @@ static void CG_LightningBolt(centity_t *cent, vec3_t origin) {
 
 	beam.reType = RT_LIGHTNING;
 	beam.customShader = cgs.media.lightningShader;
+
 	trap_R_AddRefEntityToScene(&beam);
 	// add the impact flare if it hit something
 	if (trace.fraction < 1.0) {
@@ -1686,6 +1693,7 @@ static void CG_LightningBolt(centity_t *cent, vec3_t origin) {
 		angles[0] = rand() % 360;
 		angles[1] = rand() % 360;
 		angles[2] = rand() % 360;
+
 		AnglesToAxis(angles, beam.axis);
 		trap_R_AddRefEntityToScene(&beam);
 	}
@@ -1743,13 +1751,14 @@ static void CG_LightningBolt(centity_t *cent, vec3_t origin) {
 	}
 }
 */
+
+#define SPIN_SPEED 0.9
+#define COAST_TIME 1000
 /*
 =======================================================================================================================================
 CG_MachinegunSpinAngle
 =======================================================================================================================================
 */
-#define SPIN_SPEED 0.9
-#define COAST_TIME 1000
 static float CG_MachinegunSpinAngle(centity_t *cent) {
 	int delta;
 	float angle;
@@ -1885,7 +1894,6 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent,
 	}
 
 	trap_R_LerpTag(&lerped, parent->hModel, parent->oldframe, parent->frame, 1.0 - parent->backlerp, "tag_weapon");
-
 	VectorCopy(parent->origin, gun.origin);
 	VectorMA(gun.origin, lerped.origin[0], parent->axis[0], gun.origin);
 	// Make weapon appear left-handed for 2 and centered for 3
@@ -1915,8 +1923,8 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent,
 		angles[YAW] = 0;
 		angles[PITCH] = 0;
 		angles[ROLL] = CG_MachinegunSpinAngle(cent);
-		AnglesToAxis(angles, barrel.axis);
 
+		AnglesToAxis(angles, barrel.axis);
 		CG_PositionRotatedEntityOnTag(&barrel, &gun, weapon->weaponModel, "tag_barrel");
 		CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ci->team);
 	}
@@ -1940,6 +1948,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent,
 	angles[YAW] = 0;
 	angles[PITCH] = 0;
 	angles[ROLL] = crandom() * 10;
+
 	AnglesToAxis(angles, flash.axis);
 	// colorize the railgun blast
 	Byte4Copy(ci->c1RGBA, flash.shaderRGBA);
@@ -2032,7 +2041,7 @@ void CG_AddViewWeapon(playerState_t *ps) {
 		fovOffset[2] = -0.2 * (cg_fov.integer - 90);
 	}
 
-	cent = &cg.predictedPlayerEntity; // &cg_entities[cg.snap->ps.clientNum];
+	cent = &cg.predictedPlayerEntity; //&cg_entities[cg.snap->ps.clientNum];
 
 	CG_RegisterWeapon(ps->weapon);
 

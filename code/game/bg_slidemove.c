@@ -175,7 +175,9 @@ qboolean PM_SlideMove(qboolean gravity) {
 				// slide the original velocity along the crease
 				CrossProduct(planes[i], planes[j], dir);
 				VectorNormalize(dir);
+
 				d = DotProduct(dir, pm->ps->velocity);
+
 				VectorScale(dir, d, clipVelocity);
 
 				if (gravity) {
@@ -256,6 +258,7 @@ void PM_StepSlideMove(qboolean gravity) {
 	//VectorCopy(pm->ps->velocity, down_v);
 
 	VectorCopy(start_o, up);
+
 	up[2] += STEPSIZE;
 	// test the player position if they were a stepheight higher
 	pm->trace(&trace, start_o, pm->mins, pm->maxs, up, pm->ps->clientNum, pm->tracemask);

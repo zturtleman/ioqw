@@ -413,8 +413,8 @@ static void CL_ParseServerInfo(void) {
 	const char *serverInfo;
 
 	serverInfo = cl.gameState.stringData + cl.gameState.stringOffsets[CS_SERVERINFO];
-
 	clc.sv_allowDownload = atoi(Info_ValueForKey(serverInfo, "sv_allowDownload"));
+
 	Q_strncpyz(clc.sv_dlURL, Info_ValueForKey(serverInfo, "sv_dlURL"), sizeof(clc.sv_dlURL));
 }
 
@@ -801,6 +801,7 @@ void CL_ParseCommandString(msg_t *msg) {
 
 	clc.serverCommandSequence = seq;
 	index = seq & (MAX_RELIABLE_COMMANDS - 1);
+
 	Q_strncpyz(clc.serverCommands[index], s, sizeof(clc.serverCommands[index]));
 }
 

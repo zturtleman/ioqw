@@ -172,7 +172,6 @@ void G_TeamCommand(team_t team, char *cmd) {
 G_Find
 
 Searches all active entities for the next one that holds the matching string at fieldofs (use the FOFS() macro) in the structure.
-
 Searches beginning at the entity after from, or the beginning if NULL.
 NULL will be returned if the end of the list is reached.
 =======================================================================================================================================
@@ -250,8 +249,7 @@ gentity_t *G_PickTarget(char *targetname) {
 G_UseTargets
 
 "activator" should be set to the entity that initiated the firing.
-
-Search for (string)targetname in all entities that match (string)self.target and call their .use function.
+Search for (string) targetname in all entities that match (string) self.target and call their .use function.
 =======================================================================================================================================
 */
 void G_UseTargets(gentity_t *ent, gentity_t *activator) {
@@ -263,6 +261,7 @@ void G_UseTargets(gentity_t *ent, gentity_t *activator) {
 
 	if (ent->targetShaderName && ent->targetShaderNewName) {
 		float f = level.time * 0.001;
+
 		AddRemap(ent->targetShaderName, ent->targetShaderNewName, f);
 		trap_SetConfigstring(CS_SHADERSTATE, BuildShaderStateConfig());
 	}
@@ -304,9 +303,11 @@ float *tv(float x, float y, float z) {
 	// use an array so that multiple tempvectors won't collide for a while
 	v = vecs[index];
 	index = (index + 1)&7;
+
 	v[0] = x;
 	v[1] = y;
 	v[2] = z;
+
 	return v;
 }
 
@@ -388,6 +389,7 @@ G_InitGentity
 =======================================================================================================================================
 */
 void G_InitGentity(gentity_t *e) {
+
 	e->inuse = qtrue;
 	e->classname = "noclass";
 	e->s.number = e - g_entities;
@@ -399,9 +401,7 @@ void G_InitGentity(gentity_t *e) {
 G_Spawn
 
 Either finds a free entity, or allocates a new one.
-
 The slots from 0 to MAX_CLIENTS - 1 are always reserved for clients, and will never be used by anything else.
-
 Try to avoid reusing an entity that was recently freed, because it can cause the client to think the entity morphed into something else
 instead of being removed and recreated, which can cause interpolated angles and bad trails.
 =======================================================================================================================================
@@ -446,7 +446,6 @@ gentity_t *G_Spawn(void) {
 	level.num_entities++;
 	// let the server system know that there are more entities
 	trap_LocateGameData(level.gentities, level.num_entities, sizeof(gentity_t), &level.clients[0].ps, sizeof(level.clients[0]));
-
 	G_InitGentity(e);
 	return e;
 }
@@ -653,7 +652,6 @@ int DebugLine(vec3_t start, vec3_t end, int color) {
 	VectorCopy(end, points[2]);
 	//points[2][2] -= 2;
 	VectorCopy(end, points[3]);
-
 	VectorSubtract(end, start, dir);
 	VectorNormalize(dir);
 

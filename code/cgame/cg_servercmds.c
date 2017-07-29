@@ -117,7 +117,6 @@ static void CG_ParseScores(void) {
 CG_ParseTeamInfo
 
 Format: "tinfo" team numstrings string (there are numstrings strings).
-
 Each string is "clientNum location health armor weapon powerups".
 =======================================================================================================================================
 */
@@ -164,7 +163,9 @@ void CG_ParseServerinfo(void) {
 	info = CG_ConfigString(CS_SERVERINFO);
 
 	Q_strncpyz(cgs.gametypeName, Info_ValueForKey(info, "sv_gametypeName"), sizeof(cgs.gametypeName));
+
 	cgs.gametype = atoi(Info_ValueForKey(info, "g_gametype"));
+
 	trap_Cvar_SetValue("g_gametype", cgs.gametype);
 
 	cgs.dmflags = atoi(Info_ValueForKey(info, "dmflags"));
@@ -174,6 +175,7 @@ void CG_ParseServerinfo(void) {
 	cgs.maxclients = atoi(Info_ValueForKey(info, "sv_maxclients"));
 
 	mapname = Info_ValueForKey(info, "mapname");
+
 	Com_sprintf(cgs.mapname, sizeof(cgs.mapname), "maps/%s.bsp", mapname);
 }
 
@@ -447,13 +449,10 @@ static void CG_MapRestart(void) {
 	cg.timelimitWarnings = 0;
 	cg.intermissionStarted = qfalse;
 	cg.levelShot = qfalse;
-
 	cgs.voteTime = 0;
-
 	cg.mapRestart = qtrue;
 
 	CG_StartMusic();
-
 	trap_S_ClearLoopingSounds(qtrue);
 	// we really should clear more parts of cg here and stop sounds
 	// play the "fight" sound if this is a restart without warmup
@@ -537,13 +536,16 @@ int CG_ParseVoiceChats(const char *filename, voiceChatList_t *voiceChatList, int
 	}
 
 	trap_FS_Read(buf, len, f);
+
 	buf[len] = 0;
+
 	trap_FS_FCloseFile(f);
 
 	ptr = buf;
 	p = &ptr;
 
 	Com_sprintf(voiceChatList->name, sizeof(voiceChatList->name), "%s", filename);
+
 	voiceChats = voiceChatList->voiceChats;
 
 	for (i = 0; i < maxVoiceChats; i++) {
@@ -577,6 +579,7 @@ int CG_ParseVoiceChats(const char *filename, voiceChatList_t *voiceChatList, int
 		}
 
 		Com_sprintf(voiceChats[voiceChatList->numVoiceChats].id, sizeof(voiceChats[voiceChatList->numVoiceChats].id), "%s", token);
+
 		token = COM_ParseExt(p, qtrue);
 
 		if (Q_stricmp(token, "{")) {
@@ -674,7 +677,9 @@ int CG_HeadModelVoiceChats(char *filename) {
 	}
 
 	trap_FS_Read(buf, len, f);
+
 	buf[len] = 0;
+
 	trap_FS_FCloseFile(f);
 
 	ptr = buf;
@@ -758,6 +763,7 @@ voiceChatList_t *CG_VoiceChatListForClient(int clientNum) {
 		for (i = 0; i < MAX_HEADMODELS; i++) {
 			if (!strlen(headModelVoiceChat[i].headmodel)) {
 				Com_sprintf(filename, sizeof(filename), "scripts/%s.vc", headModelName);
+
 				voiceChatNum = CG_HeadModelVoiceChats(filename);
 
 				if (voiceChatNum == -1) {
@@ -765,7 +771,9 @@ voiceChatList_t *CG_VoiceChatListForClient(int clientNum) {
 				}
 
 				Com_sprintf(headModelVoiceChat[i].headmodel, sizeof(headModelVoiceChat[i].headmodel), "%s", headModelName);
+
 				headModelVoiceChat[i].voiceChatNum = voiceChatNum;
+
 				return &voiceChatLists[headModelVoiceChat[i].voiceChatNum];
 			}
 		}
