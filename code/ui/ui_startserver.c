@@ -1094,6 +1094,7 @@ static void ServerOptions_SetMenuItems(void) {
 	Q_strncpyz(mapname, Info_ValueForKey(info, "map"), MAX_NAMELENGTH);
 	Q_strupr(mapname);
 	Com_sprintf(picname, 64, "levelshots/%s", mapname);
+
 	s_serveroptions.mappic.generic.name = picname;
 	// set the map name
 	strcpy(s_serveroptions.mapnamebuffer, s_startserver.mapname.string);

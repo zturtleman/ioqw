@@ -466,7 +466,7 @@ static void UI_AddBotsMenu_Init(void) {
 	addBotsMenuInfo.skill_slider.generic.id = ID_SKILLSLIDER;
 	addBotsMenuInfo.skill_slider.minvalue = 0.0;
 	addBotsMenuInfo.skill_slider.maxvalue = 4.0;
-	addBotsMenuInfo.skill_slider.curvalue = Com_Clamp(0, 4, (int)trap_Cvar_VariableValue("g_spSkill"));
+	addBotsMenuInfo.skill_slider.curvalue = Com_Clamp(0, 4, (int)trap_Cvar_VariableValue("g_spSkill") - 1);
 
 	y += SMALLCHAR_HEIGHT;
 	addBotsMenuInfo.skill.generic.type = MTYPE_SPINCONTROL;
