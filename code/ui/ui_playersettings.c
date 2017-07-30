@@ -250,12 +250,13 @@ static void PlayerSettings_DrawEffects(void *self) {
 		}
 
 		UI_ColorFromIndex(uitogamecode[item->curvalue], picColor);
+
 		picColor[3] = 1;
+
 		trap_R_SetColor(picColor);
 	}
 
 	UI_DrawHandlePic(item->generic.x + 64 + item->curvalue * xOffset + xOffset * 0.5f, item->generic.y + PROP_HEIGHT + 6, 16, 12, colorShader);
-
 	trap_R_SetColor(NULL);
 
 	if (focus) {
@@ -352,7 +353,6 @@ static void PlayerSettings_SetMenuItems(void) {
 	}
 
 	s_playersettings.effects.curvalue = gamecodetoui[c];
-
 	c = trap_Cvar_VariableValue("color2") - 1;
 
 	if (c < 0 || c > NUM_COLOR_EFFECTS - 1) {

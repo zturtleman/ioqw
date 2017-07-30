@@ -51,7 +51,7 @@ void VM_VmProfile_f(void);
 #if 0 // 64bit!
 /*
 =======================================================================================================================================
-VM_VM2C(
+VM_VM2C
 
 Converts a VM pointer to a C pointer and checks to make sure that the range is acceptable.
 =======================================================================================================================================
@@ -343,6 +343,7 @@ intptr_t QDECL VM_DllSyscall(intptr_t arg, ...) {
 	va_list ap;
 
 	args[0] = arg;
+
 	va_start(ap, arg);
 
 	for (i = 1; i < ARRAY_LEN(args); i++) {
@@ -568,6 +569,7 @@ vm_t *VM_Create(const char *module, intptr_t(*systemCalls)(intptr_t *), vmInterp
 
 		if (retval == VMI_NATIVE) {
 			Com_Printf("Try loading dll file %s\n", filename);
+
 			vm->dllHandle = Sys_LoadGameDll(filename, &vm->entryPoint, VM_DllSyscall);
 
 			if (vm->dllHandle) {
@@ -787,8 +789,9 @@ intptr_t QDECL VM_Call(vm_t *vm, int callnum, ...) {
 	++vm->callLevel;
 	// if we have a dll loaded, call it directly
 	if (vm->entryPoint) {
-		//rcg010207 - see dissertation at top of VM_DllSyscall() in this file.
+		// rcg010207 - see dissertation at top of VM_DllSyscall() in this file.
 		int args[MAX_VMMAIN_ARGS - 1];
+
 		va_list ap;
 		va_start(ap, callnum);
 
@@ -816,6 +819,7 @@ intptr_t QDECL VM_Call(vm_t *vm, int callnum, ...) {
 		va_list ap;
 
 		a.callnum = callnum;
+
 		va_start(ap, callnum);
 
 		for (i = 0; i < ARRAY_LEN(a.args); i++) {
@@ -900,7 +904,9 @@ void VM_VmProfile_f(void) {
 
 		sym = sorted[i];
 		perc = 100 * (float)sym->profileCount / total;
+
 		Com_Printf("%2i%% %9i %s\n", perc, sym->profileCount, sym->symName);
+
 		sym->profileCount = 0;
 	}
 
@@ -962,6 +968,7 @@ void VM_LogSyscalls(int *args) {
 	}
 
 	callnum++;
+
 	fprintf(f, "%i: %p (%i) = %i %i %i %i\n", callnum, (void *)(args - (int *)currentVM->dataBase), args[0], args[1], args[2], args[3], args[4]);
 }
 

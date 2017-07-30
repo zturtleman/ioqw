@@ -143,7 +143,6 @@ void DisplayOptions_MenuDraw(void) {
 
 	// APSFIX - rework this
 	DisplayOptions_UpdateMenuItems();
-
 	Menu_Draw(&displayOptionsInfo.menu);
 }
 

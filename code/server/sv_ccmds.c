@@ -717,14 +717,15 @@ static void SV_AddBanToList(qboolean isexception) {
 	banstring = Cmd_Argv(1);
 
 	if (strchr(banstring, '.') || strchr(banstring, ':')) {
-		// This is an ip address, not a client num.
+		// this is an ip address, not a client num.
 		if (SV_ParseCIDRNotation(&ip, &mask, banstring)) {
 			Com_Printf("Error: Invalid address %s\n", banstring);
 			return;
 		}
 	} else {
 		client_t *cl;
-		// client num.
+
+		// client num
 		cl = SV_GetPlayerByNum();
 
 		if (!cl) {
@@ -884,7 +885,7 @@ static void SV_ListBans_f(void) {
 		Com_Printf("Server is not running.\n");
 		return;
 	}
-	// List all bans
+	// list all bans
 	for (index = count = 0; index < serverBansCount; index++) {
 		ban = &serverBans[index];
 
@@ -893,7 +894,7 @@ static void SV_ListBans_f(void) {
 			Com_Printf("Ban #%d: %s/%d\n", count, NET_AdrToString(ban->ip), ban->subnet);
 		}
 	}
-	// List all exceptions
+	// list all exceptions
 	for (index = count = 0; index < serverBansCount; index++) {
 		ban = &serverBans[index];
 

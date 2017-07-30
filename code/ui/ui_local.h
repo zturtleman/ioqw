@@ -132,10 +132,8 @@ extern vmCvar_t ui_server15;
 extern vmCvar_t ui_server16;
 extern vmCvar_t ui_firstrun;
 extern vmCvar_t ui_mapicons;
-
 // ui_qmenu.c
 #define SLIDER_RANGE 10
-
 #define MAX_EDIT_LINE 256
 #define MAX_MENUDEPTH 8
 #define MAX_MENUITEMS 96
@@ -303,7 +301,6 @@ extern vec4_t text_color_highlight;
 extern char *ui_medalNames[];
 extern char *ui_medalPicNames[];
 extern char *ui_medalSounds[];
-
 extern void PText_Init(menutext_s *b);
 extern void ScrollList_Init(menulist_s *l);
 extern void RadioButton_Init(menuradiobutton_s *rb);

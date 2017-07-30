@@ -2041,6 +2041,7 @@ sysEvent_t Com_GetSystemEvent(void) {
 
 		len = strlen(s) + 1;
 		b = Z_Malloc(len);
+
 		strcpy(b, s);
 		Com_QueueEvent(0, SE_CONSOLE, 0, 0, len, b);
 	}

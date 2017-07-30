@@ -710,7 +710,7 @@ long FS_SV_FOpenFileRead(const char *filename, fileHandle_t *fp) {
 			fsh[f].handleFiles.file.o = Sys_FOpen(ospath, "rb");
 			fsh[f].handleSync = qfalse;
 		}
-		// Check fs_steampath
+		// check fs_steampath
 		if (!fsh[f].handleFiles.file.o && fs_steampath->string[0]) {
 			ospath = FS_BuildOSPath(fs_steampath->string, filename, "");
 			ospath[strlen(ospath) - 1] = '\0';
@@ -722,7 +722,7 @@ long FS_SV_FOpenFileRead(const char *filename, fileHandle_t *fp) {
 			fsh[f].handleFiles.file.o = Sys_FOpen(ospath, "rb");
 			fsh[f].handleSync = qfalse;
 		}
-		// Check fs_gogpath
+		// check fs_gogpath
 		if (!fsh[f].handleFiles.file.o && fs_gogpath->string[0]) {
 			ospath = FS_BuildOSPath(fs_gogpath->string, filename, "");
 			ospath[strlen(ospath) - 1] = '\0';
@@ -2444,7 +2444,7 @@ int FS_GetModList(char *listbuf, int bufsize) {
 				}
 			}
 		}
-		// we also drop "Data" "." and ".."
+		// we also drop "Data", "." and ".."
 		if (bDrop || Q_stricmp(name, com_basegame->string) == 0 || Q_stricmpn(name, ".", 1) == 0) {
 			continue;
 		}
@@ -2812,6 +2812,7 @@ void FS_AddGameDirectory(const char *path, const char *dir) {
 	Q_strncpyz(fs_gamedir, dir, sizeof(fs_gamedir));
 	// find all pak files in this directory
 	Q_strncpyz(curpath, FS_BuildOSPath(path, dir, ""), sizeof(curpath));
+
 	curpath[strlen(curpath) - 1] = '\0'; // strip the trailing slash
 	// get .pk3 files
 	pakfiles = Sys_ListFiles(curpath, ".pk3", NULL, &numfiles, qfalse);
@@ -3182,7 +3183,7 @@ static void FS_Startup(const char *gameName) {
 	// fs_homepath is somewhat particular to *nix systems, only add if relevant
 #ifdef __APPLE__
 	fs_apppath = Cvar_Get("fs_apppath", Sys_DefaultAppPath(), CVAR_INIT|CVAR_PROTECTED);
-	// Make MacOSX also include the base path included with the .app bundle
+	// make MacOSX also include the base path included with the .app bundle
 	if (fs_apppath->string[0]) {
 		FS_AddGameDirectory(fs_apppath->string, gameName);
 	}
@@ -3411,7 +3412,6 @@ FS_ReferencedPakPureChecksums
 
 Returns a space separated string containing the pure checksums of all referenced pk3 files.
 Servers with sv_pure set will get this string back from clients for pure validation.
-
 The string has a specific order, "cgame ui @ ref1 ref2 ref3 ...".
 =======================================================================================================================================
 */

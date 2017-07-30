@@ -726,7 +726,6 @@ static void GraphicsOptions_ApplyChanges(void *unused, int notification) {
 	}
 
 	trap_Cvar_SetValue("r_ext_multisample", s_graphicsoptions.multisample.curvalue * 2);
-
 	trap_Cmd_ExecuteText(EXEC_APPEND, "vid_restart\n");
 }
 

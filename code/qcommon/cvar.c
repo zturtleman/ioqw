@@ -415,8 +415,7 @@ cvar_t *Cvar_Get(const char *var_name, const char *var_value, int flags) {
 			Cvar_Set2(var_name, s, qtrue);
 			Z_Free(s);
 		}
-		// ZOID--needs to be set so that cvars the game sets as
-		// SERVERINFO get sent to clients
+		// ZOID--needs to be set so that cvars the game sets as SERVERINFO get sent to clients
 		cvar_modifiedFlags |= flags;
 
 		return var;
@@ -1226,7 +1225,7 @@ void Cvar_Restart(qboolean unsetVM) {
 		}
 
 		if (!(curvar->flags &(CVAR_ROM|CVAR_INIT|CVAR_NORESTART))) {
-			// Just reset the rest to their default values.
+			// just reset the rest to their default values.
 			Cvar_Set2(curvar->name, curvar->resetString, qfalse);
 		}
 

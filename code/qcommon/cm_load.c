@@ -740,8 +740,8 @@ qboolean CM_GetEntityToken(int *parseOffset, char *token, int size) {
 	}
 
 	parsePoint = cm.entityString + *parseOffset;
-
 	s = COM_Parse(&parsePoint);
+
 	Q_strncpyz(token, s, size);
 
 	if (!parsePoint && !s[0]) {

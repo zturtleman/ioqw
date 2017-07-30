@@ -1015,6 +1015,7 @@ void CM_TraceBoundingBoxThroughCapsule(traceWork_t *tw, clipHandle_t model) {
 	tw->sphere.use = qtrue;
 	tw->sphere.radius = (size[1][0] > size[1][2]) ? size[1][2] : size[1][0];
 	tw->sphere.halfheight = size[1][2];
+
 	VectorSet(tw->sphere.offset, 0, 0, size[1][2] - tw->sphere.radius);
 	// replace the capsule with the bounding box
 	h = CM_TempBoxModel(tw->size[0], tw->size[1], qfalse);

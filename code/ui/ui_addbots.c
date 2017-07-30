@@ -378,11 +378,9 @@ static void UI_AddBotsMenu_Draw(void) {
 		y -= h;
 
 		trap_R_SetColor(color_black);
-
 		UI_DrawHandlePic(x, y, w, h, hpic);
 
 		trap_R_SetColor(NULL);
-
 		UI_DrawHandlePic(x - 2, y - 2, w, h, hpic);
 		// write bot skill as float
 		x = b->generic.x + b->width - 4 * SMALLCHAR_WIDTH;

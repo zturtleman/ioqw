@@ -499,6 +499,7 @@ AxisClear
 =======================================================================================================================================
 */
 void AxisClear(vec3_t axis[3]) {
+
 	axis[0][0] = 1;
 	axis[0][1] = 0;
 	axis[0][2] = 0;
@@ -516,6 +517,7 @@ AxisCopy
 =======================================================================================================================================
 */
 void AxisCopy(vec3_t in[3], vec3_t out[3]) {
+
 	VectorCopy(in[0], out[0]);
 	VectorCopy(in[1], out[1]);
 	VectorCopy(in[2], out[2]);
@@ -576,6 +578,7 @@ VectorRotate
 =======================================================================================================================================
 */
 void VectorRotate(vec3_t in, vec3_t matrix[3], vec3_t out) {
+
 	out[0] = DotProduct(in, matrix[0]);
 	out[1] = DotProduct(in, matrix[1]);
 	out[2] = DotProduct(in, matrix[2]);
@@ -678,6 +681,7 @@ AnglesSubtract
 =======================================================================================================================================
 */
 void AnglesSubtract(vec3_t v1, vec3_t v2, vec3_t v3) {
+
 	v3[0] = AngleSubtract(v1[0], v2[0]);
 	v3[1] = AngleSubtract(v1[1], v2[1]);
 	v3[2] = AngleSubtract(v1[2], v2[2]);
@@ -955,10 +959,11 @@ vec_t VectorNormalize2(const vec3_t v, vec3_t out) {
 
 /*
 =======================================================================================================================================
-VectorMA
+_VectorMA
 =======================================================================================================================================
 */
 void _VectorMA(const vec3_t veca, float scale, const vec3_t vecb, vec3_t vecc) {
+
 	vecc[0] = veca[0] + scale * vecb[0];
 	vecc[1] = veca[1] + scale * vecb[1];
 	vecc[2] = veca[2] + scale * vecb[2];
@@ -966,7 +971,7 @@ void _VectorMA(const vec3_t veca, float scale, const vec3_t vecb, vec3_t vecc) {
 
 /*
 =======================================================================================================================================
-DotProduct
+_DotProduct
 =======================================================================================================================================
 */
 vec_t _DotProduct(const vec3_t v1, const vec3_t v2) {
@@ -975,10 +980,11 @@ vec_t _DotProduct(const vec3_t v1, const vec3_t v2) {
 
 /*
 =======================================================================================================================================
-VectorSubtract
+_VectorSubtract
 =======================================================================================================================================
 */
 void _VectorSubtract(const vec3_t veca, const vec3_t vecb, vec3_t out) {
+
 	out[0] = veca[0] - vecb[0];
 	out[1] = veca[1] - vecb[1];
 	out[2] = veca[2] - vecb[2];
@@ -986,10 +992,11 @@ void _VectorSubtract(const vec3_t veca, const vec3_t vecb, vec3_t out) {
 
 /*
 =======================================================================================================================================
-VectorAdd
+_VectorAdd
 =======================================================================================================================================
 */
 void _VectorAdd(const vec3_t veca, const vec3_t vecb, vec3_t out) {
+
 	out[0] = veca[0] + vecb[0];
 	out[1] = veca[1] + vecb[1];
 	out[2] = veca[2] + vecb[2];
@@ -997,10 +1004,11 @@ void _VectorAdd(const vec3_t veca, const vec3_t vecb, vec3_t out) {
 
 /*
 =======================================================================================================================================
-VectorCopy
+_VectorCopy
 =======================================================================================================================================
 */
 void _VectorCopy(const vec3_t in, vec3_t out) {
+
 	out[0] = in[0];
 	out[1] = in[1];
 	out[2] = in[2];
@@ -1008,10 +1016,11 @@ void _VectorCopy(const vec3_t in, vec3_t out) {
 
 /*
 =======================================================================================================================================
-VectorScale
+_VectorScale
 =======================================================================================================================================
 */
 void _VectorScale(const vec3_t in, vec_t scale, vec3_t out) {
+
 	out[0] = in[0] * scale;
 	out[1] = in[1] * scale;
 	out[2] = in[2] * scale;
@@ -1023,6 +1032,7 @@ Vector4Scale
 =======================================================================================================================================
 */
 void Vector4Scale(const vec4_t in, vec_t scale, vec4_t out) {
+
 	out[0] = in[0] * scale;
 	out[1] = in[1] * scale;
 	out[2] = in[2] * scale;
@@ -1075,6 +1085,7 @@ MatrixMultiply
 =======================================================================================================================================
 */
 void MatrixMultiply(float in1[3][3], float in2[3][3], float out[3][3]) {
+
 	out[0][0] = in1[0][0] * in2[0][0] + in1[0][1] * in2[1][0] + in1[0][2] * in2[2][0];
 	out[0][1] = in1[0][0] * in2[0][1] + in1[0][1] * in2[1][1] + in1[0][2] * in2[2][1];
 	out[0][2] = in1[0][0] * in2[0][2] + in1[0][1] * in2[1][2] + in1[0][2] * in2[2][2];
@@ -1094,8 +1105,8 @@ AngleVectors
 void AngleVectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up) {
 	float angle;
 	static float sr, sp, sy, cr, cp, cy;
-	// static to help MS compiler fp bugs
 
+	// static to help MS compiler fp bugs
 	angle = angles[YAW] * (M_PI * 2 / 360);
 	sy = sin(angle);
 	cy = cos(angle);
@@ -1167,7 +1178,6 @@ int Q_isnan(float x) {
 	fi.f = x;
 	fi.ui &= 0x7FFFFFFF;
 	fi.ui = 0x7F800000 - fi.ui;
-
 	return (int)((unsigned int)fi.ui >> 31);
 }
 #ifndef Q3_VM
@@ -1175,7 +1185,7 @@ int Q_isnan(float x) {
 =======================================================================================================================================
 Q_acos
 
-The msvc acos doesn't always return a value between 0 and PI:
+The MSVC acos doesn't always return a value between 0 and PI:
 
 int i;
 i = 1065353246;
@@ -1202,7 +1212,7 @@ float Q_acos(float c) {
 =======================================================================================================================================
 Q_asin
 
-The msvc asin probably has same odd behavior as acos.
+The MSVC asin probably has same odd behavior as acos.
 =======================================================================================================================================
 */
 float Q_asin(float c) {

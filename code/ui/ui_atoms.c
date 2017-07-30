@@ -81,6 +81,7 @@ UI_StartMenuMusic
 void UI_StartMenuMusic(void) {
 
 	trap_S_StartBackgroundTrack("music/ui_music01.ogg", "music/ui_music02.ogg");
+
 	uis.playmusic = qtrue;
 }
 

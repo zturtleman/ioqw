@@ -503,6 +503,7 @@ void StartServer_Cache(void) {
 	if (precache) {
 		for (i = 0; i < UI_GetNumArenas(); i++) {
 			info = UI_GetArenaInfoByNumber(i);
+
 			Q_strncpyz(mapname, Info_ValueForKey(info, "map"), MAX_NAMELENGTH);
 			Q_strupr(mapname);
 
@@ -988,7 +989,6 @@ static void ServerOptions_InitBotNames(void) {
 
 		s_serveroptions.playerType[10].curvalue = 2;
 		s_serveroptions.playerType[11].curvalue = 2;
-
 		return;
 	}
 
@@ -1095,6 +1095,7 @@ static void ServerOptions_SetMenuItems(void) {
 	}
 
 	Q_strncpyz(s_serveroptions.hostname.field.buffer, UI_Cvar_VariableString("sv_hostname"), sizeof(s_serveroptions.hostname.field.buffer));
+
 	s_serveroptions.pure.curvalue = Com_Clamp(0, 1, trap_Cvar_VariableValue("sv_pure"));
 	// set the map pic
 	info = UI_GetArenaInfoByNumber(s_startserver.maplist[s_startserver.currentmap]);

@@ -1028,8 +1028,7 @@ static void SV_VerifyPaks_f(client_t *cl) {
 			}
 			// store number to compare against (minus one cause the last is the number of checksums)
 			nClientPaks = i - 1;
-			// make sure none of the client check sums are the same
-			// so the client can't send 5 the same checksums
+			// make sure none of the client check sums are the same so the client can't send 5 the same checksums
 			for (i = 0; i < nClientPaks; i++) {
 				for (j = 0; j < nClientPaks; j++) {
 					if (i == j) {
@@ -1217,7 +1216,6 @@ SV_UpdateUserinfo_f
 static void SV_UpdateUserinfo_f(client_t *cl) {
 
 	Q_strncpyz(cl->userinfo, Cmd_Argv(1), sizeof(cl->userinfo));
-
 	SV_UserinfoChanged(cl);
 	// call prog code to allow overrides
 	VM_Call(gvm, GAME_CLIENT_USERINFO_CHANGED, cl - svs.clients);

@@ -725,7 +725,7 @@ void GLimp_Init(qboolean coreContext) {
 	// Nothing worked, give up
 	ri.Error(ERR_FATAL, "GLimp_Init() - could not load OpenGL subsystem");
 success:
-	// These values force the UI to disable driver selection
+	// these values force the UI to disable driver selection
 	glConfig.driverType = GLDRV_ICD;
 	glConfig.hardwareType = GLHW_GENERIC;
 	// Only using SDL_SetWindowBrightness to determine if hardware gamma is supported
