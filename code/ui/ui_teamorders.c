@@ -58,46 +58,88 @@ static teamOrdersMenuInfo_t teamOrdersMenuInfo;
 #define NUM_CTF_ORDERS 7
 
 static const char *ctfOrders[] = {
-	"I Am the Leader",
+	"Get Enemy Flag",
 	"Defend the Base",
 	"Follow Me",
-	"Get Enemy Flag",
 	"Camp Here",
+	"I Am the Leader",
 	"Report",
 	"I Relinquish Command",
 	NULL
 };
 
 static const char *ctfMessages[] = {
-	"i am the leader",
+	"%s get enemy flag",
 	"%s defend the base",
 	"%s follow me",
-	"%s get enemy flag",
 	"%s camp here",
+	"i am the leader",
 	"%s report",
 	"i stop being the leader",
+	NULL
+};
+
+static const char *ctfVoiceChats[] = {
+	"getflag",
+	"defend",
+	"followme",
+	"camp",
+	"startleader",
+	NULL,
+	"stopleader",
+	NULL
+};
+
+static const char *ctfButtons[] = {
+	"7", // getflag
+	"8", // defend
+	"10", // followme
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 };
 
 #define NUM_TEAM_ORDERS 6
 
 static const char *teamOrders[] = {
-	"I Am the Leader",
-	"Follow Me",
 	"Roam",
+	"Follow Me",
 	"Camp Here",
+	"I Am the Leader",
 	"Report",
 	"I Relinquish Command",
 	NULL
 };
 
 static const char *teamMessages[] = {
-	"i am the leader",
-	"%s follow me",
 	"%s roam",
+	"%s follow me",
 	"%s camp here",
+	"i am the leader",
 	"%s report",
 	"i stop being the leader",
+	NULL
+};
+
+static const char *teamVoiceChats[] = {
+	"patrol",
+	"followme",
+	"camp",
+	"startleader",
+	NULL,
+	"stopleader",
+	NULL
+};
+
+static const char *teamButtons[] = {
+	"9", // patrol
+	"10", // followme
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 };
 
@@ -226,7 +268,7 @@ static void UI_TeamOrdersMenu_ListDraw(void *self) {
 	y = l->generic.y;
 
 	for (i = 0; i < l->numitems; i++) {
-		style = UI_LEFT|UI_SMALLFONT|UI_CENTER;
+		style = UI_SMALLFONT|UI_CENTER;
 
 		if (i == l->curvalue) {
 			color = color_yellow;
@@ -253,6 +295,8 @@ static void UI_TeamOrdersMenu_ListEvent(void *ptr, int event) {
 	int id;
 	int selection;
 	char message[256];
+	const char **voiceChats;
+	const char **buttons;
 
 	if (event != QM_ACTIVATED) {
 		return;
@@ -275,11 +319,32 @@ static void UI_TeamOrdersMenu_ListEvent(void *ptr, int event) {
 
 	if (id == ID_LIST_CTF_ORDERS) {
 		Com_sprintf(message, sizeof(message), ctfMessages[selection], teamOrdersMenuInfo.botNames[teamOrdersMenuInfo.selectedBot]);
+		voiceChats = ctfVoiceChats;
+		buttons = ctfButtons;
 	} else {
 		Com_sprintf(message, sizeof(message), teamMessages[selection], teamOrdersMenuInfo.botNames[teamOrdersMenuInfo.selectedBot]);
+		voiceChats = teamVoiceChats;
+		buttons = teamButtons;
 	}
 
-	trap_Cmd_ExecuteText(EXEC_APPEND, va("say_team \"%s\"\n", message));
+	if (teamOrdersMenuInfo.selectedBot == 0) { // everyone
+		if (voiceChats[selection] != NULL && buttons[selection] != NULL) {
+			trap_Cmd_ExecuteText(EXEC_APPEND, va("cmd vsay_team %s; +button%s; wait; -button%s", voiceChats[selection], buttons[selection], buttons[selection]));
+		} else if (voiceChats[selection] != NULL) {
+			trap_Cmd_ExecuteText(EXEC_APPEND, va("cmd vsay_team %s", voiceChats[selection]));
+		} else {
+			trap_Cmd_ExecuteText(EXEC_APPEND, va("say_team \"%s\"\n", message));
+		}
+	} else {
+		if (voiceChats[selection] != NULL && buttons[selection] != NULL) {
+			trap_Cmd_ExecuteText(EXEC_APPEND, va("cmd vtell %s %s; +button%s; wait; -button%s", teamOrdersMenuInfo.botNames[teamOrdersMenuInfo.selectedBot], voiceChats[selection], buttons[selection], buttons[selection]));
+		} else if (voiceChats[selection] != NULL) {
+			trap_Cmd_ExecuteText(EXEC_APPEND, va("cmd vtell %s", voiceChats[selection]));
+		} else {
+			trap_Cmd_ExecuteText(EXEC_APPEND, va("say_team \"%s\"\n", message));
+		}
+	}
+
 	UI_PopMenu();
 }
 
