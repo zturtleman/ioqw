@@ -146,8 +146,8 @@ qboolean CheckGauntletAttack(gentity_t *ent) {
 #define MACHINEGUN_SPREAD 200
 #define MACHINEGUN_DAMAGE 5
 
-#define HANDGUN_SPREAD 50
-#define HANDGUN_DAMAGE 5
+#define HANDGUN_SPREAD 10
+#define HANDGUN_DAMAGE 6 // Tobias NOTE: this is not realistic, but what is already realistic? Normally a bigger caliber (mg) is more deadly, but we want a stronger pistol...so pistol dmg > mg dmg :(
 
 /*
 =======================================================================================================================================
@@ -523,17 +523,17 @@ void Weapon_RocketLauncher_Fire(gentity_t *ent) {
 /*
 =======================================================================================================================================
 
-	LIGHTNING GUN
+	BEAM GUN
 
 =======================================================================================================================================
 */
 
 /*
 =======================================================================================================================================
-Weapon_Lightning_Fire
+Weapon_Beamgun_Fire
 =======================================================================================================================================
 */
-void Weapon_Lightning_Fire(gentity_t *ent) {
+void Weapon_Beamgun_Fire(gentity_t *ent) {
 	trace_t tr;
 	vec3_t end;
 	gentity_t *traceEnt, *tent;
@@ -543,7 +543,7 @@ void Weapon_Lightning_Fire(gentity_t *ent) {
 	passent = ent->s.number;
 
 	for (i = 0; i < 10; i++) {
-		VectorMA(muzzle, LIGHTNING_RANGE, forward, end);
+		VectorMA(muzzle, BEAMGUN_RANGE, forward, end);
 		trap_Trace(&tr, muzzle, NULL, NULL, end, passent, MASK_SHOT);
 
 		if (tr.entityNum == ENTITYNUM_NONE) {
@@ -553,7 +553,7 @@ void Weapon_Lightning_Fire(gentity_t *ent) {
 		traceEnt = &g_entities[tr.entityNum];
 
 		if (traceEnt->takedamage) {
-			G_Damage(traceEnt, ent, ent, forward, tr.endpos, damage, 0, MOD_LIGHTNING);
+			G_Damage(traceEnt, ent, ent, forward, tr.endpos, damage, 0, MOD_BEAMGUN);
 		}
 
 		if (traceEnt->takedamage && traceEnt->client) {
@@ -882,8 +882,8 @@ void FireWeapon(gentity_t *ent) {
 		case WP_ROCKETLAUNCHER:
 			Weapon_RocketLauncher_Fire(ent);
 			break;
-		case WP_LIGHTNING:
-			Weapon_Lightning_Fire(ent);
+		case WP_BEAMGUN:
+			Weapon_Beamgun_Fire(ent);
 			break;
 		case WP_RAILGUN:
 			Weapon_Railgun_Fire(ent);

@@ -40,7 +40,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define INVENTORY_GRENADELAUNCHER	 12
 #define INVENTORY_NAPALMLAUNCHER	 13
 #define INVENTORY_ROCKETLAUNCHER	 14
-#define INVENTORY_LIGHTNING			 15
+#define INVENTORY_BEAMGUN			 15
 #define INVENTORY_RAILGUN			 16
 #define INVENTORY_PLASMAGUN			 17
 #define INVENTORY_BFG10K			 18
@@ -57,35 +57,37 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define INVENTORY_GRENADES			 28
 #define INVENTORY_CANISTERS			 29
 #define INVENTORY_ROCKETS			 30
-#define INVENTORY_LIGHTNING_AMMO	 31
+#define INVENTORY_BEAMGUN_AMMO		 31
 #define INVENTORY_SLUGS				 32
 #define INVENTORY_CELLS				 33
 #define INVENTORY_BFG_AMMO			 34
 #define INVENTORY_MISSILES			 35
+// holdables
+#define INVENTORY_MEDKIT			 36
+#define INVENTORY_KAMIKAZE			 37
 // powerups
-#define INVENTORY_KAMIKAZE			 36
-#define INVENTORY_QUAD				 37
-#define INVENTORY_INVISIBILITY		 38
-#define INVENTORY_REGEN				 39
-#define INVENTORY_AMMOREGEN			 40
-#define INVENTORY_GUARD				 41
-#define INVENTORY_DOUBLER			 42
-#define INVENTORY_SCOUT				 43
+#define INVENTORY_QUAD				 38
+#define INVENTORY_INVISIBILITY		 39
+#define INVENTORY_REGEN				 40
+#define INVENTORY_AMMOREGEN			 41
+#define INVENTORY_GUARD				 42
+#define INVENTORY_DOUBLER			 43
+#define INVENTORY_SCOUT				 44
 // team items
-#define INVENTORY_REDFLAG			 44
-#define INVENTORY_BLUEFLAG			 45
-#define INVENTORY_NEUTRALFLAG		 46
-#define INVENTORY_REDCUBE			 47
-#define INVENTORY_BLUECUBE			 48
+#define INVENTORY_REDFLAG			 45
+#define INVENTORY_BLUEFLAG			 46
+#define INVENTORY_NEUTRALFLAG		 47
+#define INVENTORY_REDCUBE			 48
+#define INVENTORY_BLUECUBE			 49
 // bot stuff
-#define BOT_IS_IN_HURRY				 49
-#define NUM_VISIBLE_TEAMMATES		 50
+#define BOT_IS_IN_HURRY				 50
+#define NUM_VISIBLE_TEAMMATES		 51
 // enemy stuff
-#define NUM_VISIBLE_ENEMIES			 51
-#define ENEMY_HORIZONTAL_DIST		 52
-#define ENEMY_HEIGHT				 53
+#define NUM_VISIBLE_ENEMIES			 52
+#define ENEMY_HORIZONTAL_DIST		 53
+#define ENEMY_HEIGHT				 54
 // entity stuff
-#define ENTITY_IS_AN_OBELISK		 54
+#define ENTITY_IS_AN_OBELISK		 55
 //************************************************************************
 // ITEM NUMBERS (make sure they are in sync with bg_itemlist in bg_misc.c)
 //************************************************************************
@@ -109,7 +111,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define MODELINDEX_GRENADELAUNCHER	 18
 #define MODELINDEX_NAPALMLAUNCHER	 19
 #define MODELINDEX_ROCKETLAUNCHER	 20
-#define MODELINDEX_LIGHTNING		 21
+#define MODELINDEX_BEAMGUN			 21
 #define MODELINDEX_RAILGUN			 22
 #define MODELINDEX_PLASMAGUN		 23
 #define MODELINDEX_BFG10K			 24
@@ -126,26 +128,28 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define MODELINDEX_GRENADES			 34
 #define MODELINDEX_CANISTERS		 35
 #define MODELINDEX_ROCKETS			 36
-#define MODELINDEX_LIGHTNING_AMMO	 37
+#define MODELINDEX_BEAMGUN_AMMO		 37
 #define MODELINDEX_SLUGS			 38
 #define MODELINDEX_CELLS			 39
 #define MODELINDEX_BFG_AMMO			 40
 #define MODELINDEX_MISSILES			 41
+// holdables
+#define MODELINDEX_MEDKIT			 42
+#define MODELINDEX_KAMIKAZE			 43
 // powerups
-#define MODELINDEX_KAMIKAZE			 42
-#define MODELINDEX_QUAD				 43
-#define MODELINDEX_INVISIBILITY		 44
-#define MODELINDEX_REGEN			 45
-#define MODELINDEX_AMMOREGEN		 46
-#define MODELINDEX_GUARD			 47
-#define MODELINDEX_DOUBLER			 48
-#define MODELINDEX_SCOUT			 49
+#define MODELINDEX_QUAD				 44
+#define MODELINDEX_INVISIBILITY		 45
+#define MODELINDEX_REGEN			 46
+#define MODELINDEX_AMMOREGEN		 47
+#define MODELINDEX_GUARD			 48
+#define MODELINDEX_DOUBLER			 49
+#define MODELINDEX_SCOUT			 50
 // team items
-#define MODELINDEX_REDFLAG			 50
-#define MODELINDEX_BLUEFLAG			 51
-#define MODELINDEX_NEUTRALFLAG		 52
-#define MODELINDEX_REDCUBE			 53
-#define MODELINDEX_BLUECUBE			 54
+#define MODELINDEX_REDFLAG			 51
+#define MODELINDEX_BLUEFLAG			 52
+#define MODELINDEX_NEUTRALFLAG		 53
+#define MODELINDEX_REDCUBE			 54
+#define MODELINDEX_BLUECUBE			 55
 //************************************************************************
 // WEAPON NUMBERS
 //************************************************************************
@@ -161,7 +165,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define WEAPONINDEX_GRENADELAUNCHER		10
 #define WEAPONINDEX_NAPALMLAUNCHER		11
 #define WEAPONINDEX_ROCKETLAUNCHER		12
-#define WEAPONINDEX_LIGHTNING			13
+#define WEAPONINDEX_BEAMGUN				13
 #define WEAPONINDEX_RAILGUN				14
 #define WEAPONINDEX_PLASMAGUN			15
 #define WEAPONINDEX_BFG					16

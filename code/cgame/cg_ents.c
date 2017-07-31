@@ -914,7 +914,7 @@ void CG_AddPacketEntities(void) {
 
 	BG_PlayerStateToEntityState(ps, &cg.predictedPlayerEntity.currentState, qfalse);
 	CG_AddCEntity(&cg.predictedPlayerEntity);
-	// lerp the non-predicted value for lightning gun origins
+	// lerp the non-predicted value for beam gun origins
 	CG_CalcEntityLerpPositions(&cg_entities[cg.snap->ps.clientNum]);
 	// add each entity sent over by the server
 	for (num = 0; num < cg.snap->numEntities; num++) {

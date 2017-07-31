@@ -500,7 +500,7 @@ weight "weapon_phosphorgun"
 	}
 }
 
-weight "weapon_prox_launcher"
+weight "weapon_proxylauncher"
 {
 	switch (BOT_IS_IN_HURRY)
 	{
@@ -603,29 +603,29 @@ weight "weapon_rocketlauncher"
 	}
 }
 
-weight "weapon_lightning"
+weight "weapon_beamgun"
 {
-	switch (INVENTORY_LIGHTNING)
+	switch (INVENTORY_BEAMGUN)
 	{
-		case 1: return WEAPON_SCALE(W_LIGHTNING);
+		case 1: return WEAPON_SCALE(W_BEAMGUN);
 		default:
 		{
 			switch (BOT_IS_IN_HURRY)
 			{
 				case 1:
 				{
-					switch (INVENTORY_LIGHTNING_AMMO)
+					switch (INVENTORY_BEAMGUN_AMMO)
 					{
-						case 50: return WEAPON_SCALE(GWW_LIGHTNING);
-						case 80: return WEAPON_SCALE(GWW_LIGHTNING - 10);
+						case 50: return WEAPON_SCALE(GWW_BEAMGUN);
+						case 80: return WEAPON_SCALE(GWW_BEAMGUN - 10);
 						default: return balance(5, 3, 7);
 					}
 				}
 				default:
 				{
-					switch (INVENTORY_LIGHTNING_AMMO)
+					switch (INVENTORY_BEAMGUN_AMMO)
 					{
-						case 50: return WEAPON_SCALE(GWW_LIGHTNING);
+						case 50: return WEAPON_SCALE(GWW_BEAMGUN);
 						default: return 0;
 					}
 				}
@@ -1008,13 +1008,13 @@ weight "ammo_rockets"
 	}
 }
 
-weight "ammo_lightning"
+weight "ammo_cartridge"
 {
 	switch (BOT_IS_IN_HURRY)
 	{
 		case 1:
 		{
-			switch (INVENTORY_LIGHTNING_AMMO)
+			switch (INVENTORY_BEAMGUN_AMMO)
 			{
 				case 20: return AMMO_SCALE(20);
 				case 40: return AMMO_SCALE(20);
@@ -1122,16 +1122,40 @@ weight "ammo_missiles"
 //=============================================
 // POWERUPS
 //=============================================
+
+weight "holdable_medkit"
+{
+	switch (INVENTORY_MEDKIT)
+	{
+		case 1:
+		{
+			switch (INVENTORY_KAMIKAZE)
+			{
+				case 1: return POWERUP_SCALE(W_MEDKIT);
+				default: return 0; //already has a holdable
+			}
+		}
+		default: return 0; //already has a holdable
+	}
+}
+
 weight "holdable_kamikaze"
 {
 	switch (BOT_IS_IN_HURRY)
 	{
 		case 1:
 		{
-			switch (INVENTORY_KAMIKAZE) // bot already has the kamikaze
+			switch (INVENTORY_MEDKIT)
 			{
-					case 1: return POWERUP_SCALE(W_KAMIKAZE);
-					default: return 0;
+				case 1:
+				{
+					switch (INVENTORY_KAMIKAZE)
+					{
+						case 1: return POWERUP_SCALE(W_KAMIKAZE);
+						default: return 0; //already has a holdable
+					}
+				}
+				default: return 0; //already has a holdable
 			}
 		}
 		default: return 0; // bot has an emergency goal

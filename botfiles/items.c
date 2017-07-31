@@ -103,7 +103,7 @@ iteminfo "item_armor_shard"
 iteminfo "item_armor_combat"
 {
 	name		"Armor"
-	model		"models/powerups/armor/armor_yel.md3"
+	model		"models/powerups/armor/armor_gre.md3"
 	modelindex	MODELINDEX_ARMORCOMBAT
 	type		ITEM_ARMOR
 	index		INVENTORY_ARMOR
@@ -115,7 +115,7 @@ iteminfo "item_armor_combat"
 iteminfo "item_armor_body"
 {
 	name		"Heavy Armor"
-	model		"models/powerups/armor/armor_red.md3"
+	model		"models/powerups/armor/armor_yel.md3"
 	modelindex	MODELINDEX_ARMORBODY
 	type		ITEM_ARMOR
 	index		INVENTORY_ARMOR
@@ -127,7 +127,7 @@ iteminfo "item_armor_body"
 iteminfo "item_armor_full"
 {
 	name		"Full Armor"
-	model		"models/powerups/armor/armor_blue.md3"
+	model		"models/powerups/armor/armor_red.md3"
 	modelindex	MODELINDEX_ARMORFULL
 	type		ITEM_ARMOR
 	index		INVENTORY_ARMOR
@@ -235,7 +235,7 @@ iteminfo "weapon_phosphorgun"
 	maxs		{15,15,15}
 }
 
-iteminfo "weapon_prox_launcher"
+iteminfo "weapon_proxylauncher"
 {
 	name		"Proximity Launcher"
 	model		"models/weapons/proxmine/proxmine.md3"
@@ -283,13 +283,13 @@ iteminfo "weapon_rocketlauncher"
 	maxs		{15,15,15}
 }
 
-iteminfo "weapon_lightning"
+iteminfo "weapon_beamgun"
 {
-	name		"Lightning Gun"
+	name		"Beam Gun"
 	model		"models/weapons2/lightning/lightning.md3"
-	modelindex	MODELINDEX_LIGHTNING
+	modelindex	MODELINDEX_BEAMGUN
 	type		ITEM_WEAPON
-	index		INVENTORY_LIGHTNING
+	index		INVENTORY_BEAMGUN
 	respawntime	10
 	mins		{-15,-15,-15}
 	maxs		{15,15,15}
@@ -478,13 +478,13 @@ iteminfo "ammo_rockets"
 	maxs		{15,15,15}
 }
 
-iteminfo "ammo_lightning"
+iteminfo "ammo_cartridge"
 {
-	name		"Lightning Ammo"
+	name		"Cartridge"
 	model		"models/powerups/ammo/lightningam.md3"
-	modelindex	MODELINDEX_LIGHTNING_AMMO
+	modelindex	MODELINDEX_BEAMGUN_AMMO
 	type		ITEM_AMMO
-	index		INVENTORY_LIGHTNING_AMMO
+	index		INVENTORY_BEAMGUN_AMMO
 	respawntime	40
 	mins		{-15,-15,-15}
 	maxs		{15,15,15}
@@ -539,8 +539,20 @@ iteminfo "ammo_missiles"
 }
 
 //===================================
-// POWERUPS
+// HOLDABLES
 //===================================
+iteminfo "holdable_medkit"
+{
+	name		"Medkit"
+	model		"models/powerups/holdable/medkit.md3"
+	modelindex	MODELINDEX_MEDKIT
+	type		ITEM_POWERUP
+	index		INVENTORY_MEDKIT
+	respawntime	60
+	mins		{-15,-15,-15}
+	maxs		{15,15,15}
+}
+
 iteminfo "holdable_kamikaze"
 {
 	name		"Kamikaze"
@@ -553,6 +565,9 @@ iteminfo "holdable_kamikaze"
 	maxs		{15,15,15}
 }
 
+//===================================
+// POWERUPS
+//===================================
 iteminfo "item_quad"
 {
 	name		"Quad Damage"
@@ -589,6 +604,9 @@ iteminfo "item_regen"
 	maxs		{15,15,15}
 }
 
+//===================================
+// PERSISTANT POWERUPS
+//===================================
 iteminfo "item_ammoregen"
 {
 	name		"Ammo Regen"

@@ -65,7 +65,7 @@ projectileinfo
 {
 	name			"handgunbullet"
 	gravity			0.0
-	damage			5
+	damage			6
 	damagetype		DAMAGETYPE_IMPACT
 }
 
@@ -304,11 +304,11 @@ weaponinfo
 }
 
 //===========================================================================
-// Lightning Gun
+// Beam Gun
 //===========================================================================
 projectileinfo
 {
-	name			"lightning"
+	name			"beam"
 	gravity			0.0
 	damage			8
 	damagetype		DAMAGETYPE_IMPACT
@@ -316,9 +316,9 @@ projectileinfo
 
 weaponinfo
 {
-	name			"Lightning Gun"
-	number			WEAPONINDEX_LIGHTNING
-	projectile		"lightning"
+	name			"Beam Gun"
+	number			WEAPONINDEX_BEAMGUN
+	projectile		"beam"
 	numprojectiles	1
 	hspread			0
 	vspread			0

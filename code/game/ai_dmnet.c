@@ -1401,8 +1401,8 @@ int BotSelectActivateWeapon(bot_state_t *bs) {
 		return WEAPONINDEX_NAPALMLAUNCHER;
 	} else if (bs->inventory[INVENTORY_ROCKETLAUNCHER] > 0 && bs->inventory[INVENTORY_ROCKETS] > 0) {
 		return WEAPONINDEX_ROCKETLAUNCHER;
-	} else if (bs->inventory[INVENTORY_LIGHTNING] > 0 && bs->inventory[INVENTORY_LIGHTNING_AMMO] > 0) {
-		return WEAPONINDEX_LIGHTNING;
+	} else if (bs->inventory[INVENTORY_BEAMGUN] > 0 && bs->inventory[INVENTORY_BEAMGUN_AMMO] > 0) {
+		return WEAPONINDEX_BEAMGUN;
 	} else if (bs->inventory[INVENTORY_RAILGUN] > 0 && bs->inventory[INVENTORY_SLUGS] > 0) {
 		return WEAPONINDEX_RAILGUN;
 	} else if (bs->inventory[INVENTORY_PLASMAGUN] > 0 && bs->inventory[INVENTORY_CELLS] > 0) {

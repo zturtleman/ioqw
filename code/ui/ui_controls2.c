@@ -185,7 +185,7 @@ typedef struct {
 	menuaction_s proxylauncher;
 	menuaction_s grenadelauncher;
 	menuaction_s rocketlauncher;
-	menuaction_s lightning;
+	menuaction_s beamgun;
 	menuaction_s railgun;
 	menuaction_s plasma;
 	menuaction_s bfg;
@@ -260,7 +260,7 @@ static bind_t g_bindings[] = {
 	{"weapon 6",		"Proximity Launcher",	ID_WEAPON6,		ANIM_WEAPON6,	'6',			-1, -1, -1},
 	{"weapon 7",		"Grenade Launcher",		ID_WEAPON7,		ANIM_WEAPON7,	'7',			-1, -1, -1},
 	{"weapon 8",		"Rocket Launcher",		ID_WEAPON8,		ANIM_WEAPON8,	'8',			-1, -1, -1},
-	{"weapon 9",		"Lightning Gun",		ID_WEAPON9,		ANIM_WEAPON9,	'9',			-1, -1, -1},
+	{"weapon 9",		"Beam Gun",				ID_WEAPON9,		ANIM_WEAPON9,	'9',			-1, -1, -1},
 	{"weapon 10",		"Railgun",				ID_WEAPON10,	ANIM_WEAPON10,	-1,				-1, -1, -1},
 	{"weapon 11",		"Plasma Gun",			ID_WEAPON11,	ANIM_WEAPON11,	-1,				-1, -1, -1},
 	{"weapon 12",		"BFG",					ID_WEAPON12,	ANIM_WEAPON12,	-1,				-1, -1, -1},
@@ -316,7 +316,7 @@ static menucommon_s *g_weapons_controls[] = {
 	(menucommon_s *)&s_controls.proxylauncher,
 	(menucommon_s *)&s_controls.grenadelauncher,
 	(menucommon_s *)&s_controls.rocketlauncher,
-	(menucommon_s *)&s_controls.lightning,
+	(menucommon_s *)&s_controls.beamgun,
 	(menucommon_s *)&s_controls.railgun,
 	(menucommon_s *)&s_controls.plasma,
 	(menucommon_s *)&s_controls.bfg,
@@ -510,7 +510,7 @@ static void Controls_UpdateModel(int anim) {
 			s_controls.playerWeapon = WP_ROCKETLAUNCHER;
 			break;
 		case ANIM_WEAPON9:
-			s_controls.playerWeapon = WP_LIGHTNING;
+			s_controls.playerWeapon = WP_BEAMGUN;
 			break;
 		case ANIM_WEAPON10:
 			s_controls.playerWeapon = WP_RAILGUN;
@@ -1328,11 +1328,11 @@ static void Controls_MenuInit(void) {
 	s_controls.rocketlauncher.generic.ownerdraw = Controls_DrawKeyBinding;
 	s_controls.rocketlauncher.generic.id = ID_WEAPON8;
 
-	s_controls.lightning.generic.type = MTYPE_ACTION;
-	s_controls.lightning.generic.flags = QMF_LEFT_JUSTIFY|QMF_PULSEIFFOCUS|QMF_GRAYED|QMF_HIDDEN;
-	s_controls.lightning.generic.callback = Controls_ActionEvent;
-	s_controls.lightning.generic.ownerdraw = Controls_DrawKeyBinding;
-	s_controls.lightning.generic.id = ID_WEAPON9;
+	s_controls.beamgun.generic.type = MTYPE_ACTION;
+	s_controls.beamgun.generic.flags = QMF_LEFT_JUSTIFY|QMF_PULSEIFFOCUS|QMF_GRAYED|QMF_HIDDEN;
+	s_controls.beamgun.generic.callback = Controls_ActionEvent;
+	s_controls.beamgun.generic.ownerdraw = Controls_DrawKeyBinding;
+	s_controls.beamgun.generic.id = ID_WEAPON9;
 
 	s_controls.railgun.generic.type = MTYPE_ACTION;
 	s_controls.railgun.generic.flags = QMF_LEFT_JUSTIFY|QMF_PULSEIFFOCUS|QMF_GRAYED|QMF_HIDDEN;
@@ -1577,7 +1577,7 @@ static void Controls_MenuInit(void) {
 	Menu_AddItem(&s_controls.menu, &s_controls.proxylauncher);
 	Menu_AddItem(&s_controls.menu, &s_controls.grenadelauncher);
 	Menu_AddItem(&s_controls.menu, &s_controls.rocketlauncher);
-	Menu_AddItem(&s_controls.menu, &s_controls.lightning);
+	Menu_AddItem(&s_controls.menu, &s_controls.beamgun);
 	Menu_AddItem(&s_controls.menu, &s_controls.railgun);
 	Menu_AddItem(&s_controls.menu, &s_controls.plasma);
 	Menu_AddItem(&s_controls.menu, &s_controls.bfg);

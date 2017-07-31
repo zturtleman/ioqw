@@ -170,7 +170,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir) {
 
 			break;
 		default:
-		case WP_LIGHTNING:
+		case WP_BEAMGUN:
 			// no explosion at LG impact, it is added with the beam
 			mark = cgs.media.holeMarkShader;
 			markRadius = 12;
@@ -490,6 +490,127 @@ static void CG_GrenadeTrail(centity_t *ent, const weaponInfo_t *wi) {
 	CG_RocketTrail(ent, wi);
 }
 
+/*
+=======================================================================================================================================
+CG_BeamgunTrail
+
+Origin will be the exact tag point, which is slightly different than the muzzle point used for determining hits. The cent should be the
+non-predicted cent if it is from the player, so the endpoint will reflect the simulated strike (lagging the predicted angle).
+=======================================================================================================================================
+*/
+static void CG_BeamgunTrail(centity_t *cent, vec3_t origin) {
+	trace_t trace;
+	refEntity_t beam;
+	vec3_t forward;
+	vec3_t muzzlePoint, endPoint;
+	int anim;
+
+	if (cent->currentState.weapon != WP_BEAMGUN) {
+		return;
+	}
+
+	memset(&beam, 0, sizeof(beam));
+	// always shoot straight forward from our current position
+	AngleVectors(cg.predictedPlayerState.viewangles, forward, NULL, NULL);
+	VectorCopy(cg.predictedPlayerState.origin, muzzlePoint);
+
+	anim = cent->currentState.legsAnim & ~ANIM_TOGGLEBIT;
+
+	if (anim == LEGS_WALKCR || anim == LEGS_IDLECR) {
+		muzzlePoint[2] += CROUCH_VIEWHEIGHT;
+	} else {
+		muzzlePoint[2] += DEFAULT_VIEWHEIGHT;
+	}
+
+	VectorMA(muzzlePoint, 14, forward, muzzlePoint);
+	// project forward by the beam gun range
+	VectorMA(muzzlePoint, BEAMGUN_RANGE, forward, endPoint);
+	// see if it hit a wall
+	CG_Trace(&trace, muzzlePoint, vec3_origin, vec3_origin, endPoint, cent->currentState.number, MASK_SHOT);
+	// this is the endpoint
+	VectorCopy(trace.endpos, beam.oldorigin);
+	// use the provided origin, even though it may be slightly different than the muzzle origin
+	VectorCopy(origin, beam.origin);
+
+	beam.reType = RT_LIGHTNING;
+	beam.customShader = cgs.media.lightningShader;
+
+	trap_R_AddRefEntityToScene(&beam);
+	// add the impact flare if it hit something
+	if (trace.fraction < 1.0) {
+		vec3_t angles;
+		vec3_t dir;
+
+		VectorSubtract(beam.oldorigin, beam.origin, dir);
+		VectorNormalize(dir);
+
+		memset(&beam, 0, sizeof(beam));
+
+		beam.hModel = cgs.media.lightningExplosionModel;
+
+		VectorMA(trace.endpos, -16, dir, beam.origin);
+		// make a random orientation
+		angles[0] = rand() % 360;
+		angles[1] = rand() % 360;
+		angles[2] = rand() % 360;
+
+		AnglesToAxis(angles, beam.axis);
+		trap_R_AddRefEntityToScene(&beam);
+	}
+}
+/*
+static void CG_BeamgunTrail(centity_t *cent, vec3_t origin) {
+	trace_t trace;
+	refEntity_t beam;
+	vec3_t forward;
+	vec3_t muzzlePoint, endPoint;
+
+	if (cent->currentState.weapon != WP_BEAMGUN) {
+		return;
+	}
+
+	memset(&beam, 0, sizeof(beam));
+	// find muzzle point for this frame
+	VectorCopy(cent->lerpOrigin, muzzlePoint);
+	AngleVectors(cent->lerpAngles, forward, NULL, NULL);
+	// FIXME: crouch
+	muzzlePoint[2] += DEFAULT_VIEWHEIGHT;
+
+	VectorMA(muzzlePoint, 14, forward, muzzlePoint);
+	// project forward by the beam gun range
+	VectorMA(muzzlePoint, BEAMGUN_RANGE, forward, endPoint);
+	// see if it hit a wall
+	CG_Trace(&trace, muzzlePoint, vec3_origin, vec3_origin, endPoint, cent->currentState.number, MASK_SHOT);
+	// this is the endpoint
+	VectorCopy(trace.endpos, beam.oldorigin);
+	// use the provided origin, even though it may be slightly different than the muzzle origin
+	VectorCopy(origin, beam.origin);
+
+	beam.reType = RT_LIGHTNING;
+	beam.customShader = cgs.media.lightningShader;
+	trap_R_AddRefEntityToScene(&beam);
+	// add the impact flare if it hit something
+	if (trace.fraction < 1.0) {
+		vec3_t angles;
+		vec3_t dir;
+
+		VectorSubtract(beam.oldorigin, beam.origin, dir);
+		VectorNormalize(dir);
+
+		memset(&beam, 0, sizeof(beam));
+
+		beam.hModel = cgs.media.lightningExplosionModel;
+
+		VectorMA(trace.endpos, -16, dir, beam.origin);
+		// make a random orientation
+		angles[0] = rand() % 360;
+		angles[1] = rand() % 360;
+		angles[2] = rand() % 360;
+		AnglesToAxis(angles, beam.axis);
+		trap_R_AddRefEntityToScene(&beam);
+	}
+}
+*/
 /*
 =======================================================================================================================================
 CG_RailTrail
@@ -1197,9 +1318,9 @@ void CG_FireWeapon(centity_t *cent) {
 	weap = &cg_weapons[ent->weapon];
 	// mark the entity as muzzle flashing, so when it is added it will append the flash to the weapon model
 	cent->muzzleFlashTime = cg.time;
-	// lightning gun only does this this on initial press
-	if (ent->weapon == WP_LIGHTNING) {
-		if (cent->pe.lightningFiring) {
+	// beam gun only does this this on initial press
+	if (ent->weapon == WP_BEAMGUN) {
+		if (cent->pe.beamgunFiring) {
 			return;
 		}
 	}
@@ -1421,7 +1542,7 @@ void CG_RegisterWeapon(int weaponNum) {
 			weaponInfo->flashSound[0] = trap_S_RegisterSound("sound/weapons/rocket/rocklf1a.wav", qfalse);
 			cgs.media.rocketExplosionShader = trap_R_RegisterShader("rocketExplosion");
 			break;
-		case WP_LIGHTNING:
+		case WP_BEAMGUN:
 			MAKERGB(weaponInfo->flashDlightColor, 0.45f, 0.7f, 1.0f);
 			weaponInfo->readySound = trap_S_RegisterSound("sound/weapons/melee/fsthum.wav", qfalse);
 			weaponInfo->firingSound = trap_S_RegisterSound("sound/weapons/lightning/lg_hum.wav", qfalse);
@@ -1598,160 +1719,6 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles) {
 	angles[PITCH] += scale * fracsin * 0.01;
 }
 
-/*
-=======================================================================================================================================
-CG_LightningBolt
-
-Origin will be the exact tag point, which is slightly different than the muzzle point used for determining hits. The cent should be the
-non-predicted cent if it is from the player, so the endpoint will reflect the simulated strike (lagging the predicted angle).
-=======================================================================================================================================
-*/
-static void CG_LightningBolt(centity_t *cent, vec3_t origin) {
-	trace_t trace;
-	refEntity_t beam;
-	vec3_t forward;
-	vec3_t muzzlePoint, endPoint;
-	int anim;
-
-	if (cent->currentState.weapon != WP_LIGHTNING) {
-		return;
-	}
-
-	memset(&beam, 0, sizeof(beam));
-	// CPMA "true" lightning
-	if ((cent->currentState.number == cg.predictedPlayerState.clientNum) && (cg_trueLightning.value != 0)) {
-		vec3_t angle;
-		int i;
-
-		for (i = 0; i < 3; i++) {
-			float a = cent->lerpAngles[i] - cg.refdefViewAngles[i];
-
-			if (a > 180) {
-				a -= 360;
-			}
-
-			if (a < -180) {
-				a += 360;
-			}
-
-			angle[i] = cg.refdefViewAngles[i] + a * (1.0 - cg_trueLightning.value);
-
-			if (angle[i] < 0) {
-				angle[i] += 360;
-			}
-
-			if (angle[i] > 360) {
-				angle[i] -= 360;
-			}
-		}
-
-		AngleVectors(angle, forward, NULL, NULL);
-		VectorCopy(cent->lerpOrigin, muzzlePoint);
-//		VectorCopy(cg.refdef.vieworg, muzzlePoint);
-	} else {
-		// !CPMA
-		AngleVectors(cent->lerpAngles, forward, NULL, NULL);
-		VectorCopy(cent->lerpOrigin, muzzlePoint);
-	}
-
-	anim = cent->currentState.legsAnim & ~ANIM_TOGGLEBIT;
-
-	if (anim == LEGS_WALKCR || anim == LEGS_IDLECR) {
-		muzzlePoint[2] += CROUCH_VIEWHEIGHT;
-	} else {
-		muzzlePoint[2] += DEFAULT_VIEWHEIGHT;
-	}
-
-	VectorMA(muzzlePoint, 14, forward, muzzlePoint);
-	// project forward by the lightning range
-	VectorMA(muzzlePoint, LIGHTNING_RANGE, forward, endPoint);
-	// see if it hit a wall
-	CG_Trace(&trace, muzzlePoint, vec3_origin, vec3_origin, endPoint, cent->currentState.number, MASK_SHOT);
-	// this is the endpoint
-	VectorCopy(trace.endpos, beam.oldorigin);
-	// use the provided origin, even though it may be slightly different than the muzzle origin
-	VectorCopy(origin, beam.origin);
-
-	beam.reType = RT_LIGHTNING;
-	beam.customShader = cgs.media.lightningShader;
-
-	trap_R_AddRefEntityToScene(&beam);
-	// add the impact flare if it hit something
-	if (trace.fraction < 1.0) {
-		vec3_t angles;
-		vec3_t dir;
-
-		VectorSubtract(beam.oldorigin, beam.origin, dir);
-		VectorNormalize(dir);
-
-		memset(&beam, 0, sizeof(beam));
-
-		beam.hModel = cgs.media.lightningExplosionModel;
-
-		VectorMA(trace.endpos, -16, dir, beam.origin);
-		// make a random orientation
-		angles[0] = rand() % 360;
-		angles[1] = rand() % 360;
-		angles[2] = rand() % 360;
-
-		AnglesToAxis(angles, beam.axis);
-		trap_R_AddRefEntityToScene(&beam);
-	}
-}
-/*
-static void CG_LightningBolt(centity_t *cent, vec3_t origin) {
-	trace_t trace;
-	refEntity_t beam;
-	vec3_t forward;
-	vec3_t muzzlePoint, endPoint;
-
-	if (cent->currentState.weapon != WP_LIGHTNING) {
-		return;
-	}
-
-	memset(&beam, 0, sizeof(beam));
-	// find muzzle point for this frame
-	VectorCopy(cent->lerpOrigin, muzzlePoint);
-	AngleVectors(cent->lerpAngles, forward, NULL, NULL);
-	// FIXME: crouch
-	muzzlePoint[2] += DEFAULT_VIEWHEIGHT;
-
-	VectorMA(muzzlePoint, 14, forward, muzzlePoint);
-	// project forward by the lightning range
-	VectorMA(muzzlePoint, LIGHTNING_RANGE, forward, endPoint);
-	// see if it hit a wall
-	CG_Trace(&trace, muzzlePoint, vec3_origin, vec3_origin, endPoint, cent->currentState.number, MASK_SHOT);
-	// this is the endpoint
-	VectorCopy(trace.endpos, beam.oldorigin);
-	// use the provided origin, even though it may be slightly different than the muzzle origin
-	VectorCopy(origin, beam.origin);
-
-	beam.reType = RT_LIGHTNING;
-	beam.customShader = cgs.media.lightningShader;
-	trap_R_AddRefEntityToScene(&beam);
-	// add the impact flare if it hit something
-	if (trace.fraction < 1.0) {
-		vec3_t angles;
-		vec3_t dir;
-
-		VectorSubtract(beam.oldorigin, beam.origin, dir);
-		VectorNormalize(dir);
-
-		memset(&beam, 0, sizeof(beam));
-
-		beam.hModel = cgs.media.lightningExplosionModel;
-
-		VectorMA(trace.endpos, -16, dir, beam.origin);
-		// make a random orientation
-		angles[0] = rand() % 360;
-		angles[1] = rand() % 360;
-		angles[2] = rand() % 360;
-		AnglesToAxis(angles, beam.axis);
-		trap_R_AddRefEntityToScene(&beam);
-	}
-}
-*/
-
 #define SPIN_SPEED 0.9
 #define COAST_TIME 1000
 /*
@@ -1882,12 +1849,12 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent,
 
 	if (!ps) {
 		// add weapon ready sound
-		cent->pe.lightningFiring = qfalse;
+		cent->pe.beamgunFiring = qfalse;
 
 		if ((cent->currentState.eFlags & EF_FIRING) && weapon->firingSound) {
-			// lightning gun and gauntlet make a different sound when fire is held down
+			// beam gun and gauntlet make a different sound when fire is held down
 			trap_S_AddLoopingSound(cent->currentState.number, cent->lerpOrigin, vec3_origin, weapon->firingSound);
-			cent->pe.lightningFiring = qtrue;
+			cent->pe.beamgunFiring = qtrue;
 		} else if (weapon->readySound) {
 			trap_S_AddLoopingSound(cent->currentState.number, cent->lerpOrigin, vec3_origin, weapon->readySound);
 		}
@@ -1961,7 +1928,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent,
 		VectorCopy(flash.origin, nonPredictedCent->pe.flashOrigin);
 	}
 	// add the flash
-	if ((weaponNum == WP_GAUNTLET || weaponNum == WP_LIGHTNING) && (nonPredictedCent->currentState.eFlags & EF_FIRING)) {
+	if ((weaponNum == WP_GAUNTLET || weaponNum == WP_BEAMGUN) && (nonPredictedCent->currentState.eFlags & EF_FIRING)) {
 		// continuous flash
 	} else {
 		// impulse flash
@@ -1973,8 +1940,8 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent,
 	trap_R_AddRefEntityToScene(&flash);
 
 	if (ps || cg.renderingThirdPerson || cent->currentState.number != cg.predictedPlayerState.clientNum) {
-		// add lightning bolt
-		CG_LightningBolt(nonPredictedCent, flash.origin);
+		// add beam gun trail
+		CG_BeamgunTrail(nonPredictedCent, flash.origin);
 
 		if (weapon->flashDlightColor[0] || weapon->flashDlightColor[1] || weapon->flashDlightColor[2]) {
 			trap_R_AddLightToScene(flash.origin, 100 + (rand()&31), weapon->flashDlightColor[0], weapon->flashDlightColor[1], weapon->flashDlightColor[2]);
@@ -2015,8 +1982,8 @@ void CG_AddViewWeapon(playerState_t *ps) {
 		cg.flashOrigin[2] += DEFAULT_VIEWHEIGHT - 6;
 
 		if (cg.predictedPlayerState.eFlags & EF_FIRING) {
-			// special hack for lightning gun...
-			CG_LightningBolt(&cg_entities[ps->clientNum], cg.flashOrigin);
+			// special hack for beam gun...
+			CG_BeamgunTrail(&cg_entities[ps->clientNum], cg.flashOrigin);
 		}
 
 		return;

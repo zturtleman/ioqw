@@ -399,7 +399,7 @@ void ClientTimerActions(gentity_t *ent, int msec) {
 
 	if (bg_itemlist[client->ps.stats[STAT_PERSISTANT_POWERUP]].giTag == PW_AMMOREGEN) {
 		int w, max, inc, t, i;
-		int weapList[] = {WP_HANDGUN, WP_MACHINEGUN, WP_HEAVY_MACHINEGUN, WP_CHAINGUN, WP_SHOTGUN, WP_NAILGUN, WP_PHOSPHORGUN, WP_PROXLAUNCHER, WP_GRENADELAUNCHER, WP_NAPALMLAUNCHER, WP_ROCKETLAUNCHER, WP_LIGHTNING, WP_RAILGUN, WP_PLASMAGUN, WP_BFG, WP_MISSILELAUNCHER};
+		int weapList[] = {WP_HANDGUN, WP_MACHINEGUN, WP_HEAVY_MACHINEGUN, WP_CHAINGUN, WP_SHOTGUN, WP_NAILGUN, WP_PHOSPHORGUN, WP_PROXLAUNCHER, WP_GRENADELAUNCHER, WP_NAPALMLAUNCHER, WP_ROCKETLAUNCHER, WP_BEAMGUN, WP_RAILGUN, WP_PLASMAGUN, WP_BFG, WP_MISSILELAUNCHER};
 		int weapCount = ARRAY_LEN(weapList);
 
 		for (i = 0; i < weapCount; i++) {
@@ -461,7 +461,7 @@ void ClientTimerActions(gentity_t *ent, int msec) {
 					inc = 1;
 					t = 1750;
 					break;
-				case WP_LIGHTNING:
+				case WP_BEAMGUN:
 					max = 50;
 					inc = 5;
 					t = 1500;
@@ -580,7 +580,10 @@ void ClientEvents(gentity_t *ent, int oldEventSequence) {
 				ent->pain_debounce_time = level.time + 200; // no normal pain sound
 				G_Damage(ent, NULL, NULL, NULL, NULL, damage, 0, MOD_FALLING);
 				break;
-			case EV_USE_ITEM1: // kamikaze
+			case EV_USE_ITEM1: // medkit
+				ent->health = ent->client->ps.stats[STAT_MAX_HEALTH] + 25;
+				break;
+			case EV_USE_ITEM2: // kamikaze
 				// start the kamikaze
 				G_StartKamikaze(ent);
 				break;

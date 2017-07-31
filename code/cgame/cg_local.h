@@ -211,7 +211,7 @@ typedef struct {
 	lerpFrame_t legs, torso, flag;
 	int painTime;
 	int painDirection; // flip from 0 to 1
-	int lightningFiring;
+	int beamgunFiring;
 	int railFireTime;
 	// machinegun spinning
 	float barrelAngle;
@@ -374,6 +374,7 @@ typedef struct {
 	int teamTask;			// task in teamplay (offence/defence)
 	qboolean teamLeader;	// true when this is a team leader
 	int powerups;			// so can display quad/flag status
+	int medkitUsageTime;
 	int breathPuffTime;
 	// when clientinfo is changed, the loading of models/skins/sounds can be deferred until you are dead, to prevent hitches in gameplay
 	char modelName[MAX_QPATH];
@@ -734,6 +735,7 @@ typedef struct {
 	// special effects models
 	qhandle_t teleportEffectModel;
 	qhandle_t teleportEffectShader;
+	qhandle_t medkitUsageModel;
 	qhandle_t kamikazeEffectModel;
 	qhandle_t kamikazeShockWave;
 	qhandle_t kamikazeHeadModel;
@@ -840,6 +842,7 @@ typedef struct {
 	sfxHandle_t pickupSound;
 	sfxHandle_t wearOffSound;
 	sfxHandle_t useNothingSound;
+	sfxHandle_t medkitSound;
 	sfxHandle_t kamikazeExplodeSound;
 	sfxHandle_t kamikazeImplodeSound;
 	sfxHandle_t kamikazeFarSound;
@@ -1067,7 +1070,6 @@ extern vmCvar_t cg_noProjectileTrail;
 extern vmCvar_t cg_oldRail;
 extern vmCvar_t cg_oldRocket;
 extern vmCvar_t cg_oldPlasma;
-extern vmCvar_t cg_trueLightning;
 extern vmCvar_t cg_enableDust;
 extern vmCvar_t cg_enableBreath;
 extern vmCvar_t cg_obeliskRespawnDelay;

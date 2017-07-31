@@ -338,7 +338,7 @@ static void CG_Obituary(entityState_t *ent) {
 				message = "almost dodged";
 				message2 = "'s rocket";
 				break;
-			case MOD_LIGHTNING:
+			case MOD_BEAMGUN:
 				message = "was lacerated by";
 				break;
 			case MOD_RAILGUN:
@@ -396,7 +396,8 @@ CG_UseItem
 =======================================================================================================================================
 */
 static void CG_UseItem(centity_t *cent) {
-	int itemNum;
+	clientInfo_t *ci;
+	int itemNum, clientNum;
 	gitem_t *item;
 	entityState_t *es;
 
@@ -420,6 +421,16 @@ static void CG_UseItem(centity_t *cent) {
 		default:
 		case HI_NONE:
 			trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.useNothingSound);
+			break;
+		case HI_MEDKIT:
+			clientNum = cent->currentState.clientNum;
+
+			if (clientNum >= 0 && clientNum < MAX_CLIENTS) {
+				ci = &cgs.clientinfo[clientNum];
+				ci->medkitUsageTime = cg.time;
+			}
+
+			trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.medkitSound);
 			break;
 		case HI_KAMIKAZE:
 			break;

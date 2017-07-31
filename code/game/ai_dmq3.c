@@ -1854,7 +1854,7 @@ void BotUpdateInventory(bot_state_t *bs) {
 	bs->inventory[INVENTORY_GRENADELAUNCHER] = COM_BitCheck(bs->cur_ps.weapons, (WP_GRENADELAUNCHER));
 	bs->inventory[INVENTORY_NAPALMLAUNCHER] = COM_BitCheck(bs->cur_ps.weapons, (WP_NAPALMLAUNCHER));
 	bs->inventory[INVENTORY_ROCKETLAUNCHER] = COM_BitCheck(bs->cur_ps.weapons, (WP_ROCKETLAUNCHER));
-	bs->inventory[INVENTORY_LIGHTNING] = COM_BitCheck(bs->cur_ps.weapons, (WP_LIGHTNING));
+	bs->inventory[INVENTORY_BEAMGUN] = COM_BitCheck(bs->cur_ps.weapons, (WP_BEAMGUN));
 	bs->inventory[INVENTORY_RAILGUN] = COM_BitCheck(bs->cur_ps.weapons, (WP_RAILGUN));
 	bs->inventory[INVENTORY_PLASMAGUN] = COM_BitCheck(bs->cur_ps.weapons, (WP_PLASMAGUN));
 	bs->inventory[INVENTORY_BFG10K] = COM_BitCheck(bs->cur_ps.weapons, (WP_BFG));
@@ -1871,12 +1871,13 @@ void BotUpdateInventory(bot_state_t *bs) {
 	bs->inventory[INVENTORY_GRENADES] = bs->cur_ps.ammo[WP_GRENADELAUNCHER];
 	bs->inventory[INVENTORY_CANISTERS] = bs->cur_ps.ammo[WP_NAPALMLAUNCHER];
 	bs->inventory[INVENTORY_ROCKETS] = bs->cur_ps.ammo[WP_ROCKETLAUNCHER];
-	bs->inventory[INVENTORY_LIGHTNING_AMMO] = bs->cur_ps.ammo[WP_LIGHTNING];
+	bs->inventory[INVENTORY_BEAMGUN_AMMO] = bs->cur_ps.ammo[WP_BEAMGUN];
 	bs->inventory[INVENTORY_SLUGS] = bs->cur_ps.ammo[WP_RAILGUN];
 	bs->inventory[INVENTORY_CELLS] = bs->cur_ps.ammo[WP_PLASMAGUN];
 	bs->inventory[INVENTORY_BFG_AMMO] = bs->cur_ps.ammo[WP_BFG];
 	bs->inventory[INVENTORY_MISSILES] = bs->cur_ps.ammo[WP_MISSILELAUNCHER];
 	// holdables
+	bs->inventory[INVENTORY_MEDKIT] = bs->cur_ps.stats[STAT_HOLDABLE_ITEM] == MODELINDEX_MEDKIT;
 	bs->inventory[INVENTORY_KAMIKAZE] = bs->cur_ps.stats[STAT_HOLDABLE_ITEM] == MODELINDEX_KAMIKAZE;
 	// powerups
 	bs->inventory[INVENTORY_QUAD] = bs->cur_ps.powerups[PW_QUAD] != 0;
@@ -2069,6 +2070,13 @@ BotBattleUseItems
 =======================================================================================================================================
 */
 void BotBattleUseItems(bot_state_t *bs) {
+
+	if (bs->inventory[INVENTORY_HEALTH] < 60) {
+		if (bs->inventory[INVENTORY_MEDKIT] > 0) {
+			trap_EA_Use(bs->client);
+		}
+	}
+
 	BotUseKamikaze(bs);
 }
 
@@ -2444,8 +2452,8 @@ qboolean BotAggression(bot_state_t *bs) {
 	if (bs->inventory[INVENTORY_ROCKETLAUNCHER] > 0 && bs->inventory[INVENTORY_ROCKETS] > 5) {
 		return qtrue;
 	}
-	// if the bot can use the lightning gun.
-	if (bs->inventory[INVENTORY_LIGHTNING] > 0 && bs->inventory[INVENTORY_LIGHTNING_AMMO] > 50) {
+	// if the bot can use the beam gun.
+	if (bs->inventory[INVENTORY_BEAMGUN] > 0 && bs->inventory[INVENTORY_BEAMGUN_AMMO] > 50) {
 		return qtrue;
 	}
 	// if the bot can use the railgun.
@@ -2717,8 +2725,8 @@ int BotHasPersistantPowerupAndWeapon(bot_state_t *bs) {
 	if (bs->inventory[INVENTORY_ROCKETLAUNCHER] > 0 && bs->inventory[INVENTORY_ROCKETS] > 5) {
 		return qtrue;
 	}
-	// if the bot can use the lightning gun
-	if (bs->inventory[INVENTORY_LIGHTNING] > 0 && bs->inventory[INVENTORY_LIGHTNING_AMMO] > 50) {
+	// if the bot can use the beam gun
+	if (bs->inventory[INVENTORY_BEAMGUN] > 0 && bs->inventory[INVENTORY_BEAMGUN_AMMO] > 50) {
 		return qtrue;
 	}
 	// if the bot can use the railgun
@@ -3175,13 +3183,13 @@ bot_moveresult_t BotAttackMove(bot_state_t *bs, int tfl) {
 	} else if (bs->cur_ps.weapon == WP_PROXLAUNCHER || entinfo.weapon == WP_PROXLAUNCHER) {
 		attack_dist = 700;
 		attack_range = 100;
-	// if the bot is using the lightning gun
-	} else if (bs->cur_ps.weapon == WP_LIGHTNING) {
-		attack_dist = 0.75 * LIGHTNING_RANGE;
-		attack_range = 0.25 * LIGHTNING_RANGE;
-	// if the enemy is using the lightning gun, stay away
-	} else if (entinfo.weapon == WP_LIGHTNING && bs->cur_ps.weapon != WP_LIGHTNING) {
-		attack_dist = LIGHTNING_RANGE + 200;
+	// if the bot is using the beam gun
+	} else if (bs->cur_ps.weapon == WP_BEAMGUN) {
+		attack_dist = 0.75 * BEAMGUN_RANGE;
+		attack_range = 0.25 * BEAMGUN_RANGE;
+	// if the enemy is using the beam gun, stay away
+	} else if (entinfo.weapon == WP_BEAMGUN && bs->cur_ps.weapon != WP_BEAMGUN) {
+		attack_dist = BEAMGUN_RANGE + 200;
 		attack_range = 100;
 	// attacking obelisks
 	} else if (bs->enemy >= MAX_CLIENTS && (bs->enemy == redobelisk.entitynum || bs->enemy == blueobelisk.entitynum)) {
@@ -4029,8 +4037,8 @@ void BotAimAtEnemy(bot_state_t *bs) {
 			aim_accuracy = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_ACCURACY_ROCKETLAUNCHER, 0, 1);
 			aim_skill = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_SKILL_ROCKETLAUNCHER, 0, 1);
 			break;
-		case WP_LIGHTNING:
-			aim_accuracy = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_ACCURACY_LIGHTNING, 0, 1);
+		case WP_BEAMGUN:
+			aim_accuracy = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_ACCURACY_BEAMGUN, 0, 1);
 			break;
 		case WP_RAILGUN:
 			aim_accuracy = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_ACCURACY_RAILGUN, 0, 1);

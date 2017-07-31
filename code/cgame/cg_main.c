@@ -183,7 +183,6 @@ vmCvar_t cg_noProjectileTrail;
 vmCvar_t cg_oldRail;
 vmCvar_t cg_oldRocket;
 vmCvar_t cg_oldPlasma;
-vmCvar_t cg_trueLightning;
 vmCvar_t cg_enableDust;
 vmCvar_t cg_enableBreath;
 vmCvar_t cg_obeliskRespawnDelay;
@@ -309,8 +308,7 @@ static cvarTable_t cvarTable[] = {
 	{&cg_noProjectileTrail, "cg_noProjectileTrail", "0", CVAR_ARCHIVE},
 	{&cg_oldRail, "cg_oldRail", "1", CVAR_ARCHIVE},
 	{&cg_oldRocket, "cg_oldRocket", "1", CVAR_ARCHIVE},
-	{&cg_oldPlasma, "cg_oldPlasma", "1", CVAR_ARCHIVE},
-	{&cg_trueLightning, "cg_trueLightning", "1.0", CVAR_ARCHIVE}
+	{&cg_oldPlasma, "cg_oldPlasma", "1", CVAR_ARCHIVE}
 //	{&cg_pmove_fixed, "cg_pmove_fixed", "0", CVAR_USERINFO|CVAR_ARCHIVE}
 };
 
@@ -683,6 +681,7 @@ static void CG_RegisterSounds(void) {
 	cgs.media.pickupSound = trap_S_RegisterSound("snd/i/pu.wav", qfalse);
 	cgs.media.wearOffSound = trap_S_RegisterSound("snd/i/po.wav", qfalse);
 	cgs.media.useNothingSound = trap_S_RegisterSound("snd/i/no.wav", qfalse);
+	cgs.media.medkitSound = trap_S_RegisterSound("sound/i/um.wav", qfalse);
 	cgs.media.kamikazeExplodeSound = trap_S_RegisterSound("snd/i/kam_e.wav", qfalse);
 	cgs.media.kamikazeImplodeSound = trap_S_RegisterSound("snd/i/kam_i.wav", qfalse);
 	cgs.media.kamikazeFarSound = trap_S_RegisterSound("snd/i/kam_f.wav", qfalse);
@@ -1069,6 +1068,7 @@ static void CG_RegisterGraphics(void) {
 	cgs.media.dishFlashModel = trap_R_RegisterModel("models/weaphits/boom01.md3");
 	cgs.media.teleportEffectModel = trap_R_RegisterModel("models/misc/telep.md3");
 	cgs.media.teleportEffectShader = trap_R_RegisterShader("teleportEffect");
+	cgs.media.medkitUsageModel = trap_R_RegisterModel("models/powerups/regen.md3");
 	cgs.media.kamikazeEffectModel = trap_R_RegisterModel("models/weaphits/kamboom2.md3");
 	cgs.media.kamikazeShockWave = trap_R_RegisterModel("models/weaphits/kamwave.md3");
 	cgs.media.kamikazeHeadModel = trap_R_RegisterModel("models/powerups/kamikazi.md3");

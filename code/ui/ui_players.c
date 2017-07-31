@@ -120,7 +120,7 @@ tryagain:
 		case WP_ROCKETLAUNCHER:
 			MAKERGB(pi->flashDlightColor, 1.0f, 0.75f, 0);
 			break;
-		case WP_LIGHTNING:
+		case WP_BEAMGUN:
 			MAKERGB(pi->flashDlightColor, 0.45f, 0.7f, 1.0f);
 			break;
 		case WP_RAILGUN:

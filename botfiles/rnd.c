@@ -460,7 +460,7 @@ HIT_NOKILL1 = {
 	"Next time ",0," ... you won't be so lucky.";
 	"Run for the health little rabbit!";
 	"That was just a ranging shot, ",0,".";
-	"Use that medpack now, or the next shot's for the money!";
+	"Use that medkit now, or the next shot's for the money!";
 }
 
 KILL_INSULT0 = {
@@ -1356,7 +1356,7 @@ weapon = {
 	"grenade launcher";
 	"napalm launcher";
 	"rocket launcher";
-	"lightning gun";
+	"beam gun";
 	"railgun";
 	"plasma gun";
 	"BFG";

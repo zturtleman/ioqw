@@ -29,9 +29,9 @@ CONTEXT_NEARBYITEM
 	// health
 	[("Mega Health", 0), ("MH", 0)]
 	// armor
-	[("Armor", 0), ("Yellow Armor", 0), ("Armour", 0), ("Yellow Armour", 0), ("YA", 0)]
-	[("Heavy Armor", 0), ("Red Armor", 0), ("Heavy Armour", 0), ("Red Armour", 0), ("RA", 0)]
-	[("Full Armor", 0), ("Blue Armor", 0), ("Full Armour", 0), ("Blue Armour", 0), ("BA", 0)]
+	[("Armor", 0), ("Green Armor", 0), ("Armour", 0), ("Green Armour", 0), ("GA", 0)]
+	[("Heavy Armor", 0), ("Yellow Armor", 0), ("Yellow Armour", 0), ("YA", 0)]
+	[("Full Armor", 0), ("Red Armor", 0), ("Heavy Armour", 0), ("Red Armour", 0), ("RA", 0)]
 	// weapons
 	[("Machine Gun", 1), ("MG", 0)]
 	[("Heavy Machine Gun", 1), ("HMG", 0)]
@@ -43,12 +43,13 @@ CONTEXT_NEARBYITEM
 	[("Grenade Launcher", 1), ("GL", 0.7)]
 	[("Napalm Launcher", 1), ("NL", 0.7)]
 	[("Rocket Launcher", 1), ("RL", 0.7)]
-	[("Lightning Gun", 1), ("LG", 0.7)]
+	[("Beam Gun", 1), ("BG", 0.7)]
 	[("Railgun", 1), ("Rail", 0.5), ("RG", 0)]
 	[("Plasma Gun", 1), ("Plasma", 0.7), ("PG", 0)]
 	[("BFG 10K", 1), ("BFG", 1)]
 	[("Missile Launcher", 1), ("ML", 1)]
 	// powerups
+	[("Medkit", 1), ("Syringe", 0)]
 	[("Kamikaze", 1), ("Kamikazi", 0)]
 	[("Quad Damage", 1), ("Quad", 0.7)]
 	[("Invisibility", 1), ("Invis", 0)]

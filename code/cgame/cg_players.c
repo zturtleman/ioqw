@@ -2292,6 +2292,8 @@ void CG_Player(centity_t *cent) {
 	float bodySinkOffset;
 	refEntity_t skull;
 	refEntity_t powerup;
+	int t;
+	float c;
 	float angle;
 	vec3_t dir, angles;
 
@@ -2395,6 +2397,35 @@ void CG_Player(centity_t *cent) {
 	torso.renderfx = renderfx;
 
 	CG_AddRefEntityWithPowerups(&torso, &cent->currentState);
+
+	t = cg.time - ci->medkitUsageTime;
+
+	if (ci->medkitUsageTime && t < 500) {
+		memcpy(&powerup, &torso, sizeof(torso));
+		powerup.hModel = cgs.media.medkitUsageModel;
+		powerup.customSkin = 0;
+		// always draw
+		powerup.renderfx &= ~RF_THIRD_PERSON;
+		VectorClear(angles);
+		AnglesToAxis(angles, powerup.axis);
+		VectorCopy(cent->lerpOrigin, powerup.origin);
+		powerup.origin[2] += -24 + (float)t * 80 / 500;
+
+		if (t > 400) {
+			c = (float)(t - 1000) * 0xff / 100;
+			powerup.shaderRGBA[0] = 0xff - c;
+			powerup.shaderRGBA[1] = 0xff - c;
+			powerup.shaderRGBA[2] = 0xff - c;
+			powerup.shaderRGBA[3] = 0xff - c;
+		} else {
+			powerup.shaderRGBA[0] = 0xff;
+			powerup.shaderRGBA[1] = 0xff;
+			powerup.shaderRGBA[2] = 0xff;
+			powerup.shaderRGBA[3] = 0xff;
+		}
+
+		trap_R_AddRefEntityToScene(&powerup);
+	}
 
 	if (cent->currentState.eFlags & EF_KAMIKAZE) {
 		memset(&skull, 0, sizeof(skull));

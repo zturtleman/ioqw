@@ -136,7 +136,7 @@ gitem_t bg_itemlist[] = {
 */
 	{
 		"item_armor_shard",
-		"snd/i/puag.wav",
+		"snd/i/puas.wav",
 		{"models/powerups/armor/shard.md3", NULL, NULL, NULL},
 /* icon */		"icons/iconr_shard",
 /* pickup */	"Armor Shard",
@@ -150,9 +150,9 @@ gitem_t bg_itemlist[] = {
 */
 	{
 		"item_armor_combat",
-		"snd/i/puay.wav",
-		{"models/powerups/armor/armor_yel.md3", NULL, NULL, NULL},
-/* icon */		"icons/iconr_yellow",
+		"snd/i/puag.wav",
+		{"models/powerups/armor/armor_gre.md3", NULL, NULL, NULL},
+/* icon */		"icons/iconr_green",
 /* pickup */	"Armor",
 		50,
 		IT_ARMOR,
@@ -164,9 +164,9 @@ gitem_t bg_itemlist[] = {
 */
 	{
 		"item_armor_body",
-		"snd/i/puar.wav",
-		{"models/powerups/armor/armor_red.md3", NULL, NULL, NULL},
-/* icon */		"icons/iconr_red",
+		"snd/i/puay.wav",
+		{"models/powerups/armor/armor_yel.md3", NULL, NULL, NULL},
+/* icon */		"icons/iconr_yellow",
 /* pickup */	"Heavy Armor",
 		100,
 		IT_ARMOR,
@@ -178,9 +178,9 @@ gitem_t bg_itemlist[] = {
 */
 	{
 		"item_armor_full",
-		"sound/misc/ar4_pkup.wav",
-		{"models/powerups/armor/armor_blue.md3", NULL, NULL, NULL},
-/* icon */		"icons/iconr_blue",
+		"snd/i/puar.wav",
+		{"models/powerups/armor/armor_red.md3", NULL, NULL, NULL},
+/* icon */		"icons/iconr_red",
 /* pickup */	"Full Armor",
 		200,
 		IT_ARMOR,
@@ -304,10 +304,10 @@ gitem_t bg_itemlist[] = {
 /* sounds */ ""
 	},
 
-/*QUAKED weapon_prox_launcher (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+/*QUAKED weapon_proxylauncher (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 */
 	{
-		"weapon_prox_launcher",
+		"weapon_proxylauncher",
 		"snd/i/puw.wav",
 		{"models/weapons/proxmine/proxmine.md3", NULL, NULL, NULL},
 /* icon */		"icons/iconw_proxlauncher",
@@ -360,17 +360,17 @@ gitem_t bg_itemlist[] = {
 /* sounds */ ""
 	},
 
-/*QUAKED weapon_lightning (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+/*QUAKED weapon_beamgun (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 */
 	{
-		"weapon_lightning",
+		"weapon_beamgun",
 		"snd/i/puw.wav",
 		{"models/weapons2/lightning/lightning.md3", NULL, NULL, NULL},
 /* icon */		"icons/iconw_lightning",
-/* pickup */	"Lightning Gun",
+/* pickup */	"Beam Gun",
 		100,
 		IT_WEAPON,
-		WP_LIGHTNING,
+		WP_BEAMGUN,
 /* sounds */ ""
 	},
 
@@ -588,17 +588,17 @@ gitem_t bg_itemlist[] = {
 /* sounds */ ""
 	},
 
-/*QUAKED ammo_lightning (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+/*QUAKED ammo_cartridge (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 */
 	{
-		"ammo_lightning",
+		"ammo_cartridge",
 		"snd/i/pum.wav",
 		{"models/powerups/ammo/lightningam.md3", NULL, NULL, NULL},
 /* icon */		"icons/icona_lightning",
-/* pickup */	"Lightning Ammo",
+/* pickup */	"Cartridge",
 		50,
 		IT_AMMO,
-		WP_LIGHTNING,
+		WP_BEAMGUN,
 /* sounds */ ""
 	},
 
@@ -661,6 +661,20 @@ gitem_t bg_itemlist[] = {
 /**************************************************************************************************************************************
 	HOLDABLE ITEMS
 **************************************************************************************************************************************/
+
+/*QUAKED holdable_medkit (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+*/
+	{
+		"holdable_medkit",
+		"snd/i/puh.wav",
+		{"models/powerups/holdable/medkit.md3", "models/powerups/holdable/medkit_sphere.md3", NULL, NULL},
+/* icon */		"icons/medkit",
+/* pickup */	"Medkit",
+		60,
+		IT_HOLDABLE,
+		HI_MEDKIT,
+/* sounds */ "snd/i/um.wav"
+	},
 
 /*QUAKED holdable_kamikaze (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 */

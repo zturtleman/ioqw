@@ -382,14 +382,14 @@ weight "Rocket Launcher"
 	}
 }
 
-weight "Lightning Gun"
+weight "Beam Gun"
 {
-	switch (INVENTORY_LIGHTNING)
+	switch (INVENTORY_BEAMGUN)
 	{
 		case 1: return 0;
 		default:
 		{
-			switch (INVENTORY_LIGHTNING_AMMO)
+			switch (INVENTORY_BEAMGUN_AMMO)
 			{
 				case 1: return 0;
 				default:
@@ -400,8 +400,8 @@ weight "Lightning Gun"
 						{
 							switch (ENEMY_HORIZONTAL_DIST)
 							{
-								case 750: return W_LIGHTNING;
-								default: return $evalint(W_LIGHTNING * 0.1);
+								case 750: return W_BEAMGUN;
+								default: return $evalint(W_BEAMGUN * 0.1);
 							}
 						}
 						default:
@@ -409,7 +409,7 @@ weight "Lightning Gun"
 							switch (ENEMY_HORIZONTAL_DIST)
 							{
 								case 500: return 480;
-								default: return $evalint(W_LIGHTNING * 0.1);
+								default: return $evalint(W_BEAMGUN * 0.1);
 							}
 						}
 					}
