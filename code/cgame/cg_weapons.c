@@ -511,8 +511,13 @@ static void CG_BeamgunTrail(centity_t *cent, vec3_t origin) {
 
 	memset(&beam, 0, sizeof(beam));
 	// always shoot straight forward from our current position
-	AngleVectors(cg.predictedPlayerState.viewangles, forward, NULL, NULL);
-	VectorCopy(cg.predictedPlayerState.origin, muzzlePoint);
+	if (cent->currentState.number == cg.snap->ps.clientNum) {
+		AngleVectors(cg.predictedPlayerState.viewangles, forward, NULL, NULL);
+		VectorCopy(cg.predictedPlayerState.origin, muzzlePoint);
+	} else {
+		AngleVectors(cent->lerpAngles, forward, NULL, NULL);
+		VectorCopy(cent->lerpOrigin, muzzlePoint);
+	}
 
 	anim = cent->currentState.legsAnim & ~ANIM_TOGGLEBIT;
 
