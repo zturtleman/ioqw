@@ -157,9 +157,7 @@ Negative bit values include signs.
 void MSG_WriteBits(msg_t *msg, int value, int bits) {
 	int i;
 
-	// this isn't an exact overflow check, but close enough
-	if (msg->maxsize - msg->cursize < 32) {
-		msg->overflowed = qtrue;
+	if (msg->overflowed) {
 		return;
 	}
 
@@ -172,6 +170,11 @@ void MSG_WriteBits(msg_t *msg, int value, int bits) {
 	}
 
 	if (msg->oob) {
+		if (msg->cursize + (bits >> 3) > msg->maxsize) {
+			msg->overflowed = qtrue;
+			return;
+		}
+
 		switch (bits) {
 			case 8:
 				msg->data[msg->cursize] = value;
@@ -210,6 +213,11 @@ void MSG_WriteBits(msg_t *msg, int value, int bits) {
 
 			nbits = bits&7;
 
+			if (msg->bit + nbits > msg->maxsize << 3) {
+				msg->overflowed = qtrue;
+				return;
+			}
+
 			for (i = 0; i < nbits; i++) {
 				Huff_putBit((value & 1), msg->data, &msg->bit);
 				value = (value >> 1);
@@ -220,8 +228,13 @@ void MSG_WriteBits(msg_t *msg, int value, int bits) {
 
 		if (bits) {
 			for (i = 0; i < bits; i += 8) {
-				Huff_offsetTransmit(&msgHuff.compressor, (value & 0xff), msg->data, &msg->bit);
+				Huff_offsetTransmit(&msgHuff.compressor, (value & 0xff), msg->data, &msg->bit, msg->maxsize << 3);
 				value = (value >> 8);
+
+				if (msg->bit > msg->maxsize << 3) {
+					msg->overflowed = qtrue;
+					return;
+				}
 			}
 		}
 
@@ -241,6 +254,10 @@ int MSG_ReadBits(msg_t *msg, int bits) {
 	int i, nbits;
 //	FILE *fp;
 
+	if (msg->readcount > msg->cursize) {
+		return 0;
+	}
+
 	value = 0;
 
 	if (bits < 0) {
@@ -251,6 +268,11 @@ int MSG_ReadBits(msg_t *msg, int bits) {
 	}
 
 	if (msg->oob) {
+		if (msg->readcount + (bits >> 3) > msg->cursize) {
+			msg->readcount = msg->cursize + 1;
+			return 0;
+		}
+
 		switch (bits) {
 			case 8:
 				value = msg->data[msg->readcount];
@@ -287,6 +309,11 @@ int MSG_ReadBits(msg_t *msg, int bits) {
 		if (bits&7) {
 			nbits = bits&7;
 
+			if (msg->bit + nbits > msg->cursize << 3) {
+				msg->readcount = msg->cursize + 1;
+				return 0;
+			}
+
 			for (i = 0; i < nbits; i++) {
 				value |= (Huff_getBit(msg->data, &msg->bit) << i);
 			}
@@ -298,9 +325,14 @@ int MSG_ReadBits(msg_t *msg, int bits) {
 //			fp = fopen("c:\\netchan.bin", "a");
 
 			for (i = 0; i < bits; i += 8) {
-				Huff_offsetReceive(msgHuff.decompressor.tree, &get, msg->data, &msg->bit);
+				Huff_offsetReceive(msgHuff.decompressor.tree, &get, msg->data, &msg->bit, msg->cursize << 3);
 //				fwrite(&get, 1, 1, fp);
 				value |= (get << (i + nbits));
+
+				if (msg->bit > msg->cursize << 3) {
+					msg->readcount = msg->cursize + 1;
+					return 0;
+				}
 			}
 
 //			fclose(fp);
