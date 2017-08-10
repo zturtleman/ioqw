@@ -905,6 +905,21 @@ void G_Say(gentity_t *ent, gentity_t *target, int mode, const char *chatText) {
 
 /*
 =======================================================================================================================================
+SanitizeChatText
+=======================================================================================================================================
+*/
+static void SanitizeChatText(char *text) {
+	int i;
+
+	for (i = 0; text[i]; i++) {
+		if (text[i] == '\n' || text[i] == '\r') {
+			text[i] = ' ';
+		}
+	}
+}
+
+/*
+=======================================================================================================================================
 Cmd_Say_f
 =======================================================================================================================================
 */
@@ -920,6 +935,8 @@ static void Cmd_Say_f(gentity_t *ent, int mode, qboolean arg0) {
 	} else {
 		p = ConcatArgs(1);
 	}
+
+	SanitizeChatText(p);
 
 	G_Say(ent, NULL, mode, p);
 }
@@ -954,6 +971,8 @@ static void Cmd_Tell_f(gentity_t *ent) {
 	}
 
 	p = ConcatArgs(2);
+
+	SanitizeChatText(p);
 
 	G_LogPrintf("tell: %s to %s: %s\n", ent->client->pers.netname, target->client->pers.netname, p);
 	G_Say(ent, target, SAY_TELL, p);
@@ -1052,6 +1071,8 @@ static void Cmd_Voice_f(gentity_t *ent, int mode, qboolean arg0, qboolean voiceo
 		p = ConcatArgs(1);
 	}
 
+	SanitizeChatText(p);
+
 	G_Voice(ent, NULL, mode, p, voiceonly);
 }
 
@@ -1085,6 +1106,8 @@ static void Cmd_VoiceTell_f(gentity_t *ent, qboolean voiceonly) {
 	}
 
 	id = ConcatArgs(2);
+
+	SanitizeChatText(id);
 
 	G_LogPrintf("vtell: %s to %s: %s\n", ent->client->pers.netname, target->client->pers.netname, id);
 	G_Voice(ent, target, SAY_TELL, id, voiceonly);
@@ -1429,6 +1452,7 @@ Cmd_CallTeamVote_f
 */
 void Cmd_CallTeamVote_f(gentity_t *ent) {
 	int i, team, cs_offset;
+	char *c;
 	char arg1[MAX_STRING_TOKENS];
 	char arg2[MAX_STRING_TOKENS];
 
@@ -1472,10 +1496,16 @@ void Cmd_CallTeamVote_f(gentity_t *ent) {
 
 		trap_Argv(i, &arg2[strlen(arg2)], sizeof(arg2) - strlen(arg2));
 	}
-
-	if (strchr(arg1, ';') || strchr(arg2, ';')) {
-		trap_SendServerCommand(ent - g_entities, "print \"Invalid vote string.\n\"");
-		return;
+	// check for command separators in arg2
+	for (c = arg2; *c; ++c) {
+		switch (*c) {
+			case '\n':
+			case '\r':
+			case ';':
+				trap_SendServerCommand(ent - g_entities, "print \"Invalid vote string.\n\"");
+				return;
+			break;
+		}
 	}
 
 	if (!Q_stricmp(arg1, "leader")) {
