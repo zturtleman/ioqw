@@ -1086,7 +1086,6 @@ static float CG_DrawScores(float y) {
 				color[1] = 0.5f;
 				color[2] = 0.5f;
 				color[3] = 0.33f;
-
 				CG_FillRect(x, y - 4, w, BIGCHAR_HEIGHT + 8, color);
 			}
 
@@ -1138,6 +1137,7 @@ static float CG_DrawScores(float y) {
 				color[1] = 0.0f;
 				color[2] = 1.0f;
 				color[3] = 0.33f;
+
 				CG_FillRect(x, y - 4, w, scoreHeight, color);
 				CG_DrawPic(x, y - 4, w, scoreHeight, cgs.media.selectShader);
 			} else {
@@ -1258,7 +1258,6 @@ static float CG_DrawPowerups(float y) {
 			}
 
 			CG_DrawPic(640 - size, y + ICON_SIZE / 2 - size / 2, size, size, trap_R_RegisterShader(item->icon));
-
 			trap_R_SetColor(NULL);
 		}
 	}

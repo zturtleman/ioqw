@@ -207,6 +207,7 @@ void CG_ReflectVelocity(localEntity_t *le, trace_t *trace) {
 		BG_EvaluateTrajectoryDelta(&le->pos, hitTime, velocity, qfalse, -1);
 
 		dot = DotProduct(velocity, trace->plane.normal);
+
 		VectorMA(velocity, -2 * dot, trace->plane.normal, le->pos.trDelta);
 		VectorScale(le->pos.trDelta, le->bounceFactor, le->pos.trDelta);
 	}
@@ -219,6 +220,7 @@ void CG_ReflectVelocity(localEntity_t *le, trace_t *trace) {
 		le->pos.trType = TR_STATIONARY;
 		VectorCopy(trace->endpos, le->refEntity.origin);
 		vectoangles(le->refEntity.axis[0], le->angles.trBase);
+
 		le->groundEntityNum = trace->entityNum;
 	} else {
 
@@ -240,10 +242,9 @@ void CG_AddFragment(localEntity_t *le) {
 		float oldZ;
 
 		CG_AdjustPositionForMover(le->refEntity.origin, le->groundEntityNum, le->pos.trTime, cg.time, le->refEntity.origin, le->angles.trBase, le->angles.trBase);
-
 		AnglesToAxis(le->angles.trBase, le->refEntity.axis);
-		le->pos.trTime = cg.time;
 
+		le->pos.trTime = cg.time;
 		t = le->endTime - cg.time;
 
 		if (t < SINK_TIME) {
