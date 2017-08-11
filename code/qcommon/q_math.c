@@ -1178,6 +1178,7 @@ int Q_isnan(float x) {
 	fi.f = x;
 	fi.ui &= 0x7FFFFFFF;
 	fi.ui = 0x7F800000 - fi.ui;
+
 	return (int)((unsigned int)fi.ui >> 31);
 }
 #ifndef Q3_VM

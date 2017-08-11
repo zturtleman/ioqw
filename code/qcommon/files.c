@@ -2991,7 +2991,7 @@ qboolean FS_ComparePaks(char *neededpaks, int len, qboolean dlstring) {
 		if (FS_qwPak(fs_serverReferencedPakNames[i], BASEGAME, NUM_QW_PAKS)) {
 			continue;
 		}
-		// Make sure the server cannot make us write to non-quake wars directories.
+		// make sure the server cannot make us write to non-quake wars directories.
 		if (FS_CheckDirTraversal(fs_serverReferencedPakNames[i])) {
 			Com_Printf("WARNING: Invalid download name %s\n", fs_serverReferencedPakNames[i]);
 			continue;
@@ -3029,7 +3029,7 @@ qboolean FS_ComparePaks(char *neededpaks, int len, qboolean dlstring) {
 					Q_strcat(neededpaks, len, fs_serverReferencedPakNames[i]);
 					Q_strcat(neededpaks, len, ".pk3");
 				}
-				// Find out whether it might have overflowed the buffer and don't add this file to the list if that is the case.
+				// find out whether it might have overflowed the buffer and don't add this file to the list if that is the case.
 				if (strlen(origpos) + (origpos - neededpaks) >= len - 1) {
 					*origpos = '\0';
 					break;
@@ -3280,7 +3280,7 @@ static void FS_CheckPak0(void) {
 		} else {
 			int index;
 
-			// Finally check whether this pak's checksum is listed because the user tried to trick us by renaming the file, and set foundPak's highest bit to indicate this case.
+			// finally check whether this pak's checksum is listed because the user tried to trick us by renaming the file, and set foundPak's highest bit to indicate this case.
 			for (index = 0; index < ARRAY_LEN(pak_checksums); index++) {
 				if (curpack->checksum == pak_checksums[index]) {
 					Com_Printf("\n\n**************************************************\nWARNING: %s is renamed pak file %s%cpak%d.pk3. Please rename, or remove this file.\n**************************************************\n\n\n", curpack->pakFilename, BASEGAME, PATH_SEP, index);

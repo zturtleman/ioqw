@@ -54,10 +54,13 @@ channel_t loop_channels[MAX_CHANNELS];
 int numLoopChannels;
 int s_soundStarted = 0;
 qboolean s_soundMuted = qfalse;
+
 dma_t dma;
+
 int listener_number = 0;
 vec3_t listener_origin;
 vec3_t listener_axis[3];
+
 int s_soundtime; // sample PAIRS
 int s_paintedtime; // sample PAIRS
 // MAX_SFX may be larger than MAX_SOUNDS because
