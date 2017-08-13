@@ -1334,10 +1334,6 @@ static void CreateServer_BuildMapDistribution(void) {
 			gametype = gametype_remap[j];
 			matchbits = 1 << gametype;
 
-			if (gametype == GT_FFA) {
-				matchbits |= (1 << GT_SINGLE_PLAYER);
-			}
-
 			if (matchbits & gamebits) {
 				s_scriptdata.map.TypeCount[gametype_remap2[gametype]][maptype]++;
 			}

@@ -215,10 +215,6 @@ static qboolean VoteMenu_Map_SupportsGametype(const char *mapname) {
 
 	matchbits = 1 << s_mapselect2.gametype;
 
-	if (s_mapselect2.gametype == GT_FFA) {
-		matchbits |= (1 << GT_SINGLE_PLAYER);
-	}
-
 	for (i = 0; i < count; i++) {
 		info = UI_GetArenaInfoByNumber(i);
 
@@ -353,10 +349,6 @@ static void VoteMenu_Map_LoadMaps(const char *mapname, qboolean cache) {
 
 	s_mapselect2.nummaps = 0;
 	matchbits = 1 << s_mapselect2.gametype;
-
-	if (s_mapselect2.gametype == GT_FFA) {
-		matchbits |= (1 << GT_SINGLE_PLAYER);
-	}
 
 	for (i = 0; i < count; i++) {
 		info = UI_GetArenaInfoByNumber(i);

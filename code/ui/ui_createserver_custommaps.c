@@ -105,10 +105,6 @@ int UI_BuildMapListByType(int *list, int listmax, int gametype, callbackMapList 
 		matchbits = (1 << GT_MAX_GAME_TYPE) - 1;
 	} else {
 		matchbits = 1 << gametype;
-
-		if (gametype == GT_FFA) {
-			matchbits |= (1 << GT_SINGLE_PLAYER);
-		}
 	}
 
 	nummaps = UI_GetNumArenas();
@@ -560,10 +556,6 @@ void CreateServer_DrawMapPicture(int x, int y, int w, int h, mappic_t *mappic, v
 		for (i = 0; i < NUM_GAMETYPES; i++) { // only main icon
 			if (i < GT_CTF) {
 				mapbits = 1 << gametype_remap[i];
-
-				if (gametype_remap[i] == GT_FFA) {
-					mapbits |= 1 << GT_SINGLE_PLAYER;
-				}
 
 				if (!(mapbits & mappic->gamebits)) {
 					continue;
