@@ -275,14 +275,12 @@ void CG_SpawnEffectDefault(vec3_t org) {
 	le->color[0] = le->color[1] = le->color[2] = le->color[3] = 1.0;
 
 	re = &le->refEntity;
-
 	re->reType = RT_MODEL;
 	re->shaderTime = cg.time / 1000.0f;
 	re->customShader = cgs.media.teleportEffectShader;
 	re->hModel = cgs.media.teleportEffectModel;
 
 	AxisClear(re->axis);
-
 	VectorCopy(org, re->origin);
 
 	re->origin[2] -= 4;

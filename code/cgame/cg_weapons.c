@@ -244,6 +244,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir) {
 		VectorCopy(lightColor, le->lightColor);
 		// colorize with player color
 		VectorCopy(cgs.clientinfo[clientNum].color1, le->color);
+
 		le->refEntity.shaderRGBA[0] = le->color[0] * 0xff;
 		le->refEntity.shaderRGBA[1] = le->color[1] * 0xff;
 		le->refEntity.shaderRGBA[2] = le->color[2] * 0xff;
@@ -258,6 +259,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir) {
 
 			// colorize with client color
 			color = cgs.clientinfo[clientNum].color1;
+
 			CG_ImpactMark(mark, origin, dir, random() * 360, color[0], color[1], color[2], 1, alphaFade, markRadius, markDuration);
 		} else {
 			CG_ImpactMark(mark, origin, dir, random() * 360, 1, 1, 1, 1, alphaFade, markRadius, markDuration);
@@ -452,6 +454,7 @@ static void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi) {
 	t = step * ((startTime + step) / step);
 
 	BG_EvaluateTrajectory(&es->pos, cg.time, origin, qfalse, es->effect2Time);
+
 	contents = CG_PointContents(origin, -1);
 	// if object (e.g. grenade) is stationary, don't toss up smoke
 	if (es->pos.trType == TR_STATIONARY) {
@@ -1036,6 +1039,7 @@ void CG_Tracer(vec3_t source, vec3_t dest) {
 
 	// tracer
 	VectorSubtract(dest, source, forward);
+
 	len = VectorNormalize(forward);
 	// start at least a little ways from the muzzle
 	if (len < 100) {

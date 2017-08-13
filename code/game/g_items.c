@@ -503,7 +503,6 @@ gentity_t *Launch_Item(gitem_t *item, vec3_t origin, vec3_t velocity) {
 	gentity_t *dropped;
 
 	dropped = G_Spawn();
-
 	dropped->s.eType = ET_ITEM;
 	dropped->s.modelindex = item - bg_itemlist; // store item number in modelindex
 	dropped->s.modelindex2 = 1; // this is non-zero is it's a dropped item

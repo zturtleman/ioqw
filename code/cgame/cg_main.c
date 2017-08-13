@@ -681,7 +681,7 @@ static void CG_RegisterSounds(void) {
 	cgs.media.pickupSound = trap_S_RegisterSound("snd/i/pu.wav", qfalse);
 	cgs.media.wearOffSound = trap_S_RegisterSound("snd/i/po.wav", qfalse);
 	cgs.media.useNothingSound = trap_S_RegisterSound("snd/i/no.wav", qfalse);
-	cgs.media.medkitSound = trap_S_RegisterSound("sound/i/um.wav", qfalse);
+	cgs.media.medkitSound = trap_S_RegisterSound("snd/i/um.wav", qfalse);
 	cgs.media.kamikazeExplodeSound = trap_S_RegisterSound("snd/i/kam_e.wav", qfalse);
 	cgs.media.kamikazeImplodeSound = trap_S_RegisterSound("snd/i/kam_i.wav", qfalse);
 	cgs.media.kamikazeFarSound = trap_S_RegisterSound("snd/i/kam_f.wav", qfalse);

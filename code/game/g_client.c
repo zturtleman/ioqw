@@ -867,6 +867,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot) {
 	CalculateRanks();
 	// for statistics
 //	client->areabits = areabits;
+
 //	if (!client->areabits) {
 //		client->areabits = G_Alloc((trap_AAS_PointReachabilityAreaIndex(NULL) + 7) / 8);
 //	}
@@ -1077,7 +1078,6 @@ void ClientSpawn(gentity_t *ent) {
 	client->ps.pm_flags |= PMF_RESPAWNED;
 
 	trap_GetUsercmd(client - level.clients, &ent->client->pers.cmd);
-
 	SetClientViewAngle(ent, spawn_angles);
 	// don't allow full run speed for a bit
 	client->ps.pm_flags |= PMF_TIME_KNOCKBACK;

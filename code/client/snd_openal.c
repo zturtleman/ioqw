@@ -321,6 +321,7 @@ static sfxHandle_t S_AL_BufferFind(const char *filename) {
 		memset(ptr, 0, sizeof(*ptr));
 
 		ptr->masterLoopSrc = -1;
+
 		strcpy(ptr->filename, filename);
 	}
 	// return the handle
@@ -422,6 +423,7 @@ static qboolean S_AL_GenBuffers(ALsizei numBuffers, ALuint *buffers, const char 
 		// try again
 		S_AL_ClearError(qfalse);
 		qalGenBuffers(numBuffers, buffers);
+
 		error = qalGetError();
 	}
 
@@ -487,6 +489,7 @@ static void S_AL_BufferLoad(sfxHandle_t sfx, qboolean cache) {
 	if (info.size == 0) {
 		// we have no data to buffer, so buffer silence
 		byte dummyData[2] = {0};
+
 		qalBufferData(curSfx->buffer, AL_FORMAT_MONO16, (void *)dummyData, 2, 48000);
 	} else {
 		qalBufferData(curSfx->buffer, format, data, info.size, info.rate);
@@ -504,6 +507,7 @@ static void S_AL_BufferLoad(sfxHandle_t sfx, qboolean cache) {
 		}
 		// try load it again
 		qalBufferData(curSfx->buffer, format, data, info.size, info.rate);
+
 		error = qalGetError();
 	}
 	// some other error condition

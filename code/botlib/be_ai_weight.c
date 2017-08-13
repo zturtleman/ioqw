@@ -309,6 +309,7 @@ fuzzyseperator_t *ReadFuzzySeperators_r(source_t *source) {
 
 	if (!founddefault) {
 		SourceWarning(source, "switch without default");
+
 		fs = (fuzzyseperator_t *)GetClearedMemory(sizeof(fuzzyseperator_t));
 		fs->index = index;
 		fs->value = MAX_INVENTORYVALUE;
@@ -378,6 +379,7 @@ weightconfig_t *ReadWeightConfig(char *filename) {
 
 	config = (weightconfig_t *)GetClearedMemory(sizeof(weightconfig_t));
 	config->numweights = 0;
+
 	Q_strncpyz(config->filename, filename, sizeof(config->filename));
 	// parse the item config file
 	while (PC_ReadToken(source, &token)) {
@@ -394,7 +396,9 @@ weightconfig_t *ReadWeightConfig(char *filename) {
 			}
 
 			StripDoubleQuotes(token.string);
+
 			config->weights[config->numweights].name = (char *)GetClearedMemory(strlen(token.string) + 1);
+
 			strcpy(config->weights[config->numweights].name, token.string);
 
 			if (!PC_ExpectAnyToken(source, &token)) {
@@ -951,6 +955,7 @@ void ScaleFuzzySeperatorBalanceRange_r(fuzzyseperator_t *fs, float scale) {
 		ScaleFuzzySeperatorBalanceRange_r(fs->child, scale);
 	} else if (fs->type == WT_BALANCE) {
 		float mid = (fs->minweight + fs->maxweight) * 0.5;
+
 		// get the weight between bounds
 		fs->maxweight = mid + (fs->maxweight - mid) * scale;
 		fs->minweight = mid + (fs->minweight - mid) * scale;

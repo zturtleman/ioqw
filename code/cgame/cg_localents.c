@@ -218,7 +218,9 @@ void CG_ReflectVelocity(localEntity_t *le, trace_t *trace) {
 	// check for stop, making sure that even on low FPS systems it doesn't bobble
 	if (trace->allsolid || (trace->plane.normal[2] > 0 && (le->pos.trDelta[2] < 40 || le->pos.trDelta[2] < -cg.frametime * le->pos.trDelta[2]))) {
 		le->pos.trType = TR_STATIONARY;
+
 		VectorCopy(trace->endpos, le->refEntity.origin);
+
 		vectoangles(le->refEntity.axis[0], le->angles.trBase);
 
 		le->groundEntityNum = trace->entityNum;

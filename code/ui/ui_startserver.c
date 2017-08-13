@@ -615,7 +615,7 @@ static qboolean BotAlreadySelected(const char *checkName) {
 			continue;
 		}
 
-		if ((s_serveroptions.gametype >= GT_TEAM) && (s_serveroptions.playerTeam[n].curvalue != s_serveroptions.playerTeam[s_serveroptions.newBotIndex].curvalue)) {
+		if ((s_serveroptions.gametype > GT_TOURNAMENT) && (s_serveroptions.playerTeam[n].curvalue != s_serveroptions.playerTeam[s_serveroptions.newBotIndex].curvalue)) {
 			continue;
 		}
 
@@ -726,7 +726,7 @@ static void ServerOptions_Start(void) {
 			continue;
 		}
 
-		if (s_serveroptions.gametype >= GT_TEAM) {
+		if (s_serveroptions.gametype > GT_TOURNAMENT) {
 			Com_sprintf(buf, sizeof(buf), "addbot %s %i %s\n", s_serveroptions.playerNameBuffers[n], skill, playerTeam_list[s_serveroptions.playerTeam[n].curvalue]);
 		} else {
 			Com_sprintf(buf, sizeof(buf), "addbot %s %i\n", s_serveroptions.playerNameBuffers[n], skill);
@@ -735,7 +735,7 @@ static void ServerOptions_Start(void) {
 		trap_Cmd_ExecuteText(EXEC_APPEND, buf);
 	}
 	// set player's team
-	if (dedicated == 0 && s_serveroptions.gametype >= GT_TEAM) {
+	if (dedicated == 0 && s_serveroptions.gametype > GT_TOURNAMENT) {
 		// send team command for vanilla q3 game qvm
 		trap_Cmd_ExecuteText(EXEC_APPEND, va("wait 5; team %s\n", playerTeam_list[s_serveroptions.playerTeam[0].curvalue]));
 		// set g_localTeamPref for ioq3 game qvm
@@ -778,7 +778,7 @@ static void ServerOptions_InitPlayerItems(void) {
 		Q_CleanStr(s_serveroptions.playerNameBuffers[0]);
 	}
 	// init teams
-	if (s_serveroptions.gametype >= GT_TEAM) {
+	if (s_serveroptions.gametype > GT_TOURNAMENT) {
 		for (n = 0; n < (PLAYER_SLOTS / 2); n++) {
 			s_serveroptions.playerTeam[n].curvalue = 0;
 		}
@@ -968,7 +968,7 @@ static void ServerOptions_InitBotNames(void) {
 		strcpy(s_serveroptions.playerNameBuffers[n], "Random");
 	}
 
-	if (s_serveroptions.gametype >= GT_TEAM) {
+	if (s_serveroptions.gametype > GT_TOURNAMENT) {
 		Q_strncpyz(s_serveroptions.playerNameBuffers[1], "Grunt", 16);
 		Q_strncpyz(s_serveroptions.playerNameBuffers[2], "Major", 16);
 		Q_strncpyz(s_serveroptions.playerNameBuffers[3], "Visor", 16);
@@ -1223,7 +1223,7 @@ static void ServerOptions_MenuInit(qboolean multiplayer) {
 	s_serveroptions.timelimit.field.widthInChars = 3;
 	s_serveroptions.timelimit.field.maxchars = 3;
 
-	if (s_serveroptions.gametype >= GT_TEAM) {
+	if (s_serveroptions.gametype > GT_TOURNAMENT) {
 		y += BIGCHAR_HEIGHT + 2;
 		s_serveroptions.friendlyfire.generic.type = MTYPE_RADIOBUTTON;
 		s_serveroptions.friendlyfire.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
@@ -1360,7 +1360,7 @@ static void ServerOptions_MenuInit(qboolean multiplayer) {
 
 		Menu_AddItem(&s_serveroptions.menu, &s_serveroptions.playerName[n]);
 
-		if (s_serveroptions.gametype >= GT_TEAM) {
+		if (s_serveroptions.gametype > GT_TOURNAMENT) {
 			Menu_AddItem(&s_serveroptions.menu, &s_serveroptions.playerTeam[n]);
 		}
 	}
@@ -1373,7 +1373,7 @@ static void ServerOptions_MenuInit(qboolean multiplayer) {
 
 	Menu_AddItem(&s_serveroptions.menu, &s_serveroptions.timelimit);
 
-	if (s_serveroptions.gametype >= GT_TEAM) {
+	if (s_serveroptions.gametype > GT_TOURNAMENT) {
 		Menu_AddItem(&s_serveroptions.menu, &s_serveroptions.friendlyfire);
 	}
 

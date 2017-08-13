@@ -415,6 +415,7 @@ int BotGetLongTermGoal(bot_state_t *bs, int tfl, int retreat, bot_goal_t *goal) 
 		// get entity information of the companion
 		BotEntityInfo(bs->teammate, &entinfo);
 		VectorSubtract(entinfo.origin, bs->origin, dir);
+
 		teammates = BotCountTeamMates(bs, 256);
 
 		if (VectorLengthSquared(dir) < Square(bs->formation_dist + (teammates * bs->formation_dist))) {
@@ -641,6 +642,7 @@ int BotGetLongTermGoal(bot_state_t *bs, int tfl, int retreat, bot_goal_t *goal) 
 		}
 		// if really near the camp spot
 		VectorSubtract(goal->origin, bs->origin, dir);
+
 		teammates = BotCountTeamMates(bs, 256);
 
 		if (VectorLengthSquared(dir) < Square(60 + (teammates * 60))) {
@@ -2088,6 +2090,7 @@ void AIEnter_Battle_Fight(bot_state_t *bs, char *s) {
 
 	BotRecordNodeSwitch(bs, "battle fight", "", s);
 	trap_BotResetLastAvoidReach(bs->ms);
+
 	bs->ainode = AINode_Battle_Fight;
 	bs->flags &= ~BFL_FIGHTSUICIDAL;
 }
@@ -2101,6 +2104,7 @@ void AIEnter_Battle_SuicidalFight(bot_state_t *bs, char *s) {
 
 	BotRecordNodeSwitch(bs, "battle fight", "", s);
 	trap_BotResetLastAvoidReach(bs->ms);
+
 	bs->ainode = AINode_Battle_Fight;
 	bs->flags |= BFL_FIGHTSUICIDAL;
 }

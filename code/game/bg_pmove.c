@@ -1192,6 +1192,7 @@ static int PM_CorrectAllSolid(trace_t *trace) {
 		for (j = -1; j <= 1; j++) {
 			for (k = -1; k <= 1; k++) {
 				VectorCopy(pm->ps->origin, point);
+
 				point[0] += (float)i;
 				point[1] += (float)j;
 				point[2] += (float)k;
@@ -1237,6 +1238,7 @@ static void PM_GroundTraceMissed(void) {
 		// if they aren't in a jumping animation and the ground is a ways away, force into it
 		// if we didn't do the trace, the player would be backflipping down staircases
 		VectorCopy(pm->ps->origin, point);
+
 		point[2] -= 64;
 
 		pm->trace(&trace, pm->ps->origin, pm->mins, pm->maxs, point, pm->ps->clientNum, pm->tracemask);

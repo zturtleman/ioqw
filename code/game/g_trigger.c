@@ -354,8 +354,7 @@ automatically near doors to allow spectators to move through them
 void SP_trigger_teleport(gentity_t *self) {
 
 	InitTrigger(self);
-	// unlike other triggers, we need to send this one to the client
-	// unless is a spectator trigger
+	// unlike other triggers, we need to send this one to the client unless is a spectator trigger
 	if (self->spawnflags & 1) {
 		self->r.svFlags |= SVF_NOCLIENT;
 	} else {

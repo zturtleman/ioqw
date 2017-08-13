@@ -3149,7 +3149,9 @@ bot_moveresult_t BotAttackMove(bot_state_t *bs, int tfl) {
 	if (bs->attackcrouch_time > FloatTime()) {
 		// get the start point aiming from
 		VectorCopy(bs->origin, start);
+
 		start[2] += CROUCH_VIEWHEIGHT;
+
 		BotAI_Trace(&bsptrace, start, NULL, NULL, entinfo.origin, bs->client, MASK_SHOT);
 		// only try to crouch if the enemy remains visible
 		if (bsptrace.fraction >= 1.0 || bsptrace.entityNum == attackentity) {
@@ -5451,7 +5453,6 @@ void BotCheckBlockedTeammates(bot_state_t *bs) {
 		movetype = MOVE_WALK;
 		mindist = 8;
 		speed = 200;
-
 		ent = &g_entities[i];
 		// human players and facing teammates need more space
 		if ((!(ent->r.svFlags & SVF_BOT)) || BotEntityVisible(bs->entitynum, bs->eye, bs->viewangles, 90, i)) {
@@ -5468,6 +5469,7 @@ void BotCheckBlockedTeammates(bot_state_t *bs) {
 		}
 		// calculate the direction towards the teammate
 		v1[2] = 0;
+
 		VectorSubtract(entinfo.origin, bs->origin, v1);
 		VectorNormalize(v1);
 		// now check if the teammate is blocked, increase the distance accordingly

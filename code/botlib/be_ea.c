@@ -382,7 +382,6 @@ void EA_GetInput(int client, float thinktime, bot_input_t *input) {
 	bot_input_t *bi;
 
 	bi = &botinputs[client];
-
 	bi->thinktime = thinktime;
 
 	Com_Memcpy(input, bi, sizeof(bot_input_t));
@@ -398,7 +397,6 @@ void EA_ResetInput(int client) {
 	int jumped = qfalse;
 
 	bi = &botinputs[client];
-
 	bi->thinktime = 0;
 
 	VectorClear(bi->dir);

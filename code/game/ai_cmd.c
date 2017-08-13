@@ -58,6 +58,7 @@ void BotPrintTeamGoal(bot_state_t *bs) {
 	float t;
 
 	ClientName(bs->client, netname, sizeof(netname));
+
 	t = bs->teamgoal_time - FloatTime();
 
 	switch (bs->ltgtype) {
