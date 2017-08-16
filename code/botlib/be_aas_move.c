@@ -53,7 +53,9 @@ int AAS_DropToFloor(vec3_t origin, vec3_t mins, vec3_t maxs, int passent, int co
 	origin[2] += 1;
 
 	VectorCopy(origin, end);
+
 	end[2] -= 4096;
+
 	trace = AAS_Trace(origin, mins, maxs, end, passent, contentmask);
 
 	if (trace.startsolid) {
@@ -127,6 +129,7 @@ int AAS_AgainstLadder(vec3_t origin) {
 	aas_area_t *area;
 
 	VectorCopy(origin, org);
+
 	areanum = AAS_PointAreaNum(org);
 
 	if (!areanum) {
@@ -197,6 +200,7 @@ int AAS_OnGround(vec3_t origin, int presencetype, int passent, int contentmask) 
 	aas_plane_t *plane;
 
 	VectorCopy(origin, end);
+
 	end[2] -= 10;
 
 	trace = AAS_TraceClientBBox(origin, end, presencetype, passent, contentmask);
@@ -233,6 +237,7 @@ int AAS_Swimming(vec3_t origin) {
 	vec3_t testorg;
 
 	VectorCopy(origin, testorg);
+
 	testorg[2] -= 2;
 
 	if (AAS_PointContents(testorg) & (CONTENTS_LAVA|CONTENTS_SLIME|CONTENTS_WATER)) {
@@ -274,9 +279,11 @@ void AAS_JumpReachRunStart(aas_reachability_t *reach, vec3_t runstart, int conte
 	hordir[0] = reach->start[0] - reach->end[0];
 	hordir[1] = reach->start[1] - reach->end[1];
 	hordir[2] = 0;
+
 	VectorNormalize(hordir);
 	// start point
 	VectorCopy(reach->start, start);
+
 	start[2] += 1;
 	// get command movement
 	VectorScale(hordir, 400, cmdmove);
@@ -310,8 +317,11 @@ float AAS_WeaponJumpZVelocity(vec3_t origin, float radiusdamage, int contentmask
 	viewangles[ROLL] = 0;
 	// get the start point shooting from
 	VectorCopy(origin, start);
+
 	start[2] += 8; // view offset Z
+
 	AngleVectors(viewangles, forward, right, NULL);
+
 	start[0] += forward[0] * rocketoffset[0] + right[0] * rocketoffset[1];
 	start[1] += forward[1] * rocketoffset[0] + right[1] * rocketoffset[1];
 	start[2] += forward[2] * rocketoffset[0] + right[2] * rocketoffset[1] + rocketoffset[2];
@@ -414,6 +424,7 @@ void AAS_ApplyFriction(vec3_t vel, float friction, float stopspeed, float framet
 		}
 
 		newspeed /= speed;
+
 		vel[0] *= newspeed;
 		vel[1] *= newspeed;
 	}
@@ -434,6 +445,7 @@ int AAS_ClipToBBox(aas_trace_t *trace, vec3_t start, vec3_t end, int presencetyp
 	VectorSubtract(mins, bboxmaxs, absmins);
 	VectorSubtract(maxs, bboxmins, absmaxs);
 	VectorCopy(end, trace->endpos);
+
 	trace->fraction = 1;
 
 	for (i = 0; i < 3; i++) {
@@ -567,6 +579,7 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 	Com_Memset(&trace, 0, sizeof(aas_trace_t));
 	// start at the current origin
 	VectorCopy(origin, org);
+
 	org[2] += 0.25;
 	// velocity to test for the first frame
 	VectorScale(velocity, frametime, frame_test_vel);
@@ -606,6 +619,7 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 			// ax = 0;
 			maxvel = phys_maxwalkvelocity;
 			accelerate = phys_airaccelerate;
+
 			VectorCopy(cmdmove, wishdir);
 
 			if (onground) {
@@ -703,6 +717,7 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 						if (areas[i] == stopareanum) {
 							VectorCopy(points[i], move->endpos);
 							VectorScale(frame_test_vel, 1 / frametime, move->velocity);
+
 							move->endarea = areas[i];
 							move->trace = trace;
 							move->stopevent = SE_ENTERAREA;
@@ -718,6 +733,7 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 						if (aasworld.areasettings[areas[i]].contents & AREACONTENTS_JUMPPAD) {
 							VectorCopy(points[i], move->endpos);
 							VectorScale(frame_test_vel, 1 / frametime, move->velocity);
+
 							move->endarea = areas[i];
 							move->trace = trace;
 							move->stopevent = SE_TOUCHJUMPPAD;
@@ -732,8 +748,11 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 					if (stopevent & SE_TOUCHTELEPORTER) {
 						if (aasworld.areasettings[areas[i]].contents & AREACONTENTS_TELEPORTER) {
 							VectorCopy(points[i], move->endpos);
+
 							move->endarea = areas[i];
+
 							VectorScale(frame_test_vel, 1 / frametime, move->velocity);
+
 							move->trace = trace;
 							move->stopevent = SE_TOUCHTELEPORTER;
 							move->presencetype = presencetype;
@@ -747,8 +766,11 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 					if (stopevent & SE_TOUCHCLUSTERPORTAL) {
 						if (aasworld.areasettings[areas[i]].contents & AREACONTENTS_CLUSTERPORTAL) {
 							VectorCopy(points[i], move->endpos);
+
 							move->endarea = areas[i];
+
 							VectorScale(frame_test_vel, 1 / frametime, move->velocity);
+
 							move->trace = trace;
 							move->stopevent = SE_TOUCHCLUSTERPORTAL;
 							move->presencetype = presencetype;
@@ -764,8 +786,11 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 			if (stopevent & SE_HITBOUNDINGBOX) {
 				if (AAS_ClipToBBox(&trace, org, trace.endpos, presencetype, mins, maxs)) {
 					VectorCopy(trace.endpos, move->endpos);
+
 					move->endarea = AAS_PointAreaNum(move->endpos);
+
 					VectorScale(frame_test_vel, 1 / frametime, move->velocity);
+
 					move->trace = trace;
 					move->stopevent = SE_HITBOUNDINGBOX;
 					move->presencetype = presencetype;
@@ -785,12 +810,16 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 				if (stopevent & SE_HITGROUNDAREA) {
 					if (DotProduct(plane->normal, up) > phys_maxsteepness) {
 						VectorCopy(org, start);
+
 						start[2] += 0.5;
 
 						if (AAS_PointAreaNum(start) == stopareanum) {
 							VectorCopy(start, move->endpos);
+
 							move->endarea = stopareanum;
+
 							VectorScale(frame_test_vel, 1 / frametime, move->velocity);
+
 							move->trace = trace;
 							move->stopevent = SE_HITGROUNDAREA;
 							move->presencetype = presencetype;
@@ -808,6 +837,7 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 					// check for a step
 					VectorMA(org, -0.25, plane->normal, start);
 					VectorCopy(start, stepend);
+
 					start[2] += phys_maxstep;
 					steptrace = AAS_TraceClientBBox(start, stepend, presencetype, entnum, contentmask);
 
@@ -816,6 +846,7 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 
 						if (DotProduct(plane2->normal, up) > phys_maxsteepness) {
 							VectorSubtract(end, steptrace.endpos, left_test_vel);
+
 							left_test_vel[2] = 0;
 							frame_test_vel[2] = 0;
 //#ifdef AAS_MOVE_DEBUG
@@ -823,7 +854,9 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 							if (visualize) {
 								if (steptrace.endpos[2] - org[2] > 0.125) {
 									VectorCopy(org, start);
+
 									start[2] = steptrace.endpos[2];
+
 									AAS_DebugLine(org, start, LINECOLOR_BLUE);
 								}
 							}
@@ -885,8 +918,11 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 							*/
 							if (delta > 40) {
 								VectorCopy(org, move->endpos);
+
 								move->endarea = AAS_PointAreaNum(org);
+
 								VectorCopy(frame_test_vel, move->velocity);
+
 								move->trace = trace;
 								move->stopevent = SE_HITGROUNDDAMAGE;
 								move->presencetype = presencetype;
@@ -914,6 +950,7 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 		if (frame_test_vel[2] <= 10) {
 			// check for a liquid at the feet of the bot
 			VectorCopy(org, feet);
+
 			feet[2] -= 22;
 			pc = AAS_PointContents(feet);
 			// get event from pc
@@ -947,8 +984,11 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 			// if in lava or slime
 			if (event & stopevent) {
 				VectorCopy(org, move->endpos);
+
 				move->endarea = areanum;
+
 				VectorScale(frame_test_vel, 1 / frametime, move->velocity);
+
 				move->stopevent = event & stopevent;
 				move->presencetype = presencetype;
 				move->endcontents = pc;
@@ -968,8 +1008,11 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 		if (onground) {
 			if (stopevent & SE_HITGROUND) {
 				VectorCopy(org, move->endpos);
+
 				move->endarea = AAS_PointAreaNum(org);
+
 				VectorScale(frame_test_vel, 1 / frametime, move->velocity);
+
 				move->trace = trace;
 				move->stopevent = SE_HITGROUND;
 				move->presencetype = presencetype;
@@ -980,8 +1023,11 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 			}
 		} else if (stopevent & SE_LEAVEGROUND) {
 			VectorCopy(org, move->endpos);
+
 			move->endarea = AAS_PointAreaNum(org);
+
 			VectorScale(frame_test_vel, 1 / frametime, move->velocity);
+
 			move->trace = trace;
 			move->stopevent = SE_LEAVEGROUND;
 			move->presencetype = presencetype;
@@ -994,6 +1040,7 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 
 			VectorCopy(org, start);
 			VectorCopy(start, end);
+
 			end[2] -= 48 + aassettings.phys_maxbarrier;
 			gaptrace = AAS_TraceClientBBox(start, end, PRESENCE_CROUCH, entnum, contentmask);
 			// if solid is found the bot cannot walk any further and will not fall into a gap
@@ -1002,8 +1049,11 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 				if (gaptrace.endpos[2] < org[2] - aassettings.phys_maxstep - 1) {
 					if (!(AAS_PointContents(end) & CONTENTS_WATER)) {
 						VectorCopy(lastorg, move->endpos);
+
 						move->endarea = AAS_PointAreaNum(lastorg);
+
 						VectorScale(frame_test_vel, 1 / frametime, move->velocity);
+
 						move->trace = trace;
 						move->stopevent = SE_GAP;
 						move->presencetype = presencetype;
@@ -1023,8 +1073,11 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 	}
 
 	VectorCopy(org, move->endpos);
+
 	move->endarea = AAS_PointAreaNum(org);
+
 	VectorScale(frame_test_vel, 1 / frametime, move->velocity);
+
 	move->stopevent = SE_NONE;
 	move->presencetype = presencetype;
 	move->endcontents = 0;

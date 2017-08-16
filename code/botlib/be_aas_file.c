@@ -268,13 +268,12 @@ void AAS_DumpAASData(void) {
 	aasworld.initialized = qfalse;
 	aasworld.savefile = qfalse;
 }
-
+#ifdef AASFILEDEBUG
 /*
 =======================================================================================================================================
 AAS_FileInfo
 =======================================================================================================================================
 */
-#ifdef AASFILEDEBUG
 void AAS_FileInfo(void) {
 	int i, n, optimized;
 
@@ -553,18 +552,17 @@ int AAS_LoadAASFile(char *filename) {
 	return BLERR_NOERROR;
 }
 
+static int AAS_WriteAASLump_offset;
 /*
 =======================================================================================================================================
 AAS_WriteAASLump
 =======================================================================================================================================
 */
-static int AAS_WriteAASLump_offset;
-
 int AAS_WriteAASLump(fileHandle_t fp, aas_header_t *h, int lumpnum, void *data, int length) {
 	aas_lump_t *lump;
 
 	lump = &h->lumps[lumpnum];
-	lump->fileofs = LittleLong(AAS_WriteAASLump_offset); // LittleLong(ftell(fp))
+	lump->fileofs = LittleLong(AAS_WriteAASLump_offset); //LittleLong(ftell(fp))
 	lump->filelen = LittleLong(length);
 
 	if (length > 0) {
@@ -605,6 +603,7 @@ qboolean AAS_WriteAASFile(char *filename) {
 	}
 	// write the header
 	botimport.FS_Write(&header, sizeof(aas_header_t), fp);
+
 	AAS_WriteAASLump_offset = sizeof(aas_header_t);
 	// add the data lumps to the file
 	if (!AAS_WriteAASLump(fp, &header, AASLUMP_BBOXES, aasworld.bboxes, aasworld.numbboxes * sizeof(aas_bbox_t))) {
@@ -664,7 +663,9 @@ qboolean AAS_WriteAASFile(char *filename) {
 	}
 	// rewrite the header with the added lumps
 	botimport.FS_Seek(fp, 0, FS_SEEK_SET);
+
 	AAS_DData((unsigned char *)&header + 8, sizeof(aas_header_t) - 8);
+
 	botimport.FS_Write(&header, sizeof(aas_header_t), fp);
 	// close the file
 	botimport.FS_FCloseFile(fp);

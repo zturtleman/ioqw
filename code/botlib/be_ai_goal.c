@@ -241,6 +241,7 @@ itemconfig_t *LoadItemConfig(char *filename) {
 
 	Q_strncpyz(path, filename, sizeof(path));
 	PC_SetBaseFolder(BOTFILESBASEFOLDER);
+
 	source = LoadSourceFile(path);
 
 	if (!source) {
@@ -542,6 +543,7 @@ void BotInitLevelItems(void) {
 		}
 
 		spawnflags = 0;
+
 		AAS_IntForBSPEpairKey(ent, "spawnflags", &spawnflags);
 
 		for (i = 0; i < ic->numiteminfo; i++) {
@@ -566,6 +568,7 @@ void BotInitLevelItems(void) {
 			// if the item is not floating in water
 			if (!(AAS_PointContents(origin) & CONTENTS_WATER)) {
 				VectorCopy(origin, end);
+
 				end[2] -= 32;
 				trace = AAS_Trace(origin, ic->iteminfo[i].mins, ic->iteminfo[i].maxs, end, -1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 				// if the item not near the ground
@@ -574,6 +577,7 @@ void BotInitLevelItems(void) {
 					goalareanum = AAS_BestReachableFromJumpPadArea(origin, ic->iteminfo[i].mins, ic->iteminfo[i].maxs);
 					Log_Write("item %s reachable from jumppad area %d\r\n", ic->iteminfo[i].classname, goalareanum);
 					//botimport.Print(PRT_MESSAGE, "item %s reachable from jumppad area %d\r\n", ic->iteminfo[i].classname, goalareanum);
+
 					if (!goalareanum) {
 						continue;
 					}
@@ -1162,7 +1166,8 @@ void BotUpdateEntityItems(void) {
 		if (!li->entitynum) {
 			BotFindEntityForLevelItem(li);
 		}
-	}*/
+	}
+	*/
 }
 
 /*
@@ -1422,6 +1427,7 @@ int BotChooseLTGItem(int goalstate, vec3_t origin, int *inventory, int travelfla
 			if (AAS_RandomGoalArea(areanum, travelflags, &goal.areanum, goal.origin)) {
 				VectorSet(goal.mins, -15, -15, -15);
 				VectorSet(goal.maxs, 15, 15, 15);
+
 				goal.entitynum = 0;
 				goal.number = 0;
 				goal.flags = GFL_ROAM;
@@ -1439,9 +1445,11 @@ int BotChooseLTGItem(int goalstate, vec3_t origin, int *inventory, int travelfla
 	}
 	// create a bot goal for this item
 	iteminfo = &ic->iteminfo[bestitem->iteminfo];
+
 	VectorCopy(bestitem->goalorigin, goal.origin);
 	VectorCopy(iteminfo->mins, goal.mins);
 	VectorCopy(iteminfo->maxs, goal.maxs);
+
 	goal.areanum = bestitem->goalareanum;
 	goal.entitynum = bestitem->entitynum;
 	goal.number = bestitem->number;
@@ -1619,9 +1627,11 @@ int BotChooseNBGItem(int goalstate, vec3_t origin, int *inventory, int travelfla
 	}
 	// create a bot goal for this item
 	iteminfo = &ic->iteminfo[bestitem->iteminfo];
+
 	VectorCopy(bestitem->goalorigin, goal.origin);
 	VectorCopy(iteminfo->mins, goal.mins);
 	VectorCopy(iteminfo->maxs, goal.maxs);
+
 	goal.areanum = bestitem->goalareanum;
 	goal.entitynum = bestitem->entitynum;
 	goal.number = bestitem->number;
@@ -1671,6 +1681,7 @@ int BotTouchingGoal(vec3_t origin, bot_goal_t *goal) {
 	vec3_t safety_mins = {0, 0, 0}; // {-4, -4, 0};
 
 	AAS_PresenceTypeBoundingBox(PRESENCE_NORMAL, boxmins, boxmaxs);
+
 	VectorSubtract(goal->mins, boxmaxs, absmins);
 	VectorSubtract(goal->maxs, boxmins, absmaxs);
 	VectorAdd(absmins, goal->origin, absmins);
@@ -1745,6 +1756,7 @@ void BotResetGoalState(int goalstate) {
 	Com_Memset(gs->goalstack, 0, MAX_GOALSTACK * sizeof(bot_goal_t));
 
 	gs->goalstacktop = 0;
+
 	BotResetAvoidGoals(goalstate);
 }
 
@@ -1839,6 +1851,7 @@ void BotFreeGoalState(int handle) {
 
 	BotFreeItemWeights(handle);
 	FreeMemory(botgoalstates[handle]);
+
 	botgoalstates[handle] = NULL;
 }
 

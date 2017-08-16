@@ -332,6 +332,12 @@ int AAS_Reachability_WeaponJump(int area1num, int area2num);
 int BotFuzzyPointReachabilityArea(vec3_t origin);
 float BotGapDistance(vec3_t origin, vec3_t hordir, int entnum);
 void AAS_FloodAreas(vec3_t origin);
+
+/*
+=======================================================================================================================================
+BotExportTest
+=======================================================================================================================================
+*/
 int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 // return AAS_PointLight(parm2, NULL, NULL, NULL);
 #ifdef DEBUG
@@ -387,17 +393,21 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 		newarea = highlightarea;
 	} else {
 		VectorCopy(parm2, origin);
+
 		origin[2] += 0.5;
 		//newarea = AAS_PointAreaNum(origin);
 		newarea = BotFuzzyPointReachabilityArea(origin);
 	}
 
 	botimport.Print(PRT_MESSAGE, "\rtravel time to goal (%d) = %d  ", botlibglobals.goalareanum, AAS_AreaTravelTimeToGoalArea(newarea, origin, botlibglobals.goalareanum, TFL_DEFAULT));
+
 	//newarea = BotReachabilityArea(origin, qtrue);
 
 	if (newarea != area) {
 		botimport.Print(PRT_MESSAGE, "origin = %f, %f, %f\n", origin[0], origin[1], origin[2]);
+
 		area = newarea;
+
 		botimport.Print(PRT_MESSAGE, "new area %d, cluster %d, presence type %d\n", area, AAS_AreaCluster(area), AAS_PointPresenceType(origin));
 		botimport.Print(PRT_MESSAGE, "area contents: ");
 
@@ -441,14 +451,20 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 		botimport.Print(PRT_MESSAGE, "travel time to goal (%d) = %d\n", botlibglobals.goalareanum, AAS_AreaTravelTimeToGoalArea(newarea, origin, botlibglobals.goalareanum, TFL_DEFAULT|TFL_ROCKETJUMP));
 		/*
 		VectorCopy(origin, end);
+
 		end[2] += 5;
+
 		numareas = AAS_TraceAreas(origin, end, areas, NULL, 10);
+
 		AAS_TraceClientBBox(origin, end, PRESENCE_CROUCH, -1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
+
 		botimport.Print(PRT_MESSAGE, "num areas = %d, area = %d\n", numareas, areas[0]);
 		*/
 		/*
 		botlibglobals.goalareanum = newarea;
+
 		VectorCopy(parm2, botlibglobals.goalorigin);
+
 		botimport.Print(PRT_MESSAGE, "new goal %2.1f %2.1f %2.1f area %d\n", origin[0], origin[1], origin[2], newarea);
 		*/
 	}
@@ -527,7 +543,9 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 		/*
 		goal.areanum = botlibglobals.goalareanum;
 		VectorCopy(botlibglobals.goalorigin, goal.origin);
+
 		reachnum = BotGetReachabilityToGoal(origin, newarea, lastgoalareanum, lastareanum, avoidreach, avoidreachtimes, avoidreachtries, &goal, TFL_DEFAULT|TFL_FUNCBOB|TFL_ROCKETJUMP, NULL, 0, &resultFlags);
+
 		AAS_ReachabilityFromNum(reachnum, &reach);
 		AAS_ShowReachability(&reach);
 		*/
@@ -535,8 +553,10 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 		vec3_t curorigin;
 
 		goal.areanum = botlibglobals.goalareanum;
+
 		VectorCopy(botlibglobals.goalorigin, goal.origin);
 		VectorCopy(origin, curorigin);
+
 		curarea = newarea;
 
 		for (i = 0; i < 100; i++) {
@@ -545,9 +565,12 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 			}
 
 			reachnum = BotGetReachabilityToGoal(curorigin, curarea, lastgoalareanum, lastareanum, avoidreach, avoidreachtimes, avoidreachtries, &goal, TFL_DEFAULT|TFL_FUNCBOB|TFL_ROCKETJUMP, NULL, 0, &resultFlags);
+
 			AAS_ReachabilityFromNum(reachnum, &reach);
 			AAS_ShowReachability(&reach);
+
 			VectorCopy(reach.end, origin);
+
 			lastareanum = curarea;
 			curarea = reach.areanum;
 		}
@@ -559,8 +582,8 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 	if (parm0 & BUTTON_USE) {
 		botimport.Print(PRT_MESSAGE, "test rj from 703 to 716\n");
 		AAS_Reachability_WeaponJump(703, 716);
-	}*/
-
+	}
+	*/
 //	AngleVectors(parm3, forward, right, NULL);
 	// get the eye 16 units to the right of the origin
 //	VectorMA(parm2, 8, right, eye);
@@ -609,6 +632,7 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 	// TTimo: nested comments are BAD for gcc -Werror, use #if 0 instead..
 #if 0
 	AAS_ClearShownDebugLines();
+
 	//bsptrace = AAS_Trace(eye, NULL, NULL, end, 1, MASK_PLAYERSOLID);
 	bsptrace = AAS_Trace(eye, mins, maxs, end, 1, MASK_PLAYERSOLID);
 
@@ -635,6 +659,7 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 
 	//bsptrace = AAS_Trace2(eye, NULL, NULL, end, 1, MASK_PLAYERSOLID);
 	bsptrace = AAS_Trace2(eye, mins, maxs, end, 1, MASK_PLAYERSOLID);
+
 	botimport.DebugLineShow(line[1], eye, bsptrace.endpos, LINECOLOR_BLUE);
 
 	if (bsptrace.fraction < 1.0) {

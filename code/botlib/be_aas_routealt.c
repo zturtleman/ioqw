@@ -154,7 +154,9 @@ int AAS_AlternativeRouteGoals(vec3_t start, int startareanum, vec3_t goal, int g
 		midrangeareas[i].valid = qtrue;
 		midrangeareas[i].starttime = starttime;
 		midrangeareas[i].goaltime = goaltime;
+
 		Log_Write("%d midrange area %d", nummidrangeareas, i);
+
 		nummidrangeareas++;
 	}
 
@@ -181,6 +183,7 @@ int AAS_AlternativeRouteGoals(vec3_t start, int startareanum, vec3_t goal, int g
 
 		for (j = 0; j < numclusterareas; j++) {
 			VectorSubtract(mid, aasworld.areas[clusterareas[j]].center, dir);
+
 			dist = VectorLength(dir);
 
 			if (dist < bestdist) {
@@ -191,10 +194,12 @@ int AAS_AlternativeRouteGoals(vec3_t start, int startareanum, vec3_t goal, int g
 		// now we've got an area for an alternative route
 		// FIXME: add alternative goal origin
 		VectorCopy(aasworld.areas[bestareanum].center, altroutegoals[numaltroutegoals].origin);
+
 		altroutegoals[numaltroutegoals].areanum = bestareanum;
 		altroutegoals[numaltroutegoals].starttraveltime = midrangeareas[bestareanum].starttime;
 		altroutegoals[numaltroutegoals].goaltraveltime = midrangeareas[bestareanum].goaltime;
 		altroutegoals[numaltroutegoals].extratraveltime = (midrangeareas[bestareanum].starttime + midrangeareas[bestareanum].goaltime) - goaltraveltime;
+
 		numaltroutegoals++;
 #ifdef ALTROUTE_DEBUG
 		AAS_ShowAreaPolygons(bestareanum, 1, qtrue);

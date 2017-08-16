@@ -39,7 +39,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "be_aas_def.h"
 
 //#define AAS_SAMPLE_DEBUG
-
 #define BBOX_NORMAL_EPSILON 0.001
 #define ON_EPSILON 0 // 0.0005
 #define TRACEPLANE_EPSILON 0.125
@@ -458,10 +457,14 @@ qboolean AAS_AreaEntityCollision(int areanum, vec3_t start, vec3_t end, int pres
 	if (collision) {
 		trace->startsolid = bsptrace.startsolid;
 		trace->ent = bsptrace.entityNum;
+
 		VectorCopy(bsptrace.endpos, trace->endpos);
+
 		trace->area = 0;
 		trace->planenum = 0;
+
 		VectorCopy(bsptrace.plane.normal, trace->plane.normal);
+
 		trace->plane.dist = bsptrace.plane.dist;
 		// ZTM: FIXME: Are AAS plane type and BSP plane type the same values?
 		trace->plane.type = bsptrace.plane.type;
@@ -499,6 +502,7 @@ aas_trace_t AAS_TraceClientBBox(vec3_t start, vec3_t end, int presencetype, int 
 	// we start with the whole line on the stack
 	VectorCopy(start, tstack_p->start);
 	VectorCopy(end, tstack_p->end);
+
 	tstack_p->planenum = 0;
 	// start with node 1 because node zero is a dummy for a solid leaf
 	tstack_p->nodenum = 1; // starting at the root of the tree
@@ -550,9 +554,12 @@ aas_trace_t AAS_TraceClientBBox(vec3_t start, vec3_t end, int presencetype, int 
 				}
 
 				VectorCopy(tstack_p->start, trace.endpos);
+
 				trace.ent = 0;
 				trace.area = -nodenum;
+
 //				VectorSubtract(end, start, v1);
+
 				trace.planenum = tstack_p->planenum;
 				// always take the plane with normal facing towards the trace start
 				plane = &aasworld.planes[trace.planenum];
@@ -597,6 +604,7 @@ aas_trace_t AAS_TraceClientBBox(vec3_t start, vec3_t end, int presencetype, int 
 			}
 
 			VectorCopy(tstack_p->start, trace.endpos);
+
 			trace.ent = 0;
 			trace.area = 0; // hit solid leaf
 //			VectorSubtract(end, start, v1);
@@ -635,12 +643,14 @@ aas_trace_t AAS_TraceClientBBox(vec3_t start, vec3_t end, int presencetype, int 
 				back = cur_end[0] - plane->dist;
 				break;
 			}
+
 			case PLANE_Y:
 			{
 				front = cur_start[1] - plane->dist;
 				back = cur_end[1] - plane->dist;
 				break;
 			}
+
 			case PLANE_Z:
 			{
 				front = cur_start[2] - plane->dist;
@@ -697,7 +707,9 @@ aas_trace_t AAS_TraceClientBBox(vec3_t start, vec3_t end, int presencetype, int 
 			} else if (frac > 1) {
 				frac = 0.999f; // 1
 			}
+
 			//frac = front / (front - back);
+
 			cur_mid[0] = cur_start[0] + (cur_end[0] - cur_start[0]) * frac;
 			cur_mid[1] = cur_start[1] + (cur_end[1] - cur_start[1]) * frac;
 			cur_mid[2] = cur_start[2] + (cur_end[2] - cur_start[2]) * frac;
@@ -718,9 +730,10 @@ aas_trace_t AAS_TraceClientBBox(vec3_t start, vec3_t end, int presencetype, int 
 				return trace;
 			}
 			// now put the part near the start of the line on the stack so we will continue with that part first.
-			// This way we'll find the first hit of the bbox
+			// this way we'll find the first hit of the bbox
 			VectorCopy(cur_start, tstack_p->start);
 			VectorCopy(cur_mid, tstack_p->end);
+
 			tstack_p->planenum = tmpplanenum;
 			tstack_p->nodenum = aasnode->children[side];
 			tstack_p++;
@@ -763,6 +776,7 @@ int AAS_TraceAreas(vec3_t start, vec3_t end, int *areas, vec3_t *points, int max
 	// we start with the whole line on the stack
 	VectorCopy(start, tstack_p->start);
 	VectorCopy(end, tstack_p->end);
+
 	tstack_p->planenum = 0;
 	// start with node 1 because node zero is a dummy for a solid leaf
 	tstack_p->nodenum = 1; // starting at the root of the tree
@@ -828,18 +842,21 @@ int AAS_TraceAreas(vec3_t start, vec3_t end, int *areas, vec3_t *points, int max
 				back = cur_end[0] - plane->dist;
 				break;
 			}
+
 			case PLANE_Y:
 			{
 				front = cur_start[1] - plane->dist;
 				back = cur_end[1] - plane->dist;
 				break;
 			}
+
 			case PLANE_Z:
 			{
 				front = cur_start[2] - plane->dist;
 				back = cur_end[2] - plane->dist;
 				break;
-			}*/
+			}
+			*/
 			default: // gee it's not an axial plane
 			{
 				front = DotProduct(cur_start, plane->normal) - plane->dist;
@@ -847,8 +864,7 @@ int AAS_TraceAreas(vec3_t start, vec3_t end, int *areas, vec3_t *points, int max
 				break;
 			}
 		}
-		// if the whole to be traced line is totally at the front of this node
-		// only go down the tree with the front child
+		// if the whole to be traced line is totally at the front of this node only go down the tree with the front child
 		if (front > 0 && back > 0) {
 			// keep the current start and end point on the stack and go down the tree with the front child
 			tstack_p->nodenum = aasnode->children[0];
@@ -858,8 +874,7 @@ int AAS_TraceAreas(vec3_t start, vec3_t end, int *areas, vec3_t *points, int max
 				botimport.Print(PRT_ERROR, "AAS_TraceAreas: stack overflow\n");
 				return numareas;
 			}
-		// if the whole to be traced line is totally at the back of this node
-		// only go down the tree with the back child
+		// if the whole to be traced line is totally at the back of this node only go down the tree with the back child
 		} else if (front <= 0 && back <= 0) {
 			// keep the current start and end point on the stack and go down the tree with the back child
 			tstack_p->nodenum = aasnode->children[1];
@@ -885,7 +900,9 @@ int AAS_TraceAreas(vec3_t start, vec3_t end, int *areas, vec3_t *points, int max
 			} else if (frac > 1) {
 				frac = 1;
 			}
+
 			//frac = front / (front - back);
+
 			cur_mid[0] = cur_start[0] + (cur_end[0] - cur_start[0]) * frac;
 			cur_mid[1] = cur_start[1] + (cur_end[1] - cur_start[1]) * frac;
 			cur_mid[2] = cur_start[2] + (cur_end[2] - cur_start[2]) * frac;
@@ -906,9 +923,10 @@ int AAS_TraceAreas(vec3_t start, vec3_t end, int *areas, vec3_t *points, int max
 				return numareas;
 			}
 			// now put the part near the start of the line on the stack so we will continue with that part first.
-			// This way we'll find the first hit of the bbox
+			// this way we'll find the first hit of the bbox
 			VectorCopy(cur_start, tstack_p->start);
 			VectorCopy(cur_mid, tstack_p->end);
+
 			tstack_p->planenum = tmpplanenum;
 			tstack_p->nodenum = aasnode->children[side];
 			tstack_p++;
@@ -965,6 +983,7 @@ qboolean AAS_InsideFace(aas_face_t *face, vec3_t pnormal, vec3_t point, float ep
 		edge = &aasworld.edges[abs(edgenum)];
 		// get the first vertex of the edge
 		firstvertex = edgenum < 0;
+
 		VectorCopy(aasworld.vertexes[edge->v[firstvertex]], v0);
 		// edge vector
 		VectorSubtract(aasworld.vertexes[edge->v[!firstvertex]], v0, edgevec);
@@ -1238,6 +1257,10 @@ void AAS_UnlinkFromAreas(aas_link_t *areas) {
 	}
 }
 
+typedef struct {
+	int nodenum; // node found after splitting
+} aas_linkstack_t;
+
 /*
 =======================================================================================================================================
 AAS_AASLinkEntity
@@ -1246,10 +1269,6 @@ Link the entity to the areas the bounding box is totally or partly situated in.
 This is done with recursion down the tree using the bounding box to test for plane sides.
 =======================================================================================================================================
 */
-typedef struct {
-	int nodenum; // node found after splitting
-} aas_linkstack_t;
-
 aas_link_t *AAS_AASLinkEntity(vec3_t absmins, vec3_t absmaxs, int entnum) {
 	int side, nodenum;
 	aas_linkstack_t linkstack[128];
@@ -1365,6 +1384,7 @@ aas_link_t *AAS_LinkEntityClientBBox(vec3_t absmins, vec3_t absmaxs, int entnum,
 	vec3_t newabsmins, newabsmaxs;
 
 	AAS_PresenceTypeBoundingBox(presencetype, mins, maxs);
+
 	VectorSubtract(absmins, maxs, newabsmins);
 	VectorSubtract(absmaxs, mins, newabsmaxs);
 	// relink the entity
@@ -1414,6 +1434,7 @@ int AAS_AreaInfo(int areanum, aas_areainfo_t *info) {
 	}
 
 	settings = &aasworld.areasettings[areanum];
+
 	info->cluster = settings->cluster;
 	info->contents = settings->contents;
 	info->flags = settings->areaflags;
