@@ -643,6 +643,7 @@ bot_synonymlist_t *BotLoadSynonyms(char *filename) {
 		}
 
 		PC_SetBaseFolder(BOTFILESBASEFOLDER);
+
 		source = LoadSourceFile(filename);
 
 		if (!source) {
@@ -1039,6 +1040,7 @@ bot_randomlist_t *BotLoadRandomStrings(char *filename) {
 		}
 
 		PC_SetBaseFolder(BOTFILESBASEFOLDER);
+
 		source = LoadSourceFile(filename);
 
 		if (!source) {

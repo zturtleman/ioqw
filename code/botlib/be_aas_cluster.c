@@ -1610,8 +1610,8 @@ void AAS_InitClustering(void) {
 	}
 
 	aasworld.clusters = (aas_cluster_t *)GetClearedMemory(AAS_MAX_CLUSTERS * sizeof(aas_cluster_t));
-
 	removedPortalAreas = 0;
+
 	botimport.Print(PRT_MESSAGE, "\r%6d removed portal areas", removedPortalAreas);
 
 	while (1) {
@@ -1619,7 +1619,6 @@ void AAS_InitClustering(void) {
 		// initialize the number of portals and clusters
 		aasworld.numportals = 1; // portal 0 is a dummy
 		aasworld.portalindexsize = 0;
-
 		aasworld.numclusters = 1; // cluster 0 is a dummy
 		// create the portals from the portal areas
 		AAS_CreatePortals();
