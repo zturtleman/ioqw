@@ -520,6 +520,7 @@ int BotInterpolateCharacters(int handle1, int handle2, float desiredskill) {
 	out->skill = desiredskill;
 
 	strcpy(out->filename, ch1->filename);
+
 	botcharacters[handle] = out;
 	scale = (float)(desiredskill - ch1->skill) / (ch2->skill - ch1->skill);
 

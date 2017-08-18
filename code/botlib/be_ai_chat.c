@@ -341,7 +341,9 @@ void BotQueueConsoleMessage(int chatstate, int type, char *message) {
 	m->handle = cs->handle;
 	m->time = AAS_Time();
 	m->type = type;
+
 	Q_strncpyz(m->message, message, MAX_MESSAGE_SIZE);
+
 	m->next = NULL;
 
 	if (cs->lastmessage) {

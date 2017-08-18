@@ -27,6 +27,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 **************************************************************************************************************************************/
 
 #include "../qcommon/q_shared.h"
+#include "../qcommon/surfaceflags.h"
 #include "l_memory.h"
 #include "aasfile.h"
 #include "botlib.h"
@@ -704,6 +705,7 @@ void AAS_ShowReachableAreas(int areanum) {
 		index++;
 
 		lasttime = AAS_Time();
+
 		AAS_PrintTravelType(reach.traveltype & TRAVELTYPE_MASK);
 		botimport.Print(PRT_MESSAGE, "\n");
 	}

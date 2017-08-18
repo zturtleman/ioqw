@@ -27,6 +27,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 **************************************************************************************************************************************/
 
 #include "../qcommon/q_shared.h"
+#include "../qcommon/surfaceflags.h" // for CONTENTS_WATER, CONTENTS_LAVA, CONTENTS_SLIME
 #include "l_libvar.h"
 #include "aasfile.h"
 #include "botlib.h"
@@ -37,8 +38,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 extern botlib_import_t botimport;
 
 aas_settings_t aassettings;
-
-//#define AAS_MOVE_DEBUG
 
 /*
 =======================================================================================================================================
