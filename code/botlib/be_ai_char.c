@@ -41,15 +41,13 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "be_interface.h"
 #include "be_ai_char.h"
 
+#define MAX_CHARACTERISTICS 64 // Tobias TODO: Reduce this to an adequate amount after we've added all the necessary characteristics.
+
 #define CT_INTEGER	1
 #define CT_FLOAT	2
 #define CT_STRING	3
 
 #define DEFAULT_CHARACTER "bots/default_c.c"
-
-#define MAX_CHARACTERISTICS 64 // Tobias TODO: Reduce this to an adequate amount after we've added all the necessary characteristics.
-// interpolation requires 3 slots per-character plus 2 default character slots, and account for handle 0 being a dummy
-#define MAX_BOT_CHARACTERS 195 // (3 * MAX_CLIENTS + 2 + 1)
 // characteristic value
 union cvalue {
 	int integer;
@@ -68,7 +66,7 @@ typedef struct bot_character_s {
 	bot_characteristic_t c[1]; // variable sized
 } bot_character_t;
 
-bot_character_t *botcharacters[MAX_BOT_CHARACTERS];
+bot_character_t *botcharacters[MAX_CLIENTS + 1];
 
 /*
 =======================================================================================================================================
@@ -77,7 +75,7 @@ BotCharacterFromHandle
 */
 bot_character_t *BotCharacterFromHandle(int handle) {
 
-	if (handle <= 0 || handle >= MAX_BOT_CHARACTERS) {
+	if (handle <= 0 || handle > MAX_CLIENTS) {
 		botimport.Print(PRT_FATAL, "character handle %d out of range\n", handle);
 		return NULL;
 	}
@@ -141,7 +139,7 @@ BotFreeCharacter2
 */
 void BotFreeCharacter2(int handle) {
 
-	if (handle <= 0 || handle >= MAX_BOT_CHARACTERS) {
+	if (handle <= 0 || handle > MAX_CLIENTS) {
 		botimport.Print(PRT_FATAL, "character handle %d out of range\n", handle);
 		return;
 	}
@@ -212,6 +210,7 @@ bot_character_t *BotLoadCharacterFromFile(char *charfile, int skill) {
 	foundcharacter = qfalse;
 	// a bot character is parsed in two phases
 	PC_SetBaseFolder(BOTFILESBASEFOLDER);
+
 	source = LoadSourceFile(charfile);
 
 	if (!source) {
@@ -220,6 +219,7 @@ bot_character_t *BotLoadCharacterFromFile(char *charfile, int skill) {
 	}
 
 	ch = (bot_character_t *)GetClearedMemory(sizeof(bot_character_t) + MAX_CHARACTERISTICS * sizeof(bot_characteristic_t));
+
 	strcpy(ch->filename, charfile);
 
 	while (PC_ReadToken(source, &token)) {
@@ -290,8 +290,11 @@ bot_character_t *BotLoadCharacterFromFile(char *charfile, int skill) {
 						}
 					} else if (token.type == TT_STRING) {
 						StripDoubleQuotes(token.string);
+
 						ch->c[index].value.string = GetMemory(strlen(token.string) + 1);
+
 						strcpy(ch->c[index].value.string, token.string);
+
 						ch->c[index].type = CT_STRING;
 					} else {
 						SourceError(source, "expected integer, float or string, found %s", token.string);
@@ -349,7 +352,7 @@ BotFindCachedCharacter
 int BotFindCachedCharacter(char *charfile, float skill) {
 	int handle;
 
-	for (handle = 1; handle < MAX_BOT_CHARACTERS; handle++) {
+	for (handle = 1; handle <= MAX_CLIENTS; handle++) {
 		if (!botcharacters[handle]) {
 			continue;
 		}
@@ -376,13 +379,13 @@ int BotLoadCachedCharacter(char *charfile, float skill, int reload) {
 	starttime = Sys_MilliSeconds();
 #endif // DEBUG
 	// find a free spot for a character
-	for (handle = 1; handle < MAX_BOT_CHARACTERS; handle++) {
+	for (handle = 1; handle <= MAX_CLIENTS; handle++) {
 		if (!botcharacters[handle]) {
 			break;
 		}
 	}
 
-	if (handle >= MAX_BOT_CHARACTERS) {
+	if (handle > MAX_CLIENTS) {
 		return 0;
 	}
 	// try to load a cached character with the given skill
@@ -506,13 +509,13 @@ int BotInterpolateCharacters(int handle1, int handle2, float desiredskill) {
 		return 0;
 	}
 	// find a free spot for a character
-	for (handle = 1; handle < MAX_BOT_CHARACTERS; handle++) {
+	for (handle = 1; handle <= MAX_CLIENTS; handle++) {
 		if (!botcharacters[handle]) {
 			break;
 		}
 	}
 
-	if (handle >= MAX_BOT_CHARACTERS) {
+	if (handle > MAX_CLIENTS) {
 		return 0;
 	}
 
@@ -795,7 +798,7 @@ BotShutdownCharacters
 void BotShutdownCharacters(void) {
 	int handle;
 
-	for (handle = 1; handle < MAX_BOT_CHARACTERS; handle++) {
+	for (handle = 1; handle <= MAX_CLIENTS; handle++) {
 		if (botcharacters[handle]) {
 			BotFreeCharacter2(handle);
 		}
