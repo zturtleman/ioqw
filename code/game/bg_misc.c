@@ -2165,6 +2165,7 @@ void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerStat
 #ifdef _DEBUG
 	{
 		char buf[256];
+
 		trap_Cvar_VariableStringBuffer("showevents", buf, sizeof(buf));
 
 		if (atof(buf) != 0) {

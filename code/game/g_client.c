@@ -936,7 +936,6 @@ void ClientBegin(int clientNum) {
 		}
 
 		BroadcastTeamChange(client, -1);
-
 	}
 
 	client->pers.initialSpawn = qfalse;
