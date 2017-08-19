@@ -128,10 +128,14 @@ static void CG_EntityEffects(centity_t *cent) {
 	CG_SetEntitySoundPosition(cent);
 	// add loop sound
 	if (cent->currentState.loopSound) {
-		if (cent->currentState.eType != ET_SPEAKER) {
-			trap_S_AddLoopingSound(cent->currentState.number, cent->lerpOrigin, vec3_origin, cgs.gameSounds[cent->currentState.loopSound]);
+		if (cent->currentState.eType == ET_SPEAKER) {
+			if (cent->currentState.soundRange) { // range is set
+				trap_S_AddRealLoopingSound(cent->currentState.number, cent->lerpOrigin, vec3_origin, cgs.gameSounds[cent->currentState.loopSound], cent->currentState.soundRange, cent->currentState.soundVolume);
+			} else {
+				trap_S_AddRealLoopingSound(cent->currentState.number, cent->lerpOrigin, vec3_origin, cgs.gameSounds[cent->currentState.loopSound], SOUND_RANGE_DEFAULT, cent->currentState.soundVolume);
+			}
 		} else {
-			trap_S_AddRealLoopingSound(cent->currentState.number, cent->lerpOrigin, vec3_origin, cgs.gameSounds[cent->currentState.loopSound]);
+			trap_S_AddLoopingSound(cent->currentState.number, cent->lerpOrigin, vec3_origin, cgs.gameSounds[cent->currentState.loopSound], cent->currentState.soundRange, cent->currentState.soundVolume);
 		}
 	}
 	// constant light glow
@@ -200,7 +204,7 @@ static void CG_Speaker(centity_t *cent) {
 		return;
 	}
 
-	trap_S_StartSound(NULL, cent->currentState.number, CHAN_ITEM, cgs.gameSounds[cent->currentState.eventParm]);
+	trap_S_StartSound(NULL, cent->currentState.number, CHAN_ITEM, cgs.gameSounds[cent->currentState.eventParm], cent->currentState.soundRange, cent->currentState.soundVolume);
 
 	//ent->s.frame = ent->wait * 10;
 	//ent->s.clientNum = ent->random * 10;
@@ -307,7 +311,7 @@ static void CG_Item(centity_t *cent) {
 		ent.nonNormalizedAxes = qtrue;
 
 		if (wi->readySound) {
-			trap_S_AddLoopingSound(cent->currentState.number, cent->lerpOrigin, vec3_origin, wi->readySound);
+			trap_S_AddLoopingSound(cent->currentState.number, cent->lerpOrigin, vec3_origin, wi->readySound, 32, 255);
 		}
 	}
 
@@ -415,7 +419,7 @@ static void CG_Missile(centity_t *cent) {
 		vec3_t velocity;
 
 		BG_EvaluateTrajectoryDelta(&cent->currentState.pos, cg.time, velocity, qfalse, -1);
-		trap_S_AddLoopingSound(cent->currentState.number, cent->lerpOrigin, velocity, weapon->missileSound);
+		trap_S_AddLoopingSound(cent->currentState.number, cent->lerpOrigin, velocity, weapon->missileSound, 64, 255);
 	}
 	// create the render entity
 	memset(&ent, 0, sizeof(ent));
@@ -749,7 +753,7 @@ static void CG_TeamBase(centity_t *cent) {
 			// show the target
 			if (t > h) {
 				if (!cent->muzzleFlashTime) {
-					trap_S_StartSound(cent->lerpOrigin, ENTITYNUM_NONE, CHAN_BODY, cgs.media.obeliskRespawnSound[rand()&2]);
+					trap_S_StartSound(cent->lerpOrigin, ENTITYNUM_NONE, CHAN_BODY, cgs.media.obeliskRespawnSound[rand()&2], 52, 255);
 					cent->muzzleFlashTime = 1;
 				}
 

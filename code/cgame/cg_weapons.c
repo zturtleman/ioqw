@@ -55,7 +55,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir) {
 	int r;
 	qboolean alphaFade;
 	qboolean isSprite;
-	int lightDuration, markDuration;
+	int lightDuration, markDuration, sfxRadius;
 	vec3_t sprOrg;
 	vec3_t sprVel;
 
@@ -69,6 +69,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir) {
 	lightDuration = 600;
 	isSprite = qfalse;
 	markDuration = -1; // keep -1 markDuration for temporary marks
+	sfxRadius = 128;
 
 	switch (weapon) {
 		case WP_HANDGUN:
@@ -120,6 +121,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir) {
 			markRadius = 10;
 			markDuration = 50000;
 			sfx = cgs.media.sfx_rockexp;
+			sfxRadius = 256;
 			break;
 		case WP_PROXLAUNCHER:
 			mod = cgs.media.dishFlashModel;
@@ -130,6 +132,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir) {
 			markRadius = 64;
 			markDuration = 50000;
 			sfx = cgs.media.sfx_proxexp;
+			sfxRadius = 256;
 			break;
 		case WP_GRENADELAUNCHER:
 			mod = cgs.media.dishFlashModel;
@@ -140,6 +143,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir) {
 			markRadius = 64;
 			markDuration = 50000;
 			sfx = cgs.media.sfx_rockexp;
+			sfxRadius = 256;
 			break;
 		case WP_NAPALMLAUNCHER:
 			mod = cgs.media.dishFlashModel;
@@ -160,6 +164,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir) {
 			markRadius = 64;
 			markDuration = 50000;
 			sfx = cgs.media.sfx_rockexp;
+			sfxRadius = 256;
 
 			if (cg_oldRocket.integer == 0) {
 				// explosion sprite animation
@@ -193,6 +198,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir) {
 			markRadius = 24;
 			markDuration = 50000;
 			sfx = cgs.media.sfx_plasmaexp;
+			sfxRadius = 256;
 			break;
 		case WP_PLASMAGUN:
 			mod = cgs.media.ringFlashModel;
@@ -229,6 +235,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir) {
 			markRadius = 512;
 			markDuration = 60000;
 			sfx = cgs.media.sfx_rockexp;
+			sfxRadius = 256;
 			// explosion sprite animation
 			VectorMA(origin, 24, dir, sprOrg);
 			VectorScale(dir, 64, sprVel);
@@ -267,7 +274,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir) {
 	}
 	// impact sound
 	if (sfx) {
-		trap_S_StartSound(origin, ENTITYNUM_WORLD, CHAN_AUTO, sfx);
+		trap_S_StartSound(origin, ENTITYNUM_WORLD, CHAN_AUTO, sfx, sfxRadius, 255);
 	}
 }
 
@@ -363,7 +370,7 @@ void CG_PhosphorTrail(vec3_t start, vec3_t end) {
 	midpoint[1] = (start[1] + end[1]) * 0.5;
 	midpoint[2] = (start[2] + end[2]) * 0.5;
 	// add the tracer sound
-	trap_S_StartSound(midpoint, ENTITYNUM_WORLD, CHAN_AUTO, cgs.media.tracerSound);
+	trap_S_StartSound(midpoint, ENTITYNUM_WORLD, CHAN_AUTO, cgs.media.tracerSound, 64, 255);
 }
 
 /*
@@ -1101,7 +1108,7 @@ void CG_Tracer(vec3_t source, vec3_t dest) {
 	midpoint[1] = (start[1] + finish[1]) * 0.5;
 	midpoint[2] = (start[2] + finish[2]) * 0.5;
 	// add the tracer sound
-	trap_S_StartSound(midpoint, ENTITYNUM_WORLD, CHAN_AUTO, cgs.media.tracerSound);
+	trap_S_StartSound(midpoint, ENTITYNUM_WORLD, CHAN_AUTO, cgs.media.tracerSound, 64, 255);
 }
 
 /*
@@ -1339,7 +1346,7 @@ void CG_FireWeapon(centity_t *cent) {
 	}
 	// play quad sound if needed
 	if (cent->currentState.powerups & (1 << PW_QUAD)) {
-		trap_S_StartSound(NULL, cent->currentState.number, CHAN_ITEM, cgs.media.quadSound);
+		trap_S_StartSound(NULL, cent->currentState.number, CHAN_ITEM, cgs.media.quadSound, 128, 255);
 	}
 	// play a sound
 	for (c = 0; c < 4; c++) {
@@ -1352,7 +1359,7 @@ void CG_FireWeapon(centity_t *cent) {
 		c = rand() % c;
 
 		if (weap->flashSound[c]) {
-			trap_S_StartSound(NULL, ent->number, CHAN_WEAPON, weap->flashSound[c]);
+			trap_S_StartSound(NULL, ent->number, CHAN_WEAPON, weap->flashSound[c], 128, 255);
 		}
 	}
 	// do brass ejection
@@ -1759,11 +1766,11 @@ static float CG_MachinegunSpinAngle(centity_t *cent) {
 		cent->pe.barrelSpinning = !!(cent->currentState.eFlags & EF_FIRING);
 
 		if (cent->currentState.weapon == WP_CHAINGUN && !cent->pe.barrelSpinning) {
-			trap_S_StartSound(NULL, cent->currentState.number, CHAN_WEAPON, cgs.media.sfx_chgstop);
+			trap_S_StartSound(NULL, cent->currentState.number, CHAN_WEAPON, cgs.media.sfx_chgstop, 64, 255);
 		}
 
 		if (cent->currentState.weapon == WP_HEAVY_MACHINEGUN && !cent->pe.barrelSpinning) {
-			trap_S_StartSound(NULL, cent->currentState.number, CHAN_WEAPON, cgs.media.sfx_hmgstop);
+			trap_S_StartSound(NULL, cent->currentState.number, CHAN_WEAPON, cgs.media.sfx_hmgstop, 64, 255);
 		}
 	}
 
@@ -1862,10 +1869,10 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent,
 
 		if ((cent->currentState.eFlags & EF_FIRING) && weapon->firingSound) {
 			// beam gun and gauntlet make a different sound when fire is held down
-			trap_S_AddLoopingSound(cent->currentState.number, cent->lerpOrigin, vec3_origin, weapon->firingSound);
+			trap_S_AddLoopingSound(cent->currentState.number, cent->lerpOrigin, vec3_origin, weapon->firingSound, 128, 255);
 			cent->pe.beamgunFiring = qtrue;
 		} else if (weapon->readySound) {
-			trap_S_AddLoopingSound(cent->currentState.number, cent->lerpOrigin, vec3_origin, weapon->readySound);
+			trap_S_AddLoopingSound(cent->currentState.number, cent->lerpOrigin, vec3_origin, weapon->readySound, 32, 255);
 		}
 	}
 

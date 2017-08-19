@@ -602,7 +602,7 @@ intptr_t CL_CgameSystemCalls(intptr_t *args) {
 		case CG_CM_MARKFRAGMENTS:
 			return re.MarkFragments(args[1], VMA(2), VMA(3), args[4], VMA(5), args[6], VMA(7));
 		case CG_S_STARTSOUND:
-			S_StartSound(VMA(1), args[2], args[3], args[4]);
+			S_StartSound(VMA(1), args[2], args[3], args[4], args[5], args[6]);
 			return 0;
 		case CG_S_STARTLOCALSOUND:
 			S_StartLocalSound(args[1], args[2]);
@@ -611,10 +611,10 @@ intptr_t CL_CgameSystemCalls(intptr_t *args) {
 			S_ClearLoopingSounds(args[1]);
 			return 0;
 		case CG_S_ADDLOOPINGSOUND:
-			S_AddLoopingSound(args[1], VMA(2), VMA(3), args[4]);
+			S_AddLoopingSound(args[1], VMA(2), VMA(3), args[4], args[5], args[6]);
 			return 0;
 		case CG_S_ADDREALLOOPINGSOUND:
-			S_AddRealLoopingSound(args[1], VMA(2), VMA(3), args[4]);
+			S_AddRealLoopingSound(args[1], VMA(2), VMA(3), args[4], args[5], args[6]);
 			return 0;
 		case CG_S_STOPLOOPINGSOUND:
 			S_StopLoopingSound(args[1]);

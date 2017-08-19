@@ -129,6 +129,8 @@ struct gentity_s {
 	int watertype;
 	int waterlevel;
 	int noise_index;
+	int radius;
+	int volume;
 	// timing variables
 	float wait;
 	float random;

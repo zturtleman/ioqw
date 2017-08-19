@@ -181,7 +181,7 @@ void CG_FragmentBounceSound(localEntity_t *le, trace_t *trace) {
 				s = cgs.media.gibBounce3Sound;
 			}
 
-			trap_S_StartSound(trace->endpos, ENTITYNUM_WORLD, CHAN_AUTO, s);
+			trap_S_StartSound(trace->endpos, ENTITYNUM_WORLD, CHAN_AUTO, s, 48, 255);
 		}
 	} else if (le->leBounceSoundType == LEBS_BRASS) {
 

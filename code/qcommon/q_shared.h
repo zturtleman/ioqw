@@ -980,6 +980,9 @@ typedef enum {
 	CHAN_ANNOUNCER		// announcer voices, etc.
 } soundChannel_t;
 
+#define SOUND_VOLUME_DEFAULT 255
+#define SOUND_RANGE_DEFAULT 128
+
 /*
 =======================================================================================================================================
 
@@ -1219,6 +1222,8 @@ typedef struct entityState_s {
 	int density;		// for particle effects
 	int onFireStart;
 	int onFireEnd;
+	int soundRange;
+	int soundVolume;
 	int nextWeapon;
 	int effect1Time;
 	int effect2Time;
