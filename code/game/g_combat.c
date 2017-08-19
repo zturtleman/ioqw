@@ -160,6 +160,7 @@ void TossClientCubes(gentity_t *self) {
 
 	AngleVectors(angles, velocity, NULL, NULL);
 	VectorScale(velocity, 150, velocity);
+
 	velocity[2] += 200 + crandom() * 50;
 
 	if (neutralObelisk) {

@@ -313,7 +313,6 @@ void Target_Laser_Think(gentity_t *self) {
 	}
 	// fire forward and see what we hit
 	VectorMA(self->s.origin, 2048, self->movedir, end);
-
 	trap_Trace(&tr, self->s.origin, NULL, NULL, end, self->s.number, CONTENTS_SOLID|CONTENTS_BODY|CONTENTS_CORPSE);
 
 	if (tr.entityNum) {
@@ -322,8 +321,8 @@ void Target_Laser_Think(gentity_t *self) {
 	}
 
 	VectorCopy(tr.endpos, self->s.origin2);
-
 	trap_LinkEntity(self);
+
 	self->nextthink = level.time + FRAMETIME;
 }
 

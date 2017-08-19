@@ -552,11 +552,13 @@ gentity_t *Drop_Item(gentity_t *ent, gitem_t *item, float angle) {
 	vec3_t angles;
 
 	VectorCopy(ent->s.apos.trBase, angles);
+
 	angles[YAW] += angle;
 	angles[PITCH] = 0; // always forward
 
 	AngleVectors(angles, velocity, NULL, NULL);
 	VectorScale(velocity, 150, velocity);
+
 	velocity[2] += 200 + crandom() * 50;
 
 	return Launch_Item(item, ent->s.pos.trBase, velocity);
@@ -880,6 +882,7 @@ void G_BounceItem(gentity_t *ent, trace_t *trace) {
 		trace->endpos[2] += 1.0; // make sure it is off ground
 		SnapVector(trace->endpos);
 		G_SetOrigin(ent, trace->endpos);
+
 		ent->s.groundEntityNum = trace->entityNum;
 		return;
 	}

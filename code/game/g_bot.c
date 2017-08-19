@@ -598,6 +598,7 @@ qboolean G_BotConnect(int clientNum, qboolean restart) {
 	char userinfo[MAX_INFO_STRING];
 
 	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
+
 	Q_strncpyz(settings.characterfile, Info_ValueForKey(userinfo, "characterfile"), sizeof(settings.characterfile));
 
 	settings.skill = atof(Info_ValueForKey(userinfo, "skill"));
@@ -995,6 +996,7 @@ static void G_LoadBots(void) {
 
 	for (i = 0; i < numdirs; i++, dirptr += dirlen + 1) {
 		dirlen = strlen(dirptr);
+
 		strcpy(filename, "scripts/");
 		strcat(filename, dirptr);
 		G_LoadBotsFromFile(filename);
@@ -1060,6 +1062,7 @@ void G_InitBots(qboolean restart) {
 	if (g_gametype.integer == GT_SINGLE_PLAYER) {
 		trap_GetServerinfo(serverinfo, sizeof(serverinfo));
 		Q_strncpyz(map, Info_ValueForKey(serverinfo, "mapname"), sizeof(map));
+
 		arenainfo = G_GetArenaInfoByMap(map);
 
 		if (!arenainfo) {

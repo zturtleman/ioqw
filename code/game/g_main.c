@@ -31,9 +31,9 @@ typedef struct {
 	char *cvarName;
 	char *defaultString;
 	int cvarFlags;
-	int modificationCount; // for tracking changes
-	qboolean trackChange; // track this variable, and announce if changed
-	qboolean teamShader; // track and if changed, update shader state
+	int modificationCount;	// for tracking changes
+	qboolean trackChange;	// track this variable, and announce if changed
+	qboolean teamShader;	// track and if changed, update shader state
 } cvarTable_t;
 
 gentity_t g_entities[MAX_GENTITIES];
@@ -498,7 +498,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart) {
 	G_SpawnEntitiesFromString();
 	// general initialization
 	G_FindTeams();
-	// make sure we have flags for CTF, etc
+	// make sure we have flags for CTF, etc.
 	if (g_gametype.integer > GT_TOURNAMENT) {
 		G_CheckTeamItems();
 	}
@@ -1629,6 +1629,7 @@ void SetLeader(int team, int client) {
 	}
 
 	level.clients[client].sess.teamLeader = qtrue;
+
 	ClientUserinfoChanged(client);
 	PrintTeam(team, va("print \"%s is the new team leader\n\"", level.clients[client].pers.netname));
 }

@@ -271,6 +271,7 @@ static void PodiumPlacementThink(gentity_t *podium) {
 	if (podium1) {
 		VectorSubtract(level.intermission_origin, podium->r.currentOrigin, vec);
 		vectoangles(vec, podium1->s.apos.trBase);
+
 		podium1->s.apos.trBase[PITCH] = 0;
 		podium1->s.apos.trBase[ROLL] = 0;
 
@@ -285,6 +286,7 @@ static void PodiumPlacementThink(gentity_t *podium) {
 	if (podium2) {
 		VectorSubtract(level.intermission_origin, podium->r.currentOrigin, vec);
 		vectoangles(vec, podium2->s.apos.trBase);
+
 		podium2->s.apos.trBase[PITCH] = 0;
 		podium2->s.apos.trBase[ROLL] = 0;
 
@@ -299,6 +301,7 @@ static void PodiumPlacementThink(gentity_t *podium) {
 	if (podium3) {
 		VectorSubtract(level.intermission_origin, podium->r.currentOrigin, vec);
 		vectoangles(vec, podium3->s.apos.trBase);
+
 		podium3->s.apos.trBase[PITCH] = 0;
 		podium3->s.apos.trBase[ROLL] = 0;
 
@@ -363,7 +366,7 @@ void SpawnModelsOnVictoryPads(void) {
 
 	podium = SpawnPodium();
 
-	player = SpawnModelOnVictoryPad(podium, offsetFirst, &g_entities[level.sortedClients[0]], level.clients[level.sortedClients[0]].ps.persistant[PERS_RANK] &~ RANK_TIED_FLAG);
+	player = SpawnModelOnVictoryPad(podium, offsetFirst, &g_entities[level.sortedClients[0]], level.clients[level.sortedClients[0]].ps.persistant[PERS_RANK] & ~RANK_TIED_FLAG);
 
 	if (player) {
 		player->nextthink = level.time + 2000;
@@ -371,14 +374,14 @@ void SpawnModelsOnVictoryPads(void) {
 		podium1 = player;
 	}
 
-	player = SpawnModelOnVictoryPad(podium, offsetSecond, &g_entities[level.sortedClients[1]], level.clients[level.sortedClients[1]].ps.persistant[PERS_RANK] &~ RANK_TIED_FLAG);
+	player = SpawnModelOnVictoryPad(podium, offsetSecond, &g_entities[level.sortedClients[1]], level.clients[level.sortedClients[1]].ps.persistant[PERS_RANK] & ~RANK_TIED_FLAG);
 
 	if (player) {
 		podium2 = player;
 	}
 
 	if (level.numNonSpectatorClients > 2) {
-		player = SpawnModelOnVictoryPad(podium, offsetThird, &g_entities[level.sortedClients[2]], level.clients[level.sortedClients[2]].ps.persistant[PERS_RANK] &~ RANK_TIED_FLAG);
+		player = SpawnModelOnVictoryPad(podium, offsetThird, &g_entities[level.sortedClients[2]], level.clients[level.sortedClients[2]].ps.persistant[PERS_RANK] & ~RANK_TIED_FLAG);
 
 		if (player) {
 			podium3 = player;

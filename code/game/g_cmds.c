@@ -1676,6 +1676,7 @@ void Cmd_SetViewpos_f(gentity_t *ent) {
 	}
 
 	trap_Argv(4, buffer, sizeof(buffer));
+
 	angles[YAW] = atof(buffer);
 
 	TeleportPlayer(ent, origin, angles);

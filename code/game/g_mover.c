@@ -1570,6 +1570,7 @@ void SP_func_pendulum(gentity_t *ent) {
 	G_SpawnFloat("speed", "30", &speed);
 	G_SpawnInt("dmg", "2", &ent->damage);
 	G_SpawnFloat("phase", "0", &phase);
+
 	trap_SetBrushModel(ent, ent->model);
 	// find pendulum length
 	length = fabs(ent->r.mins[2]);

@@ -790,7 +790,7 @@ int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team) {
 
 	teamgame.last_flag_capture = level.time;
 	teamgame.last_capture_team = team;
-	// Increase the team's score
+	// increase the team's score
 	AddTeamScore(ent->s.pos.trBase, other->client->sess.sessionTeam, 1);
 
 	CalculateRanks();
@@ -1459,6 +1459,7 @@ void SP_team_redobelisk(gentity_t *ent) {
 	}
 
 	ent->s.modelindex = TEAM_RED;
+
 	trap_LinkEntity(ent);
 }
 
@@ -1488,6 +1489,7 @@ void SP_team_blueobelisk(gentity_t *ent) {
 	}
 
 	ent->s.modelindex = TEAM_BLUE;
+
 	trap_LinkEntity(ent);
 }
 
@@ -1508,6 +1510,7 @@ void SP_team_neutralobelisk(gentity_t *ent) {
 	}
 
 	ent->s.modelindex = TEAM_FREE;
+
 	trap_LinkEntity(ent);
 }
 

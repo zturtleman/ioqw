@@ -674,8 +674,10 @@ void ClientThink_Real(gentity_t *ent) {
 
 	if (pmove_msec.integer < 8) {
 		trap_Cvar_SetValue("pmove_msec", 8);
+		trap_Cvar_Update(&pmove_msec);
 	} else if (pmove_msec.integer > 33) {
 		trap_Cvar_SetValue("pmove_msec", 33);
+		trap_Cvar_Update(&pmove_msec);
 	}
 
 	if (pmove_fixed.integer || client->pers.pmoveFixed) {
@@ -851,6 +853,7 @@ void ClientThink(int clientNum) {
 	gentity_t *ent;
 
 	ent = g_entities + clientNum;
+
 	trap_GetUsercmd(clientNum, &ent->client->pers.cmd);
 	// mark the time we got info, so we can display the phone jack if they don't get any for a while
 	ent->client->lastCmdTime = level.time;
