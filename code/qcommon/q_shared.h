@@ -39,7 +39,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define STEAMPATH_NAME				"Quake Wars"
 #define STEAMPATH_APPID				""
 #define GOGPATH_ID					""
-#define GAMENAME_FOR_MASTER			"Quake Wars"
+#define GAMENAME_FOR_MASTER			"QuakeWars" // must NOT contain whitespace
 #define CINEMATICS_LOGO				"qwlogo.RoQ"
 #define CINEMATICS_INTRO			"intro.RoQ"
 // Heartbeat for dpmaster protocol. You shouldn't change this unless you know what you're doing
