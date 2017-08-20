@@ -389,7 +389,11 @@ static void ArenaServers_UpdatePicture(void) {
 	} else {
 		servernodeptr = g_arenaservers.table[g_arenaservers.list.curvalue].servernode;
 
-		Com_sprintf(picname, sizeof(picname), "levelshots/%s.tga", servernodeptr->mapname);
+		Com_sprintf(picname, sizeof(picname), "levelshots/%s_small", servernodeptr->mapname);
+
+		if (!trap_R_RegisterShaderNoMip(picname)) {
+			Com_sprintf(picname, sizeof(picname), "levelshots/%s", servernodeptr->mapname);
+		}
 
 		g_arenaservers.mappic.generic.name = picname;
 	}
@@ -417,8 +421,8 @@ static void ArenaServers_UpdateMenu(void) {
 		// servers found
 		if (g_arenaservers.refreshservers && (g_arenaservers.currentping <= g_arenaservers.numqueriedservers)) {
 			// show progress
-			Com_sprintf(g_arenaservers.status.string, MAX_STATUSLENGTH, "%d of %d Arena Servers.", g_arenaservers.currentping, g_arenaservers.numqueriedservers);
-			g_arenaservers.statusbar.string = "Press SPACE to stop";
+			Com_sprintf(g_arenaservers.status.string, MAX_STATUSLENGTH, "Pinged %d of %d Servers.", g_arenaservers.currentping, g_arenaservers.numqueriedservers);
+			g_arenaservers.statusbar.string = "Press SPACE to Stop";
 			qsort(g_arenaservers.serverlist, *g_arenaservers.numservers, sizeof(servernode_t), ArenaServers_Compare);
 		} else {
 			// all servers pinged - enable controls
@@ -441,7 +445,7 @@ static void ArenaServers_UpdateMenu(void) {
 		// no servers found
 		if (g_arenaservers.refreshservers) {
 			strcpy(g_arenaservers.status.string, "Scanning For Servers.");
-			g_arenaservers.statusbar.string = "Press SPACE to stop";
+			g_arenaservers.statusbar.string = "Press SPACE to Stop";
 			// disable controls during refresh
 			g_arenaservers.gametype.generic.flags |= QMF_GRAYED;
 			g_arenaservers.sortkey.generic.flags |= QMF_GRAYED;
@@ -612,7 +616,6 @@ static void ArenaServers_Insert(char *adrstr, char *info, int pingtime) {
 	Q_strncpyz(servernodeptr->adrstr, adrstr, MAX_ADDRESSLENGTH);
 	Q_strncpyz(servernodeptr->hostname, Info_ValueForKey(info, "hostname"), MAX_HOSTNAMELENGTH);
 	Q_CleanStr(servernodeptr->hostname);
-	Q_strupr(servernodeptr->hostname);
 	Q_strncpyz(servernodeptr->mapname, Info_ValueForKey(info, "mapname"), MAX_MAPNAMELENGTH);
 	Q_CleanStr(servernodeptr->mapname);
 
@@ -982,8 +985,15 @@ int ArenaServers_SetType(int type) {
 
 	if (type >= UIAS_GLOBAL1 && type <= UIAS_GLOBAL5) {
 		char masterstr[2], cvarname[sizeof("sv_master1")];
+		int select;
 
-		while (type <= UIAS_GLOBAL5) {
+		if (type < g_servertype) {
+			select = -1;
+		} else {
+			select = 1;
+		}
+
+		while (type >= UIAS_GLOBAL1 && type <= UIAS_GLOBAL5) {
 			Com_sprintf(cvarname, sizeof(cvarname), "sv_master%d", type - UIAS_GLOBAL0);
 			trap_Cvar_VariableStringBuffer(cvarname, masterstr, sizeof(masterstr));
 
@@ -991,7 +1001,7 @@ int ArenaServers_SetType(int type) {
 				break;
 			}
 
-			type++;
+			type += select;
 		}
 	}
 
@@ -1032,7 +1042,7 @@ int ArenaServers_SetType(int type) {
 		g_arenaservers.numqueriedservers = *g_arenaservers.numservers;
 
 		ArenaServers_UpdateMenu();
-		strcpy(g_arenaservers.status.string, "hit refresh to update");
+		strcpy(g_arenaservers.status.string, "Hit Refresh to Update.");
 	}
 
 	return type;
@@ -1244,7 +1254,7 @@ static void ArenaServers_MenuInit(void) {
 	g_arenaservers.showbots.generic.x = 320;
 	g_arenaservers.showbots.generic.y = y;
 
-	y += 3 * SMALLCHAR_HEIGHT;
+	y += 2 * SMALLCHAR_HEIGHT;
 	g_arenaservers.list.generic.type = MTYPE_SCROLLLIST;
 	g_arenaservers.list.generic.flags = QMF_HIGHLIGHT_IF_FOCUS;
 	g_arenaservers.list.generic.id = ID_LIST;
