@@ -73,13 +73,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include FT_OUTLINE_H
 #include FT_STROKER_H
 
-// FT_PIXEL_MODE_BGRA exists in freetype 2.5+, but not 2.4.x.
-// Currently it's only used for passing data from between functions in this file,
-// so define it if needed.
-#if (FREETYPE_MAJOR == 2 && FREETYPE_MINOR < 5) || FREETYPE_MAJOR < 2
-#define FT_PIXEL_MODE_BGRA FT_PIXEL_MODE_MAX
-#endif
-
 #define _FLOOR(x)  ((x) & -64)
 #define _CEIL(x)   (((x)+63) & -64)
 #define _TRUNC(x)  ((x) >> 6)
@@ -353,9 +346,7 @@ FT_Bitmap *R_RenderGlyph(FT_GlyphSlot glyph, glyphInfo_t* glyphOut, float border
 
 	R_GetGlyphInfo(glyph, &left, &right, &width, &top, &bottom, &height, &pitch);
 
-	if ( glyph->format == ft_glyph_format_outline ) {
-		size   = pitch*height; 
-
+	if ( glyph->format == FT_GLYPH_FORMAT_OUTLINE ) {
 		bit2 = ri.Malloc(sizeof(FT_Bitmap));
 		bit2->buffer = NULL;
 
@@ -378,13 +369,14 @@ FT_Bitmap *R_RenderGlyph(FT_GlyphSlot glyph, glyphInfo_t* glyphOut, float border
 		// If not able to load the glyph by rendering spans, fallback to original Q3 method.
 		// This fixes 'space' (character 32) not having xSkip.
 
+		size             = pitch*height;
 		bit2->width      = width;
 		bit2->rows       = height;
 		bit2->pitch      = pitch;
 		bit2->pixel_mode = FT_PIXEL_MODE_GRAY;
 		//bit2->pixel_mode = FT_PIXEL_MODE_MONO;
-		bit2->buffer     = ri.Malloc(pitch*height);
-		bit2->num_grays = 256;
+		bit2->buffer     = ri.Malloc( size );
+		bit2->num_grays  = 256;
 
 		Com_Memset( bit2->buffer, 0, size );
 
@@ -401,8 +393,18 @@ FT_Bitmap *R_RenderGlyph(FT_GlyphSlot glyph, glyphInfo_t* glyphOut, float border
 		glyphOut->xSkip = _TRUNC(glyph->metrics.horiAdvance);// + 1;
 
 		return bit2;
-	} else {
-		ri.Printf(PRINT_ALL, "Non-outline fonts are not supported\n");
+	} else if ( glyph->format == FT_GLYPH_FORMAT_BITMAP ) {
+		glyphOut->height = height;
+		glyphOut->pitch = pitch;
+
+		glyphOut->top = _TRUNC(glyph->metrics.horiBearingY);// + 1;
+		glyphOut->left = _TRUNC(glyph->metrics.horiBearingX);// + 1;
+
+		glyphOut->xSkip = _TRUNC(glyph->metrics.horiAdvance);// + 1;
+
+		return &glyph->bitmap;
+	} else if ( glyph->format != FT_GLYPH_FORMAT_NONE ) {
+		ri.Printf( PRINT_ALL, "Only outline and bitmap font glyphs are supported\n" );
 	}
 	return NULL;
 }
@@ -456,7 +458,7 @@ static void WriteTGA (char *filename, byte *data, int width, int height) {
 }
 
 // returns NULL if glyph does not fit in image
-static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut, int *xOut, int *yOut, int *rowHeight, FT_Face face, unsigned long c, float borderWidth, qboolean forceAutoHint) {
+static glyphInfo_t *RE_ConstructGlyphInfo(const char *fontName, int imageSize, unsigned char *imageOut, int *xOut, int *yOut, int *rowHeight, FT_Face face, unsigned long c, float borderWidth, qboolean forceAutoHint) {
 	int i, loadFlags;
 	static glyphInfo_t glyph;
 	unsigned char *src, *dst;
@@ -465,7 +467,7 @@ static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut
 	Com_Memset(&glyph, 0, sizeof(glyphInfo_t));
 	// make sure everything is here
 	if (face != NULL) {
-		loadFlags = FT_LOAD_DEFAULT | FT_LOAD_NO_BITMAP;
+		loadFlags = FT_LOAD_DEFAULT | FT_LOAD_COLOR;
 
 		if ( forceAutoHint ) {
 			loadFlags |= FT_LOAD_FORCE_AUTOHINT;
@@ -477,6 +479,15 @@ static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut
 			return &glyph;
 		}
 
+		if (bitmap->pixel_mode != FT_PIXEL_MODE_MONO && bitmap->pixel_mode != FT_PIXEL_MODE_GRAY && bitmap->pixel_mode != FT_PIXEL_MODE_BGRA) {
+			ri.Printf(PRINT_WARNING, "RE_ConstructGlyphInfo: Unknown pixel format 0x%X for codepoint 0x%lX in '%s'\n", bitmap->pixel_mode, c, fontName);
+			if (bitmap != &face->glyph->bitmap) {
+				ri.Free(bitmap->buffer);
+				ri.Free(bitmap);
+			}
+			return &glyph;
+		}
+
 		// we need to make sure we fit
 		if (*xOut + bitmap->width + 1 >= imageSize-1) {
 			*xOut = 0;
@@ -485,8 +496,10 @@ static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut
 		}
 
 		if (*yOut + bitmap->rows + 1 >= imageSize-1) {
-			ri.Free(bitmap->buffer);
-			ri.Free(bitmap);
+			if (bitmap != &face->glyph->bitmap) {
+				ri.Free(bitmap->buffer);
+				ri.Free(bitmap);
+			}
 			return NULL;
 		}
 
@@ -506,7 +519,7 @@ static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut
 				unsigned char *_dst = dst;
 				unsigned char mask = 0x80;
 				unsigned char val = *_src;
-				for (j = 0; j < bitmap->pitch; j++) {
+				for (j = 0; j < bitmap->width; j++) {
 					if (mask == 0x80) {
 						val = *_src++;
 					}
@@ -528,27 +541,33 @@ static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut
 				dst += imageSize * 4;
 			}
 		} else if (bitmap->pixel_mode == FT_PIXEL_MODE_GRAY) {
-			int j;
 			for (i = 0; i < bitmap->rows; i++) {
-				for ( j = 0; j < bitmap->pitch; j++ ) {
-					dst[j*4] = 255;
-					dst[j*4+1] = 255;
-					dst[j*4+2] = 255;
-					dst[j*4+3] = src[j];
+				int j;
+				unsigned char *_src = src;
+				unsigned char *_dst = dst;
+				for ( j = 0; j < bitmap->width; j++ ) {
+					_dst[0] = 255;
+					_dst[1] = 255;
+					_dst[2] = 255;
+					_dst[3] = *_src++;
+					_dst += 4;
 				}
 				src += bitmap->pitch;
 				dst += imageSize * 4;
 			}
-		} else {
-			// FT_PIXEL_MODE_BGRA
-			int j;
+		} else if (bitmap->pixel_mode == FT_PIXEL_MODE_BGRA) {
 			// swap BGRA src to RGBA dst
 			for (i = 0; i < bitmap->rows; i++) {
-				for ( j = 0; j < bitmap->pitch; j += 4 ) {
-					dst[j+0] = src[j+2];	// red
-					dst[j+1] = src[j+1];	// green
-					dst[j+2] = src[j+0];	// blue
-					dst[j+3] = src[j+3];	// alpha
+				int j;
+				unsigned char *_src = src;
+				unsigned char *_dst = dst;
+				for ( j = 0; j < bitmap->width; j++ ) {
+					_dst[0] = _src[2];	// red
+					_dst[1] = _src[1];	// green
+					_dst[2] = _src[0];	// blue
+					_dst[3] = _src[3];	// alpha
+					_src += 4;
+					_dst += 4;
 				}
 				src += bitmap->pitch;
 				dst += imageSize * 4;
@@ -563,8 +582,10 @@ static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut
 
 		*xOut += bitmap->width + 1;
 
-		ri.Free(bitmap->buffer);
-		ri.Free(bitmap);
+		if (bitmap != &face->glyph->bitmap) {
+			ri.Free(bitmap->buffer);
+			ri.Free(bitmap);
+		}
 	}
 
 	return &glyph;
@@ -601,7 +622,6 @@ float readFloat( void ) {
 	fdOffset += 4;
 	return me.ffred;
 }
-
 #ifdef BUILD_FREETYPE
 // Q3A's gfx/2d/bigchars some additional symbols, by default these glyphs would just be default missing glyph anyway
 unsigned long R_RemapGlyphCharacter( FT_Face face, int charIndex ) {
@@ -735,10 +755,12 @@ unsigned long R_RemapGlyphCharacter( FT_Face face, int charIndex ) {
 
 /*
 ===============
-R_LoadScalableFont
+R_LoadDynamicFont
+
+Load an outline/bitmap font using Freetype for the current game window resolution.
 ===============
 */
-qboolean R_LoadScalableFont( const char *fontName, int pointSize, float borderWidth, qboolean forceAutoHint, fontInfo_t *font ) {
+qboolean R_LoadDynamicFont( const char *fontName, int pointSize, float borderWidth, qboolean forceAutoHint, fontInfo_t *font ) {
 	FT_Face		face;
 	int			j, k, xOut, yOut, lastStart, imageNumber;
 	int			scaledSize, rowHeight;
@@ -755,7 +777,7 @@ qboolean R_LoadScalableFont( const char *fontName, int pointSize, float borderWi
 	char		imageName[MAX_QPATH];
 	char		datName[MAX_QPATH];
 	char		strippedName[MAX_QPATH];
-	float		screenScale;
+	float		windowScale;
 	int			saveHeight;
 
 	if (ftLibrary == NULL) {
@@ -765,8 +787,18 @@ qboolean R_LoadScalableFont( const char *fontName, int pointSize, float borderWi
 
 	COM_StripExtension( fontName, strippedName, sizeof ( strippedName ) );
 
+	if (registeredFontCount >= MAX_FONTS) {
+		len = ri.FS_ReadFile(fontName, NULL);
+		if (len <= 0) {
+			ri.Printf(PRINT_DEVELOPER, "RE_RegisterFont: Unable to read font file '%s'\n", fontName);
+		} else {
+			ri.Printf(PRINT_WARNING, "RE_RegisterFont: No free slot to load font file '%s'\n", fontName);
+		}
+		return qfalse;
+	}
+
 	len = ri.FS_ReadFile(fontName, &faceData);
-	if (len <= 0) {
+	if (!faceData) {
 		ri.Printf(PRINT_DEVELOPER, "RE_RegisterFont: Unable to read font file '%s'\n", fontName);
 		return qfalse;
 	}
@@ -774,24 +806,79 @@ qboolean R_LoadScalableFont( const char *fontName, int pointSize, float borderWi
 	// allocate on the stack first in case we fail
 	if (FT_New_Memory_Face( ftLibrary, faceData, len, 0, &face )) {
 		ri.Printf(PRINT_WARNING, "RE_RegisterFont: FreeType, unable to allocate new face.\n");
+		ri.FS_FreeFile(faceData);
 		return qfalse;
 	}
 
 	FT_Select_Charmap( face, ft_encoding_unicode );
 
-	// point sizes are for a virtual 640x480 screen
+	// point sizes are for a virtual 640x480 window
 	if ( glConfig.vidWidth * 480 > glConfig.vidHeight * 640 ) {
-		screenScale = (glConfig.vidHeight / 480.0f);
+		windowScale = glConfig.vidHeight / 480.0f;
 	} else {
-		screenScale = (glConfig.vidWidth / 640.0f);
+		windowScale = glConfig.vidWidth / 640.0f;
 	}
 
-	// scale dpi based on screen resolution
-	dpi = 72.0f * screenScale;
+	// scale dpi based on window resolution
+	dpi = 72.0f * windowScale;
+
+	// change the scale to be relative to 1 based on 72 dpi ( so dpi of 144 means a scale of .5 )
+	glyphScale = 72.0f / dpi;
 
 	if (FT_Set_Char_Size( face, pointSize << 6, pointSize << 6, dpi, dpi)) {
-		ri.Printf(PRINT_WARNING, "RE_RegisterFont: FreeType, unable to set face char size.\n");
-		return qfalse;
+		if (face->num_fixed_sizes > 0) {
+			FT_Pos	desired_y_ppem, largerDiff, smallerDiff, diff;
+			int		largerSize, smallerSize, selectSize;
+
+			desired_y_ppem = (FT_Pos)(pointSize*windowScale) << 6;
+			largerSize = smallerSize = -1;
+			largerDiff = smallerDiff = -1;
+
+			// choose closest size; prefer larger closest size.
+			for (i = 0; i < face->num_fixed_sizes; i++) {
+				ri.Printf(PRINT_DEVELOPER, "RE_RegisterFont: Bitmap size %d: %dx%d (y_ppem: %ld) in '%s'\n",
+						i, face->available_sizes[i].height, face->available_sizes[i].width, (long)face->available_sizes[i].y_ppem>>6, fontName );
+
+				diff = abs( face->available_sizes[i].y_ppem - desired_y_ppem );
+
+				if ( face->available_sizes[i].y_ppem < desired_y_ppem ) {
+					if ( smallerDiff == -1 || diff < smallerDiff ) {
+						smallerDiff = diff;
+						smallerSize = i;
+					}
+				} else {
+					if ( largerDiff == -1 || diff < largerDiff ) {
+						largerDiff = diff;
+						largerSize = i;
+					}
+				}
+			}
+
+			if ( largerSize != -1 ) {
+				selectSize = largerSize;
+			} else if ( smallerSize != -1 ) {
+				selectSize = smallerSize;
+			} else {
+				selectSize = 0;
+			}
+
+			glyphScale = (pointSize<<6) / (float)face->available_sizes[selectSize].y_ppem;
+
+			ri.Printf(PRINT_DEVELOPER, "RE_RegisterFont: Using bitmap strike size %d (%dx%d, y_ppem: %ld) from %s (target y_ppem %ld)\n",
+					selectSize, face->available_sizes[selectSize].height, face->available_sizes[selectSize].width, (long)face->available_sizes[selectSize].y_ppem>>6, fontName, desired_y_ppem>>6);
+
+			if (FT_Select_Size(face, selectSize)) {
+				ri.Printf(PRINT_WARNING, "RE_RegisterFont: FreeType, unable to select size for %s.\n", fontName);
+				FT_Done_Face(face);
+				ri.FS_FreeFile(faceData);
+				return qfalse;
+			}
+		} else {
+			ri.Printf(PRINT_WARNING, "RE_RegisterFont: FreeType, unable to set face char size for %s.\n", fontName);
+			FT_Done_Face(face);
+			ri.FS_FreeFile(faceData);
+			return qfalse;
+		}
 	}
 
 	//*font = &registeredFonts[registeredFontCount++];
@@ -810,6 +897,8 @@ qboolean R_LoadScalableFont( const char *fontName, int pointSize, float borderWi
 	out = ri.Malloc(imageSize*imageSize*4);
 	if (out == NULL) {
 		ri.Printf(PRINT_WARNING, "RE_RegisterFont: ri.Malloc failure during output image creation.\n");
+		FT_Done_Face(face);
+		ri.FS_FreeFile(faceData);
 		return qfalse;
 	}
 	Com_Memset(out, 0, imageSize*imageSize*4);
@@ -827,7 +916,7 @@ qboolean R_LoadScalableFont( const char *fontName, int pointSize, float borderWi
 			// upload/save current image buffer
 			glyph = NULL;
 		} else {
-			glyph = RE_ConstructGlyphInfo(imageSize, out, &xOut, &yOut, &rowHeight, face, R_RemapGlyphCharacter( face, i ), borderWidth, forceAutoHint);
+			glyph = RE_ConstructGlyphInfo(fontName, imageSize, out, &xOut, &yOut, &rowHeight, face, R_RemapGlyphCharacter( face, i ), borderWidth, forceAutoHint);
 		}
 
 		if (!glyph)  {
@@ -862,7 +951,11 @@ qboolean R_LoadScalableFont( const char *fontName, int pointSize, float borderWi
 				saveHeight = imageSize;
 			}
 
-			Com_sprintf(imageName, sizeof(imageName), "%s_%i_%i.tga", strippedName, imageNumber++, pointSize);
+			if ( borderWidth != 0 ) {
+				Com_sprintf(imageName, sizeof(imageName), "%s_%i_%i_b%g.tga", strippedName, imageNumber++, pointSize, borderWidth);
+			} else {
+				Com_sprintf(imageName, sizeof(imageName), "%s_%i_%i.tga", strippedName, imageNumber++, pointSize);
+			}
 			if(r_saveFontData->integer && !ri.FS_FileExists(imageName)) {
 				WriteTGA(imageName, out, imageSize, saveHeight);
 			}
@@ -892,9 +985,6 @@ qboolean R_LoadScalableFont( const char *fontName, int pointSize, float borderWi
 		}
 	}
 
-	// change the scale to be relative to 1 based on 72 dpi ( so dpi of 144 means a scale of .5 )
-	glyphScale = 72.0f / dpi;
-
 	// we also need to adjust the scale based on point size relative to 48 points as the ui scaling is based on a 48 point font
 	glyphScale *= 48.0f / pointSize;
 
@@ -906,7 +996,11 @@ qboolean R_LoadScalableFont( const char *fontName, int pointSize, float borderWi
 		font->flags |= FONTFLAG_BORDER;
 	}
 
-	Com_sprintf(datName, sizeof(datName), "%s_%i.dat", strippedName, pointSize);
+	if ( borderWidth != 0 ) {
+		Com_sprintf(datName, sizeof(datName), "%s_%i_b%g.dat", strippedName, pointSize, borderWidth);
+	} else {
+		Com_sprintf(datName, sizeof(datName), "%s_%i.dat", strippedName, pointSize);
+	}
 	Q_strncpyz(font->name, datName, sizeof(font->name));
 	Com_Memcpy(&registeredFont[registeredFontCount++], font, sizeof(fontInfo_t));
 
@@ -921,6 +1015,7 @@ qboolean R_LoadScalableFont( const char *fontName, int pointSize, float borderWi
 
 	ri.Free(out);
 
+	FT_Done_Face(face);
 	ri.FS_FreeFile(faceData);
 	return qtrue;
 }
@@ -930,7 +1025,7 @@ qboolean R_LoadScalableFont( const char *fontName, int pointSize, float borderWi
 ==================
 R_GetFont
 
-Get already registered font or load a scalable font or a pre-rendered legacy font.
+Get already registered font or load a dynamic font or a pre-rendered legacy font.
 ==================
 */
 static qboolean R_GetFont(const char *name, int pointSize, float borderWidth, qboolean forceAutoHint, fontInfo_t *font) {
@@ -939,12 +1034,16 @@ static qboolean R_GetFont(const char *name, int pointSize, float borderWidth, qb
 	char		datName[MAX_QPATH];
 #ifdef BUILD_FREETYPE
 	char		altName[MAX_QPATH];
-	char		*scaleableFontExts[] = { "ttf", "otf", NULL };
+	char		*fontExts[] = { "ttf", "otf", "ttc", "otc", "fon", NULL };
 	const char	*ext;
 #endif
 
 	COM_StripExtension( name, strippedName, sizeof ( strippedName ) );
-	Com_sprintf( datName, sizeof ( datName ), "%s_%i.dat", strippedName, pointSize );
+	if ( borderWidth != 0 ) {
+		Com_sprintf( datName, sizeof ( datName ), "%s_%i_b%g.dat", strippedName, pointSize, borderWidth );
+	} else {
+		Com_sprintf( datName, sizeof ( datName ), "%s_%i.dat", strippedName, pointSize );
+	}
 
 	for (i = 0; i < registeredFontCount; i++) {
 		if (Q_stricmp(datName, registeredFont[i].name) == 0) {
@@ -953,22 +1052,17 @@ static qboolean R_GetFont(const char *name, int pointSize, float borderWidth, qb
 		}
 	}
 
-	if (registeredFontCount >= MAX_FONTS) {
-		ri.Printf(PRINT_WARNING, "RE_RegisterFont: Too many fonts registered already.\n");
-		return qfalse;
-	}
-
 #ifdef BUILD_FREETYPE
 	ext = COM_GetExtension( name );
 
 	// if there is an extension, check if it's a supported format
 	if ( *ext ) {
-		for ( i = 0; scaleableFontExts[i] != NULL; i++ ) {
-			if ( Q_stricmp( ext, scaleableFontExts[i] ) != 0 ) {
+		for ( i = 0; fontExts[i] != NULL; i++ ) {
+			if ( Q_stricmp( ext, fontExts[i] ) != 0 ) {
 				continue;
 			}
 
-			if ( R_LoadScalableFont( name, pointSize, borderWidth, forceAutoHint, font ) ) {
+			if ( R_LoadDynamicFont( name, pointSize, borderWidth, forceAutoHint, font ) ) {
 				return qtrue;
 			}
 			break;
@@ -976,14 +1070,14 @@ static qboolean R_GetFont(const char *name, int pointSize, float borderWidth, qb
 	}
 
 	// fallback to all formats, but don't retry the original extension
-	for ( i = 0; scaleableFontExts[i] != NULL; i++ ) {
-		if ( *ext && Q_stricmp( ext, scaleableFontExts[i] ) == 0 ) {
+	for ( i = 0; fontExts[i] != NULL; i++ ) {
+		if ( *ext && Q_stricmp( ext, fontExts[i] ) == 0 ) {
 			continue;
 		}
 
-		Com_sprintf( altName, sizeof (altName), "%s.%s", strippedName, scaleableFontExts[i] );
+		Com_sprintf( altName, sizeof (altName), "%s.%s", strippedName, fontExts[i] );
 
-		if ( R_LoadScalableFont( altName, pointSize, borderWidth, forceAutoHint, font ) ) {
+		if ( R_LoadDynamicFont( altName, pointSize, borderWidth, forceAutoHint, font ) ) {
 			return qtrue;
 		}
 	}
@@ -1059,4 +1153,3 @@ void R_DoneFreeType(void) {
 
 	registeredFontCount = 0;
 }
-

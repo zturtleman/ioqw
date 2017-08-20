@@ -1332,12 +1332,12 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum) {
 	cgs.media.charsetPropGlow = trap_R_RegisterShaderNoMip("menu/art/font1_prop_glo.tga");
 	cgs.media.charsetPropB = trap_R_RegisterShaderNoMip("menu/art/font2_prop.tga");
 	// register fonts here, otherwise CG_LoadingString wont work
-	trap_R_RegisterFont("fonts/tinyFont.ttf", TINYCHAR_HEIGHT, 0, qtrue, &cgs.media.tinyFont);
-	trap_R_RegisterFont("fonts/smallFont.ttf", SMALLCHAR_HEIGHT, 0, qtrue, &cgs.media.smallFont);
-	trap_R_RegisterFont("fonts/defaultFont.ttf", DEFAULTCHAR_HEIGHT, 0, qtrue, &cgs.media.defaultFont);
-	trap_R_RegisterFont("fonts/bigFont.ttf", BIGCHAR_HEIGHT, 0, qtrue, &cgs.media.bigFont);
-	trap_R_RegisterFont("fonts/bigFont.ttf", GIANTCHAR_HEIGHT, 0, qtrue, &cgs.media.giantFont);
-	trap_R_RegisterFont("fonts/bigFont.ttf", TITANCHAR_HEIGHT, 0, qtrue, &cgs.media.titanFont);
+	trap_R_RegisterFont("fonts/tinyFont.ttf", TINYCHAR_HEIGHT, 0.5f, qtrue, &cgs.media.tinyFont);
+	trap_R_RegisterFont("fonts/smallFont.ttf", SMALLCHAR_HEIGHT, 1, qtrue, &cgs.media.smallFont);
+	trap_R_RegisterFont("fonts/defaultFont.ttf", DEFAULTCHAR_HEIGHT, 1, qtrue, &cgs.media.defaultFont);
+	trap_R_RegisterFont("fonts/bigFont.ttf", BIGCHAR_HEIGHT, 1, qtrue, &cgs.media.bigFont);
+	trap_R_RegisterFont("fonts/bigFont.ttf", GIANTCHAR_HEIGHT, 1.2f, qtrue, &cgs.media.giantFont);
+	trap_R_RegisterFont("fonts/bigFont.ttf", TITANCHAR_HEIGHT, 1.2f, qtrue, &cgs.media.titanFont);
 
 	CG_RegisterCvars();
 	CG_InitConsoleCommands();

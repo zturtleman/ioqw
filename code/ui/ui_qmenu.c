@@ -1587,12 +1587,12 @@ Menu_Cache
 void Menu_Cache(void) {
 
 	// pointsize is a performance killer.
-	trap_R_RegisterFont("fonts/tinyFont.ttf", TINYCHAR_HEIGHT, 0, qtrue, &uis.tinyFont);
-	trap_R_RegisterFont("fonts/smallFont.ttf", SMALLCHAR_HEIGHT, 0, qtrue, &uis.smallFont);
-	trap_R_RegisterFont("fonts/defaultFont.ttf", DEFAULTCHAR_HEIGHT, 0, qtrue, &uis.defaultFont);
-	trap_R_RegisterFont("fonts/bigFont.ttf", BIGCHAR_HEIGHT, 0, qtrue, &uis.bigFont);
-	trap_R_RegisterFont("fonts/bigFont.ttf", GIANTCHAR_HEIGHT, 0, qtrue, &uis.giantFont);
-	trap_R_RegisterFont("fonts/bigFont.ttf", TITANCHAR_HEIGHT, 0, qtrue, &uis.titanFont);
+	trap_R_RegisterFont("fonts/tinyFont.ttf", TINYCHAR_HEIGHT, 0.5f, qtrue, &uis.tinyFont);
+	trap_R_RegisterFont("fonts/smallFont.ttf", SMALLCHAR_HEIGHT, 1, qtrue, &uis.smallFont);
+	trap_R_RegisterFont("fonts/defaultFont.ttf", DEFAULTCHAR_HEIGHT, 1, qtrue, &uis.defaultFont);
+	trap_R_RegisterFont("fonts/bigFont.ttf", BIGCHAR_HEIGHT, 1, qtrue, &uis.bigFont);
+	trap_R_RegisterFont("fonts/bigFont.ttf", GIANTCHAR_HEIGHT, 1.2f, qtrue, &uis.giantFont);
+	trap_R_RegisterFont("fonts/bigFont.ttf", TITANCHAR_HEIGHT, 1.2f, qtrue, &uis.titanFont);
 
 	uis.charset = trap_R_RegisterShaderNoMip("gfx/2d/bigchars");
 	uis.charsetProp = trap_R_RegisterShaderNoMip("menu/art/font1_prop.tga");
