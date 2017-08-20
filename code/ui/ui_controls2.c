@@ -119,6 +119,7 @@ enum {
 	ID_FREELOOK,
 	ID_INVERTMOUSE,
 	ID_ALWAYSRUN,
+	ID_CYCLEPASTGAUNTLET,
 	ID_AUTOSWITCH,
 	ID_MOUSESPEED,
 	ID_JOYENABLE,
@@ -205,6 +206,7 @@ typedef struct {
 	menuradiobutton_s alwaysrun;
 	menuaction_s showscores;
 	menuaction_s botmenu;
+	menuradiobutton_s cyclepastgauntlet;
 	menuradiobutton_s autoswitch;
 	menuaction_s useitem;
 	playerInfo_t playerinfo;
@@ -277,15 +279,16 @@ static bind_t g_bindings[] = {
 };
 
 static configcvar_t g_configcvars[] = {
-	{"cl_run",			0, 0},
-	{"m_pitch",			0, 0},
-	{"cg_autoswitch",	0, 0},
-	{"sensitivity",		0, 0},
-	{"in_joystick",		0, 0},
-	{"joy_threshold",	0, 0},
-	{"m_filter",		0, 0},
-	{"cl_freelook",		0, 0},
-	{NULL,				0, 0}
+	{"cl_run",					0, 0},
+	{"m_pitch",					0, 0},
+	{"cg_cyclePastGauntlet",	0, 0},
+	{"cg_autoswitch",			0, 0},
+	{"sensitivity",				0, 0},
+	{"in_joystick",				0, 0},
+	{"joy_threshold",			0, 0},
+	{"m_filter",				0, 0},
+	{"cl_freelook",				0, 0},
+	{NULL,						0, 0}
 };
 
 static menucommon_s *g_movement_controls[] = {
@@ -307,6 +310,7 @@ static menucommon_s *g_weapons_controls[] = {
 	(menucommon_s *)&s_controls.attack,
 	(menucommon_s *)&s_controls.nextweapon,
 	(menucommon_s *)&s_controls.prevweapon,
+	(menucommon_s *)&s_controls.cyclepastgauntlet,
 	(menucommon_s *)&s_controls.autoswitch,
 	(menucommon_s *)&s_controls.gauntlet,
 	(menucommon_s *)&s_controls.machinegun,
@@ -770,6 +774,7 @@ static void Controls_GetConfig(void) {
 	s_controls.invertmouse.curvalue = Controls_GetCvarValue("m_pitch") < 0;
 	s_controls.smoothmouse.curvalue = Com_Clamp(0, 1, Controls_GetCvarValue("m_filter"));
 	s_controls.alwaysrun.curvalue = Com_Clamp(0, 1, Controls_GetCvarValue("cl_run"));
+	s_controls.cyclepastgauntlet.curvalue = Com_Clamp(0, 1, Controls_GetCvarValue("cg_cyclePastGauntlet"));
 	s_controls.autoswitch.curvalue = Com_Clamp(0, 1, Controls_GetCvarValue("cg_autoswitch"));
 	s_controls.sensitivity.curvalue = Com_Clamp(2, 30, Controls_GetCvarValue("sensitivity"));
 	s_controls.joyenable.curvalue = Com_Clamp(0, 1, Controls_GetCvarValue("in_joystick"));
@@ -811,11 +816,13 @@ static void Controls_SetConfig(void) {
 
 	trap_Cvar_SetValue("m_filter", s_controls.smoothmouse.curvalue);
 	trap_Cvar_SetValue("cl_run", s_controls.alwaysrun.curvalue);
+	trap_Cvar_SetValue("cg_cyclePastGauntlet", s_controls.cyclepastgauntlet.curvalue);
 	trap_Cvar_SetValue("cg_autoswitch", s_controls.autoswitch.curvalue);
 	trap_Cvar_SetValue("sensitivity", s_controls.sensitivity.curvalue);
 	trap_Cvar_SetValue("in_joystick", s_controls.joyenable.curvalue);
 	trap_Cvar_SetValue("joy_threshold", s_controls.joythreshold.curvalue);
 	trap_Cvar_SetValue("cl_freelook", s_controls.freelook.curvalue);
+
 	trap_Cmd_ExecuteText(EXEC_APPEND, "in_restart\n");
 }
 
@@ -843,6 +850,7 @@ static void Controls_SetDefaults(void) {
 	s_controls.invertmouse.curvalue = Controls_GetCvarDefault("m_pitch") < 0;
 	s_controls.smoothmouse.curvalue = Controls_GetCvarDefault("m_filter");
 	s_controls.alwaysrun.curvalue = Controls_GetCvarDefault("cl_run");
+	s_controls.cyclepastgauntlet.curvalue = Controls_GetCvarDefault("cg_cyclePastGauntlet");
 	s_controls.autoswitch.curvalue = Controls_GetCvarDefault("cg_autoswitch");
 	s_controls.sensitivity.curvalue = Controls_GetCvarDefault("sensitivity");
 	s_controls.joyenable.curvalue = Controls_GetCvarDefault("in_joystick");
@@ -1061,6 +1069,7 @@ static void Controls_MenuEvent(void *ptr, int event) {
 		case ID_INVERTMOUSE:
 		case ID_SMOOTHMOUSE:
 		case ID_ALWAYSRUN:
+		case ID_CYCLEPASTGAUNTLET:
 		case ID_AUTOSWITCH:
 		case ID_JOYENABLE:
 		case ID_JOYTHRESHOLD:
@@ -1127,6 +1136,7 @@ Controls_MenuInit
 */
 static void Controls_MenuInit(void) {
 	static char playername[32];
+	int y;
 
 	// zero set all our globals
 	memset(&s_controls, 0, sizeof(controls_t));
@@ -1161,42 +1171,47 @@ static void Controls_MenuInit(void) {
 	s_controls.framer.width = 256;
 	s_controls.framer.height = 334;
 
+	y = 240 - 2 * PROP_HEIGHT;
+
 	s_controls.looking.generic.type = MTYPE_PTEXT;
 	s_controls.looking.generic.flags = QMF_RIGHT_JUSTIFY|QMF_PULSEIFFOCUS;
 	s_controls.looking.generic.id = ID_LOOKING;
 	s_controls.looking.generic.callback = Controls_MenuEvent;
 	s_controls.looking.generic.x = 152;
-	s_controls.looking.generic.y = 240 - 2 * PROP_HEIGHT;
+	s_controls.looking.generic.y = y;
 	s_controls.looking.string = "Look";
 	s_controls.looking.style = UI_RIGHT;
 	s_controls.looking.color = color_red;
 
+	y += PROP_HEIGHT;
 	s_controls.movement.generic.type = MTYPE_PTEXT;
 	s_controls.movement.generic.flags = QMF_RIGHT_JUSTIFY|QMF_PULSEIFFOCUS;
 	s_controls.movement.generic.id = ID_MOVEMENT;
 	s_controls.movement.generic.callback = Controls_MenuEvent;
 	s_controls.movement.generic.x = 152;
-	s_controls.movement.generic.y = 240 - PROP_HEIGHT;
+	s_controls.movement.generic.y = y;
 	s_controls.movement.string = "Move";
 	s_controls.movement.style = UI_RIGHT;
 	s_controls.movement.color = color_red;
 
+	y += PROP_HEIGHT;
 	s_controls.weapons.generic.type = MTYPE_PTEXT;
 	s_controls.weapons.generic.flags = QMF_RIGHT_JUSTIFY|QMF_PULSEIFFOCUS;
 	s_controls.weapons.generic.id = ID_WEAPONS;
 	s_controls.weapons.generic.callback = Controls_MenuEvent;
 	s_controls.weapons.generic.x = 152;
-	s_controls.weapons.generic.y = 240;
+	s_controls.weapons.generic.y = y;
 	s_controls.weapons.string = "Shoot";
 	s_controls.weapons.style = UI_RIGHT;
 	s_controls.weapons.color = color_red;
 
+	y += PROP_HEIGHT;
 	s_controls.misc.generic.type = MTYPE_PTEXT;
 	s_controls.misc.generic.flags = QMF_RIGHT_JUSTIFY|QMF_PULSEIFFOCUS;
 	s_controls.misc.generic.id = ID_MISC;
 	s_controls.misc.generic.callback = Controls_MenuEvent;
 	s_controls.misc.generic.x = 152;
-	s_controls.misc.generic.y = 240 + PROP_HEIGHT;
+	s_controls.misc.generic.y = y;
 	s_controls.misc.string = "Misc";
 	s_controls.misc.style = UI_RIGHT;
 	s_controls.misc.color = color_red;
@@ -1450,6 +1465,14 @@ static void Controls_MenuInit(void) {
 	s_controls.alwaysrun.generic.callback = Controls_MenuEvent;
 	s_controls.alwaysrun.generic.statusbar = Controls_StatusBar;
 
+	s_controls.cyclepastgauntlet.generic.type = MTYPE_RADIOBUTTON;
+	s_controls.cyclepastgauntlet.generic.flags = QMF_SMALLFONT;
+	s_controls.cyclepastgauntlet.generic.x = SCREEN_WIDTH / 2;
+	s_controls.cyclepastgauntlet.generic.name = "Cycle past Gauntlet";
+	s_controls.cyclepastgauntlet.generic.id = ID_CYCLEPASTGAUNTLET;
+	s_controls.cyclepastgauntlet.generic.callback = Controls_MenuEvent;
+	s_controls.cyclepastgauntlet.generic.statusbar = Controls_StatusBar;
+
 	s_controls.autoswitch.generic.type = MTYPE_RADIOBUTTON;
 	s_controls.autoswitch.generic.flags = QMF_SMALLFONT;
 	s_controls.autoswitch.generic.x = SCREEN_WIDTH / 2;
@@ -1568,6 +1591,7 @@ static void Controls_MenuInit(void) {
 	Menu_AddItem(&s_controls.menu, &s_controls.attack);
 	Menu_AddItem(&s_controls.menu, &s_controls.nextweapon);
 	Menu_AddItem(&s_controls.menu, &s_controls.prevweapon);
+	Menu_AddItem(&s_controls.menu, &s_controls.cyclepastgauntlet);
 	Menu_AddItem(&s_controls.menu, &s_controls.autoswitch);
 	Menu_AddItem(&s_controls.menu, &s_controls.gauntlet);
 	Menu_AddItem(&s_controls.menu, &s_controls.machinegun);

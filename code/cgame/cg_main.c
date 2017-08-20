@@ -138,6 +138,7 @@ vmCvar_t cg_tracerChance;
 vmCvar_t cg_tracerWidth;
 vmCvar_t cg_tracerLength;
 vmCvar_t cg_autoswitch;
+vmCvar_t cg_cyclePastGauntlet;
 vmCvar_t cg_ignore;
 vmCvar_t cg_simpleItems;
 vmCvar_t cg_fov;
@@ -204,6 +205,7 @@ typedef struct {
 static cvarTable_t cvarTable[] = {
 	{&cg_ignore, "cg_ignore", "0", 0}, // used for debugging
 	{&cg_autoswitch, "cg_autoswitch", "1", CVAR_ARCHIVE},
+	{&cg_cyclePastGauntlet, "cg_cyclePastGauntlet", "1", CVAR_ARCHIVE},
 	{&cg_drawGun, "cg_drawGun", "1", CVAR_ARCHIVE},
 	{&cg_zoomFov, "cg_zoomfov", "22.5", CVAR_ARCHIVE},
 	{&cg_fov, "cg_fov", "80", CVAR_ARCHIVE},

@@ -2295,7 +2295,7 @@ void CG_NextWeapon_f(void) {
 			cg.weaponSelect = 0;
 		}
 
-		if (cg.weaponSelect == WP_GAUNTLET) {
+		if (cg.weaponSelect == WP_GAUNTLET && cg_cyclePastGauntlet.integer) {
 			continue; // never cycle to gauntlet
 		}
 
@@ -2336,7 +2336,7 @@ void CG_PrevWeapon_f(void) {
 			cg.weaponSelect = MAX_WEAPONS - 1;
 		}
 
-		if (cg.weaponSelect == WP_GAUNTLET) {
+		if (cg.weaponSelect == WP_GAUNTLET && cg_cyclePastGauntlet.integer) {
 			continue; // never cycle to gauntlet
 		}
 
