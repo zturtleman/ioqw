@@ -238,7 +238,7 @@ static vec4_t controls_binding_color = {1.00f, 0.43f, 0.00f, 1.00f};
 static bind_t g_bindings[] = {
 	{"+scores",			"Show scores",			ID_SHOWSCORES,	ANIM_IDLE,		K_TAB,			-1, -1, -1},
 	{"teamorders",		"Team orders",			ID_TEAMORDERS,	ANIM_CHAT,		'b',			-1, -1, -1},
-	{"+useitem",		"Use item",				ID_USEITEM,		ANIM_IDLE,		K_ENTER,		-1, -1, -1},
+	{"+button2",		"Use item",				ID_USEITEM,		ANIM_IDLE,		K_ENTER,		-1, -1, -1},
 	{"+speed",			"Run/Walk",				ID_SPEED,		ANIM_RUN,		K_SHIFT,		-1, -1, -1},
 	{"+forward",		"Walk forward",			ID_FORWARD,		ANIM_WALK,		K_UPARROW,		-1, -1, -1},
 	{"+back",			"Backpedal",			ID_BACKPEDAL,	ANIM_BACK,		K_DOWNARROW,	-1, -1, -1},
@@ -269,7 +269,7 @@ static bind_t g_bindings[] = {
 	{"+attack",			"Attack",				ID_ATTACK,		ANIM_ATTACK,	K_CTRL,			-1, -1, -1},
 	{"weapprev",		"Previous weapon",		ID_WEAPPREV,	ANIM_IDLE,		'[',			-1, -1, -1},
 	{"weapnext",		"Next weapon",			ID_WEAPNEXT,	ANIM_IDLE,		']',			-1, -1, -1},
-	{"+gesture",		"Gesture",				ID_GESTURE,		ANIM_GESTURE,	K_MOUSE3,		-1, -1, -1},
+	{"+button3",		"Gesture",				ID_GESTURE,		ANIM_GESTURE,	K_MOUSE3,		-1, -1, -1},
 	{"messagemode",		"Chat",					ID_CHAT,		ANIM_CHAT,		't',			-1, -1, -1},
 	{"messagemode2",	"Chat-Team",			ID_CHAT2,		ANIM_CHAT,		-1,				-1, -1, -1},
 	{"messagemode3",	"Chat-Target",			ID_CHAT3,		ANIM_CHAT,		-1,				-1, -1, -1},

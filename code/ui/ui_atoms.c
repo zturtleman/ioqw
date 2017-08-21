@@ -273,62 +273,10 @@ float UI_Text_Width(const char *text, const fontInfo_t *font, float scale, int l
 
 /*
 =======================================================================================================================================
-UI_Text_PaintChar
-
-NOTE: scale must be multiplied by font->glyphScale.
-=======================================================================================================================================
-*/
-void UI_Text_PaintChar(float x, float y, float width, float height, float useScale, float s, float t, float s2, float t2, qhandle_t hShader) {
-	float w, h;
-
-	w = width * useScale;
-	h = height * useScale;
-
-	UI_AdjustFrom640(&x, &y, &w, &h);
-	// prevent native resolution text from being blurred due to sub-pixel blending
-	x = floor(x);
-	y = floor(y);
-	w = floor(w);
-	h = floor(h);
-	// fix rounding to 0
-	if (w == 0) {
-		w = 1;
-	}
-
-	if (h == 0) {
-		h = 1;
-	}
-
-	trap_R_DrawStretchPic(x, y, w, h, s, t, s2, t2, hShader);
-}
-
-/*
-=======================================================================================================================================
 UI_Text_PaintGlyph
-
-NOTE: scale must be multiplied by font->glyphScale.
 =======================================================================================================================================
 */
-void UI_Text_PaintGlyph(float x, float y, float useScale, const glyphInfo_t *glyph, float *gradientColor) {
-	float w, h;
-
-	w = glyph->imageWidth * useScale;
-	h = glyph->imageHeight * useScale;
-
-	UI_AdjustFrom640(&x, &y, &w, &h);
-	// prevent native resolution text from being blurred due to sub-pixel blending
-	x = floor(x);
-	y = floor(y);
-	w = floor(w);
-	h = floor(h);
-	// fix rounding to 0
-	if (w == 0) {
-		w = 1;
-	}
-
-	if (h == 0) {
-		h = 1;
-	}
+void UI_Text_PaintGlyph(float x, float y, float w, float h, const glyphInfo_t *glyph, float *gradientColor) {
 
 	if (gradientColor) {
 		trap_R_DrawStretchPicGradient(x, y, w, h, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph, gradientColor);
@@ -349,16 +297,34 @@ void UI_Text_Paint(float x, float y, const fontInfo_t *font, float scale, const 
 	const glyphInfo_t *glyph;
 	const char *s;
 	float yadj, xadj;
-	float useScale;
+	float useScaleX, useScaleY;
+	float xscale, yscale;
+	float shadowOffsetX, shadowOffsetY;
 
 	if (!text) {
 		return;
 	}
 
-	useScale = scale * font->glyphScale;
+	xscale = 1.0f;
+	yscale = 1.0f;
+
+	UI_AdjustFrom640(&x, &y, &xscale, &yscale);
+
+	shadowOffsetX = shadowOffset * xscale;
+	shadowOffsetY = shadowOffset * yscale;
+
+	adjust *= xscale;
+
+	useScaleX = scale * font->glyphScale * xscale;
+	useScaleY = scale * font->glyphScale * yscale;
+	// prevent native resolution text from being blurred due to sub-pixel blending
+	x = floor(x);
+	y = floor(y);
+
+	shadowOffsetX = floor(shadowOffsetX);
+	shadowOffsetY = floor(shadowOffsetY);
 
 	trap_R_SetColor(color);
-
 	Vector4Copy(color, newColor);
 	Vector4Copy(color, lastTextColor);
 
@@ -380,7 +346,9 @@ void UI_Text_Paint(float x, float y, const fontInfo_t *font, float scale, const 
 		if (Q_IsColorString(s)) {
 			if (!forceColor) {
 				VectorCopy(g_color_table[ColorIndex(*(s + 1))], newColor);
+
 				newColor[3] = color[3];
+
 				trap_R_SetColor(newColor);
 				Vector4Copy(newColor, lastTextColor);
 
@@ -396,22 +364,22 @@ void UI_Text_Paint(float x, float y, const fontInfo_t *font, float scale, const 
 
 		glyph = UI_Text_GetGlyph(font, Q_UTF8_CodePoint(&s));
 
-		yadj = useScale * glyph->top;
-		xadj = useScale * glyph->left;
+		yadj = useScaleY * glyph->top;
+		xadj = useScaleX * glyph->left;
 
-		if (shadowOffset) {
+		if (shadowOffsetX || shadowOffsetY) {
 			colorBlack[3] = newColor[3];
+
 			trap_R_SetColor(colorBlack);
-
-			UI_Text_PaintGlyph(x + xadj + shadowOffset, y - yadj + shadowOffset, useScale, glyph, NULL);
-
+			UI_Text_PaintGlyph(x + xadj + shadowOffsetX, y - yadj + shadowOffsetY, glyph->imageWidth * useScaleX, glyph->imageHeight * useScaleY, glyph, NULL);
 			trap_R_SetColor(newColor);
+
 			colorBlack[3] = 1.0f;
 		}
 
-		UI_Text_PaintGlyph(x + xadj, y - yadj, useScale, glyph, (gradient != 0) ? gradientColor : NULL);
+		UI_Text_PaintGlyph(x + xadj, y - yadj, glyph->imageWidth * useScaleX, glyph->imageHeight * useScaleY, glyph, (gradient != 0) ? gradientColor : NULL);
 
-		x += (glyph->xSkip * useScale) + adjust;
+		x += (glyph->xSkip * useScaleX) + adjust;
 		count++;
 	}
 
@@ -429,17 +397,35 @@ void UI_Text_PaintWithCursor(float x, float y, const fontInfo_t *font, float sca
 	vec4_t gradientColor;
 	const glyphInfo_t *glyph, *glyph2;
 	float yadj, xadj;
-	float useScale;
+	float useScaleX, useScaleY;
+	float xscale, yscale;
+	float shadowOffsetX, shadowOffsetY;
 	const char *s;
 
 	if (!text) {
 		return;
 	}
 
-	useScale = scale * font->glyphScale;
+	xscale = 1.0f;
+	yscale = 1.0f;
+
+	UI_AdjustFrom640(&x, &y, &xscale, &yscale);
+
+	shadowOffsetX = shadowOffset * xscale;
+	shadowOffsetY = shadowOffset * yscale;
+
+	adjust *= xscale;
+
+	useScaleX = scale * font->glyphScale * xscale;
+	useScaleY = scale * font->glyphScale * yscale;
+	// prevent native resolution text from being blurred due to sub-pixel blending
+	x = floor(x);
+	y = floor(y);
+
+	shadowOffsetX = floor(shadowOffsetX);
+	shadowOffsetY = floor(shadowOffsetY);
 
 	trap_R_SetColor(color);
-
 	Vector4Copy(color, newColor);
 	Vector4Copy(color, lastTextColor);
 
@@ -462,7 +448,9 @@ void UI_Text_PaintWithCursor(float x, float y, const fontInfo_t *font, float sca
 		if (Q_IsColorString(s)) {
 			if (!forceColor) {
 				VectorCopy(g_color_table[ColorIndex(*(s + 1))], newColor);
+
 				newColor[3] = color[3];
+
 				trap_R_SetColor(newColor);
 				Vector4Copy(newColor, lastTextColor);
 
@@ -477,23 +465,25 @@ void UI_Text_PaintWithCursor(float x, float y, const fontInfo_t *font, float sca
 		glyph = UI_Text_GetGlyph(font, Q_UTF8_CodePoint(&s));
 
 		if (count == cursorPos && ((uis.realtime / BLINK_DIVISOR) & 1) == 0) {
-			yadj = useScale * glyph2->top;
-
-			UI_Text_PaintChar(x, y - yadj, glyph->left + glyph->xSkip, glyph2->imageHeight, useScale, glyph2->s, glyph2->t, glyph2->s2, glyph2->t2, glyph2->glyph); // use horizontal width of text character
+			yadj = useScaleY * glyph2->top;
+			// use horizontal width of text character (glyph)
+			UI_Text_PaintGlyph(x, y - yadj, (glyph->left + glyph->xSkip) * useScaleX, glyph2->imageHeight * useScaleY, glyph2, NULL);
 		}
 
-		yadj = useScale * glyph->top;
-		xadj = useScale * glyph->left;
+		yadj = useScaleY * glyph->top;
+		xadj = useScaleX * glyph->left;
 
-		if (shadowOffset) {
+		if (shadowOffsetX || shadowOffsetY) {
 			colorBlack[3] = newColor[3];
+
 			trap_R_SetColor(colorBlack);
-			UI_Text_PaintGlyph(x + xadj + shadowOffset, y - yadj + shadowOffset, useScale, glyph, NULL);
+			UI_Text_PaintGlyph(x + xadj + shadowOffsetX, y - yadj + shadowOffsetY, glyph->imageWidth * useScaleX, glyph->imageHeight * useScaleY, glyph, NULL);
 			trap_R_SetColor(newColor);
+
 			colorBlack[3] = 1.0f;
 		}
 		// make overstrike cursor invert color
-		if (count == cursorPos && !((uis.realtime / BLINK_DIVISOR) & 1)/* && cursor == GLYPH_OVERSTRIKE*/) { // Tobias TODO
+		if (count == cursorPos && !((uis.realtime / BLINK_DIVISOR) & 1)/* && cursor == GLYPH_OVERSTRIKE*/) { // Tobias: FIXME
 			// invert color
 			vec4_t invertedColor;
 
@@ -504,23 +494,24 @@ void UI_Text_PaintWithCursor(float x, float y, const fontInfo_t *font, float sca
 
 			trap_R_SetColor(invertedColor);
 
-			UI_Text_PaintGlyph(x + xadj, y - yadj, useScale, glyph, NULL);
+			UI_Text_PaintGlyph(x + xadj, y - yadj, glyph->imageWidth * useScaleX, glyph->imageHeight * useScaleY, glyph, NULL);
 		} else {
-			UI_Text_PaintGlyph(x + xadj, y - yadj, useScale, glyph, (gradient != 0) ? gradientColor : NULL);
+			UI_Text_PaintGlyph(x + xadj, y - yadj, glyph->imageWidth * useScaleX, glyph->imageHeight * useScaleY, glyph, (gradient != 0) ? gradientColor : NULL);
 		}
 
-		if (count == cursorPos && !((uis.realtime / BLINK_DIVISOR) & 1)/* && cursor == GLYPH_OVERSTRIKE*/) { // Tobias TODO
+		if (count == cursorPos && !((uis.realtime / BLINK_DIVISOR) & 1)/* && cursor == GLYPH_OVERSTRIKE*/) { // Tobias: FIXME
 			// restore color
 			trap_R_SetColor(newColor);
 		}
 
-		x += (glyph->xSkip * useScale) + adjust;
+		x += (glyph->xSkip * useScaleX) + adjust;
 		count++;
 	}
 	// need to paint cursor at end of text
 	if (cursorPos == len && !((uis.realtime / BLINK_DIVISOR) & 1)) {
-		yadj = useScale * glyph2->top;
-		UI_Text_PaintGlyph(x, y - yadj, useScale, glyph2, NULL);
+		yadj = useScaleY * glyph2->top;
+
+		UI_Text_PaintGlyph(x, y - yadj, glyph2->imageWidth * useScaleX, glyph2->imageHeight * useScaleY, glyph2, NULL);
 	}
 
 	trap_R_SetColor(NULL);
