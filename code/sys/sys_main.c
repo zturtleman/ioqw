@@ -701,7 +701,6 @@ int main(int argc, char **argv) {
 	signal(SIGINT, Sys_SigHandler);
 
 	while (1) {
-		IN_Frame();
 		Com_Frame();
 	}
 
