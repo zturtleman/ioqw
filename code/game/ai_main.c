@@ -1517,7 +1517,6 @@ int BotAILoadMap(int restart) {
 }
 
 void ProximityMine_Trigger(gentity_t *trigger, gentity_t *other, trace_t *trace);
-
 /*
 =======================================================================================================================================
 BotAIStartFrame

@@ -2090,7 +2090,6 @@ static void S_AL_MusicUpdate(void) {
 	// set the gain property
 	S_AL_Gain(musicSource, s_alGain->value * s_musicVolume->value);
 }
-
 // local state variables
 static ALCdevice *alDevice;
 static ALCcontext *alContext;
@@ -2553,7 +2552,6 @@ void S_AL_MasterGain(float gain) {
 	qalListenerf(AL_GAIN, gain);
 }
 #endif
-
 /*
 =======================================================================================================================================
 S_AL_SoundInfo

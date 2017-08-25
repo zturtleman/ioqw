@@ -929,6 +929,7 @@ int AAS_Reachability_Swim(int area1num, int area2num) {
 					plane = &aasworld.planes[face1->planenum ^ side1];
 
 					VectorMA(lreach->start, -INSIDEUNITS, plane->normal, lreach->end);
+
 					lreach->traveltype = TRAVEL_SWIM;
 					lreach->traveltime = 1;
 					// if the volume of the area is rather small

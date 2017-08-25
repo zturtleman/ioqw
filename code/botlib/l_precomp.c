@@ -3115,7 +3115,6 @@ source_t *LoadSourceFile(const char *filename) {
 	}
 
 	script->next = NULL;
-
 	source = (source_t *)GetMemory(sizeof(source_t));
 
 	Com_Memset(source, 0, sizeof(source_t));

@@ -245,7 +245,6 @@ gentity_t *SelectRandomFurthestSpawnPoint(vec3_t avoidPoint, vec3_t origin, vec3
 		origin[2] += 9;
 
 		VectorCopy(spot->s.angles, angles);
-
 		return spot;
 	}
 	// select a random spot from the spawn points furthest away

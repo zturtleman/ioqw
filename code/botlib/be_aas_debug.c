@@ -705,7 +705,6 @@ void AAS_ShowReachableAreas(int areanum) {
 		index++;
 
 		lasttime = AAS_Time();
-
 		AAS_PrintTravelType(reach.traveltype & TRAVELTYPE_MASK);
 		botimport.Print(PRT_MESSAGE, "\n");
 	}

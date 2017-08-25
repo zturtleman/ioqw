@@ -624,7 +624,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			break;
 		case EV_RAILTRAIL:
 			DEBUGNAME("EV_RAILTRAIL");
-
 			cent->currentState.weapon = WP_RAILGUN;
 
 			if (es->clientNum == cg.snap->ps.clientNum && !cg.renderingThirdPerson) {
