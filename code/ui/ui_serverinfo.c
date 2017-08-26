@@ -203,7 +203,7 @@ void UI_ServerInfoMenu(void) {
 	s_serverinfo.banner.generic.type = MTYPE_BTEXT;
 	s_serverinfo.banner.generic.x = 320;
 	s_serverinfo.banner.generic.y = 16;
-	s_serverinfo.banner.string = "Server Info";
+	s_serverinfo.banner.string = "SERVER INFO";
 	s_serverinfo.banner.color = color_white;
 	s_serverinfo.banner.style = UI_CENTER;
 

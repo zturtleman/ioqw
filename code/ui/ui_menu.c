@@ -112,7 +112,7 @@ void Main_MenuEvent(void *ptr, int event) {
 			UI_ModsMenu();
 			break;
 		case ID_EXIT:
-			UI_ConfirmMenu("Exit Game?", 0, MainMenu_ExitAction);
+			UI_ConfirmMenu("EXIT GAME?", 0, MainMenu_ExitAction);
 			break;
 	}
 }
@@ -266,7 +266,7 @@ void UI_MainMenu(void) {
 	s_main.singleplayer.generic.y = y;
 	s_main.singleplayer.generic.id = ID_SINGLEPLAYER;
 	s_main.singleplayer.generic.callback = Main_MenuEvent;
-	s_main.singleplayer.string = "Singleplayer";
+	s_main.singleplayer.string = "SINGLE PLAYER";
 	s_main.singleplayer.color = color_red;
 	s_main.singleplayer.style = style;
 
@@ -277,7 +277,7 @@ void UI_MainMenu(void) {
 	s_main.multiplayer.generic.y = y;
 	s_main.multiplayer.generic.id = ID_MULTIPLAYER;
 	s_main.multiplayer.generic.callback = Main_MenuEvent;
-	s_main.multiplayer.string = "Multiplayer";
+	s_main.multiplayer.string = "MULTIPLAYER";
 	s_main.multiplayer.color = color_red;
 	s_main.multiplayer.style = style;
 
@@ -288,7 +288,7 @@ void UI_MainMenu(void) {
 	s_main.cinematics.generic.y = y;
 	s_main.cinematics.generic.id = ID_CINEMATICS;
 	s_main.cinematics.generic.callback = Main_MenuEvent;
-	s_main.cinematics.string = "Cinematics";
+	s_main.cinematics.string = "CINEMATICS";
 	s_main.cinematics.color = color_red;
 	s_main.cinematics.style = style;
 
@@ -299,7 +299,7 @@ void UI_MainMenu(void) {
 	s_main.demos.generic.y = y;
 	s_main.demos.generic.id = ID_DEMOS;
 	s_main.demos.generic.callback = Main_MenuEvent;
-	s_main.demos.string = "Demos";
+	s_main.demos.string = "DEMOS";
 	s_main.demos.color = color_red;
 	s_main.demos.style = style;
 
@@ -310,7 +310,7 @@ void UI_MainMenu(void) {
 	s_main.setup.generic.y = y;
 	s_main.setup.generic.id = ID_SETUP;
 	s_main.setup.generic.callback = Main_MenuEvent;
-	s_main.setup.string = "Setup";
+	s_main.setup.string = "SETUP";
 	s_main.setup.color = color_red;
 	s_main.setup.style = style;
 
@@ -321,7 +321,7 @@ void UI_MainMenu(void) {
 	s_main.mods.generic.y = y;
 	s_main.mods.generic.id = ID_MODS;
 	s_main.mods.generic.callback = Main_MenuEvent;
-	s_main.mods.string = "Mods";
+	s_main.mods.string = "MODS";
 	s_main.mods.color = color_red;
 	s_main.mods.style = style;
 
@@ -332,7 +332,7 @@ void UI_MainMenu(void) {
 	s_main.exit.generic.y = y;
 	s_main.exit.generic.id = ID_EXIT;
 	s_main.exit.generic.callback = Main_MenuEvent;
-	s_main.exit.string = "Exit";
+	s_main.exit.string = "EXIT";
 	s_main.exit.color = color_red;
 	s_main.exit.style = style;
 

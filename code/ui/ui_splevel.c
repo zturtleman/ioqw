@@ -746,7 +746,7 @@ static void UI_SPLevelMenu_Init(void) {
 	levelMenuInfo.item_banner.generic.type = MTYPE_BTEXT;
 	levelMenuInfo.item_banner.generic.x = 320;
 	levelMenuInfo.item_banner.generic.y = 16;
-	levelMenuInfo.item_banner.string = "Choose Level";
+	levelMenuInfo.item_banner.string = "CHOOSE LEVEL";
 	levelMenuInfo.item_banner.color = color_red;
 	levelMenuInfo.item_banner.style = UI_CENTER;
 

@@ -340,7 +340,7 @@ static void UI_RemoveBotsMenu_Init(int action) {
 	} else if (action == RBM_CALLVOTELEADER) {
 		removeBotsMenuInfo.banner.string = "Callvote Team Leader";
 	} else {
-		removeBotsMenuInfo.banner.string = "Remove Bots";
+		removeBotsMenuInfo.banner.string = "REMOVE BOTS";
 	}
 
 	removeBotsMenuInfo.background.generic.type = MTYPE_BITMAP;

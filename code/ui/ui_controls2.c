@@ -1037,7 +1037,7 @@ static void Controls_MenuEvent(void *ptr, int event) {
 			break;
 		case ID_DEFAULTS:
 			if (event == QM_ACTIVATED) {
-				UI_ConfirmMenu("Set to defaults?", Controls_ResetDefaults_Draw, Controls_ResetDefaults_Action);
+				UI_ConfirmMenu("SET TO DEFAULTS?", Controls_ResetDefaults_Draw, Controls_ResetDefaults_Action);
 			}
 
 			break;
@@ -1151,7 +1151,7 @@ static void Controls_MenuInit(void) {
 	s_controls.banner.generic.flags = QMF_CENTER_JUSTIFY;
 	s_controls.banner.generic.x = 320;
 	s_controls.banner.generic.y = 16;
-	s_controls.banner.string = "Controls";
+	s_controls.banner.string = "CONTROLS";
 	s_controls.banner.color = color_white;
 	s_controls.banner.style = UI_CENTER;
 
@@ -1179,7 +1179,7 @@ static void Controls_MenuInit(void) {
 	s_controls.looking.generic.callback = Controls_MenuEvent;
 	s_controls.looking.generic.x = 152;
 	s_controls.looking.generic.y = y;
-	s_controls.looking.string = "Look";
+	s_controls.looking.string = "LOOK";
 	s_controls.looking.style = UI_RIGHT;
 	s_controls.looking.color = color_red;
 
@@ -1190,7 +1190,7 @@ static void Controls_MenuInit(void) {
 	s_controls.movement.generic.callback = Controls_MenuEvent;
 	s_controls.movement.generic.x = 152;
 	s_controls.movement.generic.y = y;
-	s_controls.movement.string = "Move";
+	s_controls.movement.string = "MOVE";
 	s_controls.movement.style = UI_RIGHT;
 	s_controls.movement.color = color_red;
 
@@ -1201,7 +1201,7 @@ static void Controls_MenuInit(void) {
 	s_controls.weapons.generic.callback = Controls_MenuEvent;
 	s_controls.weapons.generic.x = 152;
 	s_controls.weapons.generic.y = y;
-	s_controls.weapons.string = "Shoot";
+	s_controls.weapons.string = "SHOOT";
 	s_controls.weapons.style = UI_RIGHT;
 	s_controls.weapons.color = color_red;
 
@@ -1212,7 +1212,7 @@ static void Controls_MenuInit(void) {
 	s_controls.misc.generic.callback = Controls_MenuEvent;
 	s_controls.misc.generic.x = 152;
 	s_controls.misc.generic.y = y;
-	s_controls.misc.string = "Misc";
+	s_controls.misc.string = "MISC";
 	s_controls.misc.style = UI_RIGHT;
 	s_controls.misc.color = color_red;
 
