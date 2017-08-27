@@ -41,6 +41,7 @@ struct bot_initmove_s;
 struct weaponinfo_s;
 
 #define BOTFILESBASEFOLDER "botfiles"
+#define MAX_EPAIRKEY 128
 // debug line colors
 #define LINECOLOR_NONE		0
 #define LINECOLOR_RED		1

@@ -27,6 +27,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 **************************************************************************************************************************************/
 
 #include "../qcommon/q_shared.h"
+#include "../qcommon/surfaceflags.h" // for CONTENTS_WATER, CONTENTS_LAVA, CONTENTS_SLIME etc.
 #include "l_memory.h"
 #include "l_libvar.h"
 #include "l_utils.h"
@@ -1904,7 +1905,7 @@ bot_moveresult_t BotTravel_Jump(bot_movestate_t *ms, aas_reachability_t *reach) 
 
 	AAS_PresenceTypeBoundingBox(PRESENCE_NORMAL, mins, maxs);
 	// check for solids
-	trace = AAS_Trace(start, mins, maxs, end, ms->entitynum, MASK_PLAYERSOLID);
+	trace = AAS_Trace(start, mins, maxs, end, ms->entitynum, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 
 	if (trace.startsolid) {
 		VectorCopy(start, trace.endpos);
@@ -3553,7 +3554,7 @@ int BotSetupMoveAI(void) {
 	BotSetBrushModelTypes();
 
 	sv_maxstep = LibVar("sv_step", "18");
-	sv_maxbarrier = LibVar("sv_maxbarrier", "32");
+	sv_maxbarrier = LibVar("sv_maxbarrier", "42");
 	sv_gravity = LibVar("sv_gravity", "800");
 
 	weapindex_rocketlauncher = LibVar("weapindex_rocketlauncher", "12");

@@ -27,6 +27,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 **************************************************************************************************************************************/
 
 #include "../qcommon/q_shared.h"
+#include "../qcommon/surfaceflags.h" // for CONTENTS_WATER, CONTENTS_LAVA, CONTENTS_SLIME etc.
 #include "l_log.h"
 #include "l_libvar.h"
 #include "l_script.h"
@@ -614,7 +615,7 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 	start_time = clock();
 
 	for (i = 0; i < 2000; i++) {
-		AAS_Trace2(eye, mins, maxs, end, 1, MASK_PLAYERSOLID);
+		AAS_Trace2(eye, mins, maxs, end, 1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 //		AAS_TraceClientBBox(eye, end, PRESENCE_NORMAL, 1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 	}
 
@@ -623,7 +624,7 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 	start_time = clock();
 
 	for (i = 0; i < 2000; i++) {
-		AAS_Trace(eye, mins, maxs, end, 1, MASK_PLAYERSOLID);
+		AAS_Trace(eye, mins, maxs, end, 1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 	}
 
 	end_time = clock();
@@ -633,8 +634,8 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 #if 0
 	AAS_ClearShownDebugLines();
 
-	//bsptrace = AAS_Trace(eye, NULL, NULL, end, 1, MASK_PLAYERSOLID);
-	bsptrace = AAS_Trace(eye, mins, maxs, end, 1, MASK_PLAYERSOLID);
+	//bsptrace = AAS_Trace(eye, NULL, NULL, end, 1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
+	bsptrace = AAS_Trace(eye, mins, maxs, end, 1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 
 	if (!line[0]) {
 		line[0] = botimport.DebugLineCreate();
@@ -657,8 +658,8 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 		}
 	}
 
-	//bsptrace = AAS_Trace2(eye, NULL, NULL, end, 1, MASK_PLAYERSOLID);
-	bsptrace = AAS_Trace2(eye, mins, maxs, end, 1, MASK_PLAYERSOLID);
+	//bsptrace = AAS_Trace2(eye, NULL, NULL, end, 1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
+	bsptrace = AAS_Trace2(eye, mins, maxs, end, 1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 
 	botimport.DebugLineShow(line[1], eye, bsptrace.endpos, LINECOLOR_BLUE);
 

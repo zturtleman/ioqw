@@ -862,9 +862,7 @@ int BotGetLevelItemGoal(int index, char *name, bot_goal_t *goal) {
 			if (li->flags & IFL_NOTSINGLE) {
 				continue;
 			}
-		}
-
-		if (g_gametype > GT_TOURNAMENT) {
+		} else if (g_gametype > GT_TOURNAMENT) {
 			if (li->flags & IFL_NOTTEAM) {
 				continue;
 			}
@@ -1086,9 +1084,7 @@ void BotUpdateEntityItems(void) {
 				if (li->flags & IFL_NOTSINGLE) {
 					continue;
 				}
-			}
-
-			if (g_gametype > GT_TOURNAMENT) {
+			} else if (g_gametype > GT_TOURNAMENT) {
 				if (li->flags & IFL_NOTTEAM) {
 					continue;
 				}
@@ -1352,9 +1348,7 @@ int BotChooseLTGItem(int goalstate, vec3_t origin, int *inventory, int travelfla
 			if (li->flags & IFL_NOTSINGLE) {
 				continue;
 			}
-		}
-
-		if (g_gametype > GT_TOURNAMENT) {
+		} else if (g_gametype > GT_TOURNAMENT) {
 			if (li->flags & IFL_NOTTEAM) {
 				continue;
 			}
@@ -1545,9 +1539,7 @@ int BotChooseNBGItem(int goalstate, vec3_t origin, int *inventory, int travelfla
 			if (li->flags & IFL_NOTSINGLE) {
 				continue;
 			}
-		}
-
-		if (g_gametype > GT_TOURNAMENT) {
+		} else if (g_gametype > GT_TOURNAMENT) {
 			if (li->flags & IFL_NOTTEAM) {
 				continue;
 			}
