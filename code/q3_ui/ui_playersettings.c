@@ -127,7 +127,6 @@ static void PlayerSettings_DrawName(void *self) {
 	basex = f->generic.x;
 	y = f->generic.y;
 	focus = (f->generic.parent->cursor == f->generic.menuPosition);
-
 	style = UI_LEFT|UI_SMALLFONT;
 	color = text_color_normal;
 

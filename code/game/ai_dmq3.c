@@ -4576,22 +4576,27 @@ void BotMapScripts(bot_state_t *bs) {
 
 	mapname[sizeof(mapname) - 1] = '\0';
 
-	if (!Q_stricmp(mapname, "q3tourney6")) {
-		vec3_t mins = {700, 204, 672}, maxs = {964, 468, 680};
+	if (!Q_stricmp(mapname, "q3tourney6") || !Q_stricmp(mapname, "q3tourney6_ctf") || !Q_stricmp(mapname, "mpq3tourney6")) {
+		vec3_t mins = {694, 200, 480}, maxs = {968, 472, 680};
 		vec3_t buttonorg = {304, 352, 920};
 		// NOTE: NEVER use the func_bobbing in q3tourney6
 		bs->tfl &= ~TFL_FUNCBOB;
-		// if the bot is below the bounding box
+		// crush area is higher in mpq3tourney6
+		if (!Q_stricmp(mapname, "mpq3tourney6")) {
+			mins[2] += 64;
+			maxs[2] += 64;
+		}
+		// if the bot is in the bounding box of the crush area
 		if (bs->origin[0] > mins[0] && bs->origin[0] < maxs[0]) {
 			if (bs->origin[1] > mins[1] && bs->origin[1] < maxs[1]) {
-				if (bs->origin[2] < mins[2]) {
+				if (bs->origin[2] > mins[2] && bs->origin[2] < maxs[2]) {
 					return;
 				}
 			}
 		}
 
 		shootbutton = qfalse;
-		// if an enemy is below this bounding box then shoot the button
+		// if an enemy is in the bounding box then shoot the button
 		for (i = 0; i < level.maxclients; i++) {
 			if (i == bs->client) {
 				continue;
@@ -4609,12 +4614,12 @@ void BotMapScripts(bot_state_t *bs) {
 
 			if (entinfo.origin[0] > mins[0] && entinfo.origin[0] < maxs[0]) {
 				if (entinfo.origin[1] > mins[1] && entinfo.origin[1] < maxs[1]) {
-					if (entinfo.origin[2] < mins[2]) {
+					if (entinfo.origin[2] > mins[2] && entinfo.origin[2] < maxs[2]) {
 						// if there's a team mate below the crusher
 						if (BotSameTeam(bs, i)) {
 							shootbutton = qfalse;
 							break;
-						} else {
+						} else if (bs->enemy == i) {
 							shootbutton = qtrue;
 						}
 					}
@@ -4624,9 +4629,12 @@ void BotMapScripts(bot_state_t *bs) {
 
 		if (shootbutton) {
 			bs->flags |= BFL_IDEALVIEWSET;
+
 			VectorSubtract(buttonorg, bs->eye, dir);
 			vectoangles(dir, bs->ideal_viewangles);
+
 			aim_accuracy = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_ACCURACY, 0, 1);
+
 			bs->ideal_viewangles[PITCH] += 8 * crandom() * (1 - aim_accuracy);
 			bs->ideal_viewangles[PITCH] = AngleMod(bs->ideal_viewangles[PITCH]);
 			bs->ideal_viewangles[YAW] += 8 * crandom() * (1 - aim_accuracy);
@@ -4638,6 +4646,8 @@ void BotMapScripts(bot_state_t *bs) {
 		}
 	} else if (!Q_stricmp(mapname, "mpq3tourney6")) {
 		// NOTE: NEVER use the func_bobbing in mpq3tourney6
+		// or avoid bots from jumping (during attack) on platforms moving along the x or y axis (-> the bot will fall into the void)
+		// https://github.com/zturtleman/spearmint/issues/247
 		bs->tfl &= ~TFL_FUNCBOB;
 	}
 }
