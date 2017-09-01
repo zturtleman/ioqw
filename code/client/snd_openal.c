@@ -28,7 +28,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "client.h"
 #include "../qcommon/qcommon.h"
 
-extern int Sys_Milliseconds(void);
 #ifdef USE_OPENAL
 #include "qal.h"
 // console variables specific to OpenAL
@@ -557,7 +556,9 @@ static qboolean S_AL_BufferInit(void) {
 	numSfx = 0;
 	// load the default sound, and lock it
 	default_sfx = S_AL_BufferFind("snd/u/hit.wav");
+
 	S_AL_BufferUse(default_sfx);
+
 	knownSfx[default_sfx].isLocked = qtrue;
 	// all done
 	alBuffersInitialised = qtrue;
@@ -1657,6 +1658,7 @@ static void S_AL_AllocateStreamChannel(int stream, int entityNum) {
 		}
 
 		S_AL_SrcSetup(cursrc, -1, SRCPRI_ENTITY, entityNum, 0, qfalse, SOUND_RANGE_DEFAULT, SOUND_VOLUME_DEFAULT);
+
 		alsrc = S_AL_SrcGet(cursrc);
 		srcList[cursrc].isTracking = qtrue;
 		srcList[cursrc].isStream = qtrue;
@@ -2213,6 +2215,7 @@ static void S_AL_Respatialize(int entityNum, const vec3_t origin, vec3_t axis[3]
 	orientation[5] = axis[2][2];
 
 	lastListenerNumber = entityNum;
+
 	VectorCopy(sorigin, lastListenerOrigin);
 
 	contents = CM_PointContents(sorigin, 0);
@@ -2329,6 +2332,7 @@ static void S_AL_UpdateEnvironment(void) {
 			s_alEffects.env.changeTime = -1;
 		} else {
 			float frac = Com_Clamp(0.0f, 1.0f, (now - s_alEffects.env.changeTime) / ((float)ENV_CHANGE_TIME));
+
 			S_AL_LerpReverb(&s_alEffects.env.from, &s_alEffects.env.to, frac, &s_alEffects.env.current);
 		}
 
@@ -2361,6 +2365,7 @@ static void S_AL_UpdateUnderwater(void) {
 			s_alEffects.water.current = *to;
 		} else {
 			float frac = Com_Clamp(0.0f, 1.0f, (now - s_alEffects.water.changeTime) / ((float)WATER_CHANGE_TIME));
+
 			s_alEffects.water.current.gain = from->gain + (to->gain - from->gain) * frac;
 			s_alEffects.water.current.gainHF = from->gainHF + (to->gainHF - from->gainHF) * frac;
 		}
@@ -2755,7 +2760,7 @@ static qboolean S_AL_InitEffects(ALCdevice *alDevice) {
 	s_alEffects.water.current.gainHF = 1.0f;
 	s_alEffects.water.to = s_alEffects.water.current;
 	s_alEffects.water.from = s_alEffects.water.current;
-	
+
 	s_alEffects.env.changeTime = -1;
 	s_alEffects.env.current = s_alReverbPresets[0].data;
 	s_alEffects.env.to = s_alEffects.env.current;
