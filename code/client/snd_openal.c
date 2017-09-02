@@ -27,7 +27,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "snd_codec.h"
 #include "client.h"
 #include "../qcommon/qcommon.h"
-
 #ifdef USE_OPENAL
 #include "qal.h"
 // console variables specific to OpenAL
@@ -43,21 +42,26 @@ cvar_t *s_alInputDevice;
 cvar_t *s_alAvailableDevices;
 cvar_t *s_alAvailableInputDevices;
 
-#define NUM_MUSIC_BUFFERS 4
-#define MUSIC_BUFFER_SIZE 4096
-
-static qboolean musicPlaying = qfalse;
-static srcHandle_t musicSourceHandle = -1;
-static ALuint musicSource;
-static ALuint musicBuffers[NUM_MUSIC_BUFFERS];
-static snd_stream_t *mus_stream;
-static snd_stream_t *intro_stream;
-static char s_backgroundLoop[MAX_QPATH];
-static byte decode_buffer[MUSIC_BUFFER_SIZE];
 static qboolean enumeration_ext = qfalse;
 static qboolean enumeration_all_ext = qfalse;
 #ifdef USE_VOIP
 static qboolean capture_ext = qfalse;
+#endif
+// local state variables
+static ALCdevice *alDevice;
+static ALCcontext *alContext;
+#ifdef USE_VOIP
+static ALCdevice *alCaptureDevice;
+static cvar_t *s_alCapture;
+#endif
+#ifdef _WIN32
+#define ALDRIVER_DEFAULT "OpenAL32.dll"
+#elif defined(__APPLE__)
+#define ALDRIVER_DEFAULT "libopenal.dylib"
+#elif defined(__OpenBSD__)
+#define ALDRIVER_DEFAULT "libopenal.so"
+#else
+#define ALDRIVER_DEFAULT "libopenal.so.1"
 #endif
 
 typedef struct {
@@ -154,6 +158,98 @@ static const namedReverb_t s_alReverbPresets[] = {
 	{"mood_memory", REVERB_PRESET_MOOD_MEMORY,},
 };
 
+typedef struct alSfx_s {
+	char filename[MAX_QPATH];
+	ALuint buffer;				// OpenAL buffer
+	snd_info_t info;			// information for this sound like rate, sample count..
+	qboolean isDefault;			// couldn't be loaded - use default FX
+	qboolean isDefaultChecked;	// sound has been check if it isDefault
+	qboolean inMemory;			// sound is stored in memory
+	qboolean isLocked;			// sound is locked (can not be unloaded)
+	int lastUsedTime;			// time last used
+	int duration;				// milliseconds
+	int loopCnt;				// number of loops using this sfx
+	int loopActiveCnt;			// number of playing loops using this sfx
+	int masterLoopSrc;			// all other sources looping this buffer are synced to this master src
+} alSfx_t;
+
+static qboolean alBuffersInitialised = qfalse;
+// sound effect storage, data structures
+#define MAX_SFX 4096
+static alSfx_t knownSfx[MAX_SFX];
+static sfxHandle_t numSfx = 0;
+static sfxHandle_t default_sfx;
+
+typedef struct src_s {
+	ALuint alSource;			// OpenAL source object
+	sfxHandle_t sfx;			// sound effect in use
+	int lastUsedTime;			// last time used
+	alSrcPriority_t priority;	// priority
+	int entity;					// owning entity (-1 if none)
+	int channel;				// associated channel (-1 if none)
+	qboolean isActive;			// is this source currently in use?
+	qboolean isPlaying;			// is this source currently playing, or stopped?
+	qboolean isLocked;			// this is locked (un-allocatable)
+	qboolean isLooping;			// is this a looping effect (attached to an entity)
+	qboolean isTracking;		// is this object tracking its owner
+	qboolean isStream;			// is this source a stream
+	float curGain;				// gain employed if source is within maxdistance.
+	float scaleGain;			// last gain value for this source. 0 if muted.
+	float lastTimePos;			// on stopped loops, the last position in the buffer
+	int lastSampleTime;			// time when this was stopped
+	int range;
+	int volume;
+	vec3_t loopSpeakerPos;		// origin of the loop speaker
+	qboolean local;				// is this local (relative to the cam)
+} src_t;
+#ifdef __APPLE__
+#define MAX_SRC 128
+#else
+#define MAX_SRC 255 // Tobias FIXME: 256 and 64 bots will CRASH the game! So, why can't we set this at least to 256 (which is still not enough). Eventually try 1.17.3 -> https://github.com/kcat/openal-soft/commit/d9bf4f7620c1e13846a53ee9df5c8c9eb2fcfe7d
+#endif
+static src_t srcList[MAX_SRC];
+static int srcCount = 0;
+static int srcActiveCnt = 0;
+static qboolean alSourcesInitialised = qfalse;
+static int lastListenerNumber = -1;
+static vec3_t lastListenerOrigin = {0.0f, 0.0f, 0.0f};
+
+typedef struct sentity_s {
+	vec3_t origin;
+	qboolean srcAllocated; // if a src_t has been allocated to this entity
+	int srcIndex;
+	int range;
+	int volume;
+	qboolean loopAddedThisFrame;
+	alSrcPriority_t loopPriority;
+	sfxHandle_t loopSfx;
+	qboolean startLoopingSound;
+} sentity_t;
+
+static sentity_t entityList[MAX_GENTITIES];
+
+// Q3A cinematics use up to 12 buffers at once
+#define MAX_STREAM_BUFFERS 20
+
+static srcHandle_t streamSourceHandles[MAX_RAW_STREAMS];
+static qboolean streamPlaying[MAX_RAW_STREAMS];
+static ALuint streamSources[MAX_RAW_STREAMS];
+static ALuint streamBuffers[MAX_RAW_STREAMS][MAX_STREAM_BUFFERS];
+static int streamNumBuffers[MAX_RAW_STREAMS];
+static int streamBufIndex[MAX_RAW_STREAMS];
+
+#define NUM_MUSIC_BUFFERS 4
+#define MUSIC_BUFFER_SIZE 4096
+
+static qboolean musicPlaying = qfalse;
+static srcHandle_t musicSourceHandle = -1;
+static ALuint musicSource;
+static ALuint musicBuffers[NUM_MUSIC_BUFFERS];
+static snd_stream_t *mus_stream;
+static snd_stream_t *intro_stream;
+static char s_backgroundLoop[MAX_QPATH];
+static byte decode_buffer[MUSIC_BUFFER_SIZE];
+
 /*
 =======================================================================================================================================
 S_AL_Format
@@ -221,28 +317,6 @@ static void S_AL_ClearError(qboolean quiet) {
 		Com_Printf(S_COLOR_YELLOW "WARNING: unhandled AL error: %s\n", S_AL_ErrorMsg(error));
 	}
 }
-
-typedef struct alSfx_s {
-	char filename[MAX_QPATH];
-	ALuint buffer;				// OpenAL buffer
-	snd_info_t info;			// information for this sound like rate, sample count..
-	qboolean isDefault;			// couldn't be loaded - use default FX
-	qboolean isDefaultChecked;	// sound has been check if it isDefault
-	qboolean inMemory;			// sound is stored in memory
-	qboolean isLocked;			// sound is locked (can not be unloaded)
-	int lastUsedTime;			// time last used
-	int duration;				// milliseconds
-	int loopCnt;				// number of loops using this sfx
-	int loopActiveCnt;			// number of playing loops using this sfx
-	int masterLoopSrc;			// all other sources looping this buffer are synced to this master src
-} alSfx_t;
-
-static qboolean alBuffersInitialised = qfalse;
-// sound effect storage, data structures
-#define MAX_SFX 4096
-static alSfx_t knownSfx[MAX_SFX];
-static sfxHandle_t numSfx = 0;
-static sfxHandle_t default_sfx;
 
 /*
 =======================================================================================================================================
@@ -636,54 +710,6 @@ static ALuint S_AL_BufferGet(sfxHandle_t sfx) {
 	return knownSfx[sfx].buffer;
 }
 
-typedef struct src_s {
-	ALuint alSource;			// OpenAL source object
-	sfxHandle_t sfx;			// sound effect in use
-	int lastUsedTime;			// last time used
-	alSrcPriority_t priority;	// priority
-	int entity;					// owning entity (-1 if none)
-	int channel;				// associated channel (-1 if none)
-	qboolean isActive;			// is this source currently in use?
-	qboolean isPlaying;			// is this source currently playing, or stopped?
-	qboolean isLocked;			// this is locked (un-allocatable)
-	qboolean isLooping;			// is this a looping effect (attached to an entity)
-	qboolean isTracking;		// is this object tracking its owner
-	qboolean isStream;			// is this source a stream
-	float curGain;				// gain employed if source is within maxdistance.
-	float scaleGain;			// last gain value for this source. 0 if muted.
-	float lastTimePos;			// on stopped loops, the last position in the buffer
-	int lastSampleTime;			// time when this was stopped
-	int range;
-	int volume;
-	vec3_t loopSpeakerPos;		// origin of the loop speaker
-	qboolean local;				// is this local (relative to the cam)
-} src_t;
-#ifdef __APPLE__
-#define MAX_SRC 128
-#else
-#define MAX_SRC 255 // Tobias FIXME: 256 and 64 bots will CRASH the game! So, why can't we set this at least to 256 (which is still not enough). Eventually try 1.17.3 -> https://github.com/kcat/openal-soft/commit/d9bf4f7620c1e13846a53ee9df5c8c9eb2fcfe7d
-#endif
-static src_t srcList[MAX_SRC];
-static int srcCount = 0;
-static int srcActiveCnt = 0;
-static qboolean alSourcesInitialised = qfalse;
-static int lastListenerNumber = -1;
-static vec3_t lastListenerOrigin = {0.0f, 0.0f, 0.0f};
-
-typedef struct sentity_s {
-	vec3_t origin;
-	qboolean srcAllocated; // if a src_t has been allocated to this entity
-	int srcIndex;
-	int range;
-	int volume;
-	qboolean loopAddedThisFrame;
-	alSrcPriority_t loopPriority;
-	sfxHandle_t loopSfx;
-	qboolean startLoopingSound;
-} sentity_t;
-
-static sentity_t entityList[MAX_GENTITIES];
-
 #define S_AL_SanitiseVector(v) _S_AL_SanitiseVector(v, __LINE__)
 
 /*
@@ -909,6 +935,32 @@ static void S_AL_SrcSetup(srcHandle_t src, sfxHandle_t sfx, alSrcPriority_t prio
 			//Com_Printf("%s: with effect (%d)\n", knownSfx[sfx].filename, entity);
 		}
 	}
+}
+
+/*
+=======================================================================================================================================
+S_AL_ShutDownEffects
+=======================================================================================================================================
+*/
+static void S_AL_ShutDownEffects(void) {
+
+	if (!s_alEffects.initialized) {
+		return;
+	}
+	// delete effect
+	if (s_alEffects.env.alEffect) {
+		qalDeleteEffects(1, &s_alEffects.env.alEffect);
+	}
+	// delete Auxiliary effect slot
+	if (s_alEffects.env.alEffectSlot) {
+		qalDeleteAuxiliaryEffectSlots(1, &s_alEffects.env.alEffectSlot);
+	}
+	// delete filter
+	if (s_alEffects.water.alFilter) {
+		qalDeleteFilters(1, &s_alEffects.water.alFilter);
+	}
+
+	Com_Memset(&s_alEffects, 0, sizeof(s_alEffects));
 }
 
 /*
@@ -1625,16 +1677,6 @@ static ALuint S_AL_SrcGet(srcHandle_t src) {
 	return srcList[src].alSource;
 }
 
-// Q3A cinematics use up to 12 buffers at once
-#define MAX_STREAM_BUFFERS 20
-
-static srcHandle_t streamSourceHandles[MAX_RAW_STREAMS];
-static qboolean streamPlaying[MAX_RAW_STREAMS];
-static ALuint streamSources[MAX_RAW_STREAMS];
-static ALuint streamBuffers[MAX_RAW_STREAMS][MAX_STREAM_BUFFERS];
-static int streamNumBuffers[MAX_RAW_STREAMS];
-static int streamBufIndex[MAX_RAW_STREAMS];
-
 /*
 =======================================================================================================================================
 S_AL_AllocateStreamChannel
@@ -2092,22 +2134,6 @@ static void S_AL_MusicUpdate(void) {
 	// set the gain property
 	S_AL_Gain(musicSource, s_alGain->value * s_musicVolume->value);
 }
-// local state variables
-static ALCdevice *alDevice;
-static ALCcontext *alContext;
-#ifdef USE_VOIP
-static ALCdevice *alCaptureDevice;
-static cvar_t *s_alCapture;
-#endif
-#ifdef _WIN32
-#define ALDRIVER_DEFAULT "OpenAL32.dll"
-#elif defined(__APPLE__)
-#define ALDRIVER_DEFAULT "libopenal.dylib"
-#elif defined(__OpenBSD__)
-#define ALDRIVER_DEFAULT "libopenal.so"
-#else
-#define ALDRIVER_DEFAULT "libopenal.so.1"
-#endif
 
 /*
 =======================================================================================================================================
@@ -2116,6 +2142,7 @@ S_AL_ClearSoundBuffer
 */
 static void S_AL_ClearSoundBuffer(void) {
 
+	S_AL_StopBackgroundTrack();
 	S_AL_SrcShutdown();
 	S_AL_SrcInit();
 }
@@ -2462,32 +2489,6 @@ static void S_AL_BeginRegistration(void) {
 
 /*
 =======================================================================================================================================
-S_AL_ShutDownEffects
-=======================================================================================================================================
-*/
-static void S_AL_ShutDownEffects(void) {
-
-	if (!s_alEffects.initialized) {
-		return;
-	}
-	// delete effect
-	if (s_alEffects.env.alEffect) {
-		qalDeleteEffects(1, &s_alEffects.env.alEffect);
-	}
-	// delete Auxiliary effect slot
-	if (s_alEffects.env.alEffectSlot) {
-		qalDeleteAuxiliaryEffectSlots(1, &s_alEffects.env.alEffectSlot);
-	}
-	// delete filter
-	if (s_alEffects.water.alFilter) {
-		qalDeleteFilters(1, &s_alEffects.water.alFilter);
-	}
-
-	Com_Memset(&s_alEffects, 0, sizeof(s_alEffects));
-}
-
-/*
-=======================================================================================================================================
 S_AL_SoundList
 =======================================================================================================================================
 */
@@ -2808,7 +2809,7 @@ qboolean S_AL_Init(soundInterface_t *si) {
 	// new console variables
 	s_alPrecache = Cvar_Get("s_alPrecache", "1", CVAR_ARCHIVE);
 	s_alGain = Cvar_Get("s_alGain", "1.0", CVAR_ARCHIVE);
-	s_alSources = Cvar_Get("s_alSources", "256", CVAR_ARCHIVE); // Tobias FIXME: Increase this! See: code\client\snd_openal.c
+	s_alSources = Cvar_Get("s_alSources", "256", CVAR_ARCHIVE); // Tobias FIXME: Increase this!
 	s_alDopplerFactor = Cvar_Get("s_alDopplerFactor", "1.0", CVAR_ARCHIVE);
 	s_alDopplerSpeed = Cvar_Get("s_alDopplerSpeed", "9000", CVAR_ARCHIVE);
 	s_alRolloff = Cvar_Get("s_alRolloff", "1", CVAR_CHEAT);
