@@ -38,6 +38,13 @@ ifndef SDLDLL
 		SDLDLL=SDL2.dll
 	endif
 endif
+ifndef OPENALDLL
+	ifeq ($(ARCH),x86_64)
+		OPENALDLL=OpenAL64.dll
+	else
+		OPENALDLL=OpenAL32.dll
+	endif
+endif
 
 DEFINES=
 ifeq ($(USE_RENDERER_DLOPEN),1)
@@ -63,7 +70,7 @@ endif
 all: quakewars-$(VERSION)-$(RELEASE).$(ARCH).exe
 
 quakewars.$(ARCH).nsi: quakewars.nsi.in
-	sed 's/XXXVERSIONXXX/$(VERSION)/;s/XXXRELEASEXXX/$(RELEASE)/;s/mingw32/$(PLATFORM)/g;s/x86/$(ARCH)/g;s/SDL2.dll/$(SDLDLL)/g' < $< > $@
+	sed 's/XXXVERSIONXXX/$(VERSION)/;s/XXXRELEASEXXX/$(RELEASE)/;s/mingw32/$(PLATFORM)/g;s/x86/$(ARCH)/g;s/SDL2.dll/$(SDLDLL)/g;s/OpenAL32.dll/$(OPENALDLL)/g' < $< > $@
 
 quakewars-$(VERSION)-$(RELEASE).$(ARCH).exe: quakewars.$(ARCH).nsi
 	makensis $(DEFINES) quakewars.$(ARCH).nsi
