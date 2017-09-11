@@ -493,8 +493,10 @@ static void IN_ActivateMouse(void) {
 	if (!Cvar_VariableIntegerValue("r_fullscreen")) {
 		if (in_nograb->modified || !mouseActive) {
 			if (in_nograb->integer) {
+				SDL_SetRelativeMouseMode(SDL_FALSE);
 				SDL_SetWindowGrab(SDL_window, SDL_FALSE);
 			} else {
+				SDL_SetRelativeMouseMode(SDL_TRUE);
 				SDL_SetWindowGrab(SDL_window, SDL_TRUE);
 			}
 
