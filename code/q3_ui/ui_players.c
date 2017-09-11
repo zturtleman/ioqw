@@ -86,6 +86,7 @@ tryagain:
 
 	COM_StripExtension(item->world_model[0], path, sizeof(path));
 	Q_strcat(path, sizeof(path), "_barrel.md3");
+
 	pi->barrelModel = trap_R_RegisterModel(path);
 
 	COM_StripExtension(item->world_model[0], path, sizeof(path));
@@ -985,27 +986,12 @@ static qboolean UI_ParseAnimationFile(const char *filename, playerInfo_t *pi) {
 
 			continue;
 		} else if (!Q_stricmp(token, "sex")) {
-		token = COM_Parse(&text_p);
+			token = COM_Parse(&text_p);
 
-		if (!token[0]) {
-			if (i >= TORSO_GETFLAG && i <= TORSO_NEGATIVE) {
-				animations[i].firstFrame = animations[TORSO_GESTURE].firstFrame;
-				animations[i].frameLerp = animations[TORSO_GESTURE].frameLerp;
-				animations[i].initialLerp = animations[TORSO_GESTURE].initialLerp;
-				animations[i].loopFrames = animations[TORSO_GESTURE].loopFrames;
-				animations[i].numFrames = animations[TORSO_GESTURE].numFrames;
-				animations[i].reversed = qfalse;
-				animations[i].flipflop = qfalse;
-				continue;
+			if (!token[0]) {
+				break;
 			}
 
-			break;
-		}
-
-			continue;
-		} else if (!Q_stricmp(token, "fixedlegs")) {
-			continue;
-		} else if (!Q_stricmp(token, "fixedtorso")) {
 			continue;
 		} else if (!Q_stricmp(token, "fixedlegs")) {
 			pi->fixedlegs = qtrue;
