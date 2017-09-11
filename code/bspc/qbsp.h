@@ -43,7 +43,7 @@ Suite 120, Rockville, Maryland 20850 USA.
 #include "l_log.h"
 #include "l_qfiles.h"
 
-#define BSPC_NAME			"Spearmint BSPC"
+#define BSPC_NAME			"Quake Wars BSPC"
 #define BSPC_VERSION		"2.1h"
 
 #define ZTMAUTOARGS

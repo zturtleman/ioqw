@@ -1472,7 +1472,7 @@ int AAS_Reachability_Step_Barrier_WaterJump_WalkOffLedge(int area1num, int area2
 		VectorMA(water_bestend, -INSIDEUNITS, water_bestnormal, testpoint);
 		// go down the maximum waterjump height
 		testpoint[2] -= aassettings.phys_maxwaterjump;
-		// if there IS water the sv_maxwaterjump height below the bestend point
+		// if there IS water the phys_maxwaterjump height below the bestend point
 		if (aasworld.areasettings[AAS_PointAreaNum(testpoint)].areaflags & AREA_LIQUID) {
 			// don't create rediculous water jump reachabilities from areas very far below the water surface
 			if (water_bestdist < aassettings.phys_maxwaterjump + 24) {

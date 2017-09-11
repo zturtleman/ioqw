@@ -289,8 +289,9 @@ int main (int argc, char **argv)
 	Log_Print(BSPC_NAME" version "BSPC_VERSION", %s %s\n", __DATE__, __TIME__);
 
 #ifdef ZTMAUTOARGS
-	calcgrapplereach = true;
+	calcgrapplereach = false;
 	forcesidesvisible = true; // Currently always required or BSPC fails?
+	verbose = true;
 #endif
 	DefaultCfg();
 	for (i = 1; i < argc; i++)

@@ -57,12 +57,10 @@ typedef struct cfg_s
 	float phys_jumpvel;
 	float phys_falldelta5;
 	float phys_falldelta10;
-	float phys_strafejumping;
 	float rs_waterjump;
 	float rs_teleport;
 	float rs_barrierjump;
 	float rs_startcrouch;
-	float rs_startgrapple;
 	float rs_startwalkoffledge;
 	float rs_startjump;
 	float rs_rocketjump;
@@ -75,7 +73,6 @@ typedef struct cfg_s
 	float rs_falldamage10;
 	float rs_maxfallheight;
 	float rs_maxjumpfallheight;
-	float rs_allowladders;
 } cfg_t;
 
 extern cfg_t cfg;

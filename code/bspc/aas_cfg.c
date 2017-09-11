@@ -63,7 +63,6 @@ fielddef_t cfg_fields[] =
 	{"phys_maxwalkvelocity", CFG_OFS(phys_maxwalkvelocity), FT_FLOAT},
 	{"phys_maxcrouchvelocity", CFG_OFS(phys_maxcrouchvelocity), FT_FLOAT},
 	{"phys_maxswimvelocity", CFG_OFS(phys_maxswimvelocity), FT_FLOAT},
-	{"phys_strafejumping", CFG_OFS(phys_strafejumping), FT_FLOAT},
 	{"phys_walkaccelerate", CFG_OFS(phys_walkaccelerate), FT_FLOAT},
 	{"phys_airaccelerate", CFG_OFS(phys_airaccelerate), FT_FLOAT},
 	{"phys_swimaccelerate", CFG_OFS(phys_swimaccelerate), FT_FLOAT},
@@ -78,7 +77,6 @@ fielddef_t cfg_fields[] =
 	{"rs_teleport", CFG_OFS(rs_teleport), FT_FLOAT},
 	{"rs_barrierjump", CFG_OFS(rs_barrierjump), FT_FLOAT},
 	{"rs_startcrouch", CFG_OFS(rs_startcrouch), FT_FLOAT},
-	{"rs_startgrapple", CFG_OFS(rs_startgrapple), FT_FLOAT},
 	{"rs_startwalkoffledge", CFG_OFS(rs_startwalkoffledge), FT_FLOAT},
 	{"rs_startjump", CFG_OFS(rs_startjump), FT_FLOAT},
 	{"rs_rocketjump", CFG_OFS(rs_rocketjump), FT_FLOAT},
@@ -91,7 +89,6 @@ fielddef_t cfg_fields[] =
 	{"rs_falldamage10", CFG_OFS(rs_falldamage10), FT_FLOAT},
 	{"rs_maxfallheight", CFG_OFS(rs_maxfallheight), FT_FLOAT},
 	{"rs_maxjumpfallheight", CFG_OFS(rs_maxjumpfallheight), FT_FLOAT},
-	{"rs_allowladders", CFG_OFS(rs_allowladders), FT_FLOAT},
 	{NULL, 0, 0, 0}
 };
 
@@ -134,7 +131,7 @@ void DefaultCfg(void)
 	cfg.bboxes[0].mins[2] = -24;
 	cfg.bboxes[0].maxs[0] = 15;
 	cfg.bboxes[0].maxs[1] = 15;
-	cfg.bboxes[0].maxs[2] = 32;
+	cfg.bboxes[0].maxs[2] = 56;
 	//bbox 1
 	cfg.bboxes[1].presencetype = PRESENCE_CROUCH;
 	cfg.bboxes[1].flags = 1;
@@ -143,7 +140,7 @@ void DefaultCfg(void)
 	cfg.bboxes[1].mins[2] = -24;
 	cfg.bboxes[1].maxs[0] = 15;
 	cfg.bboxes[1].maxs[1] = 15;
-	cfg.bboxes[1].maxs[2] = 16;
+	cfg.bboxes[1].maxs[2] = 32;
 	//
 	cfg.allpresencetypes = PRESENCE_NORMAL|PRESENCE_CROUCH;
 	cfg.phys_gravitydirection[0]	= 0;

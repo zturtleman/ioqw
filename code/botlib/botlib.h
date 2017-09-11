@@ -395,18 +395,18 @@ name:						default:	module(s):		description:
 "phys_gravity"				"800"		be_aas_move.c	gravity value
 "phys_waterfriction"		"1"			be_aas_move.c	water friction
 "phys_watergravity"			"400"		be_aas_move.c	gravity in water
-"phys_maxvelocity"			"320"		be_aas_move.c	maximum velocity
-"phys_maxwalkvelocity"		"320"		be_aas_move.c	maximum walk velocity
+"phys_maxvelocity"			"300"		be_aas_move.c	maximum velocity
+"phys_maxwalkvelocity"		"300"		be_aas_move.c	maximum walk velocity
 "phys_maxcrouchvelocity"	"100"		be_aas_move.c	maximum crouch velocity
-"phys_maxswimvelocity"		"150"		be_aas_move.c	maximum swim velocity
+"phys_maxswimvelocity"		"100"		be_aas_move.c	maximum swim velocity
 "phys_walkaccelerate"		"10"		be_aas_move.c	walk acceleration
 "phys_airaccelerate"		"1"			be_aas_move.c	air acceleration
 "phys_swimaccelerate"		"4"			be_aas_move.c	swim acceleration
-"phys_maxstep"				"18"		be_aas_move.c	maximum step height
+"phys_maxstep"				"19"		be_aas_move.c	maximum step height
 "phys_maxsteepness"			"0.7"		be_aas_move.c	maximum floor steepness
-"phys_maxbarrier"			"32"		be_aas_move.c	maximum barrier height
-"phys_maxwaterjump"			"19"		be_aas_move.c	maximum waterjump height
-"phys_jumpvel"				"270"		be_aas_move.c	jump z velocity
+"phys_maxwaterjump"			"12"		be_aas_move.c	maximum waterjump height
+"phys_maxbarrier"			"42"		be_aas_move.c	maximum barrier height
+"phys_jumpvel"				"200"		be_aas_move.c	jump z velocity
 "phys_falldelta5"			"40"		be_aas_move.c
 "phys_falldelta10"			"60"		be_aas_move.c
 "rs_waterjump"				"400"		be_aas_move.c
@@ -423,6 +423,7 @@ name:						default:	module(s):		description:
 "rs_startelevator"			"50"		be_aas_move.c
 "rs_falldamage5"			"300"		be_aas_move.c
 "rs_falldamage10"			"500"		be_aas_move.c
+"rs_maxfallheight"			"512"		be_aas_move.c
 "rs_maxjumpfallheight"		"450"		be_aas_move.c
 
 "max_aaslinks"				"4096"		be_aas_sample.c	maximum links in the AAS
