@@ -328,6 +328,32 @@ static float PM_CmdScale(usercmd_t *cmd) {
 
 	total = sqrt(cmd->forwardmove * cmd->forwardmove + cmd->rightmove * cmd->rightmove + cmd->upmove * cmd->upmove);
 	scale = (float)pm->ps->speed * max / (127.0 * total);
+	// ignore if spectator
+	if (pm->ps->persistant[PERS_TEAM] == TEAM_SPECTATOR) {
+		return scale;
+	}
+	// apply speed scale for strafing and going backwards
+	if (cmd->forwardmove < 0) {
+		scale *= 0.75f;
+	} else if (cmd->rightmove) {
+		scale *= 0.9f;
+	}
+	// apply weapon speed scale
+	switch (pm->ps->weapon) {
+		case WP_GAUNTLET:
+		case WP_HANDGUN:
+			scale *= 1.15f;
+			break;
+		case WP_RAILGUN:
+		case WP_BFG:
+			scale *= 0.9f;
+			break;
+		case WP_MISSILELAUNCHER:
+			scale *= 0.75f;
+			break;
+		default:
+			break;
+	}
 
 	return scale;
 }
@@ -1422,7 +1448,7 @@ static void PM_CheckDuck(void) {
 	} else { // stand up if possible
 		if (pm->ps->pm_flags & PMF_DUCKED) {
 			// try to stand up
-			pm->maxs[2] = 32;
+			pm->maxs[2] = 56;
 			pm->trace(&trace, pm->ps->origin, pm->mins, pm->maxs, pm->ps->origin, pm->ps->clientNum, pm->tracemask);
 
 			if (!trace.allsolid) {
@@ -1432,10 +1458,10 @@ static void PM_CheckDuck(void) {
 	}
 
 	if (pm->ps->pm_flags & PMF_DUCKED) {
-		pm->maxs[2] = 16;
+		pm->maxs[2] = 32;
 		pm->ps->viewheight = CROUCH_VIEWHEIGHT;
 	} else {
-		pm->maxs[2] = 32;
+		pm->maxs[2] = 56;
 		pm->ps->viewheight = DEFAULT_VIEWHEIGHT;
 	}
 }
