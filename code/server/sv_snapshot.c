@@ -675,6 +675,10 @@ void SV_SendClientMessages(void) {
 			continue; // not connected
 		}
 
+		if (svs.time - c->lastSnapshotTime < c->snapshotMsec * com_timescale->value) {
+			continue; // It's not time yet
+		}
+
 		if (*c->downloadName) {
 			continue; // Client is downloading, don't send snapshots
 		}
@@ -686,10 +690,6 @@ void SV_SendClientMessages(void) {
 
 		if (!(c->netchan.remoteAddress.type == NA_LOOPBACK || (sv_lanForceRate->integer && Sys_IsLANAddress(c->netchan.remoteAddress)))) {
 			// rate control for clients not on LAN
-			if (svs.time - c->lastSnapshotTime < c->snapshotMsec * com_timescale->value) {
-				continue; // It's not time yet
-			}
-
 			if (SV_RateMsec(c) > 0) {
 				// Not enough time since last packet passed through the line
 				c->rateDelayed = qtrue;
