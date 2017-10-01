@@ -229,6 +229,7 @@ qboolean ShotgunPellet(vec3_t start, vec3_t end, gentity_t *ent) {
 	int damage, i, passent;
 	gentity_t *traceEnt;
 	vec3_t tr_start, tr_end;
+	qboolean hitClient = qfalse;
 
 	passent = ent->s.number;
 
@@ -247,11 +248,12 @@ qboolean ShotgunPellet(vec3_t start, vec3_t end, gentity_t *ent) {
 		if (traceEnt->takedamage) {
 			damage = DEFAULT_SHOTGUN_DAMAGE * s_quadFactor;
 
-			G_Damage(traceEnt, ent, ent, forward, tr.endpos, damage, 0, MOD_SHOTGUN);
-
 			if (LogAccuracyHit(traceEnt, ent)) {
-				return qtrue;
+				hitClient = qtrue;
 			}
+
+			G_Damage(traceEnt, ent, ent, forward, tr.endpos, damage, 0, MOD_SHOTGUN);
+			return hitClient;
 		}
 
 		return qfalse;
@@ -553,6 +555,10 @@ void Weapon_Beamgun_Fire(gentity_t *ent) {
 		traceEnt = &g_entities[tr.entityNum];
 
 		if (traceEnt->takedamage) {
+			if (LogAccuracyHit(traceEnt, ent)) {
+				ent->client->accuracy_hits++;
+			}
+
 			G_Damage(traceEnt, ent, ent, forward, tr.endpos, damage, 0, MOD_BEAMGUN);
 		}
 
@@ -561,10 +567,6 @@ void Weapon_Beamgun_Fire(gentity_t *ent) {
 			tent->s.otherEntityNum = traceEnt->s.number;
 			tent->s.eventParm = DirToByte(tr.plane.normal);
 			tent->s.weapon = ent->s.weapon;
-
-			if (LogAccuracyHit(traceEnt, ent)) {
-				ent->client->accuracy_hits++;
-			}
 		} else if (!(tr.surfaceFlags & SURF_NOIMPACT)) {
 			tent = G_TempEntity(tr.endpos, EV_MISSILE_MISS);
 			tent->s.eventParm = DirToByte(tr.plane.normal);

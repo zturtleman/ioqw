@@ -619,7 +619,7 @@ ifdef MINGW
     CLIENT_LDFLAGS += -mwindows
   endif
   CLIENT_LIBS = -lgdi32 -lole32
-  RENDERER_LIBS = -lgdi32 -lole32 -lopengl32
+  RENDERER_LIBS = -lgdi32 -lole32 -lopengl32 -static-libgcc
 
   ifeq ($(USE_FREETYPE),1)
     ifneq ($(USE_INTERNAL_FREETYPE),1)
