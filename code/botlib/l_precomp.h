@@ -26,9 +26,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  Pre compiler.
 **************************************************************************************************************************************/
 
-#ifndef MAX_PATH
-#define MAX_PATH MAX_QPATH
-#endif
 #ifndef PATH_SEPERATORSTR
 #if defined(WIN32)|defined(_WIN32)|defined(__NT__)|defined(__WINDOWS__)|defined(__WINDOWS_386__)
 #define PATHSEPERATOR_STR "\\"

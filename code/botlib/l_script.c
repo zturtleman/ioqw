@@ -137,9 +137,7 @@ punctuation_t default_punctuations[] = {
 #endif // DOLLAR
 	{NULL, 0, NULL}
 };
-#ifdef BSPC
-char basefolder[MAX_PATH];
-#else
+#ifdef BOTLIB
 char basefolder[MAX_QPATH];
 #endif
 /*
@@ -1514,5 +1512,7 @@ PS_SetBaseFolder
 =======================================================================================================================================
 */
 void PS_SetBaseFolder(char *path) {
+#ifdef BOTLIB
 	Com_sprintf(basefolder, sizeof(basefolder), "%s", path);
+#endif
 }
