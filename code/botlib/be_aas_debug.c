@@ -803,4 +803,5 @@ void AAS_FloodAreas(vec3_t origin) {
 	cluster = AAS_AreaCluster(areanum);
 
 	AAS_FloodAreas_r(areanum, cluster, done);
+	AAS_FloodAreas_r(areanum, cluster, done);
 }
