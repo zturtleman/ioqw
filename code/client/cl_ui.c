@@ -410,8 +410,8 @@ LAN_CompareServers
 =======================================================================================================================================
 */
 static int LAN_CompareServers(int source, int sortKey, int sortDir, int s1, int s2) {
-	int res;
 	serverInfo_t *server1, *server2;
+	int res, clients1, clients2;
 
 	server1 = LAN_GetServerPtr(source, s1);
 	server2 = LAN_GetServerPtr(source, s2);
@@ -433,30 +433,26 @@ static int LAN_CompareServers(int source, int sortKey, int sortDir, int s1, int 
 		case SORT_MAXCLIENTS:
 		case SORT_HUMANS:
 		case SORT_BOTS:
-			{
-				int clients1, clients2;
+			if (sortKey == SORT_MAXCLIENTS) {
+				clients1 = server1->maxClients;
+				clients2 = server2->maxClients;
+			} else if (sortKey == SORT_HUMANS) {
+				clients1 = server1->g_humanplayers;
+				clients2 = server2->g_humanplayers;
+			} else if (sortKey == SORT_BOTS) {
+				clients1 = server1->clients - server1->g_humanplayers;
+				clients2 = server2->clients - server2->g_humanplayers;
+			} else {
+				clients1 = server1->clients;
+				clients2 = server2->clients;
+			}
 
-				if (sortKey == SORT_MAXCLIENTS) {
-					clients1 = server1->maxClients;
-					clients2 = server2->maxClients;
-				} else if (sortKey == SORT_HUMANS) {
-					clients1 = server1->g_humanplayers;
-					clients2 = server2->g_humanplayers;
-				} else if (sortKey == SORT_BOTS) {
-					clients1 = server1->clients - server1->g_humanplayers;
-					clients2 = server2->clients - server2->g_humanplayers;
-				} else {
-					clients1 = server1->clients;
-					clients2 = server2->clients;
-				}
-
-				if (clients1 < clients2) {
-					res = -1;
-				} else if (clients1 > clients2) {
-					res = 1;
-				} else {
-					res = 0;
-				}
+			if (clients1 < clients2) {
+				res = -1;
+			} else if (clients1 > clients2) {
+				res = 1;
+			} else {
+				res = 0;
 			}
 
 			break;

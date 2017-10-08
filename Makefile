@@ -27,7 +27,7 @@ ifndef BUILD_BASEGAME
   BUILD_BASEGAME =
 endif
 ifndef BUILD_MISSIONPACK
-  BUILD_MISSIONPACK=0
+  BUILD_MISSIONPACK=
 endif
 ifndef BUILD_RENDERER_OPENGL2
   BUILD_RENDERER_OPENGL2=
@@ -279,6 +279,7 @@ Q3LCCSRCDIR=$(MOUNT_DIR)/tools/lcc/src
 AUTOUPDATERSRCDIR=$(MOUNT_DIR)/autoupdater
 LIBTOMCRYPTSRCDIR=$(AUTOUPDATERSRCDIR)/rsa_tools/libtomcrypt-1.17
 TOMSFASTMATHSRCDIR=$(AUTOUPDATERSRCDIR)/rsa_tools/tomsfastmath-0.13.1
+LOKISETUPDIR=misc/setup
 NSISDIR=misc/nsis
 SDLHDIR=$(MOUNT_DIR)/SDL2
 LIBSDIR=$(MOUNT_DIR)/libs
@@ -2594,30 +2595,12 @@ Q3UIOBJ_ = \
   $(B)/$(BASEGAME)/ui/ui_confirm.o \
   $(B)/$(BASEGAME)/ui/ui_connect.o \
   $(B)/$(BASEGAME)/ui/ui_controls2.o \
-  $(B)/$(BASEGAME)/ui/ui_createserver_bot.o \
-  $(B)/$(BASEGAME)/ui/ui_createserver_botsel.o \
-  $(B)/$(BASEGAME)/ui/ui_createserver_common.o \
-  $(B)/$(BASEGAME)/ui/ui_createserver_custommaps.o \
-  $(B)/$(BASEGAME)/ui/ui_createserver_data.o \
-  $(B)/$(BASEGAME)/ui/ui_createserver_map.o \
-  $(B)/$(BASEGAME)/ui/ui_createserver_mapsel.o \
-  $(B)/$(BASEGAME)/ui/ui_createserver_script.o \
-  $(B)/$(BASEGAME)/ui/ui_createserver_server.o \
   $(B)/$(BASEGAME)/ui/ui_credits.o \
   $(B)/$(BASEGAME)/ui/ui_demo2.o \
   $(B)/$(BASEGAME)/ui/ui_display.o \
   $(B)/$(BASEGAME)/ui/ui_firstrun.o \
   $(B)/$(BASEGAME)/ui/ui_gameinfo.o \
   $(B)/$(BASEGAME)/ui/ui_ingame.o \
-  $(B)/$(BASEGAME)/ui/ui_ingame_callvote.o \
-  $(B)/$(BASEGAME)/ui/ui_ingame_callvote_capturelimit.o \
-  $(B)/$(BASEGAME)/ui/ui_ingame_callvote_fraglimit.o \
-  $(B)/$(BASEGAME)/ui/ui_ingame_callvote_gametype.o \
-  $(B)/$(BASEGAME)/ui/ui_ingame_callvote_kick.o \
-  $(B)/$(BASEGAME)/ui/ui_ingame_callvote_map.o \
-  $(B)/$(BASEGAME)/ui/ui_ingame_callvote_timelimit.o \
-  $(B)/$(BASEGAME)/ui/ui_ingame_command.o \
-  $(B)/$(BASEGAME)/ui/ui_ingame_vote.o \
   $(B)/$(BASEGAME)/ui/ui_loadconfig.o \
   $(B)/$(BASEGAME)/ui/ui_menu.o \
   $(B)/$(BASEGAME)/ui/ui_mfield.o \
@@ -3034,6 +3017,8 @@ endif
 clean: clean-debug clean-release
 ifeq ($(PLATFORM),mingw32)
 	@$(MAKE) -C $(NSISDIR) clean
+else
+	@$(MAKE) -C $(LOKISETUPDIR) clean
 endif
 
 clean-debug:
@@ -3076,6 +3061,8 @@ ifdef MINGW
 		USE_INTERNAL_OPUS=$(USE_INTERNAL_OPUS) \
 		USE_INTERNAL_ZLIB=$(USE_INTERNAL_ZLIB) \
 		USE_INTERNAL_JPEG=$(USE_INTERNAL_JPEG)
+else
+	@$(MAKE) VERSION=$(VERSION) -C $(LOKISETUPDIR) V=$(V)
 endif
 
 dist:

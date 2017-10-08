@@ -1009,7 +1009,6 @@ typedef enum {
 #define ENTITYNUM_MAX_NORMAL (MAX_GENTITIES - 2)
 #define MODELINDEX_BITS 10
 // these are networked using the modelindex and/or modelindex2 field, must fit in MODELINDEX_BITS
-#define MAX_SUBMODELS 1024 // max bsp models, q3map2 limits to 1024 via MAX_MAP_MODELS
 #define MAX_ITEMS 256 // max item types
 #define MAX_MODELS 256 // max model filenames set by game VM
 #define MAX_SOUNDS 256 // this is sent over the net as 8 bits (in eventParm), so they cannot be blindly increased

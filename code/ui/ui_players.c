@@ -39,6 +39,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 static int dp_realtime;
 static float jumpHeight;
+sfxHandle_t weaponChangeSound;
 
 /*
 =======================================================================================================================================
@@ -368,11 +369,11 @@ static void UI_RunLerpFrame(playerInfo_t *ci, lerpFrame_t *lf, int newAnimation)
 		lf->oldFrame = lf->frame;
 		lf->oldFrameTime = lf->frameTime;
 		// get the next frame based on the animation
+		anim = lf->animation;
+
 		if (!anim->frameLerp) {
 			return; // shouldn't happen
 		}
-
-		anim = lf->animation;
 
 		if (dp_realtime < lf->animationTime) {
 			lf->frameTime = lf->animationTime; // initial lerp
@@ -436,7 +437,7 @@ UI_PlayerAnimation
 static void UI_PlayerAnimation(playerInfo_t *pi, int *legsOld, int *legs, float *legsBackLerp, int *torsoOld, int *torso, float *torsoBackLerp) {
 
 	// legs animation
-	pi->legsAnimationTimer -= uis.frametime;
+	pi->legsAnimationTimer -= uiInfo.uiDC.frameTime;
 
 	if (pi->legsAnimationTimer < 0) {
 		pi->legsAnimationTimer = 0;
@@ -454,7 +455,7 @@ static void UI_PlayerAnimation(playerInfo_t *pi, int *legsOld, int *legs, float 
 	*legs = pi->legs.frame;
 	*legsBackLerp = pi->legs.backlerp;
 	// torso animation
-	pi->torsoAnimationTimer -= uis.frametime;
+	pi->torsoAnimationTimer -= uiInfo.uiDC.frameTime;
 
 	if (pi->torsoAnimationTimer < 0) {
 		pi->torsoAnimationTimer = 0;
@@ -503,7 +504,7 @@ static void UI_SwingAngles(float destination, float swingTolerance, float clampT
 	}
 	// swing towards the destination angle
 	if (swing >= 0) {
-		move = uis.frametime * scale * speed;
+		move = uiInfo.uiDC.frameTime * scale * speed;
 
 		if (move >= swing) {
 			move = swing;
@@ -512,7 +513,7 @@ static void UI_SwingAngles(float destination, float swingTolerance, float clampT
 
 		*angle = AngleMod(*angle + move);
 	} else if (swing < 0) {
-		move = uis.frametime * scale * -speed;
+		move = uiInfo.uiDC.frameTime * scale * -speed;
 
 		if (move <= swing) {
 			move = swing;
@@ -596,14 +597,15 @@ static void UI_PlayerAngles(playerInfo_t *pi, vec3_t legs[3], vec3_t torso[3], v
 	headAngles[YAW] = AngleMod(headAngles[YAW]);
 	VectorClear(legsAngles);
 	VectorClear(torsoAngles);
+
 	// --------- yaw -------------
 
 	// allow yaw to drift a bit
 	if ((pi->legsAnim & ~ANIM_TOGGLEBIT) != LEGS_IDLE || (pi->torsoAnim & ~ANIM_TOGGLEBIT) != TORSO_STAND) {
 		// if not standing still, always point all in the same direction
-		pi->torso.yawing = qtrue;	// always center
-		pi->torso.pitching = qtrue;	// always center
-		pi->legs.yawing = qtrue;	// always center
+		pi->torso.yawing = qtrue; // always center
+		pi->torso.pitching = qtrue; // always center
+		pi->legs.yawing = qtrue; // always center
 	}
 	// adjust legs for movement dir
 	adjust = UI_MovedirAdjustment(pi);
@@ -615,6 +617,7 @@ static void UI_PlayerAngles(playerInfo_t *pi, vec3_t legs[3], vec3_t torso[3], v
 
 	torsoAngles[YAW] = pi->torso.yawAngle;
 	legsAngles[YAW] = pi->legs.yawAngle;
+
 	// --------- pitch -------------
 
 	// only show a fraction of the pitch angle in the torso
@@ -728,6 +731,10 @@ void UI_DrawPlayer(float x, float y, float w, float h, playerInfo_t *pi, int tim
 	if (!pi->legsModel || !pi->torsoModel || !pi->headModel || !pi->animations[0].numFrames) {
 		return;
 	}
+	// this allows the ui to cache the player model on the main menu
+	if (w == 0 || h == 0) {
+		return;
+	}
 
 	dp_realtime = time;
 
@@ -759,16 +766,15 @@ void UI_DrawPlayer(float x, float y, float w, float h, playerInfo_t *pi, int tim
 	refdef.y = y;
 	refdef.width = w;
 	refdef.height = h;
-	refdef.fov_x = (int)((float)refdef.width / uis.xscale / 640.0f * 90.0f);
-	xx = refdef.width / uis.xscale / tan(refdef.fov_x / 360 * M_PI);
-	refdef.fov_y = atan2(refdef.height / uis.yscale, xx);
-	refdef.fov_y *= (360 / M_PI);
+	refdef.fov_x = (int)((float)refdef.width / uiInfo.uiDC.xscale / 640.0f * 90.0f);
+	xx = refdef.width / uiInfo.uiDC.xscale / tan(refdef.fov_x / 360 * M_PI);
+	refdef.fov_y = atan2(refdef.height / uiInfo.uiDC.yscale, xx);
+	refdef.fov_y *= (360 / (float)M_PI);
 	// calculate distance so the player nearly fills the box
 	len = 0.7 * (maxs[2] - mins[2]);
 	origin[0] = len / tan(DEG2RAD(refdef.fov_x) * 0.5);
 	origin[1] = 0.5 * (mins[1] + maxs[1]);
 	origin[2] = -0.5 * (mins[2] + maxs[2]);
-
 	refdef.time = dp_realtime;
 
 	trap_R_ClearScene();
@@ -868,6 +874,7 @@ void UI_DrawPlayer(float x, float y, float w, float h, playerInfo_t *pi, int tim
 			UI_PositionEntityOnTag(&flash, &gun, pi->weaponModel, "tag_flash");
 
 			flash.renderfx = renderfx;
+
 			trap_R_AddRefEntityToScene(&flash);
 		}
 		// make a dlight for the flash
@@ -895,20 +902,123 @@ void UI_DrawPlayer(float x, float y, float w, float h, playerInfo_t *pi, int tim
 
 /*
 =======================================================================================================================================
+UI_FileExists
+=======================================================================================================================================
+*/
+static qboolean UI_FileExists(const char *filename) {
+	int len;
+
+	len = trap_FS_FOpenFile(filename, NULL, FS_READ);
+
+	if (len > 0) {
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
+/*
+=======================================================================================================================================
+UI_FindClientHeadFile
+=======================================================================================================================================
+*/
+static qboolean UI_FindClientHeadFile(char *filename, int length, const char *teamName, const char *headModelName, const char *headSkinName, const char *base, const char *ext) {
+	char *team, *headsFolder;
+	int i;
+
+	team = "default";
+
+	if (headModelName[0] == '*') {
+		headsFolder = "heads/";
+		headModelName++;
+	} else {
+		headsFolder = "";
+	}
+
+	while (1) {
+		for (i = 0; i < 2; i++) {
+			if (i == 0 && teamName && *teamName) {
+				Com_sprintf(filename, length, "models/players/%s%s/%s/%s%s_%s.%s", headsFolder, headModelName, headSkinName, teamName, base, team, ext);
+			} else {
+				Com_sprintf(filename, length, "models/players/%s%s/%s/%s_%s.%s", headsFolder, headModelName, headSkinName, base, team, ext);
+			}
+
+			if (UI_FileExists(filename)) {
+				return qtrue;
+			}
+
+			if (i == 0 && teamName && *teamName) {
+				Com_sprintf(filename, length, "models/players/%s%s/%s%s_%s.%s", headsFolder, headModelName, teamName, base, headSkinName, ext);
+			} else {
+				Com_sprintf(filename, length, "models/players/%s%s/%s_%s.%s", headsFolder, headModelName, base, headSkinName, ext);
+			}
+
+			if (UI_FileExists(filename)) {
+				return qtrue;
+			}
+
+			if (!teamName || !*teamName) {
+				break;
+			}
+		}
+		// if tried the heads folder first
+		if (headsFolder[0]) {
+			break;
+		}
+
+		headsFolder = "heads/";
+	}
+
+	return qfalse;
+}
+
+/*
+=======================================================================================================================================
 UI_RegisterClientSkin
 =======================================================================================================================================
 */
-static qboolean UI_RegisterClientSkin(playerInfo_t *pi, const char *modelName, const char *skinName) {
+static qboolean UI_RegisterClientSkin(playerInfo_t *pi, const char *modelName, const char *skinName, const char *headModelName, const char *headSkinName, const char *teamName) {
 	char filename[MAX_QPATH];
 
-	Com_sprintf(filename, sizeof(filename), "models/players/%s/lower_%s.skin", modelName, skinName);
+	if (teamName && *teamName) {
+		Com_sprintf(filename, sizeof(filename), "models/players/%s/%s/lower_%s.skin", modelName, teamName, skinName);
+	} else {
+		Com_sprintf(filename, sizeof(filename), "models/players/%s/lower_%s.skin", modelName, skinName);
+	}
+
 	pi->legsSkin = trap_R_RegisterSkin(filename);
 
-	Com_sprintf(filename, sizeof(filename), "models/players/%s/upper_%s.skin", modelName, skinName);
+	if (!pi->legsSkin) {
+		if (teamName && *teamName) {
+			Com_sprintf(filename, sizeof(filename), "models/players/characters/%s/%s/lower_%s.skin", modelName, teamName, skinName);
+		} else {
+			Com_sprintf(filename, sizeof(filename), "models/players/characters/%s/lower_%s.skin", modelName, skinName);
+		}
+
+		pi->legsSkin = trap_R_RegisterSkin(filename);
+	}
+
+	if (teamName && *teamName) {
+		Com_sprintf(filename, sizeof(filename), "models/players/%s/%s/upper_%s.skin", modelName, teamName, skinName);
+	} else {
+		Com_sprintf(filename, sizeof(filename), "models/players/%s/upper_%s.skin", modelName, skinName);
+	}
+
 	pi->torsoSkin = trap_R_RegisterSkin(filename);
 
-	Com_sprintf(filename, sizeof(filename), "models/players/%s/head_%s.skin", modelName, skinName);
-	pi->headSkin = trap_R_RegisterSkin(filename);
+	if (!pi->torsoSkin) {
+		if (teamName && *teamName) {
+			Com_sprintf(filename, sizeof(filename), "models/players/characters/%s/%s/upper_%s.skin", modelName, teamName, skinName);
+		} else {
+			Com_sprintf(filename, sizeof(filename), "models/players/characters/%s/upper_%s.skin", modelName, skinName);
+		}
+
+		pi->torsoSkin = trap_R_RegisterSkin(filename);
+	}
+
+	if (UI_FindClientHeadFile(filename, sizeof(filename), teamName, headModelName, headSkinName, "head", "skin")) {
+		pi->headSkin = trap_R_RegisterSkin(filename);
+	}
 
 	if (!pi->legsSkin || !pi->torsoSkin || !pi->headSkin) {
 		return qfalse;
@@ -955,6 +1065,8 @@ static qboolean UI_ParseAnimationFile(const char *filename, playerInfo_t *pi) {
 	trap_FS_Read(text, len, f);
 	text[len] = 0;
 	trap_FS_FCloseFile(f);
+
+	COM_Compress(text);
 	// parse the text
 	text_p = text;
 	skip = 0; // quite the compiler warning
@@ -1059,6 +1171,7 @@ static qboolean UI_ParseAnimationFile(const char *filename, playerInfo_t *pi) {
 		}
 
 		animations[i].loopFrames = atoi(token);
+
 		token = COM_Parse(&text_p);
 
 		if (!token[0]) {
@@ -1088,9 +1201,11 @@ static qboolean UI_ParseAnimationFile(const char *filename, playerInfo_t *pi) {
 UI_RegisterClientModelname
 =======================================================================================================================================
 */
-qboolean UI_RegisterClientModelname(playerInfo_t *pi, const char *modelSkinName) {
+qboolean UI_RegisterClientModelname(playerInfo_t *pi, const char *modelSkinName, const char *headModelSkinName, const char *teamName) {
 	char modelName[MAX_QPATH];
 	char skinName[MAX_QPATH];
+	char headModelName[MAX_QPATH];
+	char headSkinName[MAX_QPATH];
 	char filename[MAX_QPATH];
 	char *slash;
 
@@ -1110,8 +1225,19 @@ qboolean UI_RegisterClientModelname(playerInfo_t *pi, const char *modelSkinName)
 		Q_strncpyz(skinName, "default", sizeof(skinName));
 	} else {
 		Q_strncpyz(skinName, slash + 1, sizeof(skinName));
-		// truncate modelName
-		*slash = 0;
+		*slash = '\0';
+	}
+
+	Q_strncpyz(headModelName, headModelSkinName, sizeof(headModelName));
+
+	slash = strchr(headModelName, '/');
+
+	if (!slash) {
+		// modelName did not include a skin name
+		Q_strncpyz(headSkinName, "default", sizeof(skinName));
+	} else {
+		Q_strncpyz(headSkinName, slash + 1, sizeof(skinName));
+		*slash = '\0';
 	}
 	// load cmodels before models so filecache works
 	Com_sprintf(filename, sizeof(filename), "models/players/%s/lower.md3", modelName);
@@ -1119,28 +1245,52 @@ qboolean UI_RegisterClientModelname(playerInfo_t *pi, const char *modelSkinName)
 	pi->legsModel = trap_R_RegisterModel(filename);
 
 	if (!pi->legsModel) {
-		Com_Printf("Failed to load model file %s\n", filename);
-		return qfalse;
+		Com_sprintf(filename, sizeof(filename), "models/players/characters/%s/lower.md3", modelName);
+
+		pi->legsModel = trap_R_RegisterModel(filename);
+
+		if (!pi->legsModel) {
+			Com_Printf("Failed to load model file %s\n", filename);
+			return qfalse;
+		}
 	}
 
 	Com_sprintf(filename, sizeof(filename), "models/players/%s/upper.md3", modelName);
+
 	pi->torsoModel = trap_R_RegisterModel(filename);
 
 	if (!pi->torsoModel) {
-		Com_Printf("Failed to load model file %s\n", filename);
-		return qfalse;
+		Com_sprintf(filename, sizeof(filename), "models/players/characters/%s/upper.md3", modelName);
+
+		pi->torsoModel = trap_R_RegisterModel(filename);
+
+		if (!pi->torsoModel) {
+			Com_Printf("Failed to load model file %s\n", filename);
+			return qfalse;
+		}
 	}
 
-	Com_sprintf(filename, sizeof(filename), "models/players/%s/head.md3", modelName);
+	if (headModelName[0] == '*') {
+		Com_sprintf(filename, sizeof(filename), "models/players/heads/%s/%s.md3", &headModelName[1], &headModelName[1]);
+	} else {
+		Com_sprintf(filename, sizeof(filename), "models/players/%s/head.md3", headModelName);
+	}
+
 	pi->headModel = trap_R_RegisterModel(filename);
+
+	if (!pi->headModel && headModelName[0] != '*') {
+		Com_sprintf(filename, sizeof(filename), "models/players/heads/%s/%s.md3", headModelName, headModelName);
+
+		pi->headModel = trap_R_RegisterModel(filename);
+	}
 
 	if (!pi->headModel) {
 		Com_Printf("Failed to load model file %s\n", filename);
 		return qfalse;
 	}
 	// if any skins failed to load, fall back to default
-	if (!UI_RegisterClientSkin(pi, modelName, skinName)) {
-		if (!UI_RegisterClientSkin(pi, modelName, "default")) {
+	if (!UI_RegisterClientSkin(pi, modelName, skinName, headModelName, headSkinName, teamName)) {
+		if (!UI_RegisterClientSkin(pi, modelName, "default", headModelName, "default", teamName)) {
 			Com_Printf("Failed to load skin file: %s : %s\n", modelName, skinName);
 			return qfalse;
 		}
@@ -1149,8 +1299,12 @@ qboolean UI_RegisterClientModelname(playerInfo_t *pi, const char *modelSkinName)
 	Com_sprintf(filename, sizeof(filename), "models/players/%s/animation.cfg", modelName);
 
 	if (!UI_ParseAnimationFile(filename, pi)) {
-		Com_Printf("Failed to load animation file %s\n", filename);
-		return qfalse;
+		Com_sprintf(filename, sizeof(filename), "models/players/characters/%s/animation.cfg", modelName);
+
+		if (!UI_ParseAnimationFile(filename, pi)) {
+			Com_Printf("Failed to load animation file %s\n", filename);
+			return qfalse;
+		}
 	}
 
 	return qtrue;
@@ -1161,11 +1315,11 @@ qboolean UI_RegisterClientModelname(playerInfo_t *pi, const char *modelSkinName)
 UI_PlayerInfo_SetModel
 =======================================================================================================================================
 */
-void UI_PlayerInfo_SetModel(playerInfo_t *pi, const char *model) {
+void UI_PlayerInfo_SetModel(playerInfo_t *pi, const char *model, const char *headmodel, char *teamName) {
 
 	memset(pi, 0, sizeof(*pi));
 
-	UI_RegisterClientModelname(pi, model);
+	UI_RegisterClientModelname(pi, model, headmodel, teamName);
 
 	pi->weapon = WP_MACHINEGUN;
 	pi->currentWeapon = pi->weapon;

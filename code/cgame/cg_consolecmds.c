@@ -27,7 +27,10 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 **************************************************************************************************************************************/
 
 #include "cg_local.h"
-
+#ifdef MISSIONPACK
+#include "../ui/ui_shared.h"
+extern menuDef_t *menuScoreboard;
+#endif
 /*
 =======================================================================================================================================
 CG_TargetCommand_f
@@ -55,7 +58,6 @@ Keybinding command.
 =======================================================================================================================================
 */
 static void CG_SizeUp_f(void) {
-	// manually clamp here so cvar range warning isn't shown
 	trap_Cvar_SetValue("cg_viewsize", Com_Clamp(30, 100, (int)(cg_viewsize.integer + 10)));
 }
 
@@ -67,7 +69,6 @@ Keybinding command.
 =======================================================================================================================================
 */
 static void CG_SizeDown_f(void) {
-	// manually clamp here so cvar range warning isn't shown
 	trap_Cvar_SetValue("cg_viewsize", Com_Clamp(30, 100, (int)(cg_viewsize.integer - 10)));
 }
 
@@ -120,6 +121,62 @@ static void CG_ScoresUp_f(void) {
 	}
 }
 #ifdef MISSIONPACK
+void Menu_Reset(void); // FIXME: add to right include file
+/*
+=======================================================================================================================================
+CG_LoadHud_f
+=======================================================================================================================================
+*/
+static void CG_LoadHud_f(void) {
+	char buff[1024];
+	const char *hudSet;
+
+	memset(buff, 0, sizeof(buff));
+
+	String_Init();
+	Menu_Reset();
+
+	trap_Cvar_VariableStringBuffer("cg_hudFiles", buff, sizeof(buff));
+
+	hudSet = buff;
+
+	if (hudSet[0] == '\0') {
+		hudSet = "ui/hud.txt";
+	}
+
+	CG_LoadMenus(hudSet);
+
+	menuScoreboard = NULL;
+}
+
+/*
+=======================================================================================================================================
+CG_scrollScoresDown_f
+=======================================================================================================================================
+*/
+static void CG_scrollScoresDown_f(void) {
+
+	if (menuScoreboard && cg.scoreBoardShowing) {
+		Menu_ScrollFeeder(menuScoreboard, FEEDER_SCOREBOARD, qtrue);
+		Menu_ScrollFeeder(menuScoreboard, FEEDER_REDTEAM_LIST, qtrue);
+		Menu_ScrollFeeder(menuScoreboard, FEEDER_BLUETEAM_LIST, qtrue);
+	}
+}
+
+/*
+=======================================================================================================================================
+CG_scrollScoresUp_f
+=======================================================================================================================================
+*/
+static void CG_scrollScoresUp_f(void) {
+
+	if (menuScoreboard && cg.scoreBoardShowing) {
+		Menu_ScrollFeeder(menuScoreboard, FEEDER_SCOREBOARD, qfalse);
+		Menu_ScrollFeeder(menuScoreboard, FEEDER_REDTEAM_LIST, qfalse);
+		Menu_ScrollFeeder(menuScoreboard, FEEDER_BLUETEAM_LIST, qfalse);
+	}
+}
+
 /*
 =======================================================================================================================================
 CG_spWin_f
@@ -474,6 +531,36 @@ static void CG_TaskSuicide_f(void) {
 	Com_sprintf(command, 128, "tell %i suicide", clientNum);
 	trap_SendClientCommand(command);
 }
+
+/*
+=======================================================================================================================================
+CG_TeamMenu_f
+=======================================================================================================================================
+*/
+/*
+static void CG_TeamMenu_f(void) {
+
+	if (trap_Key_GetCatcher() & KEYCATCH_CGAME) {
+		CG_EventHandling(CGAME_EVENT_NONE);
+		trap_Key_SetCatcher(0);
+	} else {
+		CG_EventHandling(CGAME_EVENT_TEAMMENU);
+		//trap_Key_SetCatcher(KEYCATCH_CGAME);
+	}
+}
+*/
+/*
+=======================================================================================================================================
+CG_EditHud_f
+=======================================================================================================================================
+*/
+/*
+static void CG_EditHud_f(void) {
+
+	//cls.keyCatchers ^= KEYCATCH_CGAME;
+	//VM_Call(cgvm, CG_EVENT_HANDLING, (cls.keyCatchers & KEYCATCH_CGAME) ? CGAME_EVENT_EDITHUD : CGAME_EVENT_NONE);
+}
+*/
 #endif
 /*
 =======================================================================================================================================
@@ -566,6 +653,7 @@ static consoleCommand_t commands[] = {
 	{"vtell_target", CG_VoiceTellTarget_f},
 #ifdef MISSIONPACK
 	{"vtell_attacker", CG_VoiceTellAttacker_f},
+	{"loadhud", CG_LoadHud_f},
 	{"nextTeamMember", CG_NextTeamMember_f},
 	{"prevTeamMember", CG_PrevTeamMember_f},
 	{"nextOrder", CG_NextOrder_f},
@@ -587,6 +675,8 @@ static consoleCommand_t commands[] = {
 	{"tauntGauntlet", CG_TauntGauntlet_f},
 	{"spWin", CG_spWin_f},
 	{"spLose", CG_spLose_f},
+	{"scoresDown", CG_scrollScoresDown_f},
+	{"scoresUp", CG_scrollScoresUp_f},
 #endif
 	{"startOrbit", CG_StartOrbit_f},
 	//{"camera", CG_Camera_f},

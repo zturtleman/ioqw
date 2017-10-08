@@ -28,6 +28,9 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #include "../qcommon/q_shared.h"
 #include "l_memory.h"
+#include "l_script.h"
+#include "l_precomp.h"
+#include "l_struct.h"
 #include "aasfile.h"
 #include "botlib.h"
 #include "be_aas.h"
@@ -56,6 +59,9 @@ typedef struct bsp_entity_s {
 typedef struct bsp_s {
 	// true when bsp file is loaded
 	int loaded;
+	// entity data
+	int entdatasize;
+	char *dentdata;
 	// bsp entities
 	int numentities;
 	bsp_entity_t entities[MAX_BSPENTITIES];
@@ -319,30 +325,27 @@ AAS_ParseBSPEntities
 =======================================================================================================================================
 */
 void AAS_ParseBSPEntities(void) {
-	char keyname[MAX_TOKEN_CHARS];
-	char com_token[MAX_TOKEN_CHARS];
+	script_t *script;
+	token_t token;
 	bsp_entity_t *ent;
 	bsp_epair_t *epair;
-	int offset;
+
+	script = LoadScriptMemory(bspworld.dentdata, bspworld.entdatasize, "entdata");
+
+	SetScriptFlags(script, SCFL_NOSTRINGWHITESPACES|SCFL_NOSTRINGESCAPECHARS); // SCFL_PRIMITIVE
 
 	bspworld.numentities = 1;
-	offset = 0;
 
-	while (1) {
-		// parse the opening brace
-		if (!botimport.GetEntityToken(&offset, com_token, sizeof(com_token))) {
-			// end of spawn string
-			break;
-		}
-
-		if (com_token[0] != '{') {
+	while (PS_ReadToken(script, &token)) {
+		if (strcmp(token.string, "{")) {
+			ScriptError(script, "invalid %s", token.string);
 			AAS_FreeBSPEntities();
-			botimport.Print(PRT_ERROR, "AAS_ParseBSPEntities: found %s when expecting {\n", com_token);
-			break;
+			FreeScript(script);
+			return;
 		}
 
 		if (bspworld.numentities >= MAX_BSPENTITIES) {
-			botimport.Print(PRT_WARNING, "AAS_ParseBSPEntities: too many entities in BSP file\n");
+			botimport.Print(PRT_MESSAGE, "too many entities in BSP file\n");
 			break;
 		}
 
@@ -351,43 +354,51 @@ void AAS_ParseBSPEntities(void) {
 		bspworld.numentities++;
 
 		ent->epairs = NULL;
-		// go through all the key/value pairs
-		while (1) {
-			// parse key
-			if (!botimport.GetEntityToken(&offset, keyname, sizeof(keyname))) {
-				AAS_FreeBSPEntities();
-				botimport.Print(PRT_ERROR, "AAS_ParseBSPEntities: EOF without closing brace\n");
-				return;
-			}
 
-			if (keyname[0] == '}') {
+		while (PS_ReadToken(script, &token)) {
+			if (!strcmp(token.string, "}")) {
 				break;
-			}
-			// parse value
-			if (!botimport.GetEntityToken(&offset, com_token, sizeof(com_token))) {
-				AAS_FreeBSPEntities();
-				botimport.Print(PRT_ERROR, "AAS_ParseBSPEntities: EOF without closing brace\n");
-				return;
-			}
-
-			if (com_token[0] == '}') {
-				AAS_FreeBSPEntities();
-				botimport.Print(PRT_ERROR, "AAS_ParseBSPEntities: closing brace without data\n");
-				return;
 			}
 
 			epair = (bsp_epair_t *)GetClearedHunkMemory(sizeof(bsp_epair_t));
 			epair->next = ent->epairs;
 			ent->epairs = epair;
-			epair->key = (char *)GetHunkMemory(strlen(keyname) + 1);
 
-			strcpy(epair->key, keyname);
+			if (token.type != TT_STRING) {
+				ScriptError(script, "invalid %s", token.string);
+				AAS_FreeBSPEntities();
+				FreeScript(script);
+				return;
+			}
 
-			epair->value = (char *)GetHunkMemory(strlen(com_token) + 1);
+			StripDoubleQuotes(token.string);
 
-			strcpy(epair->value, com_token);
+			epair->key = (char *)GetHunkMemory(strlen(token.string) + 1);
+
+			strcpy(epair->key, token.string);
+
+			if (!PS_ExpectTokenType(script, TT_STRING, 0, &token)) {
+				AAS_FreeBSPEntities();
+				FreeScript(script);
+				return;
+			}
+
+			StripDoubleQuotes(token.string);
+
+			epair->value = (char *)GetHunkMemory(strlen(token.string) + 1);
+
+			strcpy(epair->value, token.string);
+		}
+
+		if (strcmp(token.string, "}")) {
+			ScriptError(script, "missing }");
+			AAS_FreeBSPEntities();
+			FreeScript(script);
+			return;
 		}
 	}
+
+	FreeScript(script);
 }
 
 /*
@@ -408,6 +419,14 @@ void AAS_DumpBSPData(void) {
 
 	AAS_FreeBSPEntities();
 
+	if (bspworld.dentdata) {
+		FreeMemory(bspworld.dentdata);
+	}
+
+	bspworld.dentdata = NULL;
+	bspworld.entdatasize = 0;
+	bspworld.loaded = qfalse;
+
 	Com_Memset(&bspworld, 0, sizeof(bspworld));
 }
 
@@ -421,6 +440,12 @@ Load a .bsp file.
 int AAS_LoadBSPFile(void) {
 
 	AAS_DumpBSPData();
+
+	bspworld.entdatasize = strlen(botimport.BSPEntityData()) + 1;
+	bspworld.dentdata = (char *)GetClearedHunkMemory(bspworld.entdatasize);
+
+	Com_Memcpy(bspworld.dentdata, botimport.BSPEntityData(), bspworld.entdatasize);
+
 	AAS_ParseBSPEntities();
 
 	bspworld.loaded = qtrue;

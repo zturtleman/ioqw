@@ -1381,7 +1381,7 @@ void AAS_AddTeleporterPortals(void) {
 			VectorCopy(destorigin, end);
 
 			end[2] -= 100;
-			trace = AAS_TraceClientBBox(destorigin, end, PRESENCE_CROUCH, -1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
+			trace = AAS_TraceClientBBox(destorigin, end, PRESENCE_CROUCH, -1);
 
 			if (trace.startsolid) {
 				botimport.Print(PRT_ERROR, "teleporter destination (%s) in solid\n", target);

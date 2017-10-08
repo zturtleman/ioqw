@@ -312,7 +312,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
     <key>LSMinimumSystemVersion</key>
     <string>${MACOSX_DEPLOYMENT_TARGET}</string>
     <key>NSHumanReadableCopyright</key>
-    <string>Copyright © 1999-2015 id Software LLC, Ioquake3 contributors, Spearmint contributors, Ioid3 contributors.</string>
+    <string>Copyright © 1999-2015 id Software LLC, ioquake3 contributors, Spearmint contributors, ioid3 contributors.</string>
     <key>NSPrincipalClass</key>
     <string>NSApplication</string>
 </dict>

@@ -17,7 +17,6 @@ Ioid3-qw is licensed under a [modified version of the GNU GPLv3](COPYING.txt#L62
 
   * Enhanced BotAI
   * 64 weapon support
-  * Improved UI
 
 
 ## Goals:
@@ -32,15 +31,12 @@ Ioid3-qw is licensed under a [modified version of the GNU GPLv3](COPYING.txt#L62
 
 * Zack Middleton
 * Robert Beckebans
-* p5yc0runn3r (for dmaHD SDL sound)
-* Ian Jefferies
 * And other contributors
 
 
 ## Ioid3-qw is based on ioq3ztm and also contains code from:
 
 * Spearmint - Zack Middleton
-* UI Enhanced - Ian Jefferies
 * RTCW SP - Gray Matter Interactive
 * RTCW MP - Nerve Software
 * Wolfenstein: Enemy Territory - Splash Damage

@@ -178,15 +178,11 @@ static void SV_Map_f(void) {
 	cmd = Cmd_Argv(0);
 
 	if (!Q_stricmp(cmd, "devmap")) {
-		if (sv_gametype->integer == GT_SINGLE_PLAYER) {
-			Cvar_SetValue("g_gametype", GT_FFA);
-		}
-
 		cheat = qtrue;
-		killBots = qtrue;
+		killBots = qfalse;
 	} else {
 		cheat = qfalse;
-		killBots = Com_GameIsSinglePlayer();
+		killBots = qtrue;
 	}
 	// save the map name here cause on a map restart we reload the qwconfig.cfg and thus nuke the arguments of the map command
 	Q_strncpyz(mapname, map, sizeof(mapname));

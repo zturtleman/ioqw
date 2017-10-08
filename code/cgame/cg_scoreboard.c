@@ -280,7 +280,7 @@ static int CG_SetClientScore(int y, team_t team, float fade, int maxClients) {
 
 /*
 =======================================================================================================================================
-CG_DrawTeamSpectators
+CG_DrawSpectators
 =======================================================================================================================================
 */
 static void CG_DrawSpectators(float x, int y, int w, int h, vec4_t color) {

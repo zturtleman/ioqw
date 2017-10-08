@@ -422,7 +422,6 @@ void Text_Paint(float x, float y, const fontInfo_t *font, float scale, const vec
 		}
 
 		glyph = Text_GetGlyph(font, Q_UTF8_CodePoint(&s));
-
 		yadj = useScaleY * glyph->top;
 		xadj = useScaleX * glyph->left;
 
@@ -523,7 +522,7 @@ void Text_PaintWithCursor(float x, float y, const fontInfo_t *font, float scale,
 
 		glyph = Text_GetGlyph(font, Q_UTF8_CodePoint(&s));
 
-		if (count == cursorPos/* && ((cg.realTime / BLINK_DIVISOR) & 1) == 0*/) { // Tobias: FIXME
+		if (count == cursorPos/*&& ((cg.realTime / BLINK_DIVISOR) & 1) == 0*/) { // Tobias: FIXME ?
 			yadj = useScaleY * glyph2->top;
 			// use horizontal width of text character (glyph)
 			Text_PaintGlyph(x, y - yadj, (glyph->left + glyph->xSkip) * useScaleX, glyph2->imageHeight * useScaleY, glyph2, NULL);
@@ -542,7 +541,7 @@ void Text_PaintWithCursor(float x, float y, const fontInfo_t *font, float scale,
 			colorBlack[3] = 1.0f;
 		}
 		// make overstrike cursor invert color
-		if (count == cursorPos/* && cursor == GLYPH_OVERSTRIKE*/) { // Tobias: FIXME
+		if (count == cursorPos/*&& !((cg.realTime / BLINK_DIVISOR) & 1)*/&& cursor == GLYPH_OVERSTRIKE) { // Tobias: FIXME ?
 			// invert color
 			vec4_t invertedColor;
 
@@ -558,7 +557,7 @@ void Text_PaintWithCursor(float x, float y, const fontInfo_t *font, float scale,
 			Text_PaintGlyph(x + xadj, y - yadj, glyph->imageWidth * useScaleX, glyph->imageHeight * useScaleY, glyph, (gradient != 0) ? gradientColor : NULL);
 		}
 
-		if (count == cursorPos/* && cursor == GLYPH_OVERSTRIKE*/) { // Tobias: FIXME
+		if (count == cursorPos/*&& !((cg.realTime / BLINK_DIVISOR) & 1)*/&& cursor == GLYPH_OVERSTRIKE) { // Tobias: FIXME ?
 			// restore color
 			trap_R_SetColor(newColor);
 		}
@@ -567,7 +566,7 @@ void Text_PaintWithCursor(float x, float y, const fontInfo_t *font, float scale,
 		count++;
 	}
 	// need to paint cursor at end of text
-	if (cursorPos == len/* && !((cg.realTime / BLINK_DIVISOR) & 1)*/) { // Tobias: FIXME
+	if (cursorPos == len/*&& !((cg.realTime / BLINK_DIVISOR) & 1)*/) { // Tobias: FIXME ?
 		yadj = useScaleY * glyph2->top;
 
 		Text_PaintGlyph(x, y - yadj, glyph2->imageWidth * useScaleX, glyph2->imageHeight * useScaleY, glyph2, NULL);
@@ -656,7 +655,6 @@ void Text_Paint_Limit(float *maxX, float x, float y, const fontInfo_t *font, flo
 
 #define MAX_WRAP_BYTES 1024
 #define MAX_WRAP_LINES 1024
-
 /*
 =======================================================================================================================================
 Text_Paint_AutoWrapped

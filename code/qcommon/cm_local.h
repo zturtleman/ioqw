@@ -26,9 +26,9 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "qcommon.h"
 #include "cm_polylib.h"
 
-// fake submodel handles
-#define BOX_MODEL_HANDLE (cm.numSubModels)
-#define CAPSULE_MODEL_HANDLE (cm.numSubModels + 1)
+#define MAX_SUBMODELS 256
+#define BOX_MODEL_HANDLE 255
+#define CAPSULE_MODEL_HANDLE 254
 
 typedef struct {
 	cplane_t *plane;

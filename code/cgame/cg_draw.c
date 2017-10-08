@@ -27,15 +27,21 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 **************************************************************************************************************************************/
 
 #include "cg_local.h"
-
+#ifdef MISSIONPACK
+#include "../ui/ui_shared.h"
+// used for scoreboard
+extern displayContextDef_t cgDC;
+menuDef_t *menuScoreboard = NULL;
+#else
 int drawTeamOverlayModificationCount = -1;
+#endif
 int sortedTeamPlayers[TEAM_MAXOVERLAY];
 int numSortedTeamPlayers;
 
 char systemChat[256];
 char teamChat1[256];
 char teamChat2[256];
-
+#ifndef MISSIONPACK
 /*
 =======================================================================================================================================
 CG_DrawField
@@ -107,7 +113,7 @@ static void CG_DrawField(int x, int y, int width, int value, float *color) {
 
 	trap_R_SetColor(NULL);
 }
-
+#endif
 /*
 =======================================================================================================================================
 CG_Draw3DModel
@@ -300,7 +306,7 @@ void CG_DrawFlagModel(float x, float y, float w, float h, int team, qboolean for
 		}
 	}
 }
-
+#ifndef MISSIONPACK
 /*
 =======================================================================================================================================
 CG_DrawStatusBarHead
@@ -361,7 +367,7 @@ static void CG_DrawStatusBarFlag(float x, int team) {
 
 	CG_DrawFlagModel(x + (1.0f - cg_statusScale.value) * ICON_SIZE * 0.5f, 480 - iconSize, iconSize, iconSize, team, qfalse);
 }
-
+#endif
 /*
 =======================================================================================================================================
 CG_DrawTeamBackground
@@ -390,7 +396,7 @@ void CG_DrawTeamBackground(int x, int y, int w, int h, float alpha, int team) {
 	CG_PopScreenPlacement();
 	trap_R_SetColor(NULL);
 }
-
+#ifndef MISSIONPACK
 /*
 =======================================================================================================================================
 CG_DrawStatusBar
@@ -560,7 +566,7 @@ static void CG_DrawStatusBar(void) {
 		}
 	}
 }
-
+#endif
 /*
 =======================================================================================================================================
 
@@ -939,7 +945,7 @@ static void CG_DrawUpperRight(stereoFrame_t stereoFrame) {
 
 =======================================================================================================================================
 */
-
+#ifndef MISSIONPACK
 /*
 =======================================================================================================================================
 CG_DrawScores
@@ -1454,7 +1460,7 @@ static void CG_DrawPersistantPowerup(void) {
 		CG_DrawPic(640 - ICON_SIZE, (SCREEN_HEIGHT - ICON_SIZE) / 2 - ICON_SIZE, ICON_SIZE, ICON_SIZE, cg_items[value].icon);
 	}
 }
-
+#endif // MISSIONPACK
 /*
 =======================================================================================================================================
 
@@ -1544,10 +1550,13 @@ static void CG_DrawDisconnect(void) {
 	}
 
 	CG_SetScreenPlacement(PLACE_RIGHT, PLACE_BOTTOM);
-
+#ifdef MISSIONPACK
+	x = 640 - 48;
+	y = 480 - 144;
+#else
 	x = 640 - 48;
 	y = 480 - 48;
-
+#endif
 	CG_DrawPic(x, y, 48, 48, trap_R_RegisterShader("gfx/2d/net.tga"));
 }
 
@@ -1572,9 +1581,13 @@ static void CG_DrawLagometer(void) {
 
 	CG_SetScreenPlacement(PLACE_RIGHT, PLACE_BOTTOM);
 	// draw the graph
+#ifdef MISSIONPACK
+	x = 640 - 48;
+	y = 480 - 144;
+#else
 	x = 640 - 48;
 	y = 480 - 48;
-
+#endif
 	CG_DrawPic(x, y, 48, 48, cgs.media.lagometerShader);
 
 	ax = x;
@@ -2023,7 +2036,68 @@ CG_DrawScoreboard
 =======================================================================================================================================
 */
 static qboolean CG_DrawScoreboard(void) {
+#ifdef MISSIONPACK
+	static qboolean firstTime = qtrue;
+
+	CG_SetScreenPlacement(PLACE_CENTER, PLACE_CENTER);
+
+	if (menuScoreboard) {
+		menuScoreboard->window.flags &= ~WINDOW_FORCED;
+	}
+
+	if (cg_paused.integer) {
+		cg.deferredPlayerLoading = 0;
+		firstTime = qtrue;
+		return qfalse;
+	}
+	// should never happen in Team Arena
+	if (cgs.gametype == GT_SINGLE_PLAYER && cg.predictedPlayerState.pm_type == PM_INTERMISSION) {
+		cg.deferredPlayerLoading = 0;
+		firstTime = qtrue;
+		return qfalse;
+	}
+	// don't draw scoreboard during death while warmup up
+	if (cg.warmup && !cg.showScores) {
+		return qfalse;
+	}
+
+	if (cg.showScores || cg.predictedPlayerState.pm_type == PM_DEAD || cg.predictedPlayerState.pm_type == PM_INTERMISSION) {
+
+	} else {
+		if (!CG_FadeColor(cg.scoreFadeTime, FADE_TIME)) {
+			// next time scoreboard comes up, don't print killer
+			cg.deferredPlayerLoading = 0;
+			cg.killerName[0] = 0;
+			firstTime = qtrue;
+			return qfalse;
+		}
+	}
+
+	if (menuScoreboard == NULL) {
+		if (cgs.gametype > GT_TOURNAMENT) {
+			menuScoreboard = Menus_FindByName("teamscore_menu");
+		} else {
+			menuScoreboard = Menus_FindByName("score_menu");
+		}
+	}
+
+	if (menuScoreboard) {
+		if (firstTime) {
+			CG_SetScoreSelection(menuScoreboard);
+			firstTime = qfalse;
+		}
+
+		Menu_Paint(menuScoreboard, qtrue);
+	}
+	// load any models that have been deferred
+	if (++cg.deferredPlayerLoading > 10) {
+		CG_LoadDeferredPlayers();
+	}
+
+	return qtrue;
+#else
 	return CG_DrawOldScoreboard();
+#endif
 }
 
 /*
@@ -2032,12 +2106,18 @@ CG_DrawIntermission
 =======================================================================================================================================
 */
 static void CG_DrawIntermission(void) {
-
+//	int key;
+#ifdef MISSIONPACK
+	//if (cg_singlePlayer.integer) {
+	//	CG_DrawCenterString();
+	//	return;
+	//}
+#else
 	if (cgs.gametype == GT_SINGLE_PLAYER) {
 		CG_DrawCenterString();
 		return;
 	}
-
+#endif
 	cg.scoreFadeTime = cg.time;
 	cg.scoreBoardShowing = CG_DrawScoreboard();
 }
@@ -2234,7 +2314,11 @@ CG_Draw2D
 =======================================================================================================================================
 */
 static void CG_Draw2D(stereoFrame_t stereoFrame) {
-
+#ifdef MISSIONPACK
+	if (cgs.orderPending && cg.time > cgs.orderTime) {
+		CG_CheckOrderPending();
+	}
+#endif
 	// if we are taking a levelshot for the menu, don't draw anything
 	if (cg.levelShot) {
 		return;
@@ -2264,7 +2348,15 @@ static void CG_Draw2D(stereoFrame_t stereoFrame) {
 	} else {
 		// don't draw any status if dead or the scoreboard is being explicitly shown
 		if (!cg.showScores && cg.snap->ps.stats[STAT_HEALTH] > 0) {
+#ifdef MISSIONPACK
+			if (cg_drawStatus.integer) {
+				CG_SetScreenPlacement(PLACE_CENTER, PLACE_BOTTOM);
+				Menu_PaintAll();
+				CG_DrawTimedMenus();
+			}
+#else
 			CG_DrawStatusBar();
+#endif
 			CG_DrawAmmoWarning();
 			CG_DrawProxWarning();
 
@@ -2274,21 +2366,33 @@ static void CG_Draw2D(stereoFrame_t stereoFrame) {
 
 			CG_DrawCrosshairNames();
 			CG_DrawWeaponSelect();
+#ifndef MISSIONPACK
 			CG_DrawHoldableItem();
 			CG_DrawPersistantPowerup();
+#endif
 		}
 	}
 
 	if (cgs.gametype > GT_TOURNAMENT) {
+#ifndef MISSIONPACK
 		CG_DrawTeamInfo();
+#endif
 	}
 
 	CG_DrawVote();
 	CG_DrawTeamVote();
 	CG_DrawLagometer();
+#ifdef MISSIONPACK
+	if (!cg_paused.integer) {
+		CG_DrawUpperRight(stereoFrame);
+	}
+#else
 	CG_DrawUpperRight(stereoFrame);
+#endif
+#ifndef MISSIONPACK
 	CG_DrawLowerRight();
 	CG_DrawLowerLeft();
+#endif
 	// don't draw center string if scoreboard is up
 	cg.scoreBoardShowing = CG_DrawScoreboard();
 

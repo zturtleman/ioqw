@@ -91,7 +91,7 @@ libvar_t *sv_gravity;
 libvar_t *weapindex_rocketlauncher;
 libvar_t *weapindex_bfg10k;
 // type of model, func_plat or func_bobbing
-int modeltypes[MAX_SUBMODELS];
+int modeltypes[MAX_MODELS];
 
 bot_movestate_t *botmovestates[MAX_CLIENTS + 1];
 
@@ -353,7 +353,7 @@ int BotReachabilityArea(vec3_t origin, int client) {
 		VectorCopy(org, end);
 
 		end[2] -= 800;
-		trace = AAS_TraceClientBBox(org, end, PRESENCE_CROUCH, -1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
+		trace = AAS_TraceClientBBox(org, end, PRESENCE_CROUCH, -1);
 
 		if (!trace.startsolid) {
 			VectorCopy(trace.endpos, org);
@@ -386,7 +386,7 @@ int BotReachabilityArea(vec3_t origin, int testground) {
 		if (i > 0) {
 			VectorCopy(origin, end);
 			end[2] -= 800;
-			trace = AAS_TraceClientBBox(origin, end, PRESENCE_CROUCH, -1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
+			trace = AAS_TraceClientBBox(origin, end, PRESENCE_CROUCH, -1);
 
 			if (!trace.startsolid) {
 				VectorCopy(trace.endpos, org);
@@ -528,7 +528,7 @@ void BotSetBrushModelTypes(void) {
 	int ent, modelnum;
 	char classname[MAX_EPAIRKEY], model[MAX_EPAIRKEY];
 
-	Com_Memset(modeltypes, 0, MAX_SUBMODELS * sizeof(int));
+	Com_Memset(modeltypes, 0, MAX_MODELS * sizeof(int));
 
 	for (ent = AAS_NextBSPEntity(0); ent; ent = AAS_NextBSPEntity(ent)) {
 		if (!AAS_ValueForBSPEpairKey(ent, "classname", classname, MAX_EPAIRKEY)) {
@@ -545,7 +545,7 @@ void BotSetBrushModelTypes(void) {
 			modelnum = 0;
 		}
 
-		if (modelnum < 0 || modelnum >= MAX_SUBMODELS) {
+		if (modelnum < 0 || modelnum >= MAX_MODELS) {
 			botimport.Print(PRT_MESSAGE, "entity %s model number out of range\n", classname);
 			continue;
 		}
@@ -1090,7 +1090,7 @@ float BotGapDistance(vec3_t origin, vec3_t hordir, int checkdist, int entnum) {
 
 		end[2] -= 48 + sv_maxbarrier->value;
 
-		trace = AAS_TraceClientBBox(start, end, PRESENCE_CROUCH, entnum, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
+		trace = AAS_TraceClientBBox(start, end, PRESENCE_CROUCH, entnum);
 		// if solid is found the bot can't walk any further and fall into a gap
 		if (!trace.startsolid) {
 			// if it is a gap
@@ -1103,7 +1103,7 @@ float BotGapDistance(vec3_t origin, vec3_t hordir, int checkdist, int entnum) {
 					break;
 				}
 				// if a gap is found slow down
-				//botimport.Print(PRT_MESSAGE, "gap at %i\n", gapdist);
+				//botimport.Print(PRT_MESSAGE, S_COLOR_YELLOW "BotGapDistance: found a gap at %i.\n", gapdist);
 				return gapdist;
 			}
 
@@ -1130,7 +1130,7 @@ int BotCheckBarrierCrouch(bot_movestate_t *ms, vec3_t dir, float speed) {
 	VectorNormalize(hordir);
 	VectorMA(ms->origin, ms->thinktime * speed * 0.5, hordir, end);
 	// trace horizontally in the move direction
-	trace = AAS_TraceClientBBox(ms->origin, end, PRESENCE_NORMAL, ms->entitynum, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP|CONTENTS_BODY|CONTENTS_CORPSE);
+	trace = AAS_TraceClientBBox(ms->origin, end, PRESENCE_NORMAL, ms->entitynum);
 	// this shouldn't happen... but we check anyway
 	if (trace.startsolid) {
 		return qfalse;
@@ -1140,7 +1140,7 @@ int BotCheckBarrierCrouch(bot_movestate_t *ms, vec3_t dir, float speed) {
 		return qfalse;
 	}
 	// trace horizontally in the move direction again
-	trace = AAS_TraceClientBBox(ms->origin, end, PRESENCE_CROUCH, ms->entitynum, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP|CONTENTS_BODY|CONTENTS_CORPSE);
+	trace = AAS_TraceClientBBox(ms->origin, end, PRESENCE_CROUCH, ms->entitynum);
 	// again this shouldn't happen
 	if (trace.startsolid) {
 		return qfalse;
@@ -1167,7 +1167,7 @@ int BotCheckBarrierJump(bot_movestate_t *ms, vec3_t dir, float speed) {
 
 	end[2] += sv_maxbarrier->value;
 	// trace right up
-	trace = AAS_TraceClientBBox(ms->origin, end, PRESENCE_NORMAL, ms->entitynum, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP|CONTENTS_BODY|CONTENTS_CORPSE);
+	trace = AAS_TraceClientBBox(ms->origin, end, PRESENCE_NORMAL, ms->entitynum);
 	// this shouldn't happen... but we check anyway
 	if (trace.startsolid) {
 		return qfalse;
@@ -1190,7 +1190,7 @@ int BotCheckBarrierJump(bot_movestate_t *ms, vec3_t dir, float speed) {
 
 	end[2] = trace.endpos[2];
 	// trace from previous trace end pos horizontally in the move direction
-	trace = AAS_TraceClientBBox(start, end, PRESENCE_NORMAL, ms->entitynum, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP|CONTENTS_BODY|CONTENTS_CORPSE);
+	trace = AAS_TraceClientBBox(start, end, PRESENCE_NORMAL, ms->entitynum);
 	// again this shouldn't happen
 	if (trace.startsolid) {
 		return qfalse;
@@ -1205,7 +1205,7 @@ int BotCheckBarrierJump(bot_movestate_t *ms, vec3_t dir, float speed) {
 
 	end[2] = ms->origin[2];
 	// trace down from the previous trace end pos
-	trace = AAS_TraceClientBBox(start, end, PRESENCE_NORMAL, ms->entitynum, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP|CONTENTS_BODY|CONTENTS_CORPSE);
+	trace = AAS_TraceClientBBox(start, end, PRESENCE_NORMAL, ms->entitynum);
 	// if solid
 	if (trace.startsolid) {
 		return qfalse;
@@ -1255,7 +1255,7 @@ int BotWalkInDirection(bot_movestate_t *ms, vec3_t dir, float speed, int type) {
 
 	moveflags = 0;
 
-	if (AAS_OnGround(ms->origin, ms->presencetype, ms->entitynum, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP)) {
+	if (AAS_OnGround(ms->origin, ms->presencetype, ms->entitynum)) {
 		ms->moveflags |= MFL_ONGROUND;
 	}
 	// if the bot is on the ground
@@ -1307,7 +1307,7 @@ int BotWalkInDirection(bot_movestate_t *ms, vec3_t dir, float speed, int type) {
 		VectorCopy(ms->origin, origin);
 
 		origin[2] += 0.5;
-		predictSuccess = AAS_PredictClientMovement(&move, ms->entitynum, origin, presencetype, qtrue, velocity, cmdmove, cmdframes, maxframes, 0.1f, stopevent, 0, qfalse, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
+		predictSuccess = AAS_PredictClientMovement(&move, ms->entitynum, origin, presencetype, qtrue, velocity, cmdmove, cmdframes, maxframes, 0.1f, stopevent, 0, qfalse);
 		// check if prediction failed
 		if (!predictSuccess) {
 			//botimport.Print(PRT_MESSAGE, "client %d: prediction was stuck in loop\n", ms->client);
@@ -1489,7 +1489,7 @@ BotTravel_Walk
 =======================================================================================================================================
 */
 bot_moveresult_t BotTravel_Walk(bot_movestate_t *ms, aas_reachability_t *reach) {
-	float dist, speed;
+	float dist, speed, currentspeed;
 	int gapdist;
 	vec3_t hordir;
 	bot_moveresult_t_cleared(result);
@@ -1500,19 +1500,19 @@ bot_moveresult_t BotTravel_Walk(bot_movestate_t *ms, aas_reachability_t *reach) 
 	hordir[2] = 0;
 	dist = VectorNormalize(hordir);
 
-	if (dist < 10) {
+	if (dist < 128) {
 		// walk straight to the reachability end
 		hordir[0] = reach->end[0] - ms->origin[0];
 		hordir[1] = reach->end[1] - ms->origin[1];
 		hordir[2] = 0;
 		dist = VectorNormalize(hordir);
 	}
-
-	BotCheckBlocked(ms, hordir, qtrue, &result);
+	// get the current speed
+	currentspeed = DotProduct(ms->velocity, hordir);
 	// if going towards a crouch area
 	if (!(AAS_AreaPresenceType(reach->areanum) & PRESENCE_NORMAL)) {
 		// if pretty close to the reachable area
-		if (dist < 20) {
+		if (dist < (20 + currentspeed) * 0.2f) {
 			EA_Crouch(ms->client);
 		}
 	}
@@ -1520,18 +1520,16 @@ bot_moveresult_t BotTravel_Walk(bot_movestate_t *ms, aas_reachability_t *reach) 
 	gapdist = BotGapDistance(ms->origin, hordir, 100, ms->entitynum);
 
 	if (ms->moveflags & MFL_WALK) {
-		if (gapdist > 0) {
-			speed = 200 - (180 - gapdist);
-		} else {
-			speed = 200;
-		}
+		speed = 200;
 	} else {
 		if (gapdist > 0) {
-			speed = 400 - (360 - 2 * gapdist);
+			speed = 400 - (200 - 2 * gapdist);
 		} else {
 			speed = 400;
 		}
 	}
+
+	BotCheckBlocked(ms, hordir, qtrue, &result);
 	// elementary action move in direction
 	EA_Move(ms->client, hordir, speed);
 	VectorCopy(hordir, result.movedir);
@@ -1987,7 +1985,7 @@ bot_moveresult_t BotTravel_Jump(bot_movestate_t *ms, aas_reachability_t *reach) 
 	float dist1, dist2, dist3, speed;
 	bot_moveresult_t_cleared(result);
 
-	AAS_JumpReachRunStart(reach, runstart, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
+	AAS_JumpReachRunStart(reach, runstart);
 
 	hordir[0] = runstart[0] - reach->start[0];
 	hordir[1] = runstart[1] - reach->start[1];
@@ -3071,7 +3069,7 @@ void BotMoveToGoal(bot_moveresult_t *result, int movestate, bot_goal_t *goal, in
 	ms->moveflags &= ~(MFL_SWIMMING|MFL_AGAINSTLADDER);
 	// set some of the move flags
 	// NOTE: the MFL_ONGROUND flag is also set in the higher AI
-	if (AAS_OnGround(ms->origin, ms->presencetype, ms->entitynum, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP)) {
+	if (AAS_OnGround(ms->origin, ms->presencetype, ms->entitynum)) {
 		ms->moveflags |= MFL_ONGROUND;
 	}
 
@@ -3083,7 +3081,7 @@ void BotMoveToGoal(bot_moveresult_t *result, int movestate, bot_goal_t *goal, in
 		if (ent != -1) {
 			modelnum = AAS_EntityModelindex(ent);
 
-			if (modelnum >= 0 && modelnum < MAX_SUBMODELS) {
+			if (modelnum >= 0 && modelnum < MAX_MODELS) {
 				modeltype = modeltypes[modelnum];
 
 				if (modeltype == MODELTYPE_FUNC_PLAT) {

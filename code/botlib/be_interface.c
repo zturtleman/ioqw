@@ -125,14 +125,19 @@ int Export_BotLibSetup(void) {
 //	Swap_Init();
 
 	if (botDeveloper) {
-		char *homedir, *gamedir;
+		char *homedir, *gamedir, *basegame;
 		char logfilename[MAX_OSPATH];
 
 		homedir = LibVarGetString("homedir");
 		gamedir = LibVarGetString("gamedir");
+		basegame = LibVarGetString("basegame");
 
-		if (*homedir && *gamedir) {
-			Com_sprintf(logfilename, sizeof(logfilename), "%s%c%s%cbotlib.log", homedir, PATH_SEP, gamedir, PATH_SEP);
+		if (*homedir && (*gamedir || *basegame)) {
+			if (*gamedir) {
+				Com_sprintf(logfilename, sizeof(logfilename), "%s%c%s%cbotlib.log", homedir, PATH_SEP, gamedir, PATH_SEP);
+			} else {
+				Com_sprintf(logfilename, sizeof(logfilename), "%s%c%s%cbotlib.log", homedir, PATH_SEP, basegame, PATH_SEP);
+			}
 		} else {
 			Com_sprintf(logfilename, sizeof(logfilename), "botlib.log");
 		}
@@ -324,7 +329,7 @@ int Export_BotLibUpdateEntity(int ent, bot_entitystate_t *state) {
 BotExportTest
 =======================================================================================================================================
 */
-void AAS_TestMovementPrediction(int entnum, vec3_t origin, vec3_t dir, int contentmask);
+void AAS_TestMovementPrediction(int entnum, vec3_t origin, vec3_t dir);
 void ElevatorBottomCenter(aas_reachability_t *reach, vec3_t bottomcenter);
 int BotGetReachabilityToGoal(vec3_t origin, int areanum, int lastgoalareanum, int lastareanum, int *avoidreach, float *avoidreachtimes, int *avoidreachtries, bot_goal_t *goal, int travelflags, struct bot_avoidspot_s *avoidspots, int numavoidspots, int *flags);
 int AAS_PointLight(vec3_t origin, int *red, int *green, int *blue);
@@ -457,7 +462,7 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 
 		numareas = AAS_TraceAreas(origin, end, areas, NULL, 10);
 
-		AAS_TraceClientBBox(origin, end, PRESENCE_CROUCH, -1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
+		AAS_TraceClientBBox(origin, end, PRESENCE_CROUCH, -1);
 
 		botimport.Print(PRT_MESSAGE, "num areas = %d, area = %d\n", numareas, areas[0]);
 		*/

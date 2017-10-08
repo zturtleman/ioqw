@@ -2070,7 +2070,7 @@ int AAS_NextModelReachability(int num, int modelnum) {
 AAS_RandomGoalArea
 =======================================================================================================================================
 */
-int AAS_RandomGoalArea(int areanum, int travelflags, int contentmask, int *goalareanum, vec3_t goalorigin) {
+int AAS_RandomGoalArea(int areanum, int travelflags, int *goalareanum, vec3_t goalorigin) {
 	int i, n, t;
 	vec3_t start, end;
 	aas_trace_t trace;
@@ -2112,7 +2112,7 @@ int AAS_RandomGoalArea(int areanum, int travelflags, int contentmask, int *goala
 				VectorCopy(start, end);
 
 				end[2] -= 300;
-				trace = AAS_TraceClientBBox(start, end, PRESENCE_CROUCH, -1, contentmask);
+				trace = AAS_TraceClientBBox(start, end, PRESENCE_CROUCH, -1);
 
 				if (!trace.startsolid && trace.fraction < 1 && AAS_PointAreaNum(trace.endpos) == n) {
 					if (AAS_AreaGroundFaceArea(n) > 300) {

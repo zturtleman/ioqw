@@ -230,11 +230,11 @@ static int BotImport_inPVS(vec3_t p1, vec3_t p2) {
 
 /*
 =======================================================================================================================================
-BotImport_GetEntityToken
+BotImport_BSPEntityData
 =======================================================================================================================================
 */
-qboolean BotImport_GetEntityToken(int *offset, char *buffer, int size) {
-	return CM_GetEntityToken(offset, buffer, size);
+static char *BotImport_BSPEntityData(void) {
+	return CM_EntityString();
 }
 
 /*
@@ -560,7 +560,7 @@ void SV_BotInitBotLib(void) {
 	botlib_import.EntityTrace = BotImport_EntityTrace;
 	botlib_import.PointContents = BotImport_PointContents;
 	botlib_import.inPVS = BotImport_inPVS;
-	botlib_import.GetEntityToken = BotImport_GetEntityToken;
+	botlib_import.BSPEntityData = BotImport_BSPEntityData;
 	botlib_import.BSPModelMinsMaxsOrigin = BotImport_BSPModelMinsMaxsOrigin;
 	botlib_import.BotClientCommand = BotClientCommand;
 	// memory management

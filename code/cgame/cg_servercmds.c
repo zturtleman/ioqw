@@ -28,7 +28,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 **************************************************************************************************************************************/
 
 #include "cg_local.h"
-#include "../game/bg_local.h" // for the voice chats
+#include "../../ui/menudef.h" // for the voice chats
 
 typedef struct {
 	const char *order;
@@ -110,6 +110,9 @@ static void CG_ParseScores(void) {
 
 		cg.scores[i].team = cgs.clientinfo[cg.scores[i].client].team;
 	}
+#ifdef MISSIONPACK
+	CG_SetScoreSelection(NULL);
+#endif
 }
 
 /*

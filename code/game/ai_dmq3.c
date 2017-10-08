@@ -43,8 +43,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "inv.h" // indexes into the inventory
 #include "syn.h" // synonyms
 #include "match.h" // string matching types and vars
-// for the voice chats
-#include "bg_local.h" // sos001205 - for ui also
+#include "../../ui/menudef.h" // for the voice chats
 // from aasfile.h
 #define AREACONTENTS_MOVER 1024
 #define AREACONTENTS_MODELNUMSHIFT 24
@@ -4165,7 +4164,7 @@ void BotAimAtEnemy(bot_state_t *bs) {
 
 					VectorClear(cmdmove);
 					//AAS_ClearShownDebugLines();
-					trap_AAS_PredictClientMovement(&move, bs->enemy, origin, PRESENCE_CROUCH, qfalse, dir, cmdmove, 0, dist * 10 / wi.speed, 0.1f, 0, 0, qfalse, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
+					trap_AAS_PredictClientMovement(&move, bs->enemy, origin, PRESENCE_CROUCH, qfalse, dir, cmdmove, 0, dist * 10 / wi.speed, 0.1f, 0, 0, qfalse);
 					VectorCopy(move.endpos, bestorigin);
 					//BotAI_Print(PRT_MESSAGE, "%1.1f predicted speed = %f, frames = %f\n", FloatTime(), VectorLength(dir), dist * 10 / wi.speed);
 				// if not that skilled do linear prediction

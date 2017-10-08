@@ -32,7 +32,6 @@ void CM_ModelBounds(clipHandle_t model, vec3_t mins, vec3_t maxs);
 int CM_NumClusters(void);
 int CM_NumInlineModels(void);
 char *CM_EntityString(void);
-qboolean CM_GetEntityToken(int *parseOffset, char *token, int size);
 // returns an ORed contents mask
 int CM_PointContents(const vec3_t p, clipHandle_t model);
 int CM_TransformedPointContents(const vec3_t p, clipHandle_t model, const vec3_t origin, const vec3_t angles);

@@ -635,7 +635,9 @@ typedef struct {
 	fontInfo_t bigFont;
 	fontInfo_t giantFont;
 	fontInfo_t titanFont;
-
+	qhandle_t cursor;
+	qhandle_t selectCursor;
+	qhandle_t sizeCursor;
 	qhandle_t redCubeModel;
 	qhandle_t blueCubeModel;
 	qhandle_t redCubeIcon;
@@ -746,6 +748,7 @@ typedef struct {
 	qhandle_t doublerPowerupModel;
 	qhandle_t ammoRegenPowerupModel;
 	qhandle_t dustPuffShader;
+	qhandle_t heartShader;
 	// scoreboard headers
 	qhandle_t scoreboardName;
 	qhandle_t scoreboardPing;
@@ -941,12 +944,13 @@ typedef struct {
 	int scores1, scores2;			// from configstrings
 	int redflag, blueflag;			// flag status from configstrings
 	int flagStatus;
+	qboolean newHud;
 	// locally derived information from gamestate
 	qhandle_t gameModels[MAX_MODELS];
 	sfxHandle_t gameSounds[MAX_SOUNDS];
 	int numInlineModels;
-	qhandle_t inlineDrawModel[MAX_SUBMODELS];
-	vec3_t inlineModelMidpoints[MAX_SUBMODELS];
+	qhandle_t inlineDrawModel[MAX_MODELS];
+	vec3_t inlineModelMidpoints[MAX_MODELS];
 	clientInfo_t clientinfo[MAX_CLIENTS];
 	// teamchat width is *3 because of embedded color codes
 	char teamChatMsgs[TEAMCHAT_HEIGHT][TEAMCHAT_WIDTH * 3 + 1];
@@ -954,6 +958,13 @@ typedef struct {
 	int teamChatPos;
 	int teamLastChatPos;
 	cg_gamemodel_t miscGameModels[MAX_STATIC_GAMEMODELS];
+	int cursorX;
+	int cursorY;
+	qboolean eventHandling;
+	qboolean mouseCaptured;
+	qboolean sizingHud;
+	void *capturedItem;
+	qhandle_t activeCursor;
 	// orders
 	int currentOrder;
 	qboolean orderPending;
@@ -1067,6 +1078,8 @@ extern vmCvar_t cg_timescaleFadeEnd;
 extern vmCvar_t cg_timescaleFadeSpeed;
 extern vmCvar_t cg_timescale;
 extern vmCvar_t cg_cameraMode;
+extern vmCvar_t cg_smallFont;
+extern vmCvar_t cg_bigFont;
 extern vmCvar_t cg_noTaunt;
 extern vmCvar_t cg_noProjectileTrail;
 extern vmCvar_t cg_oldRail;
@@ -1092,6 +1105,7 @@ void CG_StartMusic(void);
 void CG_UpdateCvars(void);
 int CG_CrosshairPlayer(void);
 int CG_LastAttacker(void);
+void CG_LoadMenus(const char *menuFile);
 void CG_KeyEvent(int key, qboolean down);
 void CG_MouseEvent(int x, int y);
 void CG_EventHandling(int type);
@@ -1129,11 +1143,27 @@ void CG_SetScreenPlacement(screenPlacement_e hpos, screenPlacement_e vpos);
 void CG_PopScreenPlacement(void);
 screenPlacement_e CG_GetScreenHorizontalPlacement(void);
 screenPlacement_e CG_GetScreenVerticalPlacement(void);
-void CG_AdjustFrom640(float *x, float *y, float *w, float *h);
-void CG_FillRect(float x, float y, float width, float height, const float *color);
-void CG_DrawPic(float x, float y, float width, float height, qhandle_t hShader);
-void CG_SetClipRegion(float x, float y, float w, float h);
-void CG_ClearClipRegion(void);
+
+#define GLYPH_INSERT 10
+#define GLYPH_OVERSTRIKE 11
+#define GLYPH_ARROW 13
+
+const glyphInfo_t *Text_GetGlyph(const fontInfo_t *font, unsigned long index);
+float Text_Width(const char *text, const fontInfo_t *font, float scale, int limit);
+float Text_Height(const char *text, const fontInfo_t *font, float scale, int limit);
+void Text_PaintGlyph(float x, float y, float w, float h, const glyphInfo_t *glyph, float *gradientColor);
+void Text_Paint(float x, float y, const fontInfo_t *font, float scale, const vec4_t color, const char *text, float adjust, int limit, float shadowOffset, float gradient, qboolean forceColor);
+void Text_PaintWithCursor(float x, float y, const fontInfo_t *font, float scale, const vec4_t color, const char *text, int cursorPos, char cursor, float adjust, int limit, float shadowOffset, float gradient, qboolean forceColor);
+void Text_Paint_Limit(float *maxX, float x, float y, const fontInfo_t *font, float scale, const vec4_t color, const char *text, float adjust, int limit);
+void Text_Paint_AutoWrapped(float x, float y, const fontInfo_t *font, float scale, const vec4_t color, const char *str, float adjust, int limit, float shadowOffset, float gradient, qboolean forceColor, float xmax, float ystep, int style);
+// Missonpack text drawing (mint-arena)
+fontInfo_t *CG_FontForScale(float scale);
+void CG_Text_Paint(float x, float y, float scale, const vec4_t color, const char *text, float adjust, int limit, int textStyle);
+void CG_Text_PaintWithCursor(float x, float y, float scale, const vec4_t color, const char *text, int cursorPos, char cursor, int limit, int textStyle);
+void CG_Text_Paint_Limit(float *maxX, float x, float y, float scale, const vec4_t color, const char *text, float adjust, int limit);
+int CG_Text_Width(const char *text, float scale, int limit);
+int CG_Text_Height(const char *text, float scale, int limit);
+// Base Q3 text drawing
 void CG_DrawString(int x, int y, const char *str, int style, const vec4_t color);
 void CG_DrawFloatString(float x, int y, const char *str, int style, const vec4_t color);
 void CG_DrawStringWithCursor(int x, int y, const char *str, int style, const vec4_t color, int cursorPos, int cursorChar);
@@ -1145,8 +1175,15 @@ void CG_DrawBigString(int x, int y, const char *s, float alpha);
 void CG_DrawBigStringColor(int x, int y, const char *s, vec4_t color);
 void CG_DrawSmallString(int x, int y, const char *s, float alpha);
 void CG_DrawSmallStringColor(int x, int y, const char *s, vec4_t color);
+
 float CG_DrawStrlen(const char *str, int style);
 int CG_DrawStringLineHeight(int style);
+
+void CG_AdjustFrom640(float *x, float *y, float *w, float *h);
+void CG_FillRect(float x, float y, float width, float height, const float *color);
+void CG_DrawPic(float x, float y, float width, float height, qhandle_t hShader);
+void CG_SetClipRegion(float x, float y, float w, float h);
+void CG_ClearClipRegion(void);
 float *CG_FadeColor(int startMsec, int totalMsec);
 float *CG_TeamColor(int team);
 void CG_TileClear(void);
@@ -1179,14 +1216,25 @@ void CG_DrawHead(float x, float y, float w, float h, int clientNum, vec3_t headA
 void CG_DrawActive(stereoFrame_t stereoView);
 void CG_DrawFlagModel(float x, float y, float w, float h, int team, qboolean force2D);
 void CG_DrawTeamBackground(int x, int y, int w, int h, float alpha, int team);
+void CG_OwnerDraw(float x, float y, float w, float h, float text_x, float text_y, int ownerDraw, int ownerDrawFlags, int align, float special, float scale, vec4_t color, qhandle_t shader, int textStyle);
+
 void CG_SelectPrevPlayer(void);
 void CG_SelectNextPlayer(void);
+float CG_GetValue(int ownerDraw);
+qboolean CG_OwnerDrawVisible(int flags);
+void CG_RunMenuScript(char **args);
 void CG_ShowResponseHead(void);
+void CG_SetPrintString(int type, const char *p);
 void CG_InitTeamChat(void);
+void CG_GetTeamColor(vec4_t *color);
+const char *CG_GetGameStatusText(void);
+const char *CG_GetKillerText(void);
 void CG_Draw3DModel(float x, float y, float w, float h, qhandle_t model, qhandle_t skin, vec3_t origin, vec3_t angles);
+void CG_CheckOrderPending(void);
+const char *CG_GameTypeString(void);
 qboolean CG_YourTeamHasFlag(void);
 qboolean CG_OtherTeamHasFlag(void);
-float Text_Width(const char *text, const fontInfo_t *font, float scale, int limit);
+qhandle_t CG_StatusHandle(int task);
 // cg_particles.c
 void CG_ClearParticles(void);
 void CG_AddParticles(void);

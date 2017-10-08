@@ -121,6 +121,10 @@ void CMod_LoadSubmodels(lump_t *l) {
 	cm.cmodels = Hunk_Alloc(count * sizeof(*cm.cmodels), h_high);
 	cm.numSubModels = count;
 
+	if (count > MAX_SUBMODELS) {
+		Com_Error(ERR_DROP, "MAX_SUBMODELS exceeded");
+	}
+
 	for (i = 0; i < count; i++, in++) {
 		out = &cm.cmodels[i];
 
@@ -681,7 +685,11 @@ cmodel_t *CM_ClipHandleToModel(clipHandle_t handle) {
 		return &box_model;
 	}
 
-	Com_Error(ERR_DROP, "CM_ClipHandleToModel: bad handle %i(max %d)", handle, cm.numSubModels);
+	if (handle < MAX_SUBMODELS) {
+		Com_Error(ERR_DROP, "CM_ClipHandleToModel: bad handle %i < %i < %i", cm.numSubModels, handle, MAX_SUBMODELS);
+	}
+
+	Com_Error(ERR_DROP, "CM_ClipHandleToModel: bad handle %i", handle + MAX_SUBMODELS);
 	return NULL;
 }
 
@@ -724,33 +732,6 @@ CM_EntityString
 */
 char *CM_EntityString(void) {
 	return cm.entityString;
-}
-
-/*
-=======================================================================================================================================
-CM_GetEntityToken
-=======================================================================================================================================
-*/
-qboolean CM_GetEntityToken(int *parseOffset, char *token, int size) {
-	const char *s;
-	char *parsePoint = cm.entityString;
-
-	if (!cm.entityString || *parseOffset < 0 || *parseOffset >= cm.numEntityChars) {
-		return qfalse;
-	}
-
-	parsePoint = cm.entityString + *parseOffset;
-	s = COM_Parse(&parsePoint);
-
-	Q_strncpyz(token, s, size);
-
-	if (!parsePoint && !s[0]) {
-		*parseOffset = 0;
-		return qfalse;
-	} else {
-		*parseOffset = parsePoint - cm.entityString;
-		return qtrue;
-	}
 }
 
 /*

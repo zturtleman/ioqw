@@ -106,6 +106,7 @@ typedef struct bot_input_s {
 	int actionflags;	// one of the ACTION_? flags
 	int weapon;			// weapon to use
 } bot_input_t;
+
 typedef trace_t bsp_trace_t;
 // entity state
 typedef struct bot_entitystate_s {
@@ -142,7 +143,7 @@ typedef struct botlib_import_s {
 	// check if the point is in potential visible sight
 	int (*inPVS)(vec3_t p1, vec3_t p2);
 	// retrieve the BSP entity data lump
-	qboolean (*GetEntityToken)(int *offset, char *token, int tokenSize);
+	char *(*BSPEntityData)(void);
 	void (*BSPModelMinsMaxsOrigin)(int modelnum, vec3_t angles, vec3_t mins, vec3_t maxs, vec3_t origin);
 	// send a bot client command
 	void (*BotClientCommand)(int client, char *command);
@@ -212,7 +213,7 @@ typedef struct aas_export_s {
 	// be_aas_move.c
 	//--------------------------------------------
 	int (*AAS_Swimming)(vec3_t origin);
-	int (*AAS_PredictClientMovement)(struct aas_clientmove_s *move, int entnum, vec3_t origin, int presencetype, int onground, vec3_t velocity, vec3_t cmdmove, int cmdframes, int maxframes, float frametime, int stopevent, int stopareanum, int visualize, int contentmask);
+	int (*AAS_PredictClientMovement)(struct aas_clientmove_s *move, int entnum, vec3_t origin, int presencetype, int onground, vec3_t velocity, vec3_t cmdmove, int cmdframes, int maxframes, float frametime, int stopevent, int stopareanum, int visualize);
 } aas_export_t;
 
 typedef struct ea_export_s {
