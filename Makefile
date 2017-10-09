@@ -24,7 +24,7 @@ ifndef BUILD_GAME_QVM
   BUILD_GAME_QVM   =
 endif
 ifndef BUILD_BASEGAME
-  BUILD_BASEGAME =
+  BUILD_BASEGAME = 0
 endif
 ifndef BUILD_MISSIONPACK
   BUILD_MISSIONPACK=
@@ -118,7 +118,7 @@ APPBUNDLE=quakewars.app
 endif
 
 ifndef BASEGAME
-BASEGAME=Data
+BASEGAME=baseq3
 endif
 
 ifndef BASEGAME_CFLAGS
@@ -126,7 +126,7 @@ BASEGAME_CFLAGS=
 endif
 
 ifndef MISSIONPACK
-MISSIONPACK=missionpack
+MISSIONPACK=Data
 endif
 
 ifndef MISSIONPACK_CFLAGS
@@ -2391,7 +2391,6 @@ Q3CGOBJ_ = \
   $(B)/$(BASEGAME)/cgame/bg_pmove.o \
   $(B)/$(BASEGAME)/cgame/bg_slidemove.o \
   $(B)/$(BASEGAME)/cgame/bg_lib.o \
-  $(B)/$(BASEGAME)/cgame/bg_tracemap.o \
   $(B)/$(BASEGAME)/cgame/cg_consolecmds.o \
   $(B)/$(BASEGAME)/cgame/cg_draw.o \
   $(B)/$(BASEGAME)/cgame/cg_drawtools.o \
@@ -2412,8 +2411,7 @@ Q3CGOBJ_ = \
   $(B)/$(BASEGAME)/cgame/cg_weapons.o \
   \
   $(B)/$(BASEGAME)/qcommon/q_math.o \
-  $(B)/$(BASEGAME)/qcommon/q_shared.o \
-  $(B)/$(BASEGAME)/qcommon/q_unicode.o
+  $(B)/$(BASEGAME)/qcommon/q_shared.o
 
 Q3CGOBJ = $(Q3CGOBJ_) $(B)/$(BASEGAME)/cgame/cg_syscalls.o
 Q3CGVMOBJ = $(Q3CGOBJ_:%.o=%.asm)
@@ -2492,7 +2490,6 @@ Q3GOBJ_ = \
   $(B)/$(BASEGAME)/game/bg_pmove.o \
   $(B)/$(BASEGAME)/game/bg_slidemove.o \
   $(B)/$(BASEGAME)/game/bg_lib.o \
-  $(B)/$(BASEGAME)/game/bg_tracemap.o \
   $(B)/$(BASEGAME)/game/g_active.o \
   $(B)/$(BASEGAME)/game/g_arenas.o \
   $(B)/$(BASEGAME)/game/g_bot.o \
@@ -2591,6 +2588,7 @@ Q3UIOBJ_ = \
   $(B)/$(BASEGAME)/ui/bg_lib.o \
   $(B)/$(BASEGAME)/ui/ui_addbots.o \
   $(B)/$(BASEGAME)/ui/ui_atoms.o \
+  $(B)/$(BASEGAME)/ui/ui_cdkey.o \
   $(B)/$(BASEGAME)/ui/ui_cinematics.o \
   $(B)/$(BASEGAME)/ui/ui_confirm.o \
   $(B)/$(BASEGAME)/ui/ui_connect.o \
@@ -2598,7 +2596,6 @@ Q3UIOBJ_ = \
   $(B)/$(BASEGAME)/ui/ui_credits.o \
   $(B)/$(BASEGAME)/ui/ui_demo2.o \
   $(B)/$(BASEGAME)/ui/ui_display.o \
-  $(B)/$(BASEGAME)/ui/ui_firstrun.o \
   $(B)/$(BASEGAME)/ui/ui_gameinfo.o \
   $(B)/$(BASEGAME)/ui/ui_ingame.o \
   $(B)/$(BASEGAME)/ui/ui_loadconfig.o \
@@ -2629,8 +2626,7 @@ Q3UIOBJ_ = \
   $(B)/$(BASEGAME)/ui/ui_video.o \
   \
   $(B)/$(BASEGAME)/qcommon/q_math.o \
-  $(B)/$(BASEGAME)/qcommon/q_shared.o \
-  $(B)/$(BASEGAME)/qcommon/q_unicode.o
+  $(B)/$(BASEGAME)/qcommon/q_shared.o
 
 Q3UIOBJ = $(Q3UIOBJ_) $(B)/$(MISSIONPACK)/ui/ui_syscalls.o
 Q3UIVMOBJ = $(Q3UIOBJ_:%.o=%.asm)
