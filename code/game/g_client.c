@@ -735,7 +735,7 @@ void ClientUserinfoChanged(int clientNum) {
 		Q_strncpyz(headModel, Info_ValueForKey(userinfo, "headmodel"), sizeof(headModel));
 	}
 #ifdef MISSIONPACK
-	if (g_gametype.integer > GT_TOURNAMENT) {
+	if (g_gametype.integer > GT_TOURNAMENT && !(ent->r.svFlags & SVF_BOT)) {
 		client->pers.teamInfo = qtrue;
 	} else {
 		s = Info_ValueForKey(userinfo, "teamoverlay");
