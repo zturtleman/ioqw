@@ -2115,7 +2115,7 @@ void CG_DrawWeaponSelect(void) {
 
 	cg.bar_count = count;
 
-	y = 420;
+	y = 380;
 
 	if (count <= 0) {
 		return;
