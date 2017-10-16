@@ -95,3 +95,4 @@ int R_RandomOn(double t)
 {
 	return VALR((unsigned int) floor(t));
 }
+

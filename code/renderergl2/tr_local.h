@@ -1298,6 +1298,7 @@ typedef struct {
 	int		c_dlightSurfacesCulled;
 } frontEndCounters_t;
 
+
 // the renderer front end should never modify glstate_t
 typedef struct {
 	qboolean	finishCalled;
@@ -1555,7 +1556,6 @@ typedef struct {
 	int						frontEndMsec;		// not in pc due to clearing issue
 
 	vec4_t					clipRegion;			// 2D clipping region
-
 	//
 	// put large tables at the end, so most elements will be
 	// within the +/32K indexed range on risc processors
