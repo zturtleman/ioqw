@@ -2185,7 +2185,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum) {
 	CG_InitMarkPolys();
 	// remove the last loading update
 	cg.infoScreenText[0] = 0;
-	// Make sure we have update values (scores)
+	// make sure we have update values (scores)
 	CG_SetConfigValues();
 	CG_StartMusic();
 	CG_LoadingString("");

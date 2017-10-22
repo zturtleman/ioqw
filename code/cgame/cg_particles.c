@@ -29,9 +29,9 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "cg_local.h"
 
 //#define WOLF_PARTICLES
-#define BLOODRED 2
-#define EMISIVEFADE 3
-#define GREY75 4
+#define BLOODRED	2
+#define EMISIVEFADE	3
+#define GREY75		4
 
 typedef struct particle_s {
 	struct particle_s *next;
@@ -921,9 +921,13 @@ void CG_ParticleSnowFlurry(qhandle_t pshader, centity_t *cent) {
 	}
 
 	p = free_particles;
+
 	free_particles = p->next;
+
 	p->next = active_particles;
+
 	active_particles = p;
+
 	p->time = cg.time;
 	p->color = 0;
 	p->alpha = 0.90f;
@@ -981,9 +985,13 @@ void CG_ParticleSnow(qhandle_t pshader, vec3_t origin, vec3_t origin2, int turb,
 	}
 
 	p = free_particles;
+
 	free_particles = p->next;
+
 	p->next = active_particles;
+
 	active_particles = p;
+
 	p->time = cg.time;
 	p->color = 0;
 	p->alpha = 0.40f;
@@ -1037,9 +1045,13 @@ void CG_ParticleBubble(qhandle_t pshader, vec3_t origin, vec3_t origin2, int tur
 	}
 
 	p = free_particles;
+
 	free_particles = p->next;
+
 	p->next = active_particles;
+
 	active_particles = p;
+
 	p->time = cg.time;
 	p->color = 0;
 	p->alpha = 0.40f;
@@ -1098,9 +1110,13 @@ void CG_ParticleSmoke(qhandle_t pshader, centity_t *cent) {
 	}
 
 	p = free_particles;
+
 	free_particles = p->next;
+
 	p->next = active_particles;
+
 	active_particles = p;
+
 	p->time = cg.time;
 	p->endtime = cg.time + cent->currentState.time;
 	p->startfade = cg.time + cent->currentState.time2;
@@ -1658,6 +1674,7 @@ void CG_BloodPool(localEntity_t *le, qhandle_t pshader, trace_t *tr) {
 	}
 
 	VectorCopy(tr->endpos, start);
+
 	legit = ValidBloodPool(start);
 
 	if (!legit) {
@@ -1665,9 +1682,13 @@ void CG_BloodPool(localEntity_t *le, qhandle_t pshader, trace_t *tr) {
 	}
 
 	p = free_particles;
+
 	free_particles = p->next;
+
 	p->next = active_particles;
+
 	active_particles = p;
+
 	p->time = cg.time;
 	p->endtime = cg.time + 3000;
 	p->startfade = p->endtime;

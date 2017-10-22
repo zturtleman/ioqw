@@ -180,6 +180,7 @@ void CG_CheckOrderPending(void) {
 	if (cgs.orderPending) {
 		//clientInfo_t *ci = cgs.clientinfo + sortedTeamPlayers[cg_currentSelectedPlayer.integer];
 		const char *p1, *p2, *b;
+
 		p1 = p2 = b = NULL;
 
 		switch (cgs.currentOrder) {
@@ -576,7 +577,7 @@ static void CG_DrawSelectedPlayerStatus(rectDef_t *rect) {
 
 		if (cgs.orderPending) {
 			// blink the icon
-			if (cg.time > cgs.orderTime - 2500 && (cg.time >> 9) &1) {
+			if (cg.time > cgs.orderTime - 2500 && (cg.time >> 9) & 1) {
 				return;
 			}
 
@@ -1241,9 +1242,9 @@ static void CG_DrawAreaPowerUp(rectDef_t *rect, int align, float special, float 
 			}
 
 			CG_DrawPic(r2.x, r2.y, r2.w * .75, r2.h, trap_R_RegisterShader(item->icon));
-
 			Com_sprintf(num, sizeof(num), "%i", sortedTime[i] / 1000);
 			CG_Text_Paint(r2.x + (r2.w * .75) + 3, r2.y + r2.h, scale, color, num, 0, 0, 0);
+
 			*inc += r2.w + special;
 		}
 	}
@@ -1728,7 +1729,7 @@ void CG_DrawNewTeamInfo(rectDef_t *rect, float text_x, float text_y, float scale
 
 			if (cgs.orderPending) {
 				// blink the icon
-				if (cg.time > cgs.orderTime - 2500 && (cg.time >> 9) &1) {
+				if (cg.time > cgs.orderTime - 2500 && (cg.time >> 9) & 1) {
 					h = 0;
 				} else {
 					h = CG_StatusHandle(cgs.currentOrder);

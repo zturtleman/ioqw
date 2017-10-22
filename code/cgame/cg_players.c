@@ -1218,8 +1218,7 @@ static void CG_SetLerpFrameAnimation(clientInfo_t *ci, lerpFrame_t *lf, int newA
 =======================================================================================================================================
 CG_RunLerpFrame
 
-Sets cg.snap, cg.oldFrame, and cg.backlerp.
-cg.time should be between oldFrameTime and frameTime after exit.
+Sets cg.snap, cg.oldFrame, and cg.backlerp. cg.time should be between oldFrameTime and frameTime after exit.
 =======================================================================================================================================
 */
 static void CG_RunLerpFrame(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, float speedScale) {
@@ -1520,6 +1519,7 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 	}
 
 	CG_SwingAngles(dest, 15, 30, 0.1f, &cent->pe.torso.pitchAngle, &cent->pe.torso.pitching);
+
 	torsoAngles[PITCH] = cent->pe.torso.pitchAngle;
 	clientNum = cent->currentState.clientNum;
 
@@ -1535,6 +1535,7 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 
 	// lean towards the direction of travel
 	VectorCopy(cent->currentState.pos.trDelta, velocity);
+
 	speed = VectorNormalize(velocity);
 
 	if (speed) {
@@ -1544,6 +1545,7 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 		speed *= 0.05f;
 
 		AnglesToAxis(legsAngles, axis);
+
 		side = speed * DotProduct(velocity, axis[1]);
 		legsAngles[ROLL] -= side;
 
@@ -2402,6 +2404,7 @@ void CG_Player(centity_t *cent) {
 
 	if (ci->medkitUsageTime && t < 500) {
 		memcpy(&powerup, &torso, sizeof(torso));
+
 		powerup.hModel = cgs.media.medkitUsageModel;
 		powerup.customSkin = 0;
 		// always draw

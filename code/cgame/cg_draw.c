@@ -625,7 +625,6 @@ static float CG_DrawAttacker(float y) {
 
 	info = CG_ConfigString(CS_PLAYERS + clientNum);
 	name = Info_ValueForKey(info, "n");
-
 	y += size;
 
 	color[0] = color[1] = color[2] = 1;
@@ -1826,6 +1825,7 @@ static void CG_DrawCrosshair3D(void) {
 	// high stereo separation. We are going to trace to the next shootable object and place the crosshair in front of it.
 	// first get all the important renderer information
 	trap_Cvar_VariableStringBuffer("r_zProj", rendererinfos, sizeof(rendererinfos));
+
 	zProj = atof(rendererinfos);
 
 	trap_Cvar_VariableStringBuffer("r_stereoSeparation", rendererinfos, sizeof(rendererinfos));

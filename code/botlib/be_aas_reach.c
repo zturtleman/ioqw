@@ -4002,6 +4002,7 @@ void AAS_Reachability_JumpPad(void) {
 					VectorSubtract(facecenter, areastart, dir);
 					dir[2] = 0;
 					//hordist = VectorNormalize(dir);
+
 					//if (hordist < 1.6 * facecenter[2] - areastart[2])
 					{
 						// get command movement
@@ -4709,7 +4710,7 @@ void AAS_InitReachability(void) {
 	aasworld.savefile = qtrue;
 	// start with area 1 because area zero is a dummy
 	aasworld.numreachabilityareas = 1;
-	////aasworld.numreachabilityareas = aasworld.numareas + 1; // only calculate entity reachabilities
+	//aasworld.numreachabilityareas = aasworld.numareas + 1; // only calculate entity reachabilities
 	// setup the heap with reachability links
 	AAS_SetupReachabilityHeap();
 	// allocate area reachability link array
