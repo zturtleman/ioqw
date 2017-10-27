@@ -2120,6 +2120,7 @@ static void S_AL_MusicUpdate(void) {
 
 	while (numBuffers--) {
 		ALuint b;
+
 		qalSourceUnqueueBuffers(musicSource, 1, &b);
 		S_AL_MusicProcess(b);
 		qalSourceQueueBuffers(musicSource, 1, &b);

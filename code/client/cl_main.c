@@ -1275,7 +1275,7 @@ void CL_ClearState(void) {
 =======================================================================================================================================
 CL_UpdateGUID
 
-update cl_guid using QKEY_FILE and optional prefix.
+Update cl_guid using QKEY_FILE and optional prefix.
 =======================================================================================================================================
 */
 static void CL_UpdateGUID(const char *prefix, int prefix_len) {
@@ -2062,7 +2062,7 @@ void CL_NextDownload(void) {
 #endif // USE_CURL
 		if (!useCURL) {
 			if ((cl_allowDownload->integer & DLF_NO_UDP)) {
-				Com_Error(ERR_DROP, "UDP Downloads are disabled on your client. (cl_allowDownload is %d)", cl_allowDownload->integer);
+				Com_Error(ERR_DROP, "UDP Downloads are disabled on your client (cl_allowDownload is %d)", cl_allowDownload->integer);
 				return;
 			} else {
 				CL_BeginDownload(localName, remoteName);

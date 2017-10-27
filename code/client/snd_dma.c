@@ -1462,6 +1462,7 @@ void S_Base_StopBackgroundTrack(void) {
 	}
 
 	S_CodecCloseStream(s_backgroundStream);
+
 	s_backgroundStream = NULL;
 	s_rawend[0] = 0;
 }

@@ -1911,6 +1911,7 @@ int PC_EvaluateTokens(source_t *source, token_t *tokens, signed long int *intval
 
 						break;
 					}
+
 					default:
 					{
 						SourceError(source, "invalid operator %s in #if/#elif", t->string);

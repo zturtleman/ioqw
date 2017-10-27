@@ -48,8 +48,8 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 // Hack to enable compiling both on OpenAL SDK and OpenAL-soft.
 #ifndef ALC_ENUMERATE_ALL_EXT
 #define ALC_ENUMERATE_ALL_EXT 1
-#define ALC_DEFAULT_ALL_DEVICES_SPECIFIER 0x1012
-#define ALC_ALL_DEVICES_SPECIFIER 0x1013
+#define ALC_DEFAULT_ALL_DEVICES_SPECIFIER	0x1012
+#define ALC_ALL_DEVICES_SPECIFIER			0x1013
 #endif
 #ifdef USE_OPENAL_DLOPEN
 extern LPALENABLE qalEnable;
