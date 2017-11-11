@@ -53,6 +53,10 @@ void CG_CheckAmmo(void) {
 			continue;
 		}
 
+		if (cg.snap->ps.ammo[i] < 0) {
+			continue;
+		}
+
 		switch (i) {
 			case WP_SHOTGUN:
 			case WP_PROXLAUNCHER:
