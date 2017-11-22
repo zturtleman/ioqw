@@ -48,7 +48,7 @@ int demo_protocols[] = {67, 66, 0};
 int com_argc;
 char *com_argv[MAX_NUM_ARGVS + 1];
 
-jmp_buf abortframe; // an ERR_DROP occured, exit the entire frame
+jmp_buf abortframe; // an ERR_DROP occurred, exit the entire frame
 
 FILE *debuglogfile;
 static fileHandle_t pipefile;
@@ -1225,7 +1225,7 @@ char *CopyString(const char *in) {
 /*
 =======================================================================================================================================
 
-Goals: Reproducable without history effects -- no out of memory errors on weird map to map changes.
+Goals: Reproducible without history effects -- no out of memory errors on weird map to map changes.
 	   Allow restarting of the client without fragmentation.
 	   Minimize total pages in use at run time.
 	   Minimize total pages needed during load time.

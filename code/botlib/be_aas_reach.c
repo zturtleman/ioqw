@@ -1474,7 +1474,7 @@ int AAS_Reachability_Step_Barrier_WaterJump_WalkOffLedge(int area1num, int area2
 		testpoint[2] -= aassettings.phys_maxwaterjump;
 		// if there IS water the phys_maxwaterjump height below the bestend point
 		if (aasworld.areasettings[AAS_PointAreaNum(testpoint)].areaflags & AREA_LIQUID) {
-			// don't create rediculous water jump reachabilities from areas very far below the water surface
+			// don't create ridiculous water jump reachabilities from areas very far below the water surface
 			if (water_bestdist < aassettings.phys_maxwaterjump + 24) {
 				// waterjumping from or towards a crouch only area is not possible
 				if ((aasworld.areasettings[area1num].presencetype & PRESENCE_NORMAL) && (aasworld.areasettings[area2num].presencetype & PRESENCE_NORMAL)) {
@@ -3216,7 +3216,7 @@ void AAS_Reachability_Elevator(void) {
 					bottomorg[2] += 24;
 				}
 				// look at adjacent areas around the top of the plat
-				// make larger steps to outside the plat everytime
+				// make larger steps to outside the plat every time
 				for (n = 0; n < 3; n++) {
 					for (k = 0; k < 3; k++) {
 						mins[k] -= 4;

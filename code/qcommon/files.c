@@ -74,7 +74,7 @@ automatically restricts where game media can come from to prevent add-ons from w
 File search order: when FS_FOpenFileRead gets called it will go through the fs_searchpaths structure and stop on the first successful
 hit. fs_searchpaths is built with successive calls to FS_AddGameDirectory
 
-Additionaly, we search in several subdirectories:
+Additionally, we search in several subdirectories:
 current game is the current mode
 base game is a variable to allow mods based on other mods
 (such as base game + missionpack content combination in a mod for instance)
@@ -138,7 +138,7 @@ Casing
 
 Read/write config to floppy option.
 
-Different version coexistance?
+Different version coexistence?
 
 When building a pak file, make sure a qwconfig.cfg isn't present in it, or configs will never get loaded from disk!
 
@@ -1297,7 +1297,7 @@ long FS_FOpenFileRead(const char *filename, fileHandle_t *file, qboolean uniqueF
 		*file = 0;
 		return -1;
 	} else {
-		// when file is NULL, we're querying the existance of the file
+		// when file is NULL, we're querying the existence of the file
 		// if we've got here, it doesn't exist
 		return 0;
 	}
@@ -3623,7 +3623,7 @@ void FS_PureServerSetReferencedPaks(const char *pakSums, const char *pakNames) {
 =======================================================================================================================================
 FS_InitFilesystem
 
-Called only at inital startup, not when the filesystem is resetting due to a game change.
+Called only at initial startup, not when the filesystem is resetting due to a game change.
 =======================================================================================================================================
 */
 void FS_InitFilesystem(void) {

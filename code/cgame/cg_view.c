@@ -40,7 +40,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 	Testmodel will create a fake entity 100 units in front of the current view position, directly facing the viewer. It will remain
 	immobile, so you can move around it to view it from different angles.
 
-	Testgun will cause the model to follow the player around and supress the real view weapon model. The default frame 0 of most guns
+	Testgun will cause the model to follow the player around and suppress the real view weapon model. The default frame 0 of most guns
 	is completely off screen, so you will probably have to cycle a couple frames to see it.
 
 	"nextframe", "prevframe", "nextskin", and "prevskin" commands will change the frame or skin of the testmodel. These are bound to F5,

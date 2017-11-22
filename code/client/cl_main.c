@@ -554,7 +554,7 @@ static void CL_CaptureVoip(void) {
 =======================================================================================================================================
 CL_AddReliableCommand
 
-The given command will be transmitted to the server, and is gauranteed to not have future usercmd_t executed before it is executed.
+The given command will be transmitted to the server, and is guaranteed to not have future usercmd_t executed before it is executed.
 =======================================================================================================================================
 */
 void CL_AddReliableCommand(const char *cmd, qboolean isDisconnectCmd) {

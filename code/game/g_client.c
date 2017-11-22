@@ -57,7 +57,7 @@ void SP_info_player_deathmatch(gentity_t *ent) {
 }
 
 /*QUAKED info_player_start (1 0 0) (-16 -16 -24) (16 16 56)
-equivelant to info_player_deathmatch
+equivalent to info_player_deathmatch
 */
 void SP_info_player_start(gentity_t *ent) {
 

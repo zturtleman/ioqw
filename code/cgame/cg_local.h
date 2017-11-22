@@ -257,7 +257,7 @@ typedef struct centity_s {
 
 /**************************************************************************************************************************************
 
-	local entities are created as a result of events or predicted actions, and live independantly from all server transmitted entities.
+	local entities are created as a result of events or predicted actions, and live independently from all server transmitted entities.
 
 **************************************************************************************************************************************/
 

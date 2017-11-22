@@ -22,7 +22,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 =======================================================================================================================================
 */
 
-// string allocation/managment
+// string allocation/management
 
 #include "ui_shared.h"
 

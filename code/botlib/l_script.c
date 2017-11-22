@@ -202,7 +202,7 @@ char *PunctuationFromNum(script_t *script, int num) {
 		}
 	}
 
-	return "unkown punctuation";
+	return "unknown punctuation";
 }
 
 /*
