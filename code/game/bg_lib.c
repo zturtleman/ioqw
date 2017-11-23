@@ -1561,7 +1561,7 @@ double fabs(double x) {
  *  Brandon Long <blong@fiction.net> 10/22/97 for mutt 0.87.1
  *    Ok, added some minimal floating point support, which means this
  *    probably requires libm on most operating systems. Don't yet
- *    support the exponent (e,E) and sigfig (g,G). Also, fmtint()
+ *    support the exponent (e, E) and sigfig (g, G). Also, fmtint()
  *    was pretty badly broken, it just wasn't being exercised in ways
  *    which showed it, so that's been fixed. Also, formatted the code
  *    to mutt conventions, and removed dead code left over from the
