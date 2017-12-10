@@ -135,7 +135,6 @@ static void CG_LoadHud_f(void) {
 
 	String_Init();
 	Menu_Reset();
-
 	trap_Cvar_VariableStringBuffer("cg_hudFiles", buff, sizeof(buff));
 
 	hudSet = buff;
@@ -318,9 +317,10 @@ static void CG_PrevTeamMember_f(void) {
 /*
 =======================================================================================================================================
 CG_NextOrder_f
+
+ASS U ME's enumeration order as far as task specific orders, OFFENSE is zero, PATROL is last.
 =======================================================================================================================================
 */
-// ASS U ME's enumeration order as far as task specific orders, OFFENSE is zero, PATROL is last
 static void CG_NextOrder_f(void) {
 	clientInfo_t *ci = cgs.clientinfo + cg.snap->ps.clientNum;
 

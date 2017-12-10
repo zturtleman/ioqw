@@ -220,7 +220,6 @@ void CG_ReflectVelocity(localEntity_t *le, trace_t *trace) {
 		le->pos.trType = TR_STATIONARY;
 
 		VectorCopy(trace->endpos, le->refEntity.origin);
-
 		vectoangles(le->refEntity.axis[0], le->angles.trBase);
 
 		le->groundEntityNum = trace->entityNum;
@@ -304,15 +303,15 @@ void CG_AddFragment(localEntity_t *le) {
 		}
 
 		BG_EvaluateTrajectory(&le->pos, oldTime, origin, qtrue, -1);
-
 		VectorClear(angles);
 		// add the distance mover has moved since then
 		CG_AdjustPositionForMover(origin, trace.entityNum, oldTime, cg.time, origin, angles, angles);
 		// nudge the origin farther to avoid being co-planar
 		VectorSubtract(origin, newOrigin, dir);
-		dist = VectorNormalize(dir);
-		VectorMA(origin, dist, dir, origin);
 
+		dist = VectorNormalize(dir);
+
+		VectorMA(origin, dist, dir, origin);
 		CG_Trace(&tr, origin, NULL, NULL, newOrigin, -1, CONTENTS_SOLID);
 		// found impact. restore allsolid because trace fraction won't work correct in CG_ReflectVelocity
 		if (!tr.allsolid) {
@@ -332,7 +331,6 @@ void CG_AddFragment(localEntity_t *le) {
 	CG_FragmentBounceSound(le, &trace);
 	// reflect the velocity on the trace plane
 	CG_ReflectVelocity(le, &trace);
-
 	trap_R_AddRefEntityToScene(&le->refEntity);
 }
 
@@ -661,6 +659,7 @@ void CG_AddKamikaze(localEntity_t *le) {
 		AnglesToAxis(test, axis);
 
 		c = (float)(t - KAMI_SHOCKWAVE2_STARTTIME) / (float)(KAMI_SHOCKWAVE2_ENDTIME - KAMI_SHOCKWAVE2_STARTTIME);
+
 		VectorScale(axis[0], c * KAMI_SHOCKWAVE2_MAXRADIUS / KAMI_SHOCKWAVEMODEL_RADIUS, shockwave.axis[0]);
 		VectorScale(axis[1], c * KAMI_SHOCKWAVE2_MAXRADIUS / KAMI_SHOCKWAVEMODEL_RADIUS, shockwave.axis[1]);
 		VectorScale(axis[2], c * KAMI_SHOCKWAVE2_MAXRADIUS / KAMI_SHOCKWAVEMODEL_RADIUS, shockwave.axis[2]);

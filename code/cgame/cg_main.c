@@ -958,9 +958,7 @@ static void CG_RegisterGraphics(void) {
 	memset(&cg.refdef, 0, sizeof(cg.refdef));
 
 	trap_R_ClearScene();
-
 	CG_LoadingString(cgs.mapname);
-
 	trap_R_LoadWorldMap(cgs.mapname);
 	// precache status bar pics
 	CG_LoadingString("game media");
@@ -1137,7 +1135,9 @@ static void CG_RegisterGraphics(void) {
 		int j;
 
 		Com_sprintf(name, sizeof(name), "*%i", i);
+
 		cgs.inlineDrawModel[i] = trap_R_RegisterModel(name);
+
 		trap_R_ModelBounds(cgs.inlineDrawModel[i], mins, maxs);
 
 		for (j = 0; j < 3; j++) {
@@ -1593,11 +1593,11 @@ void CG_LoadMenus(const char *menuFile) {
 	}
 
 	trap_FS_Read(buf, len, f);
+
 	buf[len] = 0;
+
 	trap_FS_FCloseFile(f);
-
 	COM_Compress(buf);
-
 	Menu_Reset();
 
 	p = buf;
@@ -2015,9 +2015,7 @@ void CG_LoadHudMenu(void) {
 	cgDC.runCinematicFrame = &CG_RunCinematicFrame;
 
 	Init_Display(&cgDC);
-
 	Menu_Reset();
-
 	trap_Cvar_VariableStringBuffer("cg_hudFiles", buff, sizeof(buff));
 
 	hudSet = buff;
@@ -2097,7 +2095,6 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum) {
 	memset(cg_items, 0, sizeof(cg_items));
 
 	cg.clientNum = clientNum;
-
 	cgs.processedSnapshotNum = serverMessageNum;
 	cgs.serverCommandSequence = serverCommandSequence;
 	// load a few needed things before we do any screen updates
@@ -2118,7 +2115,6 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum) {
 	CG_InitConsoleCommands();
 
 	cg.weaponSelect = WP_MACHINEGUN;
-
 	cgs.redflag = cgs.blueflag = -1; // For compatibily, default to unset for
 	cgs.flagStatus = -1;
 	// old servers
@@ -2162,7 +2158,6 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum) {
 	CG_ParseServerinfo();
 	// load the new map
 	CG_LoadingString("collision map");
-
 	trap_CM_LoadMap(cgs.mapname);
 #ifdef MISSIONPACK
 	String_Init();
@@ -2191,7 +2186,6 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum) {
 	CG_LoadingString("");
 	CG_InitTeamChat();
 	CG_ShaderStateChanged();
-
 	trap_S_ClearLoopingSounds(qtrue);
 }
 

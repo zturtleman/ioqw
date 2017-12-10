@@ -740,6 +740,7 @@ void BotCTFSeekGoals(bot_state_t *bs) {
 					bs->owndecision_time = FloatTime() + 5;
 				} else {
 					BotRefuseOrder(bs);
+
 					bs->decisionmaker = bs->client;
 					bs->ordered = qfalse;
 					// get the enemy flag
@@ -1227,6 +1228,7 @@ void BotGoHarvest(bot_state_t *bs) {
 	// set the time the bot will stop harvesting
 	bs->teamgoal_time = FloatTime() + TEAM_HARVEST_TIME;
 	bs->harvestaway_time = 0;
+
 	BotSetTeamStatus(bs);
 }
 
@@ -1391,11 +1393,13 @@ void BotHarvesterRetreatGoals(bot_state_t *bs) {
 		// if not already rushing to the base
 		if (bs->ltgtype != LTG_RUSHBASE) {
 			BotRefuseOrder(bs);
+
 			bs->ltgtype = LTG_RUSHBASE;
 			bs->teamgoal_time = FloatTime() + CTF_RUSHBASE_TIME;
 			bs->rushbaseaway_time = 0;
 			bs->decisionmaker = bs->client;
 			bs->ordered = qfalse;
+
 			BotSetTeamStatus(bs);
 		}
 
@@ -1480,6 +1484,7 @@ char *ClientName(int client, char *name, int size) {
 	strncpy(name, Info_ValueForKey(buf, "n"), size - 1);
 
 	name[size - 1] = '\0';
+
 	Q_CleanStr(name);
 	return name;
 }
@@ -1606,6 +1611,7 @@ char *EasyClientName(int client, char *buf, int size) {
 	}
 
 	strncpy(buf, name, size - 1);
+
 	buf[size - 1] = '\0';
 	return buf;
 }
@@ -1734,7 +1740,6 @@ void BotSetupForMovement(bot_state_t *bs) {
 	}
 
 	VectorCopy(bs->viewangles, initmove.viewangles);
-
 	trap_BotInitMoveState(bs->ms, &initmove);
 }
 
@@ -2828,6 +2833,7 @@ int BotWantsToCamp(bot_state_t *bs) {
 	}
 	// ok found a camp spot, go camp there
 	BotGoCamp(bs, &bestgoal);
+
 	bs->ordered = qfalse;
 	return qtrue;
 }
@@ -3062,6 +3068,7 @@ void BotRoamGoal(bot_state_t *bs, vec3_t goal) {
 			belowbestorg[0] = bestorg[0];
 			belowbestorg[1] = bestorg[1];
 			belowbestorg[2] = bestorg[2] - 800;
+
 			BotAI_Trace(&trace, bestorg, NULL, NULL, belowbestorg, bs->entitynum, MASK_SOLID);
 
 			if (!trace.startsolid) {
@@ -3132,6 +3139,7 @@ bot_moveresult_t BotAttackMove(bot_state_t *bs, int tfl) {
 	VectorSubtract(entinfo.origin, bs->origin, forward);
 	// the distance towards the enemy
 	dist = VectorNormalize(forward);
+
 	VectorNegate(forward, backward);
 	// walk, crouch or jump
 	movetype = MOVE_WALK;
@@ -3272,7 +3280,7 @@ bot_moveresult_t BotAttackMove(bot_state_t *bs, int tfl) {
 		bs->attackstrafe_time = 0;
 	}
 	// bot couldn't do any useful movement
-//	bs->attackchase_time = AAS_Time() + 6;
+	//bs->attackchase_time = AAS_Time() + 6;
 	return moveresult;
 }
 
@@ -4790,7 +4798,8 @@ int BotFuncButtonActivateGoal(bot_state_t *bs, int bspent, bot_activategoal_t *a
 			VectorSet(activategoal->goal.maxs, 8, 8, 8);
 			return qtrue;
 		} else {
-			// create a goal from where the button is visible and shoot at the button from there add bounding box size to the dist
+			// create a goal from where the button is visible and shoot at the button from there
+			// add bounding box size to the dist
 			trap_AAS_PresenceTypeBoundingBox(PRESENCE_CROUCH, bboxmins, bboxmaxs);
 
 			for (i = 0; i < 3; i++) {
@@ -4805,7 +4814,9 @@ int BotFuncButtonActivateGoal(bot_state_t *bs, int bspent, bot_activategoal_t *a
 			VectorCopy(goalorigin, start);
 
 			start[2] += 24;
+
 			VectorCopy(start, end);
+
 			end[2] -= 512;
 			numareas = trap_AAS_TraceAreas(start, end, areas, points, 10);
 
@@ -4946,6 +4957,7 @@ int BotTriggerMultipleActivateGoal(bot_state_t *bs, int bspent, bot_activategoal
 	vec3_t origin, goalorigin;
 
 	activategoal->shoot = qfalse;
+
 	VectorClear(activategoal->target);
 	// create a bot goal towards the trigger
 	trap_AAS_ValueForBSPEpairKey(bspent, "model", model, sizeof(model));
@@ -4966,8 +4978,11 @@ int BotTriggerMultipleActivateGoal(bot_state_t *bs, int bspent, bot_activategoal
 	VectorScale(origin, 0.5, origin);
 	VectorCopy(origin, goalorigin);
 	VectorCopy(goalorigin, start);
+
 	start[2] += 24;
+
 	VectorCopy(start, end);
+
 	end[2] -= 100;
 	numareas = trap_AAS_TraceAreas(start, end, areas, NULL, 10);
 
@@ -5004,6 +5019,7 @@ int BotPopFromActivateGoalStack(bot_state_t *bs) {
 	}
 
 	BotEnableActivateGoalAreas(bs->activatestack, qtrue);
+
 	bs->activatestack->inuse = qfalse;
 	bs->activatestack->justused_time = FloatTime();
 	bs->activatestack = bs->activatestack->next;
@@ -5033,6 +5049,7 @@ int BotPushOntoActivateGoalStack(bot_state_t *bs, bot_activategoal_t *activatego
 
 	if (best != -1) {
 		memcpy(&bs->activategoalheap[best], activategoal, sizeof(bot_activategoal_t));
+
 		bs->activategoalheap[best].inuse = qtrue;
 		bs->activategoalheap[best].next = bs->activatestack;
 		bs->activatestack = &bs->activategoalheap[best];

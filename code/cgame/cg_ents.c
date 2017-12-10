@@ -148,6 +148,7 @@ static void CG_EntityEffects(centity_t *cent) {
 		g = (float)((cl >> 8) & 0xFF) / 255.0;
 		b = (float)((cl >> 16) & 0xFF) / 255.0;
 		i = (float)((cl >> 24) & 0xFF) * 4.0;
+
 		trap_R_AddLightToScene(cent->lerpOrigin, i, r, g, b);
 	}
 }
@@ -703,7 +704,6 @@ static void CG_TeamBase(centity_t *cent) {
 
 		VectorCopy(cent->lerpOrigin, model.lightingOrigin);
 		VectorCopy(cent->lerpOrigin, model.origin);
-
 		AnglesToAxis(cent->currentState.angles, model.axis);
 
 		model.hModel = cgs.media.overloadBaseModel;
@@ -806,7 +806,6 @@ static void CG_TeamBase(centity_t *cent) {
 
 		VectorCopy(cent->lerpOrigin, model.lightingOrigin);
 		VectorCopy(cent->lerpOrigin, model.origin);
-
 		AnglesToAxis(cent->currentState.angles, model.axis);
 
 		if (cent->currentState.modelindex == TEAM_RED) {

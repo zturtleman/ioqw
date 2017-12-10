@@ -206,6 +206,7 @@ void QDECL BotAI_BotInitialChat(bot_state_t *bs, char *type, ...) {
 	memset(vars, 0, sizeof(vars));
 
 	va_start(ap, type);
+
 	p = va_arg(ap, char *);
 
 	for (i = 0; i < MAX_MATCHVARIABLES; i++) {
@@ -989,6 +990,7 @@ void BotInputToUserCommand(bot_input_t *bi, usercmd_t *ucmd, int delta_angles[3]
 
 	angles[YAW] = bi->viewangles[YAW];
 	angles[ROLL] = 0;
+
 	AngleVectors(angles, forward, right, NULL);
 	// bot input speed is in the range [0, 400]
 	bi->speed = bi->speed * 127 / 400;
@@ -1189,6 +1191,7 @@ int BotAI(int client, float thinktime) {
 	VectorCopy(bs->cur_ps.origin, bs->origin);
 	// eye coordinates of the bot
 	VectorCopy(bs->cur_ps.origin, bs->eye);
+
 	bs->eye[2] += bs->cur_ps.viewheight;
 	// get the area the bot is in
 	bs->areanum = BotPointAreaNum(bs->origin);
@@ -1253,6 +1256,7 @@ void BotReadSessionData(bot_state_t *bs) {
 	const char *var;
 
 	var = va("botsession%i", bs->client);
+
 	trap_Cvar_VariableStringBuffer(var, s, sizeof(s));
 
 	sscanf(s, "%i %i %i %i %i %i %i %i %f %f %f %f %f %f %f %f %f %f",
@@ -1303,6 +1307,7 @@ int BotAISetupClient(int client, struct bot_settings_s *settings, qboolean resta
 	bs->gs = trap_BotAllocGoalState(client);
 	// load the item weights
 	trap_Characteristic_String(bs->character, CHARACTERISTIC_ITEMWEIGHTS, filename, sizeof(filename));
+
 	errnum = trap_BotLoadItemWeights(bs->gs, filename);
 
 	if (errnum != BLERR_NOERROR) {
@@ -1313,6 +1318,7 @@ int BotAISetupClient(int client, struct bot_settings_s *settings, qboolean resta
 	bs->ws = trap_BotAllocWeaponState();
 	// load the weapon weights
 	trap_Characteristic_String(bs->character, CHARACTERISTIC_WEAPONWEIGHTS, filename, sizeof(filename));
+
 	errnum = trap_BotLoadWeaponWeights(bs->ws, filename);
 
 	if (errnum != BLERR_NOERROR) {
@@ -1325,6 +1331,7 @@ int BotAISetupClient(int client, struct bot_settings_s *settings, qboolean resta
 	// load the chat file
 	trap_Characteristic_String(bs->character, CHARACTERISTIC_CHAT_FILE, filename, sizeof(filename));
 	trap_Characteristic_String(bs->character, CHARACTERISTIC_CHAT_NAME, name, sizeof(name));
+
 	errnum = trap_BotLoadChatFile(bs->cs, filename, name);
 
 	if (errnum != BLERR_NOERROR) {

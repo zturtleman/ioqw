@@ -174,6 +174,7 @@ void CG_DrawInformation(void) {
 	trap_R_DrawStretchPic(0, 0, cgs.glconfig.vidWidth, cgs.glconfig.vidHeight, 0, 0, 1, 1, levelshot);
 	// blend a detail texture over it
 	detail = trap_R_RegisterShader("levelShotDetail");
+
 	trap_R_DrawStretchPic(0, 0, cgs.glconfig.vidWidth, cgs.glconfig.vidHeight, 0, 0, 2.5, 2, detail);
 	// draw the icons of things as they are loaded
 	CG_DrawLoadingIcons();

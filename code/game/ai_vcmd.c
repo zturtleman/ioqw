@@ -216,9 +216,7 @@ void BotVoiceChat_Patrol(bot_state_t *bs, int client, int mode) {
 	bs->lastgoal_ltgtype = 0;
 
 	BotAI_BotInitialChat(bs, "dismissed", NULL);
-
 	trap_BotEnterChat(bs->cs, client, CHAT_TELL);
-
 	BotVoiceChatOnly(bs, -1, VOICECHAT_ONPATROL);
 	BotSetTeamStatus(bs);
 #ifdef DEBUG
@@ -301,7 +299,7 @@ void BotVoiceChat_FollowMe(bot_state_t *bs, int client, int mode) {
 	if (entinfo.valid) {
 		areanum = BotPointAreaNum(entinfo.origin);
 
-		if (areanum) { // && trap_AAS_AreaReachability(areanum)) {
+		if (areanum) { //&& trap_AAS_AreaReachability(areanum)) {
 			bs->teamgoal.entitynum = client;
 			bs->teamgoal.areanum = areanum;
 			VectorCopy(entinfo.origin, bs->teamgoal.origin);

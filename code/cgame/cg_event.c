@@ -483,7 +483,6 @@ int CG_WaterLevel(centity_t *cent) {
 	point[0] = cent->lerpOrigin[0];
 	point[1] = cent->lerpOrigin[1];
 	point[2] = cent->lerpOrigin[2] + MINS_Z + 1;
-
 	contents = CG_PointContents(point, -1);
 
 	if (contents & MASK_WATER) {
