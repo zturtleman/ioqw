@@ -116,6 +116,7 @@ static void CG_ClipMoveToEntities(const vec3_t start, const vec3_t mins, const v
 			bmaxs[2] = zu;
 
 			cmodel = trap_CM_TempBoxModel(bmins, bmaxs);
+
 			VectorCopy(vec3_origin, angles);
 			VectorCopy(cent->lerpOrigin, origin);
 		}
@@ -145,6 +146,7 @@ void CG_Trace(trace_t *result, const vec3_t start, const vec3_t mins, const vec3
 	trace_t t;
 
 	trap_CM_BoxTrace(&t, start, end, mins, maxs, 0, mask);
+
 	t.entityNum = t.fraction != 1.0 ? ENTITYNUM_WORLD : ENTITYNUM_NONE;
 	// check all other solid models
 	CG_ClipMoveToEntities(start, mins, maxs, end, skipNumber, mask, &t);
@@ -537,6 +539,7 @@ void CG_PredictPlayerState(void) {
 					}
 
 					VectorAdd(delta, cg.predictedError, cg.predictedError);
+
 					cg.predictedErrorTime = cg.oldTime;
 				}
 			}
@@ -558,7 +561,7 @@ void CG_PredictPlayerState(void) {
 	}
 
 	if (cg_showmiss.integer > 1) {
-		CG_Printf("[%i : %i] ", cg_pmove.cmd.serverTime, cg.time);
+		CG_Printf("[%i : %i]", cg_pmove.cmd.serverTime, cg.time);
 	}
 
 	if (!moved) {

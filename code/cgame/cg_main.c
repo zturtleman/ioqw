@@ -151,8 +151,8 @@ vmCvar_t cg_ignore;
 vmCvar_t cg_simpleItems;
 vmCvar_t cg_fov;
 vmCvar_t cg_fovAspectAdjust;
-vmCvar_t cg_zoomFov;
 vmCvar_t cg_fovGunAdjust;
+vmCvar_t cg_zoomFov;
 vmCvar_t cg_thirdPerson;
 vmCvar_t cg_thirdPersonRange;
 vmCvar_t cg_thirdPersonAngle;
@@ -393,7 +393,7 @@ void CG_UpdateCvars(void) {
 	}
 	// check for modications here
 
-	// If team overlay is on, ask for updates from the server. If it's off, let the server know so we don't receive it
+	// if team overlay is on, ask for updates from the server. If it's off, let the server know so we don't receive it
 	if (drawTeamOverlayModificationCount != cg_drawTeamOverlay.modificationCount) {
 		drawTeamOverlayModificationCount = cg_drawTeamOverlay.modificationCount;
 
@@ -404,17 +404,11 @@ void CG_UpdateCvars(void) {
 		}
 	}
 	// if force model or a team name changed
-	if (forceModelModificationCount != cg_forceModel.modificationCount
-#ifdef MISSIONPACK
-		|| redTeamNameModificationCount != cg_redTeamName.modificationCount || blueTeamNameModificationCount != cg_blueTeamName.modificationCount
-#endif
-		) {
-
+	if (forceModelModificationCount != cg_forceModel.modificationCount || redTeamNameModificationCount != cg_redTeamName.modificationCount || blueTeamNameModificationCount != cg_blueTeamName.modificationCount) {
 		forceModelModificationCount = cg_forceModel.modificationCount;
-#ifdef MISSIONPACK
 		redTeamNameModificationCount = cg_redTeamName.modificationCount;
 		blueTeamNameModificationCount = cg_blueTeamName.modificationCount;
-#endif
+
 		CG_ForceModelChange();
 	}
 }

@@ -106,6 +106,7 @@ static void CG_DrawField(int x, int y, int width, int value, float *color) {
 		}
 
 		CG_DrawPic(x, y, CHAR_WIDTH * cg_statusScale.value, CHAR_HEIGHT * cg_statusScale.value, cgs.media.numberShaders[frame]);
+
 		x += CHAR_WIDTH * cg_statusScale.value;
 		ptr++;
 		l--;
@@ -238,7 +239,6 @@ void CG_DrawHead(float x, float y, float w, float h, int clientNum, vec3_t headA
 		origin[0] = len / 0.268; // len / tan(fov / 2)
 		// allow per-model tweaking
 		VectorAdd(origin, ci->headOffset, origin);
-
 		CG_Draw3DModel(x, y, w, h, ci->headModel, ci->headSkin, origin, headAngles);
 	} else if (cg_drawIcons.integer) {
 		CG_DrawPic(x, y, w, h, ci->modelIcon);
@@ -754,7 +754,6 @@ static float CG_DrawTeamOverlay(float y, qboolean right, qboolean upper) {
 	healthWidth = CG_DrawStrlen("000", UI_TINYFONT);
 	iconWidth = iconHeight = lineHeight;
 	armorWidth = healthWidth;
-
 	plyrs = 0;
 	// max player name width
 	pwidth = 0;
@@ -851,7 +850,9 @@ static float CG_DrawTeamOverlay(float y, qboolean right, qboolean upper) {
 				}
 
 				xx += iconWidth; // not icon related
+
 				CG_DrawStringExt(xx, y, p, UI_DROPSHADOW|UI_TINYFONT, NULL, 0, TEAM_OVERLAY_MAXLOCATION_WIDTH, 0);
+
 				xx += lwidth;
 			}
 
@@ -1161,6 +1162,7 @@ static float CG_DrawScores(float y) {
 			s = va("%2i", cgs.fraglimit);
 			w = CG_DrawStrlen(s, UI_BIGFONT) + 8;
 			x -= w;
+
 			CG_DrawBigString(x + 4, y, s, 1.0f);
 		}
 	}
@@ -1532,6 +1534,7 @@ static void CG_DrawDisconnect(void) {
 
 	// draw the phone jack if we are completely past our buffers
 	cmdNum = trap_GetCurrentCmdNumber() - CMD_BACKUP + 1;
+
 	trap_GetUserCmd(cmdNum, &cmd);
 
 	if (cmd.serverTime <= cg.snap->ps.commandTime || cmd.serverTime > cg.time) { // special check for map_restart
@@ -2289,7 +2292,7 @@ static void CG_DrawWarmup(void) {
 
 	CG_CenterPrint(s2, CENTERPRINT_HEIGHT, UI_CENTER|UI_VA_CENTER|UI_DROPSHADOW|UI_TITANFONT, 99999);
 }
-#ifdef MISSIONPACK
+
 /*
 =======================================================================================================================================
 CG_DrawTimedMenus
@@ -2307,7 +2310,7 @@ void CG_DrawTimedMenus(void) {
 		}
 	}
 }
-#endif
+
 /*
 =======================================================================================================================================
 CG_Draw2D

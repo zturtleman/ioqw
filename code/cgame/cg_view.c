@@ -71,6 +71,7 @@ void CG_TestModel_f(void) {
 	}
 
 	Q_strncpyz(cg.testModelName, CG_Argv(1), MAX_QPATH);
+
 	cg.testModelEntity.hModel = trap_R_RegisterModel(cg.testModelName);
 
 	if (trap_Argc() == 3) {
@@ -91,6 +92,7 @@ void CG_TestModel_f(void) {
 	angles[ROLL] = 0;
 
 	AnglesToAxis(angles, cg.testModelEntity.axis);
+
 	cg.testGun = qfalse;
 }
 
@@ -217,10 +219,8 @@ static void CG_CalcVrect(void) {
 
 	cg.refdef.width = cgs.glconfig.vidWidth * size / 100;
 	cg.refdef.width &= ~1;
-
 	cg.refdef.height = cgs.glconfig.vidHeight * size / 100;
 	cg.refdef.height &= ~1;
-
 	cg.refdef.x = (cgs.glconfig.vidWidth - cg.refdef.width) / 2;
 	cg.refdef.y = (cgs.glconfig.vidHeight - cg.refdef.height) / 2;
 }
@@ -256,12 +256,10 @@ static void CG_OffsetThirdPersonView(void) {
 	}
 
 	AngleVectors(focusAngles, forward, NULL, NULL);
-
 	VectorMA(cg.refdef.vieworg, FOCUS_DISTANCE, forward, focusPoint);
 	VectorCopy(cg.refdef.vieworg, view);
 
 	view[2] += 8;
-
 	cg.refdefViewAngles[PITCH] *= 0.5;
 
 	AngleVectors(cg.refdefViewAngles, forward, right, up);
@@ -379,10 +377,8 @@ static void CG_OffsetFirstPersonView(void) {
 
 	delta = DotProduct(predictedVelocity, cg.refdef.viewaxis[0]);
 	angles[PITCH] += delta * cg_runpitch.value;
-
 	delta = DotProduct(predictedVelocity, cg.refdef.viewaxis[1]);
 	angles[ROLL] -= delta * cg_runroll.value;
-
 	delta = DotProduct(predictedVelocity, cg.refdef.viewaxis[0]);
 	angles[YAW] -= delta * cg_runyaw.value;
 	// add angles based on bob, make sure the bob is visible even at low speeds
@@ -642,6 +638,7 @@ static void CG_DamageBlendBlob(void) {
 	ent.shaderRGBA[1] = 255;
 	ent.shaderRGBA[2] = 255;
 	ent.shaderRGBA[3] = 200 * (1.0 - ((float)t / maxTime));
+
 	trap_R_AddRefEntityToScene(&ent);
 }
 

@@ -333,6 +333,7 @@ static void CG_DrawPlayerArmorIcon(rectDef_t *rect, qboolean draw2D) {
 		origin[1] = 0;
 		origin[2] = -10;
 		angles[YAW] = (cg.time &2047) * 360 / 2048.0f;
+
 		CG_Draw3DModel(rect->x, rect->y, rect->w, rect->h, cgs.media.armorModel, 0, origin, angles);
 	}
 }
@@ -847,6 +848,7 @@ static void CG_DrawRedScore(rectDef_t *rect, float scale, vec4_t color, qhandle_
 	}
 
 	value = CG_Text_Width(num, scale, 0);
+
 	CG_Text_Paint(rect->x + rect->w - value, rect->y + rect->h, scale, color, num, 0, 0, textStyle);
 }
 
@@ -866,6 +868,7 @@ static void CG_DrawBlueScore(rectDef_t *rect, float scale, vec4_t color, qhandle
 	}
 
 	value = CG_Text_Width(num, scale, 0);
+
 	CG_Text_Paint(rect->x + rect->w - value, rect->y + rect->h, scale, color, num, 0, 0, textStyle);
 }
 
@@ -1067,7 +1070,9 @@ static void CG_HarvesterSkulls(rectDef_t *rect, float scale, vec4_t color, qbool
 	}
 
 	Com_sprintf(num, sizeof(num), "%i", value);
+
 	value = CG_Text_Width(num, scale, 0);
+
 	CG_Text_Paint(rect->x + (rect->w - value), rect->y + rect->h, scale, color, num, 0, 0, textStyle);
 
 	if (cg_drawIcons.integer) {
@@ -1804,6 +1809,7 @@ void CG_DrawMedal(int ownerDraw, rectDef_t *rect, float scale, vec4_t color, qha
 	score_t *score = &cg.scores[cg.selectedScore];
 	float value = 0;
 	char *text = NULL;
+
 	color[3] = 0.25;
 
 	switch (ownerDraw) {

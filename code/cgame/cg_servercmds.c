@@ -107,7 +107,6 @@ static void CG_ParseScores(void) {
 
 		cgs.clientinfo[cg.scores[i].client].score = cg.scores[i].score;
 		cgs.clientinfo[cg.scores[i].client].powerups = powerups;
-
 		cg.scores[i].team = cgs.clientinfo[cg.scores[i].client].team;
 	}
 #ifdef MISSIONPACK
@@ -176,7 +175,6 @@ void CG_ParseServerinfo(void) {
 	cgs.capturelimit = atoi(Info_ValueForKey(info, "capturelimit"));
 	cgs.timelimit = atoi(Info_ValueForKey(info, "timelimit"));
 	cgs.maxclients = atoi(Info_ValueForKey(info, "sv_maxclients"));
-
 	mapname = Info_ValueForKey(info, "mapname");
 
 	Com_sprintf(cgs.mapname, sizeof(cgs.mapname), "maps/%s.bsp", mapname);
@@ -192,7 +190,6 @@ static void CG_ParseWarmup(void) {
 	int warmup;
 
 	info = CG_ConfigString(CS_WARMUP);
-
 	warmup = atoi(info);
 	cg.warmupCount = -1;
 
@@ -421,7 +418,6 @@ static void CG_AddToTeamChat(const char *str) {
 	}
 
 	*p = 0;
-
 	cgs.teamChatMsgTimes[cgs.teamChatPos % chatHeight] = cg.time;
 	cgs.teamChatPos++;
 
@@ -650,7 +646,6 @@ void CG_LoadVoiceChats(void) {
 	CG_ParseVoiceChats("scripts/male3.voice", &voiceChatLists[5], MAX_VOICECHATS);
 	CG_ParseVoiceChats("scripts/male4.voice", &voiceChatLists[6], MAX_VOICECHATS);
 	CG_ParseVoiceChats("scripts/male5.voice", &voiceChatLists[7], MAX_VOICECHATS);
-
 	CG_Printf("voice chat memory size = %d\n", size - trap_MemoryRemaining());
 }
 
@@ -776,7 +771,6 @@ voiceChatList_t *CG_VoiceChatListForClient(int clientNum) {
 				Com_sprintf(headModelVoiceChat[i].headmodel, sizeof(headModelVoiceChat[i].headmodel), "%s", headModelName);
 
 				headModelVoiceChat[i].voiceChatNum = voiceChatNum;
-
 				return &voiceChatLists[headModelVoiceChat[i].voiceChatNum];
 			}
 		}
@@ -857,10 +851,8 @@ void CG_PlayVoiceChat(bufferedVoiceChat_t *vchat) {
 				cgs.acceptTask = orderTask;
 				cgs.acceptLeader = vchat->clientNum;
 			}
-#ifdef MISSIONPACK
 			// see if this was an order
 			CG_ShowResponseHead();
-#endif
 		}
 	}
 

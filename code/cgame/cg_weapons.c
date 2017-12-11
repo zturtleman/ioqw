@@ -395,7 +395,6 @@ static void CG_NailTrail(centity_t *ent, const weaponInfo_t *wi) {
 	up[0] = 0;
 	up[1] = 0;
 	up[2] = 0;
-
 	step = 50;
 	es = &ent->currentState;
 	startTime = ent->trailTime;
@@ -454,7 +453,6 @@ static void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi) {
 	up[0] = 0;
 	up[1] = 0;
 	up[2] = 0;
-
 	step = 50;
 	es = &ent->currentState;
 	startTime = ent->trailTime;
@@ -635,7 +633,6 @@ void CG_RailTrail(clientInfo_t *ci, vec3_t start, vec3_t end) {
 	vec3_t axis[36], move, move2, vec, temp;
 	float len;
 	int i, j, skip;
-
 	localEntity_t *le;
 	refEntity_t *re;
 #define RADIUS 4
@@ -853,6 +850,7 @@ static void CG_MachineGunEjectBrass(centity_t *cent) {
 	}
 
 	le = CG_AllocLocalEntity();
+
 	re = &le->refEntity;
 
 	velocity[0] = 0;
@@ -1274,7 +1272,6 @@ static void CG_ShotgunPattern(vec3_t origin, vec3_t origin2, int seed, int other
 		VectorMA(origin, 131072, forward, end);
 		VectorMA(end, r, right, end);
 		VectorMA(end, u, up, end);
-
 		CG_ShotgunPellet(origin, end, otherEntNum);
 	}
 }
@@ -1877,7 +1874,6 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent,
 	}
 
 	trap_R_LerpTag(&lerped, parent->hModel, parent->oldframe, parent->frame, 1.0 - parent->backlerp, "tag_weapon");
-
 	VectorCopy(parent->origin, gun.origin);
 	VectorMA(gun.origin, lerped.origin[0], parent->axis[0], gun.origin);
 	// Make weapon appear left-handed for 2 and centered for 3
@@ -1888,7 +1884,6 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent,
 	}
 
 	VectorMA(gun.origin, lerped.origin[2], parent->axis[2], gun.origin);
-
 	MatrixMultiply(lerped.axis, ((refEntity_t *)parent)->axis, gun.axis);
 
 	gun.backlerp = parent->backlerp;
@@ -1903,7 +1898,6 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent,
 		barrel.shadowPlane = parent->shadowPlane;
 		barrel.renderfx = parent->renderfx;
 		barrel.hModel = weapon->barrelModel;
-
 		angles[YAW] = 0;
 		angles[PITCH] = 0;
 		angles[ROLL] = CG_MachinegunSpinAngle(cent);
@@ -1936,7 +1930,6 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent,
 	AnglesToAxis(angles, flash.axis);
 	// colorize the railgun blast
 	Byte4Copy(ci->c1RGBA, flash.shaderRGBA);
-
 	CG_PositionRotatedEntityOnTag(&flash, &gun, weapon->weaponModel, "tag_flash");
 	// update muzzle origin
 	if (ps) {
@@ -2034,11 +2027,9 @@ void CG_AddViewWeapon(playerState_t *ps) {
 	memset(&hand, 0, sizeof(hand));
 	// set up gun position
 	CG_CalculateWeaponPosition(hand.origin, angles);
-
 	VectorMA(hand.origin, (cg_gun_x.value + fovOffset[0]), cg.refdef.viewaxis[0], hand.origin);
 	VectorMA(hand.origin, (cg_gun_y.value + fovOffset[1]), cg.refdef.viewaxis[1], hand.origin);
 	VectorMA(hand.origin, (cg_gun_z.value + fovOffset[2]), cg.refdef.viewaxis[2], hand.origin);
-
 	AnglesToAxis(angles, hand.axis);
 	// map torso animations to weapon animations
 	if (cg_gun_frame.integer) {
@@ -2114,7 +2105,6 @@ void CG_DrawWeaponSelect(void) {
 	}
 
 	cg.bar_count = count;
-
 	y = 380;
 
 	if (count <= 0) {
