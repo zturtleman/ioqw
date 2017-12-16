@@ -69,6 +69,7 @@ trap_Error
 =======================================================================================================================================
 */
 void trap_Error(const char *text) {
+
 	syscall(G_ERROR, text);
 	// shut up GCC warning about returning functions, because we know better
 	exit(1);

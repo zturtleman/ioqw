@@ -129,7 +129,6 @@ extern vmCvar_t ui_scoreTime;
 extern vmCvar_t ui_smallFont;
 extern vmCvar_t ui_bigFont;
 extern vmCvar_t ui_serverStatusTimeOut;
-
 extern sfxHandle_t menu_in_sound;
 extern sfxHandle_t menu_move_sound;
 extern sfxHandle_t menu_out_sound;
@@ -173,8 +172,8 @@ extern void UI_RegisterCvars(void);
 extern void UI_UpdateCvars(void);
 // ui_connect.c
 extern void UI_DrawConnectScreen(qboolean overlay);
-
 // ui_players.c
+
 // FIXME ripped from cg_local.h
 typedef struct {
 	int oldFrame;
@@ -240,6 +239,7 @@ void UI_PlayerInfo_SetInfo(playerInfo_t *pi, int legsAnim, int torsoAnim, vec3_t
 void UI_ColorFromIndex(int val, vec3_t color);
 void UI_PlayerInfo_UpdateColor(playerInfo_t *pi);
 qboolean UI_RegisterClientModelname(playerInfo_t *pi, const char *modelSkinName, const char *headName, const char *teamName);
+
 // new ui stuff
 #define UI_NUMFX 7
 #define MAX_HEADS 64

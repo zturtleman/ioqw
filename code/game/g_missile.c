@@ -100,7 +100,6 @@ void G_ExplodeMissile(gentity_t *ent) {
 	// we don't have a valid direction, so just point straight up
 	dir[0] = dir[1] = 0;
 	dir[2] = 1;
-
 	ent->s.eType = ET_GENERAL;
 
 	G_AddEvent(ent, EV_MISSILE_MISS, DirToByte(dir));
@@ -200,12 +199,10 @@ static void ProximityMine_Activate(gentity_t *ent) {
 	// build the proximity trigger
 	trigger = G_Spawn();
 	trigger->classname = "proxmine_trigger";
-
 	r = ent->splashRadius;
 
 	VectorSet(trigger->r.mins, -r, -r, -r);
 	VectorSet(trigger->r.maxs, r, r, r);
-
 	G_SetOrigin(trigger, ent->s.pos.trBase);
 
 	trigger->parent = ent;
@@ -430,7 +427,6 @@ void G_RunMissile(gentity_t *ent) {
 }
 
 #define NAILGUN_SPREAD 500
-
 /*
 =======================================================================================================================================
 fire_nail

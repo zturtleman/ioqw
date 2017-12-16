@@ -28,7 +28,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #include "ui_local.h"
 
-
 /*
 =======================================================================================================================================
 Com_Error
@@ -411,6 +410,7 @@ Adjusted for resolution and screen aspect ratio.
 =======================================================================================================================================
 */
 void UI_AdjustFrom640(float *x, float *y, float *w, float *h) {
+
 	// expect valid pointers
 	*x = *x * uiInfo.uiDC.xscale + uiInfo.uiDC.bias;
 	*y *= uiInfo.uiDC.yscale;

@@ -792,9 +792,7 @@ int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team) {
 	teamgame.last_capture_team = team;
 	// increase the team's score
 	AddTeamScore(ent->s.pos.trBase, other->client->sess.sessionTeam, 1);
-
 	CalculateRanks();
-
 	Team_ResetFlags();
 	Team_CaptureFlagSound(ent, team);
 	Team_ForceGesture(other->client->sess.sessionTeam);
@@ -961,6 +959,7 @@ qboolean Team_GetLocationMsg(gentity_t *ent, char *loc, int loclen) {
 	return qtrue;
 }
 
+#define MAX_TEAM_SPAWN_POINTS 32
 /*
 =======================================================================================================================================
 SelectRandomTeamSpawnPoint
@@ -968,7 +967,6 @@ SelectRandomTeamSpawnPoint
 Go to a random point that doesn't telefrag.
 =======================================================================================================================================
 */
-#define MAX_TEAM_SPAWN_POINTS 32
 gentity_t *SelectRandomTeamSpawnPoint(int teamstate, team_t team) {
 	gentity_t *spot;
 	int count;
@@ -1032,7 +1030,9 @@ gentity_t *SelectCTFSpawnPoint(team_t team, int teamstate, vec3_t origin, vec3_t
 	}
 
 	VectorCopy(spot->s.origin, origin);
+
 	origin[2] += 9;
+
 	VectorCopy(spot->s.angles, angles);
 
 	return spot;
@@ -1121,6 +1121,7 @@ void TeamplayInfoMessage(gentity_t *ent) {
 			}
 
 			strcpy(string + stringlength, entry);
+
 			stringlength += j;
 			cnt++;
 		}
@@ -1268,9 +1269,7 @@ static void ObeliskDie(gentity_t *self, gentity_t *inflictor, gentity_t *attacke
 	}
 
 	AddTeamScore(self->s.pos.trBase, otherTeam, 1);
-
 	CalculateRanks();
-
 	Team_CaptureFlagSound(self, self->spawnflags);
 	Team_ForceGesture(otherTeam);
 
@@ -1313,9 +1312,7 @@ static void ObeliskTouch(gentity_t *self, gentity_t *other, trace_t *trace) {
 
 	AddScore(other, self->r.currentOrigin, CTF_CAPTURE_BONUS * tokens);
 	AddTeamScore(self->s.pos.trBase, other->client->sess.sessionTeam, tokens);
-
 	CalculateRanks();
-
 	Team_CaptureFlagSound(self, self->spawnflags);
 	Team_ForceGesture(other->client->sess.sessionTeam);
 }

@@ -594,7 +594,9 @@ static void UI_PlayerAngles(playerInfo_t *pi, vec3_t legs[3], vec3_t torso[3], v
 	float adjust;
 
 	VectorCopy(pi->viewAngles, headAngles);
+
 	headAngles[YAW] = AngleMod(headAngles[YAW]);
+
 	VectorClear(legsAngles);
 	VectorClear(torsoAngles);
 
@@ -1063,9 +1065,10 @@ static qboolean UI_ParseAnimationFile(const char *filename, playerInfo_t *pi) {
 	}
 
 	trap_FS_Read(text, len, f);
-	text[len] = 0;
-	trap_FS_FCloseFile(f);
 
+	text[len] = 0;
+
+	trap_FS_FCloseFile(f);
 	COM_Compress(text);
 	// parse the text
 	text_p = text;

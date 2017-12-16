@@ -78,6 +78,7 @@ void DeathmatchScoreboardMessage(gentity_t *ent) {
 		}
 
 		strcpy(string + stringlength, entry);
+
 		stringlength += j;
 	}
 
@@ -459,12 +460,12 @@ void Cmd_TeamTask_f(gentity_t *ent) {
 	}
 
 	trap_Argv(1, arg, sizeof(arg));
+
 	task = atoi(arg);
 
 	trap_GetUserinfo(client, userinfo, sizeof(userinfo));
 	Info_SetValueForKey(userinfo, "teamtask", va("%d", task));
 	trap_SetUserinfo(client, userinfo);
-
 	ClientUserinfoChanged(client);
 }
 
@@ -690,7 +691,6 @@ void Cmd_Team_f(gentity_t *ent) {
 	}
 
 	trap_Argv(1, s, sizeof(s));
-
 	SetTeam(ent, s);
 
 	if (oldTeam != ent->client->sess.sessionTeam) {
@@ -937,7 +937,6 @@ static void Cmd_Say_f(gentity_t *ent, int mode, qboolean arg0) {
 	}
 
 	SanitizeChatText(p);
-
 	G_Say(ent, NULL, mode, p);
 }
 
@@ -973,7 +972,6 @@ static void Cmd_Tell_f(gentity_t *ent) {
 	p = ConcatArgs(2);
 
 	SanitizeChatText(p);
-
 	G_LogPrintf("tell: %s to %s: %s\n", ent->client->pers.netname, target->client->pers.netname, p);
 	G_Say(ent, target, SAY_TELL, p);
 	// don't tell to the player self if it was already directed to this player also don't send the chat back to a bot
@@ -1072,7 +1070,6 @@ static void Cmd_Voice_f(gentity_t *ent, int mode, qboolean arg0, qboolean voiceo
 	}
 
 	SanitizeChatText(p);
-
 	G_Voice(ent, NULL, mode, p, voiceonly);
 }
 
@@ -1108,7 +1105,6 @@ static void Cmd_VoiceTell_f(gentity_t *ent, qboolean voiceonly) {
 	id = ConcatArgs(2);
 
 	SanitizeChatText(id);
-
 	G_LogPrintf("vtell: %s to %s: %s\n", ent->client->pers.netname, target->client->pers.netname, id);
 	G_Voice(ent, target, SAY_TELL, id, voiceonly);
 	// don't tell to the player self if it was already directed to this player also don't send the chat back to a bot

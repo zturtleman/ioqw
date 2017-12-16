@@ -44,9 +44,10 @@ void G_BounceProjectile(vec3_t start, vec3_t impact, vec3_t dir, vec3_t endout) 
 	float dot;
 
 	VectorSubtract(impact, start, v);
-	dot = DotProduct(v, dir);
-	VectorMA(v, -2 * dot, dir, newv);
 
+	dot = DotProduct(v, dir);
+
+	VectorMA(v, -2 * dot, dir, newv);
 	VectorNormalize(newv);
 	VectorMA(impact, 8192, newv, endout);
 }
@@ -164,7 +165,6 @@ void Bullet_Fire(gentity_t *ent, float spread, int damage, int mod) {
 	int i, passent;
 
 	damage *= s_quadFactor;
-
 	r = random() * M_PI * 2.0f;
 	u = sin(r) * crandom() * spread * 16;
 	r = cos(r) * crandom() * spread * 16;
@@ -797,7 +797,9 @@ Set muzzle location relative to pivoting eye.
 void CalcMuzzlePoint(gentity_t *ent, vec3_t forward, vec3_t right, vec3_t up, vec3_t muzzlePoint) {
 
 	VectorCopy(ent->s.pos.trBase, muzzlePoint);
+
 	muzzlePoint[2] += ent->client->ps.viewheight;
+
 	VectorMA(muzzlePoint, 14, forward, muzzlePoint);
 	// snap to integer coordinates for more efficient network bandwidth usage
 	SnapVector(muzzlePoint);
@@ -813,7 +815,9 @@ Set muzzle location relative to pivoting eye.
 void CalcMuzzlePointOrigin(gentity_t *ent, vec3_t origin, vec3_t forward, vec3_t right, vec3_t up, vec3_t muzzlePoint) {
 
 	VectorCopy(ent->s.pos.trBase, muzzlePoint);
+
 	muzzlePoint[2] += ent->client->ps.viewheight;
+
 	VectorMA(muzzlePoint, 14, forward, muzzlePoint);
 	// snap to integer coordinates for more efficient network bandwidth usage
 	SnapVector(muzzlePoint);
@@ -962,7 +966,9 @@ static void KamikazeRadiusDamage(vec3_t origin, gentity_t *attacker, float damag
 			VectorSubtract(ent->r.currentOrigin, origin, dir);
 			// push the center of mass higher than the origin so players get knocked into the air more
 			dir[2] += 24;
+
 			G_Damage(ent, NULL, attacker, dir, origin, damage, DAMAGE_RADIUS|DAMAGE_NO_TEAM_PROTECTION, MOD_KAMIKAZE);
+
 			ent->kamikazeTime = level.time + 3000;
 //		}
 	}
@@ -1131,7 +1137,6 @@ void G_StartKamikaze(gentity_t *ent) {
 	explosion->count = 0;
 
 	VectorClear(explosion->movedir);
-
 	trap_LinkEntity(explosion);
 
 	if (ent->client) {

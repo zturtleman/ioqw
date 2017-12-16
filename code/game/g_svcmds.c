@@ -284,7 +284,6 @@ void Svcmd_AddIP_f(void) {
 	}
 
 	trap_Argv(1, str, sizeof(str));
-
 	AddIP(str);
 }
 

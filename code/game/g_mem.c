@@ -47,9 +47,7 @@ void *G_Alloc(int size) {
 	}
 
 	p = &memoryPool[allocPoint];
-
 	allocPoint += (size + 31) & ~31;
-
 	return p;
 }
 

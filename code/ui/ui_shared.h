@@ -127,6 +127,7 @@ typedef struct {
 } rectDef_t;
 
 typedef rectDef_t Rectangle;
+
 // FIXME: do something to separate text vs window stuff
 typedef struct {
 	Rectangle rect;				// client coord rectangle

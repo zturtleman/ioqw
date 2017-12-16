@@ -535,7 +535,7 @@ void PlayerDie(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int d
 	} else {
 		AddScore(self, self->r.currentOrigin, -1);
 	}
-	// Add team bonuses
+	// add team bonuses
 	Team_FragBonuses(self, inflictor, attacker);
 	// if I committed suicide, the flag does not fall, it returns.
 	if (meansOfDeath == MOD_SUICIDE || meansOfDeath == MOD_SUICIDE_TEAM_CHANGE) {
@@ -675,7 +675,6 @@ int CheckArmor(gentity_t *ent, int damage, int dflags) {
 	}
 
 	client->ps.stats[STAT_ARMOR] -= save;
-
 	return save;
 }
 
@@ -1070,6 +1069,7 @@ qboolean G_RadiusDamage(vec3_t origin, gentity_t *attacker, float damage, float 
 			VectorSubtract(ent->r.currentOrigin, origin, dir);
 			// push the center of mass higher than the origin so players get knocked into the air more
 			dir[2] += 24;
+
 			G_Damage(ent, NULL, attacker, dir, origin, (int)points, DAMAGE_RADIUS, mod);
 		}
 	}

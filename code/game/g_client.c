@@ -126,6 +126,7 @@ gentity_t *SelectNearestDeathmatchSpawnPoint(vec3_t from) {
 
 	while ((spot = G_Find(spot, FOFS(classname), "info_player_deathmatch")) != NULL) {
 		VectorSubtract(spot->s.origin, from, delta);
+
 		dist = VectorLength(delta);
 
 		if (dist < nearestDist) {
@@ -220,7 +221,6 @@ gentity_t *SelectRandomFurthestSpawnPoint(vec3_t avoidPoint, vec3_t origin, vec3
 
 				list_dist[i] = dist;
 				list_spot[i] = spot;
-
 				numSpots++;
 				break;
 			}
@@ -324,7 +324,9 @@ gentity_t *SelectInitialSpawnPoint(vec3_t origin, vec3_t angles, qboolean isbot)
 	}
 
 	VectorCopy(spot->s.origin, origin);
+
 	origin[2] += 9;
+
 	VectorCopy(spot->s.angles, angles);
 
 	return spot;
@@ -338,7 +340,6 @@ SelectSpectatorSpawnPoint
 gentity_t *SelectSpectatorSpawnPoint(vec3_t origin, vec3_t angles) {
 
 	FindIntermissionPoint();
-
 	VectorCopy(level.intermission_origin, origin);
 	VectorCopy(level.intermission_angle, angles);
 
@@ -444,6 +445,7 @@ void CopyToBodyQue(gentity_t *ent) {
 
 	if (body->s.groundEntityNum == ENTITYNUM_NONE) {
 		body->s.pos.trType = TR_GRAVITY;
+
 		VectorCopy(ent->client->ps.velocity, body->s.pos.trDelta);
 	} else {
 		body->s.pos.trType = TR_STATIONARY;
@@ -489,7 +491,6 @@ void CopyToBodyQue(gentity_t *ent) {
 	}
 
 	VectorCopy(body->s.pos.trBase, body->r.currentOrigin);
-
 	trap_LinkEntity(body);
 }
 
@@ -657,7 +658,6 @@ static void ClientCleanName(const char *in, char *out, int outSize) {
 ClientUserinfoChanged
 
 Called from ClientConnect when the player first connects and directly by the server system when the player updates a userinfo variable.
-
 The game can override any of the settings and call trap_SetUserinfo if desired.
 =======================================================================================================================================
 */
@@ -833,7 +833,6 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot) {
 	// they can connect
 	ent->client = level.clients + clientNum;
 	client = ent->client;
-
 //	areabits = client->areabits;
 
 	memset(client, 0, sizeof(*client));
@@ -1199,7 +1198,6 @@ void ClientDisconnect(int clientNum) {
 	ent->client->sess.sessionTeam = TEAM_FREE;
 
 	trap_SetConfigstring(CS_PLAYERS + clientNum, "");
-
 	CalculateRanks();
 
 	if (ent->r.svFlags & SVF_BOT) {

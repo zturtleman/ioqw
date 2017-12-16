@@ -492,7 +492,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart) {
 	trap_LocateGameData(level.gentities, level.num_entities, sizeof(gentity_t), &level.clients[0].ps, sizeof(level.clients[0]));
 	// reserve some spots for dead player bodies
 	InitBodyQue();
-
 	ClearRegisteredItems();
 	// parse the key/value pairs and spawn gentities
 	G_SpawnEntitiesFromString();
@@ -504,7 +503,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart) {
 	}
 
 	SaveRegisteredItems();
-
 	G_Printf("-----------------------------------\n");
 
 	if (g_gametype.integer == GT_SINGLE_PLAYER || trap_Cvar_VariableIntegerValue("com_buildScript")) {
@@ -518,7 +516,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart) {
 	}
 
 	G_RemapTeamShaders();
-
 	trap_SetConfigstring(CS_INTERMISSION, "");
 }
 

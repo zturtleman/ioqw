@@ -256,7 +256,6 @@ void PM_StepSlideMove(qboolean gravity) {
 
 	//VectorCopy(pm->ps->origin, down_o);
 	//VectorCopy(pm->ps->velocity, down_v);
-
 	VectorCopy(start_o, up);
 
 	up[2] += STEPSIZE;
@@ -275,7 +274,6 @@ void PM_StepSlideMove(qboolean gravity) {
 	// try slidemove from this position
 	VectorCopy(trace.endpos, pm->ps->origin);
 	VectorCopy(start_v, pm->ps->velocity);
-
 	PM_SlideMove(gravity);
 	// push down the final amount
 	VectorCopy(pm->ps->origin, down);

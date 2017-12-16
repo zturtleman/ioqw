@@ -374,7 +374,6 @@ void Text_PaintChar(float x, float y, float width, float height, float scale, fl
 	h = height * scale;
 
 	UI_AdjustFrom640(&x, &y, &w, &h);
-
 	trap_R_DrawStretchPic(x, y, w, h, s, t, s2, t2, hShader);
 }
 
@@ -579,6 +578,7 @@ static void Text_Paint_Limit(float *maxX, float x, float y, float scale, vec4_t 
 				memcpy(newColor, g_color_table[ColorIndex(*(s + 1))], sizeof(newColor));
 
 				newColor[3] = color[3];
+
 				trap_R_SetColor(newColor);
 
 				s += 2;
@@ -965,10 +965,12 @@ void UI_ParseMenu(const char *menuFile) {
 		if (!trap_PC_ReadToken(handle, &token)) {
 			break;
 		}
+
 		//if (Q_stricmp(token, "{")) {
 		//	Com_Printf("Missing { in menu file\n");
 		//	break;
 		//}
+
 		//if (menuCount == MAX_MENUS) {
 		//	Com_Printf("Too many menus!\n");
 		//	break;
@@ -1081,7 +1083,6 @@ void UI_LoadMenus(const char *menuFile, qboolean reset) {
 	}
 
 	Com_Printf("UI menu load time = %d milli seconds\n", trap_Milliseconds() - start);
-
 	trap_PC_FreeSource(handle);
 }
 
@@ -1111,7 +1112,6 @@ void UI_Load(void) {
 	UI_LoadArenas();
 #endif
 	UI_LoadMenus(menuSet, qtrue);
-
 	Menus_CloseAll();
 	Menus_ActivateByName(lastName);
 }
@@ -3397,6 +3397,7 @@ void UI_ServersSort(int column, qboolean force) {
 	}
 
 	uiInfo.serverStatus.sortKey = sortKey;
+
 	qsort(&uiInfo.serverStatus.displayServers[0], uiInfo.serverStatus.numDisplayServers, sizeof(int), UI_ServersQsortCompare);
 	// update displayed levelshot
 	UI_FeederSelection(FEEDER_SERVERS, uiInfo.serverStatus.currentServer);
@@ -5377,7 +5378,6 @@ static void UI_FeederSelection(float feederID, int index) {
 		}
 
 		UI_SelectedMap(index, &actual);
-
 		trap_Cvar_SetValue("ui_mapIndex", index);
 
 		ui_mapIndex.integer = index;
@@ -6049,12 +6049,11 @@ void _UI_Init(qboolean inGameLoad) {
 	const char *menuSet;
 
 	//uiInfo.inGameLoad = inGameLoad;
-
 	UI_RegisterCvars();
 	UI_InitMemory();
 	// cache redundant calulations
 	trap_GetGlconfig(&uiInfo.uiDC.glconfig);
-	// for 640x480 virtualized screen
+	// for 640 x 480 virtualized screen
 	uiInfo.uiDC.yscale = uiInfo.uiDC.glconfig.vidHeight * (1.0 / 480.0);
 	uiInfo.uiDC.xscale = uiInfo.uiDC.glconfig.vidWidth * (1.0 / 640.0);
 
@@ -6157,9 +6156,7 @@ void _UI_Init(qboolean inGameLoad) {
 	UI_LoadMenus("ui/ingame.txt", qfalse);
 #endif
 	Menus_CloseAll();
-
 	trap_LAN_LoadCachedServers();
-
 	UI_LoadBestScores(uiInfo.mapList[ui_currentMap.integer].mapLoadName, uiInfo.gameTypes[ui_gameType.integer].gtEnum);
 	UI_BuildQ3Model_List();
 	UI_LoadBots();
@@ -6975,7 +6972,7 @@ static void UI_StartServerRefresh(qboolean full, qboolean force) {
 	int lanSource;
 	qtime_t q;
 
-	// this function is called with force=qfalse when server browser menu opens or net source changes.
+	// this function is called with force = qfalse when server browser menu opens or net source changes.
 	// automatically update local and favorite servers.
 	// only auto update master server list if there is no server info cache.
 	if (!force && (ui_netSource.integer >= UIAS_GLOBAL0 && ui_netSource.integer <= UIAS_GLOBAL5)) {
