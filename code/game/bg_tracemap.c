@@ -87,7 +87,7 @@ void BG_GenerateTracemap(const char *mapname, vec3_t mapcoordsMins, vec3_t mapco
 	}
 
 	COM_StripExtension(mapname, rawmapname, sizeof(rawmapname));
-	// Topdown tracing
+	// topdown tracing
 	Com_Printf("Generating level heightmap and level mask...\n");
 
 	memset(&tracemap, 0, sizeof(tracemap));
@@ -106,13 +106,13 @@ void BG_GenerateTracemap(const char *mapname, vec3_t mapcoordsMins, vec3_t mapco
 			start[1] = end[1] = mapcoordsMins[1] + j * y_step;
 			start[2] = MAX_WORLD_HEIGHT;
 			end[2] = MIN_WORLD_HEIGHT;
-			// Find the ceiling
+			// find the ceiling
 			gen->trace(&tr, start, NULL, NULL, end, ENTITYNUM_NONE, MASK_SOLID|MASK_WATER);
 			start[2] = tr.endpos[2] - 1;
 			tracecount++;
-			// Find ground
+			// find ground
 			while (1) {
-				// Perform traces up to the sky, repeating at a higher start height if we start inside a solid.
+				// perform traces up to the sky, repeating at a higher start height if we start inside a solid.
 				if (start[2] <= MIN_WORLD_HEIGHT) {
 					tracemap.ground[j][i] = MIN_WORLD_HEIGHT;
 					break;
@@ -125,9 +125,9 @@ void BG_GenerateTracemap(const char *mapname, vec3_t mapcoordsMins, vec3_t mapco
 				gen->trace(&tr, start, NULL, NULL, end, ENTITYNUM_NONE, (MASK_SOLID|MASK_WATER));
 				tracecount++;
 
-				if (tr.startsolid) { // Stuck in something, skip over it.
+				if (tr.startsolid) { // stuck in something, skip over it.
 					start[2] -= 64;
-				} else if (tr.fraction == 1) { // Didn't hit anything, we're (probably) outside the world
+				} else if (tr.fraction == 1) { // didn't hit anything, we're (probably) outside the world
 					tracemap.ground[j][i] = MIN_WORLD_HEIGHT;
 					break;
 				} else {
@@ -151,6 +151,7 @@ void BG_GenerateTracemap(const char *mapname, vec3_t mapcoordsMins, vec3_t mapco
 
 			if (!((lastDraw <= ms) && (lastDraw > ms - 500))) {
 				lastDraw = ms;
+
 				Com_Printf("%i of %i gridpoints calculated (%.2f%%), %i total traces\n", i * TRACEMAP_SIZE + j, TRACEMAP_SIZE * TRACEMAP_SIZE, ((i * TRACEMAP_SIZE + j) / (float)(TRACEMAP_SIZE * TRACEMAP_SIZE)) * 100.f, tracecount);
 				//trap_UpdateScreen();
 			}
@@ -159,7 +160,8 @@ void BG_GenerateTracemap(const char *mapname, vec3_t mapcoordsMins, vec3_t mapco
 
 	Com_Printf("%i of %i gridpoints calculated (%.2f%%), %i total traces\n", i * TRACEMAP_SIZE, TRACEMAP_SIZE * TRACEMAP_SIZE, ((i * TRACEMAP_SIZE) / (float)(TRACEMAP_SIZE * TRACEMAP_SIZE)) * 100.f, tracecount);
 	//trap_UpdateScreen();
-	// Sky tracing
+
+	// sky tracing
 	Com_Printf("Generating sky heightmap and sky mask...\n");
 
 	max = MIN_WORLD_HEIGHT;
@@ -178,9 +180,9 @@ void BG_GenerateTracemap(const char *mapname, vec3_t mapcoordsMins, vec3_t mapco
 				// we got a hole here, no need to trace
 				tracemap.sky[j][i] = MAX_WORLD_HEIGHT;
 			} else {
-				// Find sky
+				// find sky
 				while (1) {
-					// Perform traces up to the sky, repeating at a higher start height if we start inside a solid.
+					// perform traces up to the sky, repeating at a higher start height if we start inside a solid.
 					if (start[2] >= MAX_WORLD_HEIGHT) {
 						tracemap.sky[j][i] = MAX_WORLD_HEIGHT;
 						break;
@@ -193,7 +195,7 @@ void BG_GenerateTracemap(const char *mapname, vec3_t mapcoordsMins, vec3_t mapco
 					gen->trace(&tr, start, NULL, NULL, end, ENTITYNUM_NONE, MASK_SOLID);
 					tracecount++;
 
-					if (tr.startsolid) { // Stuck in something, skip over it.
+					if (tr.startsolid) { // stuck in something, skip over it.
 						// can happen, tr.endpos still is valid even if we're starting in a solid but trace out of it hitting the next surface
 						if (tr.surfaceFlags & SURF_SKY) {
 							// are we in a solid?
@@ -216,10 +218,10 @@ void BG_GenerateTracemap(const char *mapname, vec3_t mapcoordsMins, vec3_t mapco
 						} else {
 							start[2] = tr.endpos[2] + 1;
 						}
-					} else if (tr.fraction == 1) { // Didn't hit anything, we're (probably) outside the world
+					} else if (tr.fraction == 1) { // didn't hit anything, we're (probably) outside the world
 						tracemap.sky[j][i] = MAX_WORLD_HEIGHT;
 						break;
-					} else if (tr.surfaceFlags & SURF_SKY) { // Hit sky, this is where we start.
+					} else if (tr.surfaceFlags & SURF_SKY) { // hit sky, this is where we start.
 						tracemap.sky[j][i] = tr.endpos[2];
 
 						if (tracemap.sky[j][i] > max) {
@@ -242,6 +244,7 @@ void BG_GenerateTracemap(const char *mapname, vec3_t mapcoordsMins, vec3_t mapco
 
 			if (!((lastDraw <= ms) && (lastDraw > ms - 500))) {
 				lastDraw = ms;
+
 				Com_Printf("%i of %i gridpoints calculated (%.2f%%), %i total traces\n", i * TRACEMAP_SIZE + j, TRACEMAP_SIZE * TRACEMAP_SIZE, ((i * TRACEMAP_SIZE + j) / (float)(TRACEMAP_SIZE * TRACEMAP_SIZE)) * 100.f, tracecount);
 				//trap_UpdateScreen();
 			}
@@ -250,7 +253,7 @@ void BG_GenerateTracemap(const char *mapname, vec3_t mapcoordsMins, vec3_t mapco
 
 	Com_Printf("%i of %i gridpoints calculated (%.2f%%), %i total traces\n", i * TRACEMAP_SIZE, TRACEMAP_SIZE * TRACEMAP_SIZE, ((i * TRACEMAP_SIZE) / (float)(TRACEMAP_SIZE * TRACEMAP_SIZE)) * 100.f, tracecount);
 	//trap_UpdateScreen();
-	// More groundtrace, find ceilings for areas where we don't have ground
+	// more groundtrace, find ceilings for areas where we don't have ground
 	Com_Printf("Generating sky groundmap...\n");
 
 	skygroundmin = MAX_WORLD_HEIGHT;
@@ -265,11 +268,11 @@ void BG_GenerateTracemap(const char *mapname, vec3_t mapcoordsMins, vec3_t mapco
 			end[2] = MIN_WORLD_HEIGHT;
 
 			if (tracemap.sky[j][i] == MAX_WORLD_HEIGHT && tracemap.ground[j][i] != MIN_WORLD_HEIGHT) {
-				// Find the ceiling
+				// find the ceiling
 				gen->trace(&tr, start, NULL, NULL, end, ENTITYNUM_NONE, MASK_SOLID|MASK_WATER);
 				tracecount++;
 
-				if (tr.fraction == 1) { // Didn't hit anything, we're (probably) outside the world
+				if (tr.fraction == 1) { // didn't hit anything, we're (probably) outside the world
 					tracemap.skyground[j][i] = MIN_WORLD_HEIGHT;
 				} else {
 					tracemap.skyground[j][i] = tr.endpos[2];
@@ -292,6 +295,7 @@ void BG_GenerateTracemap(const char *mapname, vec3_t mapcoordsMins, vec3_t mapco
 
 			if (!((lastDraw <= ms) && (lastDraw > ms - 500))) {
 				lastDraw = ms;
+
 				Com_Printf("%i of %i gridpoints calculated (%.2f%%), %i total traces\n", i * TRACEMAP_SIZE + j, TRACEMAP_SIZE * TRACEMAP_SIZE, ((i * TRACEMAP_SIZE + j) / (float)(TRACEMAP_SIZE * TRACEMAP_SIZE)) * 100.f, tracecount);
 				//trap_UpdateScreen();
 			}
@@ -311,6 +315,7 @@ void BG_GenerateTracemap(const char *mapname, vec3_t mapcoordsMins, vec3_t mapco
 	// min is 0
 	// max is 255
 	// etmain REALLY expects 1 to 255, so I'm changing this to generate that instead, so that etpro tracemaps can be used with etmain
+
 	scalefactor = 254.f / (topdownmax - topdownmin);
 
 	if (scalefactor == 0.f) {
@@ -492,11 +497,12 @@ void BG_GenerateTracemap(const char *mapname, vec3_t mapcoordsMins, vec3_t mapco
 	}
 	// footer
 	i = 0;
+
 	trap_FS_Write(&i, sizeof(i), f); // extension area offset, 4 bytes
 
 	i = 0;
-	trap_FS_Write(&i, sizeof(i), f); // developer directory offset, 4 bytes
 
+	trap_FS_Write(&i, sizeof(i), f); // developer directory offset, 4 bytes
 	trap_FS_Write("TRUEVISION-XFILE.\0", 18, f);
 	trap_FS_FCloseFile(f);
 }

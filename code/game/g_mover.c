@@ -1413,7 +1413,6 @@ void SP_func_train(gentity_t *self) {
 	}
 
 	trap_SetBrushModel(self, self->model);
-
 	InitMover(self);
 
 	self->reached = Reached_Train;
@@ -1439,9 +1438,7 @@ A bmodel that just sits there, doing nothing. Can be used for conditional walls 
 void SP_func_static(gentity_t *ent) {
 
 	trap_SetBrushModel(ent, ent->model);
-
 	InitMover(ent);
-
 	VectorCopy(ent->s.origin, ent->s.pos.trBase);
 	VectorCopy(ent->s.origin, ent->r.currentOrigin);
 }
@@ -1486,13 +1483,10 @@ void SP_func_rotating(gentity_t *ent) {
 	}
 
 	trap_SetBrushModel(ent, ent->model);
-
 	InitMover(ent);
-
 	VectorCopy(ent->s.origin, ent->s.pos.trBase);
 	VectorCopy(ent->s.pos.trBase, ent->r.currentOrigin);
 	VectorCopy(ent->s.apos.trBase, ent->r.currentAngles);
-
 	trap_LinkEntity(ent);
 }
 
@@ -1525,7 +1519,6 @@ void SP_func_bobbing(gentity_t *ent) {
 
 	trap_SetBrushModel(ent, ent->model);
 	InitMover(ent);
-
 	VectorCopy(ent->s.origin, ent->s.pos.trBase);
 	VectorCopy(ent->s.origin, ent->r.currentOrigin);
 
@@ -1570,7 +1563,6 @@ void SP_func_pendulum(gentity_t *ent) {
 	G_SpawnFloat("speed", "30", &speed);
 	G_SpawnInt("dmg", "2", &ent->damage);
 	G_SpawnFloat("phase", "0", &phase);
-
 	trap_SetBrushModel(ent, ent->model);
 	// find pendulum length
 	length = fabs(ent->r.mins[2]);
@@ -1583,7 +1575,6 @@ void SP_func_pendulum(gentity_t *ent) {
 	ent->s.pos.trDuration = (1000 / freq);
 
 	InitMover(ent);
-
 	VectorCopy(ent->s.origin, ent->s.pos.trBase);
 	VectorCopy(ent->s.origin, ent->r.currentOrigin);
 	VectorCopy(ent->s.angles, ent->s.apos.trBase);

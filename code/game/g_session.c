@@ -66,8 +66,8 @@ void G_ReadSessionData(gclient_t *client) {
 	int sessionTeam;
 
 	var = va("session%i", (int)(client - level.clients));
-	trap_Cvar_VariableStringBuffer(var, s, sizeof(s));
 
+	trap_Cvar_VariableStringBuffer(var, s, sizeof(s));
 	sscanf(s, "%i %i %i %i %i %i %i", &sessionTeam, &client->sess.spectatorNum, &spectatorState, &client->sess.spectatorClient, &client->sess.wins, &client->sess.losses, &teamLeader);
 
 	client->sess.sessionTeam = (team_t)sessionTeam;

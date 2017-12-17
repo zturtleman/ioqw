@@ -339,7 +339,7 @@ typedef enum {
 	GAME_CLIENT_THINK,				// (int clientNum);
 	GAME_RUN_FRAME,					// (int levelTime);
 	GAME_CONSOLE_COMMAND,			// (void);
-	// ConsoleCommand will be called when a command has been issued that is not recognized as a builtin function.
+	// G_ConsoleCommand will be called when a command has been issued that is not recognized as a builtin function.
 	// The game can issue trap_argc() / trap_argv() commands to get the command and parameters. Return qfalse if the game doesn't recognize it as a command.
 	BOTAI_START_FRAME				// (int time);
 } gameExport_t;

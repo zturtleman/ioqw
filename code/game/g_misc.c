@@ -157,7 +157,6 @@ void SP_misc_model(gentity_t *ent) {
 
 	VectorSet(ent->mins, -16, -16, -16);
 	VectorSet(ent->maxs, 16, 16, 16);
-
 	trap_LinkEntity(ent);
 	G_SetOrigin(ent, ent->s.origin);
 	VectorCopy(ent->s.angles, ent->s.apos.trBase);
@@ -219,7 +218,6 @@ void SP_misc_vis_dummy(gentity_t *ent) {
 	ent->r.svFlags |= SVF_VISDUMMY;
 
 	G_SetOrigin(ent, ent->s.origin);
-
 	trap_LinkEntity(ent);
 
 	ent->think = LocateMaster;
@@ -242,7 +240,6 @@ void SP_misc_vis_dummy_multiple(gentity_t *ent) {
 	ent->r.svFlags |= SVF_VISDUMMY_MULTIPLE;
 
 	G_SetOrigin(ent, ent->s.origin);
-
 	trap_LinkEntity(ent);
 }
 
@@ -369,11 +366,12 @@ void Use_Shooter(gentity_t *ent, gentity_t *other, gentity_t *activator) {
 	CrossProduct(up, dir, right);
 
 	deg = crandom() * ent->random;
+
 	VectorMA(dir, deg, up, dir);
 
 	deg = crandom() * ent->random;
-	VectorMA(dir, deg, right, dir);
 
+	VectorMA(dir, deg, right, dir);
 	VectorNormalize(dir);
 
 	switch (ent->s.weapon) {

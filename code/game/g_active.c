@@ -752,7 +752,7 @@ void ClientThink_Real(gentity_t *ent) {
 	pm.pmove_msec = pmove_msec.integer;
 
 	VectorCopy(client->ps.origin, client->oldOrigin);
-#ifdef MISSIONPACK
+
 	if (level.intermissionQueued != 0 && g_singlePlayer.integer) {
 		if (level.time - level.intermissionQueued >= 1000) {
 			pm.cmd.buttons = 0;
@@ -767,7 +767,7 @@ void ClientThink_Real(gentity_t *ent) {
 			ent->client->ps.pm_type = PM_SPINTERMISSION;
 		}
 	}
-#endif
+
 	Pmove(&pm);
 	// prevent players from standing ontop of each other
 	if (ent->client->ps.groundEntityNum >= 0 && ent->client->ps.groundEntityNum < MAX_CLIENTS && VectorLength(ent->client->ps.velocity) < 200) {
@@ -969,7 +969,7 @@ void ClientEndFrame(gentity_t *ent) {
 		VectorClear(ent->client->ps.viewangles);
 	}
 #endif
-	// If the end of unit layout is displayed, don't give the player any normal movement attributes
+	// if the end of unit layout is displayed, don't give the player any normal movement attributes
 	if (level.intermissiontime) {
 		return;
 	}

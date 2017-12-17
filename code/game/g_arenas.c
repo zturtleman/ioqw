@@ -203,7 +203,6 @@ static gentity_t *SpawnModelOnVictoryPad(gentity_t *pad, vec3_t offset, gentity_
 	VectorMA(pad->r.currentOrigin, offset[0], f, vec);
 	VectorMA(vec, offset[1], r, vec);
 	VectorMA(vec, offset[2], u, vec);
-
 	G_SetOrigin(body, vec);
 	trap_LinkEntity(body);
 
@@ -265,7 +264,9 @@ static void PodiumPlacementThink(gentity_t *podium) {
 
 	AngleVectors(level.intermission_angle, vec, NULL, NULL);
 	VectorMA(level.intermission_origin, trap_Cvar_VariableIntegerValue("g_podiumDist"), vec, origin);
+
 	origin[2] -= trap_Cvar_VariableIntegerValue("g_podiumDrop");
+
 	G_SetOrigin(podium, origin);
 
 	if (podium1) {
@@ -279,7 +280,6 @@ static void PodiumPlacementThink(gentity_t *podium) {
 		VectorMA(podium->r.currentOrigin, offsetFirst[0], f, vec);
 		VectorMA(vec, offsetFirst[1], r, vec);
 		VectorMA(vec, offsetFirst[2], u, vec);
-
 		G_SetOrigin(podium1, vec);
 	}
 
@@ -294,7 +294,6 @@ static void PodiumPlacementThink(gentity_t *podium) {
 		VectorMA(podium->r.currentOrigin, offsetSecond[0], f, vec);
 		VectorMA(vec, offsetSecond[1], r, vec);
 		VectorMA(vec, offsetSecond[2], u, vec);
-
 		G_SetOrigin(podium2, vec);
 	}
 
@@ -309,7 +308,6 @@ static void PodiumPlacementThink(gentity_t *podium) {
 		VectorMA(podium->r.currentOrigin, offsetThird[0], f, vec);
 		VectorMA(vec, offsetThird[1], r, vec);
 		VectorMA(vec, offsetThird[2], u, vec);
-
 		G_SetOrigin(podium3, vec);
 	}
 }
@@ -339,11 +337,15 @@ static gentity_t *SpawnPodium(void) {
 
 	AngleVectors(level.intermission_angle, vec, NULL, NULL);
 	VectorMA(level.intermission_origin, trap_Cvar_VariableIntegerValue("g_podiumDist"), vec, origin);
+
 	origin[2] -= trap_Cvar_VariableIntegerValue("g_podiumDrop");
+
 	G_SetOrigin(podium, origin);
 
 	VectorSubtract(level.intermission_origin, podium->r.currentOrigin, vec);
+
 	podium->s.apos.trBase[YAW] = vectoyaw(vec);
+
 	trap_LinkEntity(podium);
 
 	podium->think = PodiumPlacementThink;

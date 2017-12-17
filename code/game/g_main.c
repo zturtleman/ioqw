@@ -217,7 +217,7 @@ Q_EXPORT intptr_t vmMain(int command, int arg0, int arg1, int arg2, int arg3, in
 			G_RunFrame(arg0);
 			return 0;
 		case GAME_CONSOLE_COMMAND:
-			return ConsoleCommand();
+			return G_ConsoleCommand();
 		case BOTAI_START_FRAME:
 			return BotAIStartFrame(arg0);
 	}

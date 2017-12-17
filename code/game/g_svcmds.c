@@ -491,10 +491,10 @@ const size_t numSvCmds = ARRAY_LEN(svcmds);
 
 /*
 =======================================================================================================================================
-ConsoleCommand
+G_ConsoleCommand
 =======================================================================================================================================
 */
-qboolean ConsoleCommand(void) {
+qboolean G_ConsoleCommand(void) {
 	char cmd[MAX_TOKEN_CHARS];
 	struct svcmd *command;
 

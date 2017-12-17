@@ -522,8 +522,7 @@ void PlayerDie(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int d
 				// also play humiliation on target
 				self->client->ps.persistant[PERS_PLAYEREVENTS] ^= PLAYEREVENT_GAUNTLETREWARD;
 			}
-			// check for two kills in a short amount of time
-			// if this is close enough to the last kill, give a reward sound
+			// check for two kills in a short amount of time, if this is close enough to the last kill, give a reward sound
 			if (level.time - attacker->client->lastKillTime < CARNAGE_REWARD_TIME) {
 				// play excellent on player
 				attacker->client->ps.persistant[PERS_EXCELLENT_COUNT]++;
