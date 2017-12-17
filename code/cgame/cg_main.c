@@ -1167,7 +1167,6 @@ static void CG_RegisterGraphics(void) {
 	trap_R_RegisterModel("models/players/james/lower.md3");
 	trap_R_RegisterModel("models/players/james/upper.md3");
 	trap_R_RegisterModel("models/players/heads/james/james.md3");
-
 	trap_R_RegisterModel("models/players/janet/lower.md3");
 	trap_R_RegisterModel("models/players/janet/upper.md3");
 	trap_R_RegisterModel("models/players/heads/janet/janet.md3");

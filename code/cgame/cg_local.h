@@ -917,7 +917,7 @@ typedef struct {
 	float screenYBias;
 	float screenXScaleStretch;
 	float screenYScaleStretch;
-	float screenFakeWidth;			// width in fake 640x480 coords, it can be more than 640
+	float screenFakeWidth;			// width in fake 640 x 480 coords, it can be more than 640
 	int serverCommandSequence;		// reliable command stream counter
 	int processedSnapshotNum;		// the number of snapshots cgame has requested
 	qboolean localServer;			// detected on startup by checking sv_running
