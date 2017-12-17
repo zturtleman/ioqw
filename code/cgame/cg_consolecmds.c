@@ -58,6 +58,7 @@ Keybinding command.
 =======================================================================================================================================
 */
 static void CG_SizeUp_f(void) {
+	// manually clamp here so cvar range warning isn't show
 	trap_Cvar_SetValue("cg_viewsize", Com_Clamp(30, 100, (int)(cg_viewsize.integer + 10)));
 }
 
@@ -69,6 +70,7 @@ Keybinding command.
 =======================================================================================================================================
 */
 static void CG_SizeDown_f(void) {
+	// manually clamp here so cvar range warning isn't show
 	trap_Cvar_SetValue("cg_viewsize", Com_Clamp(30, 100, (int)(cg_viewsize.integer - 10)));
 }
 
@@ -183,11 +185,11 @@ CG_spWin_f
 */
 static void CG_spWin_f(void) {
 
-	trap_Cvar_Set("cg_cameraOrbit", "2");
-	trap_Cvar_Set("cg_cameraOrbitDelay", "35");
-	trap_Cvar_Set("cg_thirdPerson", "1");
-	trap_Cvar_Set("cg_thirdPersonAngle", "0");
-	trap_Cvar_Set("cg_thirdPersonRange", "100");
+	trap_Cvar_SetValue("cg_cameraOrbit", 2);
+	trap_Cvar_SetValue("cg_cameraOrbitDelay", 35);
+	trap_Cvar_SetValue("cg_thirdPerson", 1);
+	trap_Cvar_SetValue("cg_thirdPersonAngle", 0);
+	trap_Cvar_SetValue("cg_thirdPersonRange", 100);
 
 	CG_AddBufferedSound(cgs.media.winnerSound);
 	//trap_S_StartLocalSound(cgs.media.winnerSound, CHAN_ANNOUNCER);
@@ -201,11 +203,11 @@ CG_spLose_f
 */
 static void CG_spLose_f(void) {
 
-	trap_Cvar_Set("cg_cameraOrbit", "2");
-	trap_Cvar_Set("cg_cameraOrbitDelay", "35");
-	trap_Cvar_Set("cg_thirdPerson", "1");
-	trap_Cvar_Set("cg_thirdPersonAngle", "0");
-	trap_Cvar_Set("cg_thirdPersonRange", "100");
+	trap_Cvar_SetValue("cg_cameraOrbit", 2);
+	trap_Cvar_SetValue("cg_cameraOrbitDelay", 35);
+	trap_Cvar_SetValue("cg_thirdPerson", 1);
+	trap_Cvar_SetValue("cg_thirdPersonAngle", 0);
+	trap_Cvar_SetValue("cg_thirdPersonRange", 100);
 
 	CG_AddBufferedSound(cgs.media.loserSound);
 	//trap_S_StartLocalSound(cgs.media.loserSound, CHAN_ANNOUNCER);
@@ -577,13 +579,13 @@ static void CG_StartOrbit_f(void) {
 	}
 
 	if (cg_cameraOrbit.value != 0) {
-		trap_Cvar_Set("cg_cameraOrbit", "0");
-		trap_Cvar_Set("cg_thirdPerson", "0");
+		trap_Cvar_SetValue("cg_cameraOrbit", 0);
+		trap_Cvar_SetValue("cg_thirdPerson", 0);
 	} else {
-		trap_Cvar_Set("cg_cameraOrbit", "5");
-		trap_Cvar_Set("cg_thirdPerson", "1");
-		trap_Cvar_Set("cg_thirdPersonAngle", "0");
-		trap_Cvar_Set("cg_thirdPersonRange", "100");
+		trap_Cvar_SetValue("cg_cameraOrbit", 5);
+		trap_Cvar_SetValue("cg_thirdPerson", 1);
+		trap_Cvar_SetValue("cg_thirdPersonAngle", 0);
+		trap_Cvar_SetValue("cg_thirdPersonRange", 100);
 	}
 }
 

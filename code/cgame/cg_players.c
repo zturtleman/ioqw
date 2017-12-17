@@ -1585,7 +1585,7 @@ static void CG_BreathPuff(int clientNum, vec3_t origin, vec3_t *axis) {
 
 	contents = CG_PointContents(origin, 0);
 
-	if (contents & (CONTENTS_WATER|CONTENTS_SLIME|CONTENTS_LAVA)) {
+	if (contents & (CONTENTS_WATER|CONTENTS_SLIME)) {
 		CG_SpawnBubbles(puffs, origin, 2, (int)(3 + random() * 5));
 	} else {
 		if (cg_enableBreath.integer) {

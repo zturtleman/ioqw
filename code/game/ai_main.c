@@ -695,7 +695,7 @@ void BotInterbreeding(void) {
 		}
 	}
 	// make sure all item weight configs are reloaded and Not shared
-	trap_BotLibVarSet("bot_reloadcharacters", "1");
+	trap_Cvar_SetValue("bot_reloadcharacters", 1);
 	// add a number of bots using the desired bot character
 	for (i = 0; i < bot_interbreedbots.integer; i++) {
 		trap_Cmd_ExecuteText(EXEC_INSERT, va("addbot %s 4 free %i %s%d\n", bot_interbreedchar.string, i * 50, bot_interbreedchar.string, i));

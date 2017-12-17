@@ -50,7 +50,7 @@ void SP_info_notnull(gentity_t *self) {
 	G_SetOrigin(self, self->s.origin);
 }
 
-/*QUAKED light (0 1 0) (-8 -8 -8) (8 8 8) linear
+/*QUAKED light (0 1 0) (-8 -8 -8) (8 8 8) LINEAR
 Non-displayed light.
 "light" overrides the default 300 intensity.
 Linear checbox gives linear falloff instead of inverse square
@@ -61,7 +61,7 @@ void SP_light(gentity_t *self) {
 	G_FreeEntity(self);
 }
 
-/*QUAKED lightJunior (0 0.7 0.3) (-8 -8 -8) (8 8 8) nonlinear angle negative_spot negative_point
+/*QUAKED lightJunior (0 0.7 0.3) (-8 -8 -8) (8 8 8) NONLINEAR ANGLE NEGATIVE-SPOT NEGATIVE-POINT
 Non-displayed light that only affects dynamic game models, but does not contribute to lightmaps
 "light" overrides the default 300 intensity.
 Nonlinear checkbox gives inverse square falloff instead of linear
@@ -321,7 +321,7 @@ void SP_misc_portal_surface(gentity_t *ent) {
 	}
 }
 
-/*QUAKED misc_portal_camera (0 0 1) (-8 -8 -8) (8 8 8) slowrotate fastrotate noswing
+/*QUAKED misc_portal_camera (0 0 1) (-8 -8 -8) (8 8 8) SLOWROTATE FASTROTATE NOSWING
 The target for a misc_portal_director. You can set either angles or target another entity to determine the direction of view.
 "roll" an angle modifier to orient the camera around the target vector;
 */

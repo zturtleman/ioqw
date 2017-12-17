@@ -184,7 +184,7 @@ void Use_Target_Print(gentity_t *ent, gentity_t *other, gentity_t *activator) {
 	trap_SendServerCommand(-1, va("cp \"%s\"", ent->message));
 }
 
-/*QUAKED target_print (1 0 0) (-8 -8 -8) (8 8 8) redteam blueteam private
+/*QUAKED target_print (1 0 0) (-8 -8 -8) (8 8 8) REDTEAM BLUETEAM PRIVATE
 "message"	text to print
 If "private", only the activator gets the message. If no checks, all clients get the message.
 */

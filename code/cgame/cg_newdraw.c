@@ -253,7 +253,7 @@ static void CG_SetSelectedPlayerName(void) {
 
 		if (ci) {
 			trap_Cvar_Set("cg_selectedPlayerName", ci->name);
-			trap_Cvar_Set("cg_selectedPlayer", va("%d", sortedTeamPlayers[cg_currentSelectedPlayer.integer]));
+			trap_Cvar_SetValue("cg_selectedPlayer", sortedTeamPlayers[cg_currentSelectedPlayer.integer]);
 			cgs.currentOrder = ci->teamTask;
 		}
 	} else {
@@ -2211,7 +2211,7 @@ CG_ShowResponseHead
 void CG_ShowResponseHead(void) {
 
 	Menus_OpenByName("voiceMenu");
-	trap_Cvar_Set("cl_conXOffset", "72");
+	trap_Cvar_SetValue("cl_conXOffset", 72);
 
 	cg.voiceTime = cg.time;
 }

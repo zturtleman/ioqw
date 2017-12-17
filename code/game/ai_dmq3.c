@@ -3372,6 +3372,7 @@ float BotEntityVisible(int viewer, vec3_t eye, vec3_t viewangles, int fov, int e
 	// check if entity is within field of vision
 	VectorSubtract(middle, eye, dir);
 	vectoangles(dir, entangles);
+
 	visdist = bot_visualrange.value;
 
 	if (VectorLength(dir) > visdist) {
@@ -3488,7 +3489,7 @@ int BotFindEnemy(bot_state_t *bs, int curenemy) {
 	aas_entityinfo_t entinfo, curenemyinfo, curbotinfo;
 	vec3_t dir, angles;
 
-//	alertness = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_ALERTNESS, 0, 1);
+	//alertness = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_ALERTNESS, 0, 1);
 	easyfragger = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_EASY_FRAGGER, 0, 1);
 	aggression = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AGGRESSION, 0, 1);
 	// check if the health decreased
@@ -5132,7 +5133,6 @@ BotGetActivateGoal
 Returns the number of the bsp entity to activate. 'goal->entitynum' will be set to the game entity to activate.
 =======================================================================================================================================
 */
-//#define OBSTACLEDEBUG
 int BotGetActivateGoal(bot_state_t *bs, int entitynum, bot_activategoal_t *activategoal) {
 	int i, ent, cur_entities[10], spawnflags, modelindex, areas[MAX_ACTIVATEAREAS * 2], numareas, t;
 	char model[MAX_INFO_STRING], tmpmodel[128];
@@ -5340,9 +5340,7 @@ int BotGetActivateGoal(bot_state_t *bs, int entitynum, bot_activategoal_t *activ
 			}
 		}
 	}
-#ifdef OBSTACLEDEBUG
-	BotAI_Print(PRT_ERROR, "BotGetActivateGoal: no valid activator for entity with target \"%s\"\n", targetname[0]);
-#endif
+
 	return 0;
 }
 

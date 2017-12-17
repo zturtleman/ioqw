@@ -275,7 +275,7 @@ void Use_Target_Push(gentity_t *self, gentity_t *other, gentity_t *activator) {
 	}
 }
 
-/*QUAKED target_push (.5 .5 .5) (-8 -8 -8) (8 8 8) bouncepad
+/*QUAKED target_push (.5 .5 .5) (-8 -8 -8) (8 8 8) BOUNCEPAD
 Pushes the activator in the direction.of angle, or towards a target apex.
 "speed" defaults to 1000
 if "bouncepad", play bounce noise instead of windfly

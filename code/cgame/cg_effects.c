@@ -551,7 +551,7 @@ Generated a bunch of gibs launching out from the bodies location.
 void CG_GibPlayer(vec3_t playerOrigin) {
 	vec3_t origin, velocity;
 
-	if (CG_PointContents(playerOrigin, -1) & (CONTENTS_WATER|CONTENTS_SLIME|CONTENTS_LAVA)) {
+	if (CG_PointContents(playerOrigin, -1) & (CONTENTS_WATER|CONTENTS_SLIME)) {
 		CG_SpawnBubbles(NULL, playerOrigin, 3, 5 + random() * 5);
 	}
 
