@@ -29,8 +29,8 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 //			   default long
 
 #define AASID (('S' << 24) + ('A' << 16) + ('A' << 8) + 'E')
-#define AASVERSION_OLD	4
-#define AASVERSION		5
+#define AASVERSION_OLD 4
+#define AASVERSION 5
 // presence types
 #define PRESENCE_NONE	1
 #define PRESENCE_NORMAL	2
