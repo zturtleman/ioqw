@@ -478,7 +478,8 @@ void PC_PrintDefine(define_t *define) {
 //	token_t *parms; // define parameters
 //	token_t *tokens; // macro tokens (possibly containing parm tokens)
 //	struct define_s *next; // next defined macro in a list
-}*/
+}
+*/
 #if DEFINEHASHING
 /*
 =======================================================================================================================================

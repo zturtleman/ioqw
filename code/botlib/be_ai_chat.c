@@ -380,7 +380,7 @@ int BotNextConsoleMessage(int chatstate, bot_consolemessage_t *cm) {
 		cm->type = firstmsg->type;
 
 		Q_strncpyz(cm->message, firstmsg->message, sizeof(cm->message));
-		// We omit setting the two pointers in cm because pointer size in the VM differs between the size in the engine on 64 bit
+		// we omit setting the two pointers in cm because pointer size in the VM differs between the size in the engine on 64 bit
 		// machines, which would lead to a buffer overflow if this functions is called from the VM. The pointers are of no interest
 		// to functions calling BotNextConsoleMessage anyways.
 		return cm->handle;
@@ -1445,6 +1445,7 @@ bot_matchtemplate_t *BotLoadMatchTemplates(char *matchfile) {
 	}
 	// free the source
 	FreeSource(source);
+
 	botimport.Print(PRT_MESSAGE, "loaded %s\n", matchfile);
 
 	//BotDumpMatchTemplates(matches);
@@ -3078,6 +3079,7 @@ void BotSetChatName(int chatstate, char *name, int client) {
 	Com_Memset(cs->name, 0, sizeof(cs->name));
 
 	strncpy(cs->name, name, sizeof(cs->name) - 1);
+
 	cs->name[sizeof(cs->name) - 1] = '\0';
 }
 

@@ -446,6 +446,7 @@ void AAS_CreatePortals(void) {
 		}
 	}
 }
+
 /*
 =======================================================================================================================================
 AAS_MapContainsTeleporters
@@ -709,8 +710,8 @@ qboolean AAS_CanMergeFaces(int *facenums, int numfaces, int planenum) {
 	}
 
 	return qtrue;
-}*/
-
+}
+*/
 /*
 =======================================================================================================================================
 AAS_ConnectedAreas_r
@@ -1051,7 +1052,9 @@ void AAS_FloodCluster_r(int areanum, int clusternum) {
 	// set cluster mark
 	aasworld.areasettings[areanum].cluster = clusternum;
 	// if the area is a portal
-	//if (aasworld.areasettings[areanum].contents & AREACONTENTS_CLUSTERPORTAL) return;
+	//if (aasworld.areasettings[areanum].contents & AREACONTENTS_CLUSTERPORTAL) {
+	//	return;
+	//}
 
 	area = &aasworld.areas[areanum];
 	// use area faces to flood into adjacent areas
@@ -1398,9 +1401,7 @@ void AAS_AddTeleporterPortals(void) {
 
 			VectorSet(mins, -8, -8, 8);
 			VectorSet(maxs, 8, 8, 24);
-
 			AAS_PresenceTypeBoundingBox(PRESENCE_CROUCH, bbmins, bbmaxs);
-
 			VectorAdd(origin, mins, mins);
 			VectorAdd(origin, maxs, maxs);
 			// add bounding box size

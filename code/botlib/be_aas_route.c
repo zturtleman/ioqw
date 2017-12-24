@@ -67,13 +67,12 @@ int numportalcacheupdates;
 #endif // ROUTING_DEBUG
 int routingcachesize;
 int max_routingcachesize;
-
+#ifdef ROUTING_DEBUG
 /*
 =======================================================================================================================================
 AAS_RoutingInfo
 =======================================================================================================================================
 */
-#ifdef ROUTING_DEBUG
 void AAS_RoutingInfo(void) {
 	botimport.Print(PRT_MESSAGE, "%d area cache updates\n", numareacacheupdates);
 	botimport.Print(PRT_MESSAGE, "%d portal cache updates\n", numportalcacheupdates);
@@ -1143,13 +1142,12 @@ int AAS_ReadRouteCache(void) {
 	return qtrue;
 }
 
+#define MAX_REACHABILITYPASSAREAS 32
 /*
 =======================================================================================================================================
 AAS_InitReachabilityAreas
 =======================================================================================================================================
 */
-#define MAX_REACHABILITYPASSAREAS 32
-
 void AAS_InitReachabilityAreas(void) {
 	int i, j, numareas, areas[MAX_REACHABILITYPASSAREAS];
 	int numreachareas;
@@ -2117,6 +2115,7 @@ int AAS_RandomGoalArea(int areanum, int travelflags, int *goalareanum, vec3_t go
 				if (!trace.startsolid && trace.fraction < 1 && AAS_PointAreaNum(trace.endpos) == n) {
 					if (AAS_AreaGroundFaceArea(n) > 300) {
 						*goalareanum = n;
+
 						VectorCopy(trace.endpos, goalorigin);
 						//botimport.Print(PRT_MESSAGE, "found random goal area %d\n", *goalareanum);
 						return qtrue;
@@ -2179,7 +2178,6 @@ int AAS_NearestHideArea(int srcnum, vec3_t origin, int areanum, int enemynum, ve
 	// assume visible
 	startVisible = qtrue;
 	badtravelflags = ~travelflags;
-
 	curupdate = &aasworld.areaupdate[areanum];
 	curupdate->areanum = areanum;
 

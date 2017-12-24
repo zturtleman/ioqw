@@ -106,6 +106,7 @@ void *GetMemory(unsigned long size)
 	memoryblock_t *block;
 
 	assert(botimport.GetMemory);
+
 	ptr = botimport.GetMemory(size + sizeof(memoryblock_t));
 	block = (memoryblock_t *)ptr;
 	block->id = MEM_ID;
@@ -117,6 +118,7 @@ void *GetMemory(unsigned long size)
 	block->line = line;
 #endif // MEMDEBUG
 	LinkMemoryBlock(block);
+
 	allocatedmemory += block->size;
 	totalmemorysize += block->size + sizeof(memoryblock_t);
 	numblocks++;
@@ -169,6 +171,7 @@ void *GetHunkMemory(unsigned long size)
 	block->line = line;
 #endif // MEMDEBUG
 	LinkMemoryBlock(block);
+
 	allocatedmemory += block->size;
 	totalmemorysize += block->size + sizeof(memoryblock_t);
 	numblocks++;
@@ -302,6 +305,7 @@ void PrintMemoryLabels(void) {
 	PrintUsedMemorySize();
 
 	i = 0;
+
 	Log_Write("============= Botlib memory log ==============\r\n");
 	Log_Write("\r\n");
 
@@ -455,6 +459,7 @@ PrintUsedMemorySize
 =======================================================================================================================================
 */
 void PrintUsedMemorySize(void) {
+
 }
 
 /*
@@ -463,5 +468,6 @@ PrintMemoryLabels
 =======================================================================================================================================
 */
 void PrintMemoryLabels(void) {
+
 }
 #endif

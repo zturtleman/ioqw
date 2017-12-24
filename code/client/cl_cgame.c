@@ -418,6 +418,7 @@ CL_ShutdownCGame
 void CL_ShutdownCGame(void) {
 
 	Key_SetCatcher(Key_GetCatcher() & ~KEYCATCH_CGAME);
+
 	cls.cgameStarted = qfalse;
 
 	if (!cgvm) {
@@ -565,7 +566,7 @@ intptr_t CL_CgameSystemCalls(intptr_t *args) {
 			return 0;
 		case CG_UPDATESCREEN:
 			// this is used during lengthy level loading, so pump message loop
-			// Com_EventLoop(); // FIXME: if a server restarts here, BAD THINGS HAPPEN!
+			//Com_EventLoop(); // FIXME: if a server restarts here, BAD THINGS HAPPEN!
 			// we can't call Com_EventLoop here, a restart will crash and this _does_ happen if there is a map change while we are downloading at pk3.
 			SCR_UpdateScreen();
 			return 0;
@@ -820,6 +821,7 @@ void CL_InitCGame(void) {
 	// find the current mapname
 	info = cl.gameState.stringData + cl.gameState.stringOffsets[CS_SERVERINFO];
 	mapname = Info_ValueForKey(info, "mapname");
+
 	Com_sprintf(cl.mapname, sizeof(cl.mapname), "maps/%s.bsp", mapname);
 	// load the dll or bytecode
 	interpret = Cvar_VariableValue("vm_cgame");
@@ -847,7 +849,6 @@ void CL_InitCGame(void) {
 	}
 	// we will send a usercmd this frame, which will cause the server to send us the first snapshot
 	clc.state = CA_PRIMED;
-
 	t2 = Sys_Milliseconds();
 
 	Com_Printf("CL_InitCGame: %5.2f seconds\n", (t2 - t1) / 1000.0);

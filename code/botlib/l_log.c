@@ -30,6 +30,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include <stdio.h>
 #include <string.h>
 #include "../qcommon/q_shared.h"
+#include "../qcommon/qcommon.h"
 #include "botlib.h"
 #include "be_interface.h" // for botimport.Print
 #include "l_libvar.h"
@@ -51,6 +52,7 @@ Log_Open
 =======================================================================================================================================
 */
 void Log_Open(char *filename) {
+	char *ospath;
 
 	if (!LibVarValue("log", "0")) {
 		return;
@@ -66,7 +68,8 @@ void Log_Open(char *filename) {
 		return;
 	}
 
-	logfile.fp = fopen(filename, "wb");
+	ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), Cvar_VariableString("fs_game"), filename);
+	logfile.fp = fopen(ospath, "wb");
 
 	if (!logfile.fp) {
 		botimport.Print(PRT_ERROR, "can't open the log file %s\n", filename);

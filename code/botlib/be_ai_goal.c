@@ -888,6 +888,7 @@ int BotGetLevelItemGoal(int index, char *name, bot_goal_t *goal) {
 			if (li->timeout) {
 				goal->flags |= GFL_DROPPED;
 			}
+
 			//botimport.Print(PRT_MESSAGE, "found li %s\n", itemconfig->iteminfo[li->iteminfo].name);
 			return li->number;
 		}
@@ -1673,7 +1674,6 @@ int BotTouchingGoal(vec3_t origin, bot_goal_t *goal) {
 	vec3_t safety_mins = {0, 0, 0}; // {-4, -4, 0};
 
 	AAS_PresenceTypeBoundingBox(PRESENCE_NORMAL, boxmins, boxmaxs);
-
 	VectorSubtract(goal->mins, boxmaxs, absmins);
 	VectorSubtract(goal->maxs, boxmins, absmaxs);
 	VectorAdd(absmins, goal->origin, absmins);

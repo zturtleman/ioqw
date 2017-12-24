@@ -423,7 +423,6 @@ void AAS_ApplyFriction(vec3_t vel, float friction, float stopspeed, float framet
 		}
 
 		newspeed /= speed;
-
 		vel[0] *= newspeed;
 		vel[1] *= newspeed;
 	}
@@ -440,7 +439,6 @@ int AAS_ClipToBBox(aas_trace_t *trace, vec3_t start, vec3_t end, int presencetyp
 	vec3_t bboxmins, bboxmaxs, absmins, absmaxs, dir, mid;
 
 	AAS_PresenceTypeBoundingBox(presencetype, bboxmins, bboxmaxs);
-
 	VectorSubtract(mins, bboxmaxs, absmins);
 	VectorSubtract(maxs, bboxmins, absmaxs);
 	VectorCopy(end, trace->endpos);

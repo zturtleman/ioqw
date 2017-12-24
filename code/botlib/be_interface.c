@@ -125,24 +125,7 @@ int Export_BotLibSetup(void) {
 //	Swap_Init();
 
 	if (botDeveloper) {
-		char *homedir, *gamedir, *basegame;
-		char logfilename[MAX_OSPATH];
-
-		homedir = LibVarGetString("homedir");
-		gamedir = LibVarGetString("gamedir");
-		basegame = LibVarGetString("basegame");
-
-		if (*homedir && (*gamedir || *basegame)) {
-			if (*gamedir) {
-				Com_sprintf(logfilename, sizeof(logfilename), "%s%c%s%cbotlib.log", homedir, PATH_SEP, gamedir, PATH_SEP);
-			} else {
-				Com_sprintf(logfilename, sizeof(logfilename), "%s%c%s%cbotlib.log", homedir, PATH_SEP, basegame, PATH_SEP);
-			}
-		} else {
-			Com_sprintf(logfilename, sizeof(logfilename), "botlib.log");
-		}
-
-		Log_Open(logfilename);
+		Log_Open("botlib.log");
 	}
 
 	botimport.Print(PRT_MESSAGE, "------- BotLib Initialization -------\n");
@@ -324,11 +307,6 @@ int Export_BotLibUpdateEntity(int ent, bot_entitystate_t *state) {
 	return AAS_UpdateEntity(ent, state);
 }
 
-/*
-=======================================================================================================================================
-BotExportTest
-=======================================================================================================================================
-*/
 void AAS_TestMovementPrediction(int entnum, vec3_t origin, vec3_t dir);
 void ElevatorBottomCenter(aas_reachability_t *reach, vec3_t bottomcenter);
 int BotGetReachabilityToGoal(vec3_t origin, int areanum, int lastgoalareanum, int lastareanum, int *avoidreach, float *avoidreachtimes, int *avoidreachtries, bot_goal_t *goal, int travelflags, struct bot_avoidspot_s *avoidspots, int numavoidspots, int *flags);
@@ -574,7 +552,6 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 
 			AAS_ReachabilityFromNum(reachnum, &reach);
 			AAS_ShowReachability(&reach);
-
 			VectorCopy(reach.end, origin);
 
 			lastareanum = curarea;

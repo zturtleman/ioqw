@@ -1384,7 +1384,6 @@ aas_link_t *AAS_LinkEntityClientBBox(vec3_t absmins, vec3_t absmaxs, int entnum,
 	vec3_t newabsmins, newabsmaxs;
 
 	AAS_PresenceTypeBoundingBox(presencetype, mins, maxs);
-
 	VectorSubtract(absmins, maxs, newabsmins);
 	VectorSubtract(absmaxs, mins, newabsmaxs);
 	// relink the entity

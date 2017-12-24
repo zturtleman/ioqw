@@ -314,7 +314,6 @@ void AAS_ShowFace(int facenum) {
 
 	VectorCopy(aasworld.vertexes[edge->v[0]], start);
 	VectorMA(start, 20, plane->normal, end);
-
 	AAS_DebugLine(start, end, LINECOLOR_RED);
 }
 
