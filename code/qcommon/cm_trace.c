@@ -850,6 +850,7 @@ void CM_TraceThroughVerticalCylinder(traceWork_t *tw, vec3_t origin, float radiu
 		if (l1 < Square(radius)) {
 			tw->trace.fraction = 0;
 			tw->trace.startsolid = qtrue;
+
 			VectorSubtract(end2d, org2d, dir);
 
 			l1 = VectorLengthSquared(dir);
@@ -889,7 +890,7 @@ void CM_TraceThroughVerticalCylinder(traceWork_t *tw, vec3_t origin, float radiu
 
 	if (d > 0) {
 		sqrtd = SquareRootFloat(d);
-		// = (-b + sqrtd) * 0.5f; // / (2.0f * a);
+		//= (-b + sqrtd) * 0.5f; // / (2.0f * a);
 		fraction = (-b - sqrtd) * 0.5f; // / (2.0f * a);
 
 		if (fraction < 0) {
@@ -1143,13 +1144,13 @@ void CM_Trace(trace_t *results, const vec3_t start, const vec3_t end, vec3_t min
 	cmodel_t *cmod;
 
 	cmod = CM_ClipHandleToModel(model);
-
 	cm.checkcount++; // for multi-check avoidance
 	c_traces++; // for statistics, may be zeroed
 	// fill in a default trace
 	Com_Memset(&tw, 0, sizeof(tw));
 
 	tw.trace.fraction = 1; // assume it goes the entire distance until shown otherwise
+
 	VectorCopy(origin, tw.modelOrigin);
 
 	if (!cm.numNodes) {
@@ -1371,7 +1372,6 @@ void CM_TransformedBoxTrace(trace_t *results, const vec3_t start, const vec3_t e
 
 	halfwidth = symetricSize[1][0];
 	halfheight = symetricSize[1][2];
-
 	sphere.use = capsule;
 	sphere.radius = (halfwidth > halfheight) ? halfheight : halfwidth;
 	sphere.halfheight = halfheight;

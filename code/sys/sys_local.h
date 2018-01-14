@@ -24,11 +24,11 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
-// Require a minimum version of SDL
+// require a minimum version of SDL
 #define MINSDL_MAJOR 2
 #define MINSDL_MINOR 0
 #define MINSDL_PATCH 0
-// Console
+// console
 void CON_Shutdown(void);
 void CON_Init(void);
 char *CON_Input(void);

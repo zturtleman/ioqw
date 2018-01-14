@@ -130,7 +130,7 @@ static qboolean SV_IsBanned(netadr_t *from, qboolean isexception) {
 	serverBan_t *curban;
 
 	if (!isexception) {
-		// If this is a query for a ban, first check whether the client is excepted
+		// if this is a query for a ban, first check whether the client is excepted
 		if (SV_IsBanned(from, qtrue)) {
 			return qfalse;
 		}
@@ -297,9 +297,9 @@ void SV_DirectConnect(netadr_t from) {
 	// find a client slot
 	// if "sv_privateClients" is set > 0, then that number of client slots will be reserved for connections that
 	// have "password" set to the value of "sv_privatePassword"
-	// Info requests will report the maxclients as if the private slots didn't exist, to prevent people from trying to connect
+	// info requests will report the maxclients as if the private slots didn't exist, to prevent people from trying to connect
 	// to a full server.
-	// This is to allow us to reserve a couple slots here on our servers so we can play without having to kick people.
+	// this is to allow us to reserve a couple slots here on our servers so we can play without having to kick people.
 
 	// check for privateClient password
 	password = Info_ValueForKey(userinfo, "password");
@@ -388,7 +388,6 @@ gotnewcl:
 	SV_UserinfoChanged(newcl);
 	// send the connect packet to the client
 	NET_OutOfBandPrint(NS_SERVER, from, "connectResponse %d", challenge);
-
 	Com_DPrintf("Going from CS_FREE to CS_CONNECTED for %s\n", newcl->name);
 
 	newcl->state = CS_CONNECTED;
@@ -463,7 +462,7 @@ void SV_DropClient(client_t *drop, const char *reason) {
 			}
 		}
 	}
-	// Free all allocated data on the client structure
+	// free all allocated data on the client structure
 	SV_FreeClient(drop);
 	// tell everyone why they got dropped
 	if (reason) {
@@ -629,7 +628,7 @@ static void SV_CloseDownload(client_t *cl) {
 
 	cl->download = 0;
 	*cl->downloadName = 0;
-	// Free the temporary buffer space
+	// free the temporary buffer space
 	for (i = 0; i < MAX_DOWNLOAD_WINDOW; i++) {
 		if (cl->downloadBlocks[i]) {
 			Z_Free(cl->downloadBlocks[i]);
@@ -1335,10 +1334,10 @@ static qboolean SV_ClientCommand(client_t *cl, msg_t *msg) {
 	// malicious users may try using too many string commands to lag other players. If we decide that we want to stall
 	// the command, we will stop processing the rest of the packet, including the usercmd. This causes flooders to lag themselves
 	// but not other people
-	// We don't do this when the client hasn't been active yet since it's normal to spam a lot of commands when downloading
+	// we don't do this when the client hasn't been active yet since it's normal to spam a lot of commands when downloading
 	if (!com_cl_running->integer && cl->state >= CS_ACTIVE && sv_floodProtect->integer && svs.time < cl->nextReliableTime) {
 		// ignore any other text messages from this client but let them keep playing
-		// TTimo - moved the ignored verbose to the actual processing in SV_ExecuteClientCommand, only printing if the core doesn't intercept
+		// moved the ignored verbose to the actual processing in SV_ExecuteClientCommand, only printing if the core doesn't intercept
 		clientOk = qfalse;
 	}
 	// don't allow another command for one second
@@ -1512,7 +1511,7 @@ static void SV_UserVoip(client_t *cl, msg_t *msg, qboolean ignoreData) {
 	packetsize = MSG_ReadShort(msg);
 
 	if (msg->readcount > msg->cursize) {
-		return; // short/invalid packet, bail.
+		return; // short/invalid packet, bail
 	}
 
 	if (packetsize > sizeof(encoded)) { // overlarge packet?
@@ -1530,13 +1529,13 @@ static void SV_UserVoip(client_t *cl, msg_t *msg, qboolean ignoreData) {
 			bytesleft -= br;
 		}
 
-		return; // overlarge packet, bail.
+		return; // overlarge packet, bail
 	}
 
 	MSG_ReadData(msg, encoded, packetsize);
 
 	if (ignoreData || SV_ShouldIgnoreVoipSender(cl)) {
-		return; // Blacklisted, disabled, etc.
+		return; // blacklisted, disabled, etc.
 	}
 	// !!! FIXME: see if we read past end of msg...
 	// !!! FIXME: reject if not opus data.
@@ -1643,9 +1642,9 @@ void SV_ExecuteClientMessage(client_t *cl, msg_t *msg) {
 	// but we still need to read the next message to move to next download or send gamestate
 	// I don't like this hack though, it must have been working fine at some point, suspecting the fix is somewhere else
 	if (serverId != sv.serverId && !*cl->downloadName && !strstr(cl->lastClientCommandString, "nextdl")) {
-		if (serverId >= sv.restartedServerId && serverId < sv.serverId) { // TTimo - use a comparison here to catch multiple map_restart
+		if (serverId >= sv.restartedServerId && serverId < sv.serverId) { // use a comparison here to catch multiple map_restart
 			// they just haven't caught the map_restart yet
-			Com_DPrintf("%s : ignoring pre map_restart / outdated client message\n", cl->name);
+			Com_DPrintf("%s : ignoring pre map_restart/outdated client message\n", cl->name);
 			return;
 		}
 		// if we can tell that the client has dropped the last gamestate we sent them, resend it

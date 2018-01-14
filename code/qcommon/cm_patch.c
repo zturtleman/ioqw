@@ -896,6 +896,7 @@ void CM_AddFacetBevels(facet_t *facet) {
 	// test the non-axial plane edges
 	for (j = 0; j < w->numpoints; j++) {
 		k = (j + 1)%w->numpoints;
+
 		VectorSubtract(w->p[j], w->p[k], vec);
 		// if it's a degenerate edge
 		if (VectorNormalize(vec) < 0.5) {
@@ -1821,13 +1822,11 @@ void CM_DrawDebugSurface(void (*drawPoly)(int color, int numPoints, float *point
 		VectorCopy(debugBlockPoints[0], v[0]);
 		VectorCopy(debugBlockPoints[1], v[1]);
 		VectorCopy(debugBlockPoints[2], v[2]);
-
 		drawPoly(2, 3, v[0]);
 
 		VectorCopy(debugBlockPoints[2], v[0]);
 		VectorCopy(debugBlockPoints[3], v[1]);
 		VectorCopy(debugBlockPoints[0], v[2]);
-
 		drawPoly(2, 3, v[0]);
 	}
 #if 0

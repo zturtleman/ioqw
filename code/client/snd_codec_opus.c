@@ -273,9 +273,9 @@ snd_stream_t *S_OggOpus_CodecOpenStream(const char *filename) {
 	stream->info.samples = numSamples;
 	stream->info.size = stream->info.samples * stream->info.channels * stream->info.width;
 	stream->info.dataofs = 0;
-	// We use stream->pos for the file pointer in the compressed ogg file
+	// we use stream->pos for the file pointer in the compressed ogg file
 	stream->pos = 0;
-	// We use the generic pointer in stream for the opus codec control structure
+	// we use the generic pointer in stream for the opus codec control structure
 	stream->ptr = of;
 
 	return stream;

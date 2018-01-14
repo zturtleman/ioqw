@@ -43,8 +43,9 @@ static void swapfunc(char *, char *, int, int);
 	long i = (n) / sizeof(TYPE);			\
 	TYPE *pi = (TYPE *)(parmi);		\
 	TYPE *pj = (TYPE *)(parmj);		\
+
 	do {						\
-		TYPE	t = *pi;		\
+		TYPE t = *pi;		\
 		*pi++ = *pj;				\
 		*pj++ = t;				\
 	} while (--i > 0);				\
@@ -61,7 +62,8 @@ swapfunc
 static void swapfunc(a, b, n, swaptype)
 	char *a, *b;
 	int n, swaptype;
-{
+	{
+
 	if (swaptype <= 1) {
 		swapcode(long, a, b, n)
 	} else {
@@ -87,7 +89,8 @@ med3
 static char *med3(a, b, c, cmp)
 	char *a, *b, *c;
 	cmp_t *cmp;
-{
+	{
+
 	return cmp(a, b) < 0 ? (cmp(b, c) < 0 ? b : (cmp(a, c) < 0 ? c : a)) : (cmp(b, c) > 0 ? b : (cmp(a, c) < 0 ? a : c));
 }
 
@@ -100,7 +103,8 @@ void qsort(a, n, es, cmp)
 	void *a;
 	size_t n, es;
 	cmp_t *cmp;
-{
+	{
+
 	char *pa, *pb, *pc, *pd, *pl, *pm, *pn;
 	int d, r, swaptype, swap_cnt;
 
@@ -134,6 +138,7 @@ loop: SWAPINIT(a, es);
 	}
 
 	swap(a, pm);
+
 	pa = pb = (char *)a + es;
 	pc = pd = (char *)a + (n - 1) * es;
 
@@ -168,7 +173,7 @@ loop: SWAPINIT(a, es);
 		pc -= es;
 	}
 
-	if (swap_cnt == 0) { // Switch to insertion sort
+	if (swap_cnt == 0) { // switch to insertion sort
 		for (pm = (char *)a + es; pm < (char *)a + n * es; pm += es) {
 			for (pl = pm; pl > (char *)a && cmp(pl - es, pl) > 0; pl -= es) {
 				swap(pl, pl - es);
@@ -180,7 +185,9 @@ loop: SWAPINIT(a, es);
 
 	pn = (char *)a + n * es;
 	r = MIN(pa - (char *)a, pb - pa);
+
 	vecswap(a, pb - r, r);
+
 	r = MIN(pd - pc, pn - pd - es);
 	vecswap(pb, pn - r, r);
 
@@ -189,7 +196,7 @@ loop: SWAPINIT(a, es);
 	}
 
 	if ((r = pd - pc) > es) {
-		// Iterate rather than recurse to save stack space
+		// iterate rather than recurse to save stack space
 		a = pn - r;
 		n = r / es;
 		goto loop;
@@ -320,6 +327,7 @@ strstr
 =======================================================================================================================================
 */
 char *strstr(const char *string, const char *strCharSet) {
+
 	while (*string) {
 		int i;
 
@@ -683,6 +691,7 @@ void create_acostable(void) {
 		}
 
 		a = acos((float) - 1 + i / 512);
+
 		fprintf(fp, "%1.8f,", a);
 	}
 
@@ -924,9 +933,7 @@ static double powN(double base, int exp) {
 
 	if (exp >= 0) {
 		double result = 1.0;
-		// calculate x, x ^ 2, x ^ 4, ... by repeated squaring
-		// and multiply together the ones corresponding to the
-		// binary digits of the exponent
+		// calculate x, x ^ 2, x ^ 4, ... by repeated squaring and multiply together the ones corresponding to the binary digits of the exponent
 		// e.g. x ^ 73 = x ^ (1 + 8 + 64) = x * x ^ 8 * x ^ 64
 		while (exp > 0) {
 			if (exp % 2 == 1) {
@@ -1164,6 +1171,7 @@ double strtod(const char *nptr, char **endptr) {
 
 	if (Q_stricmpn(nptr, "inf", 3) == 0) {
 		floatint_t inf;
+
 		inf.ui = 0x7f800000;
 
 		if (endptr == NULL) {
@@ -1190,6 +1198,7 @@ double strtod(const char *nptr, char **endptr) {
 	if (Q_stricmpn(nptr, "0x", 2) == 0) {
 		// track if we use any digits
 		const char *s = &nptr[1], *end = s;
+
 		nptr += 2;
 		res = 0;
 
@@ -1211,6 +1220,7 @@ double strtod(const char *nptr, char **endptr) {
 
 		if (*nptr == '.') {
 			float place;
+
 			nptr++;
 			// 1.0 / 16.0 == 0.0625
 			// I don't expect the float accuracy to hold out for very long but since we need to know the length of
@@ -1235,6 +1245,7 @@ double strtod(const char *nptr, char **endptr) {
 		// exponents are only valid if we encountered at least one digit already (and have therefore set end to something)
 		if (end != s && tolower(*nptr) == 'p') {
 			int exp;
+
 			// apparently (confusingly) the exponent should be decimal
 			exp = strtol(&nptr[1], (char **)&end, 10);
 
@@ -1259,6 +1270,7 @@ double strtod(const char *nptr, char **endptr) {
 	} else {
 		// track if we find any digits
 		const char *end = nptr, *p = nptr;
+
 		// this is most of the work
 		for (res = 0; isdigit(*nptr); res = 10 * res + *nptr++ - '0');
 		// if nptr moved, we read something
@@ -1269,6 +1281,7 @@ double strtod(const char *nptr, char **endptr) {
 		if (*nptr == '.') {
 			// fractional part
 			float place;
+
 			nptr++;
 
 			for (place = 0.1; isdigit(*nptr); place /= 10.0) {
@@ -1851,7 +1864,6 @@ static int dopr(char *buffer, size_t maxlen, const char *format, va_list args) {
 						}
 
 						total += fmtint(buffer, &currlen, maxlen, value, 16, min, max, flags);
-
 						break;
 					case 'f':
 						if (cflags == DP_C_LDOUBLE) {
@@ -1927,7 +1939,7 @@ static int dopr(char *buffer, size_t maxlen, const char *format, va_list args) {
 						ch = *format++;
 						break;
 					default:
-						// Unknown, skip
+						// unknown, skip
 						break;
 				}
 
@@ -1978,7 +1990,7 @@ static int fmtstr(char *buffer, size_t *currlen, size_t maxlen, char *value, int
 	}
 
 	if (flags & DP_F_MINUS) {
-		padlen = -padlen; // Left Justify
+		padlen = -padlen; // left justify
 	}
 
 	while (padlen > 0) {
@@ -2026,7 +2038,7 @@ static int fmtint(char *buffer, size_t *currlen, size_t maxlen, LLONG value, int
 		if (value < 0) {
 			signvalue = '-';
 			uvalue = -value;
-		} else if (flags & DP_F_PLUS) { // Do a sign (+/i)
+		} else if (flags & DP_F_PLUS) { // do a sign (+/i)
 			signvalue = '+';
 		} else if (flags & DP_F_SPACE) {
 			signvalue = ' ';
@@ -2034,7 +2046,7 @@ static int fmtint(char *buffer, size_t *currlen, size_t maxlen, LLONG value, int
 	}
 
 	if (flags & DP_F_UP) {
-		// Should characters be upper case?
+		// should characters be upper case?
 		digits = "0123456789ABCDEF";
 	} else {
 		digits = "0123456789abcdef";
@@ -2050,7 +2062,6 @@ static int fmtint(char *buffer, size_t *currlen, size_t maxlen, LLONG value, int
 	}
 
 	convert[place] = 0;
-
 	zpadlen = max - place;
 	spadlen = min - MAX(max, place) - (signvalue ? 1 : 0);
 
@@ -2068,32 +2079,32 @@ static int fmtint(char *buffer, size_t *currlen, size_t maxlen, LLONG value, int
 	}
 
 	if (flags & DP_F_MINUS) {
-		spadlen = -spadlen; // Left Justifty
+		spadlen = -spadlen; // left justifty
 	}
 #ifdef DEBUG_SNPRINTF
 	dprint(1, (debugfile, "zpad: %d, spad: %d, min: %d, max: %d, place: %d\n", zpadlen, spadlen, min, max, place));
 #endif
-	// Spaces
+	// spaces
 	while (spadlen > 0) {
 		total += dopr_outch(buffer, currlen, maxlen, ' ');
 		--spadlen;
 	}
-	// Sign
+	// sign
 	if (signvalue) {
 		total += dopr_outch(buffer, currlen, maxlen, signvalue);
 	}
-	// Zeros
+	// zeros
 	if (zpadlen > 0) {
 		while (zpadlen > 0) {
 			total += dopr_outch(buffer, currlen, maxlen, '0');
 			--zpadlen;
 		}
 	}
-	// Digits
+	// digits
 	while (place > 0) {
 		total += dopr_outch(buffer, currlen, maxlen, convert[--place]);
 	}
-	// Left Justified spaces
+	// left justified spaces
 	while (spadlen < 0) {
 		total += dopr_outch(buffer, currlen, maxlen, ' ');
 		++spadlen;
@@ -2163,22 +2174,22 @@ static int fmtfp(char *buffer, size_t *currlen, size_t maxlen, LDOUBLE fvalue, i
 
 	if (fvalue < 0) {
 		signvalue = '-';
-	} else if (flags & DP_F_PLUS) { // Do a sign (+/i)
+	} else if (flags & DP_F_PLUS) { // do a sign (+/i)
 		signvalue = '+';
 	} else if (flags & DP_F_SPACE) {
 		signvalue = ' ';
 	}
 #if 0
 	if (flags & DP_F_UP) {
-		caps = 1; // Should characters be upper case?
+		caps = 1; // should characters be upper case?
 	}
 #endif
 	intpart = ufvalue;
-	// Sorry, we only support 9 digits past the decimal because of our conversion method
+	// sorry, we only support 9 digits past the decimal because of our conversion method
 	if (max > 9) {
 		max = 9;
 	}
-	// We "cheat" by converting the fractional part to integer by multiplying by a factor of 10
+	// we "cheat" by converting the fractional part to integer by multiplying by a factor of 10
 	fracpart = round((powN(10, max)) * (ufvalue - intpart));
 
 	if (fracpart >= powN(10, max)) {
@@ -2188,7 +2199,7 @@ static int fmtfp(char *buffer, size_t *currlen, size_t maxlen, LDOUBLE fvalue, i
 #ifdef DEBUG_SNPRINTF
 	dprint(1, (debugfile, "fmtfp: %f =? %d.%d\n", fvalue, intpart, fracpart));
 #endif
-	// Convert integer part
+	// convert integer part
 	do {
 		iconvert[iplace++] = (caps ? "0123456789ABCDEF":"0123456789abcdef")[intpart % 10];
 		intpart = (intpart / 10);
@@ -2199,7 +2210,7 @@ static int fmtfp(char *buffer, size_t *currlen, size_t maxlen, LDOUBLE fvalue, i
 	}
 
 	iconvert[iplace] = 0;
-	// Convert fractional part
+	// convert fractional part
 	do {
 		fconvert[fplace++] = (caps ? "0123456789ABCDEF":"0123456789abcdef")[fracpart % 10];
 		fracpart = (fracpart / 10);
@@ -2223,7 +2234,7 @@ static int fmtfp(char *buffer, size_t *currlen, size_t maxlen, LDOUBLE fvalue, i
 	}
 
 	if (flags & DP_F_MINUS) {
-		padlen = -padlen; // Left Justifty
+		padlen = -padlen; // left justifty
 	}
 
 	if ((flags & DP_F_ZERO) && (padlen > 0)) {
@@ -2251,7 +2262,7 @@ static int fmtfp(char *buffer, size_t *currlen, size_t maxlen, LDOUBLE fvalue, i
 	while (iplace > 0) {
 		total += dopr_outch(buffer, currlen, maxlen, iconvert[--iplace]);
 	}
-	// Decimal point. This should probably use locale to find the correct char to print out.
+	// decimal point. This should probably use locale to find the correct char to print out.
 	if (max > 0) {
 		total += dopr_outch(buffer, currlen, maxlen, '.');
 

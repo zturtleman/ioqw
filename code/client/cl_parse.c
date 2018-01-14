@@ -480,6 +480,7 @@ void CL_ParseGamestate(msg_t *msg) {
 			Com_Memset(&nullstate, 0, sizeof(nullstate));
 
 			es = &cl.entityBaselines[newnum];
+
 			MSG_ReadDeltaEntity(msg, &nullstate, es, newnum);
 		} else {
 			Com_Error(ERR_DROP, "CL_ParseGamestate: bad command byte");

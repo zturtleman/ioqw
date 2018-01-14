@@ -361,7 +361,7 @@ cvar_t *Cvar_Get(const char *var_name, const char *var_value, int flags) {
 
 	if (var) {
 		var_value = Cvar_Validate(var, var_value, qfalse);
-		// Make sure the game code cannot mark engine-added variables as gamecode vars
+		// make sure the game code cannot mark engine-added variables as gamecode vars
 		if (var->flags & CVAR_VM_CREATED) {
 			if (!(flags & CVAR_VM_CREATED)) {
 				var->flags &= ~CVAR_VM_CREATED;
@@ -386,7 +386,7 @@ cvar_t *Cvar_Get(const char *var_name, const char *var_value, int flags) {
 				var->latchedString = CopyString(var_value);
 			}
 		}
-		// Make sure servers cannot mark engine-added variables as SERVER_CREATED
+		// make sure servers cannot mark engine-added variables as SERVER_CREATED
 		if (var->flags & CVAR_SERVER_CREATED) {
 			if (!(flags & CVAR_SERVER_CREATED)) {
 				var->flags &= ~CVAR_SERVER_CREATED;
@@ -1306,7 +1306,7 @@ void Cvar_CheckRange(cvar_t *var, float min, float max, qboolean integral) {
 	var->min = min;
 	var->max = max;
 	var->integral = integral;
-	// Force an initial range check
+	// force an initial range check
 	Cvar_Set(var->name, var->string);
 }
 
@@ -1336,7 +1336,7 @@ Basically a slightly modified Cvar_Get for the interpreted modules.
 void Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags) {
 	cvar_t *cv;
 
-	// There is code in Cvar_Get to prevent CVAR_ROM cvars being changed by the user. In other words CVAR_ARCHIVE and CVAR_ROM are
+	// there is code in Cvar_Get to prevent CVAR_ROM cvars being changed by the user. In other words CVAR_ARCHIVE and CVAR_ROM are
 	// mutually exclusive flags. Unfortunately some historical game code (including single player base game) sets both flags.
 	// We unset CVAR_ROM for such cvars.
 	if ((flags &(CVAR_ARCHIVE|CVAR_ROM)) == (CVAR_ARCHIVE|CVAR_ROM)) {
@@ -1401,7 +1401,7 @@ Cvar_CompleteCvarName
 void Cvar_CompleteCvarName(char *args, int argNum) {
 
 	if (argNum == 2) {
-		// Skip "<cmd>"
+		// skip "<cmd>"
 		char *p = Com_SkipTokens(args, 1, " ");
 
 		if (p > args) {

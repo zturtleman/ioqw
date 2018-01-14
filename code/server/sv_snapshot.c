@@ -151,7 +151,6 @@ static void SV_WriteSnapshotToClient(client_t *client, msg_t *msg) {
 	// NOTE, MRE: now sent at the start of every message from server to client
 	// let the client know which reliable clientCommands we have received
 	//MSG_WriteLong(msg, client->lastClientCommand);
-
 	// send over the current server time so the client can drift its view of time to try to match
 	if (client->oldServerTime) {
 		// the server has not yet got an acknowledgement of the new gamestate from this client, so continue to send it
@@ -571,7 +570,7 @@ static void SV_WriteVoipToClient(client_t *cl, msg_t *msg) {
 	voipServerPacket_t *packet;
 
 	if (cl->queuedVoipPackets) {
-		// Write as many VoIP packets as we reasonably can...
+		// write as many VoIP packets as we reasonably can...
 		for (i = 0; i < cl->queuedVoipPackets; i++) {
 			packet = cl->voipPacket[(i + cl->queuedVoipIndex) % ARRAY_LEN(cl->voipPacket)];
 
@@ -639,7 +638,7 @@ void SV_SendClientSnapshot(client_t *client) {
 	MSG_Init(&msg, msg_buf, sizeof(msg_buf));
 
 	msg.allowoverflow = qtrue;
-	// NOTE, MRE: all server->client messages now acknowledge
+	// NOTE: all server->client messages now acknowledge
 	// let the client know which reliable clientCommands we have received
 	MSG_WriteLong(&msg, client->lastClientCommand);
 	// (re)send any reliable server commands
@@ -676,22 +675,22 @@ void SV_SendClientMessages(void) {
 		}
 
 		if (svs.time - c->lastSnapshotTime < c->snapshotMsec * com_timescale->value) {
-			continue; // It's not time yet
+			continue; // it's not time yet
 		}
 
 		if (*c->downloadName) {
-			continue; // Client is downloading, don't send snapshots
+			continue; // client is downloading, don't send snapshots
 		}
 
 		if (c->netchan.unsentFragments || c->netchan_start_queue) {
 			c->rateDelayed = qtrue;
-			continue; // Drop this snapshot if the packet queue is still full or delta compression will break
+			continue; // drop this snapshot if the packet queue is still full or delta compression will break
 		}
 
 		if (!(c->netchan.remoteAddress.type == NA_LOOPBACK || (sv_lanForceRate->integer && Sys_IsLANAddress(c->netchan.remoteAddress)))) {
 			// rate control for clients not on LAN
 			if (SV_RateMsec(c) > 0) {
-				// Not enough time since last packet passed through the line
+				// not enough time since last packet passed through the line
 				c->rateDelayed = qtrue;
 				continue;
 			}

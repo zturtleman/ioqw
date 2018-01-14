@@ -69,13 +69,13 @@ ARMv7-A_ARMv7-R_DDI0406_2007.pdf
 
 #define bit(x) (1 << x)
 
-/* arm eabi, builtin gcc functions */
+// arm eabi, builtin gcc functions
 int __aeabi_idiv (int, int);
 unsigned __aeabi_uidiv (unsigned, unsigned);
 void __aeabi_idivmod(void);
 void __aeabi_uidivmod(void);
 
-/* exit() won't be called but use it because it is marked with noreturn */
+// exit() won't be called but use it because it is marked with noreturn
 #define DIE(reason, args...) \
 	do { \
 		Com_Error(ERR_DROP, "vm_arm compiler error: " reason, ##args); \
@@ -86,34 +86,32 @@ void __aeabi_uidivmod(void);
  * - length of immediate value
  * - returned register type
  * - required register(s) type
- */
-#define opImm0		0x0000 /* no immediate */
-#define opImm1		0x0001 /* 1 byte immadiate value after opcode */
-#define opImm4		0x0002 /* 4 bytes immediate value after opcode */
+*/
+#define opImm0	0x0000 // no immediate
+#define opImm1	0x0001 // 1 byte immadiate value after opcode
+#define opImm4	0x0002 // 4 bytes immediate value after opcode
 
-#define opRet0		0x0000 /* returns nothing */
-#define opRetI		0x0004 /* returns integer */
-#define opRetF		0x0008 /* returns float */
-#define opRetIF		(opRetI|opRetF) /* returns integer or float */
+#define opRet0	0x0000 // returns nothing
+#define opRetI	0x0004 // returns integer
+#define opRetF	0x0008 // returns float
+#define opRetIF	(opRetI|opRetF) // returns integer or float
 
-#define opArg0		0x0000 /* requires nothing */
-#define opArgI		0x0010 /* requires integer(s) */
-#define opArgF		0x0020 /* requires float(s) */
-#define opArgIF		(opArgI|opArgF) /* requires integer or float */
+#define opArg0	0x0000 // requires nothing
+#define opArgI	0x0010 // requires integer(s)
+#define opArgF	0x0020 // requires float(s)
+#define opArgIF	(opArgI|opArgF) // requires integer or float
 
-#define opArg2I		0x0040 /* requires second argument, integer */
-#define opArg2F		0x0080 /* requires second argument, float */
-#define opArg2IF	(opArg2I|opArg2F) /* requires second argument, integer or float */
+#define opArg2I	0x0040 // requires second argument, integer
+#define opArg2F	0x0080 // requires second argument, float
+#define opArg2IF (opArg2I|opArg2F) // requires second argument, integer or float
 
 static const unsigned char vm_opInfo[256] = {
 	[OP_UNDEF] = opImm0,
 	[OP_IGNORE] = opImm0,
 	[OP_BREAK] = opImm0,
 	[OP_ENTER] = opImm4,
-			/* OP_LEAVE has to accept floats, they will be converted to ints */
-	[OP_LEAVE] = opImm4|opRet0|opArgIF,
-			/* only STORE4 and POP use values from OP_CALL,
-			 * no need to convert floats back */
+	// OP_LEAVE has to accept floats, they will be converted to ints
+	[OP_LEAVE] = opImm4|opRet0|opArgIF, // only STORE4 and POP use values from OP_CALL, no need to convert floats back
 	[OP_CALL] = opImm0|opRetI|opArgI,
 	[OP_PUSH] = opImm0|opRetIF,
 	[OP_POP] = opImm0|opRet0|opArgIF,
@@ -173,7 +171,6 @@ static const unsigned char vm_opInfo[256] = {
 	[OP_CVIF] = opImm0|opRetF|opArgI,
 	[OP_CVFI] = opImm0|opRetI|opArgF,
 };
-
 #ifdef DEBUG_VM
 static const char *opnames[256] = {
 	"OP_UNDEF",
@@ -292,7 +289,6 @@ static int asmcall(int call, int pstack) {
 		intptr_t args[MAX_VMSYSCALL_ARGS];
 
 		args[0] = -1 - call;
-
 		int *argPosition = (int *)((byte *)currentVM->dataBase + pstack + 4);
 
 		for (i = 1; i < ARRAY_LEN(args); i++) {
@@ -605,7 +601,7 @@ static unsigned short can_encode(unsigned val) {
 	if (got_const) \
 	{ \
 		got_const = 0; \
-		vm->instructionPointers[instruction-1] = assembler_get_code_size(); \
+		vm->instructionPointers[instruction - 1] = assembler_get_code_size(); \
 		STACK_PUSH(4); \
 		emit("movl $%d, (%%r9, %%rbx, 4)", const_value); \
 	}
@@ -620,7 +616,7 @@ static unsigned short can_encode(unsigned val) {
 	emit(LDRTxi(R0, rOPSTACK, 4)); \
 	emit(LDRTxi(R1, rOPSTACK, 4)); \
 	emit(CMP(R1, R0)); \
-	emit(cond(comparator, Bi(j_rel(vm->instructionPointers[arg.i]-vm->codeLength)))); \
+	emit(cond(comparator, Bi(j_rel(vm->instructionPointers[arg.i] - vm->codeLength)))); \
 } while (0)
 #define FJ(comparator) do { \
 	emit_MOVRxi(R0, arg.i); \
@@ -630,7 +626,7 @@ static unsigned short can_encode(unsigned val) {
 	emit(VLDRa(S14, rOPSTACK, 8)); \
 	emit(VCMP_F32(S15, S14)); \
 	emit(VMRS(APSR_nzcv)); \
-	emit(cond(comparator, Bi(j_rel(vm->instructionPointers[arg.i]-vm->codeLength)))); \
+	emit(cond(comparator, Bi(j_rel(vm->instructionPointers[arg.i] - vm->codeLength)))); \
 } while (0)
 
 #define printreg(reg) emit(PUSH1(R3)); emit(BLX(reg)); emit(POP1(R3));
@@ -686,7 +682,7 @@ void VM_Compile(vm_t *vm, vmHeader_t *header) {
 	vm->codeLength = 0;
 
 	for (pass = 0; pass < 2; ++pass) {
-//		int offsidx = 0;
+		//int offsidx = 0;
 #ifdef CONST_OPTIMIZE
 		// const optimization
 		unsigned got_const = 0, const_value = 0;
@@ -702,7 +698,7 @@ void VM_Compile(vm_t *vm, vmHeader_t *header) {
 		}
 
 		//int (*entry)(vm_t *, int *, int *);
-		emit(PUSH((((1 << 8) - 1) << 4)|(1 << 14))); // push R4-R11, LR
+		emit(PUSH((((1 << 8) - 1) << 4)|(1 << 14))); // push R4 - R11, LR
 		emit(SUBi(SP, SP, 12)); // align stack!
 		emit(LDRai(rCODEBASE, R0, offsetof(vm_t, codeBase)));
 		emit(LDRai(rDATABASE, R0, offsetof(vm_t, dataBase)));
@@ -714,8 +710,8 @@ void VM_Compile(vm_t *vm, vmHeader_t *header) {
 		// save return value in r0
 		emit(LDRTxi(R0, rOPSTACK, 4)); // r0 = *opstack; rOPSTACK -= 4
 		emit(ADDi(SP, SP, 12)); // align stack!
-		emit(POP((((1 << 8) - 1) << 4)|(1 << 15))); // pop R4-R11, LR -> PC
-		/* save some immediates here */
+		emit(POP((((1 << 8) - 1) << 4)|(1 << 15))); // pop R4 - R11, LR -> PC
+		// save some immediates here
 		emit(BKPT(0));
 		emit(BKPT(0));
 		save_offset(OFF_IMMEDIATES);
@@ -725,7 +721,7 @@ void VM_Compile(vm_t *vm, vmHeader_t *header) {
 
 		save_offset(OFF_CODE);
 //		offsidx = OFF_IMMEDIATES + 1;
-		code = (unsigned char *) header + header->codeOffset;
+		code = (unsigned char *)header + header->codeOffset;
 		pc = 0;
 
 		for (i_count = 0; i_count < header->instructionCount; i_count++) {
@@ -757,6 +753,7 @@ void VM_Compile(vm_t *vm, vmHeader_t *header) {
 			}
 			// TODO: for debug only
 			//emit_MOVRxi(R4, i_count);
+
 			switch (op) {
 				case OP_UNDEF:
 					break;
@@ -804,6 +801,7 @@ void VM_Compile(vm_t *vm, vmHeader_t *header) {
 					{
 						static int bytes_to_skip = -1;
 						static unsigned start_block = -1;
+
 						MAYBE_EMIT_CONST();
 						// get instruction nr from stack
 						emit(LDRTxi(R0, rOPSTACK, 4)); // r0 = *opstack; rOPSTACK -= 4
@@ -1110,7 +1108,7 @@ void VM_Compile(vm_t *vm, vmHeader_t *header) {
 					emit(VLDRa(S14, rOPSTACK, 0)); // s14 = *((float *)opstack)
 					// vldr can't modify rOPSTACK so we'd either need to change it with sub or use regular ldr + vmov
 					emit(LDRxiw(R0, rOPSTACK, 4)); // opstack -= 4; r1 = *opstack
-					emit(VMOVass(S15,R0)); // s15 = r0
+					emit(VMOVass(S15, R0)); // s15 = r0
 					emit(VADD_F32(S14, S15, S14)); // s14 = s14 + s15
 					emit(VSTRa(S14, rOPSTACK, 0)); // *((float *)opstack) = s15
 					break;
@@ -1118,7 +1116,7 @@ void VM_Compile(vm_t *vm, vmHeader_t *header) {
 					emit(VLDRa(S14, rOPSTACK, 0)); // s14 = *((float *)opstack)
 					// see OP_ADDF
 					emit(LDRxiw(R0, rOPSTACK, 4)); // opstack -= 4; r1 = *opstack
-					emit(VMOVass(S15,R0)); // s15 = r0
+					emit(VMOVass(S15, R0)); // s15 = r0
 					emit(VSUB_F32(S14, S15, S14)); // s14 = s14 - s15
 					emit(VSTRa(S14, rOPSTACK, 0)); // *((float *)opstack) = s15
 					break;
@@ -1126,7 +1124,7 @@ void VM_Compile(vm_t *vm, vmHeader_t *header) {
 					emit(VLDRa(S14, rOPSTACK, 0)); // s14 = *((float *)opstack)
 					// see OP_ADDF
 					emit(LDRxiw(R0, rOPSTACK, 4)); // opstack -= 4; r1 = *opstack
-					emit(VMOVass(S15,R0)); // s15 = r0
+					emit(VMOVass(S15, R0)); // s15 = r0
 					emit(VDIV_F32(S14, S15, S14)); // s14 = s14 / s15
 					emit(VSTRa(S14, rOPSTACK, 0)); // *((float *)opstack) = s15
 					break;
@@ -1134,14 +1132,14 @@ void VM_Compile(vm_t *vm, vmHeader_t *header) {
 					emit(VLDRa(S14, rOPSTACK, 0)); // s14 = *((float *)opstack)
 					// see OP_ADDF
 					emit(LDRxiw(R0, rOPSTACK, 4)); // opstack -= 4; r1 = *opstack
-					emit(VMOVass(S15,R0)); // s15 = r0
+					emit(VMOVass(S15, R0)); // s15 = r0
 					emit(VMUL_F32(S14, S15, S14)); // s14 = s14 * s15
 					emit(VSTRa(S14, rOPSTACK, 0)); // *((float *)opstack) = s15
 					break;
 				case OP_CVIF:
 					MAYBE_EMIT_CONST();
 					emit(LDRai(R0, rOPSTACK, 0)); // r0 = *opstack
-					emit(VMOVass(S14,R0)); // s14 = r0
+					emit(VMOVass(S14, R0)); // s14 = r0
 					emit(VCVT_F32_S32(S14, S14)); // s15 = (float)s14
 					emit(VSTRa(S14, rOPSTACK, 0)); // *((float *)opstack) = s15
 					break;
@@ -1149,7 +1147,7 @@ void VM_Compile(vm_t *vm, vmHeader_t *header) {
 					MAYBE_EMIT_CONST();
 					emit(VLDRa(S14, rOPSTACK, 0)); // s14 = *((float *)opstack)
 					emit(VCVT_S32_F32(S14, S14)); // s15 = (int)s14
-					emit(VMOVssa(R0,S14)); // s14 = r0
+					emit(VMOVssa(R0, S14)); // s14 = r0
 					emit(STRai(R0, rOPSTACK, 0)); // *opstack = r0
 					break;
 			}
@@ -1184,9 +1182,7 @@ int VM_CallCompiled(vm_t *vm, int *args) {
 	int retVal;
 
 	currentVM = vm;
-
 	vm->currentlyInterpreting = qtrue;
-
 	programStack -= (8 + 4 * MAX_VMMAIN_ARGS);
 	argPointer = (int *)&image[programStack + 8];
 
@@ -1203,7 +1199,7 @@ int VM_CallCompiled(vm_t *vm, int *args) {
 	Com_Printf("r8 programStack:\t0x%x\n", programStack);
 	Com_Printf("r9 dataBase:\t\t%p\n", vm->dataBase);
 #endif
-	/* call generated code */
+	// call generated code
 	{
 		//int (*entry)(void *, int, void *, int);
 		int (*entry)(vm_t *, int *, int *);

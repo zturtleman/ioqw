@@ -87,13 +87,13 @@ static int S_FindRIFFChunk(fileHandle_t f, char *chunk) {
 	int len;
 
 	while ((len = S_ReadChunkInfo(f, name)) >= 0) {
-		// If this is the right chunk, return
+		// if this is the right chunk, return
 		if (!Q_strncmp(name, chunk, 4)) {
 			return len;
 		}
 
 		len = PAD(len, 2);
-		// Not the right chunk - skip it
+		// not the right chunk - skip it
 		FS_Seek(f, len, FS_SEEK_CUR);
 	}
 
@@ -137,12 +137,12 @@ static qboolean S_ReadRIFFHeader(fileHandle_t file, snd_info_t *info) {
 
 	// skip the riff wav header
 	FS_Read(dump, 12, file);
-	// Scan for the format chunk
+	// scan for the format chunk
 	if ((fmtlen = S_FindRIFFChunk(file, "fmt ")) < 0) {
 		Com_Printf(S_COLOR_RED "ERROR: Couldn't find \"fmt\" chunk\n");
 		return qfalse;
 	}
-	// Save the parameters
+	// save the parameters
 	FGetLittleShort(file); // wav_format
 
 	info->channels = FGetLittleShort(file);
@@ -160,12 +160,12 @@ static qboolean S_ReadRIFFHeader(fileHandle_t file, snd_info_t *info) {
 
 	info->width = bits / 8;
 	info->dataofs = 0;
-	// Skip the rest of the format chunk if required
+	// skip the rest of the format chunk if required
 	if (fmtlen > 16) {
 		fmtlen -= 16;
 		FS_Seek(file, fmtlen, FS_SEEK_CUR);
 	}
-	// Scan for the data chunk
+	// scan for the data chunk
 	if ((info->size = S_FindRIFFChunk(file, "data")) < 0) {
 		Com_Printf(S_COLOR_RED "ERROR: Couldn't find \"data\" chunk\n");
 		return qfalse;
@@ -195,19 +195,19 @@ void *S_WAV_CodecLoad(const char *filename, snd_info_t *info) {
 	fileHandle_t file;
 	void *buffer;
 
-	// Try to open the file
+	// try to open the file
 	FS_FOpenFileRead(filename, &file, qtrue);
 
 	if (!file) {
 		return NULL;
 	}
-	// Read the RIFF header
+	// read the RIFF header
 	if (!S_ReadRIFFHeader(file, info)) {
 		FS_FCloseFile(file);
 		Com_Printf(S_COLOR_RED "ERROR: Incorrect/unsupported format in \"%s\"\n", filename);
 		return NULL;
 	}
-	// Allocate some memory
+	// allocate some memory
 	buffer = Hunk_AllocateTempMemory(info->size);
 
 	if (!buffer) {
@@ -215,10 +215,10 @@ void *S_WAV_CodecLoad(const char *filename, snd_info_t *info) {
 		Com_Printf(S_COLOR_RED "ERROR: Out of memory reading \"%s\"\n", filename);
 		return NULL;
 	}
-	// Read, byteswap
+	// read, byteswap
 	FS_Read(buffer, info->size, file);
 	S_ByteSwapRawSamples(info->samples, info->width, info->channels, (byte *)buffer);
-	// Close and return
+	// close and return
 	FS_FCloseFile(file);
 	return buffer;
 }
@@ -231,13 +231,13 @@ S_WAV_CodecOpenStream
 snd_stream_t *S_WAV_CodecOpenStream(const char *filename) {
 	snd_stream_t *rv;
 
-	// Open
+	// open
 	rv = S_CodecUtilOpen(filename, &wav_codec);
 
 	if (!rv) {
 		return NULL;
 	}
-	// Read the RIFF header
+	// read the RIFF header
 	if (!S_ReadRIFFHeader(rv->file, &rv->info)) {
 		S_CodecUtilClose(&rv);
 		return NULL;

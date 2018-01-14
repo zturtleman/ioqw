@@ -111,7 +111,6 @@ static worldSector_t *SV_CreateworldSector(int depth, vec3_t mins, vec3_t maxs) 
 	vec3_t mins1, maxs1, mins2, maxs2;
 
 	anode = &sv_worldSectors[sv_numworldSectors];
-
 	sv_numworldSectors++;
 
 	if (depth == AREA_DEPTH) {
@@ -136,7 +135,6 @@ static worldSector_t *SV_CreateworldSector(int depth, vec3_t mins, vec3_t maxs) 
 	VectorCopy(maxs, maxs2);
 
 	maxs1[anode->axis] = mins2[anode->axis] = anode->dist;
-
 	anode->children[0] = SV_CreateworldSector(depth + 1, mins2, maxs2);
 	anode->children[1] = SV_CreateworldSector(depth + 1, mins1, maxs1);
 

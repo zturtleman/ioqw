@@ -439,12 +439,12 @@ void CMod_LoadEntityString(lump_t *l) {
 	Com_Memcpy(cm.entityString, cmod_base + l->fileofs, l->filelen);
 }
 
+#define VIS_HEADER 8
 /*
 =======================================================================================================================================
 CMod_LoadVisibility
 =======================================================================================================================================
 */
-#define VIS_HEADER 8
 void CMod_LoadVisibility(lump_t *l) {
 	int len;
 	byte *buf;
@@ -468,12 +468,12 @@ void CMod_LoadVisibility(lump_t *l) {
 	Com_Memcpy(cm.visibility, buf + VIS_HEADER, len - VIS_HEADER);
 }
 
+#define MAX_PATCH_VERTS 1024
 /*
 =======================================================================================================================================
 CMod_LoadPatches
 =======================================================================================================================================
 */
-#define MAX_PATCH_VERTS 1024
 void CMod_LoadPatches(lump_t *surfs, lump_t *verts) {
 	drawVert_t *dv, *dv_p;
 	dsurface_t *in;

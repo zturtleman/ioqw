@@ -52,7 +52,7 @@ static void *S_CodecGetSound(const char *filename, snd_info_t *info) {
 		// look for the correct loader and use it
 		for (codec = codecs; codec; codec = codec->next) {
 			if (!Q_stricmp(ext, codec->ext)) {
-				// Load
+				// load
 				if (info) {
 					rtn = codec->load(localName, info);
 				} else {

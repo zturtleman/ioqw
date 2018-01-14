@@ -1406,17 +1406,14 @@ void BotCheckBlocked(bot_movestate_t *ms, vec3_t dir, int checkbottom, bot_mover
 	}
 	// get the current speed
 	currentspeed = DotProduct(ms->velocity, dir);
-	// check for obstacles to avoid, depending on current speed
+	// 1st: check for distant obstacles to avoid, depending on current speed
 	VectorMA(ms->origin, currentspeed + 2, dir, end);
 	trace = AAS_Trace(ms->origin, mins, maxs, end, ms->entitynum, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP|CONTENTS_BODY);
 	// if not hitting the world entity
 	if (trace.entityNum != ENTITYNUM_WORLD && trace.entityNum != ENTITYNUM_NONE) {
 		result->blocked = qtrue;
 		result->blockentity = trace.entityNum;
-#ifdef DEBUG
-		botimport.Print(PRT_MESSAGE, S_COLOR_RED "%d: Blocked by entity!\n", result->blockentity);
-#endif // DEBUG
-	// check if the bot is standing on something and not in an area with reachability
+	// 2nd: check if the bot is standing on something and if not in an area with reachability
 	} else if (checkbottom && !AAS_AreaReachability(ms->areanum)) {
 		VectorMA(ms->origin, -2, up, end);
 		trace = AAS_Trace(ms->origin, mins, maxs, end, ms->entitynum, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP|CONTENTS_BODY);
@@ -1425,11 +1422,8 @@ void BotCheckBlocked(bot_movestate_t *ms, vec3_t dir, int checkbottom, bot_mover
 			result->blocked = qtrue;
 			result->blockentity = trace.entityNum;
 			result->flags |= MOVERESULT_ONTOPOFOBSTACLE;
-#ifdef DEBUG
-			botimport.Print(PRT_MESSAGE, S_COLOR_MAGENTA "%d: Vertically blocked (on top of obstacle).\n", result->blockentity);
-#endif // DEBUG
 		}
-	// check for world entity was hit before hitting nearby entities (... and can cause entities to go unnoticed).
+	// 3rd: check for world entity hit before hitting nearby entities(... can cause entities to go unnoticed).
 	} else {
 		VectorMA(ms->origin, 2, dir, end);
 		trace = AAS_Trace(ms->origin, mins, maxs, end, ms->entitynum, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP|CONTENTS_BODY);
@@ -1437,9 +1431,6 @@ void BotCheckBlocked(bot_movestate_t *ms, vec3_t dir, int checkbottom, bot_mover
 		if (trace.entityNum != ENTITYNUM_NONE) {
 			result->blocked = qtrue;
 			result->blockentity = trace.entityNum;
-#ifdef DEBUG
-			botimport.Print(PRT_MESSAGE, S_COLOR_YELLOW "%d: Blocked by world.\n", result->blockentity);
-#endif // DEBUG
 		}
 	}
 }

@@ -42,8 +42,8 @@ typedef struct {
 } portable_samplepair_t;
 
 typedef struct adpcm_state {
-	short sample;	// Previous output value
-	char index;		// Index into stepsize table
+	short sample;	// previous output value
+	char index;		// index into stepsize table
 } adpcm_state_t;
 
 typedef struct sndBuffer_s {

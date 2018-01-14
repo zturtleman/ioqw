@@ -148,7 +148,7 @@ static qboolean IN_IsConsoleKey(keyNum_t key, int character) {
 	static int numConsoleKeys = 0;
 	int i;
 
-	// Only parse the variable when it changes
+	// only parse the variable when it changes
 	if (cl_consoleKeys->modified) {
 		char *text_p, *token;
 
@@ -185,7 +185,7 @@ static qboolean IN_IsConsoleKey(keyNum_t key, int character) {
 			numConsoleKeys++;
 		}
 	}
-	// If the character is the same as the key, prefer the character
+	// if the character is the same as the key, prefer the character
 	if (key == character) {
 		key = 0;
 	}
@@ -221,15 +221,15 @@ static keyNum_t IN_TranslateSDLToQ3Key(SDL_Keysym *keysym, qboolean down) {
 	keyNum_t key = 0;
 
 	if (keysym->scancode >= SDL_SCANCODE_1 && keysym->scancode <= SDL_SCANCODE_0) {
-		// Always map the number keys as such even if they actually map to other characters (eg, "1" is "&" on an AZERTY keyboard).
-		// This is required for SDL before 2.0.6, except on Windows which already had this behavior.
+		// always map the number keys as such even if they actually map to other characters (eg, "1" is "&" on an AZERTY keyboard).
+		// this is required for SDL before 2.0.6, except on Windows which already had this behavior.
 		if (keysym->scancode == SDL_SCANCODE_0) {
 			key = '0';
 		} else {
 			key = '1' + keysym->scancode - SDL_SCANCODE_1;
 		}
 	} else if (keysym->sym >= SDLK_SPACE && keysym->sym < SDLK_DELETE) {
-		// These happen to match the ASCII chars
+		// these happen to match the ASCII chars
 		key = (int)keysym->sym;
 	} else {
 		switch (keysym->sym) {
@@ -429,10 +429,9 @@ static keyNum_t IN_TranslateSDLToQ3Key(SDL_Keysym *keysym, qboolean down) {
 				break;
 			default:
 				if (!(keysym->sym & SDLK_SCANCODE_MASK) && keysym->scancode <= 95) {
-					// Map Unicode characters to 95 world keys using the key's scan code.
+					// map Unicode characters to 95 world keys using the key's scan code.
 					// FIXME: There aren't enough world keys to cover all the scancodes.
-					// Maybe create a map of scancode to quake key at start up and on
-					// key map change; allocate world key numbers as needed similar to SDL 1.2.
+					// maybe create a map of scancode to quake key at start up and on key map change; allocate world key numbers as needed similar to SDL 1.2.
 					key = K_WORLD_0 + (int)keysym->scancode;
 				}
 
@@ -445,7 +444,7 @@ static keyNum_t IN_TranslateSDLToQ3Key(SDL_Keysym *keysym, qboolean down) {
 	}
 
 	if (IN_IsConsoleKey(key, 0)) {
-		// Console keys can't be bound or generate characters
+		// console keys can't be bound or generate characters
 		key = K_CONSOLE;
 	}
 
@@ -461,7 +460,7 @@ static void IN_GobbleMotionEvents(void) {
 	SDL_Event dummy[1];
 	int val = 0;
 
-	// Gobble any mouse motion events
+	// gobble any mouse motion events
 	SDL_PumpEvents();
 
 	while ((val = SDL_PeepEvents(dummy, 1, SDL_GETEVENT, SDL_MOUSEMOTION, SDL_MOUSEMOTION)) > 0) {
@@ -530,7 +529,7 @@ static void IN_DeactivateMouse(void) {
 		IN_GobbleMotionEvents();
 		SDL_SetWindowGrab(SDL_window, SDL_FALSE);
 		SDL_SetRelativeMouseMode(SDL_FALSE);
-		// Don't warp the mouse unless the cursor is within the window
+		// don't warp the mouse unless the cursor is within the window
 		if (SDL_GetWindowFlags(SDL_window) & SDL_WINDOW_MOUSE_FOCUS) {
 			SDL_WarpMouseInWindow(SDL_window, cls.glconfig.vidWidth / 2, cls.glconfig.vidHeight / 2);
 		}
@@ -617,8 +616,9 @@ static void IN_InitJoystick(void) {
 	}
 
 	total = SDL_NumJoysticks();
+
 	Com_DPrintf("%d possible joysticks\n", total);
-	// Print list and build cvar to allow ui to select joystick.
+	// print list and build cvar to allow ui to select joystick.
 	for (i = 0; i < total; i++) {
 		Q_strcat(buf, sizeof(buf), SDL_JoystickNameForIndex(i));
 		Q_strcat(buf, sizeof(buf), "\n");
@@ -780,7 +780,7 @@ static void IN_GamepadMove(void) {
 		int axis = SDL_GameControllerGetAxis(gamepad, SDL_CONTROLLER_AXIS_LEFTX + i);
 		int oldAxis = stick_state.oldaaxes[i];
 
-		// Smoothly ramp from dead zone to maximum value
+		// smoothly ramp from dead zone to maximum value
 		float f = ((float)abs(axis) / 32767.0f - in_joystickThreshold->value) / (1.0f - in_joystickThreshold->value);
 
 		if (f < 0.0f) {
@@ -888,13 +888,14 @@ static void IN_JoyMove(void) {
 			int dy = 0;
 
 			SDL_JoystickGetBall(stick, i, &dx, &dy);
+
 			balldx += dx;
 			balldy += dy;
 		}
 
 		if (balldx || balldy) {
 			// !!! FIXME: is this good for stick balls, or just mice?
-			// Scale like the mouse input...
+			// scale like the mouse input...
 			if (abs(balldx) > 1) {
 				balldx *= 2;
 			}
@@ -1049,7 +1050,7 @@ static void IN_JoyMove(void) {
 			}
 		}
 	}
-	// Time to update axes state based on old vs. new.
+	// time to update axes state based on old vs. new
 	if (axes != stick_state.oldaxes) {
 		for (i = 0; i < 16; i++) {
 			if ((axes & (1 << i)) && !(stick_state.oldaxes & (1 << i))) {
@@ -1061,7 +1062,7 @@ static void IN_JoyMove(void) {
 			}
 		}
 	}
-	// Save for future generations.
+	// save for future generations
 	stick_state.oldaxes = axes;
 }
 
@@ -1109,7 +1110,7 @@ static void IN_ProcessEvents(void) {
 				if (lastKeyDown != K_CONSOLE) {
 					char *c = e.text.text;
 
-					// Quick and dirty UTF-8 to UTF-32 conversion
+					// quick and dirty UTF-8 to UTF-32 conversion
 					while (*c) {
 						int utf32 = 0;
 
@@ -1158,6 +1159,7 @@ static void IN_ProcessEvents(void) {
 			case SDL_MOUSEBUTTONUP:
 				{
 					int b;
+
 					switch (e.button.button) {
 						case SDL_BUTTON_LEFT:
 							b = K_MOUSE1;
@@ -1321,7 +1323,6 @@ void IN_Init(void *windowData) {
 	Cvar_SetValue("com_minimized", appState & SDL_WINDOW_MINIMIZED);
 
 	IN_InitJoystick();
-
 	Com_DPrintf("------------------------------------\n");
 }
 
@@ -1338,6 +1339,7 @@ void IN_Shutdown(void) {
 	mouseAvailable = qfalse;
 
 	IN_ShutdownJoystick();
+
 	SDL_window = NULL;
 }
 

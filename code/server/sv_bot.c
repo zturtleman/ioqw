@@ -412,7 +412,6 @@ static void BotImport_DebugLineShow(int line, vec3_t start, vec3_t end, int colo
 	VectorCopy(end, points[2]);
 	//points[2][2] -= 2;
 	VectorCopy(end, points[3]);
-
 	VectorSubtract(end, start, dir);
 	VectorNormalize(dir);
 
@@ -425,7 +424,6 @@ static void BotImport_DebugLineShow(int line, vec3_t start, vec3_t end, int colo
 	}
 
 	VectorNormalize(cross);
-
 	VectorMA(points[0], 2, cross, points[0]);
 	VectorMA(points[1], -2, cross, points[1]);
 	VectorMA(points[2], -2, cross, points[2]);

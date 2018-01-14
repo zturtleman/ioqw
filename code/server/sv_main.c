@@ -144,8 +144,7 @@ The given command will be transmitted to the client, and is guaranteed to not ha
 void SV_AddServerCommand(client_t *client, const char *cmd) {
 	int index, i;
 
-	// this is very ugly but it's also a waste to for instance send multiple config string updates
-	// for the same config string index in one snapshot
+	// this is very ugly but it's also a waste to for instance send multiple config string updates for the same config string index in one snapshot
 //	if (SV_ReplacePendingServerCommands(client, cmd)) {
 //		return;
 //	}
@@ -156,8 +155,7 @@ void SV_AddServerCommand(client_t *client, const char *cmd) {
 
 	client->reliableSequence++;
 	// if we would be losing an old command that hasn't been acknowledged, we must drop the connection
-	// we check == instead of >= so a broadcast print added by SV_DropClient()
-	// doesn't cause a recursive drop client
+	// we check == instead of >= so a broadcast print added by SV_DropClient() doesn't cause a recursive drop client
 	if (client->reliableSequence - client->reliableAcknowledge == MAX_RELIABLE_COMMANDS + 1) {
 		Com_Printf("===== pending server commands =====\n");
 
@@ -192,8 +190,8 @@ void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...) {
 	va_start(argptr, fmt);
 	Q_vsnprintf((char *)message, sizeof(message), fmt, argptr);
 	va_end(argptr);
-	// Fix to http://aluigi.altervista.org/adv/q3msgboom-adv.txt
-	// The actual cause of the bug is probably further downstream and should maybe be addressed later, but this certainly
+	// fix to http://aluigi.altervista.org/adv/q3msgboom-adv.txt
+	// the actual cause of the bug is probably further downstream and should maybe be addressed later, but this certainly
 	// fixes the problem for now
 	if (strlen((char *)message) > 1022) {
 		Com_DPrintf(S_COLOR_YELLOW "WARNING: Dropped long reliable command for client %d: %s\n", (int)(cl - svs.clients), message);
@@ -557,8 +555,7 @@ static void SVC_Status(netadr_t from) {
 	}
 
 	strcpy(infostring, Cvar_InfoString(CVAR_SERVERINFO));
-	// echo back the parameter to status. so master servers can use it as a challenge to prevent timed spoofed reply packets
-	// that add ghost servers
+	// echo back the parameter to status. so master servers can use it as a challenge to prevent timed spoofed reply packets that add ghost servers
 	Info_SetValueForKey(infostring, "challenge", Cmd_Argv(1));
 
 	status[0] = 0;
@@ -631,8 +628,7 @@ void SVC_Info(netadr_t from) {
 	}
 
 	infostring[0] = 0;
-	// echo back the parameter to status. so servers can use it as a challenge to prevent timed spoofed reply packets that add
-	// ghost servers
+	// echo back the parameter to status. so servers can use it as a challenge to prevent timed spoofed reply packets that add ghost servers
 	Info_SetValueForKey(infostring, "challenge", Cmd_Argv(1));
 	Info_SetValueForKey(infostring, "gamename", com_gamename->string);
 #ifdef LEGACY_PROTOCOL
@@ -692,7 +688,7 @@ static void SVC_RemoteCommand(netadr_t from, msg_t *msg) {
 	qboolean valid;
 	char remaining[1024];
 
-	// TTimo - scaled down to accumulate, but not overflow anything network wise, print wise etc.
+	// scaled down to accumulate, but not overflow anything network wise, print wise etc.
 	// (OOB messages are the bottleneck here)
 #define SV_OUTPUTBUF_LENGTH (1024 - 16)
 	char sv_outputbuf[SV_OUTPUTBUF_LENGTH];
@@ -750,7 +746,6 @@ static void SVC_RemoteCommand(netadr_t from, msg_t *msg) {
 		}
 
 		Q_strcat(remaining, sizeof(remaining), cmd_aux);
-
 		Cmd_ExecuteString(remaining);
 	}
 

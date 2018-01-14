@@ -52,6 +52,7 @@ void SV_Netchan_TransmitNextInQueue(client_t *client) {
 	netchan_buffer_t *netbuf;
 
 	Com_DPrintf("#462 Netchan_TransmitNextFragment: popping a queued message for transmit\n");
+
 	netbuf = client->netchan_start_queue;
 
 	Netchan_Transmit(&client->netchan, netbuf->msg.cursize, netbuf->msg.data);

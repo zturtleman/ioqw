@@ -102,11 +102,10 @@ typedef struct {
 	// cgame communicates a few values to the client system
 	int cgameUserCmdValue;			// current weapon to add to usercmd_t
 	float cgameSensitivity;
-	// cmds[cmdNumber] is the predicted command, [cmdNumber - 1] is the last
-	// properly generated command
+	// cmds[cmdNumber] is the predicted command, [cmdNumber - 1] is the last properly generated command
 	usercmd_t cmds[CMD_BACKUP];		// each message will send several old cmds
 	int cmdNumber;					// incremented each frame, because multiple frames may need to be packed into a single packet
-	outPacket_t outPackets[PACKET_BACKUP];	// information about each packet we have sent out
+	outPacket_t outPackets[PACKET_BACKUP]; // information about each packet we have sent out
 	// the client maintains its own idea of view angles, which are sent to the server each frame. It is cleared to 0 upon entering each
 	// level. The server sends a delta each frame which is added to the locally tracked view angles to account for standing on rotating
 	// objects, and teleport direction changes

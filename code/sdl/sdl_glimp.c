@@ -172,7 +172,7 @@ static void GLimp_DetectAvailableModes(void) {
 			continue;
 		}
 		// SDL can give the same resolution with different refresh rates.
-		// Only list resolution once.
+		// only list resolution once.
 		for (j = 0; j < numModes; j++) {
 			if (mode.w == modes[j].w && mode.h == modes[j].h) {
 				break;
@@ -328,7 +328,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
 #endif
 			);
 #endif
-	// If a window exists, note its display index
+	// if a window exists, note its display index
 	if (SDL_window != NULL) {
 		display = SDL_GetWindowDisplayIndex(SDL_window);
 
@@ -373,12 +373,12 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
 	}
 
 	ri.Printf(PRINT_ALL, " %d %d\n", glConfig.vidWidth, glConfig.vidHeight);
-	// Center window
+	// center window
 	if (r_centerWindow->integer && !fullscreen) {
 		x = (desktopMode.w / 2) - (glConfig.vidWidth / 2);
 		y = (desktopMode.h / 2) - (glConfig.vidHeight / 2);
 	}
-	// Destroy existing state if it exists
+	// destroy existing state if it exists
 	if (SDL_glContext != NULL) {
 		GLimp_ClearProcAddresses();
 		SDL_GL_DeleteContext(SDL_glContext);
@@ -482,11 +482,11 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
 		} else {
 			perChannelColorBits = 4;
 		}
-#ifdef __sgi // Fix for SGIs grabbing too many bits of color
+#ifdef __sgi // fix for SGIs grabbing too many bits of color
 		if (perChannelColorBits == 4) {
-			perChannelColorBits = 0; // Use minimum size for 16-bit color
+			perChannelColorBits = 0; // use minimum size for 16-bit color
 		}
-		// Need alpha or else SGIs choose 36+ bit RGB mode
+		// need alpha or else SGIs choose 36+ bit RGB mode
 		SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 1);
 #endif
 		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, perChannelColorBits);
@@ -835,17 +835,17 @@ void GLimp_Init(qboolean coreContext) {
 	}
 
 	ri.Sys_GLimpInit();
-	// Create the window and set up the context
+	// create the window and set up the context
 	if (GLimp_StartDriverAndSetMode(r_mode->integer, r_fullscreen->integer, r_noborder->integer, coreContext)) {
 		goto success;
 	}
-	// Try again, this time in a platform specific "safe mode"
+	// try again, this time in a platform specific "safe mode"
 	ri.Sys_GLimpSafeInit();
 
 	if (GLimp_StartDriverAndSetMode(r_mode->integer, r_fullscreen->integer, qfalse, coreContext)) {
 		goto success;
 	}
-	// Finally, try the default screen resolution
+	// finally, try the default screen resolution
 	if (r_mode->integer != R_MODE_FALLBACK) {
 		ri.Printf(PRINT_ALL, "Setting r_mode %d failed, falling back on r_mode %d\n", r_mode->integer, R_MODE_FALLBACK);
 
@@ -853,13 +853,13 @@ void GLimp_Init(qboolean coreContext) {
 			goto success;
 		}
 	}
-	// Nothing worked, give up
+	// nothing worked, give up
 	ri.Error(ERR_FATAL, "GLimp_Init() - could not load OpenGL subsystem");
 success:
 	// these values force the UI to disable driver selection
 	glConfig.driverType = GLDRV_ICD;
 	glConfig.hardwareType = GLHW_GENERIC;
-	// Only using SDL_SetWindowBrightness to determine if hardware gamma is supported
+	// only using SDL_SetWindowBrightness to determine if hardware gamma is supported
 	glConfig.deviceSupportsGamma = !r_ignorehwgamma->integer && SDL_SetWindowBrightness(SDL_window, 1.0f) >= 0;
 	// get our config strings
 	Q_strncpyz(glConfig.vendor_string, (char *)qglGetString(GL_VENDOR), sizeof(glConfig.vendor_string));
@@ -902,7 +902,7 @@ success:
 	GLimp_InitExtensions();
 
 	ri.Cvar_Get("r_availableModes", "", CVAR_ROM);
-	// This depends on SDL_INIT_VIDEO, hence having it here
+	// this depends on SDL_INIT_VIDEO, hence having it here
 	ri.IN_Init(SDL_window);
 }
 
@@ -925,7 +925,7 @@ void GLimp_EndFrame(void) {
 		qboolean needToToggle;
 		qboolean sdlToggled = qfalse;
 
-		// Find out the current state
+		// find out the current state
 		fullscreen = !!(SDL_GetWindowFlags(SDL_window) & SDL_WINDOW_FULLSCREEN);
 
 		if (r_fullscreen->integer && ri.Cvar_VariableIntegerValue("in_nograb")) {
@@ -933,7 +933,7 @@ void GLimp_EndFrame(void) {
 			ri.Cvar_Set("r_fullscreen", "0");
 			r_fullscreen->modified = qfalse;
 		}
-		// Is the state we want different from the current state?
+		// is the state we want different from the current state?
 		needToToggle = !!r_fullscreen->integer != fullscreen;
 
 		if (needToToggle) {

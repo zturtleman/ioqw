@@ -38,7 +38,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 **************************************************************************************************************************************/
 
 #define SVF_NOCLIENT			0x00000001 // don't send entity to clients, even if it has effects
-// TTimo https://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=551
+// https://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=551
 #define SVF_CLIENTMASK			0x00000002 // send to limited list of clients
 #define SVF_BOT					0x00000008 // set if the entity is a bot
 #define SVF_BROADCAST			0x00000020 // send to all connected clients (r.cullDistance will still be checked)
@@ -58,7 +58,7 @@ typedef struct {
 	// only send to this client when SVF_SINGLECLIENT is set
 	// if SVF_CLIENTMASK is set, use bitmask for clients to send to (maxclients must be <= 32, up to the mod to enforce this)
 	int singleClient;
-	qboolean bmodel;		// if false, assume an explicit mins / maxs bounding box, only set by trap_SetBrushModel
+	qboolean bmodel;		// if false, assume an explicit mins/maxs bounding box, only set by trap_SetBrushModel
 	vec3_t mins, maxs;
 	int contents;			// CONTENTS_TRIGGER, CONTENTS_SOLID, CONTENTS_BODY, etc., a non-solid entity should set to 0
 	vec3_t absmin, absmax;	// derived from mins/maxs and origin + rotation
@@ -328,7 +328,7 @@ typedef enum {
 typedef enum {
 	GAME_INIT,						// (int levelTime, int randomSeed, int restart);
 	// init and shutdown will be called every single level
-	// The game should call G_GET_ENTITY_TOKEN to parse through all the entity configuration text and spawn gentities.
+	// the game should call G_GET_ENTITY_TOKEN to parse through all the entity configuration text and spawn gentities.
 	GAME_SHUTDOWN,					// (void);
 	GAME_CLIENT_CONNECT,			// (int clientNum, qboolean firstTime, qboolean isBot);
 	// return NULL if the client is allowed to connect, otherwise return a text string with the reason for denial
@@ -340,6 +340,6 @@ typedef enum {
 	GAME_RUN_FRAME,					// (int levelTime);
 	GAME_CONSOLE_COMMAND,			// (void);
 	// G_ConsoleCommand will be called when a command has been issued that is not recognized as a builtin function.
-	// The game can issue trap_argc() / trap_argv() commands to get the command and parameters. Return qfalse if the game doesn't recognize it as a command.
+	// the game can issue trap_argc()/trap_argv() commands to get the command and parameters. Return qfalse if the game doesn't recognize it as a command.
 	BOTAI_START_FRAME				// (int time);
 } gameExport_t;

@@ -120,7 +120,7 @@ extern cvar_t *cm_noAreas;
 extern cvar_t *cm_noCurves;
 extern cvar_t *cm_playerCurveClip;
 // cm_test.c
-// Used for oriented capsule collision detection
+// used for oriented capsule collision detection
 typedef struct {
 	qboolean use;
 	float radius;

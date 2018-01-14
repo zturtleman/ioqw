@@ -1353,7 +1353,6 @@ int FS_FindVM(void **startSearch, char *found, int foundlen, const char *name, i
 				if (FS_FileInPathExists(netpath)) {
 					Q_strncpyz(found, netpath, foundlen);
 					*startSearch = search;
-
 					return VMI_NATIVE;
 				}
 			}
@@ -1909,6 +1908,7 @@ static pack_t *FS_LoadZipFile(const char *zipfile, const char *basename) {
 	}
 
 	len = 0;
+
 	unzGoToFirstFile(uf);
 
 	for (i = 0; i < gi.number_entry; i++) {
@@ -1950,6 +1950,7 @@ static pack_t *FS_LoadZipFile(const char *zipfile, const char *basename) {
 
 	pack->handle = uf;
 	pack->numfiles = gi.number_entry;
+
 	unzGoToFirstFile(uf);
 
 	for (i = 0; i < gi.number_entry; i++) {
@@ -2337,9 +2338,9 @@ static char **Sys_ConcatenateFileLists(char **list0, char **list1) {
 
 	totalLength += Sys_CountFileList(list0);
 	totalLength += Sys_CountFileList(list1);
-	// create new list.
+	// create new list
 	dst = cat = Z_Malloc((totalLength + 1) * sizeof(char *));
-	// copy over lists.
+	// copy over lists
 	if (list0) {
 		for (src = list0; *src; src++, dst++) {
 			*dst = *src;
@@ -2416,7 +2417,7 @@ int FS_GetModList(char *listbuf, int bufsize) {
 	qboolean bDrop = qfalse;
 
 	// paths to search for mods
-	const char * const paths[] = {fs_basepath->string, fs_homepath->string, fs_steampath->string, fs_gogpath->string};
+	const char *const paths[] = {fs_basepath->string, fs_homepath->string, fs_steampath->string, fs_gogpath->string};
 
 	*listbuf = 0;
 	nMods = nTotal = 0;
@@ -3007,7 +3008,7 @@ qboolean FS_ComparePaks(char *neededpaks, int len, qboolean dlstring) {
 		if (!havepak && fs_serverReferencedPakNames[i] && *fs_serverReferencedPakNames[i]) {
 			// don't got it
 			if (dlstring) {
-				// We need this to make sure we won't hit the end of the buffer or the server could
+				// we need this to make sure we won't hit the end of the buffer or the server could
 				// overwrite non-pk3 files on clients by writing so much crap into neededpaks that
 				// Q_strcat cuts off the .pk3 extension.
 				origpos += strlen(origpos);
@@ -3273,7 +3274,7 @@ static void FS_CheckPak0(void) {
 
 		if (!Q_stricmpn(curpack->pakGamename, BASEGAME, MAX_OSPATH) && strlen(pakBasename) == 4 && !Q_stricmpn(pakBasename, "pak", 3) && pakBasename[3] >= '0' && pakBasename[3] <= '0' + NUM_QW_PAKS - 1) {
 			if (curpack->checksum != pak_checksums[pakBasename[3] - '0']) {
-				Com_Printf("\n\n**************************************************\nWARNING: " BASEGAME "/pak%d.pk3 is present but its checksum (%u) is not correct. Please re-copy /pak%d.pk3.\n**************************************************\n\n\n", pakBasename[3] - '0', curpack->checksum, pakBasename[3] - '0');
+				Com_Printf("\n\n**************************************************\nWARNING: "BASEGAME"/pak%d.pk3 is present but its checksum (%u) is not correct. Please re-copy /pak%d.pk3.\n**************************************************\n\n\n", pakBasename[3] - '0', curpack->checksum, pakBasename[3] - '0');
 			}
 
 			foundPak |= 1 << (pakBasename[3] - '0');
@@ -3828,7 +3829,7 @@ void FS_Flush(fileHandle_t f) {
 FS_FilenameCompletion
 =======================================================================================================================================
 */
-void FS_FilenameCompletion(const char *dir, const char *ext, qboolean stripExt, void(*callback)(const char *s), qboolean allowNonPureFilesOnDisk) {
+void FS_FilenameCompletion(const char *dir, const char *ext, qboolean stripExt, void (*callback)(const char *s), qboolean allowNonPureFilesOnDisk) {
 	char **filenames;
 	int nfiles;
 	int i;

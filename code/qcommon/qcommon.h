@@ -54,7 +54,6 @@ void MSG_InitOOB(msg_t *buf, byte *data, int length);
 void MSG_Clear(msg_t *buf);
 void MSG_WriteData(msg_t *buf, const void *data, int length);
 void MSG_Bitstream(msg_t *buf);
-// TTimo
 // copy a msg_t in case we need to store it as is for a bit (as I needed this to keep an msg_t from a static var for later use)
 // sets data buffer as MSG_Init does prior to do the copy
 void MSG_Copy(msg_t *buf, byte *data, int length, msg_t *src);
@@ -628,7 +627,7 @@ typedef enum {
 	SE_CHAR,			// evValue is an ascii char
 	SE_MOUSE,			// evValue and evValue2 are relative signed x / y moves
 	SE_JOYSTICK_AXIS,	// evValue is an axis number and evValue2 is the current state (-127 to 127)
-	SE_CONSOLE			// evPtr is a char*
+	SE_CONSOLE			// evPtr is a char *
 } sysEventType_t;
 
 typedef struct {
@@ -726,14 +725,14 @@ typedef enum {
 --- low memory ----
 server vm
 server clipmap
----mark---
+--- mark ---
 renderer initialization (shaders, etc.)
 UI vm
 cgame vm
 renderer map
 renderer models
 
----free---
+--- free ---
 
 temp file loading
 --- high memory ---

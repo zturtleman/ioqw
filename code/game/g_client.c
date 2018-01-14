@@ -33,7 +33,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 static vec3_t playerMins = {-15, -15, -24};
 static vec3_t playerMaxs = {15, 15, 56};
 
-/*QUAKED info_player_deathmatch (1 0 1) (-16 -16 -24) (16 16 56) initial
+/*QUAKED info_player_deathmatch (1 0 1) (-16 -16 -24) (16 16 56) INITIAL
 potential spawning position for deathmatch games.
 The first time a player enters the game, they will be at an 'initial' spot.
 Targets will be fired when someone spawns in on them.

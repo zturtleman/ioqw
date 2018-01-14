@@ -112,7 +112,6 @@ void TossClientItems(gentity_t *self) {
 			}
 
 			angle = 45;
-
 			drop = Drop_Item(self, item, angle);
 			// decide how many seconds it has left
 			drop->count = (self->client->ps.powerups[i] - level.time) / 1000;

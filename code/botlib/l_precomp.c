@@ -64,9 +64,6 @@ typedef enum {
 #include "../bspc/l_mem.h"
 #include "l_precomp.h"
 #endif // BSPC
-
-//#define DEBUG_EVAL
-
 #define MAX_DEFINEPARMS 128
 #define DEFINEHASHING 1
 // directive name with parse function

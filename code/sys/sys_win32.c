@@ -53,11 +53,11 @@ static UINT timerResolution = 0;
 #endif
 #ifndef _RC_CHOP
 // mingw doesn't seem to have these defined :(
-#define _MCW_EM 0x0008001fU
-#define _MCW_RC 0x00000300U
-#define _MCW_PC 0x00030000U
-#define _RC_NEAR 0x00000000U
-#define _PC_53 0x00010000U
+#define _MCW_EM		0x0008001fU
+#define _MCW_RC		0x00000300U
+#define _MCW_PC		0x00030000U
+#define _RC_NEAR	0x00000000U
+#define _PC_53		0x00010000U
 unsigned int _controlfp(unsigned int new, unsigned int mask);
 #endif
 #define FPUCWMASK1 (_MCW_RC|_MCW_EM)
@@ -130,7 +130,7 @@ char *Sys_SteamPath(void) {
 	DWORD pathLen = MAX_OSPATH;
 	qboolean finishPath = qfalse;
 #ifdef STEAMPATH_APPID
-	// Assuming Steam is a 32-bit app
+	// assuming Steam is a 32-bit app
 	if (!steamPath[0] && !RegOpenKeyEx(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Steam App " STEAMPATH_APPID, 0, KEY_QUERY_VALUE|KEY_WOW64_32KEY, &steamRegKey)) {
 		pathLen = MAX_OSPATH;
 
@@ -205,7 +205,6 @@ char *Sys_GogPath(void) {
 }
 
 int sys_timeBase;
-
 /*
 =======================================================================================================================================
 Sys_Milliseconds
@@ -290,7 +289,7 @@ const char *Sys_Basename(char *path) {
 	int length;
 
 	length = strlen(path) - 1;
-	// Skip trailing slashes
+	// skip trailing slashes
 	while (length > 0 && path[length] == '\\') {
 		length--;
 	}
@@ -302,7 +301,7 @@ const char *Sys_Basename(char *path) {
 	Q_strncpyz(base, &path[length], sizeof(base));
 
 	length = strlen(base) - 1;
-	// Strip trailing slashes
+	// strip trailing slashes
 	while (length > 0 && base[length] == '\\') {
 		base[length--] = '\0';
 	}
@@ -493,6 +492,7 @@ char **Sys_ListFiles(const char *directory, const char *extension, char *filter,
 
 	if (filter) {
 		nfiles = 0;
+
 		Sys_ListFilteredFiles(directory, "", filter, list, &nfiles);
 
 		list[nfiles] = 0;
@@ -509,7 +509,6 @@ char **Sys_ListFiles(const char *directory, const char *extension, char *filter,
 		}
 
 		listCopy[i] = NULL;
-
 		return listCopy;
 	}
 
@@ -626,7 +625,7 @@ void Sys_Sleep(int msec) {
 		WaitForSingleObject(GetStdHandle(STD_INPUT_HANDLE), msec);
 	}
 #else
-	// Client Sys_Sleep doesn't support waiting on stdin
+	// client Sys_Sleep doesn't support waiting on stdin
 	if (msec < 0) {
 		return;
 	}
@@ -815,11 +814,11 @@ qboolean Sys_PIDIsRunning(int pid) {
 	int i;
 
 	if (!EnumProcesses(processes, sizeof(processes), &numBytes)) {
-		return qfalse; // Assume it's not running
+		return qfalse; // assume it's not running
 	}
 
 	numProcesses = numBytes / sizeof(DWORD);
-	// Search for the pid
+	// search for the pid
 	for (i = 0; i < numProcesses; i++) {
 		if (processes[i] == pid) {
 			return qtrue;

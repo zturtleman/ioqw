@@ -670,7 +670,6 @@ S_AL_RegisterSound
 =======================================================================================================================================
 */
 static sfxHandle_t S_AL_RegisterSound(const char *sample, qboolean compressed) {
-
 	sfxHandle_t sfx = S_AL_BufferFind(sample);
 
 	if ((!knownSfx[sfx].inMemory) && (!knownSfx[sfx].isDefault)) {
@@ -1193,8 +1192,7 @@ static srcHandle_t S_AL_SrcAlloc(alSrcPriority_t priority, int entnum, int chann
 =======================================================================================================================================
 S_AL_SrcFind
 
-Finds an active source with matching entity and channel numbers.
-Returns -1 if there isn't one.
+Finds an active source with matching entity and channel numbers. Returns -1 if there isn't one.
 =======================================================================================================================================
 */
 static srcHandle_t S_AL_SrcFind(int entnum, int channel) {
@@ -1419,7 +1417,6 @@ static void S_AL_SrcLoop(alSrcPriority_t priority, sfxHandle_t sfx, const vec3_t
 	sent->volume = volume;
 	// if this is not set then the looping sound is stopped.
 	sent->loopAddedThisFrame = qtrue;
-	// UGH
 	// these lines should be called via S_AL_SrcSetup, but we can't call that yet as it buffers sfxes that may change
 	// with subsequent calls to S_AL_SrcLoop
 	curSource->entity = entityNum;
@@ -1450,7 +1447,6 @@ static void S_AL_SrcLoop(alSrcPriority_t priority, sfxHandle_t sfx, const vec3_t
 		}
 
 		S_AL_SanitiseVector(sorigin);
-
 		VectorCopy(sorigin, curSource->loopSpeakerPos);
 
 		if (velocity) {
@@ -2026,6 +2022,7 @@ static void S_AL_MusicProcess(ALuint b) {
 	if (l == 0) {
 		// we have no data to buffer, so buffer silence
 		byte dummyData[2] = {0};
+
 		qalBufferData(b, AL_FORMAT_MONO16, (void *)dummyData, 2, 48000);
 	} else {
 		qalBufferData(b, format, decode_buffer, l, curstream->info.rate);
@@ -2870,7 +2867,7 @@ qboolean S_AL_Init(soundInterface_t *si) {
 			enumeration_ext = qtrue;
 		}
 #ifdef _WIN32
-		// check whether the default device is generic hardware. If it is, change to generic Software as that one works more reliably with various sound systems.
+		// check whether the default device is generic hardware. If it is, change to generic software as that one works more reliably with various sound systems.
 		// if it's not, use OpenAL's default selection as we don't want to ignore native hardware acceleration.
 		if (!device && defaultdevice && !strcmp(defaultdevice, "Generic Hardware")) {
 			device = "Generic Software";

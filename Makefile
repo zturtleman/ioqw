@@ -2649,7 +2649,6 @@ MPUIOBJ_ = \
   $(B)/$(MISSIONPACK)/qcommon/q_shared.o \
   $(B)/$(MISSIONPACK)/qcommon/q_unicode.o
 
-
 MPUIOBJ = $(MPUIOBJ_) $(B)/$(MISSIONPACK)/ui/ui_syscalls.o
 MPUIVMOBJ = $(MPUIOBJ_:%.o=%.asm)
 

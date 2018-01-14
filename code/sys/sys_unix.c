@@ -87,7 +87,7 @@ Sys_SteamPath
 */
 char *Sys_SteamPath(void) {
 	// disabled since Steam doesn't let you install Quake Wars on Mac/Linux
-#if 0 // #ifdef STEAMPATH_NAME
+#if 0 //#ifdef STEAMPATH_NAME
 	char *p;
 
 	if ((p = getenv("HOME")) != NULL) {
@@ -125,7 +125,6 @@ unsigned long sys_timeBase = 0;
  although timeval:tv_usec is an int, I'm not sure whether it is actually used as an unsigned int (which would affect the wrap period)
 */
 int curtime;
-
 /*
 =======================================================================================================================================
 Sys_Milliseconds
@@ -735,10 +734,10 @@ static void Sys_XmessageCommand(dialogType_t type, const char *message, const ch
 			Sys_AppendToExecBuffer("OK:0");
 			break;
 		case DT_YES_NO:
-			Sys_AppendToExecBuffer("Yes:0,No:1");
+			Sys_AppendToExecBuffer("Yes:0, No:1");
 			break;
 		case DT_OK_CANCEL:
-			Sys_AppendToExecBuffer("OK:0,Cancel:1");
+			Sys_AppendToExecBuffer("OK:0, Cancel:1");
 			break;
 	}
 

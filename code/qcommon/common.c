@@ -1593,6 +1593,7 @@ void Com_InitHunkMemory(void) {
 	}
 	// allocate the stack based hunk allocator
 	cv = Cvar_Get("com_hunkMegs", DEF_COMHUNKMEGS_S, CVAR_LATCH|CVAR_ARCHIVE);
+
 	Cvar_SetDescription(cv, "The size of the hunk memory segment");
 	// if we are not dedicated min allocation is 56, otherwise min is 1
 	if (com_dedicated && com_dedicated->integer) {
@@ -2405,7 +2406,7 @@ void Com_GameRestart(int checksumFeed, qboolean disconnect) {
 	if (!com_gameRestarting && com_fullyInitialized) {
 		com_gameRestarting = qtrue;
 		com_gameClientRestarting = com_cl_running->integer;
-		// Kill server if we have one
+		// kill server if we have one
 		if (com_sv_running->integer) {
 			SV_Shutdown("Game directory changed");
 		}
@@ -2449,7 +2450,7 @@ Expose possibility to change current running mod to the user.
 void Com_GameRestart_f(void) {
 
 	if (!FS_FilenameCompare(Cmd_Argv(1), com_basegame->string)) {
-		// This is the standard base game. Servers and clients should use "" and not the standard basegame name because this messes
+		// this is the standard base game. Servers and clients should use "" and not the standard basegame name because this messes
 		// up pak file negotiation and lots of other stuff
 		Cvar_Set("fs_game", "");
 	} else {
@@ -2648,7 +2649,7 @@ void Com_Init(char *commandLine) {
 	com_protocol = Cvar_Get("com_protocol", va("%i", PROTOCOL_VERSION), CVAR_SERVERINFO|CVAR_INIT);
 #ifdef LEGACY_PROTOCOL
 	com_legacyprotocol = Cvar_Get("com_legacyprotocol", va("%i", PROTOCOL_LEGACY_VERSION), CVAR_INIT);
-	// Keep for compatibility with old mods / mods that haven't updated yet.
+	// keep for compatibility with old mods / mods that haven't updated yet.
 	if (com_legacyprotocol->integer > 0) {
 		Cvar_Get("protocol", com_legacyprotocol->string, CVAR_ROM);
 	} else
@@ -2689,7 +2690,6 @@ void Com_Init(char *commandLine) {
 	}
 	// start in full screen ui mode
 	Cvar_Set("r_uiFullScreen", "1");
-
 	CL_StartHunkUsers(qfalse);
 	// make sure single player is off by default
 	Cvar_Set("ui_singlePlayerActive", "0");
@@ -3588,5 +3588,6 @@ Com_strCompare
 int QDECL Com_strCompare(const void *a, const void *b) {
 	const char **pa = (const char **)a;
 	const char **pb = (const char **)b;
+
 	return strcmp(*pa, *pb);
 }

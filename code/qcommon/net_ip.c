@@ -104,9 +104,9 @@ static SOCKET ip_socket = INVALID_SOCKET;
 static SOCKET ip6_socket = INVALID_SOCKET;
 static SOCKET socks_socket = INVALID_SOCKET;
 static SOCKET multicast6_socket = INVALID_SOCKET;
-// Keep track of currently joined multicast group.
+// keep track of currently joined multicast group.
 static struct ipv6_mreq curgroup;
-// And the currently bound address.
+// and the currently bound address.
 static struct sockaddr_in6 boundto;
 #ifndef IF_NAMESIZE
 #define IF_NAMESIZE 16
@@ -320,7 +320,7 @@ static qboolean Sys_StringToSockaddr(const char *s, struct sockaddr *sadr, int s
 
 	if (!retval) {
 		if (family == AF_UNSPEC) {
-			// Decide here and now which protocol family to use
+			// decide here and now which protocol family to use
 			if (net_enabled->integer & NET_PRIOV6) {
 				if (net_enabled->integer & NET_ENABLEV6) {
 					search = SearchAddrInfo(res, AF_INET6);
@@ -772,7 +772,7 @@ qboolean Sys_IsLANAddress(netadr_t adr) {
 			return qtrue;
 		}
 	}
-	// Now compare against the networks this computer is member of.
+	// now compare against the networks this computer is member of.
 	for (index = 0; index < numIP; index++) {
 		if (localIP[index].type == adr.type) {
 			if (adr.type == NA_IP) {
@@ -901,7 +901,7 @@ SOCKET NET_IP6Socket(char *net_interface, int port, struct sockaddr_in6 *bindto,
 	*err = 0;
 
 	if (net_interface) {
-		// Print the name in brackets if there is a colon:
+		// print the name in brackets if there is a colon:
 		if (Q_CountChar(net_interface, ':')) {
 			Com_Printf("Opening IP6 socket: [%s]:%i\n", net_interface, port);
 		} else {
@@ -1008,11 +1008,11 @@ void NET_JoinMulticast6(void) {
 	}
 
 	if (IN6_IS_ADDR_MULTICAST(&boundto.sin6_addr) || IN6_IS_ADDR_UNSPECIFIED(&boundto.sin6_addr)) {
-		// The way the socket was bound does not prohibit receiving multi-cast packets. So we don't need to open a new one.
+		// the way the socket was bound does not prohibit receiving multi-cast packets. So we don't need to open a new one.
 		multicast6_socket = ip6_socket;
 	} else {
 		if ((multicast6_socket = NET_IP6Socket(net_mcast6addr->string, ntohs(boundto.sin6_port), NULL, &err)) == INVALID_SOCKET) {
-			// If the OS does not support binding to multicast addresses, like WinXP, at least try with the normal file descriptor.
+			// if the OS does not support binding to multicast addresses, like WinXP, at least try with the normal file descriptor.
 			multicast6_socket = ip6_socket;
 		}
 	}
@@ -1288,7 +1288,7 @@ static void NET_GetLocalAddress(void) {
 		Com_Printf("NET_GetLocalAddress: Unable to get list of network interfaces: %s\n", NET_ErrorString());
 	} else {
 		for (search = ifap; search; search = search->ifa_next) {
-			// Only add interfaces that are up.
+			// only add interfaces that are up.
 			if (ifap->ifa_flags & IFF_UP) {
 				NET_AddLocalAddress(search->ifa_name, search->ifa_addr, search->ifa_netmask);
 			}
@@ -1327,7 +1327,7 @@ static void NET_GetLocalAddress(void) {
 		struct sockaddr_in mask4;
 		struct sockaddr_in6 mask6;
 		struct addrinfo *search;
-		// On operating systems where it's more difficult to find out the configured interfaces, we'll just assume a netmask with all bits set.
+		// on operating systems where it's more difficult to find out the configured interfaces, we'll just assume a netmask with all bits set.
 		memset(&mask4, 0, sizeof(mask4));
 		memset(&mask6, 0, sizeof(mask6));
 

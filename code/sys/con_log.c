@@ -66,11 +66,11 @@ unsigned int CON_LogWrite(const char *in) {
 	unsigned int secondChunk;
 
 	while (CON_LogFree() < length && CON_LogSize() > 0) {
-		// Free enough space
+		// free enough space
 		while (consoleLog[readPos] != '\n' && CON_LogSize() > 1) {
 			readPos = (readPos + 1) % MAX_LOG;
 		}
-		// Skip past the '\n'
+		// skip past the '\n'
 		readPos = (readPos + 1) % MAX_LOG;
 	}
 

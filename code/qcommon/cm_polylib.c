@@ -90,7 +90,6 @@ void FreeWinding(winding_t *w) {
 }
 
 int c_removed;
-
 /*
 =======================================================================================================================================
 RemoveColinearPoints
@@ -257,9 +256,7 @@ winding_t *BaseWindingForPlane(vec3_t normal, vec_t dist) {
 	VectorMA(vup, -v, normal, vup);
 	VectorNormalize2(vup, vup);
 	VectorScale(normal, dist, org);
-
 	CrossProduct(vup, normal, vright);
-
 	VectorScale(vup, MAX_MAP_BOUNDS, vup);
 	VectorScale(vright, MAX_MAP_BOUNDS, vright);
 	// project a really big axis aligned box onto the plane
@@ -350,7 +347,6 @@ void ClipWindingEpsilon(winding_t *in, vec3_t normal, vec_t dist, vec_t epsilon,
 
 	sides[i] = sides[0];
 	dists[i] = dists[0];
-
 	*front = *back = NULL;
 
 	if (!counts[0]) {
@@ -364,7 +360,6 @@ void ClipWindingEpsilon(winding_t *in, vec3_t normal, vec_t dist, vec_t epsilon,
 	}
 
 	maxpts = in->numpoints + 4; // can't use counts[0] + 2 because of fp grouping errors
-
 	*front = f = AllocWinding(maxpts);
 	*back = b = AllocWinding(maxpts);
 
@@ -407,9 +402,11 @@ void ClipWindingEpsilon(winding_t *in, vec3_t normal, vec_t dist, vec_t epsilon,
 		}
 
 		VectorCopy(mid, f->p[f->numpoints]);
+
 		f->numpoints++;
 
 		VectorCopy(mid, b->p[b->numpoints]);
+
 		b->numpoints++;
 	}
 
@@ -472,7 +469,6 @@ void ChopWindingInPlace(winding_t **inout, vec3_t normal, vec_t dist, vec_t epsi
 	}
 
 	maxpts = in->numpoints + 4; // can't use counts[0] + 2 because of fp grouping errors
-
 	f = AllocWinding(maxpts);
 
 	for (i = 0; i < in->numpoints; i++) {
@@ -573,7 +569,7 @@ void CheckWinding(winding_t *w) {
 
 		for (j = 0; j < 3; j++) {
 			if (p1[j] > MAX_MAP_BOUNDS || p1[j] < -MAX_MAP_BOUNDS) {
-				Com_Error(ERR_DROP, "CheckWinding: BUGUS_RANGE: %f", p1[j]);
+				Com_Error(ERR_DROP, "CheckWinding: BOGUS_RANGE: %f", p1[j]);
 			}
 		}
 

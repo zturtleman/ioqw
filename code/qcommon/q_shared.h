@@ -229,6 +229,7 @@ typedef enum {
 	PRINT_WARNING,
 	PRINT_ERROR
 } printParm_t;
+
 #ifdef ERR_FATAL
 #undef ERR_FATAL // this is be defined in malloc.h
 #endif
@@ -351,8 +352,8 @@ extern vec4_t colorRed;
 extern vec4_t colorYellow;
 extern vec4_t colorWhite;
 extern vec4_t colorOrange;
-extern vec4_t colorMdGrey;
 extern vec4_t colorLtGrey;
+extern vec4_t colorMdGrey;
 
 #define Q_COLOR_ESCAPE '^'
 #define Q_IsColorString(p) ((p) && *(p) == Q_COLOR_ESCAPE && *((p) + 1) && isgraph(*((p) + 1)) && *((p) + 1) != Q_COLOR_ESCAPE)

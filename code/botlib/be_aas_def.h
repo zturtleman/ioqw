@@ -22,6 +22,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 =======================================================================================================================================
 */
 
+#include "../qcommon/q_shared.h"
 // debugging on
 #define AAS_DEBUG
 #define DF_AASENTNUMBER(x) (x - aasworld.entities)

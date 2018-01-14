@@ -59,7 +59,7 @@ static void SNDDMA_AudioCallback(void *userdata, Uint8 *stream, int len) {
 		memset(stream, '\0', len);
 		return;
 	} else {
-		int tobufend = dmasize - pos; // bytes to buffer's end.
+		int tobufend = dmasize - pos; // bytes to buffer's end
 		int len1 = len;
 		int len2 = 0;
 
@@ -234,9 +234,7 @@ qboolean SNDDMA_Init(void) {
 	dma.buffer = calloc(1, dmasize);
 
 	Com_Printf("Starting SDL audio callback...\n");
-
 	SDL_PauseAudio(0); // start callback.
-
 	Com_Printf("SDL audio initialized.\n");
 
 	snd_inited = qtrue;
@@ -260,11 +258,9 @@ SNDDMA_Shutdown
 void SNDDMA_Shutdown(void) {
 
 	Com_Printf("Closing SDL audio device...\n");
-
 	SDL_PauseAudio(1);
 	SDL_CloseAudio();
 	SDL_QuitSubSystem(SDL_INIT_AUDIO);
-
 	free(dma.buffer);
 
 	dma.buffer = NULL;

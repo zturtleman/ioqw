@@ -53,7 +53,6 @@ static void SV_SendConfigstring(client_t *client, int index) {
 			}
 
 			Q_strncpyz(buf, &sv.configstrings[index][sent], maxChunkSize);
-
 			SV_SendServerCommand(client, "%s %i \"%s\"\n", cmd, index, buf);
 
 			sent += (maxChunkSize - 1);
@@ -267,13 +266,13 @@ static void SV_Startup(void) {
 	}
 
 	svs.initialized = qtrue;
-	// Don't respect sv_killserver unless a server is actually running
+	// don't respect sv_killserver unless a server is actually running
 	if (sv_killserver->integer) {
 		Cvar_Set("sv_killserver", "0");
 	}
 
 	Cvar_Set("sv_running", "1");
-	// Join the ipv6 multicast group now that a map is running so clients can scan for us on the local network.
+	// join the ipv6 multicast group now that a map is running so clients can scan for us on the local network.
 	NET_JoinMulticast6();
 }
 
@@ -443,7 +442,6 @@ void SV_SpawnServer(char *server, qboolean killBots) {
 	sv.checksumFeed = (((int)rand() << 16) ^ rand()) ^ Com_Milliseconds();
 
 	FS_Restart(sv.checksumFeed);
-
 	CM_LoadMap(va("maps/%s.bsp", server), qfalse, &checksum);
 	// set serverinfo visible name
 	Cvar_Set("mapname", server);

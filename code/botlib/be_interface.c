@@ -28,6 +28,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #include "../qcommon/q_shared.h"
 #include "../qcommon/surfaceflags.h" // for CONTENTS_WATER, CONTENTS_LAVA, CONTENTS_SLIME etc.
+#include "l_memory.h"
 #include "l_log.h"
 #include "l_libvar.h"
 #include "l_script.h"
@@ -314,7 +315,7 @@ int AAS_PointLight(vec3_t origin, int *red, int *green, int *blue);
 int AAS_TraceAreas(vec3_t start, vec3_t end, int *areas, vec3_t *points, int maxareas);
 int AAS_Reachability_WeaponJump(int area1num, int area2num);
 int BotFuzzyPointReachabilityArea(vec3_t origin);
-float BotGapDistance(vec3_t origin, vec3_t hordir, int entnum);
+float BotGapDistance(vec3_t origin, vec3_t hordir, int checkdist, int entnum);
 void AAS_FloodAreas(vec3_t origin);
 
 /*

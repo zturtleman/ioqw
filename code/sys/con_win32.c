@@ -278,9 +278,7 @@ void CON_Init(void) {
 	GetConsoleMode(qconsole_hin, &qconsole_orig_mode);
 	// allow mouse wheel scrolling
 	SetConsoleMode(qconsole_hin, qconsole_orig_mode & ~ENABLE_MOUSE_INPUT);
-
 	FlushConsoleInputBuffer(qconsole_hin);
-
 	GetConsoleScreenBufferInfo(qconsole_hout, &info);
 
 	qconsole_attrib = info.wAttributes;
@@ -432,7 +430,7 @@ char *CON_Input(void) {
 =======================================================================================================================================
 CON_WindowsColorPrint
 
-Set text colors based on Q3 color codes
+Set text colors based on Q3 color codes.
 =======================================================================================================================================
 */
 void CON_WindowsColorPrint(const char *msg) {
@@ -443,7 +441,7 @@ void CON_WindowsColorPrint(const char *msg) {
 		qconsole_drawinput = (*msg == '\n');
 
 		if (Q_IsColorString(msg) || *msg == '\n') {
-			// First empty the buffer
+			// first empty the buffer
 			if (length > 0) {
 				buffer[length] = '\0';
 				fputs(buffer, stderr);
@@ -451,12 +449,12 @@ void CON_WindowsColorPrint(const char *msg) {
 			}
 
 			if (*msg == '\n') {
-				// Reset color and then add the newline
+				// reset color and then add the newline
 				SetConsoleTextAttribute(qconsole_hout, CON_ColorCharToAttrib(COLOR_WHITE));
 				fputs("\n", stderr);
 				msg++;
 			} else {
-				// Set the color
+				// set the color
 				SetConsoleTextAttribute(qconsole_hout, CON_ColorCharToAttrib(*(msg + 1)));
 				msg += 2;
 			}
@@ -470,7 +468,7 @@ void CON_WindowsColorPrint(const char *msg) {
 			msg++;
 		}
 	}
-	// Empty anything still left in the buffer
+	// empty anything still left in the buffer
 	if (length > 0) {
 		buffer[length] = '\0';
 		fputs(buffer, stderr);

@@ -5420,6 +5420,7 @@ void BotRandomMove(bot_state_t *bs, bot_moveresult_t *moveresult, float speed) {
 	}
 
 	moveresult->failure = (i == 8);
+
 	VectorCopy(dir, moveresult->movedir);
 }
 

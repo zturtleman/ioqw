@@ -2,6 +2,9 @@
 =======================================================================================================================================
 Copyright (C) 2012-2013 Unvanquished Developers.
 
+Data extracted from libunistring.
+Copyright (C) 1995-2009, Free Software Foundation, Inc.
+
 This file is part of Spearmint Source Code.
 
 Spearmint Source Code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as

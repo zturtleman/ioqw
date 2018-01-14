@@ -33,8 +33,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include <errno.h>
 #define OV_EXCLUDE_STATIC_CALLBACKS
 #include <vorbis/vorbisfile.h>
-// The OGG codec can return the samples in a number of different formats,
-// we use the standard signed short format.
+// the OGG codec can return the samples in a number of different formats, we use the standard signed short format.
 #define OGG_SAMPLEWIDTH 2
 // Q3 OGG codec
 snd_codec_t ogg_codec = {
@@ -280,9 +279,9 @@ snd_stream_t *S_OGG_CodecOpenStream(const char *filename) {
 	stream->info.samples = numSamples;
 	stream->info.size = stream->info.samples * stream->info.channels * stream->info.width;
 	stream->info.dataofs = 0;
-	// We use stream->pos for the file pointer in the compressed ogg file
+	// we use stream->pos for the file pointer in the compressed ogg file
 	stream->pos = 0;
-	// We use the generic pointer in stream for the OGG codec control structure
+	// we use the generic pointer in stream for the OGG codec control structure
 	stream->ptr = vf;
 
 	return stream;
