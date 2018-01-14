@@ -301,9 +301,7 @@ intptr_t QDECL VM_Call(vm_t *vm, int callNum, ...);
 void VM_Debug(int level);
 void *VM_ArgPtr(intptr_t intValue);
 void *VM_ExplicitArgPtr(vm_t *vm, intptr_t intValue);
-
 #define VMA(x) VM_ArgPtr(args[x])
-
 /*
 =======================================================================================================================================
 _vmf
@@ -570,7 +568,7 @@ qboolean FS_ComparePaks(char *neededpaks, int len, qboolean dlstring);
 void FS_Rename(const char *from, const char *to);
 void FS_Remove(const char *osPath);
 void FS_HomeRemove(const char *homePath);
-void FS_FilenameCompletion(const char *dir, const char *ext, qboolean stripExt, void(*callback)(const char *s), qboolean allowNonPureFilesOnDisk);
+void FS_FilenameCompletion(const char *dir, const char *ext, qboolean stripExt, void (*callback)(const char *s), qboolean allowNonPureFilesOnDisk);
 const char *FS_GetCurrentGameDir(void);
 qboolean FS_Which(const char *filename, void *searchPath);
 
@@ -801,7 +799,7 @@ void CL_MapLoading(void);
 // will be cleared, so the client must shutdown cgame, ui, and the renderer
 void CL_ForwardCommandToServer(const char *string);
 // adds the current command line as a clc_clientCommand to the client message.
-// things like godmode, noclip, etc. are commands directed to the server, so when they are typed in at the console, they will need to be forwarded.
+// things like godmode, noclip, etc., are commands directed to the server, so when they are typed in at the console, they will need to be forwarded.
 void CL_FlushMemory(void);
 // dump all memory on an error
 void CL_ShutdownAll(qboolean shutdownRef);

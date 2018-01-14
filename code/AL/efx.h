@@ -755,7 +755,6 @@ AL_API ALvoid AL_APIENTRY alGetAuxiliaryEffectSlotfv(ALuint effectslot, ALenum p
 
 
 #ifdef __cplusplus
-}  /* extern "C" */
+} /* extern "C" */
 #endif
-
 #endif /* AL_EFX_H */

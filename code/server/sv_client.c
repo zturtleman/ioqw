@@ -530,7 +530,7 @@ static void SV_SendClientGameState(client_t *client) {
 	client->gamestateMessageNum = client->netchan.outgoingSequence;
 
 	MSG_Init(&msg, msgBuffer, sizeof(msgBuffer));
-	// NOTE, MRE: all server->client messages now acknowledge
+	// NOTE: all server->client messages now acknowledge
 	// let the client know which reliable clientCommands we have received
 	MSG_WriteLong(&msg, client->lastClientCommand);
 	// send any server commands waiting to be sent first.

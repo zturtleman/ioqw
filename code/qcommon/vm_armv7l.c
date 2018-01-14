@@ -289,6 +289,7 @@ static int asmcall(int call, int pstack) {
 		intptr_t args[MAX_VMSYSCALL_ARGS];
 
 		args[0] = -1 - call;
+
 		int *argPosition = (int *)((byte *)currentVM->dataBase + pstack + 4);
 
 		for (i = 1; i < ARRAY_LEN(args); i++) {

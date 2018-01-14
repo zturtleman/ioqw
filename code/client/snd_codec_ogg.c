@@ -218,17 +218,17 @@ S_OGG_CodecOpenStream
 */
 snd_stream_t *S_OGG_CodecOpenStream(const char *filename) {
 	snd_stream_t *stream;
-
 	// OGG codec control structure
 	OggVorbis_File *vf;
 	// some variables used to get informations about the OGG
 	vorbis_info *OGGInfo;
 	ogg_int64_t numSamples;
+
 	// check if input is valid
 	if (!filename) {
 		return NULL;
 	}
-	// Open the stream
+	// open the stream
 	stream = S_CodecUtilOpen(filename, &ogg_codec);
 
 	if (!stream) {
@@ -316,7 +316,7 @@ int S_OGG_CodecReadStream(snd_stream_t *stream, int bytes, void *buffer) {
 	int bytesRead, bytesLeft, c;
 	char *bufPtr;
 
-	// Bitstream for the decoder
+	// bitstream for the decoder
 	int BS = 0;
 	// big endian machines want their samples in big endian order
 	int IsBigEndian = 0;

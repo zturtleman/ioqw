@@ -45,7 +45,7 @@ typedef enum {
 SDL_Window *SDL_window = NULL;
 static SDL_GLContext SDL_glContext = NULL;
 
-cvar_t *r_allowSoftwareGL; // Don't abort out if a hardware visual can't be obtained
+cvar_t *r_allowSoftwareGL; // don't abort out if a hardware visual can't be obtained
 cvar_t *r_allowResize; // make window resizable
 cvar_t *r_centerWindow;
 cvar_t *r_sdlDriver;
@@ -507,7 +507,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
 
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 #if 0 // if multisampling is enabled on X11, this causes create window to fail.
-		// If not allowing software GL, demand accelerated
+		// if not allowing software GL, demand accelerated
 		if (!r_allowSoftwareGL->integer) {
 			SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 		}

@@ -347,6 +347,7 @@ static sfx_t *S_FindName(const char *name) {
 	sfx = &s_knownSfx[i];
 
 	Com_Memset(sfx, 0, sizeof(*sfx));
+
 	strcpy(sfx->soundName, name);
 
 	sfx->next = sfxHash[hash];
@@ -495,7 +496,6 @@ void S_SpatializeOrigin(vec3_t origin, int master_vol, int *left_vol, int *right
 	vec3_t vec;
 
 	range *= 16;
-
 	float dist_fullvol = range * 0.064f;
 	// calculate stereo separation and distance attenuation
 	VectorSubtract(origin, listener_origin, source_vec);

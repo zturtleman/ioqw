@@ -189,6 +189,7 @@ loop: SWAPINIT(a, es);
 	vecswap(a, pb - r, r);
 
 	r = MIN(pd - pc, pn - pd - es);
+
 	vecswap(pb, pn - r, r);
 
 	if ((r = pb - pa) > es) {
@@ -683,6 +684,7 @@ void create_acostable(void) {
 	float a;
 
 	fp = fopen("c:\\acostable.txt", "w");
+
 	fprintf(fp, "float acostable[] = {");
 
 	for (i = 0; i < 1024; i++) {
@@ -955,7 +957,6 @@ static double powN(double base, int exp) {
 }
 
 static int randSeed = 0;
-
 /*
 =======================================================================================================================================
 srand
@@ -1821,8 +1822,8 @@ static int dopr(char *buffer, size_t maxlen, const char *format, va_list args) {
 						flags |= DP_F_UNSIGNED;
 
 						if (cflags == DP_C_SHORT) {
-							//value = (unsigned short int) va_arg(args, unsigned short int); // Thilo: This does not work because the rcc compiler cannot do that cast correctly.
-							value = va_arg(args, unsigned int) & ((1 << sizeof(unsigned short int) * 8) - 1); // Using this workaround instead.
+							//value = (unsigned short int) va_arg(args, unsigned short int); // this does not work because the rcc compiler cannot do that cast correctly.
+							value = va_arg(args, unsigned int) & ((1 << sizeof(unsigned short int) * 8) - 1); // using this workaround instead.
 						} else if (cflags == DP_C_LONG) {
 							value = va_arg(args, unsigned long int);
 						} else if (cflags == DP_C_LLONG) {
@@ -2320,6 +2321,7 @@ int sscanf(const char *buffer, const char *fmt, ...) {
 	size_t len;
 
 	va_start(ap, fmt);
+
 	count = 0;
 
 	while (*fmt) {

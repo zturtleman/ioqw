@@ -1423,7 +1423,7 @@ void BotCheckBlocked(bot_movestate_t *ms, vec3_t dir, int checkbottom, bot_mover
 			result->blockentity = trace.entityNum;
 			result->flags |= MOVERESULT_ONTOPOFOBSTACLE;
 		}
-	// 3rd: check for world entity hit before hitting nearby entities(... can cause entities to go unnoticed).
+	// 3rd: check for world entity hit before hitting nearby entities (... can cause entities to go unnoticed).
 	} else {
 		VectorMA(ms->origin, 2, dir, end);
 		trace = AAS_Trace(ms->origin, mins, maxs, end, ms->entitynum, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP|CONTENTS_BODY);
@@ -2196,7 +2196,6 @@ bot_moveresult_t BotTravel_Teleport(bot_movestate_t *ms, aas_reachability_t *rea
 	}
 
 	VectorCopy(hordir, result.movedir);
-
 	return result;
 }
 

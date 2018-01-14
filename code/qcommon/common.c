@@ -3431,7 +3431,7 @@ static qboolean Field_CompletePlayerNameFinal(qboolean whitespace) {
 Name_PlayerNameCompletion
 =======================================================================================================================================
 */
-static void Name_PlayerNameCompletion(const char **names, int nameCount, void(*callback)(const char *s)) {
+static void Name_PlayerNameCompletion(const char **names, int nameCount, void (*callback)(const char *s)) {
 	int i;
 
 	for (i = 0; i < nameCount; i++) {

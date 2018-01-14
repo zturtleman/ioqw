@@ -70,7 +70,7 @@ int S_OggOpus_Callback_read(void *datasource, unsigned char *ptr, int size) {
 	}
 
 	if (!size) {
-		// It's not an error, caller just wants zero bytes!
+		// it's not an error, caller just wants zero bytes!
 		errno = 0;
 		return 0;
 	}
@@ -212,7 +212,6 @@ S_OggOpus_CodecOpenStream
 */
 snd_stream_t *S_OggOpus_CodecOpenStream(const char *filename) {
 	snd_stream_t *stream;
-
 	// Opus codec control structure
 	OggOpusFile *of;
 	// some variables used to get informations about the file
@@ -223,7 +222,7 @@ snd_stream_t *S_OggOpus_CodecOpenStream(const char *filename) {
 	if (!filename) {
 		return NULL;
 	}
-	// Open the stream
+	// open the stream
 	stream = S_CodecUtilOpen(filename, &opus_codec);
 
 	if (!stream) {
@@ -391,6 +390,7 @@ void *S_OggOpus_CodecLoad(const char *filename, snd_info_t *info) {
 	}
 
 	S_OggOpus_CodecCloseStream(stream);
+
 	return buffer;
 }
 #endif // USE_CODEC_OPUS

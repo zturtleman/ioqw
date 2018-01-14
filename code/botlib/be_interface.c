@@ -494,8 +494,8 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 				ElevatorBottomCenter(&reach, bottomcenter);
 				AAS_DrawCross(bottomcenter, 10, LINECOLOR_GREEN);
 			}
-		}*/
-
+		}
+		*/
 //		botimport.Print(PRT_MESSAGE, "travel time to goal = %d\n", AAS_AreaTravelTimeToGoalArea(area, origin, botlibglobals.goalareanum, TFL_DEFAULT));
 //		botimport.Print(PRT_MESSAGE, "test rj from 703 to 716\n");
 //		AAS_Reachability_WeaponJump(703, 716);

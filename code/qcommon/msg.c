@@ -454,7 +454,7 @@ void MSG_WriteString(msg_t *sb, const char *s) {
 		l = strlen(s);
 
 		if (l >= MAX_STRING_CHARS) {
-			Com_Printf("MSG_WriteString: MAX_STRING_CHARS size reached\n");
+			Com_Printf("MSG_WriteString: MAX_STRING_CHARS size reached.\n");
 			MSG_WriteData(sb, "", 1);
 			return;
 		}
@@ -487,7 +487,7 @@ void MSG_WriteBigString(msg_t *sb, const char *s) {
 		l = strlen(s);
 
 		if (l >= BIG_INFO_STRING) {
-			Com_Printf("MSG_WriteString: BIG_INFO_STRING size reached\n");
+			Com_Printf("MSG_WriteString: BIG_INFO_STRING size reached.\n");
 			MSG_WriteData(sb, "", 1);
 			return;
 		}

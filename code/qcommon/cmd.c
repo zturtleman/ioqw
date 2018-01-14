@@ -218,7 +218,7 @@ void Cbuf_Execute(void) {
 					} else if (in_star_comment && text[i] == '*' && text[i + 1] == '/') {
 						in_star_comment = qfalse;
 						// if we are in a star comment, then the part after it is valid
-						// Note: This will cause it to NUL out the terminating '/' but ExecuteString doesn't require it anyway.
+						// NOTE: this will cause it to NULL out the terminating '/' but ExecuteString doesn't require it anyway.
 						i++;
 						break;
 					}
@@ -249,6 +249,7 @@ void Cbuf_Execute(void) {
 		} else {
 			i++;
 			cmd_text.cursize -= i;
+
 			memmove(text, text + i, cmd_text.cursize);
 		}
 		// execute the command line

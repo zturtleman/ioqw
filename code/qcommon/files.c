@@ -2025,6 +2025,7 @@ qboolean FS_CompareZipChecksum(const char *zipfile) {
 	}
 
 	checksum = thepak->checksum;
+
 	FS_FreePak(thepak);
 
 	for (index = 0; index < fs_numServerReferencedPaks; index++) {
@@ -2069,6 +2070,7 @@ static int FS_ReturnPath(const char *zname, char *zpath, int *depth) {
 	}
 
 	strcpy(zpath, zname);
+
 	zpath[len] = 0;
 	*depth = newdep;
 
@@ -2384,7 +2386,9 @@ void FS_GetModDescription(const char *modDir, char *description, int description
 
 	if (nDescLen > 0 && descHandle) {
 		file = FS_FileForHandle(descHandle);
+
 		Com_Memset(description, 0, descriptionLen);
+
 		nDescLen = fread(description, 1, descriptionLen, file);
 
 		if (nDescLen >= 0) {
@@ -2478,6 +2482,7 @@ int FS_GetModList(char *listbuf, int bufsize) {
 			// nLen is the length of the mod path
 			// we need to see if there is a description available
 			FS_GetModDescription(name, description, sizeof(description));
+
 			nDescLen = strlen(description) + 1;
 
 			if (nTotal + nLen + 1 + nDescLen + 1 < bufsize) {
@@ -2863,12 +2868,10 @@ void FS_AddGameDirectory(const char *path, const char *dir) {
 			Q_strncpyz(pak->pakGamename, dir, sizeof(pak->pakGamename));
 
 			fs_packFiles += pak->numfiles;
-
 			search = Z_Malloc(sizeof(searchpath_t));
 			search->pack = pak;
 			search->next = fs_searchpaths;
 			fs_searchpaths = search;
-
 			pakfilesi++;
 		} else {
 			// the next .pk3dir is before the next .pk3 file
@@ -2892,7 +2895,6 @@ void FS_AddGameDirectory(const char *path, const char *dir) {
 
 			search->next = fs_searchpaths;
 			fs_searchpaths = search;
-
 			pakdirsi++;
 		}
 	}
@@ -3451,6 +3453,7 @@ const char *FS_ReferencedPakPureChecksums(void) {
 	}
 	// last checksum is the encoded number of referenced pk3s
 	checksum ^= numPaks;
+
 	Q_strcat(info, sizeof(info), va("%i ", checksum));
 
 	return info;

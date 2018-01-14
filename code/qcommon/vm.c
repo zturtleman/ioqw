@@ -297,12 +297,14 @@ void VM_LoadSymbols(vm_t *vm) {
 		}
 
 		sym->symValue = value;
+
 		Q_strncpyz(sym->symName, token, chars + 1);
 
 		count++;
 	}
 
 	vm->numSymbols = count;
+
 	Com_Printf("%i symbols parsed from %s\n", count, symbols);
 	FS_FreeFile(mapfile.v);
 }
@@ -791,8 +793,8 @@ intptr_t QDECL VM_Call(vm_t *vm, int callnum, ...) {
 	if (vm->entryPoint) {
 		// rcg010207 - see dissertation at top of VM_DllSyscall() in this file.
 		int args[MAX_VMMAIN_ARGS - 1];
-
 		va_list ap;
+
 		va_start(ap, callnum);
 
 		for (i = 0; i < ARRAY_LEN(args); i++) {
@@ -911,7 +913,6 @@ void VM_VmProfile_f(void) {
 	}
 
 	Com_Printf("    %9.0f total\n", total);
-
 	Z_Free(sorted);
 }
 
