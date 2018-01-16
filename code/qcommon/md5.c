@@ -26,7 +26,7 @@ typedef struct MD5Context {
 } MD5_CTX;
 
 #ifndef Q3_BIG_ENDIAN
-#define byteReverse(buf, len) // Nothing
+#define byteReverse(buf, len) // nothing
 #else
 static void byteReverse(unsigned char *buf, unsigned longs);
 
@@ -59,25 +59,25 @@ static void MD5Init(struct MD5Context *ctx) {
 	ctx->buf[1] = 0xefcdab89;
 	ctx->buf[2] = 0x98badcfe;
 	ctx->buf[3] = 0x10325476;
-
 	ctx->bits[0] = 0;
 	ctx->bits[1] = 0;
 }
+
 // The four core functions - F1 is optimized somewhat
-// #define F1(x, y, z) (x & y|~x & z)
+//#define F1(x, y, z) (x & y|~x & z)
 #define F1(x, y, z) (z ^ (x & (y ^ z)))
 #define F2(x, y, z) F1(z, x, y)
 #define F3(x, y, z) (x ^ y ^ z)
 #define F4(x, y, z) (y ^ (x|~z))
-// This is the central step in the MD5 algorithm.
-#define MD5STEP(f, w, x, y, z, data, s) \
+// This is the central step in the MD5 algorithm
+#define MD5STEP(f, w, x, y, z, data, s)\
 	(w += f(x, y, z) + data, w = w << s|w >> (32 - s), w += x)
 
 /*
  * The core of the MD5 algorithm, this alters an existing MD5 hash to
  * reflect the addition of 16 longwords of new data. MD5Update blocks
  * the data and converts bytes into longwords for this routine.
- */
+*/
 
 /*
 =======================================================================================================================================
@@ -176,17 +176,16 @@ Update context to reflect the concatenation of another buffer full of bytes.
 static void MD5Update(struct MD5Context *ctx, unsigned char const *buf, unsigned len) {
 	uint32_t t;
 
-	// Update bitcount
+	// update bitcount
 	t = ctx->bits[0];
 
 	if ((ctx->bits[0] = t + ((uint32_t)len << 3)) < t) {
-		ctx->bits[1]++; // Carry from low to high
+		ctx->bits[1]++; // carry from low to high
 	}
 
 	ctx->bits[1] += len >> 29;
-
-	t = (t >> 3) & 0x3f; // Bytes already in shsInfo->data
-	// Handle any leading odd-sized chunks
+	t = (t >> 3) & 0x3f; // bytes already in shsInfo->data
+	// handle any leading odd-sized chunks
 	if (t) {
 		unsigned char *p = (unsigned char *)ctx->in + t;
 
@@ -200,24 +199,22 @@ static void MD5Update(struct MD5Context *ctx, unsigned char const *buf, unsigned
 		memcpy(p, buf, t);
 
 		byteReverse(ctx->in, 16);
-
 		MD5Transform(ctx->buf, (uint32_t *)ctx->in);
 
 		buf += t;
 		len -= t;
 	}
-	// Process data in 64-byte chunks
+	// process data in 64-byte chunks
 	while (len >= 64) {
 		memcpy(ctx->in, buf, 64);
 
 		byteReverse(ctx->in, 16);
-
 		MD5Transform(ctx->buf, (uint32_t *)ctx->in);
 
 		buf += 64;
 		len -= 64;
 	}
-	// Handle any remaining bytes of data.
+	// handle any remaining bytes of data
 	memcpy(ctx->in, buf, len);
 }
 
@@ -232,30 +229,29 @@ static void MD5Final(struct MD5Context *ctx, unsigned char *digest) {
 	unsigned count;
 	unsigned char *p;
 
-	// Compute number of bytes mod 64
+	// compute number of bytes mod 64
 	count = (ctx->bits[0] >> 3) & 0x3F;
-	// Set the first char of padding to 0x80. This is safe since there is always at least one byte free
+	// set the first char of padding to 0x80. This is safe since there is always at least one byte free
 	p = ctx->in + count;
 	*p++ = 0x80;
-	// Bytes of padding needed to make 64 bytes
+	// bytes of padding needed to make 64 bytes
 	count = 64 - 1 - count;
-	// Pad out to 56 mod 64
+	// pad out to 56 mod 64
 	if (count < 8) {
-		// Two lots of padding: Pad the first block to 64 bytes
+		// two lots of padding: Pad the first block to 64 bytes
 		memset(p, 0, count);
 
 		byteReverse(ctx->in, 16);
-
 		MD5Transform(ctx->buf, (uint32_t *)ctx->in);
-		// Now fill the next block with 56 bytes
+		// now fill the next block with 56 bytes
 		memset(ctx->in, 0, 56);
 	} else {
-		// Pad block to 56 bytes
+		// pad block to 56 bytes
 		memset(p, 0, count - 8);
 	}
 
 	byteReverse(ctx->in, 14);
-	// Append length in bits and transform
+	// append length in bits and transform
 	((uint32_t *)ctx->in)[14] = ctx->bits[0];
 	((uint32_t *)ctx->in)[15] = ctx->bits[1];
 
@@ -266,7 +262,7 @@ static void MD5Final(struct MD5Context *ctx, unsigned char *digest) {
 		memcpy(digest, ctx->buf, 16);
 	}
 
-	memset(ctx, 0, sizeof(*ctx)); // In case it's sensitive
+	memset(ctx, 0, sizeof(*ctx)); // in case it's sensitive
 }
 
 /*
@@ -329,7 +325,6 @@ char *Com_MD5File(const char *fn, int length, const char *prefix, int prefix_len
 	}
 
 	FS_FCloseFile(f);
-
 	MD5Final(&md5, digest);
 
 	final[0] = '\0';

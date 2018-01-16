@@ -38,6 +38,7 @@ Huff_putBit
 =======================================================================================================================================
 */
 void Huff_putBit(int bit, byte *fout, int *offset) {
+
 	bloc = *offset;
 
 	if ((bloc&7) == 0) {
@@ -469,6 +470,7 @@ Huff_offsetTransmit
 =======================================================================================================================================
 */
 void Huff_offsetTransmit(huff_t *huff, int ch, byte *fout, int *offset, int maxoffset) {
+
 	bloc = *offset;
 
 	send(huff->loc[ch], NULL, fout, maxoffset);
@@ -513,7 +515,7 @@ void Huff_Decompress(msg_t *mbuf, int offset) {
 	for (j = 0; j < cch; j++) {
 		ch = 0;
 		// don't overflow reading from the messages
-		// FIXME: would it be better to have an overflow check in get_bit ?
+		// FIXME: would it be better to have an overflow check in get_bit?
 		if ((bloc >> 3) > size) {
 			seq[j] = 0;
 			break;
@@ -553,7 +555,7 @@ void Huff_Compress(msg_t *mbuf, int offset) {
 	huff_t huff;
 
 	size = mbuf->cursize - offset;
-	buffer = mbuf->data + +offset;
+	buffer = mbuf->data + offset;
 
 	if (size <= 0) {
 		return;

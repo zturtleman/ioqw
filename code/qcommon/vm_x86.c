@@ -34,7 +34,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include <sys/types.h>
 #endif
 #include <sys/mman.h> // for PROT_ stuff
-// need this on NX enabled systems (i386 with PAE kernel or noexec32=on x86_64)
+// need this on NX enabled systems (i386 with PAE kernel or noexec32 = on x86_64)
 #define VM_X86_MMAP
 // workaround for systems that use the old MAP_ANON macro
 #ifndef MAP_ANONYMOUS
@@ -228,6 +228,7 @@ static void EmitString(const char *string) {
 		c1 = string[0];
 		c2 = string[1];
 		v = (Hex(c1) << 4)|Hex(c2);
+
 		Emit1(v);
 
 		if (!string[2]) {
@@ -528,8 +529,7 @@ int EmitCallDoSyscall(vm_t *vm) {
 	// use edx register to store DoSyscall address
 	EmitRexString(0x48, "BA"); // mov edx, DoSyscall
 	EmitPtr(DoSyscall);
-	// Push important registers to stack as we can't really make
-	// any assumptions about calling conventions.
+	// push important registers to stack as we can't really make any assumptions about calling conventions.
 	EmitString("51"); // push ebx
 	EmitString("56"); // push esi
 	EmitString("57"); // push edi
@@ -605,13 +605,13 @@ int EmitCallProcedure(vm_t *vm, int sysCallOfs) {
 	EmitString("8B 04 9F"); // mov eax, dword ptr [edi + ebx * 4]
 	STACK_POP(1); // sub bl, 1
 	EmitString("85 C0"); // test eax, eax
-	// Jump to syscall code, 1 byte offset should suffice
+	// jump to syscall code, 1 byte offset should suffice
 	EmitString("7C"); // jl systemCall
 	jmpSystemCall = compiledOfs++;
 	/************ Call inside VM ************/
 	EmitString("81 F8"); // cmp eax, vm->instructionCount
 	Emit4(vm->instructionCount);
-	// Error jump if invalid jump target
+	// error jump if invalid jump target
 	EmitString("73"); // jae badAddr
 	jmpBadAddr = compiledOfs++;
 #if idx64
@@ -647,7 +647,6 @@ Jump to constant instruction number.
 void EmitJumpIns(vm_t *vm, const char *jmpop, int cdest) {
 
 	JUSED(cdest);
-
 	EmitString(jmpop); // j??? 0x12345678
 	// we only know all the jump addresses in the third pass
 	if (pass == 2) {
@@ -665,8 +664,8 @@ Call to constant instruction number.
 =======================================================================================================================================
 */
 void EmitCallIns(vm_t *vm, int cdest) {
-	JUSED(cdest);
 
+	JUSED(cdest);
 	EmitString("E8"); // call 0x12345678
 	// we only know all the jump addresses in the third pass
 	if (pass == 2) {
@@ -749,8 +748,7 @@ qboolean ConstOptimize(vm_t *vm, int callProcOfsSyscall) {
 	int v;
 	int op1;
 
-	// we can safely perform optimizations only in case if
-	// we are 100% sure that next instruction is not a jump label
+	// we can safely perform optimizations only in case if we are 100% sure that next instruction is not a jump label
 	if (vm->jumpTableTargets && !jused[instruction]) {
 		op1 = code[pc + 4];
 	} else {
@@ -769,6 +767,7 @@ qboolean ConstOptimize(vm_t *vm, int callProcOfsSyscall) {
 			EmitString("8B 00"); // mov eax, dword ptr [eax]
 #endif
 			EmitCommand(LAST_COMMAND_MOV_STACK_EAX); // mov dword ptr [edi + ebx * 4], eax
+
 			pc++; // OP_LOAD4
 			instruction += 1;
 			return qtrue;
@@ -783,6 +782,7 @@ qboolean ConstOptimize(vm_t *vm, int callProcOfsSyscall) {
 			EmitString("0F B7 00"); // movzx eax, word ptr [eax]
 #endif
 			EmitCommand(LAST_COMMAND_MOV_STACK_EAX); // mov dword ptr [edi + ebx * 4], eax
+
 			pc++; // OP_LOAD2
 			instruction += 1;
 			return qtrue;
@@ -797,6 +797,7 @@ qboolean ConstOptimize(vm_t *vm, int callProcOfsSyscall) {
 			EmitString("0F B6 00"); // movzx eax, byte ptr [eax]
 #endif
 			EmitCommand(LAST_COMMAND_MOV_STACK_EAX); // mov dword ptr [edi + ebx * 4], eax
+
 			pc++; // OP_LOAD1
 			instruction += 1;
 			return qtrue;
@@ -811,6 +812,7 @@ qboolean ConstOptimize(vm_t *vm, int callProcOfsSyscall) {
 			Emit4(Constant4());
 #endif
 			EmitCommand(LAST_COMMAND_SUB_BL_1); // sub bl, 1
+
 			pc++; // OP_STORE4
 			instruction += 1;
 			return qtrue;
@@ -826,6 +828,7 @@ qboolean ConstOptimize(vm_t *vm, int callProcOfsSyscall) {
 			Emit2(Constant4());
 #endif
 			EmitCommand(LAST_COMMAND_SUB_BL_1); // sub bl, 1
+
 			pc++; // OP_STORE2
 			instruction += 1;
 			return qtrue;
@@ -840,11 +843,13 @@ qboolean ConstOptimize(vm_t *vm, int callProcOfsSyscall) {
 			Emit1(Constant4());
 #endif
 			EmitCommand(LAST_COMMAND_SUB_BL_1); // sub bl, 1
+
 			pc++; // OP_STORE1
 			instruction += 1;
 			return qtrue;
 		case OP_ADD:
 			v = Constant4();
+
 			EmitMovEAXStack(vm, 0);
 
 			if (iss8(v)) {
@@ -856,11 +861,13 @@ qboolean ConstOptimize(vm_t *vm, int callProcOfsSyscall) {
 			}
 
 			EmitCommand(LAST_COMMAND_MOV_STACK_EAX);
+
 			pc++; // OP_ADD
 			instruction += 1;
 			return qtrue;
 		case OP_SUB:
 			v = Constant4();
+
 			EmitMovEAXStack(vm, 0);
 
 			if (iss8(v)) {
@@ -872,11 +879,13 @@ qboolean ConstOptimize(vm_t *vm, int callProcOfsSyscall) {
 			}
 
 			EmitCommand(LAST_COMMAND_MOV_STACK_EAX);
+
 			pc++; // OP_SUB
 			instruction += 1;
 			return qtrue;
 		case OP_MULI:
 			v = Constant4();
+
 			EmitMovEAXStack(vm, 0);
 
 			if (iss8(v)) {
@@ -888,6 +897,7 @@ qboolean ConstOptimize(vm_t *vm, int callProcOfsSyscall) {
 			}
 
 			EmitCommand(LAST_COMMAND_MOV_STACK_EAX);
+
 			pc++; // OP_MULI
 			instruction += 1;
 			return qtrue;
@@ -902,6 +912,7 @@ qboolean ConstOptimize(vm_t *vm, int callProcOfsSyscall) {
 			EmitString("C1 E0"); // shl eax, 0x12
 			Emit1(v);
 			EmitCommand(LAST_COMMAND_MOV_STACK_EAX);
+
 			pc += 5; // CONST + OP_LSH
 			instruction += 1;
 			return qtrue;
@@ -916,6 +927,7 @@ qboolean ConstOptimize(vm_t *vm, int callProcOfsSyscall) {
 			EmitString("C1 F8"); // sar eax, 0x12
 			Emit1(v);
 			EmitCommand(LAST_COMMAND_MOV_STACK_EAX);
+
 			pc += 5; // CONST + OP_RSHI
 			instruction += 1;
 			return qtrue;
@@ -930,11 +942,13 @@ qboolean ConstOptimize(vm_t *vm, int callProcOfsSyscall) {
 			EmitString("C1 E8"); // shr eax, 0x12
 			Emit1(v);
 			EmitCommand(LAST_COMMAND_MOV_STACK_EAX);
+
 			pc += 5; // CONST + OP_RSHU
 			instruction += 1;
 			return qtrue;
 		case OP_BAND:
 			v = Constant4();
+
 			EmitMovEAXStack(vm, 0);
 
 			if (iss8(v)) {
@@ -946,11 +960,13 @@ qboolean ConstOptimize(vm_t *vm, int callProcOfsSyscall) {
 			}
 
 			EmitCommand(LAST_COMMAND_MOV_STACK_EAX);
+
 			pc += 1; // OP_BAND
 			instruction += 1;
 			return qtrue;
 		case OP_BOR:
 			v = Constant4();
+
 			EmitMovEAXStack(vm, 0);
 
 			if (iss8(v)) {
@@ -962,11 +978,13 @@ qboolean ConstOptimize(vm_t *vm, int callProcOfsSyscall) {
 			}
 
 			EmitCommand(LAST_COMMAND_MOV_STACK_EAX);
+
 			pc += 1; // OP_BOR
 			instruction += 1;
 			return qtrue;
 		case OP_BXOR:
 			v = Constant4();
+
 			EmitMovEAXStack(vm, 0);
 
 			if (iss8(v)) {
@@ -978,6 +996,7 @@ qboolean ConstOptimize(vm_t *vm, int callProcOfsSyscall) {
 			}
 
 			EmitCommand(LAST_COMMAND_MOV_STACK_EAX);
+
 			pc += 1; // OP_BXOR
 			instruction += 1;
 			return qtrue;
@@ -995,8 +1014,11 @@ qboolean ConstOptimize(vm_t *vm, int callProcOfsSyscall) {
 			EmitCommand(LAST_COMMAND_SUB_BL_1);
 			EmitString("3D"); // cmp eax, 0x12345678
 			Emit4(Constant4());
+
 			pc++; // OP_*
+
 			EmitBranchConditions(vm, op1);
+
 			instruction++;
 			return qtrue;
 		case OP_EQF:
@@ -1006,6 +1028,7 @@ qboolean ConstOptimize(vm_t *vm, int callProcOfsSyscall) {
 			}
 
 			pc += 5; // CONST + OP_EQF|OP_NEF
+
 			EmitMovEAXStack(vm, 0);
 			EmitCommand(LAST_COMMAND_SUB_BL_1);
 			// floating point hack :)
@@ -1022,12 +1045,15 @@ qboolean ConstOptimize(vm_t *vm, int callProcOfsSyscall) {
 			return qtrue;
 		case OP_JUMP:
 			EmitJumpIns(vm, "E9", Constant4()); // jmp 0x12345678
+
 			pc += 1; // OP_JUMP
 			instruction += 1;
 			return qtrue;
 		case OP_CALL:
 			v = Constant4();
+
 			EmitCallConst(vm, v, callProcOfsSyscall);
+
 			pc += 1; // OP_CALL
 			instruction += 1;
 			return qtrue;
@@ -1059,8 +1085,7 @@ void VM_Compile(vm_t *vm, vmHeader_t *header) {
 
 	Com_Memset(jused, 0, jusedSize);
 	Com_Memset(buf, 0, maxLength);
-	// copy code in larger buffer and put some zeros at the end
-	// so we can safely look ahead for a few instructions in it
+	// copy code in larger buffer and put some zeros at the end so we can safely look ahead for a few instructions in it
 	// without a chance to get false-positive because of some garbage bytes
 	Com_Memset(code, 0, header->codeLength + 32);
 	Com_Memcpy(code, (byte *)header + header->codeOffset, header->codeLength);
@@ -1070,7 +1095,7 @@ void VM_Compile(vm_t *vm, vmHeader_t *header) {
 	for (i = 0; i < vm->numJumpTableTargets; i++) {
 		JUSED(*(int *)(vm->jumpTableTargets + (i * sizeof(int))));
 	}
-	// Start buffer with x86-VM specific procedures
+	// start buffer with x86-VM specific procedures
 	compiledOfs = 0;
 	callDoSyscallOfs = compiledOfs;
 	callProcOfs = EmitCallDoSyscall(vm);
@@ -1659,6 +1684,9 @@ void VM_Destroy_Compiled(vm_t *self) {
 #endif
 }
 
+#if defined(_MSC_VER) && defined(idx64)
+extern uint8_t qvmcall64(int *programStack, int *opStack, intptr_t *instructionPointers, byte *dataBase);
+#endif
 /*
 =======================================================================================================================================
 VM_CallCompiled
@@ -1666,9 +1694,6 @@ VM_CallCompiled
 This function is called directly by the generated code.
 =======================================================================================================================================
 */
-#if defined(_MSC_VER) && defined(idx64)
-extern uint8_t qvmcall64(int *programStack, int *opStack, intptr_t *instructionPointers, byte *dataBase);
-#endif
 int VM_CallCompiled(vm_t *vm, int *args) {
 	byte stack[OPSTACK_SIZE + 15];
 	void *entryPoint;

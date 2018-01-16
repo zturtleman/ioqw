@@ -51,7 +51,7 @@ extern "C" {
 		voidpf opaque;
 	} zlib_filefunc_def;
 
-	void fill_fopen_filefunc OF((zlib_filefunc_def * pzlib_filefunc_def));
+	void fill_fopen_filefunc OF((zlib_filefunc_def *pzlib_filefunc_def));
 
 	#define ZREAD(filefunc, filestream, buf, size) ((*((filefunc).zread_file))((filefunc).opaque, filestream, buf, size))
 	#define ZWRITE(filefunc, filestream, buf, size) ((*((filefunc).zwrite_file))((filefunc).opaque, filestream, buf, size))

@@ -95,42 +95,100 @@ struct sparc_opcode {
 #define TICC(COND) FMT3I(0, ((COND << 6)|0x3a))
 
 enum sparc_iname {
-	CALL, NOP, SETHI,
-	BA, BN, BNE, BE, BG, BLE, BGE, BL, BGU, BLEU, BCC, BCS,
-	BPOS, BNEG, BVC, BVS,
-	ADDI, ADD,
-	ANDI, AND,
-	ORI, OR,
-	XORI, XOR,
-	SUBI, SUB,
-	ANDNI, ANDN,
-	ORNI, ORN,
-	XNORI, XNOR,
-	UMULI, UMUL,
-	SMULI, SMUL,
-	UDIVI, UDIV,
-	SDIVI, SDIV,
-	SUBCCI, SUBCC,
-	SLLI, SLL,
-	SRLI, SRL,
-	SRAI, SRA,
-	WRI, WR,
-	SAVEI, SAVE,
-	RESTOREI, RESTORE,
+	CALL,
+	NOP,
+	SETHI,
+	BA,
+	BN,
+	BNE,
+	BE,
+	BG,
+	BLE,
+	BGE,
+	BL,
+	BGU,
+	BLEU,
+	BCC,
+	BCS,
+	BPOS,
+	BNEG,
+	BVC,
+	BVS,
+	ADDI,
+	ADD,
+	ANDI,
+	AND,
+	ORI,
+	OR,
+	XORI,
+	XOR,
+	SUBI,
+	SUB,
+	ANDNI,
+	ANDN,
+	ORNI,
+	ORN,
+	XNORI,
+	XNOR,
+	UMULI,
+	UMUL,
+	SMULI,
+	SMUL,
+	UDIVI,
+	UDIV,
+	SDIVI,
+	SDIV,
+	SUBCCI,
+	SUBCC,
+	SLLI,
+	SLL,
+	SRLI,
+	SRL,
+	SRAI,
+	SRA,
+	WRI,
+	WR,
+	SAVEI,
+	SAVE,
+	RESTOREI,
+	RESTORE,
 	TA,
-	JMPLI, JMPL,
-	LDXI, LDX,
-	LDUWI, LDUW,
-	LDUHI, LDUH,
-	LDUBI, LDUB,
-	STXI, STX,
-	STWI, STW,
-	STHI, STH,
-	STBI, STB,
-	LDFI, LDF,
-	STFI, STF,
-	FADD, FSUB, FCMP, FSTOI, FITOS, FNEG, FDIV, FMUL,
-	FBE, FBNE, FBL, FBGE, FBG, FBLE,
+	JMPLI,
+	JMPL,
+	LDXI,
+	LDX,
+	LDUWI,
+	LDUW,
+	LDUHI,
+	LDUH,
+	LDUBI,
+	LDUB,
+	STXI,
+	STX,
+	STWI,
+	STW,
+	STHI,
+	STH,
+	STBI,
+	STB,
+	LDFI,
+	LDF,
+	STFI,
+	STF,
+	FADD,
+	FSUB,
+	FCMP,
+	FSTOI,
+	FITOS,
+	FNEG,
+	FDIV,
+	FMUL,
+	FBE,
+	FBNE,
+	FBL,
+	FBGE,
+	FBG,
+	FBLE,
 };
 
 #define LDLI SL(LDUWI, LDXI)
@@ -160,66 +218,66 @@ static const struct sparc_opcode sparc_opcodes[] = {
 	{"bvc", BICC(0, 15), {ARG_DISP22},},
 	{"bvs", BICC(0, 7), {ARG_DISP22},},
 	{"add", FMT3I(2, 0x00), ARG_RS1_SIMM13_RD,},
-	{"add", FMT3 (2, 0x00), ARG_RS1_RS2_RD,},
+	{"add", FMT3(2, 0x00), ARG_RS1_RS2_RD,},
 	{"and", FMT3I(2, 0x01), ARG_RS1_SIMM13_RD,},
-	{"and", FMT3 (2, 0x01), ARG_RS1_RS2_RD,},
+	{"and", FMT3(2, 0x01), ARG_RS1_RS2_RD,},
 	{"or", FMT3I(2, 0x02), ARG_RS1_SIMM13_RD,},
-	{"or", FMT3 (2, 0x02), ARG_RS1_RS2_RD,},
+	{"or", FMT3(2, 0x02), ARG_RS1_RS2_RD,},
 	{"xor", FMT3I(2, 0x03), ARG_RS1_SIMM13_RD,},
-	{"xor", FMT3 (2, 0x03), ARG_RS1_RS2_RD,},
+	{"xor", FMT3(2, 0x03), ARG_RS1_RS2_RD,},
 	{"sub", FMT3I(2, 0x04), ARG_RS1_SIMM13_RD,},
-	{"sub", FMT3 (2, 0x04), ARG_RS1_RS2_RD,},
+	{"sub", FMT3(2, 0x04), ARG_RS1_RS2_RD,},
 	{"andn", FMT3I(2, 0x05), ARG_RS1_SIMM13_RD,},
-	{"andn", FMT3 (2, 0x05), ARG_RS1_RS2_RD,},
+	{"andn", FMT3(2, 0x05), ARG_RS1_RS2_RD,},
 	{"orn", FMT3I(2, 0x06), ARG_RS1_SIMM13_RD,},
-	{"orn", FMT3 (2, 0x06), ARG_RS1_RS2_RD,},
+	{"orn", FMT3(2, 0x06), ARG_RS1_RS2_RD,},
 	{"xnor", FMT3I(2, 0x07), ARG_RS1_SIMM13_RD,},
-	{"xnor", FMT3 (2, 0x07), ARG_RS1_RS2_RD,},
+	{"xnor", FMT3(2, 0x07), ARG_RS1_RS2_RD,},
 	{"umul", FMT3I(2, 0x0a), ARG_RS1_SIMM13_RD,},
-	{"umul", FMT3 (2, 0x0a), ARG_RS1_RS2_RD,},
+	{"umul", FMT3(2, 0x0a), ARG_RS1_RS2_RD,},
 	{"smul", FMT3I(2, 0x0b), ARG_RS1_SIMM13_RD,},
-	{"smul", FMT3 (2, 0x0b), ARG_RS1_RS2_RD,},
+	{"smul", FMT3(2, 0x0b), ARG_RS1_RS2_RD,},
 	{"udiv", FMT3I(2, 0x0e), ARG_RS1_SIMM13_RD,},
-	{"udiv", FMT3 (2, 0x0e), ARG_RS1_RS2_RD,},
+	{"udiv", FMT3(2, 0x0e), ARG_RS1_RS2_RD,},
 	{"sdiv", FMT3I(2, 0x0f), ARG_RS1_SIMM13_RD,},
-	{"sdiv", FMT3 (2, 0x0f), ARG_RS1_RS2_RD,},
+	{"sdiv", FMT3(2, 0x0f), ARG_RS1_RS2_RD,},
 	{"subcc", FMT3I(2, 0x14), ARG_RS1_SIMM13_RD,},
-	{"subcc", FMT3 (2, 0x14), ARG_RS1_RS2_RD,},
+	{"subcc", FMT3(2, 0x14), ARG_RS1_RS2_RD,},
 	{"sll", FMT3I(2, 0x25), ARG_RS1_SIMM13_RD,},
-	{"sll", FMT3 (2, 0x25), ARG_RS1_RS2_RD,},
+	{"sll", FMT3(2, 0x25), ARG_RS1_RS2_RD,},
 	{"srl", FMT3I(2, 0x26), ARG_RS1_SIMM13_RD,},
-	{"srl", FMT3 (2, 0x26), ARG_RS1_RS2_RD,},
+	{"srl", FMT3(2, 0x26), ARG_RS1_RS2_RD,},
 	{"sra", FMT3I(2, 0x27), ARG_RS1_SIMM13_RD,},
-	{"sra", FMT3 (2, 0x27), ARG_RS1_RS2_RD,},
+	{"sra", FMT3(2, 0x27), ARG_RS1_RS2_RD,},
 	{"wr", FMT3I(2, 0x30), ARG_RS1_SIMM13_RD,},
-	{"wr", FMT3 (2, 0x30), ARG_RS1_SIMM13_RD,},
+	{"wr", FMT3(2, 0x30), ARG_RS1_SIMM13_RD,},
 	{"save", FMT3I(2, 0x3c), ARG_RS1_SIMM13_RD,},
-	{"save", FMT3 (2, 0x3c), ARG_RS1_RS2_RD,},
+	{"save", FMT3(2, 0x3c), ARG_RS1_RS2_RD,},
 	{"restore", FMT3I(2, 0x3d), ARG_RS1_SIMM13_RD,},
-	{"restore", FMT3 (2, 0x3d), ARG_RS1_RS2_RD,},
+	{"restore", FMT3(2, 0x3d), ARG_RS1_RS2_RD,},
 	{"ta", TICC(8), {ARG_SWTRAP, ARG_NONE},},
 	{"jmpl", FMT3I(2, 0x38), ARG_RS1_SIMM13_RD,},
-	{"jmpl", FMT3 (2, 0x38), ARG_RS1_RS2_RD,},
+	{"jmpl", FMT3(2, 0x38), ARG_RS1_RS2_RD,},
 	{"ldx", FMT3I(3, 0x0b), ARG_RS1_SIMM13_RD,},
-	{"ldx", FMT3 (3, 0x0b), ARG_RS1_RS2_RD,},
+	{"ldx", FMT3(3, 0x0b), ARG_RS1_RS2_RD,},
 	{"lduw", FMT3I(3, 0x00), ARG_RS1_SIMM13_RD,},
-	{"lduw", FMT3 (3, 0x00), ARG_RS1_RS2_RD,},
+	{"lduw", FMT3(3, 0x00), ARG_RS1_RS2_RD,},
 	{"lduh", FMT3I(3, 0x02), ARG_RS1_SIMM13_RD,},
-	{"lduh", FMT3 (3, 0x02), ARG_RS1_RS2_RD,},
+	{"lduh", FMT3(3, 0x02), ARG_RS1_RS2_RD,},
 	{"ldub", FMT3I(3, 0x01), ARG_RS1_SIMM13_RD,},
-	{"ldub", FMT3 (3, 0x01), ARG_RS1_RS2_RD,},
+	{"ldub", FMT3(3, 0x01), ARG_RS1_RS2_RD,},
 	{"stx", FMT3I(3, 0x0e), ARG_RS1_SIMM13_RD,},
-	{"stx", FMT3 (3, 0x0e), ARG_RS1_RS2_RD,},
+	{"stx", FMT3(3, 0x0e), ARG_RS1_RS2_RD,},
 	{"stw", FMT3I(3, 0x04), ARG_RS1_SIMM13_RD,},
-	{"stw", FMT3 (3, 0x04), ARG_RS1_RS2_RD,},
+	{"stw", FMT3(3, 0x04), ARG_RS1_RS2_RD,},
 	{"sth", FMT3I(3, 0x06), ARG_RS1_SIMM13_RD,},
-	{"sth", FMT3 (3, 0x06), ARG_RS1_RS2_RD,},
+	{"sth", FMT3(3, 0x06), ARG_RS1_RS2_RD,},
 	{"stb", FMT3I(3, 0x05), ARG_RS1_SIMM13_RD,},
-	{"stb", FMT3 (3, 0x05), ARG_RS1_RS2_RD,},
+	{"stb", FMT3(3, 0x05), ARG_RS1_RS2_RD,},
 	{"ldf", FMT3I(3, 0x20), ARG_RS1_SIMM13_RD,},
-	{"ldf", FMT3 (3, 0x20), ARG_RS1_RS2_RD,},
+	{"ldf", FMT3(3, 0x20), ARG_RS1_RS2_RD,},
 	{"stf", FMT3I(3, 0x24), ARG_RS1_SIMM13_RD,},
-	{"stf", FMT3 (3, 0x24), ARG_RS1_RS2_RD,},
+	{"stf", FMT3(3, 0x24), ARG_RS1_RS2_RD,},
 	{"fadd", FMT3F(2, 0x34, 0x041), ARG_RS1_RS2_RD,},
 	{"fsub", FMT3F(2, 0x34, 0x045), ARG_RS1_RS2_RD,},
 	{"fcmp", FMT3F(2, 0x35, 0x051), ARG_RS1_RS2,},
@@ -682,7 +740,6 @@ struct func_info {
 };
 
 #define THUNK_ICOUNT -1
-
 /*
 =======================================================================================================================================
 sparc_push_data
@@ -797,6 +854,7 @@ static void dst_insn_append(struct func_info * const fp) {
 	}
 
 	dst_insn_insert_tail(fp, dp);
+
 	fp->insn_index = 0;
 }
 
@@ -847,7 +905,7 @@ static void start_emit(struct func_info * const fp, int i_count) {
 
 /*
 =======================================================================================================================================
-do_emit_one
+__do_emit_one
 =======================================================================================================================================
 */
 static void __do_emit_one(struct func_info * const fp, unsigned int insn) {
@@ -855,7 +913,6 @@ static void __do_emit_one(struct func_info * const fp, unsigned int insn) {
 }
 
 #define in(inst, args...) __do_emit_one(fp, IN(inst, args))
-
 /*
 =======================================================================================================================================
 end_emit
@@ -1111,7 +1168,6 @@ static void compile_one_insn(vm_t *vm, struct func_info * const fp, struct src_i
 				in(SUBCC, rTMP, rFIRST(fp), G0);
 				in(BLEU, +4 * 5);
 				in(LDLI, rVMDATA, VM_Data_Offset(ErrJump), rTMP);
-
 				in(SLLI, rFIRST(fp), 2, rFIRST(fp));
 				in(LDLI, rVMDATA, VM_Data_Offset(iPointers), rTMP);
 				in(LDL, rTMP, rFIRST(fp), rTMP);
@@ -1588,7 +1644,9 @@ static void free_source_insns(struct func_info * const fp) {
 
 	while (sp) {
 		struct src_insn *next = sp->next;
+
 		Z_Free(sp);
+
 		sp = next;
 	}
 }
@@ -1622,7 +1680,7 @@ static void compile_function(vm_t *vm, struct func_info * const fp) {
  * the VM, where setup the fixed global registers. The second is
  * for calling out to C code from the VM, where we need to preserve
  * those fixed globals across the call.
- */
+*/
 
 /*
 =======================================================================================================================================
@@ -1802,6 +1860,7 @@ void VM_Compile(vm_t *vm, vmHeader_t *header) {
 	fi.first->next = NULL;
 #ifdef __arch64__
 	Z_Free(vm->instructionPointers);
+
 	vm->instructionPointers = Z_Malloc(header->instructionCount * sizeof(void *));
 #endif
 	fi.dst_by_i_count = (struct dst_insn **)vm->instructionPointers;
@@ -1899,9 +1958,7 @@ int VM_CallCompiled(vm_t *vm, int *args) {
 	int retVal;
 
 	currentVM = vm;
-
 	vm->currentlyInterpreting = qtrue;
-
 	programStack -= (8 + 4 * MAX_VMMAIN_ARGS);
 	argPointer = (int *)&image[programStack + 8];
 
@@ -1912,6 +1969,7 @@ int VM_CallCompiled(vm_t *vm, int *args) {
 	// call generated code
 	{
 		int (*entry)(void *, int, void *, int);
+
 		entry = (void *)(vm->codeBase + vm_dataAndCode->dataLength);
 		retVal = entry(vm->codeBase, programStack, vm->dataBase, vm->dataMask);
 	}

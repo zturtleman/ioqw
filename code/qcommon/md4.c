@@ -120,6 +120,7 @@ copy4
 =======================================================================================================================================
 */
 static void copy4(byte *out, uint32_t x) {
+
 	out[0] = x&0xFF;
 	out[1] = (x >> 8)&0xFF;
 	out[2] = (x >> 16)&0xFF;
@@ -132,6 +133,7 @@ mdfour_begin
 =======================================================================================================================================
 */
 void mdfour_begin(struct mdfour *md) {
+
 	md->A = 0x67452301;
 	md->B = 0xefcdab89;
 	md->C = 0x98badcfe;
@@ -204,6 +206,7 @@ mdfour_result
 =======================================================================================================================================
 */
 static void mdfour_result(struct mdfour *md, byte *out) {
+
 	copy4(out, md->A);
 	copy4(out + 4, md->B);
 	copy4(out + 8, md->C);
@@ -233,6 +236,7 @@ unsigned Com_BlockChecksum(const void *buffer, int length) {
 	unsigned val;
 
 	mdfour((byte *)digest, (byte *)buffer, length);
+
 	val = digest[0] ^ digest[1] ^ digest[2] ^ digest[3];
 	return val;
 }

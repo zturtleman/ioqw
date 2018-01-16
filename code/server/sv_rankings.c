@@ -132,6 +132,7 @@ void SV_RankBegin(char *gamekey) {
 	memset(SV_RankGameKey, 0, sizeof(SV_RankGameKey));
 
 	strncpy(SV_RankGameKey, gamekey, sizeof(SV_RankGameKey) - 1);
+
 	init = GRankInit(1, SV_RankGameKey, GR_OPT_POLL, GR_OPT_END);
 	s_server_context = init.context;
 	s_rankings_contexts++;
@@ -204,6 +205,7 @@ void SV_RankEnd(void) {
 	}
 
 	s_rankings_active = qfalse;
+
 	Cvar_Set("sv_rankingsActive", "0");
 }
 
@@ -691,6 +693,7 @@ void SV_RankQuit(void) {
 				} else {
 					if (s_ranked_players[i].context) {
 						GR_STATUS cleanup_status;
+
 						cleanup_status = GRankCleanupAsync(s_ranked_players[i].context, 0, SV_RankCleanupCBF, (void *)&(s_ranked_players[i]), GR_OPT_END);
 
 						if (cleanup_status != GR_STATUS_PENDING) {
@@ -974,6 +977,7 @@ static void SV_RankCloseContext(ranked_player_t *ranked_player) {
 	}
 
 	assert(s_rankings_contexts > 0);
+
 	s_rankings_contexts--;
 
 	Com_DPrintf("SV_RankCloseContext: s_rankings_contexts = %d\n", s_rankings_contexts);
@@ -1106,7 +1110,7 @@ static void SV_RankEncodeGameID(uint64_t game_id, char *result, int len) {
 		Com_DPrintf("SV_RankEncodeGameID: result buffer too small\n");
 		result[0] = '\0';
 	} else {
-		qint64 gameid = LittleLong64(*(qint64*)&game_id);
+		qint64 gameid = LittleLong64(*(qint64 *)&game_id);
 		SV_RankAsciiEncode(result, (unsigned char *)&gameid, sizeof(qint64));
 	}
 }
@@ -1128,7 +1132,7 @@ static uint64_t SV_RankDecodePlayerID(const char *string) {
 	Com_DPrintf("SV_RankDecodePlayerID: string length %d\n", len);
 	SV_RankAsciiDecode(buffer, string, len);
 
-	player_id = LittleLong64(*(qint64*)buffer);
+	player_id = LittleLong64(*(qint64 *)buffer);
 	return *(uint64_t *)&player_id;
 }
 
@@ -1143,6 +1147,7 @@ static void SV_RankDecodePlayerKey(const char *string, GR_PLAYER_TOKEN key) {
 	assert(string != NULL);
 
 	len = strlen(string);
+
 	Com_DPrintf("SV_RankDecodePlayerKey: string length %d\n", len);
 
 	memset(key, 0, sizeof(GR_PLAYER_TOKEN));
@@ -1207,6 +1212,7 @@ static void SV_RankError(const char *fmt, ...) {
 	Com_DPrintf("****************************************\n");
 
 	s_rankings_active = qfalse;
+
 	Cvar_Set("sv_rankingsActive", "0");
 	// FIXME - attempt clean shutdown?
 }

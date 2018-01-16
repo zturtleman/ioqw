@@ -443,7 +443,6 @@ vmHeader_t *VM_LoadQVM(vm_t *vm, qboolean alloc, qboolean unpure) {
 		if (vm->dataAlloc != dataLength + 4) {
 			VM_Free(vm);
 			FS_FreeFile(header.v);
-
 			Com_Printf(S_COLOR_YELLOW "Warning: Data region size of %s not matching after VM_Restart()\n", filename);
 			return NULL;
 		}
@@ -505,8 +504,8 @@ vm_t *VM_Restart(vm_t *vm, qboolean unpure) {
 		intptr_t(*systemCall)(intptr_t *parms);
 
 		systemCall = vm->systemCall;
-		Q_strncpyz(name, vm->name, sizeof(name));
 
+		Q_strncpyz(name, vm->name, sizeof(name));
 		VM_Free(vm);
 
 		vm = VM_Create(name, systemCall, VMI_NATIVE);
