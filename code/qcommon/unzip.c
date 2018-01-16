@@ -121,7 +121,6 @@ local int unzlocal_getByte(pzlib_filefunc_def, filestream, pi)
 	int *pi;
 	{
 	unsigned char c;
-
 	int err = (int)ZREAD(*pzlib_filefunc_def, filestream, &c, 1);
 
 	if (err == 1) {
@@ -354,10 +353,8 @@ local uLong unzlocal_SearchCentralDir(pzlib_filefunc_def, filestream)
   Open a Zip file. path contain the full pathname (by example,
 	 on a Windows NT computer "c:\\test\\zlib114.zip" or on a Unix computer
 	 "zlib/zlib114.zip".
-	 If the zipfile cannot be opened (file doesn't exist or in not valid), the
-	   return value is NULL.
-	 Else, the return value is an unzFile Handle, usable with other function
-	   of this unzip package.
+	 If the zipfile cannot be opened (file doesn't exist or in not valid), the return value is NULL.
+	 Else, the return value is an unzFile Handle, usable with other function of this unzip package.
 */
 extern unzFile ZEXPORT unzOpen2(path, pzlib_filefunc_def)
 	const char *path;
@@ -464,7 +461,8 @@ extern unzFile ZEXPORT unzOpen(path) const char *path;
   Close a ZipFile opened with unzipOpen.
   If there is files inside the .Zip opened with unzipOpenCurrentFile (see later),
 	these files MUST be closed with unzipCloseCurrentFile before call unzipClose.
-  return UNZ_OK if there is no problem. */
+  return UNZ_OK if there is no problem.
+*/
 extern int ZEXPORT unzClose(file) unzFile file;
 {
 	unz_s *s;
@@ -487,7 +485,8 @@ extern int ZEXPORT unzClose(file) unzFile file;
 /*
   Write info about the ZipFile in the *pglobal_info structure.
   No preparation of the structure is needed
-  return UNZ_OK if there is no problem. */
+  return UNZ_OK if there is no problem.
+*/
 extern int ZEXPORT unzGetGlobalInfo(file, pglobal_info)
 	unzFile file;
 	unz_global_info *pglobal_info;
@@ -801,7 +800,6 @@ extern int ZEXPORT unzLocateFile(file, szFileName, iCaseSensitivity)
 	int err;
 
 	// we remember the 'current' position in the file so that we can jump back there if we fail.
-
 	unz_file_info cur_file_infoSaved;
 	unz_file_info_internal cur_file_info_internalSaved;
 	uLong num_fileSaved;

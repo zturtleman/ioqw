@@ -504,7 +504,7 @@ void FS_GetModDescription(const char *modDir, char *description, int description
 fileHandle_t FS_FOpenFileWrite(const char *qpath);
 fileHandle_t FS_FOpenFileAppend(const char *filename);
 fileHandle_t FS_FCreateOpenPipeFile(const char *filename);
-// will properly create any needed paths and deal with separater character issues
+// will properly create any needed paths and deal with separator character issues
 fileHandle_t FS_SV_FOpenFileWrite(const char *filename);
 long FS_SV_FOpenFileRead(const char *filename, fileHandle_t *fp);
 void FS_SV_Rename(const char *from, const char *to, qboolean safe);
