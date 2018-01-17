@@ -238,7 +238,9 @@ int Export_BotLibVarGet(const char *var_name, char *value, int size) {
 	char *varvalue;
 
 	varvalue = LibVarGetString(var_name);
+
 	strncpy(value, varvalue, size - 1);
+
 	value[size - 1] = '\0';
 	return BLERR_NOERROR;
 }
@@ -613,7 +615,7 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 	end_time = clock();
 	botimport.Print(PRT_MESSAGE, "id %lu clocks, %lu CLOCKS_PER_SEC\n", end_time - start_time, CLOCKS_PER_SEC);
 */
-	// TTimo: nested comments are BAD for gcc -Werror, use #if 0 instead..
+	// nested comments are BAD for gcc -Werror, use #if 0 instead..
 #if 0
 	AAS_ClearShownDebugLines();
 
@@ -643,7 +645,6 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 
 	//bsptrace = AAS_Trace2(eye, NULL, NULL, end, 1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
 	bsptrace = AAS_Trace2(eye, mins, maxs, end, 1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
-
 	botimport.DebugLineShow(line[1], eye, bsptrace.endpos, LINECOLOR_BLUE);
 
 	if (bsptrace.fraction < 1.0) {

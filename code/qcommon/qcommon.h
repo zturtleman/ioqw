@@ -212,7 +212,6 @@ qboolean Netchan_Process(netchan_t *chan, msg_t *msg);
 // maintain a list of compatible protocols for demo playing
 // NOTE: that stuff only works with two digits protocols
 extern int demo_protocols[];
-
 #if !defined UPDATE_SERVER_NAME && !defined STANDALONE
 #define UPDATE_SERVER_NAME "update.quake3arena.com"
 #endif
@@ -220,10 +219,10 @@ extern int demo_protocols[];
 #ifndef MASTER_SERVER_NAME
 #define MASTER_SERVER_NAME "dpmaster.deathmask.net"
 #endif
-#define PORT_MASTER			27950
-#define PORT_UPDATE			27951
-#define PORT_SERVER			27960
-#define NUM_SERVER_PORTS	4 // broadcast scan this many ports after PORT_SERVER so a single machine can run multiple servers
+#define PORT_MASTER 27950
+#define PORT_UPDATE 27951
+#define PORT_SERVER 27960
+#define NUM_SERVER_PORTS 4 // broadcast scan this many ports after PORT_SERVER so a single machine can run multiple servers
 // the svc_strings[] array in cl_parse.c should mirror this
 // server to client
 enum svc_ops_e {
