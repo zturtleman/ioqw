@@ -4085,9 +4085,8 @@ void AAS_SetWeaponJumpAreaFlags(void) {
 		}
 
 		if (!strcmp(classname, "item_armor_combat") || !strcmp(classname, "item_armor_body") || !strcmp(classname, "item_armor_full") ||
-			!strcmp(classname, "weapon_heavy_machinegun") || !strcmp(classname, "weapon_chaingun") || !strcmp(classname, "weapon_shotgun") || !strcmp(classname, "weapon_nailgun") ||
-			!strcmp(classname, "weapon_phosphorgun") || !strcmp(classname, "weapon_napalmlauncher") || !strcmp(classname, "weapon_beamgun") || !strcmp(classname, "weapon_railgun") ||
-			!strcmp(classname, "weapon_plasmagun") || !strcmp(classname, "weapon_bfg") || !strcmp(classname, "weapon_missilelauncher") ||
+			!strcmp(classname, "weapon_chaingun") || !strcmp(classname, "weapon_nailgun") || !strcmp(classname, "weapon_napalmlauncher") ||
+			!strcmp(classname, "weapon_beamgun") || !strcmp(classname, "weapon_railgun") || !strcmp(classname, "weapon_plasmagun") || !strcmp(classname, "weapon_bfg") ||
 			!strcmp(classname, "holdable_kamikaze") || !strcmp(classname, "item_quad") || !strcmp(classname, "item_invis") || !strcmp(classname, "item_regen") ||
 			!strcmp(classname, "item_ammoregen") || !strcmp(classname, "item_guard") || !strcmp(classname, "item_doubler") || !strcmp(classname, "item_scout")) {
 			if (AAS_VectorForBSPEpairKey(ent, "origin", origin)) {
@@ -4096,7 +4095,7 @@ void AAS_SetWeaponJumpAreaFlags(void) {
 				AAS_IntForBSPEpairKey(ent, "spawnflags", &spawnflags);
 				// if not a stationary item
 				if (!(spawnflags & 1)) {
-					if (!AAS_DropToFloor(origin, mins, maxs, 0)) {
+					if (!AAS_DropToFloor(origin, mins, maxs)) {
 						botimport.Print(PRT_MESSAGE, "%s in solid at (%1.1f %1.1f %1.1f)\n", classname, origin[0], origin[1], origin[2]);
 					}
 				}

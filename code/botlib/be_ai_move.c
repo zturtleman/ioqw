@@ -1081,7 +1081,7 @@ float BotGapDistance(vec3_t origin, vec3_t hordir, int checkdist, int entnum) {
 
 	startz = origin[2];
 	// do gap checking
-	for (gapdist = 10; gapdist < checkdist; gapdist += 10) {
+	for (gapdist = 10; gapdist <= checkdist; gapdist += 10) {
 		VectorMA(origin, gapdist, hordir, start);
 
 		start[2] = startz + 24;
@@ -1396,7 +1396,7 @@ BotCheckBlocked
 void BotCheckBlocked(bot_movestate_t *ms, vec3_t dir, int checkbottom, bot_moveresult_t *result) {
 	vec3_t mins, maxs, end, up = {0, 0, 1};
 	bsp_trace_t trace;
-	float currentspeed;
+	int currentspeed;
 
 	// test for entities obstructing the bot's path
 	AAS_PresenceTypeBoundingBox(ms->presencetype, mins, maxs);
@@ -1567,6 +1567,7 @@ bot_moveresult_t BotTravel_BarrierJump(bot_movestate_t *ms, aas_reachability_t *
 	hordir[0] = reach->start[0] - ms->origin[0];
 	hordir[1] = reach->start[1] - ms->origin[1];
 	hordir[2] = 0;
+
 	dist = VectorNormalize(hordir);
 
 	BotCheckBlocked(ms, hordir, qtrue, &result);

@@ -630,10 +630,6 @@ bot_synonymlist_t *BotLoadSynonyms(char *filename) {
 	bot_synonymlist_t *synlist, *lastsyn, *syn;
 	bot_synonym_t *synonym, *lastsynonym;
 
-	if (!*filename) {
-		return NULL;
-	}
-
 	size = 0;
 	synlist = NULL; // make compiler happy
 	syn = NULL; // make compiler happy
@@ -1028,10 +1024,6 @@ bot_randomlist_t *BotLoadRandomStrings(char *filename) {
 #ifdef DEBUG
 	int starttime = Sys_MilliSeconds();
 #endif // DEBUG
-	if (!*filename) {
-		return NULL;
-	}
-
 	size = 0;
 	randomlist = NULL;
 	random = NULL;
@@ -1361,10 +1353,6 @@ bot_matchtemplate_t *BotLoadMatchTemplates(char *matchfile) {
 	token_t token;
 	bot_matchtemplate_t *matchtemplate, *matches, *lastmatch;
 	unsigned long int context;
-
-	if (!*matchfile) {
-		return NULL;
-	}
 
 	PC_SetBaseFolder(BOTFILESBASEFOLDER);
 
@@ -1952,10 +1940,6 @@ bot_replychat_t *BotLoadReplyChat(char *filename) {
 	bot_replychat_t *replychat, *replychatlist;
 	bot_replychatkey_t *key;
 
-	if (!*filename) {
-		return NULL;
-	}
-
 	PC_SetBaseFolder(BOTFILESBASEFOLDER);
 
 	source = LoadSourceFile(filename);
@@ -2129,7 +2113,7 @@ void BotDumpInitialChat(bot_chat_t *chat) {
 		Log_Write("  numchatmessages = %d", t->numchatmessages);
 
 		for (m = t->firstchatmessage; m; m = m->next) {
-			Log_Write("  \"%s\"", m->chatmessage);
+			Log_Write(" \"%s\"", m->chatmessage);
 		}
 
 		Log_Write("}");

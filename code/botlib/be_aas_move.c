@@ -48,7 +48,7 @@ aas_settings_t aassettings;
 AAS_DropToFloor
 =======================================================================================================================================
 */
-int AAS_DropToFloor(vec3_t origin, vec3_t mins, vec3_t maxs, int passent) {
+int AAS_DropToFloor(vec3_t origin, vec3_t mins, vec3_t maxs) {
 	vec3_t end;
 	bsp_trace_t trace;
 
@@ -59,7 +59,7 @@ int AAS_DropToFloor(vec3_t origin, vec3_t mins, vec3_t maxs, int passent) {
 
 	end[2] -= 4096;
 
-	trace = AAS_Trace(origin, mins, maxs, end, passent, CONTENTS_SOLID);
+	trace = AAS_Trace(origin, mins, maxs, end, 0, CONTENTS_SOLID);
 
 	if (trace.startsolid) {
 		origin[2] -= 1;

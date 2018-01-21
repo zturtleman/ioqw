@@ -563,7 +563,7 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 	}
 
 	VectorClear(forward);
-	//BotGapDistance(origin, forward, 0);
+	//BotGapDistance(origin, forward, 400, 0);
 	/*
 	if (parm0 & BUTTON_USE) {
 		botimport.Print(PRT_MESSAGE, "test rj from 703 to 716\n");

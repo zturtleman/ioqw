@@ -1514,10 +1514,6 @@ PS_SetBaseFolder
 */
 void PS_SetBaseFolder(char *path) {
 #ifdef BOTLIB
-	if (path) {
-		Com_sprintf(basefolder, sizeof(basefolder), "%s", path);
-	} else {
-		basefolder[0] = '\0';
-	}
+	Com_sprintf(basefolder, sizeof(basefolder), "%s", path);
 #endif
 }
