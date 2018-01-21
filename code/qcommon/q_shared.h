@@ -125,6 +125,7 @@ typedef int intptr_t;
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <time.h>
 #include <ctype.h>
@@ -845,20 +846,20 @@ void QDECL Com_Printf(const char *msg, ...) __attribute__((format(printf, 1, 2))
 =======================================================================================================================================
 */
 
-#define CVAR_ARCHIVE			0x0001 // set to cause it to be saved to vars.rc, used for system variables, not for player specific configurations
-#define CVAR_USERINFO			0x0002 // sent to server on connect or change
-#define CVAR_SERVERINFO			0x0004 // sent in response to front end requests
-#define CVAR_SYSTEMINFO			0x0008 // these cvars will be duplicated on all clients
-#define CVAR_INIT				0x0010 // don't allow change from console at all, but can be set from the command line
-#define CVAR_LATCH				0x0020 // will only change when C code next does a Cvar_Get(), so it can't be changed without proper initialization. modified will be set, even though the value hasn't changed yet
-#define CVAR_ROM				0x0040 // display only, cannot be set by user at all
-#define CVAR_USER_CREATED		0x0080 // created by a set command
-#define CVAR_TEMP				0x0100 // can be set even when cheats are disabled, but is not archived
-#define CVAR_CHEAT				0x0200 // can not be changed if cheats are disabled
-#define CVAR_NORESTART			0x0400 // do not clear when a cvar_restart is issued
-#define CVAR_SERVER_CREATED		0x0800 // cvar was created by a server the client connected to.
-#define CVAR_VM_CREATED			0x1000 // cvar was created exclusively in one of the VMs.
-#define CVAR_PROTECTED			0x2000 // prevent modifying this var from VMs or the server
+#define CVAR_ARCHIVE		0x0001 // set to cause it to be saved to vars.rc, used for system variables, not for player specific configurations
+#define CVAR_USERINFO		0x0002 // sent to server on connect or change
+#define CVAR_SERVERINFO		0x0004 // sent in response to front end requests
+#define CVAR_SYSTEMINFO		0x0008 // these cvars will be duplicated on all clients
+#define CVAR_INIT			0x0010 // don't allow change from console at all, but can be set from the command line
+#define CVAR_LATCH			0x0020 // will only change when C code next does a Cvar_Get(), so it can't be changed without proper initialization. modified will be set, even though the value hasn't changed yet
+#define CVAR_ROM			0x0040 // display only, cannot be set by user at all
+#define CVAR_USER_CREATED	0x0080 // created by a set command
+#define CVAR_TEMP			0x0100 // can be set even when cheats are disabled, but is not archived
+#define CVAR_CHEAT			0x0200 // can not be changed if cheats are disabled
+#define CVAR_NORESTART		0x0400 // do not clear when a cvar_restart is issued
+#define CVAR_SERVER_CREATED	0x0800 // cvar was created by a server the client connected to.
+#define CVAR_VM_CREATED		0x1000 // cvar was created exclusively in one of the VMs.
+#define CVAR_PROTECTED		0x2000 // prevent modifying this var from VMs or the server
 // these flags are only returned by the Cvar_Flags() function
 #define CVAR_MODIFIED		0x40000000 // Cvar was modified
 #define CVAR_NONEXISTENT	0x80000000 // Cvar doesn't exist.
@@ -923,10 +924,10 @@ typedef struct {
 #include "surfaceflags.h" // shared with the q3map utility
 // plane types are used to speed some tests
 // 0-2 are axial planes
-#define PLANE_X				0
-#define PLANE_Y				1
-#define PLANE_Z				2
-#define PLANE_NON_AXIAL		3
+#define PLANE_X			0
+#define PLANE_Y			1
+#define PLANE_Z			2
+#define PLANE_NON_AXIAL	3
 
 #define PlaneTypeForNormal(x) (x[0] == 1.0 ? PLANE_X : (x[1] == 1.0 ? PLANE_Y : (x[2] == 1.0 ? PLANE_Z : PLANE_NON_AXIAL)))
 // plane_t structure

@@ -47,7 +47,7 @@ The IP port should be updated to the new value before sending out any replies.
 #define MAX_PACKETLEN 1400 // max size of a network packet
 #define FRAGMENT_SIZE (MAX_PACKETLEN - 100)
 #define PACKET_HEADER 10 // two ints and a short
-#define FRAGMENT_BIT (1 << 31)
+#define FRAGMENT_BIT (1U << 31)
 
 cvar_t *showpackets;
 cvar_t *showdrop;

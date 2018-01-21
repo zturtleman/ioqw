@@ -638,18 +638,25 @@ Cvar_SetSafe
 */
 void Cvar_SetSafe(const char *var_name, const char *value) {
 	int flags = Cvar_Flags(var_name);
+	qboolean force = qtrue;
 
-	if ((flags != CVAR_NONEXISTENT) && (flags & CVAR_PROTECTED)) {
-		if (value) {
-			Com_Error(ERR_DROP, "Restricted source tried to set \"%s\" to \"%s\"", var_name, value);
-		} else {
-			Com_Error(ERR_DROP, "Restricted source tried to modify \"%s\"", var_name);
+	if (flags != CVAR_NONEXISTENT) {
+		if (flags & CVAR_PROTECTED) {
+			if (value) {
+				Com_Error(ERR_DROP, "Restricted source tried to set \"%s\" to \"%s\"", var_name, value);
+			} else {
+				Com_Error(ERR_DROP, "Restricted source tried to modify \"%s\"", var_name);
+			}
+
+			return;
 		}
-
-		return;
+		// don't let VMs or server change engine latched cvars instantly
+		if ((flags & CVAR_LATCH) && !(flags & CVAR_VM_CREATED)) {
+			force = qfalse;
+		}
 	}
 
-	Cvar_Set(var_name, value);
+	Cvar_Set2(var_name, value, force);
 }
 
 /*
@@ -1338,13 +1345,44 @@ void Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultVal
 
 	// there is code in Cvar_Get to prevent CVAR_ROM cvars being changed by the user. In other words CVAR_ARCHIVE and CVAR_ROM are
 	// mutually exclusive flags. Unfortunately some historical game code (including single player base game) sets both flags.
-	// We unset CVAR_ROM for such cvars.
+	// we unset CVAR_ROM for such cvars.
 	if ((flags &(CVAR_ARCHIVE|CVAR_ROM)) == (CVAR_ARCHIVE|CVAR_ROM)) {
-		Com_DPrintf(S_COLOR_YELLOW "WARNING: Unsetting CVAR_ROM cvar '%s', since it is also CVAR_ARCHIVE\n", varName);
+		Com_DPrintf(S_COLOR_YELLOW "WARNING: Unsetting CVAR_ROM from cvar '%s', since it is also CVAR_ARCHIVE\n", varName);
 		flags &= ~CVAR_ROM;
 	}
+	// don't allow VM to specific a different creator or other internal flags.
+	if (flags & CVAR_USER_CREATED) {
+		Com_DPrintf(S_COLOR_YELLOW "WARNING: VM tried to set CVAR_USER_CREATED on cvar '%s'\n", varName);
+		flags &= ~CVAR_USER_CREATED;
+	}
 
-	cv = Cvar_Get(varName, defaultValue, flags|CVAR_VM_CREATED);
+	if (flags & CVAR_SERVER_CREATED) {
+		Com_DPrintf(S_COLOR_YELLOW "WARNING: VM tried to set CVAR_SERVER_CREATED on cvar '%s'\n", varName);
+		flags &= ~CVAR_SERVER_CREATED;
+	}
+
+	if (flags & CVAR_PROTECTED) {
+		Com_DPrintf(S_COLOR_YELLOW "WARNING: VM tried to set CVAR_PROTECTED on cvar '%s'\n", varName);
+		flags &= ~CVAR_PROTECTED;
+	}
+
+	if (flags & CVAR_MODIFIED) {
+		Com_DPrintf(S_COLOR_YELLOW "WARNING: VM tried to set CVAR_MODIFIED on cvar '%s'\n", varName);
+		flags &= ~CVAR_MODIFIED;
+	}
+
+	if (flags & CVAR_NONEXISTENT) {
+		Com_DPrintf(S_COLOR_YELLOW "WARNING: VM tried to set CVAR_NONEXISTENT on cvar '%s'\n", varName);
+		flags &= ~CVAR_NONEXISTENT;
+	}
+
+	cv = Cvar_FindVar(varName);
+	// don't modify cvar if it's protected.
+	if (cv && (cv->flags & CVAR_PROTECTED)) {
+		Com_DPrintf(S_COLOR_YELLOW "WARNING: VM tried to register protected cvar '%s' with value '%s'%s\n", varName, defaultValue, (flags & ~cv->flags) != 0 ? " and new flags" : "");
+	} else {
+		cv = Cvar_Get(varName, defaultValue, flags|CVAR_VM_CREATED);
+	}
 
 	if (!vmCvar) {
 		return;

@@ -1186,7 +1186,7 @@ void CL_ClearMemory(qboolean shutdownRef) {
 	// shutdown all the client stuff
 	CL_ShutdownAll(shutdownRef);
 	// if not running a server clear the whole hunk
-	if (!com_sv_running->integer) {
+	if (!com_sv_running || !com_sv_running->integer) {
 		// clear the whole hunk
 		Hunk_Clear();
 		// clear collision map data
@@ -1302,7 +1302,7 @@ static void CL_OldGame(void) {
 	if (cl_oldGameSet) {
 		// change back to previous fs_game
 		cl_oldGameSet = qfalse;
-		Cvar_Set2("fs_game", cl_oldGame, qtrue);
+		Cvar_Set("fs_game", cl_oldGame);
 		FS_ConditionalRestart(clc.checksumFeed, qfalse);
 	}
 }
@@ -1471,7 +1471,7 @@ void CL_RequestMotd(void) {
 
 	info[0] = 0;
 
-	Com_sprintf(cls.updateChallenge, sizeof(cls.updateChallenge), "%i", ((rand() << 16) ^ rand()) ^ Com_Milliseconds());
+	Com_sprintf(cls.updateChallenge, sizeof(cls.updateChallenge), "%i", (int)((((unsigned int)rand() << 16) ^ (unsigned int)rand()) ^ Com_Milliseconds()));
 
 	Info_SetValueForKey(info, "challenge", cls.updateChallenge);
 	Info_SetValueForKey(info, "renderer", cls.glconfig.renderer_string);
@@ -1612,7 +1612,7 @@ void CL_Connect_f(void) {
 	} else {
 		clc.state = CA_CONNECTING;
 		// set a client challenge number that ideally is mirrored back by the server.
-		clc.challenge = ((rand() << 16) ^ rand()) ^ Com_Milliseconds();
+		clc.challenge = (((unsigned int)rand() << 16) ^ (unsigned int)rand()) ^ Com_Milliseconds();
 	}
 
 	Key_SetCatcher(0);

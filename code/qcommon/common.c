@@ -2418,6 +2418,8 @@ void Com_GameRestart(int checksumFeed, qboolean disconnect) {
 
 			CL_Shutdown("Game directory changed", disconnect, qfalse);
 		}
+		// change com_basegame to latched value
+		com_basegame = Cvar_Get("com_basegame", BASEGAME, CVAR_LATCH|CVAR_NORESTART);
 
 		FS_Restart(checksumFeed);
 		// clean out any user and VM created cvars
@@ -2449,14 +2451,7 @@ Expose possibility to change current running mod to the user.
 */
 void Com_GameRestart_f(void) {
 
-	if (!FS_FilenameCompare(Cmd_Argv(1), com_basegame->string)) {
-		// this is the standard base game. Servers and clients should use "" and not the standard basegame name because this messes
-		// up pak file negotiation and lots of other stuff
-		Cvar_Set("fs_game", "");
-	} else {
-		Cvar_Set("fs_game", Cmd_Argv(1));
-	}
-
+	Cvar_Set("fs_game", Cmd_Argv(1));
 	Com_GameRestart(0, qtrue);
 }
 
@@ -2575,12 +2570,8 @@ void Com_Init(char *commandLine) {
 	// done early so bind command exists
 	CL_InitKeyCommands();
 
-	com_basegame = Cvar_Get("com_basegame", BASEGAME, CVAR_INIT);
-	com_homepath = Cvar_Get("com_homepath", "", CVAR_INIT);
-
-	if (!com_basegame->string[0]) {
-		Cvar_ForceReset("com_basegame");
-	}
+	com_basegame = Cvar_Get("com_basegame", BASEGAME, CVAR_LATCH|CVAR_NORESTART);
+	com_homepath = Cvar_Get("com_homepath", "", CVAR_INIT|CVAR_PROTECTED);
 
 	FS_InitFilesystem();
 	Com_InitJournaling();

@@ -562,6 +562,7 @@ void FS_PureServerSetLoadedPaks(const char *pakSums, const char *pakNames);
 // If the string is empty, all data sources will be allowed.
 // If not empty, only pk3 files that match one of the space separated checksums will be checked for files, with the sole exception of .cfg files.
 qboolean FS_CheckDirTraversal(const char *checkdir);
+qboolean FS_InvalidGameDir(const char *gamedir);
 qboolean FS_qwPak(char *pak, char *base, int numPaks);
 qboolean FS_ComparePaks(char *neededpaks, int len, qboolean dlstring);
 void FS_Rename(const char *from, const char *to);
