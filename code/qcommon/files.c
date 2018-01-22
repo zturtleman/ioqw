@@ -2952,7 +2952,7 @@ qboolean FS_CheckDirTraversal(const char *checkdir) {
 
 /*
 =======================================================================================================================================
-FS_CheckDirTraversal
+FS_InvalidGameDir
 
 Return true if path is a reference to current directory or directory traversal.
 =======================================================================================================================================
