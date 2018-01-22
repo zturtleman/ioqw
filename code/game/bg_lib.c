@@ -43,7 +43,6 @@ static void swapfunc(char *, char *, int, int);
 	long i = (n) / sizeof(TYPE);			\
 	TYPE *pi = (TYPE *)(parmi);		\
 	TYPE *pj = (TYPE *)(parmj);		\
-
 	do {						\
 		TYPE t = *pi;		\
 		*pi++ = *pj;				\
