@@ -2418,8 +2418,6 @@ void Com_GameRestart(int checksumFeed, qboolean disconnect) {
 
 			CL_Shutdown("Game directory changed", disconnect, qfalse);
 		}
-		// change com_basegame to latched value
-		com_basegame = Cvar_Get("com_basegame", BASEGAME, CVAR_LATCH|CVAR_NORESTART);
 
 		FS_Restart(checksumFeed);
 		// clean out any user and VM created cvars
@@ -2570,7 +2568,7 @@ void Com_Init(char *commandLine) {
 	// done early so bind command exists
 	CL_InitKeyCommands();
 
-	com_basegame = Cvar_Get("com_basegame", BASEGAME, CVAR_LATCH|CVAR_NORESTART);
+	com_basegame = Cvar_Get("com_basegame", BASEGAME, CVAR_INIT);
 	com_homepath = Cvar_Get("com_homepath", "", CVAR_INIT|CVAR_PROTECTED);
 
 	FS_InitFilesystem();

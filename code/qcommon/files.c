@@ -3174,7 +3174,7 @@ static void FS_Startup(const char *gameName) {
 	fs_packFiles = 0;
 	fs_debug = Cvar_Get("fs_debug", "0", 0);
 	fs_basepath = Cvar_Get("fs_basepath", Sys_DefaultInstallPath(), CVAR_INIT|CVAR_PROTECTED);
-	fs_basegame = Cvar_Get("fs_basegame", "", CVAR_LATCH|CVAR_NORESTART);
+	fs_basegame = Cvar_Get("fs_basegame", "", CVAR_INIT);
 	homePath = Sys_DefaultHomePath();
 
 	if (!homePath || !homePath[0]) {
@@ -3182,7 +3182,7 @@ static void FS_Startup(const char *gameName) {
 	}
 
 	fs_homepath = Cvar_Get("fs_homepath", homePath, CVAR_INIT|CVAR_PROTECTED);
-	fs_gamedirvar = Cvar_Get("fs_game", "", CVAR_LATCH|CVAR_NORESTART|CVAR_SYSTEMINFO);
+	fs_gamedirvar = Cvar_Get("fs_game", "", CVAR_INIT|CVAR_SYSTEMINFO);
 
 	if (!gameName[0]) {
 		Cvar_ForceReset("com_basegame");
@@ -3281,6 +3281,8 @@ static void FS_Startup(const char *gameName) {
 	FS_ReorderPurePaks();
 	// print the current search paths
 	FS_Path_f();
+
+	fs_gamedirvar->modified = qfalse; // we just loaded, it's not modified
 
 	Com_Printf("----------------------\n");
 #ifdef FS_MISSING
@@ -3758,9 +3760,13 @@ Restart if necessary. Return qtrue if restarting due to game directory changed, 
 */
 qboolean FS_ConditionalRestart(int checksumFeed, qboolean disconnect) {
 
-	if (com_basegame->latchedString || fs_basegame->latchedString || fs_gamedirvar->latchedString) {
-		Com_GameRestart(checksumFeed, disconnect);
-		return qtrue;
+	if (fs_gamedirvar->modified) {
+		if (FS_FilenameCompare(lastValidGame, fs_gamedirvar->string) && (*lastValidGame || FS_FilenameCompare(fs_gamedirvar->string, com_basegame->string)) && (*fs_gamedirvar->string || FS_FilenameCompare(lastValidGame, com_basegame->string))) {
+			Com_GameRestart(checksumFeed, disconnect);
+			return qtrue;
+		} else {
+			fs_gamedirvar->modified = qfalse;
+		}
 	}
 
 	if (checksumFeed != fs_checksumFeed) {

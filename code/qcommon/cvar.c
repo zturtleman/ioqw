@@ -638,25 +638,18 @@ Cvar_SetSafe
 */
 void Cvar_SetSafe(const char *var_name, const char *value) {
 	int flags = Cvar_Flags(var_name);
-	qboolean force = qtrue;
 
-	if (flags != CVAR_NONEXISTENT) {
-		if (flags & CVAR_PROTECTED) {
-			if (value) {
-				Com_Error(ERR_DROP, "Restricted source tried to set \"%s\" to \"%s\"", var_name, value);
-			} else {
-				Com_Error(ERR_DROP, "Restricted source tried to modify \"%s\"", var_name);
-			}
+	if ((flags != CVAR_NONEXISTENT) && (flags & CVAR_PROTECTED)) {
+		if (value) {
+			Com_Error(ERR_DROP, "Restricted source tried to set \"%s\" to \"%s\"", var_name, value);
+		} else {
+			Com_Error(ERR_DROP, "Restricted source tried to modify \"%s\"", var_name);
+		}
 
-			return;
-		}
-		// don't let VMs or server change engine latched cvars instantly
-		if ((flags & CVAR_LATCH) && !(flags & CVAR_VM_CREATED)) {
-			force = qfalse;
-		}
+		return;
 	}
 
-	Cvar_Set2(var_name, value, force);
+	Car_Set(var_name, value);
 }
 
 /*
