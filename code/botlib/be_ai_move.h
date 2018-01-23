@@ -40,6 +40,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define MFL_WATERJUMP		 16 // bot is waterjumping
 #define MFL_TELEPORTED		 32 // bot is being teleported
 #define MFL_WALK			 64 // bot should walk slowly
+#define MFL_SCOUT			128 // bot is using the scout powerup
 // move result flags
 #define MOVERESULT_MOVEMENTVIEW			  1 // bot uses view for movement
 #define MOVERESULT_SWIMVIEW				  2 // bot uses view for swimming

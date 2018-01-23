@@ -28,7 +28,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #include "snd_local.h"
 #include "snd_codec.h"
-#include "snd_dmahd.h"
 #include "client.h"
 
 void S_Update_(void);
@@ -1710,9 +1709,5 @@ qboolean S_Base_Init(soundInterface_t *si) {
 	si->StopCapture = S_Base_StopCapture;
 	si->MasterGain = S_Base_MasterGain;
 #endif
-	if (dmaHD_Enabled()) {
-		return dmaHD_Init(si);
-	}
-
 	return qtrue;
 }

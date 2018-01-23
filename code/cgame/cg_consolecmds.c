@@ -123,6 +123,7 @@ static void CG_ScoresUp_f(void) {
 	}
 }
 #ifdef MISSIONPACK
+extern menuDef_t *menuScoreboard;
 void Menu_Reset(void); // FIXME: add to right include file
 /*
 =======================================================================================================================================

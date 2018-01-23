@@ -28,7 +28,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #include "snd_local.h"
 #include "snd_codec.h"
-#include "snd_dmahd.h"
 
 #define DEF_COMSOUNDMEGS "32"
 
@@ -93,7 +92,7 @@ void SND_setup(void) {
 	int scs;
 
 	cv = Cvar_Get("com_soundMegs", DEF_COMSOUNDMEGS, CVAR_LATCH|CVAR_ARCHIVE);
-	scs = (dmaHD_Enabled() ? (2 * 1536) : (cv->integer * 1536));
+	scs = (cv->integer * 1536);
 	buffer = malloc(scs * sizeof(sndBuffer));
 	// allocate the stack based hunk allocator
 	sfxScratchBuffer = malloc(SND_CHUNK_SIZE * sizeof(short) * 4); //Hunk_Alloc(SND_CHUNK_SIZE * sizeof(short) * 4);
@@ -232,9 +231,6 @@ qboolean S_LoadSound(sfx_t *sfx) {
 	snd_info_t info;
 	int size_per_sec;
 
-	if (dmaHD_Enabled()) {
-		return dmaHD_LoadSound(sfx);
-	}
 	// load it in
 	data = S_CodecLoad(sfx->soundName, &info);
 

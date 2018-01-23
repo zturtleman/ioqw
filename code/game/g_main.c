@@ -73,13 +73,6 @@ vmCvar_t g_blood;
 vmCvar_t g_podiumDist;
 vmCvar_t g_podiumDrop;
 vmCvar_t g_allowVote;
-vmCvar_t g_voteGametypes;
-vmCvar_t g_voteMinTimelimit;
-vmCvar_t g_voteMaxTimelimit;
-vmCvar_t g_voteMinFraglimit;
-vmCvar_t g_voteMaxFraglimit;
-vmCvar_t g_voteMinCapturelimit;
-vmCvar_t g_voteMaxCapturelimit;
 vmCvar_t g_localTeamPref;
 vmCvar_t g_teamAutoJoin;
 vmCvar_t g_teamForceBalance;
@@ -132,7 +125,7 @@ static cvarTable_t gameCvarTable[] = {
 	{&g_filterBan, "g_filterBan", "1", CVAR_ARCHIVE, 0, qfalse},
 	{&g_needpass, "g_needpass", "0", CVAR_SERVERINFO|CVAR_ROM, 0, qfalse},
 	{&g_dedicated, "dedicated", "0", 0, 0, qfalse},
-	{&g_speed, "g_speed", "300", 0, 0, qtrue},
+	{&g_speed, "g_speed", "280", 0, 0, qtrue},
 	{&g_gravity, "g_gravity", "800", 0, 0, qtrue},
 	{&g_knockback, "g_knockback", "1000", 0, 0, qtrue},
 	{&g_quadfactor, "g_quadfactor", "3", 0, 0, qtrue},
@@ -148,13 +141,6 @@ static cvarTable_t gameCvarTable[] = {
 	{&g_podiumDist, "g_podiumDist", "80", 0, 0, qfalse},
 	{&g_podiumDrop, "g_podiumDrop", "70", 0, 0, qfalse},
 	{&g_allowVote, "g_allowVote", "1", CVAR_SERVERINFO|CVAR_ARCHIVE, 0, qfalse},
-	{&g_voteGametypes, "g_voteGametypes", "/1/2/3/4/5/6/7/", CVAR_SERVERINFO|CVAR_ARCHIVE, 0, qfalse},
-	{&g_voteMaxTimelimit, "g_voteMaxTimelimit", "1000", CVAR_SERVERINFO|CVAR_ARCHIVE, 0, qfalse},
-	{&g_voteMinTimelimit, "g_voteMinTimelimit", "0", CVAR_SERVERINFO|CVAR_ARCHIVE, 0, qfalse},
-	{&g_voteMaxFraglimit, "g_voteMaxFraglimit", "0", CVAR_SERVERINFO|CVAR_ARCHIVE, 0, qfalse},
-	{&g_voteMinFraglimit, "g_voteMinFraglimit", "0", CVAR_SERVERINFO|CVAR_ARCHIVE, 0, qfalse},
-	{&g_voteMaxCapturelimit, "g_voteMaxCapturelimit", "0", CVAR_SERVERINFO|CVAR_ARCHIVE, 0, qfalse},
-	{&g_voteMinCapturelimit, "g_voteMinCapturelimit", "0", CVAR_SERVERINFO|CVAR_ARCHIVE, 0, qfalse},
 	{&g_listEntity, "g_listEntity", "0", 0, 0, qfalse},
 	{&g_singlePlayer, "ui_singlePlayerActive", "0", CVAR_SYSTEMINFO|CVAR_ROM, 0, qfalse, qfalse},
 	{&g_obeliskHealth, "g_obeliskHealth", "2500", 0, 0, qfalse},

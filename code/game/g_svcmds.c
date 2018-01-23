@@ -475,7 +475,9 @@ struct svcmd {
 	char *cmd;
 	qboolean dedicated;
 	void (*function)(void);
-} svcmds[] = {
+}
+
+svcmds[] = {
 	{"abort_podium", qfalse, Svcmd_AbortPodium_f},
 	{"addbot", qfalse, Svcmd_AddBot_f},
 	{"addip", qfalse, Svcmd_AddIP_f},
