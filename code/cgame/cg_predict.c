@@ -561,7 +561,7 @@ void CG_PredictPlayerState(void) {
 	}
 
 	if (cg_showmiss.integer > 1) {
-		CG_Printf("[%i : %i]", cg_pmove.cmd.serverTime, cg.time);
+		CG_Printf("[%i : %i] ", cg_pmove.cmd.serverTime, cg.time);
 	}
 
 	if (!moved) {

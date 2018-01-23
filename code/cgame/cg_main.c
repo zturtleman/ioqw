@@ -2061,17 +2061,6 @@ void CG_AssetCache(void) {
 #endif
 /*
 =======================================================================================================================================
-CG_InitTeamChat
-=======================================================================================================================================
-*/
-void CG_InitTeamChat(void) {
-	memset(teamChat1, 0, sizeof(teamChat1));
-	memset(teamChat2, 0, sizeof(teamChat2));
-	memset(systemChat, 0, sizeof(systemChat));
-}
-
-/*
-=======================================================================================================================================
 CG_Init
 
 Called after every level change or subsystem restart. Will perform callbacks to make the loading info screen update.
