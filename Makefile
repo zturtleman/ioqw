@@ -270,7 +270,7 @@ VORBISDIR=$(MOUNT_DIR)/libvorbis-1.3.5
 OPUSDIR=$(MOUNT_DIR)/opus-1.1.4
 OPUSFILEDIR=$(MOUNT_DIR)/opusfile-0.8
 ZDIR=$(MOUNT_DIR)/zlib
-FTDIR=$(MOUNT_DIR)/freetype-2.8
+FTDIR=$(MOUNT_DIR)/freetype-2.9
 Q3ASMDIR=$(MOUNT_DIR)/tools/asm
 LBURGDIR=$(MOUNT_DIR)/tools/lcc/lburg
 Q3CPPDIR=$(MOUNT_DIR)/tools/lcc/cpp
@@ -1657,7 +1657,6 @@ Q3OBJ = \
   \
   $(B)/client/snd_adpcm.o \
   $(B)/client/snd_dma.o \
-  $(B)/client/snd_dmahd.o \
   $(B)/client/snd_mem.o \
   $(B)/client/snd_mix.o \
   $(B)/client/snd_wavelet.o \
