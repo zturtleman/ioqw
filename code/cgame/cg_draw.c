@@ -2305,7 +2305,7 @@ void CG_DrawTimedMenus(void) {
 
 		if (t > 2500) {
 			Menus_CloseByName("voiceMenu");
-			trap_Cvar_Set("cl_conXOffset", "0");
+			trap_Cvar_SetValue("cl_conXOffset", 0);
 			cg.voiceTime = 0;
 		}
 	}
