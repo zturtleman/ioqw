@@ -3791,6 +3791,7 @@ void BotTeamAI(bot_state_t *bs) {
 	// give orders
 	switch (gametype) {
 		case GT_TEAM:
+		{
 			// if someone wants to know what to do or if the number of teammates changed
 			if (bs->forceorders || bs->numteammates != numteammates) {
 				bs->teamgiveorders_time = FloatTime();
@@ -3805,7 +3806,9 @@ void BotTeamAI(bot_state_t *bs) {
 			}
 
 			break;
+		}
 		case GT_CTF:
+		{
 			// if the enemy team is leading by more than 1 point, or if the enemy team leads and time limit has expired to 70%, choose the most aggressive strategy
 			if (bs->ownteamscore + 1 < bs->enemyteamscore || (bs->ownteamscore < bs->enemyteamscore && level.time - level.startTime > (g_timelimit.integer * 60000) * 0.7f)) {
 				bs->ctfstrategy = CTFS_MAX_AGGRESSIVE;
@@ -3840,7 +3843,9 @@ void BotTeamAI(bot_state_t *bs) {
 			}
 
 			break;
+		}
 		case GT_1FCTF:
+		{
 			// if the enemy team is leading by more than 2 points, or if the enemy team leads and time limit has expired to 75%, choose the most aggressive strategy
 			if (bs->ownteamscore + 2 < bs->enemyteamscore || (bs->ownteamscore < bs->enemyteamscore && level.time - level.startTime > (g_timelimit.integer * 60000) * 0.7f)) {
 				bs->ctfstrategy = CTFS_MAX_AGGRESSIVE;
@@ -3875,7 +3880,9 @@ void BotTeamAI(bot_state_t *bs) {
 			}
 
 			break;
+		}
 		case GT_OBELISK:
+		{
 			// if the enemy team is leading by more than 1 point, or if the enemy team leads and time limit has expired to 50%, choose the most aggressive strategy
 			if (bs->ownteamscore + 1 < bs->enemyteamscore || (bs->ownteamscore < bs->enemyteamscore && level.time - level.startTime > (g_timelimit.integer * 60000) * 0.5f)) {
 				bs->ctfstrategy = CTFS_MAX_AGGRESSIVE;
@@ -3909,7 +3916,9 @@ void BotTeamAI(bot_state_t *bs) {
 			}
 
 			break;
+		}
 		case GT_HARVESTER:
+		{
 			// if the enemy team is leading by more than the half of the capturelimit points and time limit has expired to 70%, choose the most aggressive strategy
 			if (bs->ownteamscore + (g_capturelimit.integer * 0.5f) < bs->enemyteamscore && level.time - level.startTime > (g_timelimit.integer * 60000) * 0.7f) {
 				bs->ctfstrategy = CTFS_MAX_AGGRESSIVE;
@@ -3943,5 +3952,6 @@ void BotTeamAI(bot_state_t *bs) {
 			}
 
 			break;
+		}
 	}
 }
