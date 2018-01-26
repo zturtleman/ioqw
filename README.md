@@ -5,7 +5,6 @@
 **A second breath of life for Xreal, based on Zack Middleton's ioq3ztm engine**
 
 Ioid3-qw is currently based on ioq3ztm and also contains code from [Spearmint](http://spearmint.pw/) (the successor of ioq3ztm), and code from other repositories owned by [Zack Middleton](https://github.com/zturtleman?tab=repositories).
-Some of the experimental changes made to this code repository will eventually find it's way into a standalone game based upon Spearmint (assuming Spearmint is alive and maintained).
 
 
 ## License:
@@ -15,8 +14,8 @@ Ioid3-qw is licensed under a [modified version of the GNU GPLv3](COPYING.txt#L62
 
 ## Main Features:
 
-  * Enhanced BotAI
-  * 64 weapon support
+  * Enhanced BotAI.
+  * 64 weapon support.
 
 
 ## Goals:

@@ -712,7 +712,6 @@ static ALuint S_AL_BufferGet(sfxHandle_t sfx) {
 }
 
 #define S_AL_SanitiseVector(v) _S_AL_SanitiseVector(v, __LINE__)
-
 /*
 =======================================================================================================================================
 _S_AL_SanitiseVector

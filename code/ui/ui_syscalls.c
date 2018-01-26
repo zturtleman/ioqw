@@ -400,6 +400,7 @@ trap_R_SetClipRegion
 void trap_R_SetClipRegion(const float *region) {
 	syscall(UI_R_SETCLIPREGION, region);
 }
+
 /*
 =======================================================================================================================================
 trap_R_DrawStretchPic

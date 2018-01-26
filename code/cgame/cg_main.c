@@ -259,7 +259,7 @@ static cvarTable_t cvarTable[] = {
 	{&cg_runroll, "cg_runroll", "0.005", CVAR_ARCHIVE},
 	{&cg_runyaw, "cg_runyaw", "0.002", CVAR_ARCHIVE},
 	{&cg_bobup, "cg_bobup", "0.005", CVAR_CHEAT},
-	{&cg_bobpitch, "cg_bobpitch", "0.003", CVAR_ARCHIVE},
+	{&cg_bobpitch, "cg_bobpitch", "0.004", CVAR_ARCHIVE},
 	{&cg_bobroll, "cg_bobroll", "0.002", CVAR_ARCHIVE},
 	{&cg_bobyaw, "cg_bobyaw", "0.001", CVAR_ARCHIVE},
 	{&cg_swingSpeed, "cg_swingSpeed", "0.3", CVAR_CHEAT},

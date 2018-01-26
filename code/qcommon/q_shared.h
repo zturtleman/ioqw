@@ -674,6 +674,7 @@ vec_t VectorNormalize2(const vec3_t v, vec3_t out);
 void Vector4Scale(const vec4_t in, vec_t scale, vec4_t out);
 void VectorRotate(vec3_t in, vec3_t matrix[3], vec3_t out);
 int Q_log2(int val);
+float Q_acos(float c);
 int Q_rand(int *seed);
 float Q_random(int *seed);
 float Q_crandom(int *seed);
@@ -701,7 +702,6 @@ qboolean PlaneFromPoints(vec4_t plane, const vec3_t a, const vec3_t b, const vec
 void ProjectPointOnPlane(vec3_t dst, const vec3_t p, const vec3_t normal);
 void RotatePointAroundVector(vec3_t dst, const vec3_t dir, const vec3_t point, float degrees);
 void RotateAroundDirection(vec3_t axis[3], float yaw);
-float Q_acos(float c);
 float Q_asin(float c);
 void MakeNormalVectors(const vec3_t forward, vec3_t right, vec3_t up);
 // perpendicular vector could be replaced by this
