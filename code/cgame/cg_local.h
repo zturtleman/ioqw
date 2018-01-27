@@ -1357,9 +1357,8 @@ void CG_CheckChangedPredictableEvents(playerState_t *ps);
 =======================================================================================================================================
 */
 
-void trap_GetClipboardData(char *buf, int bufsize);
-// The glconfig_t will not change during the life of a cgame.
-// If it needs to change, the entire cgame will be restarted, because all the qhandle_t are then invalid.
+// the glconfig_t will not change during the life of a cgame. If it needs to change, the entire cgame will be restarted,
+// because all the qhandle_t are then invalid.
 void trap_GetGlconfig(glconfig_t *glconfig);
 // force a screen update, only used during gamestate load
 void trap_UpdateScreen(void);
@@ -1368,14 +1367,14 @@ int trap_MemoryRemaining(void);
 // the gamestate should be grabbed at startup, and whenever a configstring changes
 void trap_GetGameState(gameState_t *gamestate);
 // cgame will poll each frame to see if a newer snapshot has arrived that it is interested in.
-// The time is returned separately so that snapshot latency can be calculated.
+// the time is returned separately so that snapshot latency can be calculated.
 void trap_GetCurrentSnapshotNumber(int *snapshotNumber, int *serverTime);
 // a snapshot get can fail if the snapshot (or the entties it holds) is so old that it has fallen out of the client system queue
 qboolean trap_GetSnapshot(int snapshotNumber, snapshot_t *snapshot);
 // retrieve a text command from the server stream
 // the current snapshot will hold the number of the most recent command
 // qfalse can be returned if the client system handled the command
-// argc() / argv() can be used to examine the parameters of the command
+// argc()/argv() can be used to examine the parameters of the command
 qboolean trap_GetServerCommand(int serverCommandNumber);
 // returns the most recent command number that can be passed to GetUserCmd
 // this will always be at least one higher than the number in the current snapshot, and it may be quite a few higher if it is a
@@ -1398,7 +1397,7 @@ void trap_CM_BoxTrace(trace_t *results, const vec3_t start, const vec3_t end, co
 void trap_CM_CapsuleTrace(trace_t *results, const vec3_t start, const vec3_t end, const vec3_t mins, const vec3_t maxs, clipHandle_t model, int brushmask);
 void trap_CM_TransformedBoxTrace(trace_t *results, const vec3_t start, const vec3_t end, const vec3_t mins, const vec3_t maxs, clipHandle_t model, int brushmask, const vec3_t origin, const vec3_t angles);
 void trap_CM_TransformedCapsuleTrace(trace_t *results, const vec3_t start, const vec3_t end, const vec3_t mins, const vec3_t maxs, clipHandle_t model, int brushmask, const vec3_t origin, const vec3_t angles);
-// Returns the projection of a polygon onto the solid brushes in the world
+// returns the projection of a polygon onto the solid brushes in the world
 int trap_CM_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection, int maxPoints, vec3_t pointBuffer, int maxFragments, markFragment_t *fragmentBuffer);
 void trap_R_LoadWorldMap(const char *mapname);
 qboolean trap_GetEntityToken(char *buffer, int bufferSize);
@@ -1409,7 +1408,7 @@ qhandle_t trap_R_RegisterShader(const char *name);		// returns all white if not 
 qhandle_t trap_R_RegisterShaderNoMip(const char *name);	// returns all white if not found
 void trap_R_RegisterFont(const char *fontName, int pointSize, float borderWidth, qboolean forceAutoHint, fontInfo_t *font);
 // a scene is built up by calls to R_ClearScene and the various R_Add functions.
-// Nothing is drawn until R_RenderScene is called.
+// nothing is drawn until R_RenderScene is called.
 void trap_R_ClearScene(void);
 void trap_R_AddRefEntityToScene(const refEntity_t *re);
 // polys are intended for simple wall marks, not really for doing significant construction
@@ -1464,8 +1463,3 @@ e_status trap_CIN_RunCinematic(int handle);
 void trap_CIN_DrawCinematic(int handle);
 // allows you to resize the animation dynamically
 void trap_CIN_SetExtents(int handle, int x, int y, int w, int h);
-/*
-qboolean trap_loadCamera(const char *name);
-void trap_startCamera(int time);
-qboolean trap_getCameraInfo(int time, vec3_t *origin, vec3_t *angles);
-*/

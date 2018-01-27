@@ -412,7 +412,28 @@ typedef struct {
 	int effectsColor;
 	qboolean inGameLoad;
 } uiInfo_t;
-
+// new ui
+#define ASSET_BACKGROUND "uiBackground"
+// for tracking sp game info in Team Arena
+typedef struct postGameInfo_s {
+	int baseScore;
+	int redScore;
+	int blueScore;
+	int time;
+	int accuracy;
+	int excellents;
+	int impressives;
+	int gauntlets;
+	int captures;
+	int defends;
+	int assists;
+	int perfects;
+	int timeBonus;
+	int shutoutBonus;
+	int skillBonus;
+	int score;
+} postGameInfo_t;
+#endif
 extern uiInfo_t uiInfo;
 
 extern void UI_Init(void);
@@ -421,54 +442,46 @@ extern void UI_KeyEvent(int key);
 extern void UI_MouseEvent(int dx, int dy);
 extern void UI_Refresh(int realtime);
 extern qboolean UI_ConsoleCommand(int realTime);
-extern void UI_DrawNamedPic(float x, float y, float width, float height, const char *picname);
 extern void UI_DrawHandlePic(float x, float y, float w, float h, qhandle_t hShader);
 extern void UI_FillRect(float x, float y, float width, float height, const float *color);
 extern void UI_DrawRect(float x, float y, float width, float height, const float *color);
 extern void UI_DrawTopBottom(float x, float y, float w, float h);
 extern void UI_DrawSides(float x, float y, float w, float h);
-extern void UI_UpdateScreen(void);
-extern void UI_LerpColor(vec4_t a, vec4_t b, vec4_t c, float t);
 extern void UI_DrawBannerString(int x, int y, const char *str, int style, vec4_t color);
 extern float UI_ProportionalSizeScale(int style);
 extern void UI_DrawProportionalString(int x, int y, const char *str, int style, vec4_t color);
 extern int UI_ProportionalStringWidth(const char *str);
-extern void UI_DrawString(int x, int y, const char *str, int style, vec4_t color);
-extern void UI_DrawChar(int x, int y, int ch, int style, vec4_t color);
-extern qboolean UI_CursorInRect(int x, int y, int width, int height);
 extern void UI_AdjustFrom640(float *x, float *y, float *w, float *h);
 extern qboolean UI_IsFullscreen(void);
 extern void UI_SetActiveMenu(uiMenuCommand_t menu);
-extern void UI_ForceMenuOff(void);
 extern char *UI_Argv(int arg);
 extern char *UI_Cvar_VariableString(const char *var_name);
-extern void UI_Refresh(int time);
-extern void UI_KeyEvent(int key);
 extern void UI_SetClipRegion(float x, float y, float w, float h);
 extern void UI_ClearClipRegion(void);
 void UI_LoadBestScores(const char *map, int game);
+// ui_gameinfo.c
+char *UI_GetBotInfoByNumber(int num);
+char *UI_GetBotInfoByName(const char *name);
+int UI_GetNumBots(void);
+void UI_LoadBots(void);
+char *UI_GetBotNameByNumber(int num);
+
+/*
+=======================================================================================================================================
+
+	SYSTEM TRAPS
+
+	These functions are how the ui communicates with the main game system.
+
+=======================================================================================================================================
+*/
+
 // ui_syscalls.c
 void trap_Print(const char *string);
 void trap_Error(const char *string) __attribute__((noreturn));
-int trap_Milliseconds(void);
 void trap_Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags);
 void trap_Cvar_Update(vmCvar_t *vmCvar);
-void trap_Cvar_Set(const char *var_name, const char *value);
-float trap_Cvar_VariableValue(const char *var_name);
-void trap_Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize);
-void trap_Cvar_SetValue(const char *var_name, float value);
-void trap_Cvar_Reset(const char *name);
-void trap_Cvar_Create(const char *var_name, const char *var_value, int flags);
-void trap_Cvar_InfoStringBuffer(int bit, char *buffer, int bufsize);
-int trap_Argc(void);
-void trap_Argv(int n, char *buffer, int bufferLength);
-void trap_Cmd_ExecuteText(int exec_when, const char *text); // don't use EXEC_NOW!
-int trap_FS_FOpenFile(const char *qpath, fileHandle_t *f, fsMode_t mode);
-void trap_FS_Read(void *buffer, int len, fileHandle_t f);
-void trap_FS_Write(const void *buffer, int len, fileHandle_t f);
-void trap_FS_FCloseFile(fileHandle_t f);
-int trap_FS_GetFileList(const char *path, const char *extension, char *listbuf, int bufsize);
-int trap_FS_Seek(fileHandle_t f, long offset, int origin); // fsOrigin_t
+
 qhandle_t trap_R_RegisterModel(const char *name);
 qhandle_t trap_R_RegisterSkin(const char *name);
 qhandle_t trap_R_RegisterShaderNoMip(const char *name);
@@ -525,33 +538,4 @@ e_status trap_CIN_StopCinematic(int handle);
 e_status trap_CIN_RunCinematic(int handle);
 void trap_CIN_DrawCinematic(int handle);
 void trap_CIN_SetExtents(int handle, int x, int y, int w, int h);
-int trap_RealTime(qtime_t *qtime);
 void trap_R_RemapShader(const char *oldShader, const char *newShader, const char *timeOffset);
-// ui_gameinfo.c
-char *UI_GetBotInfoByNumber(int num);
-char *UI_GetBotInfoByName(const char *name);
-int UI_GetNumBots(void);
-void UI_LoadBots(void);
-char *UI_GetBotNameByNumber(int num);
-// new ui
-#define ASSET_BACKGROUND "uiBackground"
-// for tracking sp game info in Team Arena
-typedef struct postGameInfo_s {
-	int baseScore;
-	int redScore;
-	int blueScore;
-	int time;
-	int accuracy;
-	int excellents;
-	int impressives;
-	int gauntlets;
-	int captures;
-	int defends;
-	int assists;
-	int perfects;
-	int timeBonus;
-	int shutoutBonus;
-	int skillBonus;
-	int score;
-} postGameInfo_t;
-#endif

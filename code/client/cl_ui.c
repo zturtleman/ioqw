@@ -747,11 +747,11 @@ intptr_t CL_UISystemCalls(intptr_t *args) {
 			return FloatAsInt(log(VMF(1)));
 		case TRAP_LOG10:
 			return FloatAsInt(log10(VMF(1)));
-		case UI_ERROR:
-			Com_Error(ERR_DROP, "%s", (const char *)VMA(1));
-			return 0;
 		case UI_PRINT:
 			Com_Printf("%s", (const char *)VMA(1));
+			return 0;
+		case UI_ERROR:
+			Com_Error(ERR_DROP, "%s", (const char *)VMA(1));
 			return 0;
 		case UI_MILLISECONDS:
 			return Sys_Milliseconds();
@@ -836,6 +836,65 @@ intptr_t CL_UISystemCalls(intptr_t *args) {
 			return 0;
 		case UI_PC_SOURCE_FILE_AND_LINE:
 			return botlib_export->PC_SourceFileAndLine(args[1], VMA(2), VMA(3));
+		case UI_GETGLCONFIG:
+			CL_GetGlconfig(VMA(1));
+			return 0;
+		case UI_MEMORY_REMAINING:
+			return Hunk_MemoryRemaining();
+		case UI_UPDATESCREEN:
+			SCR_UpdateScreen();
+			return 0;
+		case UI_GETCLIENTSTATE:
+			GetClientState(VMA(1));
+			return 0;
+		case UI_GETCONFIGSTRING:
+			return GetConfigString(args[1], VMA(2), args[3]);
+		case UI_LAN_GETPINGQUEUECOUNT:
+			return LAN_GetPingQueueCount();
+		case UI_LAN_CLEARPING:
+			LAN_ClearPing(args[1]);
+			return 0;
+		case UI_LAN_GETPING:
+			LAN_GetPing(args[1], VMA(2), args[3], VMA(4));
+			return 0;
+		case UI_LAN_GETPINGINFO:
+			LAN_GetPingInfo(args[1], VMA(2), args[3]);
+			return 0;
+		case UI_LAN_GETSERVERCOUNT:
+			return LAN_GetServerCount(args[1]);
+		case UI_LAN_GETSERVERADDRESSSTRING:
+			LAN_GetServerAddressString(args[1], args[2], VMA(3), args[4]);
+			return 0;
+		case UI_LAN_GETSERVERINFO:
+			LAN_GetServerInfo(args[1], args[2], VMA(3), args[4]);
+			return 0;
+		case UI_LAN_MARKSERVERVISIBLE:
+			LAN_MarkServerVisible(args[1], args[2], args[3]);
+			return 0;
+		case UI_LAN_UPDATEVISIBLEPINGS:
+			return LAN_UpdateVisiblePings(args[1]);
+		case UI_LAN_RESETPINGS:
+			LAN_ResetPings(args[1]);
+			return 0;
+		case UI_LAN_LOADCACHEDSERVERS:
+			LAN_LoadCachedServers();
+			return 0;
+		case UI_LAN_SAVECACHEDSERVERS:
+			LAN_SaveServersToCache();
+			return 0;
+		case UI_LAN_ADDSERVER:
+			return LAN_AddServer(args[1], VMA(2), VMA(3));
+		case UI_LAN_REMOVESERVER:
+			LAN_RemoveServer(args[1], VMA(2));
+			return 0;
+		case UI_LAN_SERVERSTATUS:
+			return LAN_GetServerStatus(VMA(1), VMA(2), args[3]);
+		case UI_LAN_GETSERVERPING:
+			return LAN_GetServerPing(args[1], args[2]);
+		case UI_LAN_SERVERISVISIBLE:
+			return LAN_ServerIsVisible(args[1], args[2]);
+		case UI_LAN_COMPARESERVERS:
+			return LAN_CompareServers(args[1], args[2], args[3], args[4], args[5]);
 		case UI_R_REGISTERMODEL:
 			return re.RegisterModel(VMA(1));
 		case UI_R_REGISTERSKIN:
@@ -865,9 +924,6 @@ intptr_t CL_UISystemCalls(intptr_t *args) {
 		case UI_R_SETCOLOR:
 			re.SetColor(VMA(1));
 			return 0;
-		case UI_R_SETCLIPREGION:
-			re.SetClipRegion(VMA(1));
-			return 0;
 		case UI_R_DRAWSTRETCHPIC:
 			re.DrawStretchPic(VMF(1), VMF(2), VMF(3), VMF(4), VMF(5), VMF(6), VMF(7), VMF(8), args[9]);
 			return 0;
@@ -877,23 +933,32 @@ intptr_t CL_UISystemCalls(intptr_t *args) {
 		case UI_R_DRAWROTATEDPIC:
 			re.DrawRotatedPic(VMF(1), VMF(2), VMF(3), VMF(4), VMF(5), VMF(6), VMF(7), VMF(8), args[9], VMF(10));
 			return 0;
+		case UI_R_LERPTAG:
+			return re.LerpTag(VMA(1), args[2], args[3], args[4], VMF(5), VMA(6));
 		case UI_R_MODELBOUNDS:
 			re.ModelBounds(args[1], VMA(2), VMA(3));
 			return 0;
-		case UI_UPDATESCREEN:
-			SCR_UpdateScreen();
+		case UI_R_REMAP_SHADER:
+			re.RemapShader(VMA(1), VMA(2), VMA(3));
+			return 0;
+		case UI_R_SETCLIPREGION:
+			re.SetClipRegion(VMA(1));
 			return 0;
 		case UI_CL_TRANSLATE_STRING:
 			CL_TranslateString(VMA(1), VMA(2));
 			return 0;
-		case UI_R_LERPTAG:
-			return re.LerpTag(VMA(1), args[2], args[3], args[4], VMF(5), VMA(6));
 		case UI_S_REGISTERSOUND:
 			return S_RegisterSound(VMA(1), args[2]);
 		case UI_S_SOUNDDURATION:
 			return S_SoundDuration(args[1]);
 		case UI_S_STARTLOCALSOUND:
 			S_StartLocalSound(args[1], args[2]);
+			return 0;
+		case UI_S_STARTBACKGROUNDTRACK:
+			S_StartBackgroundTrack(VMA(1), VMA(2));
+			return 0;
+		case UI_S_STOPBACKGROUNDTRACK:
+			S_StopBackgroundTrack();
 			return 0;
 		case UI_KEY_KEYNUMTOSTRINGBUF:
 			Key_KeynumToStringBuf(args[1], VMA(2), args[3]);
@@ -925,68 +990,6 @@ intptr_t CL_UISystemCalls(intptr_t *args) {
 		case UI_GETCLIPBOARDDATA:
 			CL_GetClipboardData(VMA(1), args[2]);
 			return 0;
-		case UI_GETCLIENTSTATE:
-			GetClientState(VMA(1));
-			return 0;
-		case UI_GETGLCONFIG:
-			CL_GetGlconfig(VMA(1));
-			return 0;
-		case UI_GETCONFIGSTRING:
-			return GetConfigString(args[1], VMA(2), args[3]);
-		case UI_LAN_LOADCACHEDSERVERS:
-			LAN_LoadCachedServers();
-			return 0;
-		case UI_LAN_SAVECACHEDSERVERS:
-			LAN_SaveServersToCache();
-			return 0;
-		case UI_LAN_ADDSERVER:
-			return LAN_AddServer(args[1], VMA(2), VMA(3));
-		case UI_LAN_REMOVESERVER:
-			LAN_RemoveServer(args[1], VMA(2));
-			return 0;
-		case UI_LAN_GETPINGQUEUECOUNT:
-			return LAN_GetPingQueueCount();
-		case UI_LAN_CLEARPING:
-			LAN_ClearPing(args[1]);
-			return 0;
-		case UI_LAN_GETPING:
-			LAN_GetPing(args[1], VMA(2), args[3], VMA(4));
-			return 0;
-		case UI_LAN_GETPINGINFO:
-			LAN_GetPingInfo(args[1], VMA(2), args[3]);
-			return 0;
-		case UI_LAN_GETSERVERCOUNT:
-			return LAN_GetServerCount(args[1]);
-		case UI_LAN_GETSERVERADDRESSSTRING:
-			LAN_GetServerAddressString(args[1], args[2], VMA(3), args[4]);
-			return 0;
-		case UI_LAN_GETSERVERINFO:
-			LAN_GetServerInfo(args[1], args[2], VMA(3), args[4]);
-			return 0;
-		case UI_LAN_GETSERVERPING:
-			return LAN_GetServerPing(args[1], args[2]);
-		case UI_LAN_MARKSERVERVISIBLE:
-			LAN_MarkServerVisible(args[1], args[2], args[3]);
-			return 0;
-		case UI_LAN_SERVERISVISIBLE:
-			return LAN_ServerIsVisible(args[1], args[2]);
-		case UI_LAN_UPDATEVISIBLEPINGS:
-			return LAN_UpdateVisiblePings(args[1]);
-		case UI_LAN_RESETPINGS:
-			LAN_ResetPings(args[1]);
-			return 0;
-		case UI_LAN_SERVERSTATUS:
-			return LAN_GetServerStatus(VMA(1), VMA(2), args[3]);
-		case UI_LAN_COMPARESERVERS:
-			return LAN_CompareServers(args[1], args[2], args[3], args[4], args[5]);
-		case UI_MEMORY_REMAINING:
-			return Hunk_MemoryRemaining();
-		case UI_S_STOPBACKGROUNDTRACK:
-			S_StopBackgroundTrack();
-			return 0;
-		case UI_S_STARTBACKGROUNDTRACK:
-			S_StartBackgroundTrack(VMA(1), VMA(2));
-			return 0;
 		case UI_CIN_PLAYCINEMATIC:
 			Com_DPrintf("UI_CIN_PlayCinematic\n");
 			return CIN_PlayCinematic(VMA(1), args[2], args[3], args[4], args[5], args[6]);
@@ -999,9 +1002,6 @@ intptr_t CL_UISystemCalls(intptr_t *args) {
 			return 0;
 		case UI_CIN_SETEXTENTS:
 			CIN_SetExtents(args[1], args[2], args[3], args[4], args[5]);
-			return 0;
-		case UI_R_REMAP_SHADER:
-			re.RemapShader(VMA(1), VMA(2), VMA(3));
 			return 0;
 		default:
 			Com_Error(ERR_DROP, "Bad UI system trap: %ld", (long int)args[0]);

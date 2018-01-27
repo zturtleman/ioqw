@@ -682,7 +682,6 @@ static consoleCommand_t commands[] = {
 	{"scoresUp", CG_scrollScoresUp_f},
 #endif
 	{"startOrbit", CG_StartOrbit_f},
-	//{"camera", CG_Camera_f},
 	{"loaddeferred", CG_LoadDeferredPlayers},
 	{"generateTracemap", CG_GenerateTracemap}
 };
