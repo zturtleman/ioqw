@@ -26,7 +26,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define __UI_PUBLIC_H__
 
 #define UI_API_VERSION 7
-
+// used by LAN_CompareServers
 enum {
 	SORT_HOST,
 	SORT_MAP,

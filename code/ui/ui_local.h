@@ -122,8 +122,8 @@ void UI_ShowPostGame(qboolean newHigh);
 void UI_ClearScores(void);
 void UI_LoadArenas(void);
 // ui_menu.c
-extern void UI_RegisterCvars(void);
-extern void UI_UpdateCvars(void);
+void UI_RegisterCvars(void);
+void UI_UpdateCvars(void);
 // ui_connect.c
 extern void UI_DrawConnectScreen(qboolean overlay);
 // ui_players.c
@@ -195,7 +195,6 @@ void UI_PlayerInfo_UpdateColor(playerInfo_t *pi);
 qboolean UI_RegisterClientModelname(playerInfo_t *pi, const char *modelSkinName, const char *headName, const char *teamName);
 
 // new ui stuff
-#define UI_NUMFX 7
 #define MAX_HEADS 64
 #define MAX_ALIASES 64
 #define MAX_HEADNAME 32
