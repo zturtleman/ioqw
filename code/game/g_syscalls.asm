@@ -67,19 +67,19 @@ equ trap_Trace								-111
 equ trap_TraceCapsule						-112
 equ trap_PointContents						-113
 equ trap_InPVS								-114
-equ trap_InPVSIgnorePortals					-115
-equ trap_AdjustAreaPortalState				-116
-equ trap_AreasConnected						-117
-equ trap_LinkEntity							-118
-equ trap_UnlinkEntity						-119
-equ trap_EntitiesInBox						-120
-equ trap_EntityContact						-121
-equ trap_EntityContactCapsule				-122
-equ trap_GetEntityToken						-123
-equ trap_DebugPolygonCreate					-124
-equ trap_DebugPolygonDelete					-125
-equ trap_BotAllocateClient					-126
-equ trap_BotFreeClient						-127
+equ trap_AdjustAreaPortalState				-115
+equ trap_LinkEntity							-116
+equ trap_UnlinkEntity						-117
+equ trap_EntitiesInBox						-118
+equ trap_EntityContact						-119
+equ trap_EntityContactCapsule				-120
+equ trap_GetEntityToken						-121
+equ trap_DebugPolygonCreate					-122
+equ trap_DebugPolygonDelete					-123
+equ trap_BotAllocateClient					-124
+equ trap_BotFreeClient						-125
+equ trap_InPVSIgnorePortals					-126
+equ trap_AreasConnected						-127
 
 equ trap_BotLibSetup						-201
 equ trap_BotLibShutdown						-202
@@ -112,7 +112,10 @@ equ trap_AAS_AreaReachability				-316
 equ trap_AAS_AreaTravelTimeToGoalArea		-317
 equ trap_AAS_Swimming						-318
 equ trap_AAS_PredictClientMovement			-319
-equ trap_AAS_BestReachableArea				-320
+equ trap_AAS_AlternativeRouteGoals			-320
+equ trap_AAS_PredictRoute					-321
+equ trap_AAS_PointReachabilityAreaIndex		-322
+equ trap_AAS_BestReachableArea				-323
 
 equ trap_EA_Say								-401
 equ trap_EA_SayTeam							-402
@@ -214,6 +217,3 @@ equ trap_BotRemoveFromAvoidGoals			-572
 equ trap_BotPredictVisiblePosition			-573
 equ trap_BotSetAvoidGoalTime				-574
 equ trap_BotAddAvoidSpot					-575
-equ trap_AAS_AlternativeRouteGoals			-576
-equ trap_AAS_PredictRoute					-577
-equ trap_AAS_PointReachabilityAreaIndex		-578

@@ -490,13 +490,9 @@ intptr_t SV_GameSystemCalls(intptr_t *args) {
 			return SV_PointContents(VMA(1), args[2]);
 		case G_IN_PVS:
 			return SV_inPVS(VMA(1), VMA(2));
-		case G_IN_PVS_IGNORE_PORTALS:
-			return SV_inPVSIgnorePortals(VMA(1), VMA(2));
 		case G_ADJUST_AREA_PORTAL_STATE:
 			SV_AdjustAreaPortalState(VMA(1), args[2]);
 			return 0;
-		case G_AREAS_CONNECTED:
-			return CM_AreasConnected(args[1], args[2]);
 		case G_LINKENTITY:
 			SV_LinkEntity(VMA(1));
 			return 0;
@@ -532,6 +528,10 @@ intptr_t SV_GameSystemCalls(intptr_t *args) {
 		case G_BOT_FREE_CLIENT:
 			SV_BotFreeClient(args[1]);
 			return 0;
+		case G_IN_PVS_IGNORE_PORTALS:
+			return SV_inPVSIgnorePortals(VMA(1), VMA(2));
+		case G_AREAS_CONNECTED:
+			return CM_AreasConnected(args[1], args[2]);
 		case BOTLIB_SETUP:
 			return SV_BotLibSetup();
 		case BOTLIB_SHUTDOWN:
@@ -596,14 +596,20 @@ intptr_t SV_GameSystemCalls(intptr_t *args) {
 			return botlib_export->aas.AAS_IntForBSPEpairKey(args[1], VMA(2), VMA(3));
 		case BOTLIB_AAS_AREA_REACHABILITY:
 			return botlib_export->aas.AAS_AreaReachability(args[1]);
-		case BOTLIB_AAS_BEST_REACHABLE_AREA:
-			return botlib_export->aas.AAS_BestReachableArea(VMA(1), VMA(2), VMA(3), VMA(4));
 		case BOTLIB_AAS_AREA_TRAVEL_TIME_TO_GOAL_AREA:
 			return botlib_export->aas.AAS_AreaTravelTimeToGoalArea(args[1], VMA(2), args[3], args[4]);
 		case BOTLIB_AAS_SWIMMING:
 			return botlib_export->aas.AAS_Swimming(VMA(1));
 		case BOTLIB_AAS_PREDICT_CLIENT_MOVEMENT:
 			return botlib_export->aas.AAS_PredictClientMovement(VMA(1), args[2], VMA(3), args[4], args[5], VMA(6), VMA(7), args[8], args[9], VMF(10), args[11], args[12], args[13]);
+		case BOTLIB_AAS_ALTERNATIVE_ROUTE_GOAL:
+			return botlib_export->aas.AAS_AlternativeRouteGoals(VMA(1), args[2], VMA(3), args[4], args[5], VMA(6), args[7], args[8]);
+		case BOTLIB_AAS_PREDICT_ROUTE:
+			return botlib_export->aas.AAS_PredictRoute(VMA(1), args[2], VMA(3), args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11]);
+		case BOTLIB_AAS_POINT_REACHABILITY_AREA_INDEX:
+			return botlib_export->aas.AAS_PointReachabilityAreaIndex(VMA(1));
+		case BOTLIB_AAS_BEST_REACHABLE_AREA:
+			return botlib_export->aas.AAS_BestReachableArea(VMA(1), VMA(2), VMA(3), VMA(4));
 		case BOTLIB_EA_SAY:
 			botlib_export->ea.EA_Say(args[1], VMA(2));
 			return 0;
@@ -866,12 +872,6 @@ intptr_t SV_GameSystemCalls(intptr_t *args) {
 		case BOTLIB_AI_ADD_AVOID_SPOT:
 			botlib_export->ai.BotAddAvoidSpot(args[1], VMA(2), VMF(3), args[4]);
 			return 0;
-		case BOTLIB_AAS_ALTERNATIVE_ROUTE_GOAL:
-			return botlib_export->aas.AAS_AlternativeRouteGoals(VMA(1), args[2], VMA(3), args[4], args[5], VMA(6), args[7], args[8]);
-		case BOTLIB_AAS_PREDICT_ROUTE:
-			return botlib_export->aas.AAS_PredictRoute(VMA(1), args[2], VMA(3), args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11]);
-		case BOTLIB_AAS_POINT_REACHABILITY_AREA_INDEX:
-			return botlib_export->aas.AAS_PointReachabilityAreaIndex(VMA(1));
 		default:
 			Com_Error(ERR_DROP, "Bad game system trap: %ld", (long int)args[0]);
 	}

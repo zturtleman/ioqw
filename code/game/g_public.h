@@ -146,8 +146,8 @@ typedef enum {
 	G_GET_USERCMD,				// (int clientNum, usercmd_t *cmd)
 	G_SET_CONFIGSTRING,			// (int num, const char *string);
 	// config strings hold all the index strings, and various other information that is reliably communicated to all clients
-	// All of the current configstrings are sent to clients when they connect, and changes are sent to all connected clients.
-	// All confgstrings are cleared at each level start.
+	// all of the current configstrings are sent to clients when they connect, and changes are sent to all connected clients.
+	// all confgstrings are cleared at each level start.
 	G_GET_CONFIGSTRING,			// (int num, char *buffer, int bufferSize);
 	G_SET_USERINFO,				// (int num, const char *buffer);
 	G_GET_USERINFO,				// (int num, char *buffer, int bufferSize);
@@ -162,9 +162,7 @@ typedef enum {
 	G_POINT_CONTENTS,			// (const vec3_t point, int passEntityNum);
 	// point contents against all linked entities
 	G_IN_PVS,					// (const vec3_t p1, const vec3_t p2);
-	G_IN_PVS_IGNORE_PORTALS,	// (const vec3_t p1, const vec3_t p2);
 	G_ADJUST_AREA_PORTAL_STATE,	// (gentity_t *ent, qboolean open);
-	G_AREAS_CONNECTED,			// (int area1, int area2);
 	G_LINKENTITY,				// (gentity_t *ent);
 	// an entity will never be sent to a client or used for collision if it is not passed to linkentity. If the size, position, or solidity changes, it must be relinked.
 	G_UNLINKENTITY,				// (gentity_t *ent);
@@ -175,12 +173,14 @@ typedef enum {
 	G_ENTITY_CONTACTCAPSULE,	// (const vec3_t mins, const vec3_t maxs, const gentity_t *ent);
 	// perform an exact check against inline brush models of non-square shape
 	G_GET_ENTITY_TOKEN,			// qboolean (char *buffer, int bufferSize)
-	// Retrieves the next string token from the entity spawn text, returning false when all tokens have been parsed. This should only be done at GAME_INIT time.
+	// retrieves the next string token from the entity spawn text, returning false when all tokens have been parsed. This should only be done at GAME_INIT time.
 	G_DEBUG_POLYGON_CREATE,
 	G_DEBUG_POLYGON_DELETE,
 	// access for bots to get and free a server client (FIXME?)
 	G_BOT_ALLOCATE_CLIENT,		// (void);
 	G_BOT_FREE_CLIENT,			// (int clientNum);
+	G_IN_PVS_IGNORE_PORTALS,	// (const vec3_t p1, const vec3_t p2);
+	G_AREAS_CONNECTED,			// (int area1, int area2);
 
 	BOTLIB_SETUP = 200,			// (void);
 	BOTLIB_SHUTDOWN,			// (void);
@@ -213,6 +213,9 @@ typedef enum {
 	BOTLIB_AAS_AREA_TRAVEL_TIME_TO_GOAL_AREA,
 	BOTLIB_AAS_SWIMMING,
 	BOTLIB_AAS_PREDICT_CLIENT_MOVEMENT,
+	BOTLIB_AAS_ALTERNATIVE_ROUTE_GOAL,
+	BOTLIB_AAS_PREDICT_ROUTE,
+	BOTLIB_AAS_POINT_REACHABILITY_AREA_INDEX,
 	BOTLIB_AAS_BEST_REACHABLE_AREA,
 
 	BOTLIB_EA_SAY = 400,
@@ -314,10 +317,7 @@ typedef enum {
 	BOTLIB_AI_REMOVE_FROM_AVOID_GOALS,
 	BOTLIB_AI_PREDICT_VISIBLE_POSITION,
 	BOTLIB_AI_SET_AVOID_GOAL_TIME,
-	BOTLIB_AI_ADD_AVOID_SPOT,
-	BOTLIB_AAS_ALTERNATIVE_ROUTE_GOAL,
-	BOTLIB_AAS_PREDICT_ROUTE,
-	BOTLIB_AAS_POINT_REACHABILITY_AREA_INDEX
+	BOTLIB_AI_ADD_AVOID_SPOT
 } gameImport_t;
 
 /*

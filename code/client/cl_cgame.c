@@ -770,7 +770,6 @@ intptr_t CL_CgameSystemCalls(intptr_t *args) {
 		case CG_KEY_CLEARSTATES:
 			Key_ClearStates();
 			return 0;
-
 		case CG_CIN_PLAYCINEMATIC:
 			return CIN_PlayCinematic(VMA(1), args[2], args[3], args[4], args[5], args[6]);
 		case CG_CIN_STOPCINEMATIC:

@@ -765,6 +765,9 @@ intptr_t CL_UISystemCalls(intptr_t *args) {
 		case UI_ARGV:
 			Cmd_ArgvBuffer(args[1], VMA(2), args[3]);
 			return 0;
+		case UI_CVAR_RESET:
+			Cvar_Reset(VMA(1));
+			return 0;
 		case UI_ARGS:
 			Cmd_ArgsBuffer(VMA(1), args[2]);
 			return 0;
@@ -789,11 +792,11 @@ intptr_t CL_UISystemCalls(intptr_t *args) {
 		case UI_CVAR_SET_VALUE:
 			Cvar_SetValueSafe(VMA(1), VMF(2));
 			return 0;
-		case UI_CVAR_RESET:
-			Cvar_Reset(VMA(1));
-			return 0;
 		case UI_CVAR_VARIABLE_VALUE:
 			return FloatAsInt(Cvar_VariableValue(VMA(1)));
+		case UI_CVAR_INFO_STRING_BUFFER:
+			Cvar_InfoStringBuffer(args[1], VMA(2), args[3]);
+			return 0;
 		case UI_CVAR_VARIABLE_INTEGER_VALUE:
 			return Cvar_VariableIntegerValue(VMA(1));
 		case UI_CVAR_VARIABLE_STRING_BUFFER:
@@ -801,9 +804,6 @@ intptr_t CL_UISystemCalls(intptr_t *args) {
 			return 0;
 		case UI_CVAR_LATCHED_VARIABLE_STRING_BUFFER:
 			Cvar_LatchedVariableStringBuffer(VMA(1), VMA(2), args[3]);
-			return 0;
-		case UI_CVAR_INFO_STRING_BUFFER:
-			Cvar_InfoStringBuffer(args[1], VMA(2), args[3]);
 			return 0;
 		case UI_FS_FOPENFILE:
 			return FS_FOpenFileByMode(VMA(1), VMA(2), args[3]);
@@ -849,17 +849,6 @@ intptr_t CL_UISystemCalls(intptr_t *args) {
 			return 0;
 		case UI_GETCONFIGSTRING:
 			return GetConfigString(args[1], VMA(2), args[3]);
-		case UI_LAN_GETPINGQUEUECOUNT:
-			return LAN_GetPingQueueCount();
-		case UI_LAN_CLEARPING:
-			LAN_ClearPing(args[1]);
-			return 0;
-		case UI_LAN_GETPING:
-			LAN_GetPing(args[1], VMA(2), args[3], VMA(4));
-			return 0;
-		case UI_LAN_GETPINGINFO:
-			LAN_GetPingInfo(args[1], VMA(2), args[3]);
-			return 0;
 		case UI_LAN_GETSERVERCOUNT:
 			return LAN_GetServerCount(args[1]);
 		case UI_LAN_GETSERVERADDRESSSTRING:
@@ -895,6 +884,17 @@ intptr_t CL_UISystemCalls(intptr_t *args) {
 			return LAN_ServerIsVisible(args[1], args[2]);
 		case UI_LAN_COMPARESERVERS:
 			return LAN_CompareServers(args[1], args[2], args[3], args[4], args[5]);
+		case UI_LAN_GETPING:
+			LAN_GetPing(args[1], VMA(2), args[3], VMA(4));
+			return 0;
+		case UI_LAN_GETPINGINFO:
+			LAN_GetPingInfo(args[1], VMA(2), args[3]);
+			return 0;
+		case UI_LAN_GETPINGQUEUECOUNT:
+			return LAN_GetPingQueueCount();
+		case UI_LAN_CLEARPING:
+			LAN_ClearPing(args[1]);
+			return 0;
 		case UI_R_REGISTERMODEL:
 			return re.RegisterModel(VMA(1));
 		case UI_R_REGISTERSKIN:
