@@ -317,15 +317,15 @@ static void LAN_GetServerInfo(int source, int n, char *buf, int buflen) {
 	if (server && buf) {
 		buf[0] = '\0';
 		Info_SetValueForKey(info, "hostname", server->hostName);
-		Info_SetValueForKey(info, "mapname", server->mapName);
-		Info_SetValueForKey(info, "clients", va("%i", server->clients));
-		Info_SetValueForKey(info, "sv_maxclients", va("%i", server->maxClients));
-		Info_SetValueForKey(info, "ping", va("%i", server->ping));
-		Info_SetValueForKey(info, "minping", va("%i", server->minPing));
-		Info_SetValueForKey(info, "maxping", va("%i", server->maxPing));
 		Info_SetValueForKey(info, "game", server->game);
 		Info_SetValueForKey(info, "gametype", server->gameType);
+		Info_SetValueForKey(info, "mapname", server->mapName);
+		Info_SetValueForKey(info, "sv_maxclients", va("%i", server->maxClients));
+		Info_SetValueForKey(info, "clients", va("%i", server->clients));
 		Info_SetValueForKey(info, "nettype", va("%i", server->netType));
+		Info_SetValueForKey(info, "minping", va("%i", server->minPing));
+		Info_SetValueForKey(info, "maxping", va("%i", server->maxPing));
+		Info_SetValueForKey(info, "ping", va("%i", server->ping));
 		Info_SetValueForKey(info, "addr", NET_AdrToStringwPort(server->adr));
 		Info_SetValueForKey(info, "g_needpass", va("%i", server->g_needpass));
 		Info_SetValueForKey(info, "g_humanplayers", va("%i", server->g_humanplayers));

@@ -586,10 +586,10 @@ void SV_Init(void) {
 	SV_AddOperatorCommands();
 	// serverinfo vars
 	Cvar_Get("sv_keywords", "", CVAR_SERVERINFO);
-	sv_mapname = Cvar_Get("mapname", "Nomap", CVAR_SERVERINFO|CVAR_ROM);
 	sv_gametype = Cvar_Get("g_gametype", "0", CVAR_SERVERINFO|CVAR_LATCH);
 	sv_gametypeName = Cvar_Get("sv_gametypeName", "Unknown Gametype", CVAR_SERVERINFO|CVAR_ROM);
 	sv_gametypeNetName = Cvar_Get("sv_gametypeNetName", "Unknown", CVAR_SERVERINFO|CVAR_ROM);
+	sv_mapname = Cvar_Get("mapname", "Nomap", CVAR_SERVERINFO|CVAR_ROM);
 	sv_privateClients = Cvar_Get("sv_privateClients", "0", CVAR_SERVERINFO);
 	sv_hostname = Cvar_Get("sv_hostname", "Noname", CVAR_SERVERINFO|CVAR_ARCHIVE);
 	sv_maxclients = Cvar_Get("sv_maxclients", "64", CVAR_SERVERINFO|CVAR_LATCH);

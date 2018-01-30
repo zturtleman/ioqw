@@ -3420,12 +3420,12 @@ static void CL_SetServerInfo(serverInfo_t *server, const char *info, int ping) {
 
 	if (server) {
 		if (info) {
-			server->clients = atoi(Info_ValueForKey(info, "clients"));
 			Q_strncpyz(server->hostName, Info_ValueForKey(info, "hostname"), sizeof(server->hostName));
-			Q_strncpyz(server->mapName, Info_ValueForKey(info, "mapname"), sizeof(server->mapName));
-			server->maxClients = atoi(Info_ValueForKey(info, "sv_maxclients"));
 			Q_strncpyz(server->game, Info_ValueForKey(info, "game"), sizeof(server->game));
 			Q_strncpyz(server->gameType, Info_ValueForKey(info, "gametype"), sizeof(server->gameType));
+			Q_strncpyz(server->mapName, Info_ValueForKey(info, "mapname"), sizeof(server->mapName));
+			server->maxClients = atoi(Info_ValueForKey(info, "sv_maxclients"));
+			server->clients = atoi(Info_ValueForKey(info, "clients"));
 			server->netType = atoi(Info_ValueForKey(info, "nettype"));
 			server->minPing = atoi(Info_ValueForKey(info, "minping"));
 			server->maxPing = atoi(Info_ValueForKey(info, "maxping"));
