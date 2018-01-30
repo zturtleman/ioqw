@@ -867,6 +867,9 @@ static void CG_AddCEntity(centity_t *cent) {
 		case ET_BEAM:
 			CG_Beam(cent);
 			break;
+		case ET_CORONA:
+			//CG_Corona(cent);
+			break;
 		case ET_TELEPORT_TRIGGER:
 		case ET_PUSH_TRIGGER:
 		case ET_INVISIBLE:

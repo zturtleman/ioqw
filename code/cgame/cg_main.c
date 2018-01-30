@@ -2165,6 +2165,9 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum) {
 	// make sure we have update values (scores)
 	CG_SetConfigValues();
 	CG_StartMusic();
+
+	cg.lightstylesInited = qfalse;
+
 	CG_LoadingString("");
 	CG_InitTeamChat();
 	CG_ShaderStateChanged();

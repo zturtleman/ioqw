@@ -366,6 +366,9 @@ void Svcmd_EntityList_f(void) {
 			case ET_BEAM:
 				G_Printf("ET_BEAM             ");
 				break;
+			case ET_CORONA:
+				G_Printf("ET_CORONA           ");
+				break;
 			case ET_TELEPORT_TRIGGER:
 				G_Printf("ET_TELEPORT_TRIGGER ");
 				break;

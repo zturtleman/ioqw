@@ -2266,9 +2266,16 @@ int CG_LightVerts(vec3_t normal, int numVerts, polyVert_t *verts) {
 /*
 =======================================================================================================================================
 CG_Corpse
+
+Tobias NOTE: be careful here!
+Commit https://github.com/zturtleman/mint-arena/commit/bd83bb8178efd150277bb0d5ed09494c3aa6e34b#diff-08c7587b3da3e294c50c64c1024339d7
+adds 'smooth corpse sinking' but prevents the game from representing the player model on the podiums (in base q3 UI). To fix this issue
+we need to merge commit https://github.com/zturtleman/spearmint-indigo/commit/fb119de1ff10b553120180b8cb6a51dafb49897f and also commit
+https://github.com/zturtleman/spearmint-indigo/commit/406b679c524298d1841bef2c95cc1ed06beaa06c. But merging both breaks our current
+'monster' code :(
+The missing models on the podiums aren't a big issue anymore since we do no longer support the base UI.
 =======================================================================================================================================
 */
-#define BODY_SINK_DIST 15
 void CG_Corpse(centity_t *cent, int clientNum, float *bodySinkOffset, float *shadowAlpha) {
 	float offset;
 

@@ -1201,8 +1201,8 @@ typedef struct entityState_s {
 	int otherEntityNum;	// shotgun sources, etc.
 	int otherEntityNum2;
 	int groundEntityNum; // ENTITYNUM_NONE = in air
-	int constantLight;	// r + (g << 8) + (b << 16) + (intensity << 24)
 	int dl_intensity;	// used for coronas
+	int constantLight;	// r + (g << 8) + (b << 16) + (intensity << 24)
 	int loopSound;		// constantly loop this sound
 	int modelindex;
 	int modelindex2;
@@ -1245,6 +1245,7 @@ typedef enum {
 	ET_SPEAKER,
 	ET_PORTAL,
 	ET_BEAM,
+	ET_CORONA,
 	ET_TELEPORT_TRIGGER,
 	ET_PUSH_TRIGGER,
 	ET_INVISIBLE,

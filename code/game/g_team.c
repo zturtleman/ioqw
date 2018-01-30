@@ -903,6 +903,10 @@ gentity_t *Team_GetLocation(gentity_t *ent) {
 	float bestlen, len;
 	vec3_t origin;
 
+	if (!ent) {
+		return NULL;
+	}
+
 	best = NULL;
 	bestlen = 262144;
 

@@ -253,6 +253,14 @@ typedef struct centity_s {
 	// exact interpolated position of entity on this frame
 	vec3_t lerpOrigin;
 	vec3_t lerpAngles;
+	// client side dlights
+	int dl_frame;
+	int dl_oldframe;
+	float dl_backlerp;
+	int dl_time;
+	char dl_stylestring[64];
+	int dl_sound;
+	int dl_atten;
 } centity_t;
 
 /**************************************************************************************************************************************
@@ -538,6 +546,7 @@ typedef struct {
 	float zoomSensitivity;
 	// information screen text during loading
 	char infoScreenText[MAX_STRING_CHARS];
+	qboolean lightstylesInited;
 	// scoreboard
 	int scoresRequestTime;
 	int numScores;
@@ -1113,6 +1122,7 @@ void CG_RankRunFrame(void);
 void CG_SetScoreSelection(void *menu);
 score_t *CG_GetSelectedScore(void);
 void CG_BuildSpectatorString(void);
+void CG_SetupDlightstyles(void);
 // cg_view.c
 void CG_TestModel_f(void);
 void CG_TestGun_f(void);

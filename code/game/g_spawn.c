@@ -127,6 +127,11 @@ field_t fields[] = {
 	{"angle", FOFS(s.angles), F_ANGLEHACK},
 	{"targetShaderName", FOFS(targetShaderName), F_STRING},
 	{"targetShaderNewName", FOFS(targetShaderNewName), F_STRING},
+	// dlight lightstyles (made all these unique variables for testing)
+	{"_color", FOFS(dl_color), F_VECTOR},				// color of the light (the underscore is inserted by the color picker in QER)
+	{"color", FOFS(dl_color), F_VECTOR},				// color of the light
+	{"stylestring", FOFS(dl_stylestring), F_STRING},	// user defined stylestring "fffndlsfaaaaaa" for example
+	{"shader", FOFS(dl_shader), F_STRING},				// shader to use for a target_effect or dlight
 	{NULL}
 };
 
@@ -189,6 +194,9 @@ void SP_team_blueobelisk(gentity_t *ent);
 void SP_team_redobelisk(gentity_t *ent);
 void SP_team_neutralobelisk(gentity_t *ent);
 void SP_item_botroam(gentity_t *ent) {}
+void SP_dlight(gentity_t *ent);
+void SP_corona(gentity_t *ent);
+void SP_props_skyportal(gentity_t *ent);
 
 spawn_t spawns[] = {
 	// info entities don't do anything at all, but provide positional information for things controlled by other processes
@@ -251,6 +259,9 @@ spawn_t spawns[] = {
 	{"team_blueobelisk", SP_team_blueobelisk},
 	{"team_neutralobelisk", SP_team_neutralobelisk},
 	{"item_botroam", SP_item_botroam},
+	{"dlight", SP_dlight},
+	{"corona", SP_corona},
+	{"props_skyportal", SP_props_skyportal},
 	{NULL, 0}
 };
 

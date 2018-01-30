@@ -49,7 +49,9 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define DEAD_VIEWHEIGHT -16
 #define BODY_SINK_DELAY 5000
 #define BODY_SINK_TIME 1500
+#define BODY_SINK_DIST 15
 #define OBELISK_TARGET_HEIGHT 56
+#define MAX_DLIGHT_CONFIGSTRINGS 128
 
 /**************************************************************************************************************************************
 
@@ -77,14 +79,16 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define CS_INTERMISSION		22 // when 1, fraglimit/timelimit has been hit and intermission will start in a second or two
 #define CS_FLAGSTATUS		23 // string indicating flag status in CTF
 #define CS_SHADERSTATE		24
-#define CS_BOTINFO			25
+//#define CS_BOTINFO			25
 #define CS_ITEMS			27 // string of 0's and 1's that tell which items are present
 #define CS_MODELS			32
 #define CS_SOUNDS			(CS_MODELS + MAX_MODELS)
 #define CS_PLAYERS			(CS_SOUNDS + MAX_SOUNDS)
 #define CS_LOCATIONS		(CS_PLAYERS + MAX_CLIENTS)
 #define CS_PARTICLES		(CS_LOCATIONS + MAX_LOCATIONS)
-#define CS_MAX				(CS_PARTICLES + MAX_LOCATIONS)
+#define CS_DLIGHTS			(CS_PARTICLES + MAX_LOCATIONS)
+#define CS_BOTINFO			(CS_DLIGHTS + MAX_DLIGHT_CONFIGSTRINGS)
+#define CS_MAX				(CS_BOTINFO + MAX_CLIENTS)
 #if (CS_MAX) > MAX_CONFIGSTRINGS
 #error overflow: (CS_MAX) > MAX_CONFIGSTRINGS
 #endif
@@ -474,8 +478,8 @@ typedef struct animation_s {
 // flip the togglebit every time an animation changes so a restart of the same anim can be detected
 #define ANIM_TOGGLEBIT 128
 
-#define DEFAULT_REDTEAM_NAME "Pagans"
-#define DEFAULT_BLUETEAM_NAME "Stroggs"
+#define DEFAULT_REDTEAM_NAME "Stroggs"
+#define DEFAULT_BLUETEAM_NAME "Pagans"
 
 typedef enum {
 	TEAM_RED,

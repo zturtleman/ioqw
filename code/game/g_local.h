@@ -135,6 +135,11 @@ struct gentity_s {
 	float wait;
 	float random;
 	gitem_t *item;				// for bonus items
+	// dlights
+	vec3_t dl_color;
+	char *dl_stylestring;
+	char *dl_shader;
+	int dl_atten;
 };
 
 typedef enum {
@@ -323,6 +328,7 @@ void ClearRegisteredItems(void);
 void RegisterItem(gitem_t *item);
 void SaveRegisteredItems(void);
 // g_utils.c
+int G_FindConfigstringIndex(char *name, int start, int max, qboolean create);
 int G_ModelIndex(char *name);
 int G_SoundIndex(char *name);
 void G_TeamCommand(team_t team, char *cmd);

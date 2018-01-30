@@ -3052,11 +3052,13 @@ static qboolean UI_NetSource_HandleKey(int flags, float *special, int key) {
 			char masterstr[2], cvarname[sizeof("sv_master1")];
 
 			while (ui_netSource.integer >= UIAS_GLOBAL1 && ui_netSource.integer <= UIAS_GLOBAL5) {
-				Com_sprintf(cvarname, sizeof(cvarname), "sv_master%d", ui_netSource.integer - UIAS_GLOBAL0);
-				trap_Cvar_VariableStringBuffer(cvarname, masterstr, sizeof(masterstr));
+				if (ui_browserSeparateMasters.integer) {
+					Com_sprintf(cvarname, sizeof(cvarname), "sv_master%d", ui_netSource.integer - UIAS_GLOBAL0);
+					trap_Cvar_VariableStringBuffer(cvarname, masterstr, sizeof(masterstr));
 
-				if (*masterstr) {
-					break;
+					if (*masterstr) {
+						break;
+					}
 				}
 
 				ui_netSource.integer += select;
@@ -6640,6 +6642,7 @@ vmCvar_t ui_spSkill;
 vmCvar_t ui_browserShowFull;
 vmCvar_t ui_browserShowEmpty;
 vmCvar_t ui_browserShowBots;
+vmCvar_t ui_browserSeparateMasters;
 vmCvar_t ui_brassTime;
 vmCvar_t ui_drawCrosshair;
 vmCvar_t ui_drawCrosshairNames;
@@ -6717,6 +6720,7 @@ static cvarTable_t cvarTable[] = {
 	{&ui_browserShowFull, "ui_browserShowFull", "1", CVAR_ARCHIVE},
 	{&ui_browserShowEmpty, "ui_browserShowEmpty", "1", CVAR_ARCHIVE},
 	{&ui_browserShowBots, "ui_browserShowBots", "1", CVAR_ARCHIVE},
+	{&ui_browserSeparateMasters, "ui_browserSeparateMasters", "0", CVAR_ARCHIVE},
 	{&ui_brassTime, "cg_brassTime", "2500", CVAR_ARCHIVE},
 	{&ui_drawCrosshair, "cg_drawCrosshair", "4", CVAR_ARCHIVE},
 	{&ui_drawCrosshairNames, "cg_drawCrosshairNames", "0", CVAR_ARCHIVE},
@@ -6724,10 +6728,10 @@ static cvarTable_t cvarTable[] = {
 	{&ui_new, "ui_new", "0", CVAR_TEMP},
 	{&ui_debug, "ui_debug", "0", CVAR_TEMP},
 	{&ui_initialized, "ui_initialized", "0", CVAR_TEMP},
-	{&ui_opponentName, "ui_opponentName", "Stroggs", CVAR_ARCHIVE},
-	{&ui_teamName, "ui_teamName", "Pagans", CVAR_ARCHIVE},
-	{&ui_redteam, "ui_redteam", "Stroggs", CVAR_ARCHIVE},
-	{&ui_blueteam, "ui_blueteam", "Pagans", CVAR_ARCHIVE},
+	{&ui_opponentName, "ui_opponentName", DEFAULT_REDTEAM_NAME, CVAR_ARCHIVE},
+	{&ui_teamName, "ui_teamName", DEFAULT_BLUETEAM_NAME, CVAR_ARCHIVE},
+	{&ui_redteam, "ui_redteam", DEFAULT_REDTEAM_NAME, CVAR_ARCHIVE},
+	{&ui_blueteam, "ui_blueteam", DEFAULT_BLUETEAM_NAME, CVAR_ARCHIVE},
 	{&ui_dedicated, "ui_dedicated", "0", CVAR_ARCHIVE},
 	{&ui_gameType, "ui_gametype", "3", CVAR_ARCHIVE},
 	{&ui_joinGameType, "ui_joinGametype", "0", CVAR_ARCHIVE},
@@ -6775,8 +6779,8 @@ static cvarTable_t cvarTable[] = {
 	{&ui_scoreTimeBonus, "ui_scoreTimeBonus", "0", CVAR_ARCHIVE},
 	{&ui_scoreSkillBonus, "ui_scoreSkillBonus", "0", CVAR_ARCHIVE},
 	{&ui_scoreShutoutBonus, "ui_scoreShutoutBonus", "0", CVAR_ARCHIVE},
-	{&ui_fragLimit, "ui_fragLimit", "10", 0},
-	{&ui_captureLimit, "ui_captureLimit", "5", 0},
+	{&ui_fragLimit, "ui_fragLimit", "0", 0},
+	{&ui_captureLimit, "ui_captureLimit", "8", 0},
 	{&ui_smallFont, "ui_smallFont", "0.25", CVAR_ARCHIVE},
 	{&ui_bigFont, "ui_bigFont", "0.4", CVAR_ARCHIVE},
 	{&ui_findPlayer, "ui_findPlayer", "Sarge", CVAR_ARCHIVE},
