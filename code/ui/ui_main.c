@@ -3438,18 +3438,18 @@ static void UI_StartSinglePlayer(void) {
 		k = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_opponentName"));
 
 		for (i = 0; i < PLAYERS_PER_TEAM; i++) {
-			Com_sprintf(buff, sizeof(buff), "wait; addbot %s %i %s 250 %s\n", UI_AIFromName(teamList[k].teamMembers[i]), skill, "Blue", teamList[k].teamMembers[i]);
+			Com_sprintf(buff, sizeof(buff), "wait; addbot %s %i %s 250 %s\n", UI_AIFromName(teamList[k].teamMembers[i]), skill, "Red", teamList[k].teamMembers[i]);
 			trap_Cmd_ExecuteText(EXEC_APPEND, buff);
 		}
 
 		k = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_teamName"));
 
 		for (i = 1; i < PLAYERS_PER_TEAM; i++) {
-			Com_sprintf(buff, sizeof(buff), "wait; addbot %s %i %s 250 %s\n", UI_AIFromName(teamList[k].teamMembers[i]), skill, "Red", teamList[k].teamMembers[i]);
+			Com_sprintf(buff, sizeof(buff), "wait; addbot %s %i %s 250 %s\n", UI_AIFromName(teamList[k].teamMembers[i]), skill, "Blue", teamList[k].teamMembers[i]);
 			trap_Cmd_ExecuteText(EXEC_APPEND, buff);
 		}
 
-		trap_Cmd_ExecuteText(EXEC_APPEND, "wait 5; team Red\n");
+		trap_Cmd_ExecuteText(EXEC_APPEND, "wait 5; team Blue\n");
 	}
 }
 */
@@ -6724,8 +6724,8 @@ static cvarTable_t cvarTable[] = {
 	{&ui_new, "ui_new", "0", CVAR_TEMP},
 	{&ui_debug, "ui_debug", "0", CVAR_TEMP},
 	{&ui_initialized, "ui_initialized", "0", CVAR_TEMP},
-	{&ui_teamName, "ui_teamName", "Pagans", CVAR_ARCHIVE},
 	{&ui_opponentName, "ui_opponentName", "Stroggs", CVAR_ARCHIVE},
+	{&ui_teamName, "ui_teamName", "Pagans", CVAR_ARCHIVE},
 	{&ui_redteam, "ui_redteam", "Stroggs", CVAR_ARCHIVE},
 	{&ui_blueteam, "ui_blueteam", "Pagans", CVAR_ARCHIVE},
 	{&ui_dedicated, "ui_dedicated", "0", CVAR_ARCHIVE},
