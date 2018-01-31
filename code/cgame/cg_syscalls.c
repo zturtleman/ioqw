@@ -86,6 +86,78 @@ int trap_Milliseconds(void) {
 
 /*
 =======================================================================================================================================
+trap_RealTime
+=======================================================================================================================================
+*/
+int trap_RealTime(qtime_t *qtime) {
+	return syscall(CG_REAL_TIME, qtime);
+}
+
+/*
+=======================================================================================================================================
+trap_SnapVector
+=======================================================================================================================================
+*/
+void trap_SnapVector(float *v) {
+	syscall(CG_SNAPVECTOR, v);
+}
+
+/*
+=======================================================================================================================================
+trap_Argc
+=======================================================================================================================================
+*/
+int trap_Argc(void) {
+	return syscall(CG_ARGC);
+}
+
+/*
+=======================================================================================================================================
+trap_Argv
+=======================================================================================================================================
+*/
+void trap_Argv(int n, char *buffer, int bufferLength) {
+	syscall(CG_ARGV, n, buffer, bufferLength);
+}
+
+/*
+=======================================================================================================================================
+trap_Args
+=======================================================================================================================================
+*/
+void trap_Args(char *buffer, int bufferLength) {
+	syscall(CG_ARGS, buffer, bufferLength);
+}
+
+/*
+=======================================================================================================================================
+trap_AddCommand
+=======================================================================================================================================
+*/
+void trap_AddCommand(const char *cmdName) {
+	syscall(CG_ADDCOMMAND, cmdName);
+}
+
+/*
+=======================================================================================================================================
+trap_RemoveCommand
+=======================================================================================================================================
+*/
+void trap_RemoveCommand(const char *cmdName) {
+	syscall(CG_REMOVECOMMAND, cmdName);
+}
+
+/*
+=======================================================================================================================================
+trap_Cmd_ExecuteText
+=======================================================================================================================================
+*/
+void trap_Cmd_ExecuteText(int exec_when, const char *text) {
+	syscall(CG_CMD_EXECUTETEXT, exec_when, text);
+}
+
+/*
+=======================================================================================================================================
 trap_Cvar_Register
 =======================================================================================================================================
 */
@@ -179,33 +251,6 @@ void trap_Cvar_InfoStringBuffer(int bit, char *buffer, int bufsize) {
 
 /*
 =======================================================================================================================================
-trap_Argc
-=======================================================================================================================================
-*/
-int trap_Argc(void) {
-	return syscall(CG_ARGC);
-}
-
-/*
-=======================================================================================================================================
-trap_Argv
-=======================================================================================================================================
-*/
-void trap_Argv(int n, char *buffer, int bufferLength) {
-	syscall(CG_ARGV, n, buffer, bufferLength);
-}
-
-/*
-=======================================================================================================================================
-trap_Args
-=======================================================================================================================================
-*/
-void trap_Args(char *buffer, int bufferLength) {
-	syscall(CG_ARGS, buffer, bufferLength);
-}
-
-/*
-=======================================================================================================================================
 trap_FS_FOpenFile
 =======================================================================================================================================
 */
@@ -260,47 +305,92 @@ int trap_FS_GetFileList(const char *path, const char *extension, char *listbuf, 
 
 /*
 =======================================================================================================================================
-trap_Cmd_ExecuteText
+trap_PC_AddGlobalDefine
 =======================================================================================================================================
 */
-void trap_Cmd_ExecuteText(int exec_when, const char *text) {
-	syscall(CG_CMD_EXECUTETEXT, exec_when, text);
+int trap_PC_AddGlobalDefine(char *define) {
+	return syscall(CG_PC_ADD_GLOBAL_DEFINE, define);
 }
 
 /*
 =======================================================================================================================================
-trap_AddCommand
+trap_PC_RemoveAllGlobalDefines
 =======================================================================================================================================
 */
-void trap_AddCommand(const char *cmdName) {
-	syscall(CG_ADDCOMMAND, cmdName);
+void trap_PC_RemoveAllGlobalDefines(void) {
+	syscall(CG_PC_REMOVE_ALL_GLOBAL_DEFINES);
 }
 
 /*
 =======================================================================================================================================
-trap_RemoveCommand
+trap_PC_LoadSource
 =======================================================================================================================================
 */
-void trap_RemoveCommand(const char *cmdName) {
-	syscall(CG_REMOVECOMMAND, cmdName);
+int trap_PC_LoadSource(const char *filename) {
+	return syscall(CG_PC_LOAD_SOURCE, filename);
 }
 
 /*
 =======================================================================================================================================
-trap_SendClientCommand
+trap_PC_FreeSource
 =======================================================================================================================================
 */
-void trap_SendClientCommand(const char *s) {
-	syscall(CG_SENDCLIENTCOMMAND, s);
+int trap_PC_FreeSource(int handle) {
+	return syscall(CG_PC_FREE_SOURCE, handle);
 }
 
 /*
 =======================================================================================================================================
-trap_SetMapTitle
+trap_PC_ReadToken
 =======================================================================================================================================
 */
-void trap_SetMapTitle(const char *name) {
-	syscall(CG_SETMAPTITLE, name);
+int trap_PC_ReadToken(int handle, pc_token_t *pc_token) {
+	return syscall(CG_PC_READ_TOKEN, handle, pc_token);
+}
+
+/*
+=======================================================================================================================================
+trap_PC_UnreadToken
+=======================================================================================================================================
+*/
+void trap_PC_UnreadToken(int handle) {
+	syscall(CG_PC_UNREAD_TOKEN, handle);
+}
+
+/*
+=======================================================================================================================================
+trap_PC_SourceFileAndLine
+=======================================================================================================================================
+*/
+int trap_PC_SourceFileAndLine(int handle, char *filename, int *line) {
+	return syscall(CG_PC_SOURCE_FILE_AND_LINE, handle, filename, line);
+}
+
+/*
+=======================================================================================================================================
+trap_GetClipboardData
+=======================================================================================================================================
+*/
+void trap_GetClipboardData(char *buf, int bufsize) {
+	syscall(CG_GETCLIPBOARDDATA, buf, bufsize);
+}
+
+/*
+=======================================================================================================================================
+trap_GetGlconfig
+=======================================================================================================================================
+*/
+void trap_GetGlconfig(glconfig_t *glconfig) {
+	syscall(CG_GETGLCONFIG, glconfig);
+}
+
+/*
+=======================================================================================================================================
+trap_MemoryRemaining
+=======================================================================================================================================
+*/
+int trap_MemoryRemaining(void) {
+	return syscall(CG_MEMORY_REMAINING);
 }
 
 /*
@@ -319,6 +409,87 @@ trap_TranslateString
 */
 void trap_TranslateString(const char *string, char *buf) {
 	syscall(CG_TRANSLATE_STRING, string, buf);
+}
+
+/*
+=======================================================================================================================================
+trap_GetGameState
+=======================================================================================================================================
+*/
+void trap_GetGameState(gameState_t *gamestate) {
+	syscall(CG_GETGAMESTATE, gamestate);
+}
+
+/*
+=======================================================================================================================================
+trap_GetCurrentSnapshotNumber
+=======================================================================================================================================
+*/
+void trap_GetCurrentSnapshotNumber(int *snapshotNumber, int *serverTime) {
+	syscall(CG_GETCURRENTSNAPSHOTNUMBER, snapshotNumber, serverTime);
+}
+
+/*
+=======================================================================================================================================
+trap_GetSnapshot
+=======================================================================================================================================
+*/
+qboolean trap_GetSnapshot(int snapshotNumber, snapshot_t *snapshot) {
+	return syscall(CG_GETSNAPSHOT, snapshotNumber, snapshot);
+}
+
+/*
+=======================================================================================================================================
+trap_GetServerCommand
+=======================================================================================================================================
+*/
+qboolean trap_GetServerCommand(int serverCommandNumber) {
+	return syscall(CG_GETSERVERCOMMAND, serverCommandNumber);
+}
+
+/*
+=======================================================================================================================================
+trap_GetCurrentCmdNumber
+=======================================================================================================================================
+*/
+int trap_GetCurrentCmdNumber(void) {
+	return syscall(CG_GETCURRENTCMDNUMBER);
+}
+
+/*
+=======================================================================================================================================
+trap_GetUserCmd
+=======================================================================================================================================
+*/
+qboolean trap_GetUserCmd(int cmdNumber, usercmd_t *ucmd) {
+	return syscall(CG_GETUSERCMD, cmdNumber, ucmd);
+}
+
+/*
+=======================================================================================================================================
+trap_SetUserCmdValue
+=======================================================================================================================================
+*/
+void trap_SetUserCmdValue(int stateValue, float sensitivityScale) {
+	syscall(CG_SETUSERCMDVALUE, stateValue, PASSFLOAT(sensitivityScale));
+}
+
+/*
+=======================================================================================================================================
+trap_SendClientCommand
+=======================================================================================================================================
+*/
+void trap_SendClientCommand(const char *s) {
+	syscall(CG_SENDCLIENTCOMMAND, s);
+}
+
+/*
+=======================================================================================================================================
+trap_SetMapTitle
+=======================================================================================================================================
+*/
+void trap_SetMapTitle(const char *name) {
+	syscall(CG_SETMAPTITLE, name);
 }
 
 /*
@@ -350,20 +521,11 @@ clipHandle_t trap_CM_InlineModel(int index) {
 
 /*
 =======================================================================================================================================
-trap_CM_TempBoxModel
+trap_CM_MarkFragments
 =======================================================================================================================================
 */
-clipHandle_t trap_CM_TempBoxModel(const vec3_t mins, const vec3_t maxs) {
-	return syscall(CG_CM_TEMPBOXMODEL, mins, maxs);
-}
-
-/*
-=======================================================================================================================================
-trap_CM_TempCapsuleModel
-=======================================================================================================================================
-*/
-clipHandle_t trap_CM_TempCapsuleModel(const vec3_t mins, const vec3_t maxs) {
-	return syscall(CG_CM_TEMPCAPSULEMODEL, mins, maxs);
+int trap_CM_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection, int maxPoints, vec3_t pointBuffer, int maxFragments, markFragment_t *fragmentBuffer) {
+	return syscall(CG_CM_MARKFRAGMENTS, numPoints, points, projection, maxPoints, pointBuffer, maxFragments, fragmentBuffer);
 }
 
 /*
@@ -386,20 +548,20 @@ int trap_CM_TransformedPointContents(const vec3_t p, clipHandle_t model, const v
 
 /*
 =======================================================================================================================================
+trap_CM_TempBoxModel
+=======================================================================================================================================
+*/
+clipHandle_t trap_CM_TempBoxModel(const vec3_t mins, const vec3_t maxs) {
+	return syscall(CG_CM_TEMPBOXMODEL, mins, maxs);
+}
+
+/*
+=======================================================================================================================================
 trap_CM_BoxTrace
 =======================================================================================================================================
 */
 void trap_CM_BoxTrace(trace_t *results, const vec3_t start, const vec3_t end, const vec3_t mins, const vec3_t maxs, clipHandle_t model, int brushmask) {
 	syscall(CG_CM_BOXTRACE, results, start, end, mins, maxs, model, brushmask);
-}
-
-/*
-=======================================================================================================================================
-trap_CM_CapsuleTrace
-=======================================================================================================================================
-*/
-void trap_CM_CapsuleTrace(trace_t *results, const vec3_t start, const vec3_t end, const vec3_t mins, const vec3_t maxs, clipHandle_t model, int brushmask) {
-	syscall(CG_CM_CAPSULETRACE, results, start, end, mins, maxs, model, brushmask);
 }
 
 /*
@@ -413,146 +575,29 @@ void trap_CM_TransformedBoxTrace(trace_t *results, const vec3_t start, const vec
 
 /*
 =======================================================================================================================================
+trap_CM_TempCapsuleModel
+=======================================================================================================================================
+*/
+clipHandle_t trap_CM_TempCapsuleModel(const vec3_t mins, const vec3_t maxs) {
+	return syscall(CG_CM_TEMPCAPSULEMODEL, mins, maxs);
+}
+
+/*
+=======================================================================================================================================
+trap_CM_CapsuleTrace
+=======================================================================================================================================
+*/
+void trap_CM_CapsuleTrace(trace_t *results, const vec3_t start, const vec3_t end, const vec3_t mins, const vec3_t maxs, clipHandle_t model, int brushmask) {
+	syscall(CG_CM_CAPSULETRACE, results, start, end, mins, maxs, model, brushmask);
+}
+
+/*
+=======================================================================================================================================
 trap_CM_TransformedCapsuleTrace
 =======================================================================================================================================
 */
 void trap_CM_TransformedCapsuleTrace(trace_t *results, const vec3_t start, const vec3_t end, const vec3_t mins, const vec3_t maxs, clipHandle_t model, int brushmask, const vec3_t origin, const vec3_t angles) {
 	syscall(CG_CM_TRANSFORMEDCAPSULETRACE, results, start, end, mins, maxs, model, brushmask, origin, angles);
-}
-
-/*
-=======================================================================================================================================
-trap_CM_MarkFragments
-=======================================================================================================================================
-*/
-int trap_CM_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection, int maxPoints, vec3_t pointBuffer, int maxFragments, markFragment_t *fragmentBuffer) {
-	return syscall(CG_CM_MARKFRAGMENTS, numPoints, points, projection, maxPoints, pointBuffer, maxFragments, fragmentBuffer);
-}
-
-/*
-=======================================================================================================================================
-trap_S_StartSound
-=======================================================================================================================================
-*/
-void trap_S_StartSound(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx, int range, int volume) {
-	syscall(CG_S_STARTSOUND, origin, entityNum, entchannel, sfx, range, volume);
-}
-
-/*
-=======================================================================================================================================
-trap_S_StartLocalSound
-=======================================================================================================================================
-*/
-void trap_S_StartLocalSound(sfxHandle_t sfx, int channelNum) {
-	syscall(CG_S_STARTLOCALSOUND, sfx, channelNum);
-}
-
-/*
-=======================================================================================================================================
-trap_S_StopLoopingSound
-=======================================================================================================================================
-*/
-void trap_S_StopLoopingSound(int entityNum) {
-	syscall(CG_S_STOPLOOPINGSOUND, entityNum);
-}
-
-/*
-=======================================================================================================================================
-trap_S_ClearLoopingSounds
-=======================================================================================================================================
-*/
-void trap_S_ClearLoopingSounds(qboolean killall) {
-	syscall(CG_S_CLEARLOOPINGSOUNDS, killall);
-}
-
-/*
-=======================================================================================================================================
-trap_S_AddLoopingSound
-=======================================================================================================================================
-*/
-void trap_S_AddLoopingSound(int entityNum, const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx, int range, int volume) {
-	syscall(CG_S_ADDLOOPINGSOUND, entityNum, origin, velocity, sfx, range, volume);
-}
-
-/*
-=======================================================================================================================================
-trap_S_AddRealLoopingSound
-=======================================================================================================================================
-*/
-void trap_S_AddRealLoopingSound(int entityNum, const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx, int range, int volume) {
-	syscall(CG_S_ADDREALLOOPINGSOUND, entityNum, origin, velocity, sfx, range, volume);
-}
-
-/*
-=======================================================================================================================================
-trap_S_UpdateEntityPosition
-=======================================================================================================================================
-*/
-void trap_S_UpdateEntityPosition(int entityNum, const vec3_t origin) {
-	syscall(CG_S_UPDATEENTITYPOSITION, entityNum, origin);
-}
-
-/*
-=======================================================================================================================================
-trap_S_Respatialize
-=======================================================================================================================================
-*/
-void trap_S_Respatialize(int entityNum, const vec3_t origin, vec3_t axis[3], int inwater) {
-	syscall(CG_S_RESPATIALIZE, entityNum, origin, axis, inwater);
-}
-
-/*
-=======================================================================================================================================
-trap_S_RegisterSound
-=======================================================================================================================================
-*/
-sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed) {
-	return syscall(CG_S_REGISTERSOUND, sample, compressed);
-}
-
-/*
-=======================================================================================================================================
-trap_S_SoundDuration
-=======================================================================================================================================
-*/
-int trap_S_SoundDuration(sfxHandle_t handle) {
-	return syscall(CG_S_SOUNDDURATION, handle);
-}
-
-/*
-=======================================================================================================================================
-trap_S_StartBackgroundTrack
-=======================================================================================================================================
-*/
-void trap_S_StartBackgroundTrack(const char *intro, const char *loop) {
-	syscall(CG_S_STARTBACKGROUNDTRACK, intro, loop);
-}
-
-/*
-=======================================================================================================================================
-trap_S_StopBackgroundTrack
-=======================================================================================================================================
-*/
-void trap_S_StopBackgroundTrack(void) {
-	syscall(CG_S_STOPBACKGROUNDTRACK);
-}
-
-/*
-=======================================================================================================================================
-trap_R_LoadWorldMap
-=======================================================================================================================================
-*/
-void trap_R_LoadWorldMap(const char *mapname) {
-	syscall(CG_R_LOADWORLDMAP, mapname);
-}
-
-/*
-=======================================================================================================================================
-trap_GetEntityToken
-=======================================================================================================================================
-*/
-qboolean trap_GetEntityToken(char *buffer, int bufferSize) {
-	return syscall(CG_GET_ENTITY_TOKEN, buffer, bufferSize);
 }
 
 /*
@@ -638,33 +683,6 @@ void trap_R_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *v
 
 /*
 =======================================================================================================================================
-trap_R_AddLightToScene
-=======================================================================================================================================
-*/
-void trap_R_AddLightToScene(const vec3_t org, float intensity, float r, float g, float b) {
-	syscall(CG_R_ADDLIGHTTOSCENE, org, PASSFLOAT(intensity), PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b));
-}
-
-/*
-=======================================================================================================================================
-trap_R_AddAdditiveLightToScene
-=======================================================================================================================================
-*/
-void trap_R_AddAdditiveLightToScene(const vec3_t org, float intensity, float r, float g, float b) {
-	syscall(CG_R_ADDADDITIVELIGHTTOSCENE, org, PASSFLOAT(intensity), PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b));
-}
-
-/*
-=======================================================================================================================================
-trap_R_LightForPoint
-=======================================================================================================================================
-*/
-int trap_R_LightForPoint(vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec3_t lightDir) {
-	return syscall(CG_R_LIGHTFORPOINT, point, ambientLight, directedLight, lightDir);
-}
-
-/*
-=======================================================================================================================================
 trap_R_RenderScene
 =======================================================================================================================================
 */
@@ -679,15 +697,6 @@ trap_R_SetColor
 */
 void trap_R_SetColor(const float *rgba) {
 	syscall(CG_R_SETCOLOR, rgba);
-}
-
-/*
-=======================================================================================================================================
-trap_R_SetClipRegion
-=======================================================================================================================================
-*/
-void trap_R_SetClipRegion(const float *region) {
-	syscall(CG_R_SETCLIPREGION, region);
 }
 
 /*
@@ -719,20 +728,20 @@ void trap_R_DrawRotatedPic(float x, float y, float w, float h, float s1, float t
 
 /*
 =======================================================================================================================================
-trap_R_ModelBounds
-=======================================================================================================================================
-*/
-void trap_R_ModelBounds(clipHandle_t model, vec3_t mins, vec3_t maxs) {
-	syscall(CG_R_MODELBOUNDS, model, mins, maxs);
-}
-
-/*
-=======================================================================================================================================
 trap_R_LerpTag
 =======================================================================================================================================
 */
 int trap_R_LerpTag(orientation_t *tag, clipHandle_t mod, int startFrame, int endFrame, float frac, const char *tagName) {
 	return syscall(CG_R_LERPTAG, tag, mod, startFrame, endFrame, PASSFLOAT(frac), tagName);
+}
+
+/*
+=======================================================================================================================================
+trap_R_ModelBounds
+=======================================================================================================================================
+*/
+void trap_R_ModelBounds(clipHandle_t model, vec3_t mins, vec3_t maxs) {
+	syscall(CG_R_MODELBOUNDS, model, mins, maxs);
 }
 
 /*
@@ -746,6 +755,42 @@ void trap_R_RemapShader(const char *oldShader, const char *newShader, const char
 
 /*
 =======================================================================================================================================
+trap_R_SetClipRegion
+=======================================================================================================================================
+*/
+void trap_R_SetClipRegion(const float *region) {
+	syscall(CG_R_SETCLIPREGION, region);
+}
+
+/*
+=======================================================================================================================================
+trap_R_LoadWorldMap
+=======================================================================================================================================
+*/
+void trap_R_LoadWorldMap(const char *mapname) {
+	syscall(CG_R_LOADWORLDMAP, mapname);
+}
+
+/*
+=======================================================================================================================================
+trap_GetEntityToken
+=======================================================================================================================================
+*/
+qboolean trap_GetEntityToken(char *buffer, int bufferSize) {
+	return syscall(CG_GET_ENTITY_TOKEN, buffer, bufferSize);
+}
+
+/*
+=======================================================================================================================================
+trap_R_LightForPoint
+=======================================================================================================================================
+*/
+int trap_R_LightForPoint(vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec3_t lightDir) {
+	return syscall(CG_R_LIGHTFORPOINT, point, ambientLight, directedLight, lightDir);
+}
+
+/*
+=======================================================================================================================================
 trap_R_inPVS
 =======================================================================================================================================
 */
@@ -755,128 +800,128 @@ qboolean trap_R_inPVS(const vec3_t p1, const vec3_t p2) {
 
 /*
 =======================================================================================================================================
-trap_GetClipboardData
+trap_R_AddLightToScene
 =======================================================================================================================================
 */
-void trap_GetClipboardData(char *buf, int bufsize) {
-	syscall(CG_GETCLIPBOARDDATA, buf, bufsize);
+void trap_R_AddLightToScene(const vec3_t org, float intensity, float r, float g, float b) {
+	syscall(CG_R_ADDLIGHTTOSCENE, org, PASSFLOAT(intensity), PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b));
 }
 
 /*
 =======================================================================================================================================
-trap_GetGlconfig
+trap_R_AddAdditiveLightToScene
 =======================================================================================================================================
 */
-void trap_GetGlconfig(glconfig_t *glconfig) {
-	syscall(CG_GETGLCONFIG, glconfig);
+void trap_R_AddAdditiveLightToScene(const vec3_t org, float intensity, float r, float g, float b) {
+	syscall(CG_R_ADDADDITIVELIGHTTOSCENE, org, PASSFLOAT(intensity), PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b));
 }
 
 /*
 =======================================================================================================================================
-trap_GetGameState
+trap_S_RegisterSound
 =======================================================================================================================================
 */
-void trap_GetGameState(gameState_t *gamestate) {
-	syscall(CG_GETGAMESTATE, gamestate);
+sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed) {
+	return syscall(CG_S_REGISTERSOUND, sample, compressed);
 }
 
 /*
 =======================================================================================================================================
-trap_GetCurrentSnapshotNumber
+trap_S_SoundDuration
 =======================================================================================================================================
 */
-void trap_GetCurrentSnapshotNumber(int *snapshotNumber, int *serverTime) {
-	syscall(CG_GETCURRENTSNAPSHOTNUMBER, snapshotNumber, serverTime);
+int trap_S_SoundDuration(sfxHandle_t handle) {
+	return syscall(CG_S_SOUNDDURATION, handle);
 }
 
 /*
 =======================================================================================================================================
-trap_GetSnapshot
+trap_S_StartLocalSound
 =======================================================================================================================================
 */
-qboolean trap_GetSnapshot(int snapshotNumber, snapshot_t *snapshot) {
-	return syscall(CG_GETSNAPSHOT, snapshotNumber, snapshot);
+void trap_S_StartLocalSound(sfxHandle_t sfx, int channelNum) {
+	syscall(CG_S_STARTLOCALSOUND, sfx, channelNum);
 }
 
 /*
 =======================================================================================================================================
-trap_GetServerCommand
+trap_S_StartBackgroundTrack
 =======================================================================================================================================
 */
-qboolean trap_GetServerCommand(int serverCommandNumber) {
-	return syscall(CG_GETSERVERCOMMAND, serverCommandNumber);
+void trap_S_StartBackgroundTrack(const char *intro, const char *loop) {
+	syscall(CG_S_STARTBACKGROUNDTRACK, intro, loop);
 }
 
 /*
 =======================================================================================================================================
-trap_GetCurrentCmdNumber
+trap_S_StopBackgroundTrack
 =======================================================================================================================================
 */
-int trap_GetCurrentCmdNumber(void) {
-	return syscall(CG_GETCURRENTCMDNUMBER);
+void trap_S_StopBackgroundTrack(void) {
+	syscall(CG_S_STOPBACKGROUNDTRACK);
 }
 
 /*
 =======================================================================================================================================
-trap_GetUserCmd
+trap_S_StartSound
 =======================================================================================================================================
 */
-qboolean trap_GetUserCmd(int cmdNumber, usercmd_t *ucmd) {
-	return syscall(CG_GETUSERCMD, cmdNumber, ucmd);
+void trap_S_StartSound(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx, int range, int volume) {
+	syscall(CG_S_STARTSOUND, origin, entityNum, entchannel, sfx, range, volume);
 }
 
 /*
 =======================================================================================================================================
-trap_SetUserCmdValue
+trap_S_ClearLoopingSounds
 =======================================================================================================================================
 */
-void trap_SetUserCmdValue(int stateValue, float sensitivityScale) {
-	syscall(CG_SETUSERCMDVALUE, stateValue, PASSFLOAT(sensitivityScale));
+void trap_S_ClearLoopingSounds(qboolean killall) {
+	syscall(CG_S_CLEARLOOPINGSOUNDS, killall);
 }
 
 /*
 =======================================================================================================================================
-trap_MemoryRemaining
+trap_S_AddLoopingSound
 =======================================================================================================================================
 */
-int trap_MemoryRemaining(void) {
-	return syscall(CG_MEMORY_REMAINING);
+void trap_S_AddLoopingSound(int entityNum, const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx, int range, int volume) {
+	syscall(CG_S_ADDLOOPINGSOUND, entityNum, origin, velocity, sfx, range, volume);
 }
 
 /*
 =======================================================================================================================================
-trap_Key_IsDown
+trap_S_UpdateEntityPosition
 =======================================================================================================================================
 */
-qboolean trap_Key_IsDown(int keynum) {
-	return syscall(CG_KEY_ISDOWN, keynum);
+void trap_S_UpdateEntityPosition(int entityNum, const vec3_t origin) {
+	syscall(CG_S_UPDATEENTITYPOSITION, entityNum, origin);
 }
 
 /*
 =======================================================================================================================================
-trap_Key_GetCatcher
+trap_S_Respatialize
 =======================================================================================================================================
 */
-int trap_Key_GetCatcher(void) {
-	return syscall(CG_KEY_GETCATCHER);
+void trap_S_Respatialize(int entityNum, const vec3_t origin, vec3_t axis[3], int inwater) {
+	syscall(CG_S_RESPATIALIZE, entityNum, origin, axis, inwater);
 }
 
 /*
 =======================================================================================================================================
-trap_Key_SetCatcher
+trap_S_AddRealLoopingSound
 =======================================================================================================================================
 */
-void trap_Key_SetCatcher(int catcher) {
-	syscall(CG_KEY_SETCATCHER, catcher);
+void trap_S_AddRealLoopingSound(int entityNum, const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx, int range, int volume) {
+	syscall(CG_S_ADDREALLOOPINGSOUND, entityNum, origin, velocity, sfx, range, volume);
 }
 
 /*
 =======================================================================================================================================
-trap_Key_GetKey
+trap_S_StopLoopingSound
 =======================================================================================================================================
 */
-int trap_Key_GetKey(const char *binding, int startKey) {
-	return syscall(CG_KEY_GETKEY, binding, startKey);
+void trap_S_StopLoopingSound(int entityNum) {
+	syscall(CG_S_STOPLOOPINGSOUND, entityNum);
 }
 
 /*
@@ -908,11 +953,11 @@ void trap_Key_SetBinding(int keynum, const char *binding) {
 
 /*
 =======================================================================================================================================
-trap_Key_SetOverstrikeMode
+trap_Key_IsDown
 =======================================================================================================================================
 */
-void trap_Key_SetOverstrikeMode(qboolean state) {
-	syscall(CG_KEY_SETOVERSTRIKEMODE, state);
+qboolean trap_Key_IsDown(int keynum) {
+	return syscall(CG_KEY_ISDOWN, keynum);
 }
 
 /*
@@ -926,83 +971,38 @@ qboolean trap_Key_GetOverstrikeMode(void) {
 
 /*
 =======================================================================================================================================
-trap_PC_AddGlobalDefine
+trap_Key_SetOverstrikeMode
 =======================================================================================================================================
 */
-int trap_PC_AddGlobalDefine(char *define) {
-	return syscall(CG_PC_ADD_GLOBAL_DEFINE, define);
+void trap_Key_SetOverstrikeMode(qboolean state) {
+	syscall(CG_KEY_SETOVERSTRIKEMODE, state);
 }
 
 /*
 =======================================================================================================================================
-trap_PC_RemoveAllGlobalDefines
+trap_Key_GetCatcher
 =======================================================================================================================================
 */
-void trap_PC_RemoveAllGlobalDefines(void) {
-	syscall(CG_PC_REMOVE_ALL_GLOBAL_DEFINES);
+int trap_Key_GetCatcher(void) {
+	return syscall(CG_KEY_GETCATCHER);
 }
 
 /*
 =======================================================================================================================================
-trap_PC_LoadSource
+trap_Key_SetCatcher
 =======================================================================================================================================
 */
-int trap_PC_LoadSource(const char *filename) {
-	return syscall(CG_PC_LOAD_SOURCE, filename);
+void trap_Key_SetCatcher(int catcher) {
+	syscall(CG_KEY_SETCATCHER, catcher);
 }
 
 /*
 =======================================================================================================================================
-trap_PC_FreeSource
+trap_Key_GetKey
 =======================================================================================================================================
 */
-int trap_PC_FreeSource(int handle) {
-	return syscall(CG_PC_FREE_SOURCE, handle);
-}
-
-/*
-=======================================================================================================================================
-trap_PC_ReadToken
-=======================================================================================================================================
-*/
-int trap_PC_ReadToken(int handle, pc_token_t *pc_token) {
-	return syscall(CG_PC_READ_TOKEN, handle, pc_token);
-}
-
-/*
-=======================================================================================================================================
-trap_PC_UnreadToken
-=======================================================================================================================================
-*/
-void trap_PC_UnreadToken(int handle) {
-	syscall(CG_PC_UNREAD_TOKEN, handle);
-}
-
-/*
-=======================================================================================================================================
-trap_PC_SourceFileAndLine
-=======================================================================================================================================
-*/
-int trap_PC_SourceFileAndLine(int handle, char *filename, int *line) {
-	return syscall(CG_PC_SOURCE_FILE_AND_LINE, handle, filename, line);
-}
-
-/*
-=======================================================================================================================================
-trap_RealTime
-=======================================================================================================================================
-*/
-int trap_RealTime(qtime_t *qtime) {
-	return syscall(CG_REAL_TIME, qtime);
-}
-
-/*
-=======================================================================================================================================
-trap_SnapVector
-=======================================================================================================================================
-*/
-void trap_SnapVector(float *v) {
-	syscall(CG_SNAPVECTOR, v);
+int trap_Key_GetKey(const char *binding, int startKey) {
+	return syscall(CG_KEY_GETKEY, binding, startKey);
 }
 
 /*
