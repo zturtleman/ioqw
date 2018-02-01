@@ -3924,8 +3924,13 @@ static void UI_RunMenuScript(char **args) {
 					trap_Cmd_ExecuteText(EXEC_APPEND, buff);
 				}
 			}
-		// Tobias NOTE: currently this is the same as the "StartServer" script (above)! Do we want a simplified script for in-game server setup?
-		//				I changed SV_Map_f to kick bots, otherwise bots are added continuously (I have no idea if removing bots in this case will cause some problems)!
+		// Tobias NOTE: currently this is EXACTLY the same as the "StartServer" script (above)!
+		//				Do we want a simplified script for in-game server setup?
+
+		//				1: I changed SV_Map_f to kick bots, otherwise bots are added continuously (I have no idea if removing bots in this case will cause some problems)!
+		//				2: Waiting for too long before starting a new server will CRASH!
+		//				3: Changing the gametype will switch teams for connected players!
+		//				4: There is a pause before starting the new server (drawing a black screen), this is ugly, and this was not the case with baseq3 UI!
 		} else if (Q_stricmp(name, "StartServerIngame") == 0) {
 			int i, clients, oldclients;
 			float skill;

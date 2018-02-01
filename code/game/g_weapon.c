@@ -656,7 +656,7 @@ void Weapon_Railgun_Fire(gentity_t *ent) {
 		tent->s.eventParm = DirToByte(trace.plane.normal);
 		// do impact radius damage
 		// Tobias FIXME: 'accuracy' will go beyond 100% without the !hitClient check.
-		// This should be inside the do/while loop, if we do this here tradius damage will not work because the rail trail already go through a client.
+		// This should be inside the do/while loop, if we do this here radius damage will not work because the rail trail already go through a client.
 		// Unfortunately the ENTITYNUM_MAX_NORMAL break prevents us from doing radius damage after direct damage (or something like that).
 		if (!hitClient) {
 			if (G_RadiusDamage(trace.endpos, ent, damage * 0.5, 20, NULL, MOD_RAILGUN)) {
