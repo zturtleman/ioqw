@@ -2039,7 +2039,6 @@ CG_DrawScoreboard
 =======================================================================================================================================
 */
 static qboolean CG_DrawScoreboard(void) {
-#ifdef MISSIONPACK
 	static qboolean firstTime = qtrue;
 
 	CG_SetScreenPlacement(PLACE_CENTER, PLACE_CENTER);
@@ -2098,9 +2097,6 @@ static qboolean CG_DrawScoreboard(void) {
 	}
 
 	return qtrue;
-#else
-	return CG_DrawOldScoreboard();
-#endif
 }
 
 /*

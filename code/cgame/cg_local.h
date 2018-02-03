@@ -1339,8 +1339,6 @@ void CG_LoadingString(const char *s);
 void CG_LoadingItem(int itemNum);
 void CG_LoadingClient(int clientNum);
 void CG_DrawInformation(void);
-// cg_scoreboard.c
-qboolean CG_DrawOldScoreboard(void);
 // cg_consolecmds.c
 qboolean CG_ConsoleCommand(void);
 void CG_InitConsoleCommands(void);

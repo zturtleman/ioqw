@@ -2395,7 +2395,6 @@ Q3CGOBJ_ = \
   $(B)/$(BASEGAME)/cgame/cg_players.o \
   $(B)/$(BASEGAME)/cgame/cg_playerstate.o \
   $(B)/$(BASEGAME)/cgame/cg_predict.o \
-  $(B)/$(BASEGAME)/cgame/cg_scoreboard.o \
   $(B)/$(BASEGAME)/cgame/cg_servercmds.o \
   $(B)/$(BASEGAME)/cgame/cg_snapshot.o \
   $(B)/$(BASEGAME)/cgame/cg_view.o \
@@ -2440,7 +2439,6 @@ MPCGOBJ_ = \
   $(B)/$(MISSIONPACK)/cgame/cg_players.o \
   $(B)/$(MISSIONPACK)/cgame/cg_playerstate.o \
   $(B)/$(MISSIONPACK)/cgame/cg_predict.o \
-  $(B)/$(MISSIONPACK)/cgame/cg_scoreboard.o \
   $(B)/$(MISSIONPACK)/cgame/cg_servercmds.o \
   $(B)/$(MISSIONPACK)/cgame/cg_snapshot.o \
   $(B)/$(MISSIONPACK)/cgame/cg_view.o \
