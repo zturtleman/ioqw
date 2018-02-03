@@ -44,7 +44,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define WINDOW_HASFOCUS			0x00000002 // has cursor focus, exclusive
 #define WINDOW_VISIBLE			0x00000004 // is visible
 #define WINDOW_GREY				0x00000008 // is visible but grey (non-active)
-#define WINDOW_DECORATION		0x00000010 // for decoration only, no mouse, keyboard, etc..
+#define WINDOW_DECORATION		0x00000010 // for decoration only, no mouse, keyboard, etc.
 #define WINDOW_FADINGOUT		0x00000020 // fading out, non-active
 #define WINDOW_FADINGIN			0x00000040 // fading in
 #define WINDOW_MOUSEOVERTEXT	0x00000080 // mouse is over it, non exclusive
@@ -253,7 +253,7 @@ typedef struct itemDef_s {
 	sfxHandle_t focusSound;
 	int numColors;				// number of color ranges
 	colorRangeDef_t colorRanges[MAX_COLOR_RANGES];
-	float special;				// used for feeder id's etc.. diff per type
+	float special;				// used for feeder id's etc., diff per type
 	int cursorPos;				// cursor position in characters
 	void *typeData;				// type specific data ptr's
 } itemDef_t;

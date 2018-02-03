@@ -186,9 +186,7 @@ int Export_BotLibShutdown(void) {
 	if (!BotLibSetup("BotLibShutdown")) {
 		return BLERR_LIBRARYNOTSETUP;
 	}
-#ifndef DEMO
-	//DumpFileCRCs();
-#endif // DEMO
+
 	BotShutdownChatAI();		// be_ai_chat.c
 	BotShutdownMoveAI();		// be_ai_move.c
 	BotShutdownGoalAI();		// be_ai_goal.c

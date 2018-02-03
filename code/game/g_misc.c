@@ -590,17 +590,18 @@ void Use_Dlight(gentity_t *ent, gentity_t *other, gentity_t *activator) {
 }
 
 /*QUAKED dlight (0 1 0) (-12 - 12 - 12) (12 12 12) FORCEACTIVE STARTOFF ONETIME
+Use color picker to set color or key "color". Values are 0.0 - 1.0 for each color (rgb).
+Stylestring characters run at 10 cps in the game (meaning the alphabet, at 24 characters, would take 2.4 seconds to cycle).
 "style": value is an int from 1 - 19 that contains a pre - defined 'flicker' string.
-"stylestring": set your own 'flicker' string.  (ex. "klmnmlk"). NOTE: this should be all lowercase
-Stylestring characters run at 10 cps in the game. (meaning the alphabet, at 24 characters, would take 2.4 seconds to cycle)
-"offset": change the initial index in a style string.  So val of 3 in the above example would start this light at 'N'.  (used to get dlights using the same style out of sync).
-"atten": offset from the alpha values of the stylestring.  stylestring of "ddeeffzz" with an atten of - 1 would result in "ccddeeyy"
-Use color picker to set color or key "color".  values are 0.0 - 1.0 for each color (rgb).
-FORCEACTIVE	 -  toggle makes sure this light stays alive in a map even if the user has r_dynamiclight set to 0.
-STARTOFF	 -  means the dlight doesn't spawn in until ent is triggered
-ONETIME		 -  when the dlight is triggered, it will play through it's cycle once, then shut down until triggered again
-"shader" name of shader to apply
-"sound" sound to loop every cycle (this actually just plays the sound at the beginning of each cycle)
+"stylestring": set your own 'flicker' string. (ex. "klmnmlk"). NOTE: this should be all lowercase.
+"offset": change the initial index in a style string. So val of 3 in the above example would start this light at 'N' (used to get dlights using the same style out of sync).
+"atten": offset from the alpha values of the stylestring. Stylestring of "ddeeffzz" with an atten of -1 would result in "ccddeeyy".
+"shader": name of shader to apply.
+"sound": sound to loop every cycle (this actually just plays the sound at the beginning of each cycle).
+
+FORCEACTIVE	- toggle makes sure this light stays alive in a map even if the user has r_dynamiclight set to 0.
+STARTOFF	- means the dlight doesn't spawn in until ent is triggered.
+ONETIME		- when the dlight is triggered, it will play through it's cycle once, then shut down until triggered again.
 
 styles:
 1 - "mmnmmommommnonmmonqnmmo"
@@ -640,7 +641,7 @@ void SP_dlight(gentity_t *ent) {
 	G_SpawnInt("style", "0", &style); // predefined stylestring
 	G_SpawnString("sound", "", &snd);
 	G_SpawnInt("atten", "0", &atten);
-	G_SpawnString("shader", "", &shader);  // name of shader to use for this dlight image
+	G_SpawnString("shader", "", &shader); // name of shader to use for this dlight image
 
 	if (G_SpawnString("sound", "0", &snd)) {
 		ent->soundLoop = G_SoundIndex(snd);
@@ -672,7 +673,7 @@ void SP_dlight(gentity_t *ent) {
 		ent->dl_color[0] = ent->dl_color[1] = ent->dl_color[2] = 1;
 	}
 
-	ent->dl_color[0] = ent->dl_color[0] * 255;  // range 0 - 255 now so the client doesn't have to on every update
+	ent->dl_color[0] = ent->dl_color[0] * 255; // range 0 - 255 now so the client doesn't have to on every update
 	ent->dl_color[1] = ent->dl_color[1] * 255;
 	ent->dl_color[2] = ent->dl_color[2] * 255;
 

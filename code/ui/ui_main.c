@@ -31,7 +31,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 */
 
 // use this to get a demo build without an explicit demo build, i.e. to get the demo ui files to build
-//#define PRE_RELEASE_TADEMO
 
 #include "ui_local.h"
 
@@ -1105,12 +1104,8 @@ void UI_Load(void) {
 	}
 
 	String_Init();
-#ifdef PRE_RELEASE_TADEMO
-	UI_ParseGameInfo("demogameinfo.txt");
-#else
 	UI_ParseGameInfo("gameinfo.txt");
 	UI_LoadArenas();
-#endif
 	UI_LoadMenus(menuSet, qtrue);
 	Menus_CloseAll();
 	Menus_ActivateByName(lastName);
@@ -4025,11 +4020,7 @@ static void UI_RunMenuScript(char **args) {
 		} else if (Q_stricmp(name, "clearError") == 0) {
 			trap_Cvar_Set("com_errorMessage", "");
 		} else if (Q_stricmp(name, "loadGameInfo") == 0) {
-#ifdef PRE_RELEASE_TADEMO
-			UI_ParseGameInfo("demogameinfo.txt");
-#else
 			UI_ParseGameInfo("gameinfo.txt");
-#endif
 			UI_LoadBestScores(uiInfo.mapList[ui_currentMap.integer].mapLoadName, uiInfo.gameTypes[ui_gameType.integer].gtEnum);
 		} else if (Q_stricmp(name, "resetScores") == 0) {
 			UI_ClearScores();
@@ -5960,7 +5951,7 @@ static void UI_DrawCinematic(int handle, float x, float y, float w, float h) {
 
 	// adjust coords to get correct placement in wide screen
 	UI_AdjustFrom640(&x, &y, &w, &h);
-	// CIN_SetExtents takes stretched 640 x 480 virtualized coords
+	// CIN_SetExtents takes stretched 640 * 480 virtualized coords
 	x *= SCREEN_WIDTH / (float)uiInfo.uiDC.glconfig.vidWidth;
 	w *= SCREEN_WIDTH / (float)uiInfo.uiDC.glconfig.vidWidth;
 	y *= SCREEN_HEIGHT / (float)uiInfo.uiDC.glconfig.vidHeight;
@@ -6060,7 +6051,7 @@ void _UI_Init(qboolean inGameLoad) {
 	UI_InitMemory();
 	// cache redundant calulations
 	trap_GetGlconfig(&uiInfo.uiDC.glconfig);
-	// for 640 x 480 virtualized screen
+	// for 640 * 480 virtualized screen
 	uiInfo.uiDC.yscale = uiInfo.uiDC.glconfig.vidHeight * (1.0 / 480.0);
 	uiInfo.uiDC.xscale = uiInfo.uiDC.glconfig.vidWidth * (1.0 / 640.0);
 
@@ -6136,15 +6127,11 @@ void _UI_Init(qboolean inGameLoad) {
 	uiInfo.teamCount = 0;
 	uiInfo.characterCount = 0;
 	uiInfo.aliasCount = 0;
-#ifdef PRE_RELEASE_TADEMO
-	UI_ParseTeamInfo("demoteaminfo.txt");
-	UI_ParseGameInfo("demogameinfo.txt");
-#else
+
 	UI_ParseTeamInfo("teaminfo.txt");
 	UI_LoadTeams();
 	UI_ParseGameInfo("gameinfo.txt");
 	UI_LoadArenas();
-#endif
 	UI_ValidateTeams();
 
 	menuSet = UI_Cvar_VariableString("ui_menuFiles");
