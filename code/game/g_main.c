@@ -1347,12 +1347,24 @@ void CheckExitRules(void) {
 		return;
 	}
 
+	if (g_timelimit.integer < 0 || g_timelimit.integer > INT_MAX / 60000) {
+		G_Printf("timelimit %i is out of range, defaulting to 0\n", g_timelimit.integer);
+		trap_Cvar_SetValue("timelimit", 0);
+		trap_Cvar_Update(&g_timelimit);
+	}
+
 	if (g_timelimit.integer && !level.warmupTime) {
 		if (level.time - level.startTime >= g_timelimit.integer * 60000) {
 			trap_SendServerCommand(-1, "print \"Timelimit hit.\n\"");
 			LogExit("Timelimit hit.");
 			return;
 		}
+	}
+
+	if (g_fraglimit.integer < 0) {
+		G_Printf("fraglimit %i is out of range, defaulting to 0\n", g_fraglimit.integer);
+		trap_Cvar_SetValue("fraglimit", 0);
+		trap_Cvar_Update(&g_fraglimit);
 	}
 
 	if (g_gametype.integer < GT_CTF && g_fraglimit.integer) {
@@ -1385,6 +1397,12 @@ void CheckExitRules(void) {
 				return;
 			}
 		}
+	}
+
+	if (g_capturelimit.integer < 0) {
+		G_Printf("capturelimit %i is out of range, defaulting to 0\n", g_capturelimit.integer);
+		trap_Cvar_SetValue("capturelimit", 0);
+		trap_Cvar_Update(&g_capturelimit);
 	}
 
 	if (g_gametype.integer > GT_TEAM && g_capturelimit.integer) {

@@ -1401,7 +1401,7 @@ int BotAIShutdownClient(int client, qboolean restart) {
 	if (BotChat_ExitGame(bs)) {
 		trap_BotEnterChat(bs->cs, bs->client, CHAT_ALL);
 	}
-
+	// free the move state
 	trap_BotFreeMoveState(bs->ms);
 	// free the goal state
 	trap_BotFreeGoalState(bs->gs);

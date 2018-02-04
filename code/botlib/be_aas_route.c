@@ -1669,7 +1669,7 @@ int AAS_AreaRouteToGoalArea(int areanum, vec3_t origin, int goalareanum, int tra
 		*reachnum = 0;
 		return qtrue;
 	}
-
+	// check !AAS_AreaReachability(areanum) with custom developer-only debug message
 	if (areanum <= 0 || areanum >= aasworld.numareas) {
 		if (botDeveloper) {
 			botimport.Print(PRT_ERROR, "AAS_AreaTravelTimeToGoalArea: areanum %d out of range\n", areanum);
@@ -1683,6 +1683,10 @@ int AAS_AreaRouteToGoalArea(int areanum, vec3_t origin, int goalareanum, int tra
 			botimport.Print(PRT_ERROR, "AAS_AreaTravelTimeToGoalArea: goalareanum %d out of range\n", goalareanum);
 		}
 
+		return qfalse;
+	}
+
+	if (!aasworld.areasettings[areanum].numreachableareas || !aasworld.areasettings[goalareanum].numreachableareas) {
 		return qfalse;
 	}
 	// make sure the routing cache doesn't grow to large
