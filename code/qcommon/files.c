@@ -2954,12 +2954,12 @@ qboolean FS_CheckDirTraversal(const char *checkdir) {
 =======================================================================================================================================
 FS_InvalidGameDir
 
-Return true if path is a reference to current directory or directory traversal.
+Return true if path is a reference to current directory or directory traversal or a sub-directory.
 =======================================================================================================================================
 */
 qboolean FS_InvalidGameDir(const char *gamedir) {
 
-	if (!strcmp(gamedir, ".") || !strcmp(gamedir, "..") || !strcmp(gamedir, "/") || !strcmp(gamedir, "\\") || strstr(gamedir, "/..") || strstr(gamedir, "\\..") || FS_CheckDirTraversal(gamedir)) {
+	if (!strcmp(gamedir, ".") || !strcmp(gamedir, "..") || strchr(gamedir, '/') || strchr(gamedir, '\\')) {
 		return qtrue;
 	}
 
@@ -2970,7 +2970,7 @@ qboolean FS_InvalidGameDir(const char *gamedir) {
 =======================================================================================================================================
 FS_ComparePaks
 
-------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------
 dlstring == qtrue
 
 Returns a list of pak files that we should download from the server. They all get stored in the current gamedir and an FS_Restart will
@@ -2984,7 +2984,7 @@ static int fs_numServerReferencedPaks;
 static int fs_serverReferencedPaks[MAX_SEARCH_PATHS];
 static char *fs_serverReferencedPakNames[MAX_SEARCH_PATHS];
 
-------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------
 dlstring == qfalse
 
 We are not interested in a download string format, we want something human-readable (this is used for diagnostics while connecting to
@@ -3026,9 +3026,8 @@ qboolean FS_ComparePaks(char *neededpaks, int len, qboolean dlstring) {
 		if (!havepak && fs_serverReferencedPakNames[i] && *fs_serverReferencedPakNames[i]) {
 			// don't got it
 			if (dlstring) {
-				// we need this to make sure we won't hit the end of the buffer or the server could
-				// overwrite non-pk3 files on clients by writing so much crap into neededpaks that
-				// Q_strcat cuts off the .pk3 extension.
+				// we need this to make sure we won't hit the end of the buffer or the server could overwrite non-pk3 files on clients by
+				// writing so much crap into neededpaks that Q_strcat cuts off the .pk3 extension.
 				origpos += strlen(origpos);
 				// remote name
 				Q_strcat(neededpaks, len, "@");
