@@ -749,11 +749,9 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 					if (stopevent & SE_TOUCHTELEPORTER) {
 						if (aasworld.areasettings[areas[i]].contents & AREACONTENTS_TELEPORTER) {
 							VectorCopy(points[i], move->endpos);
-
-							move->endarea = areas[i];
-
 							VectorScale(frame_test_vel, 1 / frametime, move->velocity);
 
+							move->endarea = areas[i];
 							move->trace = trace;
 							move->stopevent = SE_TOUCHTELEPORTER;
 							move->presencetype = presencetype;
@@ -767,11 +765,9 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 					if (stopevent & SE_TOUCHCLUSTERPORTAL) {
 						if (aasworld.areasettings[areas[i]].contents & AREACONTENTS_CLUSTERPORTAL) {
 							VectorCopy(points[i], move->endpos);
-
-							move->endarea = areas[i];
-
 							VectorScale(frame_test_vel, 1 / frametime, move->velocity);
 
+							move->endarea = areas[i];
 							move->trace = trace;
 							move->stopevent = SE_TOUCHCLUSTERPORTAL;
 							move->presencetype = presencetype;
@@ -787,11 +783,9 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 			if (stopevent & SE_HITBOUNDINGBOX) {
 				if (AAS_ClipToBBox(&trace, org, trace.endpos, presencetype, mins, maxs)) {
 					VectorCopy(trace.endpos, move->endpos);
-
-					move->endarea = AAS_PointAreaNum(move->endpos);
-
 					VectorScale(frame_test_vel, 1 / frametime, move->velocity);
 
+					move->endarea = AAS_PointAreaNum(move->endpos);
 					move->trace = trace;
 					move->stopevent = SE_HITBOUNDINGBOX;
 					move->presencetype = presencetype;
@@ -816,11 +810,9 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 
 						if (AAS_PointAreaNum(start) == stopareanum) {
 							VectorCopy(start, move->endpos);
-
-							move->endarea = stopareanum;
-
 							VectorScale(frame_test_vel, 1 / frametime, move->velocity);
 
+							move->endarea = stopareanum;
 							move->trace = trace;
 							move->stopevent = SE_HITGROUNDAREA;
 							move->presencetype = presencetype;
@@ -919,11 +911,9 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 							*/
 							if (delta > 40) {
 								VectorCopy(org, move->endpos);
-
-								move->endarea = AAS_PointAreaNum(org);
-
 								VectorCopy(frame_test_vel, move->velocity);
 
+								move->endarea = AAS_PointAreaNum(org);
 								move->trace = trace;
 								move->stopevent = SE_HITGROUNDDAMAGE;
 								move->presencetype = presencetype;
@@ -985,11 +975,9 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 			// if in lava or slime
 			if (event & stopevent) {
 				VectorCopy(org, move->endpos);
-
-				move->endarea = areanum;
-
 				VectorScale(frame_test_vel, 1 / frametime, move->velocity);
 
+				move->endarea = areanum;
 				move->stopevent = event & stopevent;
 				move->presencetype = presencetype;
 				move->endcontents = pc;
@@ -1009,11 +997,9 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 		if (onground) {
 			if (stopevent & SE_HITGROUND) {
 				VectorCopy(org, move->endpos);
-
-				move->endarea = AAS_PointAreaNum(org);
-
 				VectorScale(frame_test_vel, 1 / frametime, move->velocity);
 
+				move->endarea = AAS_PointAreaNum(org);
 				move->trace = trace;
 				move->stopevent = SE_HITGROUND;
 				move->presencetype = presencetype;
@@ -1024,11 +1010,9 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 			}
 		} else if (stopevent & SE_LEAVEGROUND) {
 			VectorCopy(org, move->endpos);
-
-			move->endarea = AAS_PointAreaNum(org);
-
 			VectorScale(frame_test_vel, 1 / frametime, move->velocity);
 
+			move->endarea = AAS_PointAreaNum(org);
 			move->trace = trace;
 			move->stopevent = SE_LEAVEGROUND;
 			move->presencetype = presencetype;
@@ -1050,11 +1034,9 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 				if (gaptrace.endpos[2] < org[2] - aassettings.phys_maxstep - 1) {
 					if (!(AAS_PointContents(end) & CONTENTS_WATER)) {
 						VectorCopy(lastorg, move->endpos);
-
-						move->endarea = AAS_PointAreaNum(lastorg);
-
 						VectorScale(frame_test_vel, 1 / frametime, move->velocity);
 
+						move->endarea = AAS_PointAreaNum(lastorg);
 						move->trace = trace;
 						move->stopevent = SE_GAP;
 						move->presencetype = presencetype;
@@ -1074,11 +1056,9 @@ int AAS_ClientMovementPrediction(struct aas_clientmove_s *move, int entnum, vec3
 	}
 
 	VectorCopy(org, move->endpos);
-
-	move->endarea = AAS_PointAreaNum(org);
-
 	VectorScale(frame_test_vel, 1 / frametime, move->velocity);
 
+	move->endarea = AAS_PointAreaNum(org);
 	move->stopevent = SE_NONE;
 	move->presencetype = presencetype;
 	move->endcontents = 0;

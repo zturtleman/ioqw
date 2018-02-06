@@ -574,7 +574,7 @@ int BotOnTopOfEntity(bot_movestate_t *ms) {
 	AAS_PresenceTypeBoundingBox(ms->presencetype, mins, maxs);
 	VectorMA(ms->origin, -3, up, end);
 	trace = AAS_Trace(ms->origin, mins, maxs, end, ms->entitynum, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
-
+	// if not started in solid and NOT hitting the world entity
 	if (!trace.startsolid && (trace.entityNum != ENTITYNUM_WORLD && trace.entityNum != ENTITYNUM_NONE)) {
 		return trace.entityNum;
 	}
@@ -1383,7 +1383,7 @@ int BotWalkInDirection(bot_movestate_t *ms, vec3_t dir, float speed, int type) {
 				EA_Move(ms->client, dir, speed);
 			}
 		}
-		// FIXME: do air control to avoid hazards
+
 		return qtrue;
 	}
 }
@@ -1442,6 +1442,8 @@ BotMoveInDirection
 */
 int BotMoveInDirection(int movestate, vec3_t dir, float speed, int type) {
 	bot_movestate_t *ms;
+	bot_moveresult_t result;
+	bot_input_t bi;
 	qboolean success;
 
 	ms = BotMoveStateFromHandle(movestate);
@@ -1457,9 +1459,6 @@ int BotMoveInDirection(int movestate, vec3_t dir, float speed, int type) {
 	}
 	// check if blocked
 	if (success) {
-		bot_moveresult_t result;
-		bot_input_t bi;
-
 		Com_Memset(&result, 0, sizeof(result));
 
 		EA_GetInput(ms->client, ms->thinktime, &bi);
@@ -2741,6 +2740,7 @@ bot_moveresult_t BotTravel_RocketJump(bot_movestate_t *ms, aas_reachability_t *r
 		hordir[0] = reach->end[0] - ms->origin[0];
 		hordir[1] = reach->end[1] - ms->origin[1];
 		hordir[2] = 0;
+
 		VectorNormalize(hordir);
 		// elementary action jump
 		EA_Jump(ms->client);
@@ -2792,6 +2792,10 @@ bot_moveresult_t BotTravel_BFGJump(bot_movestate_t *ms, aas_reachability_t *reac
 	hordir[2] = 0;
 
 	dist = VectorNormalize(hordir);
+	// look in the movement direction
+	Vector2Angles(hordir, result.ideal_viewangles);
+	// look straight down
+	result.ideal_viewangles[PITCH] = 90;
 
 	if (dist < 5 && fabs(AngleDiff(result.ideal_viewangles[0], ms->viewangles[0])) < 5 && fabs(AngleDiff(result.ideal_viewangles[1], ms->viewangles[1])) < 5) {
 		//botimport.Print(PRT_MESSAGE, "between jump start and run start point\n");
@@ -2864,7 +2868,7 @@ bot_moveresult_t BotFinishTravel_WeaponJump(bot_movestate_t *ms, aas_reachabilit
 		VectorNormalize(hordir);
 		speed = 400;
 	}
-
+	// elementary action move in direction
 	EA_Move(ms->client, hordir, speed);
 	VectorCopy(hordir, result.movedir);
 
