@@ -232,36 +232,6 @@ weight "Nail Gun"
 	}
 }
 
-weight "Phosphor Gun"
-{
-	switch (INVENTORY_PHOSPHORGUN)
-	{
-		case 1: return 0;
-		default:
-		{
-			switch (INVENTORY_CAPSULES)
-			{
-				case 1: return 0;
-				default:
-				{
-					switch (ENTITY_IS_AN_OBELISK)
-					{
-						case 1: return W_PHOSPHORGUN;
-						default:
-						{
-							switch (ENEMY_HORIZONTAL_DIST)
-							{
-								case 500: return 540;
-								default: return W_PHOSPHORGUN;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-}
-
 weight "Proximity Launcher"
 {
 	switch (INVENTORY_PROXLAUNCHER)
@@ -508,36 +478,6 @@ weight "BFG 10K"
 							{
 								case 500: return 560;
 								default: return W_BFG10K;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-}
-
-weight "Missile Launcher"
-{
-	switch (INVENTORY_MISSILELAUNCHER)
-	{
-		case 1: return 0;
-		default:
-		{
-			switch (INVENTORY_MISSILES)
-			{
-				case 1: return 0;
-				default:
-				{
-					switch (ENTITY_IS_AN_OBELISK)
-					{
-						case 1: return W_MISSILELAUNCHER;
-						default:
-						{
-							switch (ENEMY_HORIZONTAL_DIST)
-							{
-								case 500: return 560;
-								default: return W_MISSILELAUNCHER;
 							}
 						}
 					}

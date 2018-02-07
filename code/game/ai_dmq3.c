@@ -5398,6 +5398,24 @@ void BotPrintActivateGoalInfo(bot_state_t *bs, bot_activategoal_t *activategoal,
 
 /*
 =======================================================================================================================================
+BotMemorizeOrigin
+=======================================================================================================================================
+*/
+static void BotMemorizeOrigin(bot_state_t* bs) {
+
+	if (bs->oldOrigin1_time <= FloatTime() - 2) {
+		VectorCopy(bs->oldOrigin1, bs->oldOrigin2);
+		bs->oldOrigin2_time = bs->oldOrigin1_time;
+
+		VectorCopy(bs->origin, bs->oldOrigin1);
+		bs->oldOrigin1_time = FloatTime();
+#ifdef OBSTACLEDEBUG
+		BotAI_Print(PRT_MESSAGE, S_COLOR_YELLOW "BotMemorizeOrigin: bs->oldOrigin1_time = %1.1f.\n", bs->oldOrigin1_time);
+#endif
+	}
+}
+/*
+=======================================================================================================================================
 BotRandomMove
 =======================================================================================================================================
 */
@@ -5549,7 +5567,7 @@ void BotAIBlocked(bot_state_t *bs, bot_moveresult_t *moveresult, int activate) {
 #ifdef OBSTACLEDEBUG
 	char netname[MAX_NETNAME];
 #endif
-	float speed;
+	float speed, obtrusiveness;
 	int movetype, bspent;
 	vec3_t mins, maxs, end, v1, v2, hordir, sideward, angles, up = {0, 0, 1};
 	gentity_t *ent;
@@ -5557,9 +5575,16 @@ void BotAIBlocked(bot_state_t *bs, bot_moveresult_t *moveresult, int activate) {
 	bot_activategoal_t activategoal;
 	bsp_trace_t trace;
 
+	obtrusiveness = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_OBTRUSIVENESS, 0, 1);
 	// if the bot is not blocked by anything
 	if (!moveresult->blocked) {
 		bs->notblocked_time = FloatTime();
+
+		if (obtrusiveness < 0.9) {
+			VectorSet(bs->notblocked_dir, 0, 0, 0);
+			BotMemorizeOrigin(bs);
+		}
+
 		return;
 	}
 
@@ -5641,6 +5666,7 @@ void BotAIBlocked(bot_state_t *bs, bot_moveresult_t *moveresult, int activate) {
 			}
 		}
 	}
+/************************************************************** MOVEMENT *************************************************************/
 	// just some basic dynamic obstacle avoidance code
 	hordir[0] = moveresult->movedir[0];
 	hordir[1] = moveresult->movedir[1];
@@ -5679,17 +5705,34 @@ void BotAIBlocked(bot_state_t *bs, bot_moveresult_t *moveresult, int activate) {
 			VectorNegate(sideward, sideward);
 			// try to move to the left
 			if (!trap_BotMoveInDirection(bs->ms, sideward, speed, movetype)) {
-				// move in a random direction in the hope to get out
-				BotRandomMove(bs, moveresult, speed);
+				if (obtrusiveness < 0.9) {
+					if (DotProduct(bs->notblocked_dir, bs->notblocked_dir) < 0.1) {
+						VectorSet(angles, 0, 360 * random(), 0);
+						AngleVectors(angles, hordir, NULL, NULL);
+					} else {
+						VectorCopy(bs->notblocked_dir, hordir);
+					}
+
+					if (!trap_BotMoveInDirection(bs->ms, hordir, speed, movetype)) {
+						VectorSet(bs->notblocked_dir, 0, 0, 0);
+						// move in a random direction in the hope to get out
+						BotRandomMove(bs, moveresult, speed);
+					} else {
+						VectorCopy(hordir, bs->notblocked_dir);
+					}
+				} else {
+					// move in a random direction in the hope to get out
+					BotRandomMove(bs, moveresult, speed);
+				}
 			}
 		}
 	}
 
-	if (!activate) {
+	if (!activate && obtrusiveness < 0.9) {
 		// just reset goals and hope the bot will go into another direction?
 		if (bs->ainode == AINode_Seek_NBG) {
 			bs->nbg_time = 0;
-		} else if (bs->ainode == AINode_Seek_LTG) {
+		} else if (bs->ainode == AINode_Seek_LTG && !BotCTFCarryingFlag(bs) && !Bot1FCTFCarryingFlag(bs) && !BotHarvesterCarryingCubes(bs)) {
 			bs->ltg_time = 0;
 		}
 	}

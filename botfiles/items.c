@@ -223,18 +223,6 @@ iteminfo "weapon_nailgun"
 	maxs		{15,15,15}
 }
 
-iteminfo "weapon_phosphorgun"
-{
-	name		"Phosphor Gun"
-	model		"models/weapons/phosphorgun/phosphorgun.md3"
-	modelindex	MODELINDEX_PHOSPHORGUN
-	type		ITEM_WEAPON
-	index		INVENTORY_PHOSPHORGUN
-	respawntime	10
-	mins		{-15,-15,-15}
-	maxs		{15,15,15}
-}
-
 iteminfo "weapon_proxylauncher"
 {
 	name		"Proximity Launcher"
@@ -331,18 +319,6 @@ iteminfo "weapon_bfg"
 	maxs		{15,15,15}
 }
 
-iteminfo "weapon_missilelauncher"
-{
-	name		"Missile Launcher"
-	model		"models/weapons2/missile/missilel.md3"
-	modelindex	MODELINDEX_MISSILELAUNCHER
-	type		ITEM_WEAPON
-	index		INVENTORY_MISSILELAUNCHER
-	respawntime	10
-	mins		{-15,-15,-15}
-	maxs		{15,15,15}
-}
-
 //===================================
 // AMMO
 //===================================
@@ -413,18 +389,6 @@ iteminfo "ammo_nails"
 	modelindex	MODELINDEX_NAILS
 	type		ITEM_AMMO
 	index		INVENTORY_NAILS
-	respawntime	40
-	mins		{-15,-15,-15}
-	maxs		{15,15,15}
-}
-
-iteminfo "ammo_capsules"
-{
-	name		"Capsules"
-	model		"models/powerups/ammo/phosphorgunam.md3"
-	modelindex	MODELINDEX_CAPSULES
-	type		ITEM_AMMO
-	index		INVENTORY_CAPSULES
 	respawntime	40
 	mins		{-15,-15,-15}
 	maxs		{15,15,15}
@@ -521,18 +485,6 @@ iteminfo "ammo_bfg"
 	modelindex	MODELINDEX_BFG_AMMO
 	type		ITEM_AMMO
 	index		INVENTORY_BFG_AMMO
-	respawntime	40
-	mins		{-15,-15,-15}
-	maxs		{15,15,15}
-}
-
-iteminfo "ammo_missiles"
-{
-	name		"Missiles"
-	model		"models/powerups/ammo/missileam.md3"
-	modelindex	MODELINDEX_MISSILES
-	type		ITEM_AMMO
-	index		INVENTORY_MISSILES
 	respawntime	40
 	mins		{-15,-15,-15}
 	maxs		{15,15,15}

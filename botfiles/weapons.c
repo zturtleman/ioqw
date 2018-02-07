@@ -65,7 +65,7 @@ projectileinfo
 {
 	name			"handgunbullet"
 	gravity			0.0
-	damage			6
+	damage			8
 	damagetype		DAMAGETYPE_IMPACT
 }
 
@@ -188,28 +188,6 @@ weaponinfo
 	hspread			1
 	vspread			1
 	speed			1500
-}
-
-//===========================================================================
-// Phosphor Gun
-//===========================================================================
-projectileinfo
-{
-	name			"capsule"
-	gravity			0.0
-	damage			20
-	damagetype		DAMAGETYPE_IMPACT
-}
-
-weaponinfo
-{
-	name			"Phosphor Gun"
-	number			WEAPONINDEX_PHOSPHORGUN
-	projectile		"capsule"
-	numprojectiles	1
-	hspread			1
-	vspread			1
-	speed			0
 }
 
 //===========================================================================
@@ -391,27 +369,4 @@ weaponinfo
 	hspread			0
 	vspread			0
 	speed			2000
-}
-
-//===========================================================================
-// Missile Launcher
-//===========================================================================
-projectileinfo
-{
-	name			"missile"
-	gravity			0.0
-	damage			1000
-	radius			1000
-	damagetype		$evalint(DAMAGETYPE_IMPACT|DAMAGETYPE_RADIAL)
-}
-
-weaponinfo
-{
-	name			"Missile Launcher"
-	number			WEAPONINDEX_MISSILELAUNCHER
-	projectile		"missile"
-	numprojectiles	1
-	hspread			0
-	vspread			0
-	speed			10000
 }

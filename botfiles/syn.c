@@ -38,7 +38,6 @@ CONTEXT_NEARBYITEM
 	[("Chain Gun", 1), ("CG", 0)]
 	[("Shotgun", 1), ("SG", 0.5)]
 	[("Nail Gun", 1), ("NG", 0)]
-	[("Phosphor Gun", 1), ("PPG", 0.5)]
 	[("Proximity Launcher", 1), ("Proxlauncher", 0.7), ("Proximitylauncher", 0.5)]
 	[("Grenade Launcher", 1), ("GL", 0.7)]
 	[("Napalm Launcher", 1), ("NL", 0.7)]
@@ -47,7 +46,6 @@ CONTEXT_NEARBYITEM
 	[("Railgun", 1), ("Rail", 0.5), ("RG", 0)]
 	[("Plasma Gun", 1), ("Plasma", 0.7), ("PG", 0)]
 	[("BFG 10K", 1), ("BFG", 1)]
-	[("Missile Launcher", 1), ("ML", 1)]
 	// powerups
 	[("Medkit", 1), ("Syringe", 0)]
 	[("Kamikaze", 1), ("Kamikazi", 0)]

@@ -469,37 +469,6 @@ weight "weapon_nailgun"
 	}
 }
 
-weight "weapon_phosphorgun"
-{
-	switch (INVENTORY_PHOSPHORGUN)
-	{
-		case 1: return WEAPON_SCALE(W_PHOSPHORGUN);
-		default:
-		{
-			switch (BOT_IS_IN_HURRY)
-			{
-				case 1:
-				{
-					switch (INVENTORY_CAPSULES)
-					{
-						case 20: return WEAPON_SCALE(GWW_PHOSPHORGUN);
-						case 40: return WEAPON_SCALE(GWW_PHOSPHORGUN - 10);
-						default: return balance(5, 3, 7);
-					}
-				}
-				default:
-				{
-					switch (INVENTORY_CAPSULES)
-					{
-						case 10: return WEAPON_SCALE(GWW_PHOSPHORGUN);
-						default: return 0;
-					}
-				}
-			}
-		}
-	}
-}
-
 weight "weapon_proxylauncher"
 {
 	switch (BOT_IS_IN_HURRY)
@@ -713,23 +682,6 @@ weight "weapon_bfg"
 	}
 }
 
-weight "weapon_missilelauncher"
-{
-	switch (INVENTORY_MISSILELAUNCHER)
-	{
-		case 1: return WEAPON_SCALE(W_MISSILELAUNCHER);
-		default:
-		{
-			switch (INVENTORY_MISSILES)
-			{
-				case 5: return WEAPON_SCALE(GWW_MISSILELAUNCHER);
-				case 10: return WEAPON_SCALE(GWW_MISSILELAUNCHER - 10);
-				default: return balance(5, 3, 7);
-			}
-		}
-	}
-}
-
 //=============================================
 // AMMO
 //=============================================
@@ -865,31 +817,6 @@ weight "ammo_nails"
 		case 1:
 		{
 			switch (INVENTORY_NAILS)
-			{
-				case 20: return AMMO_SCALE(20);
-				case 40: return AMMO_SCALE(20);
-				case 60: return AMMO_SCALE(20);
-				case 80: return AMMO_SCALE(20);
-				case 100: return AMMO_SCALE(20);
-				case 120: return AMMO_SCALE(20);
-				case 140: return AMMO_SCALE(20);
-				case 160: return AMMO_SCALE(20);
-				case 180: return AMMO_SCALE(20);
-				case 200: return AMMO_SCALE(0);
-				default: return 0;
-			}
-		}
-		default: return 0;
-	}
-}
-
-weight "ammo_capsules"
-{
-	switch (BOT_IS_IN_HURRY)
-	{
-		case 1:
-		{
-			switch (INVENTORY_CAPSULES)
 			{
 				case 20: return AMMO_SCALE(20);
 				case 40: return AMMO_SCALE(20);
@@ -1086,24 +1013,6 @@ weight "ammo_cells"
 weight "ammo_bfg"
 {
 	switch (INVENTORY_BFG_AMMO)
-	{
-		case 20: return AMMO_SCALE(20);
-		case 40: return AMMO_SCALE(20);
-		case 60: return AMMO_SCALE(20);
-		case 80: return AMMO_SCALE(20);
-		case 100: return AMMO_SCALE(20);
-		case 120: return AMMO_SCALE(20);
-		case 140: return AMMO_SCALE(20);
-		case 160: return AMMO_SCALE(20);
-		case 180: return AMMO_SCALE(20);
-		case 200: return AMMO_SCALE(0);
-		default: return 0;
-	}
-}
-
-weight "ammo_missiles"
-{
-	switch (INVENTORY_MISSILES)
 	{
 		case 20: return AMMO_SCALE(20);
 		case 40: return AMMO_SCALE(20);
