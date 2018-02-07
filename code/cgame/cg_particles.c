@@ -1750,7 +1750,7 @@ void CG_ParticleBloodCloud(centity_t *cent, vec3_t origin, vec3_t dir) {
 	length = VectorLength(dir);
 
 	vectoangles(dir, angles);
-	AngleVectors(angles, forward, NULL, NULL);
+	AngleVectorsForward(angles, forward);
 
 	crittersize = LARGESIZE;
 
@@ -1876,7 +1876,7 @@ void CG_ParticleDust(centity_t *cent, vec3_t origin, vec3_t dir) {
 	length = VectorLength(dir);
 
 	vectoangles(dir, angles);
-	AngleVectors(angles, forward, NULL, NULL);
+	AngleVectorsForward(angles, forward);
 
 	crittersize = LARGESIZE;
 

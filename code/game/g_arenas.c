@@ -262,7 +262,7 @@ static void PodiumPlacementThink(gentity_t *podium) {
 
 	podium->nextthink = level.time + 100;
 
-	AngleVectors(level.intermission_angle, vec, NULL, NULL);
+	AngleVectorsForward(level.intermission_angle, vec);
 	VectorMA(level.intermission_origin, trap_Cvar_VariableIntegerValue("g_podiumDist"), vec, origin);
 
 	origin[2] -= trap_Cvar_VariableIntegerValue("g_podiumDrop");
@@ -335,7 +335,7 @@ static gentity_t *SpawnPodium(void) {
 	podium->r.contents = CONTENTS_SOLID;
 	podium->s.modelindex = G_ModelIndex(SP_PODIUM_MODEL);
 
-	AngleVectors(level.intermission_angle, vec, NULL, NULL);
+	AngleVectorsForward(level.intermission_angle, vec);
 	VectorMA(level.intermission_origin, trap_Cvar_VariableIntegerValue("g_podiumDist"), vec, origin);
 
 	origin[2] -= trap_Cvar_VariableIntegerValue("g_podiumDrop");

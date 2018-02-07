@@ -255,7 +255,7 @@ static void CG_OffsetThirdPersonView(void) {
 		focusAngles[PITCH] = 45; // don't go too far overhead
 	}
 
-	AngleVectors(focusAngles, forward, NULL, NULL);
+	AngleVectorsForward(focusAngles, forward);
 	VectorMA(cg.refdef.vieworg, FOCUS_DISTANCE, forward, focusPoint);
 	VectorCopy(cg.refdef.vieworg, view);
 

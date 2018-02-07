@@ -2999,7 +2999,7 @@ void AAS_Reachability_Teleport(void) {
 
 				if (angle) {
 					VectorSet(angles, 0, angle, 0);
-					AngleVectors(angles, velocity, NULL, NULL);
+					AngleVectorsForward(angles, velocity);
 					VectorScale(velocity, 400, velocity);
 				} else {
 					VectorClear(velocity);

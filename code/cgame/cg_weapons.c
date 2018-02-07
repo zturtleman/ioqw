@@ -520,10 +520,10 @@ static void CG_BeamgunTrail(centity_t *cent, vec3_t origin) {
 	memset(&beam, 0, sizeof(beam));
 	// always shoot straight forward from our current position
 	if (cent->currentState.number == cg.snap->ps.clientNum) {
-		AngleVectors(cg.predictedPlayerState.viewangles, forward, NULL, NULL);
+		AngleVectorsForward(cg.predictedPlayerState.viewangles, forward);
 		VectorCopy(cg.predictedPlayerState.origin, muzzlePoint);
 	} else {
-		AngleVectors(cent->lerpAngles, forward, NULL, NULL);
+		AngleVectorsForward(cent->lerpAngles, forward);
 		VectorCopy(cent->lerpOrigin, muzzlePoint);
 	}
 
@@ -585,7 +585,7 @@ static void CG_BeamgunTrail(centity_t *cent, vec3_t origin) {
 	memset(&beam, 0, sizeof(beam));
 	// find muzzle point for this frame
 	VectorCopy(cent->lerpOrigin, muzzlePoint);
-	AngleVectors(cent->lerpAngles, forward, NULL, NULL);
+	AngleVectorsForward(cent->lerpAngles, forward);
 	// FIXME: crouch
 	muzzlePoint[2] += DEFAULT_VIEWHEIGHT;
 
@@ -1124,7 +1124,7 @@ static qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle) {
 
 		muzzle[2] += cg.snap->ps.viewheight;
 
-		AngleVectors(cg.snap->ps.viewangles, forward, NULL, NULL);
+		AngleVectorsForward(cg.snap->ps.viewangles, forward);
 		VectorMA(muzzle, 14, forward, muzzle);
 		return qtrue;
 	}
@@ -1136,7 +1136,7 @@ static qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle) {
 	}
 
 	VectorCopy(cent->currentState.pos.trBase, muzzle);
-	AngleVectors(cent->currentState.apos.trBase, forward, NULL, NULL);
+	AngleVectorsForward(cent->currentState.apos.trBase, forward);
 
 	anim = cent->currentState.legsAnim & ~ANIM_TOGGLEBIT;
 

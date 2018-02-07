@@ -107,7 +107,7 @@ void TeleportPlayer(gentity_t *player, vec3_t origin, vec3_t angles) {
 
 	if (!noAngles) {
 		// spit the player out
-		AngleVectors(angles, player->client->ps.velocity, NULL, NULL);
+		AngleVectorsForward(angles, player->client->ps.velocity);
 		VectorScale(player->client->ps.velocity, 400, player->client->ps.velocity);
 
 		player->client->ps.pm_time = 160; // hold time

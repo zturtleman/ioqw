@@ -711,6 +711,8 @@ void MakeNormalVectors(const vec3_t forward, vec3_t right, vec3_t up);
 //int PlaneTypeForNormal(vec3_t normal);
 void MatrixMultiply(float in1[3][3], float in2[3][3], float out[3][3]);
 void AngleVectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up);
+// optimized version of AngleVectors (when only forward is needed)
+void AngleVectorsForward(const vec3_t angles, vec3_t forward);
 void PerpendicularVector(vec3_t dst, const vec3_t src);
 #ifndef MAX
 #define MAX(x, y) ((x) > (y) ? (x) : (y))

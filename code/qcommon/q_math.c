@@ -1218,6 +1218,30 @@ void AngleVectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up) 
 
 /*
 =======================================================================================================================================
+AngleVectorsForward
+
+Optimized version of 'AngleVectors'.
+=======================================================================================================================================
+*/
+void AngleVectorsForward(const vec3_t angles, vec3_t forward) {
+	float angle;
+	static float sp, sy, cp, cy;
+
+	// static to help MS compiler fp bugs
+	angle = angles[YAW] * (M_PI * 2 / 360);
+	sy = sin(angle);
+	cy = cos(angle);
+	angle = angles[PITCH] * (M_PI * 2 / 360);
+	sp = sin(angle);
+	cp = cos(angle);
+
+	forward[0] = cp * cy;
+	forward[1] = cp * sy;
+	forward[2] = -sp;
+}
+
+/*
+=======================================================================================================================================
 PerpendicularVector
 
 Assumes "src" is normalized.

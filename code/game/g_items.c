@@ -96,7 +96,7 @@ int Pickup_Powerup(gentity_t *ent, gentity_t *other) {
 			continue;
 		}
 		// if not facing, no sound
-		AngleVectors(client->ps.viewangles, forward, NULL, NULL);
+		AngleVectorsForward(client->ps.viewangles, forward);
 
 		if (DotProduct(delta, forward) < 0.4) {
 			continue;
@@ -556,7 +556,7 @@ gentity_t *Drop_Item(gentity_t *ent, gitem_t *item, float angle) {
 	angles[YAW] += angle;
 	angles[PITCH] = 0; // always forward
 
-	AngleVectors(angles, velocity, NULL, NULL);
+	AngleVectorsForward(angles, velocity);
 	VectorScale(velocity, 150, velocity);
 
 	velocity[2] += 200 + crandom() * 50;

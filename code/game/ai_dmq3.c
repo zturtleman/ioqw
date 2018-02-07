@@ -4676,7 +4676,7 @@ void BotSetMovedir(vec3_t angles, vec3_t movedir) {
 	} else if (VectorCompare(angles, VEC_DOWN)) {
 		VectorCopy(MOVEDIR_DOWN, movedir);
 	} else {
-		AngleVectors(angles, movedir, NULL, NULL);
+		AngleVectorsForward(angles, movedir);
 	}
 }
 
@@ -5410,7 +5410,7 @@ void BotRandomMove(bot_state_t *bs, bot_moveresult_t *moveresult, float speed) {
 	angles[2] = 0;
 
 	for (i = 0; i < 8; i++) {
-		AngleVectors(angles, dir, NULL, NULL);
+		AngleVectorsForward(angles, dir);
 
 		if (trap_BotMoveInDirection(bs->ms, dir, speed, MOVE_WALK)) {
 #ifdef OBSTACLEDEBUG
@@ -5655,7 +5655,7 @@ void BotAIBlocked(bot_state_t *bs, bot_moveresult_t *moveresult, int activate) {
 	// if no direction just take a random direction
 	if (VectorNormalize(hordir) < 0.1) {
 		VectorSet(angles, 0, 360 * random(), 0);
-		AngleVectors(angles, hordir, NULL, NULL);
+		AngleVectorsForward(angles, hordir);
 	}
 
 	//if (moveresult->flags & MOVERESULT_ONTOPOFOBSTACLE) movetype = MOVE_JUMP;
@@ -5689,7 +5689,7 @@ void BotAIBlocked(bot_state_t *bs, bot_moveresult_t *moveresult, int activate) {
 				if (obtrusiveness < 0.9) {
 					if (DotProduct(bs->notblocked_dir, bs->notblocked_dir) < 0.1) {
 						VectorSet(angles, 0, 360 * random(), 0);
-						AngleVectors(angles, hordir, NULL, NULL);
+						AngleVectorsForward(angles, hordir);
 					} else {
 						VectorCopy(bs->notblocked_dir, hordir);
 					}

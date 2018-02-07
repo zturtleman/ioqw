@@ -157,7 +157,7 @@ void TossClientCubes(gentity_t *self) {
 	angles[PITCH] = 0; // always forward
 	angles[ROLL] = 0;
 
-	AngleVectors(angles, velocity, NULL, NULL);
+	AngleVectorsForward(angles, velocity);
 	VectorScale(velocity, 150, velocity);
 
 	velocity[2] += 200 + crandom() * 50;
