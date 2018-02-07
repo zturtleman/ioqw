@@ -5398,24 +5398,6 @@ void BotPrintActivateGoalInfo(bot_state_t *bs, bot_activategoal_t *activategoal,
 
 /*
 =======================================================================================================================================
-BotMemorizeOrigin
-=======================================================================================================================================
-*/
-static void BotMemorizeOrigin(bot_state_t* bs) {
-
-	if (bs->oldOrigin1_time <= FloatTime() - 2) {
-		VectorCopy(bs->oldOrigin1, bs->oldOrigin2);
-		bs->oldOrigin2_time = bs->oldOrigin1_time;
-
-		VectorCopy(bs->origin, bs->oldOrigin1);
-		bs->oldOrigin1_time = FloatTime();
-#ifdef OBSTACLEDEBUG
-		BotAI_Print(PRT_MESSAGE, S_COLOR_YELLOW "BotMemorizeOrigin: bs->oldOrigin1_time = %1.1f.\n", bs->oldOrigin1_time);
-#endif
-	}
-}
-/*
-=======================================================================================================================================
 BotRandomMove
 =======================================================================================================================================
 */
@@ -5431,6 +5413,9 @@ void BotRandomMove(bot_state_t *bs, bot_moveresult_t *moveresult, float speed) {
 		AngleVectors(angles, dir, NULL, NULL);
 
 		if (trap_BotMoveInDirection(bs->ms, dir, speed, MOVE_WALK)) {
+#ifdef OBSTACLEDEBUG
+			BotAI_Print(PRT_MESSAGE, S_COLOR_RED "BotRandomMove!\n");
+#endif
 			break;
 		}
 
@@ -5575,18 +5560,14 @@ void BotAIBlocked(bot_state_t *bs, bot_moveresult_t *moveresult, int activate) {
 	bot_activategoal_t activategoal;
 	bsp_trace_t trace;
 
-	obtrusiveness = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_OBTRUSIVENESS, 0, 1);
 	// if the bot is not blocked by anything
 	if (!moveresult->blocked) {
 		bs->notblocked_time = FloatTime();
-
-		if (obtrusiveness < 0.9) {
-			VectorSet(bs->notblocked_dir, 0, 0, 0);
-			BotMemorizeOrigin(bs);
-		}
-
+		VectorSet(bs->notblocked_dir, 0, 0, 0);
 		return;
 	}
+
+	obtrusiveness = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_OBTRUSIVENESS, 0, 1);
 
 	if (!BotWantsToWalk(bs)) {
 		speed = 400;
@@ -5713,17 +5694,17 @@ void BotAIBlocked(bot_state_t *bs, bot_moveresult_t *moveresult, int activate) {
 						VectorCopy(bs->notblocked_dir, hordir);
 					}
 
-					if (!trap_BotMoveInDirection(bs->ms, hordir, speed, movetype)) {
-						VectorSet(bs->notblocked_dir, 0, 0, 0);
-						// move in a random direction in the hope to get out
-						BotRandomMove(bs, moveresult, speed);
-					} else {
+					if (trap_BotMoveInDirection(bs->ms, hordir, speed, movetype)) {
 						VectorCopy(hordir, bs->notblocked_dir);
+#ifdef OBSTACLEDEBUG
+						BotAI_Print(PRT_MESSAGE, S_COLOR_YELLOW "BotNotBlockedDirMove!\n");
+#endif
+					} else {
+						VectorSet(bs->notblocked_dir, 0, 0, 0);
 					}
-				} else {
-					// move in a random direction in the hope to get out
-					BotRandomMove(bs, moveresult, speed);
 				}
+				// move in a random direction in the hope to get out
+				BotRandomMove(bs, moveresult, speed);
 			}
 		}
 	}
