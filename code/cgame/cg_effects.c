@@ -520,6 +520,7 @@ void CG_LaunchGib(vec3_t origin, vec3_t velocity, qhandle_t hModel) {
 	re = &le->refEntity;
 
 	le->leType = LE_FRAGMENT;
+	le->leFlags = LEF_GIBS;
 	le->startTime = cg.time;
 	le->endTime = le->startTime + 5000 + random() * 3000;
 

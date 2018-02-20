@@ -234,7 +234,7 @@ CG_AddFragment
 =======================================================================================================================================
 */
 void CG_AddFragment(localEntity_t *le) {
-	vec3_t newOrigin;
+	vec3_t newOrigin, angles;
 	trace_t trace;
 
 	if (le->pos.trType == TR_STATIONARY) {
@@ -262,6 +262,10 @@ void CG_AddFragment(localEntity_t *le) {
 
 		return;
 	}
+	// never free gibs while they're flying
+	if (le->endTime < cg.time + 2000) {
+		le->endTime = cg.time + 2000;
+	}
 	// calculate new position
 	BG_EvaluateTrajectory(&le->pos, cg.time, newOrigin, qfalse, -1);
 	// trace a line from previous position to new position
@@ -270,14 +274,29 @@ void CG_AddFragment(localEntity_t *le) {
 	if (trace.fraction == 1.0) {
 		// still in free fall
 		VectorCopy(newOrigin, le->refEntity.origin);
+		VectorClear(angles);
 
-		if (le->leFlags & LEF_TUMBLE) {
-			vec3_t angles;
-
-			BG_EvaluateTrajectory(&le->angles, cg.time, angles, qtrue, -1);
-			AnglesToAxis(angles, le->refEntity.axis);
+		switch (le->leFlags) {
+			case LEF_TUMBLE:
+				BG_EvaluateTrajectory(&le->angles, cg.time, angles, qtrue, -1);
+				break;
+			case LEF_GIBS:
+				angles[1] = ((cg.time & 2047) * 360 / 2048.0 + 120);
+				angles[0] = ((cg.time & 2047) * 360 / 2048.0);
+				angles[2] = ((cg.time & 2047) * 360 / 2048.0 + 240);
+				break;
+			case LEF_BRASS_MG:
+				angles[0] = angles[2] = angles[1] = ((cg.time & 2047) * 360 / 2048.0 + random() * 4);
+				break;
+			case LEF_BRASS_SG:
+				angles[1] = ((cg.time & 2047) * 360 / 2048.0 + random() * 2);
+				angles[0] = angles[2] = 90;
+				break;
+			default:
+				break;
 		}
 
+		AnglesToAxis(angles, le->refEntity.axis);
 		trap_R_AddRefEntityToScene(&le->refEntity);
 		// add a blood trail
 		if (le->leBounceSoundType == LEBS_BLOOD) {

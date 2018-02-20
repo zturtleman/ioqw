@@ -898,7 +898,7 @@ static void CG_MachineGunEjectBrass(centity_t *cent) {
 	le->angles.trDelta[0] = 2;
 	le->angles.trDelta[1] = 1;
 	le->angles.trDelta[2] = 0;
-	le->leFlags = LEF_TUMBLE;
+	le->leFlags = LEF_BRASS_MG;
 	le->leBounceSoundType = LEBS_BRASS;
 	le->leMarkType = LEMT_NONE;
 }
@@ -976,7 +976,7 @@ static void CG_ShotgunEjectBrass(centity_t *cent) {
 		le->angles.trDelta[0] = 1;
 		le->angles.trDelta[1] = 0.5;
 		le->angles.trDelta[2] = 0;
-		le->leFlags = LEF_TUMBLE;
+		le->leFlags = LEF_BRASS_SG;
 		le->leBounceSoundType = LEBS_BRASS;
 		le->leMarkType = LEMT_NONE;
 	}
