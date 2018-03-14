@@ -15,12 +15,11 @@ Ioid3-qw is licensed under a [modified version of the GNU GPLv3](COPYING.txt#L62
 ## Main Features:
 
   * Enhanced BotAI.
-  * 64 weapon support.
 
 
 ## Goals:
 
-  * Enhanced BotAI.
+  * 64 weapon support.
   * Advanced bot order menu.
   * Ragdoll physics.
   * A modern rendering system (the 'real' Xreal renderer).
