@@ -15,6 +15,7 @@ Ioid3-qw is licensed under a [modified version of the GNU GPLv3](COPYING.txt#L62
 ## Main Features:
 
   * Enhanced BotAI.
+  * Rotating gibs.
 
 
 ## Goals:
