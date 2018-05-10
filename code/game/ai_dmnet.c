@@ -1891,6 +1891,8 @@ int AINode_Seek_LTG(bot_state_t *bs) {
 	//char buf[128];
 	//bot_goal_t tmpgoal;
 
+	range = trap_Characteristic_BInteger(bs->character, CHARACTERISTIC_GOAL_MULTIPLIER, 0, 10000);
+
 	if (BotIsObserver(bs)) {
 		AIEnter_Observer(bs, "seek ltg: observer");
 		return qfalse;
@@ -1953,16 +1955,11 @@ int AINode_Seek_LTG(bot_state_t *bs) {
 		bs->check_time = FloatTime() + 0.05;
 		// check if the bot wants to camp
 		BotWantsToCamp(bs);
-
-		if (bs->ltgtype == LTG_DEFENDKEYAREA) {
-			range = 400;
 		// if carrying a flag and the own flag is at base, or if the bot is trying to get the flag and the own flag is NOT at base the bot shouldn't be distracted too much and should ignore some items
-		} else if (BotHasEmergencyGoal(bs)) {
-			range = 50;
+		if (BotHasEmergencyGoal(bs)) {
+			range *= 0.1; // 50
 		} else if (!BotFeelingBad(bs)) {
-			range = 150;
-		} else {
-			range = 350;
+			range *= 0.3; // 150
 		}
 
 		if (BotNearbyGoal(bs, bs->tfl, &goal, range)) {
@@ -2175,10 +2172,12 @@ int AINode_Battle_Fight(bot_state_t *bs) {
 		// check for nearby goals periodicly
 		if (bs->check_time < FloatTime()) {
 			bs->check_time = FloatTime() + 0.05;
+			range *= 0.6; // 300
 
 			if (BotNearbyGoal(bs, bs->tfl, &goal, range)) {
-				bs->nbg_time = FloatTime() + (range * 0.01);
 				trap_BotResetLastAvoidReach(bs->ms);
+				// time the bot gets to pick up the nearby goal item
+				bs->nbg_time = FloatTime() + (range * 0.006);
 				AIEnter_Battle_NBG(bs, "battle fight: going for NBG");
 				return qfalse;
 			}
@@ -2231,7 +2230,9 @@ int AINode_Battle_Chase(bot_state_t *bs) {
 	bot_goal_t goal;
 	vec3_t target, dir;
 	bot_moveresult_t moveresult;
-	float range;
+	int range;
+
+	range = trap_Characteristic_BInteger(bs->character, CHARACTERISTIC_GOAL_MULTIPLIER, 0, 10000);
 
 	if (BotIsObserver(bs)) {
 		AIEnter_Observer(bs, "battle chase: observer");
@@ -2298,12 +2299,12 @@ int AINode_Battle_Chase(bot_state_t *bs) {
 	// check for nearby goals periodicly
 	if (bs->check_time < FloatTime()) {
 		bs->check_time = FloatTime() + 0.05;
-		range = 150;
+		range *= 0.3; // 150
 
 		if (BotNearbyGoal(bs, bs->tfl, &goal, range)) {
-			// the bot gets 5 seconds to pick up the nearby goal item
-			bs->nbg_time = FloatTime() + 0.1 * range + 1;
 			trap_BotResetLastAvoidReach(bs->ms);
+			// time the bot gets to pick up the nearby goal item
+			bs->nbg_time = FloatTime() + 0.1 * range + 1;
 			AIEnter_Battle_NBG(bs, "battle chase: nbg");
 			return qfalse;
 		}
@@ -2376,8 +2377,10 @@ int AINode_Battle_Retreat(bot_state_t *bs) {
 	aas_entityinfo_t entinfo;
 	bot_moveresult_t moveresult;
 	vec3_t target, dir;
-	float attack_skill, range;
-	int areanum;
+	float attack_skill;
+	int areanum, range;
+
+	range = trap_Characteristic_BInteger(bs->character, CHARACTERISTIC_GOAL_MULTIPLIER, 0, 10000);
 
 	if (BotIsObserver(bs)) {
 		AIEnter_Observer(bs, "battle retreat: observer");
@@ -2469,11 +2472,9 @@ int AINode_Battle_Retreat(bot_state_t *bs) {
 		bs->check_time = FloatTime() + 0.05;
 		// if carrying a flag and the own flag is at base, or if the bot is trying to get the flag and the own flag is NOT at base the bot shouldn't be distracted too much and should ignore some items
 		if (BotHasEmergencyGoal(bs)) {
-			range = 50;
+			range *= 0.1; // 50
 		} else if (!BotFeelingBad(bs)) {
-			range = 150;
-		} else {
-			range = 350;
+			range *= 0.3; // 150
 		}
 
 		if (BotNearbyGoal(bs, bs->tfl, &goal, range)) {
