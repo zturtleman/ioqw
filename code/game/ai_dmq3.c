@@ -1920,6 +1920,8 @@ void BotUpdateInventory(bot_state_t *bs) {
 		bs->inventory[INVENTORY_BLUECUBE] = bs->cur_ps.tokens;
 	}
 
+	bs->inventory[BOT_IS_IN_HURRY] = (int)BotHasEmergencyGoal(bs);
+
 	BotCheckItemPickup(bs, oldinventory);
 }
 
@@ -1936,7 +1938,6 @@ void BotUpdateBattleInventory(bot_state_t *bs, int enemy) {
 	BotEntityInfo(enemy, &entinfo);
 	VectorSubtract(entinfo.origin, bs->origin, dir);
 
-	bs->inventory[BOT_IS_IN_HURRY] = (int)BotHasEmergencyGoal(bs);
 	bs->inventory[ENEMY_HEIGHT] = (int)dir[2];
 	dir[2] = 0;
 	bs->inventory[ENEMY_HORIZONTAL_DIST] = (int)VectorLength(dir);
