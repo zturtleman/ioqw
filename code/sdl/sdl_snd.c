@@ -176,7 +176,9 @@ qboolean SNDDMA_Init(void) {
 	SDL_AudioSpec desired;
 	SDL_AudioSpec obtained;
 	int tmp;
-
+#ifdef USE_SDL_AUDIO_CAPTURE
+	SDL_version sdlVersion;
+#endif
 	if (snd_inited) {
 		return qtrue;
 	}
@@ -274,9 +276,14 @@ qboolean SNDDMA_Init(void) {
 	dmasize = (dma.samples * (dma.samplebits / 8));
 	dma.buffer = calloc(1, dmasize);
 #ifdef USE_SDL_AUDIO_CAPTURE
+	// FIXME: some of these SDL_OpenAudioDevice() values should be cvars.
 	s_sdlCapture = Cvar_Get("s_sdlCapture", "1", CVAR_ARCHIVE|CVAR_LATCH);
+	// FIXME: hopefully pulseaudio capture will be fixed in SDL 2.0.9... https://bugzilla.libsdl.org/show_bug.cgi?id=4087
+	SDL_GetVersion(&sdlVersion);
 
-	if (!s_sdlCapture->integer) {
+	if (sdlVersion.major == 2 && sdlVersion.minor == 0 && sdlVersion.patch < 9 && Q_stricmp(SDL_GetCurrentAudioDriver(), "pulseaudio") == 0) {
+		Com_Printf("SDL audio capture support disabled (pulseaudio capture does not work correctly with SDL %d.%d.%d)\n", sdlVersion.major, sdlVersion.minor, sdlVersion.patch);
+	} else if (!s_sdlCapture->integer) {
 		Com_Printf("SDL audio capture support disabled by user ('+set s_sdlCapture 1' to enable)\n");
 	}
 #if USE_MUMBLE
