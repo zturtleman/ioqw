@@ -27,7 +27,7 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 US
 
 #if idppc_altivec
 #if !defined(__APPLE__)
-#include < altivec.h>
+#include <altivec.h>
 #endif
 
 /*
