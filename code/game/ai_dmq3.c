@@ -2479,6 +2479,10 @@ qboolean BotAggression(bot_state_t *bs) {
 	if (bs->inventory[INVENTORY_SCOUT]) {
 		return qtrue;
 	}
+	// if the bot can use the machine gun
+	if (bs->inventory[INVENTORY_MACHINEGUN] > 0 && bs->inventory[INVENTORY_BULLETS] > 40) {
+		return qtrue;
+	}
 	// if the bot can use the chain gun
 	if (bs->inventory[INVENTORY_CHAINGUN] > 0 && bs->inventory[INVENTORY_BELT] > 50) {
 		return qtrue;
