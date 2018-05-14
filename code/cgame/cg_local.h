@@ -1080,6 +1080,9 @@ qboolean CG_CullPoint(vec3_t pt);
 qboolean CG_CullPointAndRadius(const vec3_t pt, vec_t radius);
 void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoPlayback);
 // cg_drawtools.c
+// ugly workaround for having it in cg_local.h and ui_shared.h
+#ifndef HAVE_SCREEN_PLACEMENT
+#define HAVE_SCREEN_PLACEMENT
 typedef enum {
 	PLACE_STRETCH,
 	PLACE_CENTER,
@@ -1090,6 +1093,7 @@ typedef enum {
 	PLACE_TOP,
 	PLACE_BOTTOM
 } screenPlacement_e;
+#endif
 
 void CG_SetScreenPlacement(screenPlacement_e hpos, screenPlacement_e vpos);
 void CG_PopScreenPlacement(void);

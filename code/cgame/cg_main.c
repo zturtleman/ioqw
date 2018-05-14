@@ -1952,6 +1952,7 @@ CG_LoadHudMenu
 void CG_LoadHudMenu(void) {
 	char buff[1024];
 	const char *hudSet;
+	menuDef_t *menu;
 
 	cgDC.registerShaderNoMip = &trap_R_RegisterShaderNoMip;
 	cgDC.setColor = &trap_R_SetColor;
@@ -2002,6 +2003,9 @@ void CG_LoadHudMenu(void) {
 	cgDC.stopCinematic = &CG_StopCinematic;
 	cgDC.drawCinematic = &CG_DrawCinematic;
 	cgDC.runCinematicFrame = &CG_RunCinematicFrame;
+	cgDC.adjustFrom640 = &CG_AdjustFrom640;
+	cgDC.setScreenPlacement = &CG_SetScreenPlacement;
+	cgDC.popScreenPlacement = &CG_PopScreenPlacement;
 
 	Init_Display(&cgDC);
 	Menu_Reset();
@@ -2014,6 +2018,31 @@ void CG_LoadHudMenu(void) {
 	}
 
 	CG_LoadMenus(hudSet);
+	// make voice chat head stick to left side in widescreen
+	menu = Menus_FindByName("voiceMenu");
+
+	if (menu && !menu->forceScreenPlacement) {
+		Menu_SetScreenPlacement(menu, PLACE_LEFT, PLACE_TOP);
+	}
+	// make vertical power up area stick to the left or right side in widescreen
+	// Team Arena has it on the right side but also handle custom huds that use left side
+	menu = Menus_FindByName("powerup area");
+
+	if (menu && !menu->forceScreenPlacement) {
+		itemDef_t *item = Menu_FindItemByName(menu, "powerupArea");
+
+		if (item && item->window.ownerDraw == CG_AREA_POWERUP && item->alignment == HUD_VERTICAL) {
+			screenPlacement_e hpos;
+
+			if (item->window.rect.x > SCREEN_WIDTH * 0.5f) {
+				hpos = PLACE_RIGHT;
+			} else {
+				hpos = PLACE_LEFT;
+			}
+
+			Menu_SetScreenPlacement(menu, hpos, PLACE_CENTER);
+		}
+	}
 }
 
 /*
