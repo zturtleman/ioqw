@@ -342,17 +342,23 @@ static float PM_CmdScale(usercmd_t *cmd) {
 	} else if (cmd->rightmove) {
 		scale *= 0.9f;
 	}
-	// apply weapon speed scale
-	switch (pm->ps->weapon) {
-		case WP_GAUNTLET:
-			scale *= 1.15f;
-			break;
-		case WP_RAILGUN:
-		case WP_BFG:
-			scale *= 0.9f;
-			break;
-		default:
-			break;
+	// running
+	if (!(pm->cmd.buttons & BUTTON_WALKING)) {
+		// apply weapon speed scale
+		switch (pm->ps->weapon) {
+			case WP_GAUNTLET:
+				scale *= 1.15f;
+				break;
+			case WP_RAILGUN:
+			case WP_BFG:
+				scale *= 0.9f;
+				break;
+			default:
+				break;
+		}
+	// walking
+	} else {
+		scale *= 0.75f;
 	}
 
 	return scale;
@@ -1531,12 +1537,12 @@ static void PM_Footsteps(void) {
 	} else if (pm->ps->pm_flags & PMF_BACKWARDS_RUN) {
 		// running
 		if (!(pm->cmd.buttons & BUTTON_WALKING)) {
-			bobmove = 0.55f;
+			bobmove = 0.57f;
 
 			PM_ContinueLegsAnim(LEGS_BACK);
 		// walking
 		} else {
-			bobmove = 0.35f; // walking bobs slow
+			bobmove = 0.37f; // walking bobs slow
 
 			PM_ContinueLegsAnim(LEGS_BACKWALK);
 		}
@@ -1544,7 +1550,7 @@ static void PM_Footsteps(void) {
 	} else {
 		// running
 		if (!(pm->cmd.buttons & BUTTON_WALKING)) {
-			bobmove = 0.45f; // faster speeds bob faster
+			bobmove = 0.47f; // faster speeds bob faster
 
 			PM_ContinueLegsAnim(LEGS_RUN);
 		// walking
