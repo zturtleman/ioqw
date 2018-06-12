@@ -5315,7 +5315,7 @@ void Item_ValidateTypeData(itemDef_t *item) {
 
 typedef struct keywordHash_s {
 	char *keyword;
-	qboolean(*func)(itemDef_t *item, int handle);
+	qboolean (*func)(itemDef_t *item, int handle);
 	struct keywordHash_s *next;
 } keywordHash_t;
 
@@ -7206,7 +7206,7 @@ qboolean MenuParse_fadeCycle(itemDef_t *item, int handle) {
 =======================================================================================================================================
 MenuParse_screenPlacement
 
-This only affects the draw location. It's mainly for HUDs, not interactive menus. Though it could be used for menu decorations.
+NOTE: This only affects the draw location. It's mainly for HUDs, not interactive menus. Though it could be used for menu decorations.
 =======================================================================================================================================
 */
 qboolean MenuParse_screenPlacement(itemDef_t *item, int handle) {

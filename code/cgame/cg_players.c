@@ -1621,7 +1621,7 @@ static void CG_AddBreathPuffs(centity_t *cent, refEntity_t *head) {
 		return;
 	}
 	// add first person effects
-	if (cent->currentState.number == cg.snap->ps.clientNum /*&& !cg.renderingThirdPerson*/) {
+	if (cent->currentState.number == cg.snap->ps.clientNum && !cg.renderingThirdPerson) {
 		VectorMA(cg.refdef.vieworg, 20, cg.refdef.viewaxis[0], origin);
 		VectorMA(origin, -4, cg.refdef.viewaxis[2], origin);
 		CG_BreathPuff(cent->currentState.number, origin, cg.refdef.viewaxis);

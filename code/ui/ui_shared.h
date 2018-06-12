@@ -389,7 +389,6 @@ typedef struct {
 	void (*adjustFrom640)(float *x, float *y, float *w, float *h);
 	void (*setScreenPlacement)(screenPlacement_e hpos, screenPlacement_e vpos);
 	void (*popScreenPlacement)(void);
-
 	float yscale;
 	float xscale;
 	float bias;
