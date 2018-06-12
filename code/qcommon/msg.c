@@ -39,7 +39,6 @@ int pcount[256];
 =======================================================================================================================================
 */
 
-int oldsize = 0;
 void MSG_initHuffman(void);
 
 /*
@@ -157,8 +156,6 @@ Negative bit values include signs.
 */
 void MSG_WriteBits(msg_t *msg, int value, int bits) {
 	int i;
-
-	oldsize += bits;
 
 	if (msg->overflowed) {
 		return;
@@ -884,7 +881,6 @@ void MSG_WriteDeltaUsercmdKey(msg_t *msg, int key, usercmd_t *from, usercmd_t *t
 
 	if (from->angles[0] == to->angles[0] && from->angles[1] == to->angles[1] && from->angles[2] == to->angles[2] && from->forwardmove == to->forwardmove && from->rightmove == to->rightmove && from->upmove == to->upmove && from->buttons == to->buttons && from->weapon == to->weapon) {
 		MSG_WriteBits(msg, 0, 1); // no change
-		oldsize += 7;
 		return;
 	}
 
@@ -987,56 +983,56 @@ typedef struct {
 #define NETF(x) #x, (size_t)&((entityState_t *)0)->x
 
 netField_t entityStateFields[] = {
+	{NETF(eType), 8},
+	{NETF(eFlags), 32},
+	{NETF(pos.trType), 8},
 	{NETF(pos.trTime), 32},
+	{NETF(pos.trDuration), 32},
 	{NETF(pos.trBase[0]), 0},
 	{NETF(pos.trBase[1]), 0},
+	{NETF(pos.trBase[2]), 0},
 	{NETF(pos.trDelta[0]), 0},
 	{NETF(pos.trDelta[1]), 0},
-	{NETF(pos.trBase[2]), 0},
-	{NETF(apos.trBase[1]), 0},
 	{NETF(pos.trDelta[2]), 0},
-	{NETF(apos.trBase[0]), 0},
-	{NETF(event), 10},
-	{NETF(angles2[1]), 0},
-	{NETF(eType), 8},
-	{NETF(torsoAnim), 8},
-	{NETF(eventParm), 8},
-	{NETF(legsAnim), 8},
-	{NETF(groundEntityNum), GENTITYNUM_BITS},
-	{NETF(pos.trType), 8},
-	{NETF(eFlags), 19},
-	{NETF(otherEntityNum), GENTITYNUM_BITS},
-	{NETF(weapon), 8},
-	{NETF(clientNum), 8},
-	{NETF(angles[1]), 0},
-	{NETF(pos.trDuration), 32},
 	{NETF(apos.trType), 8},
-	{NETF(origin[0]), 0},
-	{NETF(origin[1]), 0},
-	{NETF(origin[2]), 0},
-	{NETF(solid), 24},
-	{NETF(powerups), MAX_POWERUPS},
-	{NETF(modelindex), 8},
-	{NETF(otherEntityNum2), GENTITYNUM_BITS},
-	{NETF(loopSound), 8},
-	{NETF(origin2[2]), 0},
-	{NETF(origin2[0]), 0},
-	{NETF(origin2[1]), 0},
-	{NETF(modelindex2), 8},
-	{NETF(angles[0]), 0},
-	{NETF(time), 32},
 	{NETF(apos.trTime), 32},
 	{NETF(apos.trDuration), 32},
+	{NETF(apos.trBase[0]), 0},
+	{NETF(apos.trBase[1]), 0},
 	{NETF(apos.trBase[2]), 0},
 	{NETF(apos.trDelta[0]), 0},
 	{NETF(apos.trDelta[1]), 0},
 	{NETF(apos.trDelta[2]), 0},
+	{NETF(time), 32},
 	{NETF(time2), 32},
+	{NETF(origin[0]), 0},
+	{NETF(origin[1]), 0},
+	{NETF(origin[2]), 0},
+	{NETF(origin2[0]), 0},
+	{NETF(origin2[1]), 0},
+	{NETF(origin2[2]), 0},
+	{NETF(angles[0]), 0},
+	{NETF(angles[1]), 0},
 	{NETF(angles[2]), 0},
 	{NETF(angles2[0]), 0},
+	{NETF(angles2[1]), 0},
 	{NETF(angles2[2]), 0},
+	{NETF(otherEntityNum), GENTITYNUM_BITS},
+	{NETF(otherEntityNum2), GENTITYNUM_BITS},
+	{NETF(groundEntityNum), GENTITYNUM_BITS},
+	{NETF(loopSound), 8},
 	{NETF(constantLight), 32},
+	{NETF(modelindex), 8},
+	{NETF(modelindex2), 8},
 	{NETF(frame), 16},
+	{NETF(clientNum), 8},
+	{NETF(solid), 24},
+	{NETF(event), 10},
+	{NETF(eventParm), 8},
+	{NETF(powerups), MAX_POWERUPS},
+	{NETF(weapon), 8},
+	{NETF(torsoAnim), 8},
+	{NETF(legsAnim), 8},
 	{NETF(soundRange), 32},
 	{NETF(tokens), 8},
 	{NETF(team), 8}
@@ -1113,8 +1109,6 @@ void MSG_WriteDeltaEntity(msg_t *msg, struct entityState_s *from, struct entityS
 	MSG_WriteBits(msg, 1, 1); // we have a delta
 	MSG_WriteByte(msg, lc); // # of changes
 
-	oldsize += numFields;
-
 	for (i = 0, field = entityStateFields; i < lc; i++, field++) {
 		fromF = (int *)((byte *)from + field->offset);
 		toF = (int *)((byte *)to + field->offset);
@@ -1133,7 +1127,6 @@ void MSG_WriteDeltaEntity(msg_t *msg, struct entityState_s *from, struct entityS
 
 			if (fullFloat == 0.0f) {
 				MSG_WriteBits(msg, 0, 1);
-				oldsize += FLOAT_INT_BITS;
 			} else {
 				MSG_WriteBits(msg, 1, 1);
 
@@ -1302,47 +1295,47 @@ void MSG_ReadDeltaEntity(msg_t *msg, entityState_t *from, entityState_t *to, int
 
 netField_t playerStateFields[] = {
 	{PSF(commandTime), 32},
+	{PSF(pm_type), 8},
+	{PSF(bobCycle), 8},
+	{PSF(pm_flags), 16},
+	{PSF(pm_time), -16},
 	{PSF(origin[0]), 0},
 	{PSF(origin[1]), 0},
-	{PSF(bobCycle), 8},
+	{PSF(origin[2]), 0},
 	{PSF(velocity[0]), 0},
 	{PSF(velocity[1]), 0},
-	{PSF(viewangles[1]), 0},
-	{PSF(viewangles[0]), 0},
-	{PSF(weaponTime), -16},
-	{PSF(origin[2]), 0},
 	{PSF(velocity[2]), 0},
-	{PSF(legsTimer), 8},
-	{PSF(pm_time), -16},
-	{PSF(eventSequence), 16},
-	{PSF(torsoAnim), 8},
-	{PSF(movementDir), 4},
-	{PSF(events[0]), 8},
-	{PSF(legsAnim), 8},
-	{PSF(events[1]), 8},
-	{PSF(pm_flags), 16},
-	{PSF(groundEntityNum), GENTITYNUM_BITS},
-	{PSF(weaponstate), 4},
-	{PSF(eFlags), 16},
-	{PSF(externalEvent), 10},
+	{PSF(weaponTime), -16},
 	{PSF(gravity), 16},
 	{PSF(speed), 16},
-	{PSF(delta_angles[1]), 16},
-	{PSF(externalEventParm), 8},
-	{PSF(viewheight), -8},
-	{PSF(damageEvent), 8},
-	{PSF(damageYaw), 8},
-	{PSF(damagePitch), 8},
-	{PSF(damageCount), 8},
-	{PSF(pm_type), 8},
 	{PSF(delta_angles[0]), 16},
+	{PSF(delta_angles[1]), 16},
 	{PSF(delta_angles[2]), 16},
+	{PSF(groundEntityNum), GENTITYNUM_BITS},
+	{PSF(legsTimer), 8},
 	{PSF(torsoTimer), 12},
+	{PSF(legsAnim), 8},
+	{PSF(torsoAnim), 8},
+	{PSF(movementDir), 4},
+	{PSF(eFlags), 32},
+	{PSF(eventSequence), 16},
+	{PSF(events[0]), 8},
+	{PSF(events[1]), 8},
 	{PSF(eventParms[0]), 8},
 	{PSF(eventParms[1]), 8},
 	{PSF(clientNum), 8},
 	{PSF(weapon), 5},
+	{PSF(weaponstate), 4},
+	{PSF(viewangles[0]), 0},
+	{PSF(viewangles[1]), 0},
 	{PSF(viewangles[2]), 0},
+	{PSF(damageEvent), 8},
+	{PSF(damageYaw), 8},
+	{PSF(damagePitch), 8},
+	{PSF(damageCount), 8},
+	{PSF(externalEvent), 10},
+	{PSF(externalEventParm), 8},
+	{PSF(viewheight), -8},
 	{PSF(tokens), 8},
 	{PSF(jumppad_ent), GENTITYNUM_BITS},
 	{PSF(loopSound), 16}
@@ -1385,8 +1378,6 @@ void MSG_WriteDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct pl
 	}
 
 	MSG_WriteByte(msg, lc); // # of changes
-
-	oldsize += numFields - lc;
 
 	for (i = 0, field = playerStateFields; i < lc; i++, field++) {
 		fromF = (int *)((byte *)from + field->offset);
@@ -1454,7 +1445,6 @@ void MSG_WriteDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct pl
 
 	if (!statsbits && !persistantbits && !ammobits && !powerupbits) {
 		MSG_WriteBits(msg, 0, 1); // no change
-		oldsize += 4;
 		return;
 	}
 
