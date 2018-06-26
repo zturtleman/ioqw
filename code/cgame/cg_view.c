@@ -64,6 +64,8 @@ Creates an entity in front of the current position, which can then be moved arou
 void CG_TestModel_f(void) {
 	vec3_t angles;
 
+	cg.testGun = qfalse;
+
 	memset(&cg.testModelEntity, 0, sizeof(cg.testModelEntity));
 
 	if (trap_Argc() < 2) {
@@ -92,8 +94,6 @@ void CG_TestModel_f(void) {
 	angles[ROLL] = 0;
 
 	AnglesToAxis(angles, cg.testModelEntity.axis);
-
-	cg.testGun = qfalse;
 }
 
 /*
@@ -106,6 +106,10 @@ Replaces the current view weapon with the given model.
 void CG_TestGun_f(void) {
 
 	CG_TestModel_f();
+
+	if (!cg.testModelEntity.hModel) {
+		return;
+	}
 
 	cg.testGun = qtrue;
 	cg.testModelEntity.renderfx = RF_MINLIGHT|RF_DEPTHHACK|RF_FIRST_PERSON;

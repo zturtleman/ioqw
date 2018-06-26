@@ -1144,6 +1144,7 @@ SV_RankDecodePlayerKey
 static void SV_RankDecodePlayerKey(const char *string, GR_PLAYER_TOKEN key) {
 	unsigned char buffer[1400];
 	int len;
+
 	assert(string != NULL);
 
 	len = strlen(string);

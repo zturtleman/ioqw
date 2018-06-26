@@ -578,6 +578,7 @@ void S_PaintChannels(int endtime) {
 
 				for (i = s_paintedtime; i < stop; i++) {
 					const int s = i&(MAX_RAW_SAMPLES - 1);
+
 					paintbuffer[i - s_paintedtime].left += rawsamples[s].left;
 					paintbuffer[i - s_paintedtime].right += rawsamples[s].right;
 				}

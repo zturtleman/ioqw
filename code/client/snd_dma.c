@@ -877,7 +877,9 @@ void S_Base_AddLoopingSound(int entityNum, const vec3_t origin, const vec3_t vel
 
 		loopSounds[entityNum].doppler = qtrue;
 		lena = DistanceSquared(loopSounds[listener_number].origin, loopSounds[entityNum].origin);
+
 		VectorAdd(loopSounds[entityNum].origin, loopSounds[entityNum].velocity, out);
+
 		lenb = DistanceSquared(loopSounds[listener_number].origin, out);
 
 		if ((loopSounds[entityNum].framenum + 1) != cls.framecount) {

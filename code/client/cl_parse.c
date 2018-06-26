@@ -607,7 +607,7 @@ CL_ShouldIgnoreVoipSender
 static qboolean CL_ShouldIgnoreVoipSender(int sender) {
 
 	if (!cl_voip->integer) {
-		return qtrue; // VoIP is disabled.
+		return qtrue; // VoIP is disabled
 	} else if ((sender == clc.clientNum) && (!clc.demoplaying)) {
 		return qtrue; // ignore own voice (unless playing back a demo)
 	} else if (clc.voipMuteAll) {
@@ -698,24 +698,24 @@ static void CL_ParseVoip(msg_t *msg, qboolean ignoreData) {
 	} else if (!clc.voipCodecInitialized) {
 		return; // can't handle VoIP without libopus!
 	} else if (sender >= MAX_CLIENTS) {
-		return; // bogus sender.
+		return; // bogus sender
 	} else if (CL_ShouldIgnoreVoipSender(sender)) {
-		return; // channel is muted, bail.
+		return; // channel is muted, bail
 	}
 	// !!! FIXME: make sure data is narrowband? Does decoder handle this?
 	Com_DPrintf("VoIP: packet accepted!\n");
 
 	seqdiff = sequence - clc.voipIncomingSequence[sender];
-	// this is a new "generation" ... a new recording started, reset the bits.
+	// this is a new "generation" ... a new recording started, reset the bits
 	if (generation != clc.voipIncomingGeneration[sender]) {
 		Com_DPrintf("VoIP: new generation %d!\n", generation);
 		opus_decoder_ctl(clc.opusDecoder[sender], OPUS_RESET_STATE);
 		clc.voipIncomingGeneration[sender] = generation;
 		seqdiff = 0;
 	} else if (seqdiff < 0) { // we're ahead of the sequence?!
-		// this shouldn't happen unless the packet is corrupted or something.
+		// this shouldn't happen unless the packet is corrupted or something
 		Com_DPrintf("VoIP: misordered sequence! %d < %d!\n", sequence, clc.voipIncomingSequence[sender]);
-		// reset the decoder just in case.
+		// reset the decoder just in case
 		opus_decoder_ctl(clc.opusDecoder[sender], OPUS_RESET_STATE);
 		seqdiff = 0;
 	} else if (seqdiff * VOIP_MAX_PACKET_SAMPLES * 2 >= sizeof(decoded)) { // dropped more than we can handle?

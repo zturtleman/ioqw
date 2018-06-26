@@ -1366,6 +1366,7 @@ Updates an interpreted modules' version of a cvar.
 */
 void Cvar_Update(vmCvar_t *vmCvar) {
 	cvar_t *cv = NULL;
+
 	assert(vmCvar);
 
 	if ((unsigned)vmCvar->handle >= cvar_numIndexes) {

@@ -49,5 +49,4 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define Sys_LoadFunction(h, fn) SDL_LoadFunction(h, fn)
 #define Sys_LibraryError() SDL_GetError()
 #endif
-
 void *QDECL Sys_LoadDll(const char *name, qboolean useSystemLib);

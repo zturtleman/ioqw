@@ -431,7 +431,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart) {
 			char serverinfo[MAX_INFO_STRING];
 
 			trap_GetServerinfo(serverinfo, sizeof(serverinfo));
-
 			G_LogPrintf("------------------------------------------------------------\n");
 			G_LogPrintf("InitGame: %s\n", serverinfo);
 		}

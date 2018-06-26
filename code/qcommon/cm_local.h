@@ -140,7 +140,7 @@ typedef struct {
 	int contents;		// ored contents of the model tracing through
 	qboolean isPoint;	// optimized case
 	trace_t trace;		// returned from trace call
-	sphere_t sphere;	// sphere for oriendted capsule collision
+	sphere_t sphere;	// sphere for oriented capsule collision
 } traceWork_t;
 
 typedef struct leafList_s {

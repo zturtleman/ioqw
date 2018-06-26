@@ -173,7 +173,7 @@ void SV_DirectConnect(netadr_t from) {
 	char *ip;
 
 	Com_DPrintf("SVC_DirectConnect()\n");
-	// check whether this client is banned.
+	// check whether this client is banned
 	if (SV_IsBanned(&from, qfalse)) {
 		NET_OutOfBandPrint(NS_SERVER, from, "print\nYou are banned from this server.\n");
 		return;
@@ -1521,17 +1521,17 @@ static void SV_UserVoip(client_t *cl, msg_t *msg, qboolean ignoreData) {
 	// decide who needs this VoIP packet sent to them...
 	for (i = 0, client = svs.clients; i < sv_maxclients->integer; i++, client++) {
 		if (client->state != CS_ACTIVE) {
-			continue; // not in the game yet, don't send to this guy.
+			continue; // not in the game yet, don't send to this guy
 		} else if (i == sender) {
-			continue; // don't send voice packet back to original author.
+			continue; // don't send voice packet back to original author
 		} else if (!client->hasVoip) {
 			continue; // no VoIP support, or unsupported protocol
 		} else if (client->muteAllVoip) {
-			continue; // client is ignoring everyone.
+			continue; // client is ignoring everyone
 		} else if (client->ignoreVoipFromClient[sender]) {
-			continue; // client is ignoring this talker.
+			continue; // client is ignoring this talker
 		} else if (*cl->downloadName) { // !!! FIXME: possible to DoS?
-			continue; // no VoIP allowed if downloading, to save bandwidth.
+			continue; // no VoIP allowed if downloading, to save bandwidth
 		}
 
 		if (Com_IsVoipTarget(recips, sizeof(recips), i)) {
@@ -1541,12 +1541,12 @@ static void SV_UserVoip(client_t *cl, msg_t *msg, qboolean ignoreData) {
 		}
 
 		if (!(flags & (VOIP_SPATIAL|VOIP_DIRECT))) {
-			continue; // not addressed to this player.
+			continue; // not addressed to this player
 		}
-		// transmit this packet to the client.
+		// transmit this packet to the client
 		if (client->queuedVoipPackets >= ARRAY_LEN(client->voipPacket)) {
 			Com_Printf("Too many VoIP packets queued for client #%d\n", i);
-			continue; // no room for another packet right now.
+			continue; // no room for another packet right now
 		}
 
 		packet = Z_Malloc(sizeof(*packet));

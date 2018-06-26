@@ -136,6 +136,7 @@ S_CodecRegister
 =======================================================================================================================================
 */
 void S_CodecRegister(snd_codec_t *codec) {
+
 	codec->next = codecs;
 	codecs = codec;
 }
@@ -224,5 +225,6 @@ void S_CodecUtilClose(snd_stream_t **stream) {
 
 	FS_FCloseFile((*stream)->file);
 	Z_Free(*stream);
+
 	*stream = NULL;
 }

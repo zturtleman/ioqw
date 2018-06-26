@@ -133,6 +133,7 @@ static void CON_Show(void) {
 
 		if (ttycon_hide == 0) {
 			size_t UNUSED_VAR size;
+
 			size = write(STDOUT_FILENO, TTY_CONSOLE_PROMPT, strlen(TTY_CONSOLE_PROMPT));
 
 			if (TTY_con.cursor) {

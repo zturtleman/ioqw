@@ -319,6 +319,7 @@ const char *Sys_Dirname(char *path) {
 	int length;
 
 	Q_strncpyz(dir, path, sizeof(dir));
+
 	length = strlen(dir) - 1;
 
 	while (length > 0 && dir[length] != '\\') {
