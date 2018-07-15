@@ -108,6 +108,8 @@ int BotEnemyFlagCarrierVisible(bot_state_t *bs);
 int BotCountAllTeamMates(bot_state_t *bs, float range);
 // get the number of visible teammates and enemies
 void BotCountVisibleTeamMatesAndEnemies(bot_state_t *bs, int *teammates, int *enemies, float range);
+// get the number of visible enemies
+void BotCountVisibleEnemies(bot_state_t *bs, int *enemies, float range);
 // returns true if within the field of vision for the given angles
 qboolean InFieldOfVision(vec3_t viewangles, int fov, vec3_t angles);
 // returns true and sets the .enemy field when an enemy is found

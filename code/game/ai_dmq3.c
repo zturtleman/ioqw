@@ -1965,6 +1965,80 @@ void BotUpdateBattleInventory(bot_state_t *bs, int enemy) {
 	// FIXME: add num visible enemies and num visible team mates to the inventory
 }
 
+/*
+=======================================================================================================================================
+BotWantsToUseKamikaze
+=======================================================================================================================================
+*/
+qboolean BotWantsToUseKamikaze(bot_state_t *bs) {
+
+	if (gametype == GT_OBELISK) {
+		// if the bot is low on health and recently hurt
+		if (bs->inventory[INVENTORY_HEALTH] < 60 && g_entities[bs->entitynum].client->lasthurt_time > level.time - 1000) {
+			return qtrue;
+		}
+		// if the bot has the ammoregen powerup
+		if (bs->inventory[INVENTORY_AMMOREGEN] > 0) {
+			return qfalse;
+		}
+		// if the bot can use the machine gun
+		if (bs->inventory[INVENTORY_MACHINEGUN] > 0 && bs->inventory[INVENTORY_BULLETS] > 0) {
+			return qfalse;
+		}
+		// if the bot can use the chain gun
+		if (bs->inventory[INVENTORY_CHAINGUN] > 0 && bs->inventory[INVENTORY_BELT] > 0) {
+			return qfalse;
+		}
+		// if the bot can use the shot gun
+		if (bs->inventory[INVENTORY_SHOTGUN] > 0 && bs->inventory[INVENTORY_SHELLS] > 0) {
+			return qfalse;
+		}
+		// if the bot can use the nail gun
+		if (bs->inventory[INVENTORY_NAILGUN] > 0 && bs->inventory[INVENTORY_NAILS] > 0) {
+			return qfalse;
+		}
+		// if the bot can place a mine
+		if (bs->inventory[INVENTORY_PROXLAUNCHER] > 0 && bs->inventory[INVENTORY_MINES] > 0) {
+			return qfalse;
+		}
+		// if the bot can use the grenade launcher
+		if (bs->inventory[INVENTORY_GRENADELAUNCHER] > 0 && bs->inventory[INVENTORY_GRENADES] > 0) {
+			return qfalse;
+		}
+		// if the bot can use the napalm launcher
+		if (bs->inventory[INVENTORY_NAPALMLAUNCHER] > 0 && bs->inventory[INVENTORY_CANISTERS] > 0) {
+			return qfalse;
+		}
+		// if the bot can use the rocket launcher
+		if (bs->inventory[INVENTORY_ROCKETLAUNCHER] > 0 && bs->inventory[INVENTORY_ROCKETS] > 0) {
+			return qfalse;
+		}
+		// if the bot can use the beam gun
+		if (bs->inventory[INVENTORY_BEAMGUN] > 0 && bs->inventory[INVENTORY_BEAMGUN_AMMO] > 0) {
+			return qfalse;
+		}
+		// if the bot can use the rail gun
+		if (bs->inventory[INVENTORY_RAILGUN] > 0 && bs->inventory[INVENTORY_SLUGS] > 0) {
+			return qfalse;
+		}
+		// if the bot can use the plasma gun
+		if (bs->inventory[INVENTORY_PLASMAGUN] > 0 && bs->inventory[INVENTORY_CELLS] > 0) {
+			return qfalse;
+		}
+		// if the bot can use the bfg
+		if (bs->inventory[INVENTORY_BFG10K] > 0 && bs->inventory[INVENTORY_BFG_AMMO] > 0) {
+			return qfalse;
+		}
+	} else {
+		// if the bot is low on health and recently hurt
+		if (bs->inventory[INVENTORY_HEALTH] < 80 && g_entities[bs->entitynum].client->lasthurt_time > level.time - 1000) {
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
+
 #define KAMIKAZE_DIST 1024
 /*
 =======================================================================================================================================
@@ -1989,126 +2063,170 @@ void BotUseKamikaze(bot_state_t *bs) {
 
 	bs->kamikaze_time = FloatTime() + 0.2;
 
-	if (gametype == GT_CTF) {
-		// never use kamikaze if the team flag carrier is visible
-		if (BotCTFCarryingFlag(bs)) {
-			return;
-		}
+	switch (gametype) {
+		case GT_FFA:
+			BotCountVisibleEnemies(bs, &enemies, KAMIKAZE_DIST);
 
-		c = BotTeamFlagCarrierVisible(bs);
-
-		if (c >= 0) {
-			// get the entity information
-			BotEntityInfo(c, &entinfo);
-			VectorSubtract(entinfo.origin, bs->origin, dir);
-
-			if (VectorLengthSquared(dir) < Square(KAMIKAZE_DIST)) {
-				return;
-			}
-		}
-
-		c = BotEnemyFlagCarrierVisible(bs);
-
-		if (c >= 0) {
-			// get the entity information
-			BotEntityInfo(c, &entinfo);
-			VectorSubtract(entinfo.origin, bs->origin, dir);
-
-			if (VectorLengthSquared(dir) < Square(KAMIKAZE_DIST)) {
+			if (enemies > 0 && BotWantsToUseKamikaze(bs)) {
 				trap_EA_Use(bs->client);
 				return;
 			}
-		}
-	} else if (gametype == GT_1FCTF) {
-		// never use kamikaze if the team flag carrier is visible
-		if (Bot1FCTFCarryingFlag(bs)) {
-			return;
-		}
 
-		c = BotTeamFlagCarrierVisible(bs);
+			break;
+		case GT_TEAM:
+			BotCountVisibleTeamMatesAndEnemies(bs, &teammates, &enemies, KAMIKAZE_DIST);
 
-		if (c >= 0) {
-			// get the entity information
-			BotEntityInfo(c, &entinfo);
-			VectorSubtract(entinfo.origin, bs->origin, dir);
-
-			if (VectorLengthSquared(dir) < Square(KAMIKAZE_DIST)) {
-				return;
-			}
-		}
-
-		c = BotEnemyFlagCarrierVisible(bs);
-
-		if (c >= 0) {
-			// get the entity information
-			BotEntityInfo(c, &entinfo);
-			VectorSubtract(entinfo.origin, bs->origin, dir);
-
-			if (VectorLengthSquared(dir) < Square(KAMIKAZE_DIST)) {
+			if (enemies > 2 && enemies > teammates + 1 && BotWantsToUseKamikaze(bs)) {
 				trap_EA_Use(bs->client);
 				return;
 			}
-		}
-	} else if (gametype == GT_OBELISK) {
-		switch (BotTeam(bs)) {
-			case TEAM_RED:
-				goal = &blueobelisk;
-				break;
-			default:
-				goal = &redobelisk;
-				break;
-		}
-		// if the obelisk is visible
-		VectorCopy(goal->origin, target);
 
-		target[2] += 1;
+			break;
+		case GT_CTF:
+			// never use the kamikaze if carrying a flag
+			if (BotCTFCarryingFlag(bs)) {
+				return;
+			}
+			// never use the kamikaze if the team flag carrier is visible
+			c = BotTeamFlagCarrierVisible(bs);
 
-		VectorSubtract(bs->origin, target, dir);
+			if (c >= 0) {
+				// get the entity information
+				BotEntityInfo(c, &entinfo);
+				VectorSubtract(entinfo.origin, bs->origin, dir);
 
-		if (VectorLengthSquared(dir) < Square(KAMIKAZE_DIST * 0.9)) {
-			BotAI_Trace(&trace, bs->eye, NULL, NULL, target, bs->client, CONTENTS_SOLID);
+				if (VectorLengthSquared(dir) < Square(KAMIKAZE_DIST)) {
+					return;
+				}
+			}
+			// always use the kamikaze if the enemy flag carrier is visible
+			c = BotEnemyFlagCarrierVisible(bs);
 
-			if (trace.fraction >= 1 || trace.entityNum == goal->entitynum) {
+			if (c >= 0) {
+				// get the entity information
+				BotEntityInfo(c, &entinfo);
+				VectorSubtract(entinfo.origin, bs->origin, dir);
+
+				if (VectorLengthSquared(dir) < Square(KAMIKAZE_DIST)) {
+					trap_EA_Use(bs->client);
+					return;
+				}
+			}
+
+			BotCountVisibleTeamMatesAndEnemies(bs, &teammates, &enemies, KAMIKAZE_DIST);
+
+			if (enemies > 2 && enemies > teammates + 1 && BotWantsToUseKamikaze(bs)) {
 				trap_EA_Use(bs->client);
 				return;
 			}
-		}
-	} else if (gametype == GT_HARVESTER) {
-		if (BotHarvesterCarryingCubes(bs)) {
-			return;
-		}
-		// never use kamikaze if a team mate carrying cubes is visible
-		c = BotTeamCubeCarrierVisible(bs);
 
-		if (c >= 0) {
-			// get the entity information
-			BotEntityInfo(c, &entinfo);
-			VectorSubtract(entinfo.origin, bs->origin, dir);
-
-			if (VectorLengthSquared(dir) < Square(KAMIKAZE_DIST)) {
+			break;
+		case GT_1FCTF:
+			// never use the kamikaze if carrying the flag
+			if (Bot1FCTFCarryingFlag(bs)) {
 				return;
 			}
-		}
+			// never use the kamikaze if the team flag carrier is visible
+			c = BotTeamFlagCarrierVisible(bs);
 
-		c = BotEnemyCubeCarrierVisible(bs);
+			if (c >= 0) {
+				// get the entity information
+				BotEntityInfo(c, &entinfo);
+				VectorSubtract(entinfo.origin, bs->origin, dir);
 
-		if (c >= 0) {
-			// get the entity information
-			BotEntityInfo(c, &entinfo);
-			VectorSubtract(entinfo.origin, bs->origin, dir);
+				if (VectorLengthSquared(dir) < Square(KAMIKAZE_DIST)) {
+					return;
+				}
+			}
+			// always use the kamikaze if the enemy flag carrier is visible
+			c = BotEnemyFlagCarrierVisible(bs);
 
-			if (VectorLengthSquared(dir) < Square(KAMIKAZE_DIST)) {
+			if (c >= 0) {
+				// get the entity information
+				BotEntityInfo(c, &entinfo);
+				VectorSubtract(entinfo.origin, bs->origin, dir);
+
+				if (VectorLengthSquared(dir) < Square(KAMIKAZE_DIST)) {
+					trap_EA_Use(bs->client);
+					return;
+				}
+			}
+
+			BotCountVisibleTeamMatesAndEnemies(bs, &teammates, &enemies, KAMIKAZE_DIST);
+
+			if (enemies > 2 && enemies > teammates + 1 && BotWantsToUseKamikaze(bs)) {
 				trap_EA_Use(bs->client);
 				return;
 			}
-		}
-	}
 
-	BotCountVisibleTeamMatesAndEnemies(bs, &teammates, &enemies, KAMIKAZE_DIST);
+			break;
+		case GT_OBELISK:
+			switch (BotTeam(bs)) {
+				case TEAM_RED:
+					goal = &blueobelisk;
+					break;
+				default:
+					goal = &redobelisk;
+					break;
+			}
+			// if the obelisk is visible
+			VectorCopy(goal->origin, target);
 
-	if (enemies > 2 && enemies > teammates + 1) {
-		trap_EA_Use(bs->client);
-		return;
+			target[2] += 1;
+
+			VectorSubtract(bs->origin, target, dir);
+			// don't use the kamikaze as long as it isn't really needed
+			if (VectorLengthSquared(dir) < Square(KAMIKAZE_DIST * 0.7) && BotWantsToUseKamikaze(bs)) {
+				BotAI_Trace(&trace, bs->eye, NULL, NULL, target, bs->client, CONTENTS_SOLID);
+
+				if (trace.fraction >= 1 || trace.entityNum == goal->entitynum) {
+					trap_EA_Use(bs->client);
+					return;
+				}
+			}
+
+			break;
+		case GT_HARVESTER:
+			// never use the kamikaze if carrying cubes
+			if (BotHarvesterCarryingCubes(bs)) {
+				return;
+			}
+			// never use the kamikaze if a team mate carrying cubes is visible
+			c = BotTeamCubeCarrierVisible(bs);
+
+			if (c >= 0) {
+				// get the entity information
+				BotEntityInfo(c, &entinfo);
+				VectorSubtract(entinfo.origin, bs->origin, dir);
+
+				if (VectorLengthSquared(dir) < Square(KAMIKAZE_DIST)) {
+					return;
+				}
+			}
+			// always use the kamikaze if an enemy carrying cubes is visible
+			c = BotEnemyCubeCarrierVisible(bs);
+
+			if (c >= 0) {
+				// get the entity information
+				BotEntityInfo(c, &entinfo);
+				VectorSubtract(entinfo.origin, bs->origin, dir);
+
+				if (VectorLengthSquared(dir) < Square(KAMIKAZE_DIST)) {
+					trap_EA_Use(bs->client);
+					return;
+				}
+			}
+
+			BotCountVisibleTeamMatesAndEnemies(bs, &teammates, &enemies, KAMIKAZE_DIST);
+
+			if (enemies > 2 && enemies > teammates + 1 && BotWantsToUseKamikaze(bs)) {
+				trap_EA_Use(bs->client);
+				return;
+			}
+
+			break;
+		default:
+			break;
 	}
 }
 
@@ -4105,6 +4223,47 @@ int BotEnemyFlagCarrierVisible(bot_state_t *bs) {
 
 /*
 =======================================================================================================================================
+BotCountVisibleEnemies
+=======================================================================================================================================
+*/
+void BotCountVisibleEnemies(bot_state_t *bs, int *enemies, float range) {
+	int i;
+	aas_entityinfo_t entinfo;
+	vec3_t dir;
+
+	if (enemies) {
+		*enemies = 0;
+	}
+
+	for (i = 0; i < level.maxclients; i++) {
+		if (i == bs->client) {
+			continue;
+		}
+		// get the entity information
+		BotEntityInfo(i, &entinfo);
+		// if this player is active
+		if (!entinfo.valid) {
+			continue;
+		}
+		// if not within range
+		VectorSubtract(entinfo.origin, bs->origin, dir);
+
+		if (VectorLengthSquared(dir) > Square(range)) {
+			continue;
+		}
+		// if the enemy is not visible
+		if (!BotEntityVisible(&bs->cur_ps, 360, i)) {
+			continue;
+		}
+
+		if (enemies) {
+			(*enemies)++;
+		}
+	}
+}
+
+/*
+=======================================================================================================================================
 BotCountVisibleTeamMatesAndEnemies
 =======================================================================================================================================
 */
@@ -4131,9 +4290,12 @@ void BotCountVisibleTeamMatesAndEnemies(bot_state_t *bs, int *teammates, int *en
 		if (!entinfo.valid) {
 			continue;
 		}
-		// if this player is carrying a flag
-		if (!EntityCarriesFlag(&entinfo)) {
-			continue;
+
+		if (gametype == GT_CTF || gametype == GT_1FCTF) {
+			// if this player is carrying a flag
+			if (!EntityCarriesFlag(&entinfo)) {
+				continue;
+			}
 		}
 		// if not within range
 		VectorSubtract(entinfo.origin, bs->origin, dir);
@@ -4169,6 +4331,11 @@ int BotCountAllTeamMates(bot_state_t *bs, float range) {
 	int teammates, i;
 	aas_entityinfo_t entinfo;
 	vec3_t dir;
+
+	// if not in teamplay mode
+	if (gametype < GT_TEAM) {
+		return 0;
+	}
 
 	teammates = 0;
 

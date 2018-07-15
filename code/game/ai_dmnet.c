@@ -2296,7 +2296,7 @@ int AINode_Battle_Fight(bot_state_t *bs) {
 		}
 	}
 	// only check for nearby goals if not in water, it takes too long
-	if (!trap_AAS_Swimming(bs->origin) && ((gametype > GT_TEAM && !BotHasEmergencyGoal(bs)) || BotFeelingBad(bs))) { // Tobias NOTE: logic-wise it looks like this doesn't make sense but this is absolute correct, well, it looks like shit, I know. Eventually I'll clearify this line someday ...
+	if (BotFeelingBad(bs) && !trap_AAS_Swimming(bs->origin) && !BotCTFCarryingFlag(bs) && !Bot1FCTFCarryingFlag(bs) && !BotHarvesterCarryingCubes(bs)) {
 		// check for nearby goals periodicly
 		if (bs->check_time < FloatTime()) {
 			bs->check_time = FloatTime() + 0.05;
