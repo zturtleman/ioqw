@@ -1413,9 +1413,9 @@ void RE_Shutdown(qboolean destroyWindow) {
 		Com_Memset(&glConfig, 0, sizeof(glConfig));
 		Com_Memset(&glRefConfig, 0, sizeof(glRefConfig));
 
-		textureFilterAnisotropic = qfalse;
-		maxAnisotropy = 0;
-		displayAspect = 0.0f;
+		glConfig.textureFilterAnisotropic = qfalse;
+		glConfig.maxAnisotropy = 0;
+		glConfig.displayAspect = 0.0f;
 
 		Com_Memset(&glState, 0, sizeof(glState));
 	}
