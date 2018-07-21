@@ -105,7 +105,7 @@ void COM_StripExtension(const char *in, char *out, int destsize) {
 =======================================================================================================================================
 COM_CompareExtension
 
-string compare the end of the strings and return qtrue if strings match.
+String compare the end of the strings and return qtrue if strings match.
 =======================================================================================================================================
 */
 qboolean COM_CompareExtension(const char *in, const char *ext) {
@@ -474,7 +474,9 @@ int COM_Compress(char *data_p) {
 					*out++ = '\n';
 					newline = qfalse;
 					whitespace = qfalse;
-				} if (whitespace) {
+				}
+
+				if (whitespace) {
 					*out++ = ' ';
 					whitespace = qfalse;
 				}
@@ -1199,7 +1201,7 @@ char *QDECL va(char *format, ...) {
 =======================================================================================================================================
 Com_TruncateLongString
 
-Assumes buffer is atleast TRUNCATE_LENGTH big.
+Assumes buffer is at least TRUNCATE_LENGTH big.
 =======================================================================================================================================
 */
 void Com_TruncateLongString(char *buffer, const char *s) {

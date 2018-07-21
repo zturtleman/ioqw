@@ -727,7 +727,6 @@ void CM_TraceThroughLeaf(traceWork_t *tw, cLeaf_t *leaf) {
 }
 
 #define RADIUS_EPSILON 1.0f
-
 /*
 =======================================================================================================================================
 CM_TraceThroughSphere
@@ -830,7 +829,7 @@ void CM_TraceThroughSphere(traceWork_t *tw, vec3_t origin, float radius, vec3_t 
 =======================================================================================================================================
 CM_TraceThroughVerticalCylinder
 
-Get the first intersection of the ray with the cylinder the cylinder extends halfheight above and below the origin.
+Get the first intersection of the ray with the cylinder. The cylinder extends halfheight above and below the origin.
 =======================================================================================================================================
 */
 void CM_TraceThroughVerticalCylinder(traceWork_t *tw, vec3_t origin, float radius, float halfheight, vec3_t start, vec3_t end) {

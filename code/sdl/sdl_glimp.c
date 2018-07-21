@@ -62,9 +62,19 @@ void (APIENTRYP qglLockArraysEXT)(GLint first, GLsizei count);
 void (APIENTRYP qglUnlockArraysEXT)(void);
 #define GLE(ret, name, ...) name##proc * qgl##name;
 QGL_1_1_PROCS;
+QGL_1_1_FIXED_FUNCTION_PROCS;
 QGL_DESKTOP_1_1_PROCS;
+QGL_DESKTOP_1_1_FIXED_FUNCTION_PROCS;
 QGL_ES_1_1_PROCS;
+QGL_ES_1_1_FIXED_FUNCTION_PROCS;
+QGL_1_3_PROCS;
+QGL_1_5_PROCS;
+QGL_2_0_PROCS;
 QGL_3_0_PROCS;
+QGL_ARB_occlusion_query_PROCS;
+QGL_ARB_framebuffer_object_PROCS;
+QGL_ARB_vertex_array_object_PROCS;
+QGL_EXT_direct_state_access_PROCS;
 #undef GLE
 
 /*
@@ -220,7 +230,7 @@ GLimp_GetProcAddresses
 Get addresses for OpenGL functions.
 =======================================================================================================================================
 */
-static qboolean GLimp_GetProcAddresses(void) {
+static qboolean GLimp_GetProcAddresses(qboolean fixedFunction) {
 	qboolean success = qtrue;
 	const char *version;
 #ifdef __SDL_NOGETPROCADDR__
@@ -258,17 +268,41 @@ static qboolean GLimp_GetProcAddresses(void) {
 		sscanf(version, "%d.%d", &qglMajorVersion, &qglMinorVersion);
 	}
 
-	if (QGL_VERSION_ATLEAST(1, 2)) {
-		QGL_1_1_PROCS;
-		QGL_DESKTOP_1_1_PROCS;
-	} else if (qglesMajorVersion == 1 && qglesMinorVersion >= 1) {
-		// OpenGL ES 1.1 (2.0 is not backward compatible)
-		QGL_1_1_PROCS;
-		QGL_ES_1_1_PROCS;
-		// error so this doesn't segfault due to NULL desktop GL functions being used
-		Com_Error(ERR_FATAL, "Unsupported OpenGL Version: %s\n", version);
+	if (fixedFunction) {
+		if (QGL_VERSION_ATLEAST(1, 2)) {
+			QGL_1_1_PROCS;
+			QGL_1_1_FIXED_FUNCTION_PROCS;
+			QGL_DESKTOP_1_1_PROCS;
+			QGL_DESKTOP_1_1_FIXED_FUNCTION_PROCS;
+		} else if (qglesMajorVersion == 1 && qglesMinorVersion >= 1) {
+			// OpenGL ES 1.1(2.0 is not backward compatible)
+			QGL_1_1_PROCS;
+			QGL_1_1_FIXED_FUNCTION_PROCS;
+			QGL_ES_1_1_PROCS;
+			QGL_ES_1_1_FIXED_FUNCTION_PROCS;
+			// error so this doesn't segfault due to NULL desktop GL functions being used
+			Com_Error(ERR_FATAL, "Unsupported OpenGL Version: %s\n", version);
+		} else {
+			Com_Error(ERR_FATAL, "Unsupported OpenGL Version(%s), OpenGL 1.2 is required\n", version);
+		}
 	} else {
-		Com_Error(ERR_FATAL, "Unsupported OpenGL Version: %s\n", version);
+		if (QGL_VERSION_ATLEAST(2, 0)) {
+			QGL_1_1_PROCS;
+			QGL_DESKTOP_1_1_PROCS;
+			QGL_1_3_PROCS;
+			QGL_1_5_PROCS;
+			QGL_2_0_PROCS;
+		} else if (QGLES_VERSION_ATLEAST(2, 0)) {
+			QGL_1_1_PROCS;
+			QGL_ES_1_1_PROCS;
+			QGL_1_3_PROCS;
+			QGL_1_5_PROCS;
+			QGL_2_0_PROCS;
+			// error so this doesn't segfault due to NULL desktop GL functions being used
+			Com_Error(ERR_FATAL, "Unsupported OpenGL Version: %s\n", version);
+		} else {
+			Com_Error(ERR_FATAL, "Unsupported OpenGL Version(%s), OpenGL 2.0 is required\n", version);
+		}
 	}
 
 	if (QGL_VERSION_ATLEAST(3, 0) || QGLES_VERSION_ATLEAST(3, 0)) {
@@ -293,9 +327,25 @@ static void GLimp_ClearProcAddresses(void) {
 	qglesMinorVersion = 0;
 
 	QGL_1_1_PROCS;
+	QGL_1_1_FIXED_FUNCTION_PROCS;
 	QGL_DESKTOP_1_1_PROCS;
+	QGL_DESKTOP_1_1_FIXED_FUNCTION_PROCS;
 	QGL_ES_1_1_PROCS;
+	QGL_ES_1_1_FIXED_FUNCTION_PROCS;
+	QGL_1_3_PROCS;
+	QGL_1_5_PROCS;
+	QGL_2_0_PROCS;
 	QGL_3_0_PROCS;
+	QGL_ARB_occlusion_query_PROCS;
+	QGL_ARB_framebuffer_object_PROCS;
+	QGL_ARB_vertex_array_object_PROCS;
+	QGL_EXT_direct_state_access_PROCS;
+
+	qglActiveTextureARB = NULL;
+	qglClientActiveTextureARB = NULL;
+	qglMultiTexCoord2fARB = NULL;
+	qglLockArraysEXT = NULL;
+	qglUnlockArraysEXT = NULL;
 #undef GLE
 }
 
@@ -304,7 +354,7 @@ static void GLimp_ClearProcAddresses(void) {
 GLimp_SetMode
 =======================================================================================================================================
 */
-static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qboolean coreContext) {
+static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qboolean fixedFunction) {
 	const char *glstring;
 	int perChannelColorBits;
 	int colorBits, depthBits, stencilBits;
@@ -509,7 +559,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
 		}
 
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-#if 0 // if multisampling is enabled on X11, this causes create window to fail.
+#if 0 // if multisampling is enabled on X11, this causes create window to fail
 		// if not allowing software GL, demand accelerated
 		if (!r_allowSoftwareGL->integer) {
 			SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
@@ -548,7 +598,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
 
 		SDL_SetWindowIcon(SDL_window, icon);
 
-		if (coreContext) {
+		if (!fixedFunction) {
 			int profileMask, majorVersion, minorVersion;
 
 			SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &profileMask);
@@ -573,7 +623,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
 
 				ri.Printf(PRINT_ALL, "SDL_GL_CreateContext succeeded.\n");
 
-				if (GLimp_GetProcAddresses()) {
+				if (GLimp_GetProcAddresses(fixedFunction)) {
 					renderer = (const char *)qglGetString(GL_RENDERER);
 				} else {
 					ri.Printf(PRINT_ALL, "GLimp_GetProcAddresses() failed for OpenGL 3.2 core context\n");
@@ -586,7 +636,9 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
 					}
 
 					GLimp_ClearProcAddresses();
+
 					SDL_GL_DeleteContext(SDL_glContext);
+
 					SDL_glContext = NULL;
 
 					SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, profileMask);
@@ -606,7 +658,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
 				continue;
 			}
 
-			if (!GLimp_GetProcAddresses()) {
+			if (!GLimp_GetProcAddresses(fixedFunction)) {
 				ri.Printf(PRINT_ALL, "GLimp_GetProcAddresses() failed\n");
 				GLimp_ClearProcAddresses();
 				SDL_GL_DeleteContext(SDL_glContext);
@@ -619,6 +671,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder, qbool
 
 		qglClearColor(0, 0, 0, 1);
 		qglClear(GL_COLOR_BUFFER_BIT);
+
 		SDL_GL_SwapWindow(SDL_window);
 
 		if (SDL_GL_SetSwapInterval(r_swapInterval->integer) == -1) {
@@ -701,7 +754,7 @@ static qboolean GLimp_StartDriverAndSetMode(int mode, qboolean fullscreen, qbool
 GLimp_InitExtensions
 =======================================================================================================================================
 */
-static void GLimp_InitExtensions(void) {
+static void GLimp_InitExtensions(qboolean fixedFunction) {
 
 	if (!r_allowExtensions->integer) {
 		ri.Printf(PRINT_ALL, "* IGNORING OPENGL EXTENSIONS *\n");
@@ -735,66 +788,69 @@ static void GLimp_InitExtensions(void) {
 			ri.Printf(PRINT_ALL, "...GL_S3_s3tc not found\n");
 		}
 	}
-	// GL_EXT_texture_env_add
-	glConfig.textureEnvAddAvailable = qfalse;
+	// OpenGL 1 fixed function pipeline
+	if (fixedFunction) {
+		// GL_EXT_texture_env_add
+		glConfig.textureEnvAddAvailable = qfalse;
 
-	if (SDL_GL_ExtensionSupported("GL_EXT_texture_env_add")) {
-		if (r_ext_texture_env_add->integer) {
-			glConfig.textureEnvAddAvailable = qtrue;
-			ri.Printf(PRINT_ALL, "...using GL_EXT_texture_env_add\n");
+		if (SDL_GL_ExtensionSupported("GL_EXT_texture_env_add")) {
+			if (r_ext_texture_env_add->integer) {
+				glConfig.textureEnvAddAvailable = qtrue;
+				ri.Printf(PRINT_ALL, "...using GL_EXT_texture_env_add\n");
+			} else {
+				glConfig.textureEnvAddAvailable = qfalse;
+				ri.Printf(PRINT_ALL, "...ignoring GL_EXT_texture_env_add\n");
+			}
 		} else {
-			glConfig.textureEnvAddAvailable = qfalse;
-			ri.Printf(PRINT_ALL, "...ignoring GL_EXT_texture_env_add\n");
+			ri.Printf(PRINT_ALL, "...GL_EXT_texture_env_add not found\n");
 		}
-	} else {
-		ri.Printf(PRINT_ALL, "...GL_EXT_texture_env_add not found\n");
-	}
-	// GL_ARB_multitexture
-	qglMultiTexCoord2fARB = NULL;
-	qglActiveTextureARB = NULL;
-	qglClientActiveTextureARB = NULL;
+		// GL_ARB_multitexture
+		qglMultiTexCoord2fARB = NULL;
+		qglActiveTextureARB = NULL;
+		qglClientActiveTextureARB = NULL;
 
-	if (SDL_GL_ExtensionSupported("GL_ARB_multitexture")) {
-		if (r_ext_multitexture->value) {
-			qglMultiTexCoord2fARB = SDL_GL_GetProcAddress("glMultiTexCoord2fARB");
-			qglActiveTextureARB = SDL_GL_GetProcAddress("glActiveTextureARB");
-			qglClientActiveTextureARB = SDL_GL_GetProcAddress("glClientActiveTextureARB");
+		if (SDL_GL_ExtensionSupported("GL_ARB_multitexture")) {
+			if (r_ext_multitexture->value) {
+				qglMultiTexCoord2fARB = SDL_GL_GetProcAddress("glMultiTexCoord2fARB");
+				qglActiveTextureARB = SDL_GL_GetProcAddress("glActiveTextureARB");
+				qglClientActiveTextureARB = SDL_GL_GetProcAddress("glClientActiveTextureARB");
 
-			if (qglActiveTextureARB) {
-				GLint glint = 0;
-				qglGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &glint);
-				glConfig.numTextureUnits = (int)glint;
+				if (qglActiveTextureARB) {
+					GLint glint = 0;
+					qglGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &glint);
+					glConfig.numTextureUnits = (int)glint;
 
-				if (glConfig.numTextureUnits > 1) {
-					ri.Printf(PRINT_ALL, "...using GL_ARB_multitexture\n");
-				} else {
-					qglMultiTexCoord2fARB = NULL;
-					qglActiveTextureARB = NULL;
-					qglClientActiveTextureARB = NULL;
-					ri.Printf(PRINT_ALL, "...not using GL_ARB_multitexture, < 2 texture units\n");
+					if (glConfig.numTextureUnits > 1) {
+						ri.Printf(PRINT_ALL, "...using GL_ARB_multitexture\n");
+					} else {
+						qglMultiTexCoord2fARB = NULL;
+						qglActiveTextureARB = NULL;
+						qglClientActiveTextureARB = NULL;
+						ri.Printf(PRINT_ALL, "...not using GL_ARB_multitexture, < 2 texture units\n");
+					}
 				}
+			} else {
+				ri.Printf(PRINT_ALL, "...ignoring GL_ARB_multitexture\n");
 			}
 		} else {
-			ri.Printf(PRINT_ALL, "...ignoring GL_ARB_multitexture\n");
+			ri.Printf(PRINT_ALL, "...GL_ARB_multitexture not found\n");
 		}
-	} else {
-		ri.Printf(PRINT_ALL, "...GL_ARB_multitexture not found\n");
-	}
-	// GL_EXT_compiled_vertex_array
-	if (SDL_GL_ExtensionSupported("GL_EXT_compiled_vertex_array")) {
-		if (r_ext_compiled_vertex_array->value) {
-			ri.Printf(PRINT_ALL, "...using GL_EXT_compiled_vertex_array\n");
-			qglLockArraysEXT = (void (APIENTRY *)(GLint, GLint))SDL_GL_GetProcAddress("glLockArraysEXT");
-			qglUnlockArraysEXT = (void (APIENTRY *)(void))SDL_GL_GetProcAddress("glUnlockArraysEXT");
+		// GL_EXT_compiled_vertex_array
+		if (SDL_GL_ExtensionSupported("GL_EXT_compiled_vertex_array")) {
+			if (r_ext_compiled_vertex_array->value) {
+				ri.Printf(PRINT_ALL, "...using GL_EXT_compiled_vertex_array\n");
+				qglLockArraysEXT = (void (APIENTRY *)(GLint, GLint))SDL_GL_GetProcAddress("glLockArraysEXT");
+				qglUnlockArraysEXT = (void (APIENTRY *)(void))SDL_GL_GetProcAddress("glUnlockArraysEXT");
 
-			if (!qglLockArraysEXT || !qglUnlockArraysEXT) {
-				ri.Error(ERR_FATAL, "bad getprocaddress");
+				if (!qglLockArraysEXT || !qglUnlockArraysEXT) {
+					ri.Error(ERR_FATAL, "bad getprocaddress");
+				}
+			} else {
+				ri.Printf(PRINT_ALL, "...ignoring GL_EXT_compiled_vertex_array\n");
 			}
 		} else {
-			ri.Printf(PRINT_ALL, "...ignoring GL_EXT_compiled_vertex_array\n");
+			ri.Printf(PRINT_ALL, "...GL_EXT_compiled_vertex_array not found\n");
 		}
-	} else {
-		ri.Printf(PRINT_ALL, "...GL_EXT_compiled_vertex_array not found\n");
 	}
 
 	glConfig.textureFilterAnisotropic = qfalse;
@@ -819,7 +875,6 @@ static void GLimp_InitExtensions(void) {
 }
 
 #define R_MODE_FALLBACK 3 // 640 * 480
-
 /*
 =======================================================================================================================================
 GLimp_Init
@@ -827,7 +882,7 @@ GLimp_Init
 This routine is responsible for initializing the OS specific portions of OpenGL.
 =======================================================================================================================================
 */
-void GLimp_Init(qboolean coreContext) {
+void GLimp_Init(qboolean fixedFunction) {
 
 	ri.Printf(PRINT_DEVELOPER, "Glimp_Init()\n");
 
@@ -845,20 +900,20 @@ void GLimp_Init(qboolean coreContext) {
 
 	ri.Sys_GLimpInit();
 	// create the window and set up the context
-	if (GLimp_StartDriverAndSetMode(r_mode->integer, r_fullscreen->integer, r_noborder->integer, coreContext)) {
+	if (GLimp_StartDriverAndSetMode(r_mode->integer, r_fullscreen->integer, r_noborder->integer, fixedFunction)) {
 		goto success;
 	}
 	// try again, this time in a platform specific "safe mode"
 	ri.Sys_GLimpSafeInit();
 
-	if (GLimp_StartDriverAndSetMode(r_mode->integer, r_fullscreen->integer, qfalse, coreContext)) {
+	if (GLimp_StartDriverAndSetMode(r_mode->integer, r_fullscreen->integer, qfalse, fixedFunction)) {
 		goto success;
 	}
 	// finally, try the default screen resolution
 	if (r_mode->integer != R_MODE_FALLBACK) {
 		ri.Printf(PRINT_ALL, "Setting r_mode %d failed, falling back on r_mode %d\n", r_mode->integer, R_MODE_FALLBACK);
 
-		if (GLimp_StartDriverAndSetMode(R_MODE_FALLBACK, qfalse, qfalse, coreContext)) {
+		if (GLimp_StartDriverAndSetMode(R_MODE_FALLBACK, qfalse, qfalse, fixedFunction)) {
 			goto success;
 		}
 	}
@@ -905,7 +960,7 @@ success:
 		Q_strncpyz(glConfig.extensions_string, (char *)qglGetString(GL_EXTENSIONS), sizeof(glConfig.extensions_string));
 	}
 	// initialize extensions
-	GLimp_InitExtensions();
+	GLimp_InitExtensions(fixedFunction);
 
 	ri.Cvar_Get("r_availableModes", "", CVAR_ROM);
 	// this depends on SDL_INIT_VIDEO, hence having it here

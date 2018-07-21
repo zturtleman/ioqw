@@ -25,7 +25,9 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "client.h"
 
 // key up events are sent even if in console mode
+
 field_t historyEditLines[COMMAND_HISTORY];
+
 int nextHistoryLine; // the last line in the history buffer, not masked
 int historyLine; // the line being displayed from history buffer will be <= nextHistoryLine
 field_t g_consoleField;

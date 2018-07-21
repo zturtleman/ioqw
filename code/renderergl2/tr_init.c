@@ -208,8 +208,6 @@ OGL subsystem) then setting variables, checking GL constants, and reporting the 
 =======================================================================================================================================
 */
 static void InitOpenGL(void) {
-	char renderer_buffer[1024];
-
 	// initialize OS specific portions of the renderer
 
 	// GLimp_Init directly or indirectly references the following cvars:
@@ -222,11 +220,10 @@ static void InitOpenGL(void) {
 	if (glConfig.vidWidth == 0) {
 		GLint temp;
 
-		GLimp_Init(qtrue);
+		GLimp_Init(qfalse);
 		GLimp_InitExtraExtensions();
 
-		strcpy(renderer_buffer, glConfig.renderer_string);
-		Q_strlwr(renderer_buffer);
+		glConfig.textureEnvAddAvailable = qtrue;
 		// OpenGL driver constants
 		qglGetIntegerv(GL_MAX_TEXTURE_SIZE, &temp);
 
@@ -235,6 +232,9 @@ static void InitOpenGL(void) {
 		if (glConfig.maxTextureSize <= 0) {
 			glConfig.maxTextureSize = 0;
 		}
+
+		qglGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &temp);
+		glConfig.numTextureUnits = temp;
 	}
 	// set default state
 	GL_SetDefaultState();
@@ -971,7 +971,7 @@ void GfxInfo_f(void) {
 
 	ri.Printf(PRINT_ALL, "\n");
 	ri.Printf(PRINT_ALL, "GL_MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize);
-	ri.Printf(PRINT_ALL, "GL_MAX_TEXTURE_UNITS_ARB: %d\n", glConfig.numTextureUnits);
+	ri.Printf(PRINT_ALL, "GL_MAX_TEXTURE_IMAGE_UNITS: %d\n", glConfig.numTextureUnits);
 	ri.Printf(PRINT_ALL, "\nPIXELFORMAT: color(%d-bits) Z(%d-bit) stencil(%d-bits)\n", glConfig.colorBits, glConfig.depthBits, glConfig.stencilBits);
 	ri.Printf(PRINT_ALL, "MODE: %d, %d x %d %s hz:", r_mode->integer, glConfig.vidWidth, glConfig.vidHeight, fsstrings[r_fullscreen->integer == 1]);
 
@@ -1411,6 +1411,12 @@ void RE_Shutdown(qboolean destroyWindow) {
 		GLimp_Shutdown();
 
 		Com_Memset(&glConfig, 0, sizeof(glConfig));
+		Com_Memset(&glRefConfig, 0, sizeof(glRefConfig));
+
+		textureFilterAnisotropic = qfalse;
+		maxAnisotropy = 0;
+		displayAspect = 0.0f;
+
 		Com_Memset(&glState, 0, sizeof(glState));
 	}
 

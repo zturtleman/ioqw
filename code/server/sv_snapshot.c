@@ -27,7 +27,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 /*
 =======================================================================================================================================
 
-	Delta encode a client frame onto the network channel
+	Delta encode a client frame onto the network channel.
 
 	A normal server packet will look like:
 

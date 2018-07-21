@@ -398,7 +398,7 @@ void RE_BeginScene(const refdef_t *fd) {
 RE_EndScene
 =======================================================================================================================================
 */
-void RE_EndScene() {
+void RE_EndScene(void) {
 
 	// the next scene rendered in this frame will tack on after this one
 	r_firstSceneDrawSurf = tr.refdef.numDrawSurfs;

@@ -210,6 +210,7 @@ void WindingCenter(winding_t *w, vec3_t center) {
 	}
 
 	scale = 1.0 / w->numpoints;
+
 	VectorScale(center, scale, center);
 }
 

@@ -295,7 +295,6 @@ Will allocate a new sfx if it isn't found.
 static sfx_t *S_FindName(const char *name) {
 	int i;
 	int hash;
-
 	sfx_t *sfx;
 
 	if (!name) {

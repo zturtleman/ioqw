@@ -134,7 +134,7 @@ void R_LoadTGA(const char *name, byte **pic, int *width, int *height);
 =======================================================================================================================================
 */
 
-void GLimp_Init(qboolean);
+void GLimp_Init(qboolean fixedFunction);
 void GLimp_Shutdown(void);
 void GLimp_EndFrame(void);
 void GLimp_LogComment(char *comment);

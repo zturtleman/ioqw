@@ -874,7 +874,7 @@ static void IN_JoyMove(void) {
 	}
 
 	SDL_JoystickUpdate();
-	// update the ball state.
+	// update the ball state
 	total = SDL_JoystickNumBalls(stick);
 
 	if (total > 0) {

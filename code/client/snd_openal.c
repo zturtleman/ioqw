@@ -678,7 +678,7 @@ static sfxHandle_t S_AL_RegisterSound(const char *sample, qboolean compressed) {
 =======================================================================================================================================
 S_AL_BufferGet
 
-Return's a sfx's buffer.
+Returns a sfx's buffer.
 =======================================================================================================================================
 */
 static ALuint S_AL_BufferGet(sfxHandle_t sfx) {
@@ -730,7 +730,7 @@ static void S_AL_ScaleGain(src_t *chksrc, vec3_t origin) {
 	if (!chksrc->local) {
 		distance = Distance(origin, lastListenerOrigin);
 	}
-	// if we exceed a certain distance, scale the gain linearly until the sound vanishes into nothingness.
+	// if we exceed a certain distance, scale the gain linearly until the sound vanishes into nothingness
 	if (!chksrc->local && (distance -= chksrc->range * 4) > 0) {
 		float scaleFactor;
 
@@ -940,12 +940,15 @@ static void S_AL_ShutDownEffects(void) {
 /*
 =======================================================================================================================================
 S_AL_SaveLoopPos
+
+Remove given source as loop master if it is the master and hand off master status to another source in this case.
 =======================================================================================================================================
 */
 static void S_AL_SaveLoopPos(src_t *dest, ALuint alSource) {
 	int error;
 
 	S_AL_ClearError(qfalse);
+
 	qalGetSourcef(alSource, AL_SEC_OFFSET, &dest->lastTimePos);
 
 	if ((error = qalGetError()) != AL_NO_ERROR) {
@@ -1553,7 +1556,7 @@ static void S_AL_SrcUpdate(void) {
 
 							src_t *master = &srcList[curSfx->masterLoopSrc];
 							// this loop sound used to be played, but all sources are stopped. Use last sample position/time
-							// to calculate offset so the player thinks the sources continued playing while they were inaudible.
+							// to calculate offset so the player thinks the sources continued playing while they were inaudible
 							if (master->lastTimePos >= 0) {
 								secofs = master->lastTimePos + (Sys_Milliseconds() - master->lastSampleTime) / 1000.0f;
 								secofs = fmodf(secofs, (float)curSfx->info.samples / curSfx->info.rate);
@@ -1964,7 +1967,7 @@ static void S_AL_MusicProcess(ALuint b) {
 	// run out data to read, start at the beginning again
 	if (l == 0) {
 		S_CodecCloseStream(curstream);
-		// the intro stream just finished playing so we don't need to reopen the music stream.
+		// the intro stream just finished playing so we don't need to reopen the music stream
 		if (intro_stream) {
 			intro_stream = NULL;
 		} else {
@@ -2032,7 +2035,7 @@ static void S_AL_StartBackgroundTrack(const char *intro, const char *loop) {
 	// copy the loop over
 	Q_strncpyz(s_backgroundLoop, loop, sizeof(s_backgroundLoop));
 
-	if (!issame) { // open the intro and don't mind whether it succeeds.
+	if (!issame) { // open the intro and don't mind whether it succeeds
 		// the important part is the loop.
 		intro_stream = S_CodecOpenStream(intro);
 	} else {
@@ -2528,6 +2531,7 @@ S_AL_SoundInfo
 =======================================================================================================================================
 */
 static void S_AL_SoundInfo(void) {
+
 	Com_Printf("OpenAL info:\n");
 	Com_Printf("  Vendor:         %s\n", qalGetString(AL_VENDOR));
 	Com_Printf("  Version:        %s\n", qalGetString(AL_VERSION));
@@ -2841,7 +2845,7 @@ qboolean S_AL_Init(soundInterface_t *si) {
 			device = "Generic Software";
 		}
 #endif
-		// dump a list of available devices to a cvar for the user to see.
+		// dump a list of available devices to a cvar for the user to see
 		if (devicelist) {
 			while ((curlen = strlen(devicelist))) {
 				Q_strcat(devicenames, sizeof(devicenames), devicelist);

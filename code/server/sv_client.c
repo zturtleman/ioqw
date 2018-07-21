@@ -383,7 +383,7 @@ gotnewcl:
 	// when we receive the first packet from the client, we will notice that it is from a different serverid and that the
 	// gamestate message was not just sent, forcing a retransmit
 	newcl->gamestateMessageNum = -1;
-	// if this was the first client on the server, or the last client the server can hold, send a heartbeat to the master.
+	// if this was the first client on the server, or the last client the server can hold, send a heartbeat to the master
 	count = 0;
 
 	for (i = 0, cl = svs.clients; i < sv_maxclients->integer; i++, cl++) {
@@ -1311,7 +1311,7 @@ static qboolean SV_ClientCommand(client_t *cl, msg_t *msg) {
 	// malicious users may try using too many string commands to lag other players. If we decide that we want to stall
 	// the command, we will stop processing the rest of the packet, including the usercmd. This causes flooders to lag themselves
 	// but not other people
-	// we don't do this when the client hasn't been active yet since it's normal to spam a lot of commands when downloading
+	// we don't do this when the client hasn't been active yet since its normal to spam a lot of commands when downloading
 	if (!com_cl_running->integer && cl->state >= CS_ACTIVE && sv_floodProtect->integer && svs.time < cl->nextReliableTime) {
 		// ignore any other text messages from this client but let them keep playing
 		// moved the ignored verbose to the actual processing in SV_ExecuteClientCommand, only printing if the core doesn't intercept
@@ -1680,7 +1680,7 @@ void SV_ExecuteClientMessage(client_t *cl, msg_t *msg) {
 		Com_Printf("WARNING: bad command byte for client %i\n", (int)(cl - svs.clients));
 	}
 
-//	if (msg->readcount != msg->cursize) {
-//		Com_Printf("WARNING: Junk at end of packet for client %i\n", cl - svs.clients);
-//	}
+	//if (msg->readcount != msg->cursize) {
+	//	Com_Printf("WARNING: Junk at end of packet for client %i\n", cl - svs.clients);
+	//}
 }

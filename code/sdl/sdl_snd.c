@@ -222,7 +222,7 @@ qboolean SNDDMA_Init(void) {
 	if (s_sdlDevSamps->value) {
 		desired.samples = s_sdlDevSamps->value;
 	} else {
-		// just pick a sane default.
+		// just pick a sane default
 		if (desired.freq <= 11025) {
 			desired.samples = 256;
 		} else if (desired.freq <= 22050) {
@@ -256,7 +256,7 @@ qboolean SNDDMA_Init(void) {
 		tmp = (obtained.samples * obtained.channels) * 10;
 	}
 
-	if (tmp & (tmp - 1)) { // not a power of two? Seems to confuse something.
+	if (tmp & (tmp - 1)) { // not a power of two? Seems to confuse something
 		int val = 1;
 
 		while (val < tmp) {
@@ -395,7 +395,7 @@ SNDDMA_AvailableCaptureSamples
 */
 int SNDDMA_AvailableCaptureSamples(void) {
 #ifdef USE_SDL_AUDIO_CAPTURE
-	// divided by 2 to convert from bytes to (mono16) samples.
+	// divided by 2 to convert from bytes to (mono16) samples
 	return sdlCaptureDevice ? (SDL_GetQueuedAudioSize(sdlCaptureDevice) / 2) : 0;
 #else
 	return 0;
@@ -409,7 +409,7 @@ SNDDMA_Capture
 */
 void SNDDMA_Capture(int samples, byte *data) {
 #ifdef USE_SDL_AUDIO_CAPTURE
-	// multiplied by 2 to convert from (mono16) samples to bytes.
+	// multiplied by 2 to convert from (mono16) samples to bytes
 	if (sdlCaptureDevice) {
 		SDL_DequeueAudio(sdlCaptureDevice, data, samples * 2);
 	} else

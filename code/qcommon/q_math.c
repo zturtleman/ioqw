@@ -661,7 +661,7 @@ float Q_rsqrt(float number) {
 	t.i = 0x5f3759df - (t.i >> 1); // what the fuck?
 	y = t.f;
 	y = y * (threehalfs - (x2 * y * y)); // 1st iteration
-//	y = y * (threehalfs - (x2 * y * y)); // 2nd iteration, this can be removed
+	//y = y * (threehalfs - (x2 * y * y)); // 2nd iteration, this can be removed
 
 	return y;
 }
@@ -877,6 +877,7 @@ ClearBounds
 =======================================================================================================================================
 */
 void ClearBounds(vec3_t mins, vec3_t maxs) {
+
 	mins[0] = mins[1] = mins[2] = 99999;
 	maxs[0] = maxs[1] = maxs[2] = -99999;
 }

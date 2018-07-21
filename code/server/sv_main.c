@@ -764,9 +764,11 @@ static void SV_ConnectionlessPacket(netadr_t from, msg_t *msg) {
 	}
 
 	s = MSG_ReadStringLine(msg);
+
 	Cmd_TokenizeString(s);
 
 	c = Cmd_Argv(0);
+
 	Com_DPrintf("SV packet %s : %s\n", NET_AdrToString(from), c);
 
 	if (!Q_stricmp(c, "getstatus")) {
@@ -904,7 +906,7 @@ static void SV_CalcPings(void) {
 =======================================================================================================================================
 SV_CheckTimeouts
 
-If a packet has not been received from a client for timeout->integer seconds, drop the conneciton. Server time is used instead of
+If a packet has not been received from a client for timeout->integer seconds, drop the connection. Server time is used instead of
 realtime to avoid dropping the local client while debugging.
 
 When a client is normally dropped, the client_t goes into a zombie state for a few seconds to make sure any final reliable message gets
@@ -1055,7 +1057,7 @@ void SV_Frame(int msec) {
 		SV_BotFrame(sv.time + sv.timeResidual);
 	}
 	// if time is about to hit the 32nd bit, kick all clients and clear sv.time, rather than checking for negative
-	// time wraparound everywhere.
+	// time wraparound everywhere
 	// 2giga-milliseconds = 23 days, so it won't be too often
 	if (svs.time > 0x70000000) {
 		SV_Shutdown("Restarting server due to time wrapping");

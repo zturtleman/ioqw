@@ -72,38 +72,37 @@ with code changes. Demo/oem versions should be exactly the same executables as r
 automatically restricts where game media can come from to prevent add-ons from working.
 
 File search order: when FS_FOpenFileRead gets called it will go through the fs_searchpaths structure and stop on the first successful
-hit. fs_searchpaths is built with successive calls to FS_AddGameDirectory
+hit. fs_searchpaths is built with successive calls to FS_AddGameDirectory.
 
 Additionally, we search in several subdirectories:
-current game is the current mode
-base game is a variable to allow mods based on other mods
-(such as base game + missionpack content combination in a mod for instance)
-BASEGAME is the hardcoded base game("Data")
+- current game is the current mode
+- base game is a variable to allow mods based on other mods (such as base game + missionpack content combination in a mod for instance)
+- BASEGAME is the hardcoded base game ("Data")
 
-e.g. the qpath "sound/newstuff/test.wav" would be searched for in the following places:
+  e.g. the qpath "sound/newstuff/test.wav" would be searched for in the following places:
 
-home path + current game's zip files
-home path + current game's directory
-base path + current game's zip files
-base path + current game's directory
-cd path + current game's zip files
-cd path + current game's directory
+  home path + current game's zip files
+  home path + current game's directory
+  base path + current game's zip files
+  base path + current game's directory
+  cd path + current game's zip files
+  cd path + current game's directory
 
-home path + base game's zip file
-home path + base game's directory
-base path + base game's zip file
-base path + base game's directory
-cd path + base game's zip file
-cd path + base game's directory
+  home path + base game's zip file
+  home path + base game's directory
+  base path + base game's zip file
+  base path + base game's directory
+  cd path + base game's zip file
+  cd path + base game's directory
 
-home path + BASEGAME's zip file
-home path + BASEGAME's directory
-base path + BASEGAME's zip file
-base path + BASEGAME's directory
-cd path + BASEGAME's zip file
-cd path + BASEGAME's directory
+  home path + BASEGAME's zip file
+  home path + BASEGAME's directory
+  base path + BASEGAME's zip file
+  base path + BASEGAME's directory
+  cd path + BASEGAME's zip file
+  cd path + BASEGAME's directory
 
-server download, to be written to home path + current game's directory
+- server download, to be written to home path + current game's directory.
 
 The filesystem can be safely shutdown and reinitialized with different basedir/cddir/game combinations, but all other subsystems that
 rely on it (sound, video) must also be forced to restart.
@@ -294,7 +293,7 @@ qboolean FS_PakIsPure(pack_t *pack) {
 			// NOTE TTimo: a pk3 with same checksum but different name would be validated too
 			// I don't see this as allowing for any exploit, it would only happen if the client does manips of its file names 'not a bug'
 			if (pack->checksum == fs_serverPaks[i]) {
-				return qtrue; // on the aproved list
+				return qtrue; // on the approved list
 			}
 		}
 
@@ -966,7 +965,7 @@ fileHandle_t FS_FCreateOpenPipeFile(const char *filename) {
 =======================================================================================================================================
 FS_FilenameCompare
 
-Ignore case and seprator char distinctions.
+Compare filenames. Ignores case and separator char distinctions.
 =======================================================================================================================================
 */
 qboolean FS_FilenameCompare(const char *s1, const char *s2) {
@@ -1075,7 +1074,7 @@ long FS_FOpenFileReadDir(const char *filename, searchpath_t *search, fileHandle_
 	if (filename[0] == '/' || filename[0] == '\\') {
 		filename++;
 	}
-	// make absolutely sure that it can't back up the path.
+	// make absolutely sure that it can't back up the path
 	// the searchpaths do guarantee that something will always be prepended, so we don't need to worry about "c:" or "//limbo"
 	if (strstr(filename, "..") || strstr(filename, "::")) {
 		if (file == NULL) {
@@ -1562,7 +1561,7 @@ int FS_Seek(fileHandle_t f, long offset, int origin) {
 
 				unzSetOffset(fsh[f].handleFiles.file.z, fsh[f].zipFilePos);
 				unzOpenCurrentFile(fsh[f].handleFiles.file.z);
-				// fallthrough
+			// fall through
 			case FS_SEEK_END:
 			case FS_SEEK_CUR:
 				while (remainder > PK3_SEEK_BUFFER_SIZE) {
@@ -1630,7 +1629,7 @@ int FS_FileIsInPAK(const char *filename, int *pChecksum) {
 	if (filename[0] == '/' || filename[0] == '\\') {
 		filename++;
 	}
-	// make absolutely sure that it can't back up the path.
+	// make absolutely sure that it can't back up the path
 	// the searchpaths do guarantee that something will always be prepended, so we don't need to worry about "c:" or "//limbo"
 	if (strstr(filename, "..") || strstr(filename, "::")) {
 		return -1;
@@ -2143,7 +2142,7 @@ char **FS_ListFilteredFiles(const char *path, const char *extension, char *filte
 	for (search = fs_searchpaths; search; search = search->next) {
 		// is the element a pak file?
 		if (search->pack) {
-			// ZOID: If we are pure, don't search for files on paks that aren't on the pure list
+			// if we are pure, don't search for files on paks that aren't on the pure list
 			if (!FS_PakIsPure(search->pack)) {
 				continue;
 			}
@@ -2351,7 +2350,7 @@ static char **Sys_ConcatenateFileLists(char **list0, char **list1) {
 	}
 	// terminate the list
 	*dst = NULL;
-	// free our old lists.
+	// free our old lists
 	// NOTE: not freeing their content, it's been merged in dst and still being used
 	if (list0) {
 		Z_Free(list0);
@@ -2556,7 +2555,7 @@ void FS_ConvertPath(char *s) {
 =======================================================================================================================================
 FS_PathCmp
 
-Ignore case and seprator char distinctions.
+Ignore case and separator char distinctions.
 =======================================================================================================================================
 */
 int FS_PathCmp(const char *s1, const char *s2) {
@@ -3006,7 +3005,7 @@ qboolean FS_ComparePaks(char *neededpaks, int len, qboolean dlstring) {
 		if (FS_qwPak(fs_serverReferencedPakNames[i], BASEGAME, NUM_QW_PAKS)) {
 			continue;
 		}
-		// make sure the server cannot make us write to non-quake wars directories.
+		// make sure the server cannot make us write to non-quake wars directories
 		if (FS_CheckDirTraversal(fs_serverReferencedPakNames[i])) {
 			Com_Printf("WARNING: Invalid download name %s\n", fs_serverReferencedPakNames[i]);
 			continue;
@@ -3811,6 +3810,7 @@ int FS_FOpenFileByMode(const char *qpath, fileHandle_t *f, fsMode_t mode) {
 			break;
 		case FS_APPEND_SYNC:
 			sync = qtrue;
+		// fall through
 		case FS_APPEND:
 			*f = FS_FOpenFileAppend(qpath);
 			r = 0;

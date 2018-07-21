@@ -283,6 +283,7 @@ qboolean CL_GetServerCommand(int serverCommandNumber) {
 
 rescan:
 	Cmd_TokenizeString(s);
+
 	cmd = Cmd_Argv(0);
 	argc = Cmd_Argc();
 
@@ -775,6 +776,7 @@ CL_CGameRendering
 =======================================================================================================================================
 */
 void CL_CGameRendering(stereoFrame_t stereo) {
+
 	VM_Call(cgvm, CG_DRAW_ACTIVE_FRAME, cl.serverTime, stereo, clc.demoplaying);
 	VM_Debug(0);
 }
@@ -960,8 +962,7 @@ void CL_SetCGameTime(void) {
 	if (clc.demoplaying && cl_freezeDemo->integer) {
 		// cl_freezeDemo is used to lock a demo in place for single frame advances
 	} else {
-		// cl_timeNudge is a user adjustable cvar that allows more or less latency to be added in the interest of better
-		// smoothness or better responsiveness.
+		// cl_timeNudge is a user adjustable cvar that allows more or less latency to be added in the interest of better smoothness or better responsiveness
 		int tn;
 
 		tn = cl_timeNudge->integer;

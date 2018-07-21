@@ -30,7 +30,7 @@ static struct {
 GL_BindNullTextures
 =======================================================================================================================================
 */
-void GL_BindNullTextures() {
+void GL_BindNullTextures(void) {
 	int i;
 
 	if (glRefConfig.directStateAccess) {
@@ -179,7 +179,7 @@ GLvoid APIENTRY GLDSA_GenerateTextureMipmapEXT(GLuint texture, GLenum target) {
 GL_BindNullProgram
 =======================================================================================================================================
 */
-void GL_BindNullProgram() {
+void GL_BindNullProgram(void) {
 
 	qglUseProgram(0);
 	glDsaState.program = 0;
@@ -283,7 +283,7 @@ GLvoid APIENTRY GLDSA_ProgramUniformMatrix4fvEXT(GLuint program, GLint location,
 GL_BindNullFramebuffers
 =======================================================================================================================================
 */
-void GL_BindNullFramebuffers() {
+void GL_BindNullFramebuffers(void) {
 
 	qglBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glDsaState.drawFramebuffer = glDsaState.readFramebuffer = 0;

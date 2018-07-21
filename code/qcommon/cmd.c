@@ -190,7 +190,7 @@ void Cbuf_Execute(void) {
 	int quotes;
 
 	// this will keep // style comments all on one line by not breaking on a semicolon. It will keep /* ... */ style comments all on
-	// one line by not breaking it for semicolon or newline.
+	// one line by not breaking it for semicolon or newline
 	qboolean in_star_comment = qfalse;
 	qboolean in_slash_comment = qfalse;
 
@@ -218,7 +218,7 @@ void Cbuf_Execute(void) {
 					} else if (in_star_comment && text[i] == '*' && text[i + 1] == '/') {
 						in_star_comment = qfalse;
 						// if we are in a star comment, then the part after it is valid
-						// NOTE: this will cause it to NULL out the terminating '/' but ExecuteString doesn't require it anyway.
+						// NOTE: this will cause it to NULL out the terminating '/' but ExecuteString doesn't require it anyway
 						i++;
 						break;
 					}
@@ -320,6 +320,7 @@ void Cmd_Vstr_f(void) {
 	}
 
 	v = Cvar_VariableString(Cmd_Argv(1));
+
 	Cbuf_InsertText(va("%s\n", v));
 }
 
@@ -555,7 +556,7 @@ static void Cmd_TokenizeString2(const char *text_in, qboolean ignoreQuotes) {
 			}
 		}
 		// handle quoted strings
-		// NOTE TTimo this doesn't handle \" escaping
+		// NOTE: this doesn't handle \" escaping
 		if (!ignoreQuotes && *text == '"') {
 			cmd_argv[cmd_argc] = textOut;
 			cmd_argc++;
@@ -822,6 +823,8 @@ void Cmd_ExecuteString(const char *text) {
 /*
 =======================================================================================================================================
 Cmd_List_f
+
+List available commands.
 =======================================================================================================================================
 */
 void Cmd_List_f(void) {

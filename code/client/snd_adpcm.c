@@ -50,16 +50,16 @@ S_AdpcmEncode
 =======================================================================================================================================
 */
 void S_AdpcmEncode(short indata[], char outdata[], int len, struct adpcm_state *state) {
-	short *inp;			// Input buffer pointer
+	short *inp;			// input buffer pointer
 	signed char *outp;	// output buffer pointer
-	int val;			// Current input sample value
-	int sign;			// Current adpcm sign bit
-	int delta;			// Current adpcm output value
-	int diff;			// Difference between val and sample
-	int step;			// Stepsize
-	int valpred;		// Predicted output value
-	int vpdiff;			// Current change to valpred
-	int index;			// Current step change index
+	int val;			// current input sample value
+	int sign;			// current adpcm sign bit
+	int delta;			// current adpcm output value
+	int diff;			// difference between val and sample
+	int step;			// stepsize
+	int valpred;		// predicted output value
+	int vpdiff;			// current change to valpred
+	int index;			// current step change index
 	int outputbuffer;	// place to keep previous 4-bit value
 	int bufferstep;		// toggle between outputbuffer/output
 
@@ -145,7 +145,7 @@ void S_AdpcmEncode(short indata[], char outdata[], int len, struct adpcm_state *
 
 		bufferstep = !bufferstep;
 	}
-	// Output last step, if needed
+	// output last step, if needed
 	if (!bufferstep) {
 		*outp++ = outputbuffer;
 	}
@@ -160,14 +160,14 @@ S_AdpcmDecode
 =======================================================================================================================================
 */
 /*static*/ void S_AdpcmDecode(const char indata[], short *outdata, int len, struct adpcm_state *state) {
-	signed char *inp;	// Input buffer pointer
+	signed char *inp;	// input buffer pointer
 	int outp;			// output buffer pointer
-	int sign;			// Current adpcm sign bit
-	int delta;			// Current adpcm output value
-	int step;			// Stepsize
-	int valpred;		// Predicted value
-	int vpdiff;			// Current change to valpred
-	int index;			// Current step change index
+	int sign;			// current adpcm sign bit
+	int delta;			// current adpcm output value
+	int step;			// stepsize
+	int valpred;		// predicted value
+	int vpdiff;			// current change to valpred
+	int index;			// current step change index
 	int inputbuffer;	// place to keep next 4-bit value
 	int bufferstep;		// toggle between inputbuffer/input
 
