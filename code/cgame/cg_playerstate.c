@@ -305,7 +305,11 @@ void CG_CheckLocalSounds(playerState_t *ps, playerState_t *ops) {
 			} else if (armor || health > 100) {
 				trap_S_StartLocalSound(cgs.media.hitSoundLowArmor, CHAN_LOCAL_SOUND);
 			} else {
-				trap_S_StartLocalSound(cgs.media.hitSound, CHAN_LOCAL_SOUND);
+				if (ps->persistant[PERS_SCORE] > ops->persistant[PERS_SCORE]) {
+					trap_S_StartLocalSound(cgs.media.killSound, CHAN_LOCAL_SOUND);
+				} else {
+					trap_S_StartLocalSound(cgs.media.hitSound, CHAN_LOCAL_SOUND);
+				}
 			}
 		} else if (ps->persistant[PERS_HITS] < ops->persistant[PERS_HITS]) {
 			trap_S_StartLocalSound(cgs.media.hitTeamSound, CHAN_LOCAL_SOUND);

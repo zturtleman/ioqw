@@ -745,6 +745,7 @@ typedef struct {
 	qhandle_t escortShader;
 	// sounds
 	sfxHandle_t talkSound;
+	sfxHandle_t killSound;
 	sfxHandle_t hitSound;
 	sfxHandle_t hitSoundHighArmor;
 	sfxHandle_t hitSoundLowArmor;

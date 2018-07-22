@@ -579,6 +579,7 @@ static void CG_RegisterSounds(void) {
 	CG_LoadVoiceChats();
 
 	cgs.media.talkSound = trap_S_RegisterSound("snd/u/talk.wav", qfalse);
+	cgs.media.killSound = trap_S_RegisterSound("snd/u/kill.wav", qfalse);
 	cgs.media.hitSound = trap_S_RegisterSound("snd/u/hit.wav", qfalse);
 	cgs.media.hitSoundHighArmor = trap_S_RegisterSound("snd/u/hithi.wav", qfalse);
 	cgs.media.hitSoundLowArmor = trap_S_RegisterSound("snd/u/hitlo.wav", qfalse);
