@@ -846,6 +846,8 @@ static void RB_FogPass(void) {
 
 		if (glState.vertexAnimation) {
 			index |= FOGDEF_USE_VERTEX_ANIMATION;
+		} else if (glState.boneAnimation) {
+			index |= FOGDEF_USE_BONE_ANIMATION;
 		}
 
 		sp = &tr.fogShader[index];
@@ -859,6 +861,11 @@ static void RB_FogPass(void) {
 
 	GLSL_SetUniformMat4(sp, UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelviewProjection);
 	GLSL_SetUniformFloat(sp, UNIFORM_VERTEXLERP, glState.vertexAttribsInterpolation);
+
+	if (glState.boneAnimation) {
+		GLSL_SetUniformMat4BoneMatrix(sp, UNIFORM_BONEMATRIX, glState.boneMatrix, glState.boneAnimation);
+	}
+
 	GLSL_SetUniformInt(sp, UNIFORM_DEFORMGEN, deformGen);
 
 	if (deformGen != DGEN_NONE) {
@@ -942,7 +949,11 @@ static void RB_IterateStagesGeneric(shaderCommands_t *input) {
 				int index = 0;
 
 				if (backEnd.currentEntity && backEnd.currentEntity != &tr.worldEntity) {
-					index |= LIGHTDEF_ENTITY;
+					if (glState.boneAnimation) {
+						index |= LIGHTDEF_ENTITY_BONE_ANIMATION;
+					} else {
+						index |= LIGHTDEF_ENTITY_VERTEX_ANIMATION;
+					}
 				}
 
 				if (pStage->stateBits & GLS_ATEST_BITS) {
@@ -959,6 +970,8 @@ static void RB_IterateStagesGeneric(shaderCommands_t *input) {
 
 				if (glState.vertexAnimation) {
 					shaderAttribs |= GENERICDEF_USE_VERTEX_ANIMATION;
+				} else if (glState.boneAnimation) {
+					shaderAttribs |= GENERICDEF_USE_BONE_ANIMATION;
 				}
 
 				if (pStage->stateBits & GLS_ATEST_BITS) {
@@ -971,7 +984,11 @@ static void RB_IterateStagesGeneric(shaderCommands_t *input) {
 			int index = pStage->glslShaderIndex;
 
 			if (backEnd.currentEntity && backEnd.currentEntity != &tr.worldEntity) {
-				index |= LIGHTDEF_ENTITY;
+				if (glState.boneAnimation) {
+					index |= LIGHTDEF_ENTITY_BONE_ANIMATION;
+				} else {
+					index |= LIGHTDEF_ENTITY_VERTEX_ANIMATION;
+				}
 			}
 
 			if (r_sunlightMode->integer && (backEnd.viewParms.flags & VPF_USESUNLIGHT) && (index & LIGHTDEF_LIGHTTYPE_MASK)) {
@@ -996,6 +1013,11 @@ static void RB_IterateStagesGeneric(shaderCommands_t *input) {
 		GLSL_SetUniformVec3(sp, UNIFORM_VIEWORIGIN, backEnd.viewParms.or.origin);
 		GLSL_SetUniformVec3(sp, UNIFORM_LOCALVIEWORIGIN, backEnd.or.viewOrigin);
 		GLSL_SetUniformFloat(sp, UNIFORM_VERTEXLERP, glState.vertexAttribsInterpolation);
+
+		if (glState.boneAnimation) {
+			GLSL_SetUniformMat4BoneMatrix(sp, UNIFORM_BONEMATRIX, glState.boneMatrix, glState.boneAnimation);
+		}
+
 		GLSL_SetUniformInt(sp, UNIFORM_DEFORMGEN, deformGen);
 
 		if (deformGen != DGEN_NONE) {
@@ -1249,13 +1271,25 @@ static void RB_RenderShadowmap(shaderCommands_t *input) {
 	ComputeDeformValues(&deformGen, deformParams);
 
 	{
-		shaderProgram_t *sp = &tr.shadowmapShader;
+		shaderProgram_t *sp = &tr.shadowmapShader[0];
+
+		if (glState.vertexAnimation) {
+			sp = &tr.shadowmapShader[SHADOWMAPDEF_USE_VERTEX_ANIMATION];
+		} else if (glState.boneAnimation) {
+			sp = &tr.shadowmapShader[SHADOWMAPDEF_USE_BONE_ANIMATION];
+		}
+
 		vec4_t vector;
 
 		GLSL_BindProgram(sp);
 		GLSL_SetUniformMat4(sp, UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelviewProjection);
 		GLSL_SetUniformMat4(sp, UNIFORM_MODELMATRIX, backEnd.or.transformMatrix);
 		GLSL_SetUniformFloat(sp, UNIFORM_VERTEXLERP, glState.vertexAttribsInterpolation);
+
+		if (glState.boneAnimation) {
+			GLSL_SetUniformMat4BoneMatrix(sp, UNIFORM_BONEMATRIX, glState.boneMatrix, glState.boneAnimation);
+		}
+
 		GLSL_SetUniformInt(sp, UNIFORM_DEFORMGEN, deformGen);
 
 		if (deformGen != DGEN_NONE) {
