@@ -584,20 +584,20 @@ static void DoFCBI(byte *in, byte *out, int width, int height, int component) {
 
 		x = 3;
 		// optimization one
-		//                       SAMPLE2(sa, x-1, y-3);
-		//SAMPLE2(sc, x-3, y-1); SAMPLE2(sd, x-1, y-1); SAMPLE2(se, x+1, y-1);
-		//SAMPLE2(sg, x-3, y+1); SAMPLE2(sh, x-1, y+1); SAMPLE2(si, x+1, y+1);
-		//                       SAMPLE2(sk, x-1, y+3);
+		// SAMPLE2(sa, x - 1, y - 3);
+		// SAMPLE2(sc, x - 3, y - 1); SAMPLE2(sd, x - 1, y - 1); SAMPLE2(se, x + 1, y - 1);
+		// SAMPLE2(sg, x - 3, y + 1); SAMPLE2(sh, x - 1, y + 1); SAMPLE2(si, x + 1, y + 1);
+		// SAMPLE2(sk, x - 1, y + 3);
 		// optimization two
 		line1 = in + ((y - 3) * width + (x - 1)) * 4 + component;
 		line2 = in + ((y - 1) * width + (x - 3)) * 4 + component;
 		line3 = in + ((y + 1) * width + (x - 3)) * 4 + component;
 		line4 = in + ((y + 3) * width + (x - 1)) * 4 + component;
 
-		//                                   COPYSAMPLE(sa, line1); line1 += 8;
-		//COPYSAMPLE(sc, line2); line2 += 8; COPYSAMPLE(sd, line2); line2 += 8; COPYSAMPLE(se, line2); line2 += 8;
-		//COPYSAMPLE(sg, line3); line3 += 8; COPYSAMPLE(sh, line3); line3 += 8; COPYSAMPLE(si, line3); line3 += 8;
-		//                                   COPYSAMPLE(sk, line4); line4 += 8;
+		// COPYSAMPLE(sa, line1); line1 += 8;
+		// COPYSAMPLE(sc, line2); line2 += 8; COPYSAMPLE(sd, line2); line2 += 8; COPYSAMPLE(se, line2); line2 += 8;
+		// COPYSAMPLE(sg, line3); line3 += 8; COPYSAMPLE(sh, line3); line3 += 8; COPYSAMPLE(si, line3); line3 += 8;
+		// COPYSAMPLE(sk, line4); line4 += 8;
 
 		sa = *line1;
 		line1 += 8;
@@ -622,20 +622,20 @@ static void DoFCBI(byte *in, byte *out, int width, int height, int component) {
 			int NWd, NEd, NWp, NEp;
 
 			// original
-			//                       SAMPLE2(sa, x-1, y-3); SAMPLE2(sb, x+1, y-3);
-			//SAMPLE2(sc, x-3, y-1); SAMPLE2(sd, x-1, y-1); SAMPLE2(se, x+1, y-1); SAMPLE2(sf, x+3, y-1);
-			//SAMPLE2(sg, x-3, y+1); SAMPLE2(sh, x-1, y+1); SAMPLE2(si, x+1, y+1); SAMPLE2(sj, x+3, y+1);
-			//                       SAMPLE2(sk, x-1, y+3); SAMPLE2(sl, x+1, y+3);
+			// SAMPLE2(sa, x - 1, y - 3); SAMPLE2(sb, x + 1, y - 3);
+			// SAMPLE2(sc, x - 3, y - 1); SAMPLE2(sd, x - 1, y - 1); SAMPLE2(se, x + 1, y - 1); SAMPLE2(sf, x + 3, y - 1);
+			// SAMPLE2(sg, x - 3, y + 1); SAMPLE2(sh, x - 1, y + 1); SAMPLE2(si, x + 1, y + 1); SAMPLE2(sj, x + 3, y + 1);
+			// SAMPLE2(sk, x - 1, y + 3); SAMPLE2(sl, x + 1, y + 3);
 			// optimization one
-			//SAMPLE2(sb, x+1, y-3);
-			//SAMPLE2(sf, x+3, y-1);
-			//SAMPLE2(sj, x+3, y+1);
-			//SAMPLE2(sl, x+1, y+3);
+			// SAMPLE2(sb, x + 1, y - 3);
+			// SAMPLE2(sf, x + 3, y - 1);
+			// SAMPLE2(sj, x + 3, y + 1);
+			// SAMPLE2(sl, x + 1, y + 3);
 			// optimization two
-			//COPYSAMPLE(sb, line1); line1 += 8;
-			//COPYSAMPLE(sf, line2); line2 += 8;
-			//COPYSAMPLE(sj, line3); line3 += 8;
-			//COPYSAMPLE(sl, line4); line4 += 8;
+			// COPYSAMPLE(sb, line1); line1 += 8;
+			// COPYSAMPLE(sf, line2); line2 += 8;
+			// COPYSAMPLE(sj, line3); line3 += 8;
+			// COPYSAMPLE(sl, line4); line4 += 8;
 
 			sb = *line1;
 			line1 += 8;
@@ -674,10 +674,10 @@ static void DoFCBI(byte *in, byte *out, int width, int height, int component) {
 
 			outbyte += 8;
 
-			//                    COPYSAMPLE(sa, sb);
-			//COPYSAMPLE(sc, sd); COPYSAMPLE(sd, se); COPYSAMPLE(se, sf);
-			//COPYSAMPLE(sg, sh); COPYSAMPLE(sh, si); COPYSAMPLE(si, sj);
-			//                    COPYSAMPLE(sk, sl);
+			// COPYSAMPLE(sa, sb);
+			// COPYSAMPLE(sc, sd); COPYSAMPLE(sd, se); COPYSAMPLE(se, sf);
+			// COPYSAMPLE(sg, sh); COPYSAMPLE(sh, si); COPYSAMPLE(si, sj);
+			// COPYSAMPLE(sk, sl);
 
 			sa = sb;
 			sc = sd;
@@ -719,7 +719,8 @@ static void DoFCBI(byte *in, byte *out, int width, int height, int component) {
 		//   h - i - j
 		//   - k - l -
 		//
-		// x+2 uses these samples:
+		// x + 2 uses these samples:
+		//
 		//
 		//       0
 		//   - - - a - b -
@@ -730,7 +731,7 @@ static void DoFCBI(byte *in, byte *out, int width, int height, int component) {
 		//
 		// so we can reuse 7 of them on next iteration
 		//
-		// a=b, c=d, d=e, f=g, h=i, i=j, k=l
+		// a = b, c = d, d = e, f = g, h = i, i = j, k = l
 		//
 		// only b, e, g, j, and l need to be sampled on next iteration
 
@@ -740,11 +741,11 @@ static void DoFCBI(byte *in, byte *out, int width, int height, int component) {
 		//x = (y + 1) % 2;
 		x = (y + 1) % 2 + 2;
 		// optimization one
-		//            SAMPLE2(sa, x-1, y-2);
-		//SAMPLE2(sc, x-2, y-1); SAMPLE2(sd, x,   y-1);
-		//            SAMPLE2(sf, x-1, y );
-		//SAMPLE2(sh, x-2, y+1); SAMPLE2(si, x,   y+1);
-		//            SAMPLE2(sk, x-1, y+2);
+		// SAMPLE2(sa, x - 1, y - 2);
+		// SAMPLE2(sc, x - 2, y - 1); SAMPLE2(sd, x, y - 1);
+		// SAMPLE2(sf, x - 1, y);
+		// SAMPLE2(sh, x - 2, y + 1); SAMPLE2(si, x, y + 1);
+		// SAMPLE2(sk, x - 1, y + 2);
 
 		line1 = in + ((y - 2) * width + (x - 1)) * 4 + component;
 		line2 = in + ((y - 1) * width + (x - 2)) * 4 + component;
@@ -752,11 +753,11 @@ static void DoFCBI(byte *in, byte *out, int width, int height, int component) {
 		line4 = in + ((y + 1) * width + (x - 2)) * 4 + component;
 		line5 = in + ((y + 2) * width + (x - 1)) * 4 + component;
 
-		//                 COPYSAMPLE(sa, line1); line1 += 8;
-		//COPYSAMPLE(sc, line2); line2 += 8; COPYSAMPLE(sd, line2); line2 += 8;
-		//                 COPYSAMPLE(sf, line3); line3 += 8;
-		//COPYSAMPLE(sh, line4); line4 += 8; COPYSAMPLE(si, line4); line4 += 8;
-        //                 COPYSAMPLE(sk, line5); line5 += 8;
+		// COPYSAMPLE(sa, line1); line1 += 8;
+		// COPYSAMPLE(sc, line2); line2 += 8; COPYSAMPLE(sd, line2); line2 += 8;
+		// COPYSAMPLE(sf, line3); line3 += 8;
+		// COPYSAMPLE(sh, line4); line4 += 8; COPYSAMPLE(si, line4); line4 += 8;
+		// COPYSAMPLE(sk, line5); line5 += 8;
 
 		sa = *line1;
 		line1 += 8;
@@ -777,25 +778,23 @@ static void DoFCBI(byte *in, byte *out, int width, int height, int component) {
 
 		for (; x < width - 3; x += 2) {
 			int hd, vd, hp, vp;
-
-			//            SAMPLE2(sa, x-1, y-2); SAMPLE2(sb, x+1, y-2);
-			//SAMPLE2(sc, x-2, y-1); SAMPLE2(sd, x,   y-1); SAMPLE2(se, x+2, y-1);
-			//            SAMPLE2(sf, x-1, y ); SAMPLE2(sg, x+1, y );
-			//SAMPLE2(sh, x-2, y+1); SAMPLE2(si, x,   y+1); SAMPLE2(sj, x+2, y+1);
-			//            SAMPLE2(sk, x-1, y+2); SAMPLE2(sl, x+1, y+2);
-
+			// SAMPLE2(sa, x - 1, y - 2); SAMPLE2(sb, x + 1, y - 2);
+			// SAMPLE2(sc, x - 2, y - 1); SAMPLE2(sd, x, y - 1); SAMPLE2(se, x + 2, y - 1);
+			// SAMPLE2(sf, x - 1, y); SAMPLE2(sg, x + 1, y);
+			// SAMPLE2(sh, x - 2, y + 1); SAMPLE2(si, x, y + 1); SAMPLE2(sj, x + 2, y + 1);
+			// SAMPLE2(sk, x - 1, y + 2); SAMPLE2(sl, x + 1, y + 2);
 			// optimization one
-			//SAMPLE2(sb, x+1, y-2);
-			//SAMPLE2(se, x+2, y-1);
-			//SAMPLE2(sg, x+1, y );
-			//SAMPLE2(sj, x+2, y+1);
-			//SAMPLE2(sl, x+1, y+2);
+			// SAMPLE2(sb, x + 1, y - 2);
+			// SAMPLE2(se, x + 2, y - 1);
+			// SAMPLE2(sg, x + 1, y);
+			// SAMPLE2(sj, x + 2, y + 1);
+			// SAMPLE2(sl, x + 1, y + 2);
 
-			//COPYSAMPLE(sb, line1); line1 += 8;
-			//COPYSAMPLE(se, line2); line2 += 8;
-			//COPYSAMPLE(sg, line3); line3 += 8;
-			//COPYSAMPLE(sj, line4); line4 += 8;
-			//COPYSAMPLE(sl, line5); line5 += 8;
+			// COPYSAMPLE(sb, line1); line1 += 8;
+			// COPYSAMPLE(se, line2); line2 += 8;
+			// COPYSAMPLE(sg, line3); line3 += 8;
+			// COPYSAMPLE(sj, line4); line4 += 8;
+			// COPYSAMPLE(sl, line5); line5 += 8;
 
 			sb = *line1;
 			line1 += 8;
@@ -836,11 +835,13 @@ static void DoFCBI(byte *in, byte *out, int width, int height, int component) {
 			}
 
 			outbyte += 8;
-			//          COPYSAMPLE(sa, sb);
-			//COPYSAMPLE(sc, sd); COPYSAMPLE(sd, se);
-			//          COPYSAMPLE(sf, sg);
-			//COPYSAMPLE(sh, si); COPYSAMPLE(si, sj);
-			//          COPYSAMPLE(sk, sl);
+
+			// COPYSAMPLE(sa, sb);
+			// COPYSAMPLE(sc, sd); COPYSAMPLE(sd, se);
+			// COPYSAMPLE(sf, sg);
+			// COPYSAMPLE(sh, si); COPYSAMPLE(si, sj);
+			// COPYSAMPLE(sk, sl);
+
 			sa = sb;
 			sc = sd;
 			sd = se;
@@ -1422,22 +1423,22 @@ static void R_BlendOverTexture(byte *data, int pixelCount, byte blend[4]) {
 }
 
 byte mipBlendColors[16][4] = {
-	{0,0,0,0},
-	{255,0,0,128},
-	{0,255,0,128},
-	{0,0,255,128},
-	{255,0,0,128},
-	{0,255,0,128},
-	{0,0,255,128},
-	{255,0,0,128},
-	{0,255,0,128},
-	{0,0,255,128},
-	{255,0,0,128},
-	{0,255,0,128},
-	{0,0,255,128},
-	{255,0,0,128},
-	{0,255,0,128},
-	{0,0,255,128},
+	{0, 0, 0, 0},
+	{255, 0, 0, 128},
+	{0, 255, 0, 128},
+	{0, 0, 255, 128},
+	{255, 0, 0, 128},
+	{0, 255, 0, 128},
+	{0, 0, 255, 128},
+	{255, 0, 0, 128},
+	{0, 255, 0, 128},
+	{0, 0, 255, 128},
+	{255, 0, 0, 128},
+	{0, 255, 0, 128},
+	{0, 0, 255, 128},
+	{255, 0, 0, 128},
+	{0, 255, 0, 128},
+	{0, 0, 255, 128},
 };
 
 /*
@@ -2158,7 +2159,7 @@ void R_UpdateSubImage(image_t *image, byte *pic, int x, int y, int width, int he
 	Upload32(pic, x, y, width, height, picFormat, 0, image, qfalse);
 }
 
-// Prototype for dds loader function which isn't common to both renderers
+// prototype for dds loader function which isn't common to both renderers
 void R_LoadDDS(const char *filename, byte **pic, int *width, int *height, GLenum *picFormat, int *numMips);
 
 typedef struct {

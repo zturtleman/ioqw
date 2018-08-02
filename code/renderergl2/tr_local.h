@@ -621,16 +621,17 @@ typedef struct {
 	float toneMinAvgMaxLinear[3];
 } trRefdef_t;
 
+/*
+=======================================================================================================================================
 
-//=================================================================================
+	Maximum surfaces per-skin.
+	This is an arbitry limit. Vanilla Q3 only supported 32 surfaces in skins but failed to enforce the maximum limit when reading skin
+	files. It was possile to use more than 32 surfaces which accessed out of bounds memory past end of skin->surfaces hunk block.
 
-// max surfaces per-skin
-// this is an arbitry limit. Vanilla Q3 only supported 32 surfaces in skins but failed to
-// enforce the maximum limit when reading skin files. It was possile to use more than 32
-// surfaces which accessed out of bounds memory past end of skin->surfaces hunk block.
+=======================================================================================================================================
+*/
 
 #define MAX_SKIN_SURFACES 256
-
 // skins allow models to be retextured without modifying the model file
 typedef struct {
 	char name[MAX_QPATH];
@@ -696,8 +697,8 @@ typedef struct {
 
 =======================================================================================================================================
 */
-typedef byte color4ub_t[4];
 
+typedef byte color4ub_t[4];
 // any changes in surfaceType must be mirrored in rb_surfaceTable[]
 typedef enum {
 	SF_BAD,
@@ -785,6 +786,7 @@ typedef struct srfBspSurface_s {
 	float *widthLodError;
 	float *heightLodError;
 } srfBspSurface_t;
+
 // inter-quake-model
 typedef struct {
 	int num_vertexes;
@@ -801,17 +803,15 @@ typedef struct {
 	float *normals;
 	float *tangents;
 	byte *colors;
-	int *influences; // [num_vertexes] indexes into influenceBlendVertexes
+	int *influences;				// [num_vertexes] indexes into influenceBlendVertexes
 	// unique list of vertex blend indexes/weights for faster CPU vertex skinning
-	byte *influenceBlendIndexes; // [num_influences]
+	byte *influenceBlendIndexes;	// [num_influences]
 	union {
 		float *f;
 		byte *b;
-	} influenceBlendWeights; // [num_influences]
-	// depending upon the exporter, blend indices and weights might be int/float
-	// as opposed to the recommended byte/byte, for example Noesis exports
-	// int/float whereas the official IQM tool exports byte/byte
-	int blendWeightsType; // IQM_UBYTE or IQM_FLOAT
+	} influenceBlendWeights;		// [num_influences]
+	// depending upon the exporter, blend indices and weights might be int/float as opposed to the recommended byte/byte, for example Noesis exports int/float whereas the official IQM tool exports byte/byte
+	int blendWeightsType;			// IQM_UBYTE or IQM_FLOAT
 	char *jointNames;
 	int *jointParents;
 	float *jointMats;
@@ -820,6 +820,7 @@ typedef struct {
 	int numVaoSurfaces;
 	struct srfVaoIQModel_s *vaoSurfaces;
 } iqmData_t;
+
 // inter-quake-model surface
 typedef struct srfIQModel_s {
 	surfaceType_t surfaceType;
@@ -905,12 +906,12 @@ typedef struct cullinfo_s {
 } cullinfo_t;
 
 typedef struct msurface_s {
-	//int viewCount;		// if == tr.viewCount, already added
-	struct shader_s *shader;
+	//int viewCount;					// if == tr.viewCount, already added
+	struct shader_s *shader;			// shader for rendering
 	int fogIndex;
 	int cubemapIndex;
 	cullinfo_t cullinfo;
-	surfaceType_t *data;	// any of srf*_t
+	surfaceType_t *data;				// any of srf*_t
 } msurface_t;
 
 #define CONTENTS_NODE -1
@@ -1069,24 +1070,25 @@ The drawsurf sort data is packed into a single 32 bit value so it can be compare
 
 The bits are allocated as follows:
 
-0-1		: dlightmap index
-//2		: used to be clipped flag REMOVED - 03.21.00 rad
-2-6		: fog index
-11-20	: entity index
-21-31	: sorted shader index
+	  0-1	: dlightmap index
+	  //2	: used to be clipped flag REMOVED - 03.21.00 rad
+	  2-6	: fog index
+	11-20	: entity index
+	21-31	: sorted shader index
 
 	TTimo - 1.32
-0-1		: dlightmap index
-2-6		: fog index
-7-16	: entity index
-17-30	: sorted shader index
+	  0-1	: dlightmap index
+	  2-6	: fog index
+	 7-16	: entity index
+	17-30	: sorted shader index
 
 	SmileTheory - for pshadows
-17-31	: sorted shader index
-7-16	: entity index
-2-6		: fog index
-1		: pshadow flag
-0		: dlight flag
+	17-31	: sorted shader index
+	 7-16	: entity index
+	  2-6	: fog index
+		1	: pshadow flag
+		0	: dlight flag
+
 =======================================================================================================================================
 */
 #define QSORT_FOGNUM_SHIFT 2
@@ -1120,9 +1122,9 @@ typedef struct {
 	uint32_t storedGlState;
 	float vertexAttribsInterpolation;
 	qboolean vertexAnimation;
-	int boneAnimation; // number of bones
+	int boneAnimation;				// number of bones
 	mat4_t boneMatrix[IQM_MAX_JOINTS];
-	uint32_t vertexAttribsEnabled; // global if no VAOs, tess only otherwise
+	uint32_t vertexAttribsEnabled;	// global if no VAOs, tess only otherwise
 	FBO_t *currentFBO;
 	vao_t *currentVao;
 	mat4_t modelview;
@@ -1597,7 +1599,7 @@ void R_SetColorMappings(void);
 void R_GammaCorrect(byte *buffer, int bufSize);
 void R_ImageList_f(void);
 void R_SkinList_f(void);
-// https://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=516
+//https://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=516
 const void *RB_TakeScreenshotCmd(const void *data);
 void R_ScreenShot_f(void);
 void R_InitFogTable(void);

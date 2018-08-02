@@ -320,7 +320,9 @@ static void ProjectDlightTexture(void) {
 		}
 
 		dl = &backEnd.refdef.dlights[l];
+
 		VectorCopy(dl->transformed, origin);
+
 		radius = dl->radius;
 		scale = 1.0f / radius;
 
@@ -379,15 +381,8 @@ static void ComputeShaderColors(shaderStage_t *pStage, vec4_t baseColor, vec4_t 
 	float overbright = (isBlend || is2DDraw) ? 1.0f : (float)(1 << tr.overbrightBits);
 	fog_t *fog;
 
-	baseColor[0] =
-	baseColor[1] =
-	baseColor[2] =
-	baseColor[3] = 1.0f;
-
-	vertColor[0] =
-	vertColor[1] =
-	vertColor[2] =
-	vertColor[3] = 0.0f;
+	baseColor[0] = baseColor[1] = baseColor[2] = baseColor[3] = 1.0f;
+	vertColor[0] = vertColor[1] = vertColor[2] = vertColor[3] = 0.0f;
 	// rgbGen
 	switch (pStage->rgbGen) {
 		case CGEN_EXACT_VERTEX:
@@ -700,6 +695,7 @@ static void ForwardDlight(void) {
 		VectorCopy(dl->origin, vector);
 
 		vector[3] = 1.0f;
+
 		GLSL_SetUniformVec4(sp, UNIFORM_LIGHTORIGIN, vector);
 		GLSL_SetUniformFloat(sp, UNIFORM_LIGHTRADIUS, radius);
 		GLSL_SetUniformVec4(sp, UNIFORM_NORMALSCALE, pStage->normalScale);
@@ -744,6 +740,7 @@ static void ForwardDlight(void) {
 		}
 
 		ComputeTexMods(pStage, TB_DIFFUSEMAP, texMatrix, texOffTurb);
+
 		GLSL_SetUniformVec4(sp, UNIFORM_DIFFUSETEXMATRIX, texMatrix);
 		GLSL_SetUniformVec4(sp, UNIFORM_DIFFUSETEXOFFTURB, texOffTurb);
 		GLSL_SetUniformInt(sp, UNIFORM_TCGEN0, pStage->bundle[0].tcGen);
@@ -794,7 +791,9 @@ static void ProjectPshadowVBOGLSL(void) {
 		GLSL_SetUniformMat4(sp, UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelviewProjection);
 
 		VectorCopy(origin, vector);
+
 		vector[3] = 1.0f;
+
 		GLSL_SetUniformVec4(sp, UNIFORM_LIGHTORIGIN, vector);
 
 		VectorScale(ps->lightViewAxis[0], 1.0f / ps->viewRadius, vector);
@@ -1086,6 +1085,7 @@ static void RB_IterateStagesGeneric(shaderCommands_t *input) {
 
 		if (r_lightmap->integer) {
 			vec4_t v;
+
 			VectorSet4(v, 1.0f, 0.0f, 0.0f, 1.0f);
 			GLSL_SetUniformVec4(sp, UNIFORM_DIFFUSETEXMATRIX, v);
 			VectorSet4(v, 0.0f, 0.0f, 0.0f, 0.0f);

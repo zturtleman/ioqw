@@ -132,8 +132,7 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent, world_t *world) {
 	float totalFactor;
 
 	if (ent->e.renderfx & RF_LIGHTING_ORIGIN) {
-		// separate lightOrigins are needed so an object that is sinking into the ground can still be lit, and so
-		// multi-part models can be lit identically
+		// separate lightOrigins are needed so an object that is sinking into the ground can still be lit, and so multi-part models can be lit identically
 		VectorCopy(ent->e.lightingOrigin, lightOrigin);
 	} else {
 		VectorCopy(ent->e.origin, lightOrigin);

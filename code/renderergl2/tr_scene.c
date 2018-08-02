@@ -112,7 +112,7 @@ void RE_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts,
 	}
 
 	if (!hShader) {
-		// this isn't a useful warning, and an hShader of zero isn't a null shader, it's the default shader.
+		// this isn't a useful warning, and an hShader of zero isn't a null shader, it's the default shader
 		//ri.Printf(PRINT_WARNING, "WARNING: RE_AddPolyToScene: NULL poly shader\n");
 		//return;
 	}
@@ -325,9 +325,7 @@ void RE_BeginScene(const refdef_t *fd) {
 		}
 
 		if (r_sunlightMode->integer == 1) {
-			tr.refdef.sunAmbCol[0] =
-			tr.refdef.sunAmbCol[1] =
-			tr.refdef.sunAmbCol[2] = r_forceSun->integer ? r_forceSunAmbientScale->value : tr.sunShadowScale;
+			tr.refdef.sunAmbCol[0] = tr.refdef.sunAmbCol[1] = tr.refdef.sunAmbCol[2] = r_forceSun->integer ? r_forceSunAmbientScale->value : tr.sunShadowScale;
 		} else {
 			if (r_forceSun->integer) {
 				VectorScale(tr.sunLight, scale * r_forceSunAmbientScale->value, tr.refdef.sunAmbCol);
@@ -384,11 +382,9 @@ void RE_BeginScene(const refdef_t *fd) {
 	if (r_dynamiclight->integer == 0 || r_vertexLight->integer == 1) {
 		tr.refdef.num_dlights = 0;
 	}
-	// a single frame may have multiple scenes draw inside it --
-	// a 3D game view, 3D status bar renderings, 3D menus, etc.
-	// they need to be distinguished by the light flare code, because
-	// the visibility state for a given surface may be different in
-	// each scene / view.
+	// a single frame may have multiple scenes draw inside it -- a 3D game view, 3D status bar renderings, 3D menus, etc.
+	// they need to be distinguished by the light flare code, because the visibility state for a given surface may be different in
+	// each scene/view
 	tr.frameSceneNum++;
 	tr.sceneCount++;
 }

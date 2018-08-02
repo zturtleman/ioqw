@@ -190,7 +190,7 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t n
 	VectorCopy(point, f->origin);
 	VectorCopy(color, f->color);
 	// fade the intensity of the flare down as the light surface turns away from the viewer
-	VectorScale(f->color, d, f->color); 
+	VectorScale(f->color, d, f->color);
 	// save info needed to test
 	f->windowX = backEnd.viewParms.viewportX + window[0];
 	f->windowY = backEnd.viewParms.viewportY + window[1];
@@ -219,7 +219,7 @@ void RB_AddDlightFlares(void) {
 
 	for (i = 0; i < backEnd.refdef.num_dlights; i++, l++) {
 		if (fog) {
-			// find which fog volume the light is in 
+			// find which fog volume the light is in
 			for (j = 1; j < tr.world->numfogs; j++) {
 				fog = &tr.world->fogs[j];
 
@@ -324,13 +324,13 @@ void RB_RenderFlare(flare_t *f) {
 	byte fogFactors[3] = {255, 255, 255};
 
 	backEnd.pc.c_flareRenders++;
-	// we don't want too big values anyways when dividing by distance.
+	// we don't want too big values anyways when dividing by distance
 	if (f->eyeZ > -1.0f) {
 		distance = 1.0f;
 	} else {
 		distance = -f->eyeZ;
 	}
-	// calculate the flare size..
+	// calculate the flare size
 	size = backEnd.viewParms.viewportWidth * (r_flareSize->value / 640.0f + 8 / distance);
 	/*
 	* This is an alternative to intensity scaling. It changes the size of the flare on screen instead
@@ -338,14 +338,14 @@ void RB_RenderFlare(flare_t *f) {
 		// size will change ~ 1/r.
 		size = backEnd.viewParms.viewportWidth * (r_flareSize->value / (distance * -2.0f));
 	* As flare sizes stay nearly constant with increasing distance we must decrease the intensity
-	* to achieve a reasonable visual result. The intensity is ~ (size^2 / distance^2) which can be
+	* to achieve a reasonable visual result. The intensity is ~ (size ^ 2 / distance ^ 2) which can be
 	* got by considering the ratio of
 	* (flaresurface on screen) : (Surface of sphere defined by flare origin and distance from flare)
 	* An important requirement is:
 	* intensity <= 1 for all distances.
 	*
 	* The formula used here to compute the intensity is as follows:
-	* intensity = flareCoeff * size^2 / (distance + size*sqrt(flareCoeff))^2
+	* intensity = flareCoeff * size^2 / (distance + size * sqrt(flareCoeff)) ^ 2
 	* As you can see, the intensity will have a max. of 1 when the distance is 0.
 	* The coefficient flareCoeff will determine the falloff speed with increasing distance.
 	*/
@@ -448,7 +448,7 @@ void RB_RenderFlares(void) {
 		r_flareCoeff->modified = qfalse;
 	}
 	// reset currentEntity to world so that any previously referenced entities
-	// don't have influence on the rendering of these flares (i.e. RF_ renderer flags).
+	// don't have influence on the rendering of these flares (i.e. RF_ renderer flags)
 	backEnd.currentEntity = &tr.worldEntity;
 	backEnd.or = backEnd.viewParms.world;
 

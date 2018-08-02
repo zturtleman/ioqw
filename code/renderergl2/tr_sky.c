@@ -39,12 +39,12 @@ static float s_cloudTexP[6][SKY_SUBDIVISIONS + 1][SKY_SUBDIVISIONS + 1];
 */
 
 static vec3_t sky_clip[6] = {
-	{1,1,0},
-	{1,-1,0},
-	{0,-1,1},
-	{0,1,1},
-	{1,0,1},
-	{-1,0,1}
+	{1, 1, 0},
+	{1, -1, 0},
+	{0, -1, 1},
+	{0, 1, 1},
+	{1, 0, 1},
+	{-1, 0, 1}
 };
 
 static float sky_mins[2][6], sky_maxs[2][6];
@@ -61,18 +61,16 @@ static void AddSkyPolygon(int nump, vec3_t vecs) {
 	float s, t, dv;
 	int axis;
 	float *vp;
-
-	//s = [0]/[2], t = [1]/[2]
-
+	// s = [0] / [2], t = [1] / [2]
 	static int vec_to_st[6][3] = {
-		{-2,3,1},
-		{2,3,-1},
-		{1,3,2},
-		{-1,3,-2},
-		{-2,-1,3},
-		{-2,1,-3}
-	//	{-1,2,3},
-	//	{1,2,-3}
+		{-2, 3, 1},
+		{2, 3, -1},
+		{1, 3, 2},
+		{-1, 3, -2},
+		{-2, -1, 3},
+		{-2, 1, -3}
+		//{-1, 2, 3},
+		//{1, 2, -3}
 	};
 	// decide which face it maps to
 	VectorCopy(vec3_origin, v);
@@ -300,12 +298,12 @@ Parms: s, t range from -1 to 1.
 static void MakeSkyVec(float s, float t, int axis, float outSt[2], vec3_t outXYZ) {
 	// 1 = s, 2 = t, 3 = 2048
 	static int st_to_vec[6][3] = {
-		{3,-1,2},
-		{-3,1,2},
-		{1,3,2},
-		{-1,-3,2},
-		{-2,-1,3}, // 0 degrees yaw, look straight up
-		{2,-1,-3} // look straight down
+		{3, -1, 2},
+		{-3, 1, 2},
+		{1, 3, 2},
+		{-1, -3, 2},
+		{-2, -1, 3}, // 0 degrees yaw, look straight up
+		{2, -1, -3} // look straight down
 	};
 	vec3_t b;
 	int j, k;
@@ -805,6 +803,7 @@ void RB_StageIteratorSky(void) {
 		GL_State(0);
 		GL_Cull(CT_FRONT_SIDED);
 		//qglTranslatef(backEnd.viewParms.or.origin[0], backEnd.viewParms.or.origin[1], backEnd.viewParms.or.origin[2]);
+
 		{
 			// FIXME: this could be a lot cleaner
 			mat4_t trans, product;

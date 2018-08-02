@@ -77,7 +77,7 @@ ELSE
 	fistp dword ptr src
 	fild dword ptr src
 	fstp dword ptr src
-  endm    
+  endm
 
   qsnapvectorx87 PROC
 	mov eax, dword ptr 4[esp]

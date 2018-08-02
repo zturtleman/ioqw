@@ -1625,7 +1625,6 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height) {
 			ri.Free(OutBuffer);
 			ri.Free(DecompressedData);
 			CloseBufferedFile(ThePNG);
-
 			return;
 		}
 	}

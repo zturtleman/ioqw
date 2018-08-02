@@ -29,7 +29,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "tr_local.h"
 
 static char *s_shaderText;
-// the shader is parsed into these global variables, then copied into dynamically allocated memory if it is valid.
+// the shader is parsed into these global variables, then copied into dynamically allocated memory if it is valid
 static shaderStage_t stages[MAX_SHADER_STAGES];
 static shader_t shader;
 static texModInfo_t texMods[MAX_SHADER_STAGES][TR_MAX_TEXMODS];
@@ -1476,7 +1476,7 @@ infoParm_t infoParms[] = {
 =======================================================================================================================================
 ParseSurfaceParm
 
-surfaceparm <name>
+surfaceparm <name>.
 =======================================================================================================================================
 */
 static void ParseSurfaceParm(char **text) {
@@ -2935,7 +2935,7 @@ qhandle_t RE_RegisterShaderFromImage(const char *name, int lightmapIndex, image_
 
 	hash = generateHashValue(name, FILE_HASH_SIZE);
 	// probably not necessary since this function
-	// only gets called from tr_font.c with lightmapIndex == LIGHTMAP_2D but better safe than sorry.
+	// only gets called from tr_font.c with lightmapIndex == LIGHTMAP_2D but better safe than sorry
 	if (lightmapIndex >= tr.numLightmaps) {
 		lightmapIndex = LIGHTMAP_WHITEIMAGE;
 	}

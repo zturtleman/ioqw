@@ -375,6 +375,7 @@ void RE_StretchPicGradient(float x, float y, float w, float h, float s1, float t
 
 	if (!gradientColor) {
 		static float colorWhite[4] = {1, 1, 1, 1};
+
 		gradientColor = colorWhite;
 	}
 

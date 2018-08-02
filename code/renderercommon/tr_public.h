@@ -32,7 +32,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 // these are the functions exported by the refresh module
 typedef struct {
 	// called before the library is unloaded
-	// if the system is just reconfiguring, pass destroyWindow = qfalse, which will keep the screen from flashing to the desktop.
+	// if the system is just reconfiguring, pass destroyWindow = qfalse, which will keep the screen from flashing to the desktop
 	void (*Shutdown)(qboolean destroyWindow);
 	// All data that will be used in a level should be registered before rendering any frames to prevent disk hits,
 	// but they can still be registered at a later time if necessary.

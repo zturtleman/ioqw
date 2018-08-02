@@ -42,7 +42,7 @@ qvmcall64 PROC
   xor rbx, rbx						; opStackOfs starts out being 0
   mov rdi, rdx						; opStack
   mov esi, dword ptr [rcx]			; programStack
-  
+
   call qword ptr [r8]				; instructionPointers[0] is also the entry point
 
   pop rcx
@@ -53,7 +53,7 @@ qvmcall64 PROC
   pop rbx
   pop rdi
   pop rsi
-  
+
   ret
 qvmcall64 ENDP
 
