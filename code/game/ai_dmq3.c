@@ -1690,6 +1690,96 @@ int BotSynonymContext(bot_state_t *bs) {
 
 /*
 =======================================================================================================================================
+BotUsesLongRangeInstantHitWeapon
+=======================================================================================================================================
+*/
+/*
+static qboolean BotUsesLongRangeInstantHitWeapon(bot_state_t *bs) {
+
+	switch (bs->weaponnum) {
+		case WP_RAILGUN:
+			return qtrue;
+		default:
+			return qfalse;
+	}
+}
+*/
+/*
+=======================================================================================================================================
+BotUsesMidRangeWeapon
+=======================================================================================================================================
+*/
+
+/*
+static qboolean BotUsesMidRangeWeapon(bot_state_t *bs) {
+
+	switch (bs->weaponnum) {
+		case WP_MACHINEGUN:
+		case WP_CHAINGUN:
+		case WP_ROCKETLAUNCHER:
+		case WP_BEAMGUN:
+		case WP_RAILGUN:
+		case WP_PLASMAGUN:
+		case WP_BFG:
+			return qtrue;
+		default:
+			return qfalse;
+	}
+}
+*/
+/*
+=======================================================================================================================================
+BotUsesGravityAffectedProjectileWeapon
+=======================================================================================================================================
+*/
+static qboolean BotUsesGravityAffectedProjectileWeapon(bot_state_t *bs) {
+
+	switch (bs->weaponnum) {
+		case WP_PROXLAUNCHER:
+		case WP_GRENADELAUNCHER:
+		case WP_NAPALMLAUNCHER:
+			return qtrue;
+		default:
+			return qfalse;
+	}
+}
+
+/*
+=======================================================================================================================================
+BotUsesInstantHitWeapon
+=======================================================================================================================================
+*/
+static qboolean BotUsesInstantHitWeapon(bot_state_t *bs) {
+
+	switch (bs->weaponnum) {
+		case WP_GAUNTLET:
+		case WP_MACHINEGUN:
+		case WP_CHAINGUN:
+		case WP_SHOTGUN:
+		case WP_BEAMGUN:
+		case WP_RAILGUN:
+			return qtrue;
+		default:
+			return qfalse;
+	}
+}
+
+/*
+=======================================================================================================================================
+BotUsesCloseCombatWeapon
+=======================================================================================================================================
+*/
+static qboolean BotUsesCloseCombatWeapon(bot_state_t *bs) {
+
+	switch (bs->weaponnum) {
+		case WP_GAUNTLET:
+			return qtrue;
+		default:
+			return qfalse;
+	}
+}
+/*
+=======================================================================================================================================
 BotChooseWeapon
 =======================================================================================================================================
 */
@@ -3419,7 +3509,11 @@ bot_moveresult_t BotAttackMove(bot_state_t *bs, int tfl) {
 	bot_moveresult_t moveresult;
 	bot_goal_t goal;
 	bsp_trace_t bsptrace;
-	weaponinfo_t wi;
+
+	// if the bot is in the air
+	if (bs->cur_ps.groundEntityNum == ENTITYNUM_NONE) {
+		return moveresult;
+	}
 
 	attackentity = bs->enemy;
 
@@ -3463,6 +3557,12 @@ bot_moveresult_t BotAttackMove(bot_state_t *bs, int tfl) {
 	VectorNegate(forward, backward);
 	// walk, crouch or jump
 	movetype = MOVE_WALK;
+	// for long range attacks the bots should crouch more often
+	if (dist > 2048) {
+		croucher += 0.5;
+	} else if (BotWantsToRetreat(bs)) {
+		croucher = 0;
+	}
 
 	if (bs->attackcrouch_time < FloatTime() - 1) {
 		if (random() < jumper) {
@@ -3494,10 +3594,8 @@ bot_moveresult_t BotAttackMove(bot_state_t *bs, int tfl) {
 			bs->attackjump_time = FloatTime() + 1;
 		}
 	}
-	// get the weapon information
-	trap_BotGetWeaponInfo(bs->ws, bs->weaponnum, &wi);
 	// if the bot is using a close combat weapon or if the enemy is using a weapon with splash damage, go closer
-	if ((!wi.numprojectiles && BotAggression(bs)) || ((entinfo.weapon == WP_NAPALMLAUNCHER || entinfo.weapon == WP_ROCKETLAUNCHER || entinfo.weapon == WP_BFG) && dist < 200 && selfpreservation < 0.5 && movetype != MOVE_CROUCH)) {
+	if ((BotUsesCloseCombatWeapon(bs) && BotAggression(bs)) || ((entinfo.weapon == WP_NAPALMLAUNCHER || entinfo.weapon == WP_ROCKETLAUNCHER || entinfo.weapon == WP_BFG) && dist < 200 && selfpreservation < 0.5 && movetype != MOVE_CROUCH)) {
 		attack_dist = 0;
 		attack_range = 0;
 	// if the bot is using the napalmlauncher, or the enemy is using the napalmlauncher
@@ -3555,7 +3653,7 @@ bot_moveresult_t BotAttackMove(bot_state_t *bs, int tfl) {
 		strafechange_time += crandom() * 0.2;
 	}
 	// close combat weapons
-	if (!wi.numprojectiles && BotAggression(bs)) {
+	if (BotUsesCloseCombatWeapon(bs) && BotAggression(bs)) {
 		bs->attackstrafe_time = 0;
 	}
 	// if the strafe direction should be changed
@@ -3949,7 +4047,7 @@ int BotFindEnemy(bot_state_t *bs, int curenemy) {
 		if (curenemy == bs->revenge_enemy && bs->revenge_kills > 0) {
 			return qfalse;
 		}
-		// less aggressive bots will immediatly stop firing if the enemy is dead.
+		// less aggressive bots will immediatly stop firing if the enemy is dead
 		if (EntityIsDead(&curenemyinfo) && aggression < 0.2) {
 			bs->enemy = -1;
 			curenemy = -1;
@@ -4625,7 +4723,7 @@ void BotAimAtEnemy(bot_state_t *bs) {
 			bestorigin[2] += 16;
 		}
 		// if it is not an instant hit weapon the bot might want to predict the enemy
-		if (wi.speed) {
+		if (!BotUsesInstantHitWeapon(bs)) {
 			VectorSubtract(bestorigin, bs->origin, dir);
 			dist = VectorLength(dir);
 			VectorSubtract(entinfo.origin, bs->enemyorigin, dir);
@@ -4719,7 +4817,7 @@ void BotAimAtEnemy(bot_state_t *bs) {
 		// if the bot is skilled enough
 		if (aim_skill > 0.5) {
 			// do prediction shots around corners
-			if (wi.speed) {
+			if (!BotUsesInstantHitWeapon(bs)) {
 				// create the chase goal
 				goal.entitynum = bs->client;
 				goal.areanum = bs->areanum;
@@ -4781,7 +4879,7 @@ NOTE: 6. This code becomes more precise the faster the projectile moves. Grenade
 WARNING 1: Accuracy is nearly 100% even with very fast projectiled weapons (e.g.: speed 20000 etc.), this means bots will always hit their opponents, even with a bow (eventually decrease the bots individual aim_accuracy), otherwise it is very likely you become shot down by an arrow without knowing :)
 WARNING 2: Bots will also throw grenades through windows even from distance, so be careful!
 */
-	if (wi.proj.gravity) {
+	if (BotUsesGravityAffectedProjectileWeapon(bs)) {
 		// direction towards the enemy
 		VectorSubtract(bestorigin, bs->origin, dir);
 		// distance towards the enemy
@@ -4822,7 +4920,7 @@ WARNING 2: Bots will also throw grenades through windows even from distance, so 
 	// get aim direction
 	VectorSubtract(bestorigin, bs->eye, dir);
 
-	if (!wi.speed) {
+	if (BotUsesInstantHitWeapon(bs)) {
 		// distance towards the enemy
 		dist = VectorLength(dir);
 
@@ -4937,10 +5035,8 @@ void BotCheckAttack(bot_state_t *bs) {
 	}
 
 	VectorSubtract(bs->aimtarget, bs->eye, dir);
-	// get the weapon info
-	trap_BotGetWeaponInfo(bs->ws, bs->weaponnum, &wi);
 
-	if (!wi.numprojectiles && BotWantsToRetreat(bs)) {
+	if (BotUsesCloseCombatWeapon(bs) && BotWantsToRetreat(bs)) {
 		if (VectorLengthSquared(dir) > Square(60)) {
 			return;
 		}
@@ -4969,6 +5065,8 @@ void BotCheckAttack(bot_state_t *bs) {
 	start[2] += bs->cur_ps.viewheight;
 
 	AngleVectors(bs->viewangles, forward, right, NULL);
+	// get the weapon info
+	trap_BotGetWeaponInfo(bs->ws, bs->weaponnum, &wi);
 
 	start[0] += forward[0] * wi.offset[0] + right[0] * wi.offset[1];
 	start[1] += forward[1] * wi.offset[0] + right[1] * wi.offset[1];
