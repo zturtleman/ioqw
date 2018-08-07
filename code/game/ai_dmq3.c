@@ -2936,10 +2936,10 @@ qboolean BotAvoidItemPickup(bot_state_t *bs, bot_goal_t *goal) {
 
 /*
 =======================================================================================================================================
-BotIsWaiting
+BotCanWait
 =======================================================================================================================================
 */
-qboolean BotIsWaiting(bot_state_t *bs, bot_goal_t *goal) {
+qboolean BotCanWait(bot_state_t *bs, bot_goal_t *goal) {
 
 	// never wait if there is an enemy
 	if (bs->enemy >= 0) {
@@ -2952,7 +2952,7 @@ qboolean BotIsWaiting(bot_state_t *bs, bot_goal_t *goal) {
 	// if the bot is waiting for a teammate to pick up items
 	if (BotAvoidItemPickup(bs, goal)) {
 		// pop the current goal from the stack
-		trap_BotPopGoal(bs->gs); // Tobias NOTE: without this we get a "goal heap overflow" error.
+		trap_BotPopGoal(bs->gs); // Tobias NOTE: without this we get an "goal heap overflow" error, why?
 		return qtrue;
 	}
 

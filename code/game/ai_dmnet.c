@@ -1510,25 +1510,13 @@ void BotClearPath(bot_state_t *bs, bot_moveresult_t *moveresult) {
 
 /*
 =======================================================================================================================================
-BotWaitTime
-=======================================================================================================================================
-*/
-float BotWaitTime(bot_state_t *bs) {
-	float obtrusiveness;
-
-	obtrusiveness = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_OBTRUSIVENESS, 0, 1);
-	return 0.9 - (obtrusiveness * 0.75) + random();
-}
-
-/*
-=======================================================================================================================================
 AIEnter_Wait
 =======================================================================================================================================
 */
 void AIEnter_Wait(bot_state_t *bs, char *s) {
 
 	BotRecordNodeSwitch(bs, "waiting", "", s);
-
+	bs->wait_time = FloatTime();
 	bs->ainode = AINode_Wait;
 }
 
@@ -1614,8 +1602,8 @@ int AINode_Wait(bot_state_t *bs) {
 	if (moveresult.flags & MOVERESULT_MOVEMENTWEAPON) {
 		bs->weaponnum = moveresult.weapon;
 	}
-	// when done standing
-	if (bs->wait_time < FloatTime()) {
+	// when done waiting
+	if (bs->wait_time < FloatTime() - 0.5) {
 		AIEnter_Seek_LTG(bs, "waiting: time out");
 		return qfalse;
 	}
@@ -1912,9 +1900,7 @@ int AINode_Seek_NBG(bot_state_t *bs) {
 		return qfalse;
 	}
 	// if the bot should wait
-	if (BotIsWaiting(bs, &goal)) {
-		trap_BotResetLastAvoidReach(bs->ms);
-		bs->wait_time = FloatTime() + BotWaitTime(bs);
+	if (BotCanWait(bs, &goal)) {
 		AIEnter_Wait(bs, "seek nbg: waiting");
 		return qfalse;
 	}
@@ -2098,9 +2084,7 @@ int AINode_Seek_LTG(bot_state_t *bs) {
 		}
 	}
 	// if the bot should wait
-	if (BotIsWaiting(bs, &goal)) {
-		trap_BotResetLastAvoidReach(bs->ms);
-		bs->wait_time = FloatTime() + BotWaitTime(bs);
+	if (BotCanWait(bs, &goal)) {
 		AIEnter_Wait(bs, "seek ltg: waiting");
 		return qfalse;
 	}
@@ -2440,9 +2424,7 @@ int AINode_Battle_Chase(bot_state_t *bs) {
 		}
 	}
 	// if the bot should wait
-	if (BotIsWaiting(bs, &goal)) {
-		trap_BotResetLastAvoidReach(bs->ms);
-		bs->wait_time = FloatTime() + BotWaitTime(bs);
+	if (BotCanWait(bs, &goal)) {
 		AIEnter_Wait(bs, "battle chase: waiting");
 		return qfalse;
 	}
@@ -2621,9 +2603,7 @@ int AINode_Battle_Retreat(bot_state_t *bs) {
 		}
 	}
 	// if the bot should wait
-	if (BotIsWaiting(bs, &goal)) {
-		trap_BotResetLastAvoidReach(bs->ms);
-		bs->wait_time = FloatTime() + BotWaitTime(bs);
+	if (BotCanWait(bs, &goal)) {
 		AIEnter_Wait(bs, "battle retreat: waiting");
 		return qfalse;
 	}
