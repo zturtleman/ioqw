@@ -3510,11 +3510,6 @@ bot_moveresult_t BotAttackMove(bot_state_t *bs, int tfl) {
 	bot_goal_t goal;
 	bsp_trace_t bsptrace;
 
-	// if the bot is in the air
-	if (bs->cur_ps.groundEntityNum == ENTITYNUM_NONE) {
-		return moveresult;
-	}
-
 	attackentity = bs->enemy;
 
 	if (attackentity < 0) {
@@ -3541,6 +3536,10 @@ bot_moveresult_t BotAttackMove(bot_state_t *bs, int tfl) {
 	jumper = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_JUMPER, 0, 1);
 	croucher = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_CROUCHER, 0, 1);
 	selfpreservation = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_SELFPRESERVATION, 0, 1);
+	// if the bot is in the air
+	if (bs->cur_ps.groundEntityNum == ENTITYNUM_NONE) {
+		return moveresult;
+	}
 	// if the bot is really stupid
 	if (attack_skill < 0.2) {
 		// check blocked teammates
