@@ -62,5 +62,5 @@ script "main"
 	moveto("red armor box");
 	wait(touch(1, "red armor box"));
 	moveto("near red armor box");
-	wait(touch(0, "red armor box");
+	wait(touch(0, "red armor box"));
 }
