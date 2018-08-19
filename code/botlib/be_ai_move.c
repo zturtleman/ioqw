@@ -809,7 +809,7 @@ int BotGetReachabilityToGoal(vec3_t origin, int areanum, int lastgoalareanum, in
 	aas_reachability_t reach;
 
 	// if not in a valid area
-	if (!areanum) {
+	if (!areanum || !goal->areanum || !AAS_AreaReachability(areanum)) {
 		return 0;
 	}
 

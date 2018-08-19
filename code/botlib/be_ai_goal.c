@@ -1344,14 +1344,16 @@ int BotChooseLTGItem(int goalstate, vec3_t origin, int *inventory, int travelfla
 	// if the bot is in solid or if the area the bot is in has no reachability links
 	if (!areanum || !AAS_AreaReachability(areanum)) {
 		// use the last valid area the bot was in
-		areanum = gs->lastreachabilityarea;
+		if (gs->lastreachabilityarea > 0) {
+			areanum = gs->lastreachabilityarea;
+		}
 	}
-	// remember the last area with reachabilities the bot was in
-	gs->lastreachabilityarea = areanum;
 	// if still in solid
 	if (!areanum) {
 		return qfalse;
 	}
+	// remember the last area with reachabilities the bot was in
+	gs->lastreachabilityarea = areanum;
 	// the item configuration
 	ic = itemconfig;
 
@@ -1529,14 +1531,16 @@ int BotChooseNBGItem(int goalstate, vec3_t origin, int *inventory, int travelfla
 	// if the bot is in solid or if the area the bot is in has no reachability links
 	if (!areanum || !AAS_AreaReachability(areanum)) {
 		// use the last valid area the bot was in
-		areanum = gs->lastreachabilityarea;
+		if (gs->lastreachabilityarea > 0) {
+			areanum = gs->lastreachabilityarea;
+		}
 	}
-	// remember the last area with reachabilities the bot was in
-	gs->lastreachabilityarea = areanum;
 	// if still in solid
 	if (!areanum) {
 		return qfalse;
 	}
+	// remember the last area with reachabilities the bot was in
+	gs->lastreachabilityarea = areanum;
 
 	if (ltg) {
 		ltg_time = AAS_AreaTravelTimeToGoalArea(areanum, origin, ltg->areanum, travelflags);

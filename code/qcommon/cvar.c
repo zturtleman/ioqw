@@ -558,7 +558,7 @@ cvar_t *Cvar_Set2(const char *var_name, const char *value, qboolean force) {
 			Com_Printf("%s is cheat protected.\n", var_name);
 			return var;
 		}
-		
+
 		if (var->flags & CVAR_LATCH) {
 			if (var->latchedString) {
 				if (strcmp(value, var->latchedString) == 0) {

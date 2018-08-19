@@ -3917,6 +3917,7 @@ static void UI_RunMenuScript(char **args) {
 					} else {
 						Com_sprintf(buff, sizeof(buff), "addbot %s %f %i\n", name, skill, delay);
 					}
+
 					trap_Cmd_ExecuteText(EXEC_APPEND, buff);
 					delay += 500;
 				}
@@ -3937,6 +3938,7 @@ static void UI_RunMenuScript(char **args) {
 					} else {
 						Com_sprintf(buff, sizeof(buff), "addbot %s %f %i\n", name, skill, delay);
 					}
+
 					trap_Cmd_ExecuteText(EXEC_APPEND, buff);
 					delay += 500;
 				}

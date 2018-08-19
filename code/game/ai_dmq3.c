@@ -1459,14 +1459,15 @@ void BotTeamGoals(bot_state_t *bs, int retreat) {
 	bs->order_time = 0;
 }
 
+#define BOTAREA_JIGGLE_DIST 32
 /*
 =======================================================================================================================================
 BotPointAreaNum
 =======================================================================================================================================
 */
 int BotPointAreaNum(vec3_t origin) {
-	int areanum, numareas, areas[10];
-	vec3_t end;
+	int areanum, numareas, areas[1];
+	vec3_t end, ofs;
 
 	areanum = trap_AAS_PointAreaNum(origin);
 
@@ -1477,10 +1478,23 @@ int BotPointAreaNum(vec3_t origin) {
 	VectorCopy(origin, end);
 
 	end[2] += 10;
-	numareas = trap_AAS_TraceAreas(origin, end, areas, NULL, 10);
+	numareas = trap_AAS_TraceAreas(origin, end, areas, NULL, 1);
 
 	if (numareas > 0) {
 		return areas[0];
+	}
+	// jiggle them around to look for a fuzzy area, helps LARGE characters reach destinations that are against walls
+	ofs[2] = 10;
+
+	for (ofs[0] = -BOTAREA_JIGGLE_DIST; ofs[0] <= BOTAREA_JIGGLE_DIST; ofs[0] += BOTAREA_JIGGLE_DIST * 2) {
+		for (ofs[1] = -BOTAREA_JIGGLE_DIST; ofs[1] <= BOTAREA_JIGGLE_DIST; ofs[1] += BOTAREA_JIGGLE_DIST * 2) {
+			VectorAdd(origin, ofs, end);
+			numareas = trap_AAS_TraceAreas(origin, end, areas, NULL, 1);
+
+			if (numareas > 0) {
+				return areas[0];
+			}
+		}
 	}
 
 	return 0;
