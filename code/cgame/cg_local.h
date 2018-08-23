@@ -1095,7 +1095,6 @@ typedef enum {
 	PLACE_BOTTOM
 } screenPlacement_e;
 #endif
-
 void CG_SetScreenPlacement(screenPlacement_e hpos, screenPlacement_e vpos);
 void CG_PopScreenPlacement(void);
 screenPlacement_e CG_GetScreenHorizontalPlacement(void);
@@ -1112,7 +1111,6 @@ void CG_DrawBigString(int x, int y, const char *s, float alpha);
 void CG_DrawBigStringColor(int x, int y, const char *s, vec4_t color);
 void CG_DrawSmallString(int x, int y, const char *s, float alpha);
 void CG_DrawSmallStringColor(int x, int y, const char *s, vec4_t color);
-
 int CG_DrawStrlen(const char *str);
 void CG_AdjustFrom640(float *x, float *y, float *w, float *h);
 void CG_FillRect(float x, float y, float width, float height, const float *color);

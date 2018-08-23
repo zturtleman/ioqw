@@ -1062,7 +1062,6 @@ typedef struct usercmd_s {
 } usercmd_t;
 
 #define SCOUT_SPEED_SCALE 1.5
-
 // if entityState->solid == SOLID_BMODEL, modelindex is an inline model number
 #define SOLID_BMODEL 0xffffff
 

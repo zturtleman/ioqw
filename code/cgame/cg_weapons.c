@@ -206,6 +206,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir) {
 		if (weapon == WP_RAILGUN) {
 			// colorize with client color
 			VectorCopy(cgs.clientinfo[clientNum].color1, le->color);
+
 			le->refEntity.shaderRGBA[0] = le->color[0] * 0xff;
 			le->refEntity.shaderRGBA[1] = le->color[1] * 0xff;
 			le->refEntity.shaderRGBA[2] = le->color[2] * 0xff;
@@ -407,7 +408,7 @@ static void CG_BeamgunBolt(centity_t *cent, vec3_t origin) {
 	}
 
 	memset(&beam, 0, sizeof(beam));
-	// CPMA  "true" lightning
+	// CPMA "true" lightning
 	if ((cent->currentState.number == cg.predictedPlayerState.clientNum) && (cg_trueLightning.value != 0)) {
 		vec3_t angle;
 		int i;
@@ -436,9 +437,9 @@ static void CG_BeamgunBolt(centity_t *cent, vec3_t origin) {
 
 		AngleVectorsForward(angle, forward);
 		VectorCopy(cent->lerpOrigin, muzzlePoint);
-//		VectorCopy(cg.refdef.vieworg, muzzlePoint);
+		//VectorCopy(cg.refdef.vieworg, muzzlePoint);
+	// !CPMA
 	} else {
-		// !CPMA
 		AngleVectorsForward(cent->lerpAngles, forward);
 		VectorCopy(cent->lerpOrigin, muzzlePoint);
 	}
