@@ -1723,8 +1723,6 @@ static qboolean BotUsesLongRangeInstantHitWeapon(bot_state_t *bs) {
 BotUsesMidRangeWeapon
 =======================================================================================================================================
 */
-
-/*
 static qboolean BotUsesMidRangeWeapon(bot_state_t *bs) {
 
 	switch (bs->weaponnum) {
@@ -1740,7 +1738,7 @@ static qboolean BotUsesMidRangeWeapon(bot_state_t *bs) {
 			return qfalse;
 	}
 }
-*/
+
 /*
 =======================================================================================================================================
 BotUsesGravityAffectedProjectileWeapon
@@ -4001,12 +3999,15 @@ BotFindEnemy
 */
 int BotFindEnemy(bot_state_t *bs, int curenemy) {
 	int i, f, healthdecrease, enemyArea;
-	float /*alertness, */aggression, easyfragger, squaredist, cursquaredist;
+	float /*alertness, */aggression, enemypreference, easyfragger, squaredist, curdist, cursquaredist;
 	aas_entityinfo_t entinfo, curenemyinfo, curbotinfo;
 	vec3_t dir, angles;
 	qboolean foundEnemy;
+	//char botname[32];
 
+	//ClientName(bs->client, botname, sizeof(botname));
 	//alertness = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_ALERTNESS, 0, 1);
+	enemypreference = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_ENEMY_PREFERENCE, 0, 1);
 	easyfragger = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_EASY_FRAGGER, 0, 1);
 	aggression = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AGGRESSION, 0, 1);
 	// check if the health decreased by a reliable method (consider automatic decrease if health > max. health!)
@@ -4059,6 +4060,38 @@ int BotFindEnemy(bot_state_t *bs, int curenemy) {
 		// looking for revenge
 		if (curenemy == bs->revenge_enemy && bs->revenge_kills > 0) {
 			return qfalse;
+		}
+		// if stupid ignore all new enemies
+		if (enemypreference < 0.2) {
+			//BotAI_Print(PRT_MESSAGE, "%s: I already have an enemy!.\n", botname);
+			return qfalse;
+		}
+		// calculate the distance towards the enemy
+		VectorSubtract(curenemyinfo.origin, bs->origin, dir);
+
+		curdist = VectorLength(dir);
+		// if this enemy is not too far away and the bot has a precise weapon and if the enemy is weaker than the bot itself
+		if (enemypreference > 0.4 && curdist < 650 && BotUsesMidRangeWeapon(bs) && bs->lasthealth - 40 > g_entities[curenemy].health) {
+			// if the enemy is standing still, or is just moving slowly (could be a camper)
+			if (enemypreference < 0.5 && VectorLength(bs->enemyvelocity) < 200) {
+				//BotAI_Print(PRT_MESSAGE, S_COLOR_MAGENTA "%s: Health = %i, Current enemy health = %i. Enemy isn't moving.\n", botname, bs->lasthealth, g_entities[curenemy].health);
+				return qfalse;
+			}
+			// prefer enemies with higher scores
+			if (enemypreference > 0.9 && g_entities[curenemy].client->ps.persistant[PERS_SCORE] > bs->cur_ps.persistant[PERS_SCORE]) {
+				//BotAI_Print(PRT_MESSAGE, S_COLOR_CYAN "%s: Health = %i, Current enemy health = %i. Current enemy score = %i, Own score = %i.\n", botname, bs->lasthealth, g_entities[curenemy].health, g_entities[curenemy].client->ps.persistant[PERS_SCORE], bs->cur_ps.persistant[PERS_SCORE]);
+				return qfalse;
+			}
+			// if this is enemy has the quad damage or the regenration powerup
+			if (enemypreference > 0.7 && (curenemyinfo.powerups & (1 << PW_QUAD) || curenemyinfo.powerups & (1 << PW_REGEN))) {
+				//BotAI_Print(PRT_MESSAGE, S_COLOR_BLUE "%s: Health = %i, Current enemy health = %i. Enemy has powerup.\n", botname, bs->lasthealth, g_entities[curenemy].health);
+				return qfalse;
+			}
+			// if this is enemy is low on health
+			if (enemypreference > 0.6) {
+				//BotAI_Print(PRT_MESSAGE, S_COLOR_YELLOW "%s: Health = %i, Current enemy health = %i. Enemy is low on health.\n", botname, bs->lasthealth, g_entities[curenemy].health);
+				return qfalse;
+			}
 		}
 		// less aggressive bots will immediatly stop firing if the enemy is dead
 		if (EntityIsDead(&curenemyinfo) && aggression < 0.2) {

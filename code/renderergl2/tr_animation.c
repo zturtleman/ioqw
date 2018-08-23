@@ -128,6 +128,7 @@ int R_MDRComputeFogNum(mdrHeader_t *header, trRefEntity_t *ent) {
 	frameSize = (size_t)(&((mdrFrame_t *)0)->bones[header->numBones]);
 	// FIXME: non-normalized axis issues
 	mdrFrame = (mdrFrame_t *)((byte *)header + header->ofsFrames + frameSize * ent->e.frame);
+
 	VectorAdd(ent->e.origin, mdrFrame->localOrigin, localOrigin);
 
 	for (i = 1; i < tr.world->numfogs; i++) {
