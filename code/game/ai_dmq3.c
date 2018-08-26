@@ -2871,7 +2871,7 @@ qboolean BotAvoidItemPickup(bot_state_t *bs, bot_goal_t *goal) {
 
 		ent = &g_entities[i];
 		// ignore non-moving teammates
-		if (VectorLength(ent->client->ps.velocity) <= 0) {
+		if (VectorLengthSquared(ent->client->ps.velocity) <= 0) {
 			continue;
 		}
 
@@ -4721,7 +4721,7 @@ void BotAimAtEnemy(bot_state_t *bs) {
 		aim_accuracy = 0.0001f;
 	}
 	// if the bot is standing still
-	if (VectorLength(bs->cur_ps.velocity) <= 0) {
+	if (VectorLengthSquared(bs->cur_ps.velocity) <= 0) {
 		aim_accuracy += 0.2;
 	}
 	// if the bot is crouching
@@ -6078,7 +6078,7 @@ void BotCheckBlockedTeammates(bot_state_t *bs) {
 
 		ent = &g_entities[i];
 /*
-		if (VectorLength(ent->client->ps.velocity) <= 0) {
+		if (VectorLengthSquared(ent->client->ps.velocity) <= 0) {
 			continue;
 		}
 */

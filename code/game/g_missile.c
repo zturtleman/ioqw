@@ -292,7 +292,7 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace) {
 
 			BG_EvaluateTrajectoryDelta(&ent->s.pos, level.time, velocity);
 
-			if (VectorLength(velocity) == 0) {
+			if (VectorLengthSquared(velocity) == 0) {
 				velocity[2] = 1; // stepped on a grenade
 			}
 
