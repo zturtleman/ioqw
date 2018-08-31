@@ -1294,6 +1294,7 @@ see the last frag.
 void CheckExitRules(void) {
 	int i;
 	gclient_t *cl;
+	qboolean won = qtrue;
 
 	// if at the intermission, wait for all non-bots to signal ready, then go to next level
 	if (level.intermissiontime) {
@@ -1306,6 +1307,15 @@ void CheckExitRules(void) {
 
 		if (level.time - level.intermissionQueued >= time) {
 			level.intermissionQueued = 0;
+
+			if (g_gametype.integer > GT_TOURNAMENT) {
+				if (level.teamScores[TEAM_RED] > level.teamScores[TEAM_BLUE]) {
+					won = qfalse;
+				}
+
+				trap_SendServerCommand(-1, (won) ? "blueWins\n" : "redWins\n");
+			}
+
 			BeginIntermission();
 		}
 

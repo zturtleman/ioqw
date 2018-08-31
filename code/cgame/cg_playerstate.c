@@ -356,10 +356,6 @@ void CG_CheckLocalSounds(playerState_t *ps, playerState_t *ops) {
 		trap_S_StartLocalSound(sfx, CHAN_ANNOUNCER);
 	}
 
-	if (ps->persistant[PERS_CAPTURES] != ops->persistant[PERS_CAPTURES]) {
-		trap_S_StartLocalSound(cgs.media.captureAwardSound, CHAN_ANNOUNCER);
-	}
-
 	if (ps->persistant[PERS_DEFEND_COUNT] != ops->persistant[PERS_DEFEND_COUNT]) {
 		trap_S_StartLocalSound(cgs.media.defendSound, CHAN_ANNOUNCER);
 	}

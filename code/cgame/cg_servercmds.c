@@ -1079,6 +1079,16 @@ static void CG_ServerCommand(void) {
 		return;
 	}
 
+	if (!strcmp(cmd, "redWins")) {
+		trap_S_StartLocalSound(cgs.media.redWinsSound, CHAN_ANNOUNCER);
+		return;
+	}
+ 
+	if (!strcmp(cmd, "blueWins")) {
+		trap_S_StartLocalSound(cgs.media.blueWinsSound, CHAN_ANNOUNCER);
+		return;
+	}
+
 	if (!strcmp(cmd, "map_restart")) {
 		CG_MapRestart();
 		return;
