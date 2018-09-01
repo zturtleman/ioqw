@@ -5009,11 +5009,88 @@ WARNING 2: Bots will also throw grenades through windows even from distance, so 
 
 /*
 =======================================================================================================================================
+BotMayRadiusDamageTeamMate
+=======================================================================================================================================
+*/
+static qboolean BotMayRadiusDamageTeamMate(bot_state_t *bs, vec3_t origin, float radius) {
+	gentity_t *ent;
+	int i, e, numListedEntities, entityList[MAX_GENTITIES];
+	float selfpreservation, teampreservation;
+	vec3_t mins, maxs, v;
+	team_t team;
+
+	if (g_gametype.integer < GT_TEAM) {
+		return qfalse;
+	}
+
+	if (!g_friendlyFire.integer) {
+		return qfalse;
+	}
+
+	if (radius < 1) {
+		radius = 1;
+	}
+
+	for (i = 0; i < 3; i++) {
+		mins[i]= origin[i] - radius;
+		maxs[i]= origin[i] + radius;
+	}
+
+	team = g_entities[bs->entitynum].client->sess.sessionTeam;
+	numListedEntities = trap_EntitiesInBox(mins, maxs, entityList, MAX_GENTITIES);
+	selfpreservation = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_SELFPRESERVATION, 0, 1);
+	teampreservation = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_TEAMPRESERVATION, 0, 1);
+
+	for (e = 0; e < numListedEntities; e++) {
+		ent = &g_entities[entityList[e]];
+		// if this is the bot self
+		if (e == bs->client && selfpreservation < 1) {
+			continue;
+		}
+
+		if (!ent->takedamage) {
+			continue;
+		}
+
+		if (!ent->client) {
+			continue;
+		}
+
+		if (ent->client->sess.sessionTeam != team) {
+			continue;
+		}
+
+		if (ent->client->ps.stats[STAT_HEALTH] <= 0) {
+			continue;
+		}
+		// find the distance from the edge of the bounding box
+		for (i = 0; i < 3; i++) {
+			if (origin[i] < ent->r.absmin[i]) {
+				v[i] = ent->r.absmin[i] - origin[i];
+			} else if (origin[i] > ent->r.absmax[i]) {
+				v[i] = origin[i] - ent->r.absmax[i];
+			} else {
+				v[i] = 0;
+			}
+		}
+
+		if (VectorLength(v) >= (radius * 2 * teampreservation)) {
+			continue;
+		}
+
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
+/*
+=======================================================================================================================================
 BotCheckAttack
 =======================================================================================================================================
 */
 void BotCheckAttack(bot_state_t *bs) {
-	float points, reactiontime, firethrottle;
+	float reactiontime, firethrottle;
 	int attackentity, fov;
 	bsp_trace_t bsptrace;
 	//float selfpreservation;
@@ -5131,18 +5208,10 @@ void BotCheckAttack(bot_state_t *bs) {
 			}
 		}
 	}
-	// if won't hit the enemy or not attacking a player (could be an obelisk)
-	if (trace.entityNum != attackentity || attackentity >= MAX_CLIENTS) {
-		// if the projectile does radial damage
-		if (wi.proj.damagetype & DAMAGETYPE_RADIAL) {
-			if (trace.fraction * 1000 < wi.proj.radius) {
-				points = (wi.proj.damage - 0.5 * trace.fraction * 1000) * 0.5;
 
-				if (points > 0) {
-					return;
-				}
-			}
-			// FIXME: check if a teammate gets radial damage
+	if (wi.proj.damagetype & DAMAGETYPE_RADIAL) {
+		if (BotMayRadiusDamageTeamMate(bs, trace.endpos, wi.proj.radius)) {
+			return;
 		}
 	}
 	// if fire has to be release to activate weapon
