@@ -311,7 +311,7 @@ static void CG_ConfigStringModified(void) {
 		cgs.voteModified = qtrue;
 	} else if (num == CS_VOTE_STRING) {
 		Q_strncpyz(cgs.voteString, str, sizeof(cgs.voteString));
-		trap_S_StartLocalSound(cgs.media.voteNow, CHAN_ANNOUNCER);
+		CG_AddBufferedSound(cgs.media.voteNow);
 	} else if (num >= CS_TEAMVOTE_TIME && num <= CS_TEAMVOTE_TIME + 1) {
 		cgs.teamVoteTime[num - CS_TEAMVOTE_TIME] = atoi(str);
 		cgs.teamVoteModified[num - CS_TEAMVOTE_TIME] = qtrue;
@@ -323,7 +323,7 @@ static void CG_ConfigStringModified(void) {
 		cgs.teamVoteModified[num - CS_TEAMVOTE_NO] = qtrue;
 	} else if (num >= CS_TEAMVOTE_STRING && num <= CS_TEAMVOTE_STRING + 1) {
 		Q_strncpyz(cgs.teamVoteString[num - CS_TEAMVOTE_STRING], str, sizeof(cgs.teamVoteString[0]));
-		trap_S_StartLocalSound(cgs.media.voteNow, CHAN_ANNOUNCER);
+		CG_AddBufferedSound(cgs.media.voteNow);
 	} else if (num == CS_INTERMISSION) {
 		cg.intermissionStarted = atoi(str);
 	} else if (num >= CS_MODELS && num < CS_MODELS + MAX_MODELS) {
@@ -438,6 +438,11 @@ static void CG_MapRestart(void) {
 	CG_InitLocalEntities();
 	CG_InitMarkPolys();
 	CG_ClearParticles();
+	// NOTE: do we need this?
+	cg.soundTime = 0;
+	cg.soundBufferIn = 0;
+	cg.soundBufferOut = 0;
+	cg.soundBuffer[cg.soundBufferOut] = 0;
 	// make sure the "3 frags left" warnings play again
 	cg.fraglimitWarnings = 0;
 	cg.timelimitWarnings = 0;
@@ -1025,9 +1030,9 @@ static void CG_ServerCommand(void) {
 		cmd = CG_Argv(1); // yes, this is obviously a hack, but so is the way we hear about votes passing or failing
 
 		if (!Q_stricmpn(cmd, "vote failed", 11) || !Q_stricmpn(cmd, "team vote failed", 16)) {
-			trap_S_StartLocalSound(cgs.media.voteFailed, CHAN_ANNOUNCER);
+			CG_AddBufferedSound(cgs.media.voteFailed);
 		} else if (!Q_stricmpn(cmd, "vote passed", 11) || !Q_stricmpn(cmd, "team vote passed", 16)) {
-			trap_S_StartLocalSound(cgs.media.votePassed, CHAN_ANNOUNCER);
+			CG_AddBufferedSound(cgs.media.votePassed);
 		}
 
 		return;

@@ -771,6 +771,10 @@ void CG_AddBufferedSound(sfxHandle_t sfx) {
 	if (!sfx) {
 		return;
 	}
+	// if we are going into the intermission, don't start any voices
+	if (cg.intermissionStarted || (cg.warmup && cg.warmupCount < 6)) {
+		return;
+	}
 
 	cg.soundBuffer[cg.soundBufferIn] = sfx;
 	cg.soundBufferIn = (cg.soundBufferIn + 1) % MAX_SOUNDBUFFER;
@@ -782,17 +786,38 @@ void CG_AddBufferedSound(sfxHandle_t sfx) {
 
 /*
 =======================================================================================================================================
+CG_HasBufferedSound
+=======================================================================================================================================
+*/
+qboolean CG_HasBufferedSound(void) {
+	return (cg.soundBufferOut != cg.soundBufferIn && cg.soundBuffer[cg.soundBufferOut]);
+}
+
+/*
+=======================================================================================================================================
 CG_PlayBufferedSounds
 =======================================================================================================================================
 */
 static void CG_PlayBufferedSounds(void) {
 
-	if (cg.soundTime < cg.time) {
-		if (cg.soundBufferOut != cg.soundBufferIn && cg.soundBuffer[cg.soundBufferOut]) {
-			trap_S_StartLocalSound(cg.soundBuffer[cg.soundBufferOut], CHAN_ANNOUNCER);
-			cg.soundBuffer[cg.soundBufferOut] = 0;
-			cg.soundBufferOut = (cg.soundBufferOut + 1) % MAX_SOUNDBUFFER;
-			cg.soundTime = cg.time + 750;
+	if (cg.intermissionStarted || (cg.warmup && cg.warmupCount < 6)) {
+		// NOTE: do we need this?
+		cg.soundTime = 0;
+		cg.soundBufferIn = 0;
+		cg.soundBufferOut = 0;
+		cg.soundBuffer[cg.soundBufferOut] = 0;
+		return;
+	}
+
+	if (cg.soundTime < cg.time && CG_HasBufferedSound()) {
+		trap_S_StartLocalSound(cg.soundBuffer[cg.soundBufferOut], CHAN_ANNOUNCER);
+		cg.soundBuffer[cg.soundBufferOut] = 0;
+		cg.soundBufferOut = (cg.soundBufferOut + 1) % MAX_SOUNDBUFFER;
+
+		if (cgs.gametype > GT_TEAM) {
+			cg.soundTime = cg.time + 2000;
+		} else {
+			cg.soundTime = cg.time + 1500;
 		}
 	}
 }

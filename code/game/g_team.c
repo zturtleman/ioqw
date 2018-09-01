@@ -647,10 +647,18 @@ void Team_CaptureFlagSound(gentity_t *ent, int team) {
 
 	te = G_TempEntity(ent->s.pos.trBase, EV_GLOBAL_TEAM_SOUND);
 
-	if (team == TEAM_BLUE) {
-		te->s.eventParm = GTS_BLUE_CAPTURE;
+	if (g_gametype.integer > GT_1FCTF) {
+		if (team == TEAM_BLUE) {
+			te->s.eventParm = GTS_RED_CAPTURE;
+		} else {
+			te->s.eventParm = GTS_BLUE_CAPTURE;
+		}
 	} else {
-		te->s.eventParm = GTS_RED_CAPTURE;
+		if (team == TEAM_BLUE) {
+			te->s.eventParm = GTS_BLUE_CAPTURE;
+		} else {
+			te->s.eventParm = GTS_RED_CAPTURE;
+		}
 	}
 
 	te->r.svFlags |= SVF_BROADCAST;
