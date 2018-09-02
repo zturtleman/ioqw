@@ -163,8 +163,8 @@ typedef struct bot_state_s {
 	float lastchat_time;					// time the bot last selected a chat
 	float kamikaze_time;					// time to check for kamikaze usage
 	float standfindenemy_time;				// time to find enemy while standing
+	float crouch_time;						// time the bot will stop crouching
 	float attackstrafe_time;				// time the bot is strafing in one dir
-	float attackcrouch_time;				// time the bot will stop crouching
 	float attackchase_time;					// time the bot chases during actual attack
 	float attackjump_time;					// time the bot jumped during attack
 	float enemysight_time;					// time before reacting to enemy

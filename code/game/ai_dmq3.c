@@ -3516,7 +3516,7 @@ BotAttackMove
 bot_moveresult_t BotAttackMove(bot_state_t *bs, int tfl) {
 	int movetype, i, attackentity, attack_dist, attack_range;
 	float attack_skill, jumper, croucher, dist, selfpreservation, strafechange_time;
-	vec3_t forward, backward, sideward, start, hordir, up = {0, 0, 1};
+	vec3_t forward, backward, sideward, start, hordir, up = {0, 0, 1}, mins = {-4, -4, -4}, maxs = {4, 4, 4};
 	aas_entityinfo_t entinfo;
 	bot_moveresult_t moveresult;
 	bot_goal_t goal;
@@ -3575,23 +3575,27 @@ bot_moveresult_t BotAttackMove(bot_state_t *bs, int tfl) {
 		croucher = 0;
 	}
 
-	if (bs->attackcrouch_time < FloatTime() - 1) {
+	if (bs->crouch_time < FloatTime() - 1) {
 		if (random() < jumper) {
 			movetype = MOVE_JUMP;
 		// wait at least one second before crouching again
-		} else if (bs->attackcrouch_time < FloatTime() - 1 && random() < croucher) {
-			bs->attackcrouch_time = FloatTime() + croucher * 5;
+		} else if (bs->crouch_time < FloatTime() - 1 && random() < croucher) {
+			bs->crouch_time = FloatTime() + croucher * 5;
 		}
 	}
-
-	if (bs->attackcrouch_time > FloatTime()) {
-		// get the start point aiming from
+	// don't crouch when swimming
+	if (trap_AAS_Swimming(bs->origin)) {
+		bs->crouch_time = FloatTime() - 1;
+	}
+	// if the bot wants to crouch
+	if (bs->crouch_time > FloatTime()) {
+		// only try to crouch if the enemy remains visible
 		VectorCopy(bs->origin, start);
 
 		start[2] += CROUCH_VIEWHEIGHT;
 
-		BotAI_Trace(&bsptrace, start, NULL, NULL, entinfo.origin, bs->client, MASK_SHOT);
-		// only try to crouch if the enemy remains visible
+		BotAI_Trace(&bsptrace, start, mins, maxs, entinfo.origin, bs->client, MASK_SHOT);
+		// if the enemy is visible from the current position
 		if (bsptrace.fraction >= 1.0 || bsptrace.entityNum == attackentity) {
 			movetype = MOVE_CROUCH;
 		}
@@ -6182,7 +6186,7 @@ void BotCheckBlockedTeammates(bot_state_t *bs) {
 		// if the teammate is too close (blocked)
 		if (trace.entityNum == i && (trace.startsolid || trace.fraction < 1.0)) {
 			// stop crouching to gain speed
-			bs->attackcrouch_time = FloatTime() - 1;
+			bs->crouch_time = FloatTime() - 1;
 			// look into the direction of the blocked teammate
 			vectoangles(v2, bs->ideal_viewangles);
 			// get the sideward vector

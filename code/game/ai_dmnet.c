@@ -341,12 +341,13 @@ We could also create a separate AI node for every long term goal type. However, 
 =======================================================================================================================================
 */
 int BotGetLongTermGoal(bot_state_t *bs, int tfl, int retreat, bot_goal_t *goal) {
-	vec3_t target, dir;
+	vec3_t target, dir, start;
 	char netname[MAX_NETNAME];
 	char buf[MAX_MESSAGE_SIZE];
 	int areanum, teammates;
 	float croucher;
 	aas_entityinfo_t entinfo;
+	bsp_trace_t bsptrace;
 	bot_waypoint_t *wp;
 
 	if (bs->ltgtype == LTG_TEAMHELP && !retreat) {
@@ -425,16 +426,16 @@ int BotGetLongTermGoal(bot_state_t *bs, int tfl, int retreat, bot_goal_t *goal) 
 
 		if (VectorLengthSquared(dir) < Square(bs->formation_dist + (teammates * bs->formation_dist))) {
 			// check if the bot wants to crouch, don't crouch if crouched less than 5 seconds ago
-			if (bs->attackcrouch_time < FloatTime() - 5) {
+			if (bs->crouch_time < FloatTime() - 5) {
 				croucher = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_CROUCHER, 0, 1);
 
 				if (random() < bs->thinktime * croucher) {
-					bs->attackcrouch_time = FloatTime() + 5 + croucher * 15;
+					bs->crouch_time = FloatTime() + 5 + croucher * 15;
 				}
 			}
 			// don't crouch when swimming
 			if (trap_AAS_Swimming(bs->origin)) {
-				bs->attackcrouch_time = FloatTime() - 1;
+				bs->crouch_time = FloatTime() - 1;
 			}
 			// if the companion is visible
 			if (BotEntityVisible(&bs->cur_ps, 360, bs->teammate)) {
@@ -449,8 +450,17 @@ int BotGetLongTermGoal(bot_state_t *bs, int tfl, int retreat, bot_goal_t *goal) 
 						trap_BotEnterChat(bs->cs, bs->teammate, CHAT_TELL);
 						bs->arrive_time = FloatTime();
 					// if the bot wants to crouch
-					} else if (bs->attackcrouch_time > FloatTime()) {
-						trap_EA_Crouch(bs->client);
+					} else if (bs->crouch_time > FloatTime()) {
+						// only try to crouch if the teammate remains visible
+						VectorCopy(bs->origin, start);
+
+						start[2] += CROUCH_VIEWHEIGHT;
+
+						BotAI_Trace(&bsptrace, start, NULL, NULL, entinfo.origin, bs->client, MASK_SHOT);
+						// if the teammate is visible from the current position
+						if (bsptrace.fraction >= 1.0 || bsptrace.entityNum == bs->teammate) {
+							trap_EA_Crouch(bs->client);
+						}
 					// else do some model taunts
 					} else if (random() < bs->thinktime * 0.05) {
 						// do a gesture :)
@@ -667,20 +677,20 @@ int BotGetLongTermGoal(bot_state_t *bs, int tfl, int retreat, bot_goal_t *goal) 
 				bs->ideal_viewangles[2] *= 0.5;
 			}
 			// check if the bot wants to crouch, don't crouch if crouched less than 5 seconds ago
-			if (bs->attackcrouch_time < FloatTime() - 5) {
+			if (bs->crouch_time < FloatTime() - 5) {
 				croucher = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_CROUCHER, 0, 1);
 
 				if (random() < bs->thinktime * croucher) {
-					bs->attackcrouch_time = FloatTime() + 5 + croucher * 15;
+					bs->crouch_time = FloatTime() + 5 + croucher * 15;
 				}
-			}
-			// if the bot wants to crouch
-			if (bs->attackcrouch_time > FloatTime()) {
-				trap_EA_Crouch(bs->client);
 			}
 			// don't crouch when swimming
 			if (trap_AAS_Swimming(bs->origin)) {
-				bs->attackcrouch_time = FloatTime() - 1;
+				bs->crouch_time = FloatTime() - 1;
+			}
+			// if the bot wants to crouch
+			if (bs->crouch_time > FloatTime()) {
+				trap_EA_Crouch(bs->client);
 			}
 			// make sure the bot is not gonna drown
 			if (trap_PointContents(bs->eye, bs->entitynum) & (CONTENTS_WATER|CONTENTS_SLIME|CONTENTS_LAVA)) {
@@ -1437,9 +1447,9 @@ void BotClearPath(bot_state_t *bs, bot_moveresult_t *moveresult) {
 					// if the bot is pretty close with its aim
 					if (InFieldOfVision(bs->viewangles, 20, moveresult->ideal_viewangles)) {
 						BotAI_Trace(&bsptrace, bs->eye, NULL, NULL, target, bs->entitynum, MASK_SHOT);
-						// if the mine is visible from the current position
+						// if the corpse is visible from the current position
 						if (bsptrace.fraction >= 1.0 || bsptrace.entityNum == state.number) {
-							// shoot at the mine
+							// shoot at the kamikaze corpse
 							trap_EA_Attack(bs->client);
 						}
 					}
