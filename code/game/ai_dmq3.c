@@ -3589,11 +3589,11 @@ bot_moveresult_t BotAttackMove(bot_state_t *bs, int tfl) {
 	}
 	// if the bot wants to crouch
 	if (bs->crouch_time > FloatTime()) {
-		// only try to crouch if the enemy remains visible
+		// get the start point shooting from
 		VectorCopy(bs->origin, start);
 
 		start[2] += CROUCH_VIEWHEIGHT;
-
+		// only try to crouch if the enemy remains visible
 		BotAI_Trace(&bsptrace, start, mins, maxs, entinfo.origin, bs->client, MASK_SHOT);
 		// if the enemy is visible from the current position
 		if (bsptrace.fraction >= 1.0 || bsptrace.entityNum == attackentity) {
@@ -4086,12 +4086,12 @@ int BotFindEnemy(bot_state_t *bs, int curenemy) {
 				//BotAI_Print(PRT_MESSAGE, S_COLOR_CYAN "%s: Health = %i, Current enemy health = %i. Current enemy score = %i, Own score = %i.\n", botname, bs->lasthealth, g_entities[curenemy].health, g_entities[curenemy].client->ps.persistant[PERS_SCORE], bs->cur_ps.persistant[PERS_SCORE]);
 				return qfalse;
 			}
-			// if this is enemy has the quad damage or the regenration powerup
+			// if this enemy has the quad damage or the regenration powerup
 			if (enemypreference > 0.7 && (curenemyinfo.powerups & (1 << PW_QUAD) || curenemyinfo.powerups & (1 << PW_REGEN))) {
 				//BotAI_Print(PRT_MESSAGE, S_COLOR_BLUE "%s: Health = %i, Current enemy health = %i. Enemy has powerup.\n", botname, bs->lasthealth, g_entities[curenemy].health);
 				return qfalse;
 			}
-			// if this is enemy is low on health
+			// if this enemy is low on health
 			if (enemypreference > 0.6) {
 				//BotAI_Print(PRT_MESSAGE, S_COLOR_YELLOW "%s: Health = %i, Current enemy health = %i. Enemy is low on health.\n", botname, bs->lasthealth, g_entities[curenemy].health);
 				return qfalse;

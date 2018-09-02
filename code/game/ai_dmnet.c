@@ -451,11 +451,11 @@ int BotGetLongTermGoal(bot_state_t *bs, int tfl, int retreat, bot_goal_t *goal) 
 						bs->arrive_time = FloatTime();
 					// if the bot wants to crouch
 					} else if (bs->crouch_time > FloatTime()) {
-						// only try to crouch if the teammate remains visible
+						// get the start point looking from
 						VectorCopy(bs->origin, start);
 
 						start[2] += CROUCH_VIEWHEIGHT;
-
+						// only try to crouch if the teammate remains visible
 						BotAI_Trace(&bsptrace, start, NULL, NULL, entinfo.origin, bs->client, MASK_SHOT);
 						// if the teammate is visible from the current position
 						if (bsptrace.fraction >= 1.0 || bsptrace.entityNum == bs->teammate) {
