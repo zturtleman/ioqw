@@ -3574,6 +3574,10 @@ bot_moveresult_t BotAttackMove(bot_state_t *bs, int tfl) {
 	} else if (BotWantsToRetreat(bs)) {
 		croucher = 0;
 	}
+	// don't jump if the enemy is quite far away
+	if (dist > 1024) {
+		jumper = 0;
+	}
 
 	if (bs->crouch_time < FloatTime() - 1) {
 		if (random() < jumper) {
@@ -4608,6 +4612,10 @@ void BotAimAtEnemy(bot_state_t *bs) {
 	if (bs->enemy < 0) {
 		return;
 	}
+
+	if (bs->weaponnum <= WP_NONE || bs->weaponnum >= WP_NUM_WEAPONS) {
+		return;
+	}
 	// get the entity information
 	BotEntityInfo(bs->enemy, &entinfo);
 	// if this is not a player (could be an obelisk)
@@ -5109,6 +5117,10 @@ void BotCheckAttack(bot_state_t *bs) {
 	if (attackentity < 0) {
 		return;
 	}
+
+	if (bs->weaponnum <= WP_NONE || bs->weaponnum >= WP_NUM_WEAPONS) {
+		return;
+	}
 	// get the entity information
 	BotEntityInfo(attackentity, &entinfo);
 	// if the entity isn't dead
@@ -5144,30 +5156,14 @@ void BotCheckAttack(bot_state_t *bs) {
 	if (bs->weaponchange_time > FloatTime() - 0.1) {
 		return;
 	}
-	// check fire throttle characteristic
-	if (bs->firethrottlewait_time > FloatTime()) {
+
+	BotAI_Trace(&bsptrace, bs->eye, NULL, NULL, bs->aimtarget, bs->client, MASK_SHOT);
+
+	if (bsptrace.fraction < 1.0 && bsptrace.entityNum != attackentity) {
 		return;
 	}
 
-	firethrottle = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_FIRETHROTTLE, 0, 1);
-
-	if (bs->firethrottleshoot_time < FloatTime()) {
-		if (random() > firethrottle) {
-			bs->firethrottlewait_time = FloatTime() + firethrottle;
-			bs->firethrottleshoot_time = 0;
-		} else {
-			bs->firethrottleshoot_time = FloatTime() + 1 - firethrottle;
-			bs->firethrottlewait_time = 0;
-		}
-	}
-
 	VectorSubtract(bs->aimtarget, bs->eye, dir);
-
-	if (BotUsesCloseCombatWeapon(bs) && BotWantsToRetreat(bs)) {
-		if (VectorLengthSquared(dir) > Square(60)) {
-			return;
-		}
-	}
 
 	if (VectorLengthSquared(dir) < Square(100)) {
 		fov = 120;
@@ -5178,12 +5174,6 @@ void BotCheckAttack(bot_state_t *bs) {
 	vectoangles(dir, angles);
 
 	if (!InFieldOfVision(bs->viewangles, fov, angles)) {
-		return;
-	}
-
-	BotAI_Trace(&bsptrace, bs->eye, NULL, NULL, bs->aimtarget, bs->client, MASK_SHOT);
-
-	if (bsptrace.fraction < 1 && bsptrace.entityNum != attackentity) {
 		return;
 	}
 	// get the start point shooting from
@@ -5215,6 +5205,32 @@ void BotCheckAttack(bot_state_t *bs) {
 
 	if (wi.proj.damagetype & DAMAGETYPE_RADIAL) {
 		if (BotMayRadiusDamageTeamMate(bs, trace.endpos, wi.proj.radius)) {
+			return;
+		}
+	}
+	// check fire throttle characteristic
+	if (bs->firethrottlewait_time > FloatTime()) {
+		return;
+	}
+
+	firethrottle = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_FIRETHROTTLE, 0, 1);
+	// if attacking an obelisk or if the bot wants to retreat and using the grenadelauncher
+	if ((bs->enemy >= MAX_CLIENTS && (bs->enemy == redobelisk.entitynum || bs->enemy == blueobelisk.entitynum)) || (bs->weaponnum == WP_GRENADELAUNCHER && BotWantsToRetreat(bs))) {
+		firethrottle = 0;
+	}
+
+	if (bs->firethrottleshoot_time < FloatTime()) {
+		if (random() > firethrottle) {
+			bs->firethrottlewait_time = FloatTime() + firethrottle;
+			bs->firethrottleshoot_time = 0;
+		} else {
+			bs->firethrottleshoot_time = FloatTime() + 1 - firethrottle;
+			bs->firethrottlewait_time = 0;
+		}
+	}
+
+	if (BotUsesCloseCombatWeapon(bs) && BotWantsToRetreat(bs)) {
+		if (VectorLengthSquared(dir) > Square(60)) {
 			return;
 		}
 	}

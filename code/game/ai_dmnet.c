@@ -225,6 +225,16 @@ BotReachedGoal
 int BotReachedGoal(bot_state_t *bs, bot_goal_t *goal) {
 
 	if (goal->flags & GFL_ITEM) {
+		// if the item is a dropped item it may no longer exist
+		if (goal->flags & GFL_DROPPED) {
+			if (!g_entities[goal->entitynum].inuse) {
+				return qtrue;
+			}
+
+			if (Distance(goal->origin, g_entities[goal->entitynum].r.currentOrigin) > 50) {
+				return qtrue;
+			}
+		}
 		// if touching the goal
 		if (trap_BotTouchingGoal(bs->origin, goal)) {
 			if (!(goal->flags & GFL_DROPPED)) {
@@ -1212,7 +1222,15 @@ int BotLongTermGoal(bot_state_t *bs, int tfl, int retreat, bot_goal_t *goal) {
 		}
 	}
 
-	return BotGetLongTermGoal(bs, tfl, retreat, goal);
+	if (BotGetLongTermGoal(bs, tfl, retreat, goal)) {
+		if (bs->ltgtype != 0) {
+			memcpy(&bs->teamgoal, goal, sizeof(bot_goal_t));
+		}
+
+		return qtrue;
+	}
+
+	return qfalse;
 }
 
 /*
