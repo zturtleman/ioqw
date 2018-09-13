@@ -1404,7 +1404,7 @@ void S_Update_(void) {
 	// mix to an even submission block size
 	endtime = (endtime + dma.submission_chunk - 1) & ~(dma.submission_chunk - 1);
 	// never mix more than the complete buffer
-	samps = dma.samples >> (dma.channels - 1);
+	samps = dma.samples / dma.channels;
 
 	if (endtime - s_soundtime > samps) {
 		endtime = s_soundtime + samps;
