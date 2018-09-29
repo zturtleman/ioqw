@@ -79,7 +79,7 @@ static qboolean Menu_OverActiveItem(menuDef_t *menu, float x, float y);
 #else
 #define MEM_POOL_SIZE 1024 * 1024
 #endif
-static char memoryPool[MEM_POOL_SIZE];
+static char UI_memoryPool[MEM_POOL_SIZE];
 static int allocPoint, outOfMemory;
 
 /*
@@ -101,7 +101,7 @@ void *UI_Alloc(int size) {
 		return NULL;
 	}
 
-	p = &memoryPool[allocPoint];
+	p = &UI_memoryPool[allocPoint];
 	allocPoint += (size + 15) & ~15;
 
 	return p;

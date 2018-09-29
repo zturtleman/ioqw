@@ -104,8 +104,12 @@ int G_ParseInfos(char *buf, int max, char *infos[]) {
 
 			Info_SetValueForKey(info, key, token);
 		}
+
+		if (!BG_CanAlloc(strlen(info) + strlen("\\num\\") + strlen(va("%d", MAX_ARENAS)) + 1)) {
+			break; // not enough memory, don't even try
+		}
 		// NOTE: extra space for arena number
-		infos[count] = G_Alloc(strlen(info) + strlen("\\num\\") + strlen(va("%d", MAX_ARENAS)) + 1);
+		infos[count] = BG_Alloc(strlen(info) + strlen("\\num\\") + strlen(va("%d", MAX_ARENAS)) + 1);
 
 		if (infos[count]) {
 			strcpy(infos[count], info);

@@ -604,6 +604,13 @@ void FinalizeTracemapClamp(int *x, int *y);
 #define MASK_OPAQUE			(CONTENTS_SOLID|CONTENTS_SLIME|CONTENTS_LAVA)
 #define MASK_SHOT			(CONTENTS_SOLID|CONTENTS_BODY|CONTENTS_CORPSE)
 
+qboolean BG_CanAlloc(unsigned int size);
+void *BG_Alloc(unsigned int size);
+void BG_InitMemory(void);
+void BG_Free(void *ptr);
+void BG_DefragmentMemory(void);
+void  BG_MemoryInfo(void);
+
 void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result);
 void BG_EvaluateTrajectoryDelta(const trajectory_t *tr, int atTime, vec3_t result);
 void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerState_t *ps);

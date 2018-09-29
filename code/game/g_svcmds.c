@@ -464,6 +464,15 @@ void Svcmd_ForceTeam_f(void) {
 
 /*
 =======================================================================================================================================
+Svcmd_G_MemoryInfo_f
+=======================================================================================================================================
+*/
+static void Svcmd_G_MemoryInfo_f(void) {
+	BG_MemoryInfo();
+}
+
+/*
+=======================================================================================================================================
 Svcmd_ListIPs_f
 =======================================================================================================================================
 */
@@ -484,7 +493,7 @@ svcmds[] = {
 	{"botlist", qfalse, Svcmd_BotList_f},
 	{"entitylist", qfalse, Svcmd_EntityList_f},
 	{"forceteam", qfalse, Svcmd_ForceTeam_f},
-	{"game_memory", qfalse, Svcmd_GameMem_f},
+	{"game_memory", qfalse, Svcmd_G_MemoryInfo_f},
 	{"listip", qfalse, Svcmd_ListIPs_f},
 	{"removeip", qfalse, Svcmd_RemoveIP_f},
 };
