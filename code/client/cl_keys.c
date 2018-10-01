@@ -788,6 +788,7 @@ Single ascii characters return themselves, while the K_* names are matched up.
 */
 int Key_StringToKeynum(char *str) {
 	keyname_t *kn;
+	int n;
 
 	if (!str || !str[0]) {
 		return -1;
@@ -797,12 +798,10 @@ int Key_StringToKeynum(char *str) {
 		return tolower(str[0]);
 	}
 	// check for hex code
-	if (strlen(str) == 4) {
-		int n = Com_HexStrToInt(str);
+	n = Com_HexStrToInt(str);
 
-		if (n >= 0) {
-			return n;
-		}
+	if (n >= 0 && n < MAX_KEYS) {
+		return n;
 	}
 	// scan for a text match
 	for (kn = keynames; kn->name; kn++) {
