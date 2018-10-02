@@ -679,7 +679,7 @@ static void CG_InterpolateEntityPosition(centity_t *cent) {
 
 	// it would be an internal error to find an entity that interpolates without a snapshot ahead of the current one
 	if (cg.nextSnap == NULL) {
-		CG_Error("CG_InterpoateEntityPosition: cg.nextSnap == NULL");
+		CG_Error("CG_InterpolateEntityPosition: cg.nextSnap == NULL");
 	}
 
 	f = cg.frameInterpolation;
