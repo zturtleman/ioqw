@@ -2377,7 +2377,7 @@ qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolea
 					listPtr->startPos = max;
 				}
 			} else if (item->window.flags & WINDOW_LB_THUMB) {
-				// Display_SetCaptureItem(item);
+				//Display_SetCaptureItem(item);
 			} else {
 				// select an item
 				if (DC->realTime < lastListBoxClickTime && listPtr->doubleClick) {
