@@ -401,6 +401,7 @@ typedef struct shader_s {
 	deformStage_t deforms[MAX_SHADER_DEFORMS];
 	int numUnfoggedPasses;
 	shaderStage_t *stages[MAX_SHADER_STAGES];
+	int lightingStage;
 	void (*optimalStageIteratorFunc)(void);
 	double clampTime;					// time this shader is clamped to
 	double timeOffset;					// current time offset for this shader
