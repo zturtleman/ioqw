@@ -115,6 +115,7 @@ void RemoveColinearPoints(winding_t *w) {
 
 		if (DotProduct(v1, v2) < 0.999) {
 			VectorCopy(w->p[i], p[nump]);
+
 			nump++;
 		}
 	}
@@ -414,11 +415,11 @@ void ClipWindingEpsilon(winding_t *in, vec3_t normal, vec_t dist, vec_t epsilon,
 	}
 
 	if (f->numpoints > maxpts || b->numpoints > maxpts) {
-		Com_Error(ERR_DROP, "ClipWinding: points exceeded estimate");
+		Com_Error(ERR_DROP, "ClipWindingEpsilon: points exceeded estimate");
 	}
 
 	if (f->numpoints > MAX_POINTS_ON_WINDING || b->numpoints > MAX_POINTS_ON_WINDING) {
-		Com_Error(ERR_DROP, "ClipWinding: MAX_POINTS_ON_WINDING");
+		Com_Error(ERR_DROP, "ClipWindingEpsilon: MAX_POINTS_ON_WINDING");
 	}
 }
 
@@ -511,11 +512,11 @@ void ChopWindingInPlace(winding_t **inout, vec3_t normal, vec_t dist, vec_t epsi
 	}
 
 	if (f->numpoints > maxpts) {
-		Com_Error(ERR_DROP, "ClipWinding: points exceeded estimate");
+		Com_Error(ERR_DROP, "ChopWindingInPlace: points exceeded estimate");
 	}
 
 	if (f->numpoints > MAX_POINTS_ON_WINDING) {
-		Com_Error(ERR_DROP, "ClipWinding: MAX_POINTS_ON_WINDING");
+		Com_Error(ERR_DROP, "ChopWindingInPlace: MAX_POINTS_ON_WINDING");
 	}
 
 	FreeWinding(in);

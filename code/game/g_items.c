@@ -461,7 +461,7 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace) {
 	ent->r.svFlags |= SVF_NOCLIENT;
 	ent->s.eFlags |= EF_NODRAW;
 	ent->r.contents = 0;
-	// a negative respawn times means to never respawn this item (but don't delete it).
+	// a negative respawn times means to never respawn this item (but don't delete it)
 	// this is used by items that are respawned by third party events such as ctf flags
 	if (respawn <= 0) {
 		ent->nextthink = 0;

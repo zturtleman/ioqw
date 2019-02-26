@@ -1618,7 +1618,7 @@ void NET_Event(fd_set *fdr) {
 
 		if (NET_GetPacket(&from, &netmsg, fdr)) {
 			if (net_dropsim->value > 0.0f && net_dropsim->value <= 100.0f) {
-				// com_dropsim->value percent of incoming packets get dropped.
+				// com_dropsim->value percent of incoming packets get dropped
 				if (rand() < (int)(((double)RAND_MAX) / 100.0 * (double)net_dropsim->value)) {
 					continue; // drop this packet
 				}

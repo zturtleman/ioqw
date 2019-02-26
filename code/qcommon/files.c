@@ -2884,8 +2884,8 @@ void FS_AddGameDirectory(const char *path, const char *dir) {
 			search = Z_Malloc(sizeof(searchpath_t));
 			search->dir = Z_Malloc(sizeof(*search->dir));
 
-			Q_strncpyz(search->dir->path, curpath, sizeof(search->dir->path)); // c:\Quake Wars\Data
-			Q_strncpyz(search->dir->fullpath, pakfile, sizeof(search->dir->fullpath)); // c:\Quake Wars\Data\mypak.pk3dir
+			Q_strncpyz(search->dir->path, curpath, sizeof(search->dir->path)); // C:\Quake Wars\Data
+			Q_strncpyz(search->dir->fullpath, pakfile, sizeof(search->dir->fullpath)); // C:\Quake Wars\Data\mypak.pk3dir
 			Q_strncpyz(search->dir->gamedir, pakdirs[pakdirsi], sizeof(search->dir->gamedir)); // mypak.pk3dir
 
 			search->next = fs_searchpaths;
@@ -3317,7 +3317,7 @@ static void FS_CheckPak0(void) {
 		} else {
 			int index;
 
-			// finally check whether this pak's checksum is listed because the user tried to trick us by renaming the file, and set foundPak's highest bit to indicate this case.
+			// finally check whether this pak's checksum is listed because the user tried to trick us by renaming the file, and set foundPak's highest bit to indicate this case
 			for (index = 0; index < ARRAY_LEN(pak_checksums); index++) {
 				if (curpack->checksum == pak_checksums[index]) {
 					Com_Printf("\n\n**************************************************\nWARNING: %s is renamed pak file %s%cpak%d.pk3. Please remove this file.\n**************************************************\n\n\n", curpack->pakFilename, BASEGAME, PATH_SEP, index);

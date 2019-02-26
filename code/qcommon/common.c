@@ -2667,7 +2667,7 @@ void Com_Init(char *commandLine) {
 	Cvar_Set("ui_singlePlayerActive", "0");
 
 	com_fullyInitialized = qtrue;
-	// always set the cvar, but only print the info if it makes sense.
+	// always set the cvar, but only print the info if it makes sense
 	Com_DetectAltivec();
 #if idppc
 	Com_Printf("Altivec support is %s\n", com_altivec->integer ? "enabled" : "disabled");
@@ -2832,7 +2832,7 @@ int Com_ModifyMsec(int msec) {
 		clampTime = 5000;
 	} else {
 		// for local single player gaming
-		// we may want to clamp the time to prevent players from flying off edges when something hitches.
+		// we may want to clamp the time to prevent players from flying off edges when something hitches
 		clampTime = 200;
 	}
 

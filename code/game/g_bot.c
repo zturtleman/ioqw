@@ -1151,7 +1151,9 @@ static void G_ParseTeamInfo(const char *filename) {
 	}
 
 	trap_FS_Read(buf, len, f);
+
 	buf[len] = 0;
+
 	trap_FS_FCloseFile(f);
 
 	p = buf;

@@ -1223,7 +1223,8 @@ Called before parsing a gamestate.
 */
 void CL_ClearState(void) {
 
-//	S_StopAllSounds();
+	//S_StopAllSounds();
+
 	Com_Memset(&cl, 0, sizeof(cl));
 }
 
@@ -1901,7 +1902,7 @@ void CL_DownloadsComplete(void) {
 	clc.state = CA_LOADING;
 	// pump the loop, this may change gamestate!
 	Com_EventLoop();
-	// if the gamestate was changed by calling Com_EventLoop then we loaded everything already and we don't want to do it again.
+	// if the gamestate was changed by calling Com_EventLoop then we loaded everything already and we don't want to do it again
 	if (clc.state != CA_LOADING) {
 		return;
 	}
@@ -2176,7 +2177,6 @@ void CL_InitServerInfo(serverInfo_t *server, netadr_t *address) {
 }
 
 #define MAX_SERVERSPERPACKET 256
-
 /*
 =======================================================================================================================================
 CL_ServersResponsePacket
@@ -2518,8 +2518,7 @@ Check whether client has been paused.
 */
 qboolean CL_CheckPaused(void) {
 
-	// if cl_paused->modified is set, the cvar has only been changed in this frame. Keep paused in this frame to ensure the server
-	// doesn't lag behind.
+	// if cl_paused->modified is set, the cvar has only been changed in this frame. Keep paused in this frame to ensure the server doesn't lag behind
 	if (cl_paused->integer || cl_paused->modified) {
 		return qtrue;
 	}
@@ -3222,7 +3221,7 @@ void CL_Init(void) {
 
 	CL_InitRef();
 	SCR_Init();
-//	Cbuf_Execute();
+	//Cbuf_Execute();
 	Cvar_Set("cl_running", "1");
 	CL_GenerateQKey();
 	Cvar_Get("cl_guid", "", CVAR_USERINFO|CVAR_ROM);

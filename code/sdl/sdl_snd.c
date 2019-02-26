@@ -245,9 +245,9 @@ qboolean SNDDMA_Init(void) {
 
 	SNDDMA_PrintAudiospec("SDL_AudioSpec", &obtained);
 	// dma.samples needs to be big, or id's mixer will just refuse to work at all; we need to keep it significantly bigger than the
-	// amount of SDL callback samples, and just copy a little each time the callback runs.
+	// amount of SDL callback samples, and just copy a little each time the callback runs
 	// 32768 is what the OSS driver filled in here on my system. I don't know if it's a good value overall, but at least we know it's
-	// reasonable...this is why I let the user override.
+	// reasonable...this is why I let the user override
 	tmp = s_sdlMixSamps->value;
 
 	if (!tmp) {

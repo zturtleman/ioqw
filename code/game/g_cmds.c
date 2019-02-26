@@ -972,7 +972,7 @@ static void Cmd_Tell_f(gentity_t *ent) {
 	SanitizeChatText(p);
 	G_LogPrintf("tell: %s to %s: %s\n", ent->client->pers.netname, target->client->pers.netname, p);
 	G_Say(ent, target, SAY_TELL, p);
-	// don't tell to the player self if it was already directed to this player also don't send the chat back to a bot
+	// don't tell to the player self if it was already directed to this player, also don't send the chat back to a bot
 	if (ent != target && !(ent->r.svFlags & SVF_BOT)) {
 		G_Say(ent, ent, SAY_TELL, p);
 	}
@@ -1105,7 +1105,7 @@ static void Cmd_VoiceTell_f(gentity_t *ent, qboolean voiceonly) {
 	SanitizeChatText(id);
 	G_LogPrintf("vtell: %s to %s: %s\n", ent->client->pers.netname, target->client->pers.netname, id);
 	G_Voice(ent, target, SAY_TELL, id, voiceonly);
-	// don't tell to the player self if it was already directed to this player also don't send the chat back to a bot
+	// don't tell to the player self if it was already directed to this player, also don't send the chat back to a bot
 	if (ent != target && !(ent->r.svFlags & SVF_BOT)) {
 		G_Voice(ent, ent, SAY_TELL, id, voiceonly);
 	}
@@ -1240,7 +1240,7 @@ void Cmd_GameCommand_f(gentity_t *ent) {
 
 	G_LogPrintf("tell: %s to %s: %s\n", ent->client->pers.netname, target->client->pers.netname, gc_orders[order]);
 	G_Say(ent, target, SAY_TELL, gc_orders[order]);
-	// don't tell to the player self if it was already directed to this player also don't send the chat back to a bot
+	// don't tell to the player self if it was already directed to this player, also don't send the chat back to a bot
 	if (ent != target && !(ent->r.svFlags & SVF_BOT)) {
 		G_Say(ent, ent, SAY_TELL, gc_orders[order]);
 	}
@@ -1307,7 +1307,7 @@ void Cmd_CallVote_f(gentity_t *ent) {
 			case ';':
 				trap_SendServerCommand(ent - g_entities, "print \"Invalid vote string.\n\"");
 				return;
-			break;
+				break;
 		}
 	}
 
@@ -1723,7 +1723,7 @@ void ClientCommand(int clientNum) {
 
 	if (!ent->client || ent->client->pers.connected != CON_CONNECTED) {
 		if (ent->client && ent->client->pers.localClient) {
-			// handle early team command sent by UI when starting a local team play game.
+			// handle early team command sent by UI when starting a local team play game
 			trap_Argv(0, cmd, sizeof(cmd));
 
 			if (Q_stricmp(cmd, "team") == 0) {

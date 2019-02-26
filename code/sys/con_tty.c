@@ -57,7 +57,7 @@ static field_t TTY_con;
 static field_t ttyEditLines[CON_HISTORY];
 static int hist_current = -1, hist_count = 0;
 #ifndef DEDICATED
-// don't use "]" as it would be the same as in-game console, this makes it clear where input came from.
+// don't use "]" as it would be the same as in-game console, this makes it clear where input came from
 #define TTY_CONSOLE_PROMPT "tty]"
 #else
 #define TTY_CONSOLE_PROMPT "]"
@@ -497,10 +497,10 @@ void CON_Print(const char *msg) {
 	}
 
 	if (!ttycon_on) {
-		// CON_Hide didn't do anything.
+		// CON_Hide didn't do anything
 		return;
 	}
-	// only print prompt when msg ends with a newline, otherwise the console might get garbled when output does not fit on one line.
+	// only print prompt when msg ends with a newline, otherwise the console might get garbled when output does not fit on one line
 	if (msg[strlen(msg) - 1] == '\n') {
 		CON_Show();
 		// run CON_Show the number of times it was deferred.

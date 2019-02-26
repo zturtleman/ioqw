@@ -34,7 +34,7 @@ qboolean G_SpawnString(const char *key, const char *defaultString, char **out) {
 
 	if (!level.spawning) {
 		*out = (char *)defaultString;
-//		G_Error("G_SpawnString() called while not spawning");
+		//G_Error("G_SpawnString() called while not spawning");
 	}
 
 	for (i = 0; i < level.numSpawnVars; i++) {
@@ -205,9 +205,9 @@ spawn_t spawns[] = {
 	{"func_train", SP_func_train},
 	{"func_group", SP_info_null},
 	{"func_timer", SP_func_timer}, // rename trigger_timer?
-	// Triggers are brush objects that cause an effect when contacted by a living player, usually involving firing targets.
-	// While almost everything could be done with a single trigger class and different targets, triggered effects
-	// could not be client side predicted (push and teleport).
+	// triggers are brush objects that cause an effect when contacted by a living player, usually involving firing targets
+	// while almost everything could be done with a single trigger class and different targets, triggered effects
+	// could not be client side predicted (push and teleport)
 	{"trigger_always", SP_trigger_always},
 	{"trigger_multiple", SP_trigger_multiple},
 	{"trigger_push", SP_trigger_push},

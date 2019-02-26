@@ -2322,8 +2322,8 @@ qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolea
 				return qtrue;
 			}
 		}
-		// use mouse wheel in vertical and horizontal menus.
-		// if scrolling 3 items would replace over half of the displayed items, only scroll 1 item at a time.
+		// use mouse wheel in vertical and horizontal menus
+		// if scrolling 3 items would replace over half of the displayed items, only scroll 1 item at a time
 		if (key == K_MWHEELUP) {
 			int scroll = viewmax < 6 ? 1 : 3;
 
@@ -4899,7 +4899,7 @@ void Item_Paint(itemDef_t *item) {
 	if (!(item->window.flags & WINDOW_VISIBLE)) {
 		return;
 	}
-	// paint the rect first..
+	// paint the rect first...
 	Window_Paint(&item->window, parent->fadeAmount, parent->fadeClamp, parent->fadeCycle);
 
 	if (debugMode) {
@@ -6644,7 +6644,7 @@ Hacks to fix issues with Team Arena menu scripts.
 */
 static void Item_ApplyHacks(itemDef_t *item) {
 
-	// Fix length of favorite address in createfavorite.menu
+	// fix length of favorite address in createfavorite.menu
 	if (item->type == ITEM_TYPE_EDITFIELD && item->cvar && !Q_stricmp(item->cvar, "ui_favoriteAddress")) {
 		editFieldDef_t *editField = (editFieldDef_t *)item->typeData;
 

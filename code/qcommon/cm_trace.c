@@ -47,6 +47,7 @@ void RotatePoint(vec3_t point, /*const*/ vec3_t matrix[3]) { // FIXME
 	vec3_t tvec;
 
 	VectorCopy(point, tvec);
+
 	point[0] = DotProduct(matrix[0], tvec);
 	point[1] = DotProduct(matrix[1], tvec);
 	point[2] = DotProduct(matrix[2], tvec);

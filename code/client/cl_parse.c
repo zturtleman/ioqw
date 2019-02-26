@@ -215,7 +215,6 @@ void CL_ParseSnapshot(msg_t *msg) {
 	// get the reliable sequence acknowledge number
 	// NOTE: now sent with all server to client messages
 	//clc.reliableAcknowledge = MSG_ReadLong(msg);
-
 	// read in the new snapshot to a temporary buffer
 	// we will only copy to cl.snap if it is valid
 	Com_Memset(&newSnap, 0, sizeof(newSnap));

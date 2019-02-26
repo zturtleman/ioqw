@@ -427,9 +427,9 @@ static keyNum_t IN_TranslateSDLToQ3Key(SDL_Keysym *keysym, qboolean down) {
 				break;
 			default:
 				if (!(keysym->sym & SDLK_SCANCODE_MASK) && keysym->scancode <= 95) {
-					// map Unicode characters to 95 world keys using the key's scan code.
-					// FIXME: There aren't enough world keys to cover all the scancodes.
-					// maybe create a map of scancode to quake key at start up and on key map change; allocate world key numbers as needed similar to SDL 1.2.
+					// map Unicode characters to 95 world keys using the key's scan code
+					// FIXME: There aren't enough world keys to cover all the scancodes
+					// maybe create a map of scancode to quake key at start up and on key map change; allocate world key numbers as needed similar to SDL 1.2
 					key = K_WORLD_0 + (int)keysym->scancode;
 				}
 

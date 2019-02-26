@@ -276,7 +276,7 @@ int MSG_ReadBits(msg_t *msg, int bits) {
 			msg->readcount += 4;
 			msg->bit += 32;
 		} else {
-			Com_Error(ERR_DROP, "can't read %d bits", bits);
+			Com_Error(ERR_DROP, "Can't read %d bits.", bits);
 		}
 	} else {
 		nbits = 0;
@@ -459,7 +459,7 @@ void MSG_WriteBigString(msg_t *sb, const char *s) {
 		l = strlen(s);
 
 		if (l >= BIG_INFO_STRING) {
-			Com_Printf("MSG_WriteString: BIG_INFO_STRING size reached.\n");
+			Com_Printf("MSG_WriteBigString: BIG_INFO_STRING size reached.\n");
 			MSG_WriteData(sb, "", 1);
 			return;
 		}

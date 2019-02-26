@@ -641,7 +641,6 @@ int frameCount = 0;
 int startTime;
 
 #define UI_FPS_FRAMES 4
-
 /*
 =======================================================================================================================================
 _UI_Refresh
@@ -715,7 +714,6 @@ void _UI_Shutdown(void) {
 }
 
 char *defaultMenu = NULL;
-
 /*
 =======================================================================================================================================
 GetMenuBuffer
@@ -3701,7 +3699,7 @@ static void UI_StartSkirmish(qboolean next) {
 
 	if (g == GT_TOURNAMENT) {
 		trap_Cvar_SetValue("sv_maxClients", 2);
-		Com_sprintf(buff, sizeof(buff), "wait; addbot %s %f "", %i \n", uiInfo.mapList[ui_currentMap.integer].opponentName, skill, delay);
+		Com_sprintf(buff, sizeof(buff), "wait; addbot %s %f "", %i\n", uiInfo.mapList[ui_currentMap.integer].opponentName, skill, delay);
 		trap_Cmd_ExecuteText(EXEC_APPEND, buff);
 	} else {
 		temp = uiInfo.mapList[ui_currentMap.integer].teamMembers * 2;
@@ -4674,7 +4672,7 @@ static void UI_BuildServerDisplayList(int force) {
 		ping = trap_LAN_GetServerPing(lanSource, i);
 
 		if (ping > 0 || ui_netSource.integer == UIAS_FAVORITES) {
-			// remove favorite servers so they do not appear multiple times or appear when the cached server info was not filtered out but the new server info is filtered out.
+			// remove favorite servers so they do not appear multiple times or appear when the cached server info was not filtered out but the new server info is filtered out
 			if (ui_netSource.integer == UIAS_FAVORITES) {
 				UI_RemoveServerFromDisplayList(i);
 			}
@@ -6604,7 +6602,7 @@ static void UI_DisplayDownloadInfo(const char *downloadName, float centerPoint, 
 		if (downloadSize && xferRate) {
 			int n = downloadSize / xferRate; // estimated time for entire d/l in secs
 
-			// we do it in K (/1024) because we'd overflow around 4MB
+			// we do it in K (/ 1024) because we'd overflow around 4MB
 			UI_PrintTime(dlTimeBuf, sizeof dlTimeBuf, (n - (((downloadCount / 1024) * n) / (downloadSize / 1024))) * 1000);
 
 			Text_PaintCenter(leftWidth, yStart + 216, scale, colorWhite, dlTimeBuf, 0);
