@@ -475,7 +475,7 @@ typedef struct {
 	qboolean thisFrameTeleport;
 	qboolean nextFrameTeleport;
 	int frametime;					// cg.time - cg.oldTime
-	int time;						// this is the time value that the client is rendering at.
+	int time;						// this is the time value that the client is rendering at
 	int oldTime;					// time at last frame, used for missile trails and prediction checking
 	int physicsTime;				// either cg.snap->time or cg.nextSnap->time
 	int timelimitWarnings;			// 5 min, 1 min, overtime
@@ -1362,7 +1362,7 @@ int trap_CIN_PlayCinematic(const char *arg0, int xpos, int ypos, int width, int 
 // stops playing the cinematic and ends it. should always return FMV_EOF
 // cinematics must be stopped in reverse order of when they are started
 e_status trap_CIN_StopCinematic(int handle);
-// will run a frame of the cinematic but will not draw it. Will return FMV_EOF if the end of the cinematic has been reached.
+// will run a frame of the cinematic but will not draw it. Will return FMV_EOF if the end of the cinematic has been reached
 e_status trap_CIN_RunCinematic(int handle);
 // draws the current frame
 void trap_CIN_DrawCinematic(int handle);

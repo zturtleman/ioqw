@@ -1344,7 +1344,7 @@ void AAS_UpdateAreaRoutingCache(aas_routingcache_t *areacache) {
 	numreachabilityareas = aasworld.clusters[areacache->cluster].numreachabilityareas;
 	aasworld.frameroutingupdates++;
 	// clear the routing update fields
-//	Com_Memset(aasworld.areaupdate, 0, aasworld.numareas * sizeof(aas_routingupdate_t));
+	//Com_Memset(aasworld.areaupdate, 0, aasworld.numareas * sizeof(aas_routingupdate_t));
 
 	badtravelflags = ~areacache->travelflags;
 	clusterareanum = AAS_ClusterAreaNum(areacache->cluster, areacache->areanum);
@@ -1511,7 +1511,7 @@ void AAS_UpdatePortalRoutingCache(aas_routingcache_t *portalcache) {
 	numportalcacheupdates++;
 #endif // ROUTING_DEBUG
 	// clear the routing update fields
-//	Com_Memset(aasworld.portalupdate, 0, (aasworld.numportals + 1) * sizeof(aas_routingupdate_t));
+	//Com_Memset(aasworld.portalupdate, 0, (aasworld.numportals + 1) * sizeof(aas_routingupdate_t));
 
 	curupdate = &aasworld.portalupdate[aasworld.numportals];
 	curupdate->cluster = portalcache->cluster;

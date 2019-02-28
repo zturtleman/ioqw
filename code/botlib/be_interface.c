@@ -123,7 +123,7 @@ int Export_BotLibSetup(void) {
 
 	memset(&botlibglobals, 0, sizeof(botlibglobals));
 	// initialize byte swapping (litte endian etc.)
-//	Swap_Init();
+	//Swap_Init();
 
 	if (botDeveloper) {
 		Log_Open("botlib.log");
@@ -202,7 +202,7 @@ int Export_BotLibShutdown(void) {
 	// remove all global defines from the pre compiler
 	PC_RemoveAllGlobalDefines();
 	// dump all allocated memory
-//	DumpMemory();
+	//DumpMemory();
 #ifdef DEBUG
 	PrintMemoryLabels();
 #endif
@@ -324,27 +324,27 @@ BotExportTest
 =======================================================================================================================================
 */
 int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
-// return AAS_PointLight(parm2, NULL, NULL, NULL);
+	//return AAS_PointLight(parm2, NULL, NULL, NULL);
 #ifdef DEBUG
 	static int area = -1;
 	static int line[2];
 	int newarea, i, highlightarea, flood;
-//	int reachnum;
+	//int reachnum;
 	vec3_t forward, origin;
-//	vec3_t eye, right, end;
-//	vec3_t bottomcenter;
-//	aas_trace_t trace;
-//	aas_face_t *face;
-//	aas_entity_t *ent;
-//	bsp_trace_t bsptrace;
-//	aas_reachability_t reach;
-//	bot_goal_t goal;
-//	clock_t start_time, end_time;
-//	vec3_t mins = {-16, -16, -24};
-//	vec3_t maxs = {16, 16, 32};
-//	int areas[10], numareas;
+	//vec3_t eye, right, end;
+	//vec3_t bottomcenter;
+	//aas_trace_t trace;
+	//aas_face_t *face;
+	//aas_entity_t *ent;
+	//bsp_trace_t bsptrace;
+	//aas_reachability_t reach;
+	//bot_goal_t goal;
+	// clock_t start_time, end_time;
+	//vec3_t mins = {-16, -16, -24};
+	//vec3_t maxs = {16, 16, 32};
+	//int areas[10], numareas;
 
-//	return 0;
+	//return 0;
 
 	if (!aasworld.loaded) {
 		return 0;
@@ -363,14 +363,14 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 		}
 	}
 
-//	AAS_ClearShownDebugLines();
+	//AAS_ClearShownDebugLines();
 
-//	if (AAS_AgainstLadder(parm2)) {
-//		botimport.Print(PRT_MESSAGE, "against ladder\n");
-//	}
+	//if (AAS_AgainstLadder(parm2)) {
+	//	botimport.Print(PRT_MESSAGE, "against ladder\n");
+	//}
 
-//	BotOnGround(parm2, PRESENCE_NORMAL, 1, &newarea, &newarea);
-//	botimport.Print(PRT_MESSAGE, "%f %f %f\n", parm2[0], parm2[1], parm2[2]);
+	//BotOnGround(parm2, PRESENCE_NORMAL, 1, &newarea, &newarea);
+	//botimport.Print(PRT_MESSAGE, "%f %f %f\n", parm2[0], parm2[1], parm2[2]);
 
 	highlightarea = LibVarGetValue("bot_highlightarea");
 
@@ -384,7 +384,7 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 		newarea = BotFuzzyPointReachabilityArea(origin);
 	}
 
-	botimport.Print(PRT_MESSAGE, "\rtravel time to goal (%d) = %d  ", botlibglobals.goalareanum, AAS_AreaTravelTimeToGoalArea(newarea, origin, botlibglobals.goalareanum, TFL_DEFAULT));
+	botimport.Print(PRT_MESSAGE, "\rtravel time to goal (%d) = %d.", botlibglobals.goalareanum, AAS_AreaTravelTimeToGoalArea(newarea, origin, botlibglobals.goalareanum, TFL_DEFAULT));
 
 	//newarea = BotReachabilityArea(origin, qtrue);
 
@@ -569,15 +569,15 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 		AAS_Reachability_WeaponJump(703, 716);
 	}
 	*/
-//	AngleVectors(parm3, forward, right, NULL);
+	//AngleVectors(parm3, forward, right, NULL);
 	// get the eye 16 units to the right of the origin
-//	VectorMA(parm2, 8, right, eye);
+	//VectorMA(parm2, 8, right, eye);
 	// get the eye 24 units up
-//	eye[2] += 24;
+	//eye[2] += 24;
 	// get the end point for the line to be traced
-//	VectorMA(eye, 800, forward, end);
+	//VectorMA(eye, 800, forward, end);
 
-//	AAS_TestMovementPrediction(1, parm2, forward);
+	//AAS_TestMovementPrediction(1, parm2, forward);
 /*
 	// trace the line to find the hit point
 	trace = AAS_TraceClientBBox(eye, end, PRESENCE_NORMAL, 1);
@@ -599,7 +599,7 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 
 	for (i = 0; i < 2000; i++) {
 		AAS_Trace2(eye, mins, maxs, end, 1, CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_BOTCLIP);
-//		AAS_TraceClientBBox(eye, end, PRESENCE_NORMAL, 1);
+		//AAS_TraceClientBBox(eye, end, PRESENCE_NORMAL, 1);
 	}
 
 	end_time = clock();
@@ -613,7 +613,7 @@ int BotExportTest(int parm0, char *parm1, vec3_t parm2, vec3_t parm3) {
 	end_time = clock();
 	botimport.Print(PRT_MESSAGE, "id %lu clocks, %lu CLOCKS_PER_SEC\n", end_time - start_time, CLOCKS_PER_SEC);
 */
-	// nested comments are BAD for gcc -Werror, use #if 0 instead..
+	// nested comments are BAD for gcc -Werror, use #if 0 instead ...
 #if 0
 	AAS_ClearShownDebugLines();
 

@@ -265,7 +265,7 @@ void CG_AddFragment(localEntity_t *le) {
 
 		return;
 	}
-	// never free gibs while they're flying
+	// never free fragments while they're flying
 	if (le->endTime < cg.time + 2000) {
 		le->endTime = cg.time + 2000;
 	}
@@ -887,7 +887,7 @@ void CG_BubbleThink(localEntity_t *le) {
 	contents = CG_PointContents(trace.endpos, -1);
 
 	if (!(contents & (CONTENTS_WATER|CONTENTS_SLIME|CONTENTS_LAVA))) {
-		// Bubble isn't in liquid anymore, remove it.
+		// bubble isn't in liquid anymore, remove it
 		CG_FreeLocalEntity(le);
 		return;
 	}

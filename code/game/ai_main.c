@@ -906,6 +906,7 @@ void BotChangeViewAngles(bot_state_t *bs, float thinktime) {
 			// demping
 			bs->viewanglespeed[i] *= 0.45 * (1 - factor);
 		}
+
 		//BotAI_Print(PRT_MESSAGE, "ideal_angles %f %f\n", bs->ideal_viewangles[0], bs->ideal_viewangles[1], bs->ideal_viewangles[2]);
 		//bs->viewangles[i] = bs->ideal_viewangles[i];
 	}
@@ -1581,8 +1582,8 @@ int BotAIStartFrame(int time) {
 	trap_Cvar_Update(&bot_report);
 
 	if (bot_report.integer) {
-//		BotTeamplayReport();
-//		trap_Cvar_SetValue("bot_report", 0);
+		//BotTeamplayReport();
+		//trap_Cvar_SetValue("bot_report", 0);
 		BotUpdateInfoConfigStrings();
 	}
 

@@ -36,10 +36,10 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define RANK_TIED_FLAG 0x4000
 #define DEFAULT_SHOTGUN_SPREAD 700
 #define DEFAULT_SHOTGUN_COUNT 11
-#define ITEM_RADIUS 15			// item sizes are needed for client side pickup detection
+#define ITEM_RADIUS 15 // item sizes are needed for client side pickup detection
 #define BEAMGUN_RANGE 768
 #define SCORE_NOT_PRESENT -9999	// for the CS_SCORES[12] when only one player is present
-#define VOTE_TIME 30000			// 30 seconds before vote times out
+#define VOTE_TIME 30000 // 30 seconds before vote times out
 #define MINS_Z -24
 #define DEFAULT_VIEWHEIGHT 38
 #define CROUCH_VIEWHEIGHT 22

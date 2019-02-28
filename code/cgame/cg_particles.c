@@ -769,7 +769,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha) {
 
 	if (!p->pshader) {
 		// temp commented out for DM
-//		CG_Printf("CG_AddParticleToScene type %d p->pshader == ZERO\n", p->type);
+		//CG_Printf("CG_AddParticleToScene type %d p->pshader == ZERO\n", p->type);
 		return;
 	}
 

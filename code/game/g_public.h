@@ -140,8 +140,8 @@ typedef enum {
 	G_GET_USERCMD,				// (int clientNum, usercmd_t *cmd)
 	G_SET_CONFIGSTRING,			// (int num, const char *string);
 	// config strings hold all the index strings, and various other information that is reliably communicated to all clients
-	// all of the current configstrings are sent to clients when they connect, and changes are sent to all connected clients.
-	// all confgstrings are cleared at each level start.
+	// all of the current configstrings are sent to clients when they connect, and changes are sent to all connected clients
+	// all confgstrings are cleared at each level start
 	G_GET_CONFIGSTRING,			// (int num, char *buffer, int bufferSize);
 	G_SET_USERINFO,				// (int num, const char *buffer);
 	G_GET_USERINFO,				// (int num, char *buffer, int bufferSize);
@@ -159,7 +159,7 @@ typedef enum {
 	G_IN_PVS,					// (const vec3_t p1, const vec3_t p2);
 	G_ADJUST_AREA_PORTAL_STATE,	// (gentity_t *ent, qboolean open);
 	G_LINKENTITY,				// (gentity_t *ent);
-	// an entity will never be sent to a client or used for collision if it is not passed to linkentity. If the size, position, or solidity changes, it must be relinked.
+	// an entity will never be sent to a client or used for collision if it is not passed to linkentity. If the size, position, or solidity changes, it must be relinked
 	G_UNLINKENTITY,				// (gentity_t *ent);
 	// call before removing an interactive entity
 	G_ENTITIES_IN_BOX,			// (const vec3_t mins, const vec3_t maxs, gentity_t **list, int maxcount);
@@ -323,7 +323,7 @@ typedef enum {
 typedef enum {
 	GAME_INIT,						// (int levelTime, int randomSeed, int restart);
 	// init and shutdown will be called every single level
-	// the game should call G_GET_ENTITY_TOKEN to parse through all the entity configuration text and spawn gentities.
+	// the game should call G_GET_ENTITY_TOKEN to parse through all the entity configuration text and spawn gentities
 	GAME_SHUTDOWN,					// (void);
 	GAME_CLIENT_CONNECT,			// (int clientNum, qboolean firstTime, qboolean isBot);
 	// return NULL if the client is allowed to connect, otherwise return a text string with the reason for denial

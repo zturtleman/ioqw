@@ -202,8 +202,8 @@ typedef enum {
 	// use Cmd_Argc() / Cmd_Argv() to read the command, return qfalse if the command is not known to the game
 	CG_DRAW_ACTIVE_FRAME,
 //	void (*CG_DrawActiveFrame)(int serverTime, stereoFrame_t stereoView, qboolean demoPlayback);
-	// Generates and draws a game scene and status information at the given time.
-	// If demoPlayback is set, local movement prediction will not be enabled
+	// generates and draws a game scene and status information at the given time.
+	// if demoPlayback is set, local movement prediction will not be enabled
 	CG_CROSSHAIR_PLAYER,
 //	int (*CG_CrosshairPlayer)(void);
 	CG_LAST_ATTACKER,

@@ -1717,7 +1717,7 @@ bot_moveresult_t BotTravel_WalkOffLedge(bot_movestate_t *ms, aas_reachability_t 
 	hordir[2] = 0;
 	dist = VectorNormalize(hordir);
 
-//	BotCheckBlocked(ms, hordir, qtrue, &result); // Tobias CHECK: not really needed?
+	//BotCheckBlocked(ms, hordir, qtrue, &result); // Tobias CHECK: not really needed?
 	// if pretty close to the start focus on the reachability end
 	if (dist < 64) {
 		hordir[0] = reach->end[0] - ms->origin[0];
@@ -2056,7 +2056,7 @@ BotTravel_Jump
 */
 bot_moveresult_t BotTravel_Jump(bot_movestate_t *ms, aas_reachability_t *reach) {
 	vec3_t hordir, dir1, dir2, dir3, start, end, runstart;
-//	vec3_t runstart, dir1, dir2, hordir;
+	//vec3_t runstart, dir1, dir2, hordir;
 	int gapdist;
 	float dist1, dist2, dist3, speed;
 	bot_moveresult_t_cleared(result);
@@ -2104,7 +2104,7 @@ bot_moveresult_t BotTravel_Jump(bot_movestate_t *ms, aas_reachability_t *reach) 
 	dist3 = VectorNormalize(dir3);
 	// if just before the reachability start
 	if ((dist1 + 10 >= dist2 + dist3) || DotProduct(dir1, dir2) < -0.8 || dist2 < 5) {
-//		botimport.Print(PRT_MESSAGE, "between jump start and run start point\n");
+		//botimport.Print(PRT_MESSAGE, "between jump start and run start point\n");
 		hordir[0] = reach->end[0] - ms->origin[0];
 		hordir[1] = reach->end[1] - ms->origin[1];
 		hordir[2] = 0;
@@ -2122,7 +2122,7 @@ bot_moveresult_t BotTravel_Jump(bot_movestate_t *ms, aas_reachability_t *reach) 
 
 		ms->jumpreach = ms->lastreachnum;
 	} else {
-//		botimport.Print(PRT_MESSAGE, "going towards run start point\n");
+		//botimport.Print(PRT_MESSAGE, "going towards run start point\n");
 		hordir[0] = runstart[0] - ms->origin[0];
 		hordir[1] = runstart[1] - ms->origin[1];
 		hordir[2] = 0;
@@ -2191,10 +2191,10 @@ bot_moveresult_t BotTravel_Ladder(bot_movestate_t *ms, aas_reachability_t *reach
 	//float dist, speed;
 	vec3_t dir, viewdir; //hordir
 	vec3_t origin = {0, 0, 0};
-//	vec3_t up = {0, 0, 1};
+	//vec3_t up = {0, 0, 1};
 	bot_moveresult_t_cleared(result);
 
-//	if ((ms->moveflags & MFL_AGAINSTLADDER))
+	//if ((ms->moveflags & MFL_AGAINSTLADDER))
 		// NOTE: not a good idea for ladders starting in water
 		// || !(ms->moveflags & MFL_ONGROUND))
 	{

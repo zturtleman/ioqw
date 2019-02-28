@@ -997,6 +997,7 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 		}
 
 		cg.oldTime = cg.time;
+
 		CG_AddLagometerFrameInfo();
 	}
 

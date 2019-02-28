@@ -2439,8 +2439,11 @@ void CG_Player(centity_t *cent) {
 			CrossProduct(skull.axis[1], skull.axis[2], skull.axis[0]);
 
 			skull.hModel = cgs.media.kamikazeHeadModel;
+
 			trap_R_AddRefEntityToScene(&skull);
+
 			skull.hModel = cgs.media.kamikazeHeadTrail;
+
 			trap_R_AddRefEntityToScene(&skull);
 		} else {
 			// three skulls spinning around the player
@@ -2448,6 +2451,7 @@ void CG_Player(centity_t *cent) {
 			dir[0] = cos(angle) * 20;
 			dir[1] = sin(angle) * 20;
 			dir[2] = cos(angle) * 20;
+
 			VectorAdd(torso.origin, dir, skull.origin);
 
 			angles[0] = sin(angle) * 30;
@@ -2462,6 +2466,7 @@ void CG_Player(centity_t *cent) {
 			AnglesToAxis(angles, skull.axis);
 			/*
 			dir[2] = 0;
+
 			VectorInverse(dir);
 			VectorCopy(dir, skull.axis[1]);
 			VectorNormalize(skull.axis[1]);

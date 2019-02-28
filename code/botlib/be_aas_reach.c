@@ -1546,7 +1546,7 @@ int AAS_Reachability_Step_Barrier_WaterJump_WalkOffLedge(int area1num, int area2
 					VectorMA(ground_bestend, INSIDEUNITS_WALKEND, ground_bestnormal, lreach->end);
 
 					lreach->traveltype = TRAVEL_BARRIERJUMP;
-					lreach->traveltime = aassettings.rs_barrierjump; // AAS_BarrierJumpTravelTime();
+					lreach->traveltime = aassettings.rs_barrierjump; //AAS_BarrierJumpTravelTime();
 					lreach->next = areareachability[area1num];
 
 					areareachability[area1num] = lreach;
@@ -3882,7 +3882,9 @@ void AAS_Reachability_JumpPad(void) {
 		if (velocity[0] || velocity[1]) {
 			VectorSet(cmdmove, 0, 0, 0);
 			//VectorCopy(velocity, cmdmove);
+
 			//cmdmove[2] = 0;
+
 			Com_Memset(&move, 0, sizeof(aas_clientmove_t));
 
 			area2num = 0;
@@ -4004,6 +4006,7 @@ void AAS_Reachability_JumpPad(void) {
 				if (ret && speed < 150) {
 					// direction towards the face center
 					VectorSubtract(facecenter, areastart, dir);
+
 					dir[2] = 0;
 					//hordist = VectorNormalize(dir);
 

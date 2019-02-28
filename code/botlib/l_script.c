@@ -687,8 +687,8 @@ int PS_ReadNumber(script_t *script, token_t *token) {
 	int len = 0, i;
 	int octal, dot;
 	char c;
-//	unsigned long int intvalue = 0;
-//	double floatvalue = 0;
+	//unsigned long int intvalue = 0;
+	//double floatvalue = 0;
 
 	token->type = TT_NUMBER;
 	// check for a hexadecimal number

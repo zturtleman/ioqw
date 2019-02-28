@@ -1120,7 +1120,6 @@ typedef struct entityState_s {
 	int soundRange;
 	int tokens;			// harvester skulls
 } entityState_t;
-
 // entityState_t->eType
 typedef enum {
 	ET_GENERAL,
@@ -1176,7 +1175,7 @@ typedef struct {
 #define FONTFLAG_BORDER		0x0002 // font has a border
 
 typedef struct {
-	glyphInfo_t glyphs [GLYPHS_PER_FONT];
+	glyphInfo_t glyphs[GLYPHS_PER_FONT];
 	float glyphScale;
 	char name[MAX_QPATH];
 	int pointSize;

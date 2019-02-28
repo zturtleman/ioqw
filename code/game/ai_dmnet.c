@@ -611,7 +611,7 @@ int BotGetLongTermGoal(bot_state_t *bs, int tfl, int retreat, bot_goal_t *goal) 
 			trap_EA_Action(bs->client, ACTION_AFFIRMATIVE);
 			bs->teammessage_time = 0;
 		}
-		// the goal the bot should go for
+		// set the bot goal (the goal the bot should go for)
 		memcpy(goal, &bs->teamgoal, sizeof(bot_goal_t));
 		// stop after some time
 		if (bs->teamgoal_time < FloatTime()) {
@@ -1496,7 +1496,7 @@ void BotClearPath(bot_state_t *bs, bot_moveresult_t *moveresult) {
 		}
 
 		if (bestmine != -1) {
-			// state->team == TEAM_RED || state->team == TEAM_BLUE
+			//state->team == TEAM_RED || state->team == TEAM_BLUE
 
 			// deactivate prox mines in the bot's path by shooting rockets or plasma cells etc. at them
 			BotAI_GetEntityState(bs->proxmines[bestmine], &state);

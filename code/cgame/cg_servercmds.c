@@ -464,7 +464,7 @@ static void CG_MapRestart(void) {
 		trap_Cvar_SetValue("ui_matchStartTime", cg.time);
 
 		if (cg_recordSPDemo.integer && *cg_recordSPDemoName.string) {
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("set g_synchronousclients 1; record %s \n", cg_recordSPDemoName.string));
+			trap_Cmd_ExecuteText(EXEC_APPEND, va("set g_synchronousclients 1; record %s\n", cg_recordSPDemoName.string));
 		}
 	}
 

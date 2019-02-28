@@ -1203,7 +1203,7 @@ void MSG_ReadDeltaEntity(msg_t *msg, entityState_t *from, entityState_t *to, int
 	lc = MSG_ReadByte(msg);
 
 	if (lc > numFields || lc < 0) {
-		Com_Error(ERR_DROP, "invalid entityState field count");
+		Com_Error(ERR_DROP, "MSG_ReadDeltaEntity: Invalid entityState field count");
 	}
 	// shownet 2/3 will interleave with other printed info, -1 will just print the delta records
 	if (cl_shownet && (cl_shownet->integer >= 2 || cl_shownet->integer == -1)) {

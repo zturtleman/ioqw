@@ -218,7 +218,7 @@ void CG_Text_Paint(float x, float y, float scale, vec4_t color, const char *text
 				}
 
 				CG_Text_PaintChar(x, y - yadj, glyph->imageWidth, glyph->imageHeight, useScale, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
-				// CG_DrawPic(x, y - yadj, scale * cgDC.Assets.textFont.glyphs[text[i]].imageWidth, scale * cgDC.Assets.textFont.glyphs[text[i]].imageHeight, cgDC.Assets.textFont.glyphs[text[i]].glyph);
+				//CG_DrawPic(x, y - yadj, scale * cgDC.Assets.textFont.glyphs[text[i]].imageWidth, scale * cgDC.Assets.textFont.glyphs[text[i]].imageHeight, cgDC.Assets.textFont.glyphs[text[i]].glyph);
 				x += (glyph->xSkip * useScale) + adjust;
 				s++;
 				count++;
@@ -279,7 +279,7 @@ static void CG_DrawField(int x, int y, int width, int value) {
 
 	x += 2 + CHAR_WIDTH * (width - l);
 	// center x, move y to bottom
-	x += (1.0f - cg_statusScale.value) * CHAR_WIDTH * 0.5f;
+	x += (1.0f - cg_statusScale.value) * l * CHAR_WIDTH * 0.5f;
 	y += (1.0f - cg_statusScale.value) * CHAR_HEIGHT;
 	ptr = num;
 
@@ -1161,7 +1161,7 @@ static float CG_DrawScores(float y) {
 		CG_DrawBigString(x + 4, y, s, 1.0f);
 
 		if (cgs.gametype == GT_CTF) {
-			// Display flag status
+			// display flag status
 			item = BG_FindItemForPowerup(PW_REDFLAG);
 
 			if (item) {
@@ -2335,7 +2335,9 @@ static void CG_DrawWarmup(void) {
 	if (sec < 0) {
 		s = "Waiting for players";
 		w = CG_DrawStrlen(s) * BIGCHAR_WIDTH;
+
 		CG_DrawBigString(320 - w / 2, 24, s, 1.0f);
+
 		cg.warmupCount = 0;
 		return;
 	}

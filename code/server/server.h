@@ -200,7 +200,7 @@ typedef struct {
 // Structure for managing bans
 typedef struct {
 	netadr_t ip;
-	// For a CIDR-Notation type suffix
+	// for a CIDR-Notation type suffix
 	int subnet;
 	qboolean isexception;
 } serverBan_t;
@@ -327,16 +327,16 @@ void SV_ClearWorld(void);
 void SV_UnlinkEntity(sharedEntity_t *ent);
 // call before removing an entity, and before trying to move one, so it doesn't clip against itself
 void SV_LinkEntity(sharedEntity_t *ent);
-// Needs to be called any time an entity changes origin, mins, maxs, or solid. Automatically unlinks if needed.
+// needs to be called any time an entity changes origin, mins, maxs, or solid. Automatically unlinks if needed
 // sets ent->r.absmin and ent->r.absmax
 // sets ent->leafnums[] for pvs determination even if the entity is not solid
 clipHandle_t SV_ClipHandleForEntity(const sharedEntity_t *ent);
 void SV_SectorList_f(void);
 int SV_AreaEntities(const vec3_t mins, const vec3_t maxs, int *entityList, int maxcount);
-// fills in a table of entity numbers with entities that have bounding boxes that intersect the given area.
-// It is possible for a non-axial bmodel to be returned that doesn't actually intersect the area on an exact test.
+// fills in a table of entity numbers with entities that have bounding boxes that intersect the given area
+// it is possible for a non-axial bmodel to be returned that doesn't actually intersect the area on an exact test
 // returns the number of pointers filled in
-// The world entity is never returned in this list.
+// the world entity is never returned in this list
 int SV_PointContents(const vec3_t p, int passEntityNum);
 // returns the CONTENTS_* value from the world and all entities at the given point.
 void SV_Trace(trace_t *results, const vec3_t start, vec3_t mins, vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask, int capsule);

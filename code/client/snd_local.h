@@ -37,7 +37,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define SND_CHUNK_SIZE_BYTE (SND_CHUNK_SIZE * 2) // floats
 
 typedef struct {
-	int left; // the final values will be clamped to +/- 0x00ffff00 and shifted down
+	int left;	// the final values will be clamped to +/- 0x00ffff00 and shifted down
 	int right;
 } portable_samplepair_t;
 
@@ -121,9 +121,9 @@ typedef struct {
 	int width;
 	int channels;
 	int samples;
-	int dataofs; // chunk starts this many bytes from file start
+	int dataofs;	// chunk starts this many bytes from file start
 } wavinfo_t;
-// Interface between Q3 sound "api" and the sound backend
+// interface between Q3 sound "api" and the sound backend
 typedef struct {
 	void (*Shutdown)(void);
 	void (*StartSound)(vec3_t origin, int entnum, int entchannel, sfxHandle_t sfx, int range);
@@ -166,7 +166,7 @@ typedef struct {
 qboolean SNDDMA_Init(void);
 // gets the current DMA position
 int SNDDMA_GetDMAPos(void);
-// shutdown the DMA xfer.
+// shutdown the DMA xfer
 void SNDDMA_Shutdown(void);
 void SNDDMA_BeginPainting(void);
 void SNDDMA_Submit(void);
