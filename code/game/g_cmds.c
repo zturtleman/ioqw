@@ -866,7 +866,7 @@ void G_Say(gentity_t *ent, gentity_t *target, int mode, const char *chatText) {
 			G_LogPrintf("sayteam: %s: %s\n", ent->client->pers.netname, chatText);
 
 			if (Team_GetLocationMsg(ent, location, sizeof(location))) {
-				Com_sprintf(name, sizeof(name), EC"(%s%c%c"EC")(%s)"EC": ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, location);
+				Com_sprintf(name, sizeof(name), EC"(%s%c%c"EC") (%s)"EC": ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, location);
 			} else {
 				Com_sprintf(name, sizeof(name), EC"(%s%c%c"EC")"EC": ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE);
 			}
@@ -875,7 +875,7 @@ void G_Say(gentity_t *ent, gentity_t *target, int mode, const char *chatText) {
 			break;
 		case SAY_TELL:
 			if (target && target->inuse && target->client && g_gametype.integer > GT_TOURNAMENT && target->client->sess.sessionTeam == ent->client->sess.sessionTeam && Team_GetLocationMsg(ent, location, sizeof(location))) {
-				Com_sprintf(name, sizeof(name), EC"[%s%c%c"EC"](%s)"EC": ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, location);
+				Com_sprintf(name, sizeof(name), EC"[%s%c%c"EC"] (%s)"EC": ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, location);
 			} else {
 				Com_sprintf(name, sizeof(name), EC"[%s%c%c"EC"]"EC": ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE);
 			}

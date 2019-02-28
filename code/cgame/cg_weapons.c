@@ -1538,7 +1538,7 @@ void CG_RegisterItemVisuals(int itemNum) {
 	gitem_t *item;
 
 	if (itemNum < 0 || itemNum >= bg_numItems) {
-		CG_Error("CG_RegisterItemVisuals: itemNum %d out of range [0 - %d]", itemNum, bg_numItems - 1);
+		CG_Error("CG_RegisterItemVisuals: itemNum %d out of range [0-%d]", itemNum, bg_numItems - 1);
 	}
 
 	itemInfo = &cg_items[itemNum];

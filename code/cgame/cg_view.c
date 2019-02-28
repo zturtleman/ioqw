@@ -227,7 +227,6 @@ static void CG_CalcVrect(void) {
 		} else {
 			size = cg_viewsize.integer;
 		}
-
 	}
 
 	cg.refdef.width = cgs.glconfig.vidWidth * size / 100;
