@@ -43,7 +43,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "be_aas_def.h"
 
 #define ROUTING_DEBUG
-// travel time in hundreths of a second = distance * 100 / speed
+// travel time in hundredths of a second = distance * 100 / speed
 #define DISTANCEFACTOR_CROUCH 1.3f // crouch speed = 100
 #define DISTANCEFACTOR_SWIM 1 // should be 0.66, swim speed = 150
 #define DISTANCEFACTOR_WALK 0.33f // walk speed = 300
