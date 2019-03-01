@@ -91,7 +91,7 @@ libvar_t *sv_gravity;
 libvar_t *weapindex_rocketlauncher;
 libvar_t *weapindex_bfg10k;
 // type of model, func_plat or func_bobbing
-int modeltypes[MAX_MODELS];
+int modeltypes[MAX_SUBMODELS];
 
 bot_movestate_t *botmovestates[MAX_CLIENTS + 1];
 
@@ -535,7 +535,7 @@ void BotSetBrushModelTypes(void) {
 	int ent, modelnum;
 	char classname[MAX_EPAIRKEY], model[MAX_EPAIRKEY];
 
-	Com_Memset(modeltypes, 0, MAX_MODELS * sizeof(int));
+	Com_Memset(modeltypes, 0, MAX_SUBMODELS * sizeof(int));
 
 	for (ent = AAS_NextBSPEntity(0); ent; ent = AAS_NextBSPEntity(ent)) {
 		if (!AAS_ValueForBSPEpairKey(ent, "classname", classname, MAX_EPAIRKEY)) {
@@ -552,7 +552,7 @@ void BotSetBrushModelTypes(void) {
 			modelnum = 0;
 		}
 
-		if (modelnum < 0 || modelnum >= MAX_MODELS) {
+		if (modelnum < 0 || modelnum >= MAX_SUBMODELS) {
 			botimport.Print(PRT_MESSAGE, "entity %s model number out of range\n", classname);
 			continue;
 		}
@@ -1604,7 +1604,7 @@ bot_moveresult_t BotTravel_Swim(bot_movestate_t *ms, aas_reachability_t *reach) 
 	// elementary actions
 	EA_Move(ms->client, dir, 400);
 	// set the ideal view angles
-	vectoangles(dir, result.ideal_viewangles);
+	VectorToAngles(dir, result.ideal_viewangles);
 
 	result.flags |= MOVERESULT_SWIMVIEW;
 
@@ -1641,7 +1641,7 @@ bot_moveresult_t BotTravel_WaterJump(bot_movestate_t *ms, aas_reachability_t *re
 		EA_MoveUp(ms->client);
 	}
 	// set the ideal view angles
-	vectoangles(dir, result.ideal_viewangles);
+	VectorToAngles(dir, result.ideal_viewangles);
 
 	result.flags |= MOVERESULT_MOVEMENTVIEW;
 
@@ -1680,7 +1680,7 @@ bot_moveresult_t BotFinishTravel_WaterJump(bot_movestate_t *ms, aas_reachability
 	// elementary actions
 	EA_Move(ms->client, dir, 400);
 	// set the ideal view angles
-	vectoangles(dir, result.ideal_viewangles);
+	VectorToAngles(dir, result.ideal_viewangles);
 
 	result.flags |= MOVERESULT_MOVEMENTVIEW;
 
@@ -2206,7 +2206,7 @@ bot_moveresult_t BotTravel_Ladder(bot_movestate_t *ms, aas_reachability_t *reach
 		viewdir[1] = dir[1];
 		viewdir[2] = 3 * dir[2];
 
-		vectoangles(viewdir, result.ideal_viewangles);
+		VectorToAngles(viewdir, result.ideal_viewangles);
 		// elementary action
 		EA_Move(ms->client, origin, 0);
 		EA_MoveForward(ms->client);
@@ -2821,7 +2821,7 @@ bot_moveresult_t BotTravel_RocketJump(bot_movestate_t *ms, aas_reachability_t *r
 
 	dist = VectorNormalize(hordir);
 	// look in the movement direction
-	vectoangles(hordir, result.ideal_viewangles);
+	VectorToAngles(hordir, result.ideal_viewangles);
 	// look straight down
 	result.ideal_viewangles[PITCH] = 90;
 
@@ -2848,7 +2848,7 @@ bot_moveresult_t BotTravel_RocketJump(bot_movestate_t *ms, aas_reachability_t *r
 		EA_Move(ms->client, hordir, speed);
 	}
 	// look in the movement direction
-	vectoangles(hordir, result.ideal_viewangles);
+	VectorToAngles(hordir, result.ideal_viewangles);
 	// look straight down
 	result.ideal_viewangles[PITCH] = 90;
 	// set the view angles directly
@@ -2883,7 +2883,7 @@ bot_moveresult_t BotTravel_BFGJump(bot_movestate_t *ms, aas_reachability_t *reac
 
 	dist = VectorNormalize(hordir);
 	// look in the movement direction
-	vectoangles(hordir, result.ideal_viewangles);
+	VectorToAngles(hordir, result.ideal_viewangles);
 	// look straight down
 	result.ideal_viewangles[PITCH] = 90;
 
@@ -2910,7 +2910,7 @@ bot_moveresult_t BotTravel_BFGJump(bot_movestate_t *ms, aas_reachability_t *reac
 		EA_Move(ms->client, hordir, speed);
 	}
 	// look in the movement direction
-	vectoangles(hordir, result.ideal_viewangles);
+	VectorToAngles(hordir, result.ideal_viewangles);
 	// look straight down
 	result.ideal_viewangles[PITCH] = 90;
 	// set the view angles directly
@@ -3112,7 +3112,7 @@ bot_moveresult_t BotMoveInGoalArea(bot_movestate_t *ms, bot_goal_t *goal) {
 	VectorCopy(dir, result.movedir);
 
 	if (ms->moveflags & MFL_SWIMMING) {
-		vectoangles(dir, result.ideal_viewangles);
+		VectorToAngles(dir, result.ideal_viewangles);
 		result.flags |= MOVERESULT_SWIMVIEW;
 	}
 	//if (!debugline) debugline = botimport.DebugLineCreate();
@@ -3177,7 +3177,7 @@ void BotMoveToGoal(bot_moveresult_t *result, int movestate, bot_goal_t *goal, in
 		if (ent != -1) {
 			modelnum = AAS_EntityModelindex(ent);
 
-			if (modelnum >= 0 && modelnum < MAX_MODELS) {
+			if (modelnum >= 0 && modelnum < MAX_SUBMODELS) {
 				modeltype = modeltypes[modelnum];
 
 				if (modeltype == MODELTYPE_FUNC_PLAT) {

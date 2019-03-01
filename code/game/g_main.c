@@ -79,7 +79,6 @@ vmCvar_t g_filterBan;
 vmCvar_t g_smoothClients;
 vmCvar_t pmove_fixed;
 vmCvar_t pmove_msec;
-vmCvar_t g_rankings;
 vmCvar_t g_listEntity;
 vmCvar_t g_singlePlayer;
 vmCvar_t g_obeliskHealth;
@@ -151,8 +150,7 @@ static cvarTable_t gameCvarTable[] = {
 	{&g_enableBreath, "g_enableBreath", "0", CVAR_SYSTEMINFO, 0, qtrue, qfalse},
 	{&g_smoothClients, "g_smoothClients", "1", 0, 0, qfalse},
 	{&pmove_fixed, "pmove_fixed", "0", CVAR_SYSTEMINFO, 0, qfalse},
-	{&pmove_msec, "pmove_msec", "8", CVAR_SYSTEMINFO, 0, qfalse},
-	{&g_rankings, "g_rankings", "0", 0, 0, qfalse}
+	{&pmove_msec, "pmove_msec", "8", CVAR_SYSTEMINFO, 0, qfalse}
 };
 
 static int gameCvarTableSize = ARRAY_LEN(gameCvarTable);
@@ -958,7 +956,7 @@ void FindIntermissionPoint(void) {
 
 			if (target) {
 				VectorSubtract(target->s.origin, level.intermission_origin, dir);
-				vectoangles(dir, level.intermission_angle);
+				VectorToAngles(dir, level.intermission_angle);
 			}
 		}
 	}

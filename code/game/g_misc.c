@@ -61,6 +61,19 @@ void SP_light(gentity_t *self) {
 	G_FreeEntity(self);
 }
 
+/*QUAKED lightJunior (0 0.7 0.3) (-8 -8 -8) (8 8 8)nonlinear angle negative_spot negative_point
+Non - displayed light that only affects dynamic game models, but does not contribute to lightmaps
+"light" overrides the default 300 intensity.
+Nonlinear checkbox gives inverse square falloff instead of linear
+Angle adds light:surface angle calculations(only valid for "Linear" lights)
+Lights pointed at a target will be spotlights.
+"radius" overrides the default 64 unit radius of a spotlight at the target point.
+"fade" falloff / radius adjustment value. multiply the run of the slope by "fade"(1.0f default)(only valid for "Linear" lights)
+*/
+void SP_lightJunior(gentity_t *self) {
+	G_FreeEntity(self);
+}
+
 /*
 =======================================================================================================================================
 
@@ -162,6 +175,24 @@ void SP_misc_model(gentity_t *ent) {
 #else
 	G_FreeEntity(ent);
 #endif
+}
+
+/*QUAKED misc_gamemodel (1 0 0) (-16 -16 -16) (16 16 16)
+md3 placed in the game at runtime (rather than in the bsp)
+"model" arbitrary .md3 file to display
+"modelscale" scale multiplier (defaults to 1x, and scales uniformly)
+"modelscale_vec" scale multiplier (defaults to 1 1 1, scales each axis as requested)
+
+"modelscale_vec" - Set scale per-axis.  Overrides "modelscale", so if you have both, the "modelscale" is ignored
+*/
+// ZTM: FIXME: Stub. Currently just loaded by cgame
+void SP_misc_gamemodel(gentity_t *ent) {
+	G_FreeEntity(ent);
+}
+
+// loaded by CGame
+void SP_props_skyportal(gentity_t *ent) {
+	G_FreeEntity(ent);
 }
 
 /*
@@ -429,4 +460,229 @@ Fires at either the target or the current direction.
 */
 void SP_shooter_grenade(gentity_t *ent) {
 	InitShooter(ent, WP_GRENADELAUNCHER);
+}
+
+/*QUAKED corona (0 1 0) (-4 -4 -4) (4 4 4) START_OFF
+Use color picker to set color or key "color". Values are 0.0 - 1.0 for each color (rgb).
+"scale" will designate a multiplier to the default size (so 2.0 is 2 x default size, 0.5 is half)
+*/
+
+/*
+=======================================================================================================================================
+use_corona
+
+So level designers can toggle them on/off.
+=======================================================================================================================================
+*/
+void use_corona(gentity_t *ent, gentity_t *other, gentity_t *activator) {
+
+	if (ent->r.linked) {
+		trap_UnlinkEntity(ent);
+	} else {
+		trap_LinkEntity(ent);
+	}
+}
+
+/*
+=======================================================================================================================================
+SP_corona
+=======================================================================================================================================
+*/
+void SP_corona(gentity_t *ent) {
+	float scale;
+
+	ent->s.eType = ET_CORONA;
+	// if it's black or has no color assigned
+	if (ent->dl_color[0] <= 0 && ent->dl_color[1] <= 0 && ent->dl_color[2] <= 0) {
+		ent->dl_color[0] = ent->dl_color[1] = ent->dl_color[2] = 1; // set white
+	}
+
+	ent->dl_color[0] = ent->dl_color[0] * 255;
+	ent->dl_color[1] = ent->dl_color[1] * 255;
+	ent->dl_color[2] = ent->dl_color[2] * 255;
+	ent->s.dl_intensity = (int)ent->dl_color[0] |((int)ent->dl_color[1] << 8)|((int)ent->dl_color[2] << 16);
+
+	G_SpawnFloat("scale", "1", &scale);
+
+	ent->s.density = (int)(scale * 255);
+	ent->use = use_corona;
+
+	if (!(ent->spawnflags & 1)) {
+		trap_LinkEntity(ent);
+	}
+}
+
+char *predef_lightstyles[] = {
+	"mmnmmommommnonmmonqnmmo",
+	"abcdefghijklmnopqrstuvwxyzyxwvutsrqponmlkjihgfedcba",
+	"mmmmmaaaaammmmmaaaaaabcdefgabcdefg",
+	"ma",
+	"jklmnopqrstuvwxyzyxwvutsrqponmlkj",
+	"nmonqnmomnmomomono",
+	"mmmaaaabcdefgmmmmaaaammmaamm",
+	"aaaaaaaazzzzzzzz",
+	"mmamammmmammamamaaamammma",
+	"abcdefghijklmnopqrrqponmlkjihgfedcba",
+	"mmnommomhkmmomnonmmonqnmmo",
+	"kmamaamakmmmaakmamakmakmmmma",
+	"kmmmakakmmaaamammamkmamakmmmma",
+	"mmnnoonnmmmmmmmmmnmmmmnonmmmmmmm",
+	"mmmmnonmmmmnmmmmmnonmmmmmnmmmmmmm",
+	"zzzzzzzzaaaaaaaa",
+	"zzzzzzzzaaaaaaaaaaaaaaaa",
+	"aaaaaaaazzzzzzzzaaaaaaaa",
+	"aaaaaaaaaaaaaaaazzzzzzzz"
+};
+
+/*
+=======================================================================================================================================
+dlight_finish_spawning
+
+All the dlights should call this on the same frame, thereby being synched, starting their sequences all at the same time.
+=======================================================================================================================================
+*/
+void dlight_finish_spawning(gentity_t *ent) {
+	G_FindConfigstringIndex(va("%i %s %i %i %i", ent->s.number, ent->dl_stylestring, ent->health, ent->soundLoop, ent->dl_atten), CS_DLIGHTS, MAX_DLIGHT_CONFIGSTRINGS, qtrue);
+}
+
+static int dlightstarttime = 0;
+
+/*QUAKED dlight (0 1 0) (-12 - 12 - 12) (12 12 12) FORCEACTIVE STARTOFF ONETIME
+"style": value is an int from 1 - 19 that contains a pre - defined 'flicker' string.
+"stylestring": set your own 'flicker' string.(ex. "klmnmlk"). NOTE: this should be all lowercase
+Stylestring characters run at 10 cps in the game.(meaning the alphabet, at 24 characters, would take 2.4 seconds to cycle)
+"offset": change the initial index in a style string.  So val of 3 in the above example would start this light at 'N'.(used to get dlights using the same style out of sync).
+"atten": offset from the alpha values of the stylestring.  stylestring of "ddeeffzz" with an atten of - 1 would result in "ccddeeyy"
+Use color picker to set color or key "color".  values are 0.0 - 1.0 for each color(rgb).
+FORCEACTIVE	-toggle makes sure this light stays alive in a map even if the user has r_dynamiclight set to 0.
+STARTOFF	-means the dlight doesn't spawn in until ent is triggered
+ONETIME		-when the dlight is triggered, it will play through it's cycle once, then shut down until triggered again
+"shader" name of shader to apply
+"sound" sound to loop every cycle(this actually just plays the sound at the beginning of each cycle)
+
+styles:
+1 - "mmnmmommommnonmmonqnmmo"
+2 - "abcdefghijklmnopqrstuvwxyzyxwvutsrqponmlkjihgfedcba"
+3 - "mmmmmaaaaammmmmaaaaaabcdefgabcdefg"
+4 - "ma"
+5 - "jklmnopqrstuvwxyzyxwvutsrqponmlkj"
+6 - "nmonqnmomnmomomono"
+7 - "mmmaaaabcdefgmmmmaaaammmaamm"
+8 - "aaaaaaaazzzzzzzz"
+9 - "mmamammmmammamamaaamammma"
+10 - "abcdefghijklmnopqrrqponmlkjihgfedcba"
+11 - "mmnommomhkmmomnonmmonqnmmo"
+12 - "kmamaamakmmmaakmamakmakmmmma"
+13 - "kmmmakakmmaaamammamkmamakmmmma"
+14 - "mmnnoonnmmmmmmmmmnmmmmnonmmmmmmm"
+15 - "mmmmnonmmmmnmmmmmnonmmmmmnmmmmmmm"
+16 - "zzzzzzzzaaaaaaaa"
+17 - "zzzzzzzzaaaaaaaaaaaaaaaa"
+18 - "aaaaaaaazzzzzzzzaaaaaaaa"
+19 - "aaaaaaaaaaaaaaaazzzzzzzz"
+*/
+
+/*
+=======================================================================================================================================
+shutoff_dlight
+
+The dlight knew when it was triggered to unlink after going through it's cycle once.
+=======================================================================================================================================
+*/
+void shutoff_dlight(gentity_t *ent) {
+
+	if (!(ent->r.linked)) {
+		return;
+	}
+
+	trap_UnlinkEntity(ent);
+
+	ent->think = 0;
+	ent->nextthink = 0;
+}
+
+/*
+=======================================================================================================================================
+use_dlight
+=======================================================================================================================================
+*/
+void use_dlight(gentity_t *ent, gentity_t *other, gentity_t *activator) {
+
+	if (ent->r.linked) {
+		trap_UnlinkEntity(ent);
+	} else {
+		trap_LinkEntity(ent);
+
+		if (ent->spawnflags & 4) { // ONETIME
+			ent->think = shutoff_dlight;
+			ent->nextthink = level.time + (strlen(ent->dl_stylestring) * 100) - 100;
+		}
+	}
+}
+
+/*
+=======================================================================================================================================
+SP_dlight
+
+ent->dl_stylestring contains the lightstyle string
+ent->health tracks current index into style string
+ent->count tracks length of style string
+=======================================================================================================================================
+*/
+void SP_dlight(gentity_t *ent) {
+	char *snd, *shader;
+	int i;
+	int offset, style, atten;
+
+	G_SpawnInt("offset", "0", &offset); // starting index into the stylestring
+	G_SpawnInt("style", "0", &style); // predefined stylestring
+	G_SpawnString("sound", "", &snd);
+	G_SpawnInt("atten", "0", &atten);
+	G_SpawnString("shader", "", &shader); // name of shader to use for this dlight image
+
+	if (G_SpawnString("sound", "0", &snd)) {
+		ent->soundLoop = G_SoundIndex(snd);
+	}
+
+	if (ent->dl_stylestring && strlen(ent->dl_stylestring)) { // if they're specified in a string, use em
+
+	} else if (style) {
+		style = MAX(1, style); // clamp to predefined range
+		style = MIN(19, style);
+		ent->dl_stylestring = predef_lightstyles[style - 1]; // these are input as 1 - 20
+	} else {
+		ent->dl_stylestring = "mmmaaa"; // default to a strobe to call attention to this not being set
+	}
+
+	ent->count = strlen(ent->dl_stylestring);
+	ent->dl_atten = atten;
+	// make the initial offset a valid index into the stylestring
+	offset = offset %(ent->count);
+
+	ent->health = offset; // set the offset into the string
+	ent->think = dlight_finish_spawning;
+
+	if (!dlightstarttime) { // sync up all the dlights
+		dlightstarttime = level.time + 100;
+	}
+
+	ent->nextthink = dlightstarttime;
+	// if it's black or has no color assigned, make it white
+	if (ent->dl_color[0] <= 0 && ent->dl_color[1] <= 0 && ent->dl_color[2] <= 0) {
+		ent->dl_color[0] = ent->dl_color[1] = ent->dl_color[2] = 1;
+	}
+
+	ent->dl_color[0] = ent->dl_color[0] * 255; // range 0 - 255 now so the client doesn't have to on every update
+	ent->dl_color[1] = ent->dl_color[1] * 255;
+	ent->dl_color[2] = ent->dl_color[2] * 255;
+
+	i = (int)(ent->dl_stylestring[offset]) - (int)'a';
+	i = i * (1000.0f / 24.0f);
+
+	ent->s.constantLight = (int)ent->dl_color[0] |((int)ent->dl_color[1] << 8)|((int)ent->dl_color[2] << 16)|(i / 4 << 24);
+	ent->use = use_dlight;
+
+	if (!(ent->spawnflags & 2)) {
+		trap_LinkEntity(ent);
+	}
 }

@@ -320,7 +320,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha) {
 		height = p->height + (ratio * (p->endheight - p->height));
 
 		if (p->roll) {
-			vectoangles(cg.refdef.viewaxis[0], rotate_ang);
+			VectorToAngles(cg.refdef.viewaxis[0], rotate_ang);
 			rotate_ang[ROLL] += p->roll;
 			AngleVectors(rotate_ang, NULL, rr, ru);
 		}
@@ -446,7 +446,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha) {
 		if (p->type != P_SMOKE_IMPACT) {
 			vec3_t temp;
 
-			vectoangles(rforward, temp);
+			VectorToAngles(rforward, temp);
 			p->accumroll += p->roll;
 			temp[ROLL] += p->accumroll * 0.1;
 			AngleVectors(temp, NULL, rright2, rup2);
@@ -526,7 +526,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha) {
 		alpha = p->alpha;
 
 		if (p->roll) {
-			vectoangles(cg.refdef.viewaxis[0], rotate_ang);
+			VectorToAngles(cg.refdef.viewaxis[0], rotate_ang);
 			rotate_ang[ROLL] += p->roll;
 			AngleVectors(rotate_ang, NULL, rr, ru);
 		} else {
@@ -703,7 +703,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha) {
 		p->pshader = shaderAnims[i][j];
 
 		if (p->roll) {
-			vectoangles(cg.refdef.viewaxis[0], rotate_ang);
+			VectorToAngles(cg.refdef.viewaxis[0], rotate_ang);
 			rotate_ang[ROLL] += p->roll;
 			AngleVectors(rotate_ang, NULL, rr, ru);
 		}
@@ -774,9 +774,9 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha) {
 	}
 
 	if (p->type == P_WEATHER || p->type == P_WEATHER_TURBULENT || p->type == P_WEATHER_FLURRY) {
-		trap_R_AddPolyToScene(p->pshader, 3, TRIverts);
+		trap_R_AddPolyToScene(p->pshader, 3, TRIverts, 0, 0);
 	} else {
-		trap_R_AddPolyToScene(p->pshader, 4, verts);
+		trap_R_AddPolyToScene(p->pshader, 4, verts, 0, 0);
 	}
 }
 
@@ -802,7 +802,7 @@ void CG_AddParticles(void) {
 	VectorCopy(cg.refdef.viewaxis[0], vforward);
 	VectorCopy(cg.refdef.viewaxis[1], vright);
 	VectorCopy(cg.refdef.viewaxis[2], vup);
-	vectoangles(cg.refdef.viewaxis[0], rotate_ang);
+	VectorToAngles(cg.refdef.viewaxis[0], rotate_ang);
 
 	roll += ((cg.time - oldtime) * 0.1);
 	rotate_ang[ROLL] += (roll * 0.9);
@@ -1631,7 +1631,7 @@ qboolean ValidBloodPool(vec3_t start) {
 	fheight = 16;
 
 	VectorSet(normal, 0, 0, 1);
-	vectoangles(normal, angles);
+	VectorToAngles(normal, angles);
 	AngleVectors(angles, NULL, right, up);
 	VectorMA(start, EXTRUDE_DIST, normal, center_pos);
 
@@ -1740,7 +1740,7 @@ void CG_ParticleBloodCloud(centity_t *cent, vec3_t origin, vec3_t dir) {
 	dist = 0;
 	length = VectorLength(dir);
 
-	vectoangles(dir, angles);
+	VectorToAngles(dir, angles);
 	AngleVectorsForward(angles, forward);
 
 	crittersize = LARGESIZE;
@@ -1866,7 +1866,7 @@ void CG_ParticleDust(centity_t *cent, vec3_t origin, vec3_t dir) {
 
 	length = VectorLength(dir);
 
-	vectoangles(dir, angles);
+	VectorToAngles(dir, angles);
 	AngleVectorsForward(angles, forward);
 
 	crittersize = LARGESIZE;

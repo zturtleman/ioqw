@@ -220,7 +220,7 @@ void CG_ReflectVelocity(localEntity_t *le, trace_t *trace) {
 		le->pos.trType = TR_STATIONARY;
 
 		VectorCopy(trace->endpos, le->refEntity.origin);
-		vectoangles(le->refEntity.axis[0], le->angles.trBase);
+		VectorToAngles(le->refEntity.axis[0], le->angles.trBase);
 
 		le->groundEntityNum = trace->entityNum;
 	} else {
@@ -256,11 +256,11 @@ void CG_AddFragment(localEntity_t *le) {
 			oldZ = le->refEntity.origin[2];
 			le->refEntity.origin[2] -= 16 * (1.0 - (float)t / SINK_TIME);
 
-			trap_R_AddRefEntityToScene(&le->refEntity);
+			CG_AddRefEntityWithMinLight(&le->refEntity);
 
 			le->refEntity.origin[2] = oldZ;
 		} else {
-			trap_R_AddRefEntityToScene(&le->refEntity);
+			CG_AddRefEntityWithMinLight(&le->refEntity);
 		}
 
 		return;
@@ -300,7 +300,7 @@ void CG_AddFragment(localEntity_t *le) {
 		}
 
 		AnglesToAxis(angles, le->refEntity.axis);
-		trap_R_AddRefEntityToScene(&le->refEntity);
+		CG_AddRefEntityWithMinLight(&le->refEntity);
 		// add a blood trail
 		if (le->leBounceSoundType == LEBS_BLOOD) {
 			CG_BloodTrail(le);
@@ -353,7 +353,7 @@ void CG_AddFragment(localEntity_t *le) {
 	CG_FragmentBounceSound(le, &trace);
 	// reflect the velocity on the trace plane
 	CG_ReflectVelocity(le, &trace);
-	trap_R_AddRefEntityToScene(&le->refEntity);
+	CG_AddRefEntityWithMinLight(&le->refEntity);
 }
 
 /*
@@ -385,7 +385,7 @@ void CG_AddFadeRGB(localEntity_t *le) {
 	re->shaderRGBA[2] = le->color[2] * c;
 	re->shaderRGBA[3] = le->color[3] * c;
 
-	trap_R_AddRefEntityToScene(re);
+	CG_AddRefEntityWithMinLight(re);
 }
 
 /*
@@ -426,7 +426,7 @@ static void CG_AddMoveScaleFade(localEntity_t *le) {
 		return;
 	}
 
-	trap_R_AddRefEntityToScene(re);
+	CG_AddRefEntityWithMinLight(re);
 }
 
 /*
@@ -486,7 +486,7 @@ static void CG_EmitPolyVerts(const refEntity_t *re) {
 		verts[i].modulate[3] = re->shaderRGBA[3];
 	}
 
-	trap_R_AddPolyToScene(re->customShader, 4, verts);
+	trap_R_AddPolyToScene(re->customShader, 4, verts, 0, 0);
 }
 
 /*
@@ -567,10 +567,12 @@ static void CG_AddExplosion(localEntity_t *ex) {
 
 	ent = &ex->refEntity;
 	// add the entity
-	trap_R_AddRefEntityToScene(ent);
+	CG_AddRefEntityWithMinLight(ent);
 	// add the dlight
 	if (ex->light) {
 		float light;
+		float radius;
+		float intensity;
 
 		light = (float)(cg.time - ex->startTime) / (ex->endTime - ex->startTime);
 
@@ -582,7 +584,15 @@ static void CG_AddExplosion(localEntity_t *ex) {
 
 		light = ex->light * light;
 
-		trap_R_AddLightToScene(ent->origin, light, ex->lightColor[0], ex->lightColor[1], ex->lightColor[2]);
+		if (cg_fadeExplosions.integer) {
+			radius = ex->light;
+			intensity = light;
+		} else {
+			radius = ex->light * light;
+			intensity = 1;
+		}
+
+		trap_R_AddLightToScene(ent->origin, radius, intensity, ex->lightColor[0], ex->lightColor[1], ex->lightColor[2], 0);
 	}
 }
 
@@ -613,6 +623,8 @@ static void CG_AddSpriteExplosion(localEntity_t *le) {
 	// add the dlight
 	if (le->light) {
 		float light;
+		float radius;
+		float intensity;
 
 		light = (float)(cg.time - le->startTime) / (le->endTime - le->startTime);
 
@@ -624,7 +636,15 @@ static void CG_AddSpriteExplosion(localEntity_t *le) {
 
 		light = le->light * light;
 
-		trap_R_AddLightToScene(re.origin, light, le->lightColor[0], le->lightColor[1], le->lightColor[2]);
+		if (cg_fadeExplosions.integer) {
+			radius = le->light;
+			intensity = light;
+		} else {
+			radius = le->light * light;
+			intensity = 1;
+		}
+
+		trap_R_AddLightToScene(le->refEntity.origin, radius, intensity, le->lightColor[0], le->lightColor[1], le->lightColor[2], 0);
 	}
 }
 
@@ -682,7 +702,7 @@ void CG_AddKamikaze(localEntity_t *le) {
 		shockwave.shaderRGBA[2] = 0xff - c;
 		shockwave.shaderRGBA[3] = 0xff - c;
 
-		trap_R_AddRefEntityToScene(&shockwave);
+		CG_AddRefEntityWithMinLight(&shockwave);
 	}
 
 	if (t > KAMI_EXPLODE_STARTTIME && t < KAMI_IMPLODE_ENDTIME) {
@@ -714,9 +734,9 @@ void CG_AddKamikaze(localEntity_t *le) {
 
 		re->nonNormalizedAxes = qtrue;
 
-		trap_R_AddRefEntityToScene(re);
+		CG_AddRefEntityWithMinLight(re);
 		// add the dlight
-		trap_R_AddLightToScene(re->origin, c * 1000.0, 1.0, 1.0, c);
+		trap_R_AddLightToScene(re->origin, c * 1000.0, 1.0, 1.0, 1.0, c, 0);
 	}
 
 	if (t > KAMI_SHOCKWAVE2_STARTTIME && t < KAMI_SHOCKWAVE2_ENDTIME) {
@@ -762,7 +782,7 @@ void CG_AddKamikaze(localEntity_t *le) {
 		shockwave.shaderRGBA[2] = 0xff - c;
 		shockwave.shaderRGBA[3] = 0xff - c;
 
-		trap_R_AddRefEntityToScene(&shockwave);
+		CG_AddRefEntityWithMinLight(&shockwave);
 	}
 }
 
@@ -778,7 +798,7 @@ void CG_AddRefEntity(localEntity_t *le) {
 		return;
 	}
 
-	trap_R_AddRefEntityToScene(&le->refEntity);
+	CG_AddRefEntityWithMinLight(&le->refEntity);
 }
 
 #define NUMBER_SIZE 8

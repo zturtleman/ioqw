@@ -499,10 +499,10 @@ void RotateAroundDirection(vec3_t axis[3], float yaw) {
 
 /*
 =======================================================================================================================================
-vectoangles
+VectorToAngles
 =======================================================================================================================================
 */
-void vectoangles(const vec3_t value1, vec3_t angles) {
+void VectorToAngles(const vec3_t value1, vec3_t angles) {
 	float forward;
 	float yaw, pitch;
 

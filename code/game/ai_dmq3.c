@@ -2617,7 +2617,7 @@ qboolean BotAggression(bot_state_t *bs) {
 				// if the enemy is far away, check if we can attack the enemy from behind
 				if (aggression > 0.5 && bs->inventory[ENEMY_HORIZONTAL_DIST] < 500) {
 					VectorSubtract(bs->origin, entinfo.origin, dir);
-					vectoangles(dir, angles);
+					VectorToAngles(dir, angles);
 					// if not in the enemy's field of vision, attack!
 					if (!InFieldOfVision(entinfo.angles, 180, angles)) {
 						return qtrue;
@@ -2876,7 +2876,7 @@ qboolean BotAvoidItemPickup(bot_state_t *bs, bot_goal_t *goal) {
 		}
 
 		VectorSubtract(bs->origin, entinfo.origin, dir);
-		vectoangles(dir, angles);
+		VectorToAngles(dir, angles);
 		// humans are prefered
 		if (!(ent->r.svFlags & SVF_BOT)) {
 			// ignore distant teammates
@@ -3824,7 +3824,7 @@ qboolean BotEntityVisible(playerState_t *ps, float fov, int ent) {
 	}
 	// check if entity is within field of vision
 	VectorCopy(ps->viewangles, viewangles);
-	vectoangles(dir, entangles);
+	VectorToAngles(dir, entangles);
 
 	if (!InFieldOfVision(viewangles, fov, entangles)) {
 		return qfalse;
@@ -4227,7 +4227,7 @@ int BotFindEnemy(bot_state_t *bs, int curenemy) {
 			}
 			// check if we can avoid this enemy
 			VectorSubtract(bs->origin, entinfo.origin, dir);
-			vectoangles(dir, angles);
+			VectorToAngles(dir, angles);
 			// if the bot isn't in the fov of the enemy
 			if (!InFieldOfVision(entinfo.angles, 90, angles)) {
 				// update some stuff for this enemy
@@ -4628,7 +4628,7 @@ void BotAimAtEnemy(bot_state_t *bs) {
 		}
 		// aim at the entity
 		VectorSubtract(target, bs->eye, dir);
-		vectoangles(dir, bs->ideal_viewangles);
+		VectorToAngles(dir, bs->ideal_viewangles);
 		// set the aim target before trying to attack
 		VectorCopy(target, bs->aimtarget);
 		return;
@@ -4998,7 +4998,7 @@ WARNING 2: Bots will also throw grenades through windows even from distance, so 
 		}
 	}
 	// set the ideal view angles
-	vectoangles(dir, bs->ideal_viewangles);
+	VectorToAngles(dir, bs->ideal_viewangles);
 	// take the weapon spread into account for lower skilled bots
 	bs->ideal_viewangles[PITCH] += 6 * wi.vspread * crandom() * (1 - aim_accuracy);
 	bs->ideal_viewangles[PITCH] = AngleMod(bs->ideal_viewangles[PITCH]);
@@ -5171,7 +5171,7 @@ void BotCheckAttack(bot_state_t *bs) {
 		fov = 50;
 	}
 
-	vectoangles(dir, angles);
+	VectorToAngles(dir, angles);
 
 	if (!InFieldOfVision(bs->viewangles, fov, angles)) {
 		return;
@@ -5323,7 +5323,7 @@ void BotMapScripts(bot_state_t *bs) {
 			bs->flags |= BFL_IDEALVIEWSET;
 
 			VectorSubtract(buttonorg, bs->eye, dir);
-			vectoangles(dir, bs->ideal_viewangles);
+			VectorToAngles(dir, bs->ideal_viewangles);
 
 			aim_accuracy = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AIM_ACCURACY, 0, 1);
 
@@ -6204,7 +6204,7 @@ void BotCheckBlockedTeammates(bot_state_t *bs) {
 			// stop crouching to gain speed
 			bs->crouch_time = FloatTime() - 1;
 			// look into the direction of the blocked teammate
-			vectoangles(v2, bs->ideal_viewangles);
+			VectorToAngles(v2, bs->ideal_viewangles);
 			// get the sideward vector
 			CrossProduct(up, v2, sideward);
 			// get the direction the blocked player is moving

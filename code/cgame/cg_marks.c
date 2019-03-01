@@ -179,17 +179,35 @@ void CG_ImpactMark(qhandle_t markShader, const vec3_t origin, const vec3_t dir, 
 		polyVert_t *v;
 		polyVert_t verts[MAX_VERTS_ON_POLY];
 		markPoly_t *mark;
+		vec3_t delta;
+		vec3_t localOrigin;
 
+		// create the texture axis
+		VectorNormalize2(mf->projectionDir, axis[0]);
+		VectorScale(axis[0], -1, axis[0]); // ZTM: the dir was scaled to -20 before giving to renderer, turn it back around. :S
+		PerpendicularVector(axis[1], axis[0]);
+		RotatePointAroundVector(axis[2], axis[0], axis[1], orientation);
+		CrossProduct(axis[0], axis[2], axis[1]);
+
+		if (mf->bmodelNum) {
+			// ZTM: TODO?: compensate for scale in the axes if necessary? see R_RotateForEntity
+			// ZTM: FIXME: cgame should be able to get origin and axis from entity!
+			VectorSubtract(origin, mf->bmodelOrigin, delta);
+
+			localOrigin[0] = DotProduct(delta, mf->bmodelAxis[0]);
+			localOrigin[1] = DotProduct(delta, mf->bmodelAxis[1]);
+			localOrigin[2] = DotProduct(delta, mf->bmodelAxis[2]);
+		} else {
+			VectorCopy(origin, localOrigin);
+		}
 		// we have an upper limit on the complexity of polygons that we store persistantly
 		if (mf->numPoints > MAX_VERTS_ON_POLY) {
 			mf->numPoints = MAX_VERTS_ON_POLY;
 		}
 
 		for (j = 0, v = verts; j < mf->numPoints; j++, v++) {
-			vec3_t delta;
-
 			VectorCopy(markPoints[mf->firstPoint + j], v->xyz);
-			VectorSubtract(v->xyz, origin, delta);
+			VectorSubtract(v->xyz, localOrigin, delta);
 
 			v->st[0] = 0.5 + DotProduct(delta, axis[1]) * texCoordScale;
 			v->st[1] = 0.5 + DotProduct(delta, axis[2]) * texCoordScale;
@@ -197,15 +215,16 @@ void CG_ImpactMark(qhandle_t markShader, const vec3_t origin, const vec3_t dir, 
 		}
 		// if it is a temporary (shadow) mark, add it immediately and forget about it
 		if (temporary) {
-			trap_R_AddPolyToScene(markShader, mf->numPoints, verts);
+			trap_R_AddPolyToScene(markShader, mf->numPoints, verts, mf->bmodelNum, 0);
 			continue;
 		}
 		// otherwise save it persistantly
 		mark = CG_AllocMark();
+		mark->bmodelNum = mf->bmodelNum;
 		mark->time = cg.time;
 		mark->alphaFade = alphaFade;
 		mark->markShader = markShader;
-		mark->poly.numVerts = mf->numPoints;
+		mark->numVerts = mf->numPoints;
 		mark->color[0] = red;
 		mark->color[1] = green;
 		mark->color[2] = blue;
@@ -252,7 +271,7 @@ void CG_AddMarks(void) {
 				}
 
 				if (mp->verts[0].modulate[0] != 0) {
-					for (j = 0; j < mp->poly.numVerts; j++) {
+					for (j = 0; j < mp->numVerts; j++) {
 						mp->verts[j].modulate[0] = mp->color[0] * fade;
 						mp->verts[j].modulate[1] = mp->color[1] * fade;
 						mp->verts[j].modulate[2] = mp->color[2] * fade;
@@ -267,11 +286,11 @@ void CG_AddMarks(void) {
 			fade = 255 * t / MARK_FADE_TIME;
 
 			if (mp->alphaFade) {
-				for (j = 0; j < mp->poly.numVerts; j++) {
+				for (j = 0; j < mp->numVerts; j++) {
 					mp->verts[j].modulate[3] = fade;
 				}
 			} else {
-				for (j = 0; j < mp->poly.numVerts; j++) {
+				for (j = 0; j < mp->numVerts; j++) {
 					mp->verts[j].modulate[0] = mp->color[0] * fade;
 					mp->verts[j].modulate[1] = mp->color[1] * fade;
 					mp->verts[j].modulate[2] = mp->color[2] * fade;
@@ -279,6 +298,6 @@ void CG_AddMarks(void) {
 			}
 		}
 
-		trap_R_AddPolyToScene(mp->markShader, mp->poly.numVerts, mp->verts);
+		trap_R_AddPolyToScene(mp->markShader, mp->numVerts, mp->verts, mp->bmodelNum, 0);
 	}
 }

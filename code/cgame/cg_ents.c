@@ -30,17 +30,39 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 /*
 =======================================================================================================================================
+CG_AddRefEntityWithMinLight
+=======================================================================================================================================
+*/
+void CG_AddRefEntityWithMinLight(const refEntity_t *entity) {
+	refEntity_t re;
+
+	if (!entity) {
+		return;
+	}
+
+	re = *entity;
+	// give everything a minimum light add
+	re.ambientLight[0] = 32;
+	re.ambientLight[1] = 32;
+	re.ambientLight[2] = 32;
+
+	trap_R_AddRefEntityToScene(&re);
+}
+
+/*
+=======================================================================================================================================
 CG_PositionEntityOnTag
 
 Modifies the entities position and axis by the given tag location.
 =======================================================================================================================================
 */
-void CG_PositionEntityOnTag(refEntity_t *entity, const refEntity_t *parent, qhandle_t parentModel, char *tagName) {
+qboolean CG_PositionEntityOnTag(refEntity_t *entity, const refEntity_t *parent, qhandle_t parentModel, char *tagName) {
 	int i;
 	orientation_t lerped;
+	qboolean returnValue;
 
 	// lerp the tag
-	trap_R_LerpTag(&lerped, parentModel, parent->oldframe, parent->frame, 1.0 - parent->backlerp, tagName);
+	returnValue = trap_R_LerpTagFrameModel(&lerped, parentModel, parent->oldframeModel, parent->oldframe, parent->frameModel, parent->frame, 1.0 - parent->backlerp, tagName, NULL);
 	// FIXME: allow origin offsets along tag?
 	VectorCopy(parent->origin, entity->origin);
 
@@ -51,6 +73,8 @@ void CG_PositionEntityOnTag(refEntity_t *entity, const refEntity_t *parent, qhan
 	MatrixMultiply(lerped.axis, ((refEntity_t *)parent)->axis, entity->axis);
 
 	entity->backlerp = parent->backlerp;
+
+	return returnValue;
 }
 
 /*
@@ -60,14 +84,14 @@ CG_PositionRotatedEntityOnTag
 Modifies the entities position and axis by the given tag location.
 =======================================================================================================================================
 */
-void CG_PositionRotatedEntityOnTag(refEntity_t *entity, const refEntity_t *parent, qhandle_t parentModel, char *tagName) {
+qboolean CG_PositionRotatedEntityOnTag(refEntity_t *entity, const refEntity_t *parent, qhandle_t parentModel, char *tagName) {
 	int i;
 	orientation_t lerped;
 	vec3_t tempAxis[3];
+	qboolean returnValue;
 
-	//AxisClear(entity->axis);
 	// lerp the tag
-	trap_R_LerpTag(&lerped, parentModel, parent->oldframe, parent->frame, 1.0 - parent->backlerp, tagName);
+	returnValue = trap_R_LerpTagFrameModel(&lerped, parentModel, parent->oldframeModel, parent->oldframe, parent->frameModel, parent->frame, 1.0 - parent->backlerp, tagName, NULL);
 	// FIXME: allow origin offsets along tag?
 	VectorCopy(parent->origin, entity->origin);
 
@@ -77,6 +101,8 @@ void CG_PositionRotatedEntityOnTag(refEntity_t *entity, const refEntity_t *paren
 	// had to cast away the const to avoid compiler problems...
 	MatrixMultiply(entity->axis, lerped.axis, tempAxis);
 	MatrixMultiply(tempAxis, ((refEntity_t *)parent)->axis, entity->axis);
+
+	return returnValue;
 }
 
 /*
@@ -109,6 +135,90 @@ void CG_SetEntitySoundPosition(centity_t *cent) {
 	}
 }
 
+#define LS_FRAMETIME 100 // (ms) cycle through lightstyle characters at 10fps
+/*
+=======================================================================================================================================
+CG_AddLightstyle
+=======================================================================================================================================
+*/
+void CG_AddLightstyle(centity_t *cent) {
+	float lightval;
+	int cl;
+	int r, g, b;
+	int stringlength;
+	float offset;
+	//int offsetwhole;
+	int otime;
+	int lastch, nextch;
+
+	if (!cent->dl_stylestring[0]) {
+		return;
+	}
+
+	otime = cg.time - cent->dl_time;
+	stringlength = strlen(cent->dl_stylestring);
+	// it's been a long time since you were updated, lets assume a reset
+	if (otime > 2 * LS_FRAMETIME) {
+		otime = 0;
+		cent->dl_frame = cent->dl_oldframe = 0;
+		cent->dl_backlerp = 0;
+	}
+
+	cent->dl_time = cg.time;
+	offset = ((float)otime) / LS_FRAMETIME;
+	cent->dl_backlerp += offset;
+
+	if (cent->dl_backlerp > 1) { // we're moving on to the next frame
+		cent->dl_oldframe = cent->dl_oldframe + (int)cent->dl_backlerp;
+		cent->dl_frame = cent->dl_oldframe + 1;
+
+		if (cent->dl_oldframe >= stringlength) {
+			cent->dl_oldframe = (cent->dl_oldframe)% stringlength;
+
+			if (cent->dl_oldframe < 3 && cent->dl_sound) { // < 3 so if an alarm comes back into the pvs it will only start a sound if it's going to be closely synced with the light, otherwise wait till the next cycle
+				trap_S_StartSound(NULL, cent->currentState.number, CHAN_AUTO, cgs.gameSounds[cent->dl_sound], 64); // Tobias FIXME: from ET -> CG_GetGameSound(cent->dl_sound)
+			}
+		}
+
+		if (cent->dl_frame >= stringlength) {
+			cent->dl_frame = (cent->dl_frame)% stringlength;
+		}
+
+		cent->dl_backlerp = cent->dl_backlerp - (int)cent->dl_backlerp;
+	}
+
+	lastch = cent->dl_stylestring[cent->dl_oldframe] - 'a';
+	nextch = cent->dl_stylestring[cent->dl_frame] - 'a';
+	lightval = (lastch * (1.0 - cent->dl_backlerp)) + (nextch * cent->dl_backlerp);
+	// ydnar: dlight values go from 0 - 1.5ish
+#if 0
+	lightval = (lightval * (1000.0f / 24.0f)) - 200.0f; // they want 'm' as the "middle" value as 300
+	lightval = MAX(0.0f, lightval);
+	lightval = min(1000.0f, lightval);
+#else
+	lightval *= 0.071429;
+	lightval = MAX(0.0f, lightval);
+	lightval = MIN(20.0f, lightval);
+#endif
+	cl = cent->currentState.constantLight;
+	r = cl & 255;
+	g = (cl >> 8)& 255;
+	b = (cl >> 16)& 255;
+	// ydnar: if the dlight has angles, then it is a directional global dlight
+	if (cent->currentState.angles[0] || cent->currentState.angles[1] || cent->currentState.angles[2]) {
+		vec3_t normal;
+		// ZTM: NOTE: lightning on ET's Radar map is too bright with multiple light passes
+		// (enabled with r_dynamiclight 2 in vanilla ET, currently always done in Spearmint) so scale the light values down
+		lightval *= 0.25f;
+
+		AngleVectors(cent->currentState.angles, normal, NULL, NULL);
+		trap_R_AddDirectedLightToScene(normal, lightval, (float)r / 255.0f, (float)g / 255.0f, (float)b / 255.0f);
+	// normal global dlight
+	} else {
+		trap_R_AddVertexLightToScene(cent->lerpOrigin, 256, lightval, (float)r / 255.0f, (float)g / 255.0f, (float)b / 255.0f);
+	}
+}
+
 /*
 =======================================================================================================================================
 CG_EntityEffects
@@ -137,13 +247,17 @@ static void CG_EntityEffects(centity_t *cent) {
 		int cl;
 		float i, r, g, b;
 
-		cl = cent->currentState.constantLight;
-		r = (float)(cl & 0xFF) / 255.0;
-		g = (float)((cl >> 8) & 0xFF) / 255.0;
-		b = (float)((cl >> 16) & 0xFF) / 255.0;
-		i = (float)((cl >> 24) & 0xFF) * 4.0;
+		if (cent->dl_stylestring[0] != 0) { // it's probably a dlight
+			CG_AddLightstyle(cent);
+		} else {
+			cl = cent->currentState.constantLight;
+			r = (float)(cl & 0xFF) / 255.0;
+			g = (float)((cl >> 8) & 0xFF) / 255.0;
+			b = (float)((cl >> 16) & 0xFF) / 255.0;
+			i = (float)((cl >> 24) & 0xFF) * 4.0;
 
-		trap_R_AddLightToScene(cent->lerpOrigin, i, r, g, b);
+			trap_R_AddLightToScene(cent->lerpOrigin, i, 1.0f, r, g, b, 0);
+		}
 	}
 }
 
@@ -174,12 +288,12 @@ static void CG_General(centity_t *cent) {
 	ent.hModel = cgs.gameModels[s1->modelindex];
 	// player model
 	if (s1->number == cg.snap->ps.clientNum) {
-		ent.renderfx |= RF_THIRD_PERSON; // only draw from mirrors
+		ent.renderfx |= RF_ONLY_MIRROR;
 	}
 	// convert angles to axis
 	AnglesToAxis(cent->lerpAngles, ent.axis);
 	// add to refresh list
-	trap_R_AddRefEntityToScene(&ent);
+	CG_AddRefEntityWithMinLight(&ent);
 }
 
 /*
@@ -297,10 +411,6 @@ static void CG_Item(centity_t *cent) {
 	} else {
 		frac = 1.0;
 	}
-	// items without glow textures need to keep a minimum light value so they are always visible
-	if ((item->giType == IT_WEAPON) || (item->giType == IT_ARMOR)) {
-		ent.renderfx |= RF_MINLIGHT;
-	}
 // Tobias HACK: decrease the size of some models until we have new models...
 	if (item->giType == IT_AMMO) {
 		VectorScale(ent.axis[0], 0.35, ent.axis[0]);
@@ -324,7 +434,7 @@ static void CG_Item(centity_t *cent) {
 		ent.nonNormalizedAxes = qtrue;
 	}
 	// add to refresh list
-	trap_R_AddRefEntityToScene(&ent);
+	CG_AddRefEntityWithMinLight(&ent);
 
 	if (item->giType == IT_WEAPON && wi && wi->barrelModel) {
 		refEntity_t barrel;
@@ -348,7 +458,7 @@ static void CG_Item(centity_t *cent) {
 
 		barrel.nonNormalizedAxes = ent.nonNormalizedAxes;
 
-		trap_R_AddRefEntityToScene(&barrel);
+		CG_AddRefEntityWithMinLight(&barrel);
 	}
 	// accompanying rings/spheres for powerups
 	if (!cg_simpleItems.integer) {
@@ -378,7 +488,7 @@ static void CG_Item(centity_t *cent) {
 					VectorScale(ent.axis[2], 0.45, ent.axis[2]);
 				}
 // Tobias END
-				trap_R_AddRefEntityToScene(&ent);
+				CG_AddRefEntityWithMinLight(&ent);
 			}
 		}
 	}
@@ -429,7 +539,7 @@ static void CG_Missile(centity_t *cent) {
 */
 	// add dynamic light
 	if (weapon->missileDlight) {
-		trap_R_AddLightToScene(cent->lerpOrigin, weapon->missileDlight, weapon->missileDlightColor[0], weapon->missileDlightColor[1], weapon->missileDlightColor[2]);
+		trap_R_AddLightToScene(cent->lerpOrigin, weapon->missileDlight, 1.0f, weapon->missileDlightColor[0], weapon->missileDlightColor[1], weapon->missileDlightColor[2], 0);
 	}
 	// add missile sound
 	if (weapon->missileSound) {
@@ -449,7 +559,7 @@ static void CG_Missile(centity_t *cent) {
 		ent.radius = 16;
 		ent.rotation = 0;
 		ent.customShader = cgs.media.plasmaBallShader;
-		trap_R_AddRefEntityToScene(&ent);
+		CG_AddRefEntityWithMinLight(&ent);
 		return;
 	}
 	// flicker between two skins
@@ -513,12 +623,12 @@ static void CG_Mover(centity_t *cent) {
 		ent.hModel = cgs.gameModels[s1->modelindex];
 	}
 	// add to refresh list
-	trap_R_AddRefEntityToScene(&ent);
+	CG_AddRefEntityWithMinLight(&ent);
 	// add the secondary model
 	if (s1->modelindex2) {
 		ent.skinNum = 0;
 		ent.hModel = cgs.gameModels[s1->modelindex2];
-		trap_R_AddRefEntityToScene(&ent);
+		CG_AddRefEntityWithMinLight(&ent);
 	}
 }
 
@@ -544,7 +654,7 @@ void CG_Beam(centity_t *cent) {
 	ent.reType = RT_BEAM;
 	ent.renderfx = RF_NOSHADOW;
 	// add to refresh list
-	trap_R_AddRefEntityToScene(&ent);
+	CG_AddRefEntityWithMinLight(&ent);
 }
 
 /*
@@ -574,7 +684,7 @@ static void CG_Portal(centity_t *cent) {
 	ent.frame = s1->frame; // rotation speed
 	ent.skinNum = s1->clientNum / 256.0 * 360; // roll offset
 	// add to refresh list
-	trap_R_AddRefEntityToScene(&ent);
+	CG_AddRefEntityWithMinLight(&ent);
 }
 
 /*
@@ -762,7 +872,7 @@ static void CG_TeamBase(centity_t *cent) {
 			model.hModel = cgs.media.neutralFlagBaseModel;
 		}
 
-		trap_R_AddRefEntityToScene(&model);
+		CG_AddRefEntityWithMinLight(&model);
 	} else if (cgs.gametype == GT_OBELISK) {
 		// show the obelisk
 		memset(&model, 0, sizeof(model));
@@ -775,7 +885,7 @@ static void CG_TeamBase(centity_t *cent) {
 
 		model.hModel = cgs.media.overloadBaseModel;
 
-		trap_R_AddRefEntityToScene(&model);
+		CG_AddRefEntityWithMinLight(&model);
 		// if hit
 		if (cent->currentState.frame == 1) {
 			// show hit model
@@ -787,7 +897,7 @@ static void CG_TeamBase(centity_t *cent) {
 			model.shaderRGBA[3] = 0xff;
 			model.hModel = cgs.media.overloadEnergyModel;
 
-			trap_R_AddRefEntityToScene(&model);
+			CG_AddRefEntityWithMinLight(&model);
 		}
 		// if respawning
 		if (cent->currentState.frame == 2) {
@@ -816,7 +926,7 @@ static void CG_TeamBase(centity_t *cent) {
 			model.shaderRGBA[3] = c * 0xff;
 			model.hModel = cgs.media.overloadLightsModel;
 
-			trap_R_AddRefEntityToScene(&model);
+			CG_AddRefEntityWithMinLight(&model);
 			// show the target
 			if (t > h) {
 				if (!cent->muzzleFlashTime) {
@@ -841,7 +951,7 @@ static void CG_TeamBase(centity_t *cent) {
 				model.origin[2] += OBELISK_TARGET_HEIGHT;
 				model.hModel = cgs.media.overloadTargetModel;
 
-				trap_R_AddRefEntityToScene(&model);
+				CG_AddRefEntityWithMinLight(&model);
 			} else {
 				// FIXME: show animated smoke
 			}
@@ -858,12 +968,12 @@ static void CG_TeamBase(centity_t *cent) {
 			// show the lights
 			model.hModel = cgs.media.overloadLightsModel;
 
-			trap_R_AddRefEntityToScene(&model);
+			CG_AddRefEntityWithMinLight(&model);
 			// show the target
 			model.origin[2] += OBELISK_TARGET_HEIGHT;
 			model.hModel = cgs.media.overloadTargetModel;
 
-			trap_R_AddRefEntityToScene(&model);
+			CG_AddRefEntityWithMinLight(&model);
 		}
 	} else if (cgs.gametype == GT_HARVESTER) {
 		// show harvester model
@@ -877,17 +987,79 @@ static void CG_TeamBase(centity_t *cent) {
 
 		if (cent->currentState.modelindex == TEAM_RED) {
 			model.hModel = cgs.media.harvesterModel;
-			model.customSkin = cgs.media.harvesterRedSkin;
+			model.customSkin = CG_AddSkinToFrame(&cgs.media.harvesterRedSkin);
 		} else if (cent->currentState.modelindex == TEAM_BLUE) {
 			model.hModel = cgs.media.harvesterModel;
-			model.customSkin = cgs.media.harvesterBlueSkin;
+			model.customSkin = CG_AddSkinToFrame(&cgs.media.harvesterBlueSkin);
 		} else {
 			model.hModel = cgs.media.harvesterNeutralModel;
 			model.customSkin = 0;
 		}
 
-		trap_R_AddRefEntityToScene(&model);
+		CG_AddRefEntityWithMinLight(&model);
 	}
+}
+
+/*
+=======================================================================================================================================
+CG_Corona
+
+Only coronas that are in your PVS are being added.
+=======================================================================================================================================
+*/
+static void CG_Corona(centity_t *cent) {
+	trace_t tr;
+	int r, g, b;
+	int dli;
+	qboolean visible, behind, toofar;
+	float dot, dist;
+	vec3_t dir;
+
+	if (cg_coronas.integer == 0) { // if set to '0' no coronas
+		return;
+	}
+
+	dli = cent->currentState.dl_intensity;
+	r = dli & 255;
+	g = (dli >> 8)& 255;
+	b = (dli >> 16)& 255;
+
+	visible = qfalse;
+	behind = qfalse;
+	toofar = qfalse;
+
+	if (cg_coronas.integer == 3) {
+		// let renderer decide if visable, may see through wall though
+		visible = qtrue;
+	} else if (cg_coronas.integer == 2) {
+		// trace everything
+	} else {
+		VectorSubtract(cg.refdef.vieworg, cent->lerpOrigin, dir);
+
+		dist = VectorNormalize2(dir, dir);
+
+		if (dist > cg_coronafardist.integer) { // performance variable cg_coronafardist will keep down super long traces
+			toofar = qtrue;
+		}
+
+		dot = DotProduct(dir, cg.refdef.viewaxis[0]);
+
+		if (dot >= -0.6) { // assumes ~90 deg fov, changed value to 0.6 (screen corner at 90 fov)
+			behind = qtrue; // use the dot to at least do trivial removal of those behind you
+		}
+		// yeah, I could calc side planes to clip against, but would that be worth it? (much better than dumb dot >= thing?)
+		//CG_Printf("dot: %f\n", dot);
+	}
+
+	if (!visible && !behind && !toofar) {
+		CG_Trace(&tr, cg.refdef.vieworg, NULL, NULL, cent->lerpOrigin, -1, MASK_SOLID);
+
+		if (tr.fraction == 1) {
+			visible = qtrue;
+		}
+	}
+
+	trap_R_AddCoronaToScene(cent->lerpOrigin, (float)r / 255.0f, (float)g / 255.0f, (float)b / 255.0f, (float)cent->currentState.density / 255.0f, cent->currentState.number, visible, cgs.media.coronaShader);
 }
 
 /*
@@ -924,6 +1096,9 @@ static void CG_AddCEntity(centity_t *cent) {
 			break;
 		case ET_MOVER:
 			CG_Mover(cent);
+			break;
+		case ET_CORONA:
+			CG_Corona(cent);
 			break;
 		case ET_SPEAKER:
 			CG_Speaker(cent);

@@ -271,6 +271,8 @@ void CG_ShaderStateChanged(void) {
 			break;
 		}
 	}
+	// only need to do this once, unless a shader is remapped to new shader with fogvars.
+	trap_R_GetGlobalFog(&cgs.globalFogType, cgs.globalFogColor, &cgs.globalFogDepthForOpaque, &cgs.globalFogDensity, &cgs.globalFogFarClip);
 }
 
 /*
@@ -335,6 +337,8 @@ static void CG_ConfigStringModified(void) {
 	} else if (num >= CS_PLAYERS && num < CS_PLAYERS + MAX_CLIENTS) {
 		CG_NewClientInfo(num - CS_PLAYERS);
 		CG_BuildSpectatorString();
+	} else if (num >= CS_DLIGHTS && num < CS_DLIGHTS + MAX_DLIGHT_CONFIGSTRINGS) {
+		// FIXME - dlight changes ignored!
 	} else if (num == CS_FLAGSTATUS) {
 		if (cgs.gametype == GT_CTF) {
 			// format is rb where its red/blue, 0 is at base, 1 is taken, 2 is dropped
@@ -449,6 +453,7 @@ static void CG_MapRestart(void) {
 	cg.intermissionStarted = qfalse;
 	cg.levelShot = qfalse;
 	cgs.voteTime = 0;
+	cg.lightstylesInited = qfalse;
 	cg.mapRestart = qtrue;
 
 	CG_StartMusic();

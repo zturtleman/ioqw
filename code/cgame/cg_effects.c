@@ -492,7 +492,7 @@ void CG_Bleed(vec3_t origin, int entityNum) {
 	ex->refEntity.customShader = cgs.media.bloodExplosionShader;
 	// don't show player's own blood in view
 	if (entityNum == cg.snap->ps.clientNum) {
-		ex->refEntity.renderfx |= RF_THIRD_PERSON;
+		ex->refEntity.renderfx |= RF_ONLY_MIRROR;
 	}
 }
 

@@ -45,6 +45,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define CROUCH_VIEWHEIGHT 22
 #define DEAD_VIEWHEIGHT -16
 #define OBELISK_TARGET_HEIGHT 56
+#define MAX_DLIGHT_CONFIGSTRINGS 128
 #define TIMER_GESTURE 2294
 
 /**************************************************************************************************************************************
@@ -73,14 +74,15 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define CS_INTERMISSION		22 // when 1, fraglimit/timelimit has been hit and intermission will start in a second or two
 #define CS_FLAGSTATUS		23 // string indicating flag status in CTF
 #define CS_SHADERSTATE		24
-#define CS_BOTINFO			25
 #define CS_ITEMS			27 // string of 0's and 1's that tell which items are present
 #define CS_MODELS			32
 #define CS_SOUNDS			(CS_MODELS + MAX_MODELS)
 #define CS_PLAYERS			(CS_SOUNDS + MAX_SOUNDS)
 #define CS_LOCATIONS		(CS_PLAYERS + MAX_CLIENTS)
 #define CS_PARTICLES		(CS_LOCATIONS + MAX_LOCATIONS)
-#define CS_MAX				(CS_PARTICLES + MAX_LOCATIONS)
+#define CS_DLIGHTS			(CS_PARTICLES + MAX_LOCATIONS)
+#define CS_BOTINFO			(CS_DLIGHTS + MAX_DLIGHT_CONFIGSTRINGS)
+#define CS_MAX				(CS_BOTINFO + MAX_CLIENTS)
 #if (CS_MAX) > MAX_CONFIGSTRINGS
 #error overflow: (CS_MAX) > MAX_CONFIGSTRINGS
 #endif
@@ -473,13 +475,28 @@ typedef struct animation_s {
 } animation_t;
 // flip the togglebit every time an animation changes so a restart of the same anim can be detected
 #define ANIM_TOGGLEBIT 128
+// skin surfaces array shouldn't be dynamically allocated because players reuse the same skin structure when changing models
+#define MAX_CG_SKIN_SURFACES 100
+typedef struct {
+	int numSurfaces;
+	qhandle_t surfaces[MAX_CG_SKIN_SURFACES];
+} cgSkin_t;
 
 #define DEFAULT_PLAYER_NAME "UnnamedPlayer"
-#define DEFAULT_MODEL "james"
-#define DEFAULT_HEAD "*james"
+// default player model names
+#define DEFAULT_MODEL "sarge"
+#define DEFAULT_HEAD "sarge"
+// for fallback player and gender-specific fallback sounds
+#define DEFAULT_MODEL_MALE "sarge"
+#define DEFAULT_MODEL_FEMALE "major"
+// default team player model names
 #define DEFAULT_TEAM_MODEL "james"
 #define DEFAULT_TEAM_HEAD "*james"
-
+// for fallback (team) player and gender-specific fallback sounds, also used for UI's character base model and CGame player pre-caching
+#define DEFAULT_TEAM_MODEL_MALE "james"
+#define DEFAULT_TEAM_HEAD_MALE "*james"
+#define DEFAULT_TEAM_MODEL_FEMALE "janet"
+#define DEFAULT_TEAM_HEAD_FEMALE "*janet"
 #define DEFAULT_REDTEAM_NAME "Stroggs"
 #define DEFAULT_BLUETEAM_NAME "Pagans"
 
@@ -575,11 +592,20 @@ gitem_t *BG_FindItemForHoldable(holdable_t pw);
 #define ITEM_INDEX(x) ((x) - bg_itemlist)
 
 qboolean BG_CanItemBeGrabbed(int gametype, const entityState_t *ent, const playerState_t *ps);
+
+typedef struct {
+	int gametype;
+	// callbacks to test the entity, these will be different functions during game and cgame
+	qboolean (*spawnInt)(const char *key, const char *defaultString, int *out);
+	qboolean (*spawnString)(const char *key, const char *defaultString, char **out);
+} bgEntitySpawnInfo_t;
+
+qboolean BG_CheckSpawnEntity(const bgEntitySpawnInfo_t *info);
+
 #define MAX_MAP_SIZE 65536
 // bg_tracemap.c
 typedef struct {
-	// callbacks to test the world
-	// these will be different functions during game and cgame
+	// callbacks to test the world, these will be different functions during game and cgame
 	void (*trace)(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask);
 	int (*pointcontents)(const vec3_t point, int passEntityNum);
 } bgGenTracemap_t;

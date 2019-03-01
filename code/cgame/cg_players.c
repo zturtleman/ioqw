@@ -83,6 +83,58 @@ sfxHandle_t CG_CustomSound(int clientNum, const char *soundName) {
 
 /*
 =======================================================================================================================================
+CG_CachePlayerSounds
+
+Used to cache player sounds at start up.
+=======================================================================================================================================
+*/
+void CG_CachePlayerSounds(const char *modelName) {
+	char filename[MAX_QPATH];
+	const char *s;
+	int i;
+
+	for (i = 0; i < MAX_CUSTOM_SOUNDS; i++) {
+		s = cg_customSoundNames[i];
+
+		if (!s) {
+			break;
+		}
+
+		Com_sprintf(filename, sizeof(filename), "sound/player/%s/%s", modelName, s + 1);
+		trap_S_RegisterSound(filename, qfalse);
+	}
+}
+
+/*
+=======================================================================================================================================
+CG_CachePlayerModels
+
+Used to cache player models at start up.
+=======================================================================================================================================
+*/
+void CG_CachePlayerModels(const char *modelName, const char *headModelName) {
+	char filename[MAX_QPATH];
+
+	Com_sprintf(filename, sizeof(filename), "models/players/%s/lower.md3", modelName);
+	trap_R_RegisterModel(filename);
+
+	Com_sprintf(filename, sizeof(filename), "models/players/%s/upper.md3", modelName);
+	trap_R_RegisterModel(filename);
+
+	if (headModelName[0] == '*') {
+		Com_sprintf(filename, sizeof(filename), "models/players/heads/%s/%s.md3", &headModelName[1], &headModelName[1]);
+	} else {
+		Com_sprintf(filename, sizeof(filename), "models/players/%s/head.md3", headModelName);
+	}
+
+	if (!trap_R_RegisterModel(filename) && headModelName[0] != '*') {
+		Com_sprintf(filename, sizeof(filename), "models/players/heads/%s/%s.md3", headModelName, headModelName);
+		trap_R_RegisterModel(filename);
+	}
+}
+
+/*
+=======================================================================================================================================
 
 	CLIENT INFO
 
@@ -370,18 +422,18 @@ CG_FindClientModelFile
 =======================================================================================================================================
 */
 static qboolean CG_FindClientModelFile(char *filename, int length, clientInfo_t *ci, const char *teamName, const char *modelName, const char *skinName, const char *base, const char *ext) {
-	char *team, *charactersFolder;
+	char *team;
 	int i;
 
 	if (cgs.gametype > GT_TOURNAMENT) {
 		switch (ci->team) {
-			case TEAM_RED: {
-				team = "red";
+			case TEAM_BLUE: {
+				team = "blue";
 				break;
 			}
 
 			default: {
-				team = "blue";
+				team = "red";
 				break;
 			}
 		}
@@ -389,54 +441,44 @@ static qboolean CG_FindClientModelFile(char *filename, int length, clientInfo_t 
 		team = "default";
 	}
 
-	charactersFolder = "";
+	for (i = 0; i < 2; i++) {
+		if (i == 0 && teamName && *teamName) {
+			//								"models/players/james/stroggs/lower_lily_red.skin"
+			Com_sprintf(filename, length, "models/players/%s/%s%s_%s_%s.%s", modelName, teamName, base, skinName, team, ext);
+		} else {
+			//								"models/players/james/lower_lily_red.skin"
+			Com_sprintf(filename, length, "models/players/%s/%s_%s_%s.%s", modelName, base, skinName, team, ext);
+		}
 
-	while (1) {
-		for (i = 0; i < 2; i++) {
+		if (CG_FileExists(filename)) {
+			return qtrue;
+		}
+
+		if (cgs.gametype > GT_TOURNAMENT) {
 			if (i == 0 && teamName && *teamName) {
-				//								"models/players/characters/james/stroggs/lower_lily_red.skin"
-				Com_sprintf(filename, length, "models/players/%s%s/%s%s_%s_%s.%s", charactersFolder, modelName, teamName, base, skinName, team, ext);
+				//								"models/players/james/stroggs/lower_red.skin"
+				Com_sprintf(filename, length, "models/players/%s/%s%s_%s.%s", modelName, teamName, base, team, ext);
 			} else {
-				//								"models/players/characters/james/lower_lily_red.skin"
-				Com_sprintf(filename, length, "models/players/%s%s/%s_%s_%s.%s", charactersFolder, modelName, base, skinName, team, ext);
+				//								"models/players/james/lower_red.skin"
+				Com_sprintf(filename, length, "models/players/%s/%s_%s.%s", modelName, base, team, ext);
 			}
-
-			if (CG_FileExists(filename)) {
-				return qtrue;
-			}
-
-			if (cgs.gametype > GT_TOURNAMENT) {
-				if (i == 0 && teamName && *teamName) {
-					//								"models/players/characters/james/stroggs/lower_red.skin"
-					Com_sprintf(filename, length, "models/players/%s%s/%s%s_%s.%s", charactersFolder, modelName, teamName, base, team, ext);
-				} else {
-					//								"models/players/characters/james/lower_red.skin"
-					Com_sprintf(filename, length, "models/players/%s%s/%s_%s.%s", charactersFolder, modelName, base, team, ext);
-				}
+		} else {
+			if (i == 0 && teamName && *teamName) {
+				//								"models/players/james/stroggs/lower_lily.skin"
+				Com_sprintf(filename, length, "models/players/%s/%s%s_%s.%s", modelName, teamName, base, skinName, ext);
 			} else {
-				if (i == 0 && teamName && *teamName) {
-					//								"models/players/characters/james/stroggs/lower_lily.skin"
-					Com_sprintf(filename, length, "models/players/%s%s/%s%s_%s.%s", charactersFolder, modelName, teamName, base, skinName, ext);
-				} else {
-					//								"models/players/characters/james/lower_lily.skin"
-					Com_sprintf(filename, length, "models/players/%s%s/%s_%s.%s", charactersFolder, modelName, base, skinName, ext);
-				}
-			}
-
-			if (CG_FileExists(filename)) {
-				return qtrue;
-			}
-
-			if (!teamName || !*teamName) {
-				break;
+				//								"models/players/james/lower_lily.skin"
+				Com_sprintf(filename, length, "models/players/%s/%s_%s.%s", modelName, base, skinName, ext);
 			}
 		}
-		// if tried the heads folder first
-		if (charactersFolder[0]) {
+
+		if (CG_FileExists(filename)) {
+			return qtrue;
+		}
+
+		if (!teamName || !*teamName) {
 			break;
 		}
-
-		charactersFolder = "characters/";
 	}
 
 	return qfalse;
@@ -453,13 +495,13 @@ static qboolean CG_FindClientHeadFile(char *filename, int length, clientInfo_t *
 
 	if (cgs.gametype > GT_TOURNAMENT) {
 		switch (ci->team) {
-			case TEAM_RED: {
-				team = "red";
+			case TEAM_BLUE: {
+				team = "blue";
 				break;
 			}
 
 			default: {
-				team = "blue";
+				team = "red";
 				break;
 			}
 		}
@@ -482,7 +524,13 @@ static qboolean CG_FindClientHeadFile(char *filename, int length, clientInfo_t *
 				Com_sprintf(filename, length, "models/players/%s%s/%s/%s_%s.%s", headsFolder, headModelName, headSkinName, base, team, ext);
 			}
 
-			if (CG_FileExists(filename)) {
+			if (Q_stricmpn(ext, "$image", 6) == 0) {
+				COM_StripExtension(filename, filename, length);
+
+				if (trap_R_RegisterShaderNoMip(filename)) {
+					return qtrue;
+				}
+			} else if (CG_FileExists(filename)) {
 				return qtrue;
 			}
 
@@ -500,7 +548,13 @@ static qboolean CG_FindClientHeadFile(char *filename, int length, clientInfo_t *
 				}
 			}
 
-			if (CG_FileExists(filename)) {
+			if (Q_stricmpn(ext, "$image", 6) == 0) {
+				COM_StripExtension(filename, filename, length);
+
+				if (trap_R_RegisterShaderNoMip(filename)) {
+					return qtrue;
+				}
+			} else if (CG_FileExists(filename)) {
 				return qtrue;
 			}
 
@@ -521,61 +575,176 @@ static qboolean CG_FindClientHeadFile(char *filename, int length, clientInfo_t *
 
 /*
 =======================================================================================================================================
+CG_AddSkinToFrame
+=======================================================================================================================================
+*/
+qhandle_t CG_AddSkinToFrame(const cgSkin_t *skin) {
+
+	if (!skin || !skin->numSurfaces) {
+		return 0;
+	}
+
+	return trap_R_AddSkinToFrame(skin->numSurfaces, skin->surfaces);
+}
+
+/*
+=======================================================================================================================================
+CG_RegisterSkin
+=======================================================================================================================================
+*/
+qboolean CG_RegisterSkin(const char *name, cgSkin_t *skin, qboolean append) {
+	char *text_p;
+	int len;
+	char *token;
+	char text[20000];
+	fileHandle_t f;
+	char surfName[MAX_QPATH];
+	char shaderName[MAX_QPATH];
+	qhandle_t hShader;
+	int initialSurfaces;
+	int totalSurfaces;
+
+	if (!name || !name[0]) {
+		Com_Printf("Empty name passed to RE_RegisterSkin\n");
+		return 0;
+	}
+
+	if (strlen(name) >= MAX_QPATH) {
+		Com_Printf("Skin name exceeds MAX_QPATH\n");
+		return 0;
+	}
+
+	if (!COM_CompareExtension(name, ".skin")) {
+		Com_Printf("WARNING: CG_RegisterSkin ignoring '%s', must have \".skin\" extension\n", name);
+		return 0;
+	}
+
+	if (!append) {
+		skin->numSurfaces = 0;
+	}
+
+	initialSurfaces = skin->numSurfaces;
+	totalSurfaces = skin->numSurfaces;
+	// load the file
+	len = trap_FS_FOpenFile(name, &f, FS_READ);
+
+	if (len <= 0) {
+		return qfalse;
+	}
+
+	if (len >= sizeof(text) - 1) {
+		CG_Printf("File %s too long\n", name);
+		trap_FS_FCloseFile(f);
+		return qfalse;
+	}
+
+	trap_FS_Read(text, len, f);
+	text[len] = 0;
+	trap_FS_FCloseFile(f);
+	// parse the text
+	text_p = text;
+
+	while (text_p && *text_p) {
+		// get surface name
+		token = COM_ParseExt2(&text_p, qtrue, ',');
+		Q_strncpyz(surfName, token, sizeof(surfName));
+
+		if (!token[0]) {
+			break;
+		}
+
+		if (*text_p == ',') {
+			text_p++;
+		}
+
+		if (!Q_stricmpn(token, "tag_", 4)) {
+			SkipRestOfLine(&text_p);
+			continue;
+		}
+		// skip RTCW/ET skin settings
+		if (!Q_stricmpn(token, "md3_", 4) || !Q_stricmp(token, "playerscale")) {
+			SkipRestOfLine(&text_p);
+			continue;
+		}
+		// parse the shader name
+		token = COM_ParseExt2(&text_p, qfalse, ',');
+		Q_strncpyz(shaderName, token, sizeof(shaderName));
+
+		if (skin->numSurfaces < MAX_CG_SKIN_SURFACES) {
+			hShader = trap_R_RegisterShaderEx(shaderName, LIGHTMAP_NONE, qtrue);
+			// for compatibility with quake3 skins, don't render missing shaders listed in skins
+			if (!hShader) {
+				hShader = cgs.media.nodrawShader;
+			}
+
+			skin->surfaces[skin->numSurfaces] = trap_R_AllocSkinSurface(surfName, hShader);
+			skin->numSurfaces++;
+		}
+
+		totalSurfaces++;
+	}
+
+	if (totalSurfaces > MAX_CG_SKIN_SURFACES) {
+		CG_Printf("WARNING: Ignoring excess surfaces (found %d, max is %d) in skin '%s'!\n", totalSurfaces - initialSurfaces, MAX_CG_SKIN_SURFACES - initialSurfaces, name);
+	}
+	// failed to load surfaces
+	if (!skin->numSurfaces) {
+		return qfalse;
+	}
+
+	return qtrue;
+}
+
+/*
+=======================================================================================================================================
 CG_RegisterClientSkin
 =======================================================================================================================================
 */
 static qboolean CG_RegisterClientSkin(clientInfo_t *ci, const char *teamName, const char *modelName, const char *skinName, const char *headModelName, const char *headSkinName) {
 	char filename[MAX_QPATH];
+	qboolean legsSkin, torsoSkin, headSkin;
+
+	legsSkin = torsoSkin = headSkin = qfalse;
 	/*
 	Com_sprintf(filename, sizeof(filename), "models/players/%s/%slower_%s.skin", modelName, teamName, skinName);
 	ci->legsSkin = trap_R_RegisterSkin(filename);
 
 	if (!ci->legsSkin) {
-		Com_sprintf(filename, sizeof(filename), "models/players/characters/%s/%slower_%s.skin", modelName, teamName, skinName);
-		ci->legsSkin = trap_R_RegisterSkin(filename);
-
-		if (!ci->legsSkin) {
-			Com_Printf("Leg skin load failure: %s\n", filename);
-		}
+		Com_Printf("Leg skin load failure: %s\n", filename);
 	}
 
 	Com_sprintf(filename, sizeof(filename), "models/players/%s/%supper_%s.skin", modelName, teamName, skinName);
 	ci->torsoSkin = trap_R_RegisterSkin(filename);
 
 	if (!ci->torsoSkin) {
-		Com_sprintf(filename, sizeof(filename), "models/players/characters/%s/%supper_%s.skin", modelName, teamName, skinName);
-		ci->torsoSkin = trap_R_RegisterSkin(filename);
-
-		if (!ci->torsoSkin) {
-			Com_Printf("Torso skin load failure: %s\n", filename);
-		}
+		Com_Printf("Torso skin load failure: %s\n", filename);
 	}
 	*/
 	if (CG_FindClientModelFile(filename, sizeof(filename), ci, teamName, modelName, skinName, "lower", "skin")) {
-		ci->legsSkin = trap_R_RegisterSkin(filename);
+		legsSkin = CG_RegisterSkin(filename, &ci->modelSkin, qfalse);
 	}
 
-	if (!ci->legsSkin) {
+	if (!legsSkin) {
 		Com_Printf("Leg skin load failure: %s\n", filename);
 	}
 
 	if (CG_FindClientModelFile(filename, sizeof(filename), ci, teamName, modelName, skinName, "upper", "skin")) {
-		ci->torsoSkin = trap_R_RegisterSkin(filename);
+		torsoSkin = CG_RegisterSkin(filename, &ci->modelSkin, qtrue);
 	}
 
-	if (!ci->torsoSkin) {
+	if (!torsoSkin) {
 		Com_Printf("Torso skin load failure: %s\n", filename);
 	}
 
 	if (CG_FindClientHeadFile(filename, sizeof(filename), ci, teamName, headModelName, headSkinName, "head", "skin")) {
-		ci->headSkin = trap_R_RegisterSkin(filename);
+		headSkin = CG_RegisterSkin(filename, &ci->modelSkin, qtrue);
 	}
 
-	if (!ci->headSkin) {
+	if (!headSkin) {
 		Com_Printf("Head skin load failure: %s\n", filename);
 	}
 	// if any skins failed to load
-	if (!ci->legsSkin || !ci->torsoSkin || !ci->headSkin) {
+	if (!legsSkin || !torsoSkin || !headSkin) {
 		return qfalse;
 	}
 
@@ -602,26 +771,16 @@ static qboolean CG_RegisterClientModelname(clientInfo_t *ci, const char *modelNa
 	ci->legsModel = trap_R_RegisterModel(filename);
 
 	if (!ci->legsModel) {
-		Com_sprintf(filename, sizeof(filename), "models/players/characters/%s/lower.md3", modelName);
-		ci->legsModel = trap_R_RegisterModel(filename);
-
-		if (!ci->legsModel) {
-			Com_Printf("Failed to load model file %s\n", filename);
-			return qfalse;
-		}
+		Com_Printf("Failed to load model file %s\n", filename);
+		return qfalse;
 	}
 
 	Com_sprintf(filename, sizeof(filename), "models/players/%s/upper.md3", modelName);
 	ci->torsoModel = trap_R_RegisterModel(filename);
 
 	if (!ci->torsoModel) {
-		Com_sprintf(filename, sizeof(filename), "models/players/characters/%s/upper.md3", modelName);
-		ci->torsoModel = trap_R_RegisterModel(filename);
-
-		if (!ci->torsoModel) {
-			Com_Printf("Failed to load model file %s\n", filename);
-			return qfalse;
-		}
+		Com_Printf("Failed to load model file %s\n", filename);
+		return qfalse;
 	}
 
 	if (headName[0] == '*') {
@@ -665,22 +824,22 @@ static qboolean CG_RegisterClientModelname(clientInfo_t *ci, const char *modelNa
 	Com_sprintf(filename, sizeof(filename), "models/players/%s/animation.cfg", modelName);
 
 	if (!CG_ParseAnimationFile(filename, ci)) {
-		Com_sprintf(filename, sizeof(filename), "models/players/characters/%s/animation.cfg", modelName);
-
-		if (!CG_ParseAnimationFile(filename, ci)) {
-			Com_Printf("Failed to load animation file %s\n", filename);
-			return qfalse;
-		}
+		Com_Printf("Failed to load animation file %s\n", filename);
+		return qfalse;
 	}
 
-	if (CG_FindClientHeadFile(filename, sizeof(filename), ci, teamName, headName, headSkinName, "icon", "skin")) {
+	if (CG_FindClientHeadFile(filename, sizeof(filename), ci, teamName, headName, headSkinName, "icon", "$image")) {
 		ci->modelIcon = trap_R_RegisterShaderNoMip(filename);
-	} else if (CG_FindClientHeadFile(filename, sizeof(filename), ci, teamName, headName, headSkinName, "icon", "tga")) {
-		ci->modelIcon = trap_R_RegisterShaderNoMip(filename);
+	} else {
+		ci->modelIcon = 0;
 	}
 
 	if (!ci->modelIcon) {
-		return qfalse;
+		Com_Printf("Failed to load icon for %s/%s\n", headName, headSkinName);
+
+		if (cg_buildScript.integer) {
+			return qfalse;
+		}
 	}
 
 	return qtrue;
@@ -818,7 +977,12 @@ static void CG_LoadClientInfo(int clientNum, clientInfo_t *ci) {
 	}
 	// sounds
 	dir = ci->modelName;
-	fallback = (cgs.gametype > GT_TOURNAMENT) ? DEFAULT_TEAM_MODEL : DEFAULT_MODEL;
+
+	if (cgs.gametype > GT_TOURNAMENT) {
+		fallback = (ci->gender == GENDER_FEMALE) ? DEFAULT_TEAM_MODEL_FEMALE : DEFAULT_TEAM_MODEL_MALE;
+	} else {
+		fallback = (ci->gender == GENDER_FEMALE) ? DEFAULT_MODEL_FEMALE : DEFAULT_MODEL_MALE;
+	}
 
 	for (i = 0; i < MAX_CUSTOM_SOUNDS; i++) {
 		s = cg_customSoundNames[i];
@@ -859,11 +1023,9 @@ static void CG_CopyClientInfoModel(clientInfo_t *from, clientInfo_t *to) {
 	to->foottype = from->foottype;
 	to->gender = from->gender;
 	to->legsModel = from->legsModel;
-	to->legsSkin = from->legsSkin;
 	to->torsoModel = from->torsoModel;
-	to->torsoSkin = from->torsoSkin;
 	to->headModel = from->headModel;
-	to->headSkin = from->headSkin;
+	to->modelSkin = from->modelSkin;
 	to->modelIcon = from->modelIcon;
 	to->newAnims = from->newAnims;
 
@@ -1710,7 +1872,7 @@ static void CG_TrailItem(centity_t *cent, qhandle_t hModel) {
 
 	ent.hModel = hModel;
 
-	trap_R_AddRefEntityToScene(&ent);
+	CG_AddRefEntityWithMinLight(&ent);
 }
 
 /*
@@ -1718,7 +1880,7 @@ static void CG_TrailItem(centity_t *cent, qhandle_t hModel) {
 CG_PlayerFlag
 =======================================================================================================================================
 */
-static void CG_PlayerFlag(centity_t *cent, qhandle_t hSkin, refEntity_t *torso) {
+static void CG_PlayerFlag(centity_t *cent, const cgSkin_t *skin, refEntity_t *torso) {
 	clientInfo_t *ci;
 	refEntity_t pole;
 	refEntity_t flag;
@@ -1737,12 +1899,12 @@ static void CG_PlayerFlag(centity_t *cent, qhandle_t hSkin, refEntity_t *torso) 
 	pole.renderfx = torso->renderfx;
 
 	CG_PositionEntityOnTag(&pole, torso, torso->hModel, "tag_flag");
-	trap_R_AddRefEntityToScene(&pole);
+	CG_AddRefEntityWithMinLight(&pole);
 	// show the flag model
 	memset(&flag, 0, sizeof(flag));
 
 	flag.hModel = cgs.media.flagFlapModel;
-	flag.customSkin = hSkin;
+	flag.customSkin = CG_AddSkinToFrame(skin);
 
 	VectorCopy(torso->lightingOrigin, flag.lightingOrigin);
 
@@ -1797,7 +1959,7 @@ static void CG_PlayerFlag(centity_t *cent, qhandle_t hSkin, refEntity_t *torso) 
 				angles[YAW] -= 360;
 			}
 
-			//vectoangles(cent->currentState.pos.trDelta, tmpangles);
+			//VectorToAngles(cent->currentState.pos.trDelta, tmpangles);
 			//angles[YAW] = tmpangles[YAW] + 45 - cent->pe.torso.yawAngle;
 			// change the yaw angle
 			CG_SwingAngles(angles[YAW], 25, 90, 0.15f, &cent->pe.flag.yawAngle, &cent->pe.flag.yawing);
@@ -1836,7 +1998,7 @@ static void CG_PlayerFlag(centity_t *cent, qhandle_t hSkin, refEntity_t *torso) 
 
 	AnglesToAxis(angles, flag.axis);
 	CG_PositionRotatedEntityOnTag(&flag, &pole, pole.hModel, "tag_flag");
-	trap_R_AddRefEntityToScene(&flag);
+	CG_AddRefEntityWithMinLight(&flag);
 }
 
 /*
@@ -1914,7 +2076,7 @@ static void CG_PlayerTokens(centity_t *cent, int renderfx) {
 		angle = (((cg.time + 500 * MAX_SKULLTRAIL - 500 * i) / 16) & 255) * (M_PI * 2) / 255;
 		ent.origin[2] += sin(angle) * 10;
 
-		trap_R_AddRefEntityToScene(&ent);
+		CG_AddRefEntityWithMinLight(&ent);
 		VectorCopy(trail->positions[i], origin);
 	}
 }
@@ -1935,14 +2097,14 @@ static void CG_PlayerPowerups(centity_t *cent, refEntity_t *torso) {
 	}
 	// quad gives a dlight
 	if (powerups & (1 << PW_QUAD)) {
-		trap_R_AddLightToScene(cent->lerpOrigin, 200 + (rand()&31), 0.2f, 0.2f, 1);
+		trap_R_AddLightToScene(cent->lerpOrigin, 200 + (rand()&31), 1.0f, 0.2f, 0.2f, 1, 0);
 	}
 
 	ci = &cgs.clientinfo[cent->currentState.clientNum];
 	// redflag
 	if (powerups & (1 << PW_REDFLAG)) {
 		if (ci->newAnims) {
-			CG_PlayerFlag(cent, cgs.media.redFlagFlapSkin, torso);
+			CG_PlayerFlag(cent, &cgs.media.redFlagFlapSkin, torso);
 		} else {
 			CG_TrailItem(cent, cgs.media.redFlagModel);
 		}
@@ -1950,7 +2112,7 @@ static void CG_PlayerPowerups(centity_t *cent, refEntity_t *torso) {
 	// blueflag
 	if (powerups & (1 << PW_BLUEFLAG)) {
 		if (ci->newAnims) {
-			CG_PlayerFlag(cent, cgs.media.blueFlagFlapSkin, torso);
+			CG_PlayerFlag(cent, &cgs.media.blueFlagFlapSkin, torso);
 		} else {
 			CG_TrailItem(cent, cgs.media.blueFlagModel);
 		}
@@ -1958,7 +2120,7 @@ static void CG_PlayerPowerups(centity_t *cent, refEntity_t *torso) {
 	// neutralflag
 	if (powerups & (1 << PW_NEUTRALFLAG)) {
 		if (ci->newAnims) {
-			CG_PlayerFlag(cent, cgs.media.neutralFlagFlapSkin, torso);
+			CG_PlayerFlag(cent, &cgs.media.neutralFlagFlapSkin, torso);
 		} else {
 			CG_TrailItem(cent, cgs.media.neutralFlagModel);
 		}
@@ -2007,10 +2169,10 @@ static void CG_PlayerSprites(centity_t *cent, const refEntity_t *parent) {
 
 	if (cent->currentState.number == cg.snap->ps.clientNum) {
 		// current player's team sprite should only be shown in mirrors
-		friendFlags = RF_THIRD_PERSON;
+		friendFlags = RF_ONLY_MIRROR;
 
 		if (!cg.renderingThirdPerson) {
-			thirdPersonFlags = RF_THIRD_PERSON;
+			thirdPersonFlags = RF_ONLY_MIRROR;
 		} else {
 			thirdPersonFlags = 0;
 		}
@@ -2174,7 +2336,7 @@ static void CG_PlayerSplash(centity_t *cent) {
 	verts[3].modulate[2] = 255;
 	verts[3].modulate[3] = 255;
 
-	trap_R_AddPolyToScene(cgs.media.wakeMarkShader, 4, verts);
+	trap_R_AddPolyToScene(cgs.media.wakeMarkShader, 4, verts, 0, 0);
 }
 
 /*
@@ -2195,19 +2357,19 @@ void CG_AddRefEntityWithPowerups(refEntity_t *ent, entityState_t *state) {
 			ent->customShader = cgs.media.invisShader;
 		}
 
-		trap_R_AddRefEntityToScene(ent);
+		CG_AddRefEntityWithMinLight(ent);
 	} else {
-		trap_R_AddRefEntityToScene(ent);
+		CG_AddRefEntityWithMinLight(ent);
 
 		if (state->powerups & (1 << PW_QUAD)) {
 			ent->customShader = cgs.media.quadShader;
-			trap_R_AddRefEntityToScene(ent);
+			CG_AddRefEntityWithMinLight(ent);
 		}
 
 		if (state->powerups & (1 << PW_REGEN)) {
 			if (((cg.time / 100) % 10) == 1) {
 				ent->customShader = cgs.media.regenShader;
-				trap_R_AddRefEntityToScene(ent);
+				CG_AddRefEntityWithMinLight(ent);
 			}
 		}
 	}
@@ -2306,7 +2468,7 @@ void CG_Player(centity_t *cent) {
 
 	if (cent->currentState.number == cg.snap->ps.clientNum) {
 		if (!cg.renderingThirdPerson) {
-			renderfx = RF_THIRD_PERSON; // only draw in mirrors
+			renderfx = RF_ONLY_MIRROR; // only draw in mirrors
 		} else {
 			if (cg_cameraMode.integer) {
 				return;
@@ -2345,7 +2507,7 @@ void CG_Player(centity_t *cent) {
 	}
 	// add the legs
 	legs.hModel = ci->legsModel;
-	legs.customSkin = ci->legsSkin;
+	legs.customSkin = CG_AddSkinToFrame(&ci->modelSkin);
 
 	VectorCopy(cent->lerpOrigin, legs.origin);
 	VectorCopy(cent->lerpOrigin, legs.lightingOrigin);
@@ -2354,6 +2516,7 @@ void CG_Player(centity_t *cent) {
 	legs.renderfx = renderfx;
 
 	VectorCopy(legs.origin, legs.oldorigin); // don't positionally lerp at all
+	Byte4Copy(ci->c1RGBA, legs.shaderRGBA);
 	CG_AddRefEntityWithPowerups(&legs, &cent->currentState);
 	// if the model failed, allow the default nullmodel to be displayed
 	if (!legs.hModel) {
@@ -2366,7 +2529,7 @@ void CG_Player(centity_t *cent) {
 		return;
 	}
 
-	torso.customSkin = ci->torsoSkin;
+	torso.customSkin = legs.customSkin;
 
 	VectorCopy(cent->lerpOrigin, torso.lightingOrigin);
 	CG_PositionRotatedEntityOnTag(&torso, &legs, ci->legsModel, "tag_torso");
@@ -2374,6 +2537,7 @@ void CG_Player(centity_t *cent) {
 	torso.shadowPlane = shadowPlane;
 	torso.renderfx = renderfx;
 
+	Byte4Copy(ci->c1RGBA, torso.shaderRGBA);
 	CG_AddRefEntityWithPowerups(&torso, &cent->currentState);
 
 	t = cg.time - ci->medkitUsageTime;
@@ -2386,7 +2550,7 @@ void CG_Player(centity_t *cent) {
 		powerup.oldframe = 0;
 		powerup.customSkin = 0;
 		// always draw
-		powerup.renderfx &= ~RF_THIRD_PERSON;
+		powerup.renderfx &= ~RF_ONLY_MIRROR;
 		VectorClear(angles);
 		AnglesToAxis(angles, powerup.axis);
 		VectorCopy(cent->lerpOrigin, powerup.origin);
@@ -2405,7 +2569,7 @@ void CG_Player(centity_t *cent) {
 			powerup.shaderRGBA[3] = 0xff;
 		}
 
-		trap_R_AddRefEntityToScene(&powerup);
+		CG_AddRefEntityWithMinLight(&powerup);
 	}
 
 	if (cent->currentState.eFlags & EF_KAMIKAZE) {
@@ -2440,11 +2604,11 @@ void CG_Player(centity_t *cent) {
 
 			skull.hModel = cgs.media.kamikazeHeadModel;
 
-			trap_R_AddRefEntityToScene(&skull);
+			CG_AddRefEntityWithMinLight(&skull);
 
 			skull.hModel = cgs.media.kamikazeHeadTrail;
 
-			trap_R_AddRefEntityToScene(&skull);
+			CG_AddRefEntityWithMinLight(&skull);
 		} else {
 			// three skulls spinning around the player
 			angle = ((cg.time / 4) & 255) * (M_PI * 2) / 255;
@@ -2475,13 +2639,13 @@ void CG_Player(centity_t *cent) {
 			*/
 			skull.hModel = cgs.media.kamikazeHeadModel;
 
-			trap_R_AddRefEntityToScene(&skull);
+			CG_AddRefEntityWithMinLight(&skull);
 			// flip the trail because this skull is spinning in the other direction
 			VectorInverse(skull.axis[1]);
 
 			skull.hModel = cgs.media.kamikazeHeadTrail;
 
-			trap_R_AddRefEntityToScene(&skull);
+			CG_AddRefEntityWithMinLight(&skull);
 
 			angle = ((cg.time / 4) & 255) * (M_PI * 2) / 255 + M_PI;
 
@@ -2514,11 +2678,11 @@ void CG_Player(centity_t *cent) {
 			*/
 			skull.hModel = cgs.media.kamikazeHeadModel;
 
-			trap_R_AddRefEntityToScene(&skull);
+			CG_AddRefEntityWithMinLight(&skull);
 
 			skull.hModel = cgs.media.kamikazeHeadTrail;
 
-			trap_R_AddRefEntityToScene(&skull);
+			CG_AddRefEntityWithMinLight(&skull);
 
 			angle = ((cg.time / 3) & 255) * (M_PI * 2) / 255 + 0.5 * M_PI;
 
@@ -2538,11 +2702,11 @@ void CG_Player(centity_t *cent) {
 
 			skull.hModel = cgs.media.kamikazeHeadModel;
 
-			trap_R_AddRefEntityToScene(&skull);
+			CG_AddRefEntityWithMinLight(&skull);
 
 			skull.hModel = cgs.media.kamikazeHeadTrail;
 
-			trap_R_AddRefEntityToScene(&skull);
+			CG_AddRefEntityWithMinLight(&skull);
 		}
 	}
 
@@ -2552,7 +2716,7 @@ void CG_Player(centity_t *cent) {
 		powerup.frame = 0;
 		powerup.oldframe = 0;
 		powerup.customSkin = 0;
-		trap_R_AddRefEntityToScene(&powerup);
+		CG_AddRefEntityWithMinLight(&powerup);
 	}
 
 	if (cent->currentState.powerups & (1 << PW_GUARD)) {
@@ -2561,7 +2725,7 @@ void CG_Player(centity_t *cent) {
 		powerup.frame = 0;
 		powerup.oldframe = 0;
 		powerup.customSkin = 0;
-		trap_R_AddRefEntityToScene(&powerup);
+		CG_AddRefEntityWithMinLight(&powerup);
 	}
 
 	if (cent->currentState.powerups & (1 << PW_DOUBLER)) {
@@ -2570,7 +2734,7 @@ void CG_Player(centity_t *cent) {
 		powerup.frame = 0;
 		powerup.oldframe = 0;
 		powerup.customSkin = 0;
-		trap_R_AddRefEntityToScene(&powerup);
+		CG_AddRefEntityWithMinLight(&powerup);
 	}
 
 	if (cent->currentState.powerups & (1 << PW_SCOUT)) {
@@ -2579,7 +2743,7 @@ void CG_Player(centity_t *cent) {
 		powerup.frame = 0;
 		powerup.oldframe = 0;
 		powerup.customSkin = 0;
-		trap_R_AddRefEntityToScene(&powerup);
+		CG_AddRefEntityWithMinLight(&powerup);
 	}
 	// add the talk baloon or disconnect icon
 	CG_PlayerSprites(cent, &torso);
@@ -2590,7 +2754,7 @@ void CG_Player(centity_t *cent) {
 		return;
 	}
 
-	head.customSkin = ci->headSkin;
+	head.customSkin = legs.customSkin;
 
 	VectorCopy(cent->lerpOrigin, head.lightingOrigin);
 	CG_PositionRotatedEntityOnTag(&head, &torso, ci->torsoModel, "tag_head");
@@ -2598,6 +2762,7 @@ void CG_Player(centity_t *cent) {
 	head.shadowPlane = shadowPlane;
 	head.renderfx = renderfx;
 
+	Byte4Copy(ci->c1RGBA, head.shaderRGBA);
 	CG_AddRefEntityWithPowerups(&head, &cent->currentState);
 	CG_AddBreathPuffs(cent, &head);
 	CG_DustTrail(cent);

@@ -357,6 +357,9 @@ void Svcmd_EntityList_f(void) {
 			case ET_MOVER:
 				G_Printf("ET_MOVER            ");
 				break;
+			case ET_CORONA:
+				G_Printf("ET_CORONA           ");
+				break;
 			case ET_SPEAKER:
 				G_Printf("ET_SPEAKER          ");
 				break;

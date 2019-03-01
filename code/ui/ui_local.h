@@ -147,13 +147,11 @@ typedef struct {
 typedef struct {
 	// model info
 	qhandle_t legsModel;
-	qhandle_t legsSkin;
 	lerpFrame_t legs;
 	qhandle_t torsoModel;
-	qhandle_t torsoSkin;
 	lerpFrame_t torso;
 	qhandle_t headModel;
-	qhandle_t headSkin;
+	cgSkin_t modelSkin;
 	animation_t animations[MAX_TOTALANIMATIONS];
 	qboolean fixedlegs;		// true if legs yaw is always the same as torso yaw
 	qboolean fixedtorso;	// true if torso never changes yaw
@@ -441,6 +439,7 @@ extern void UI_Shutdown(void);
 extern void UI_KeyEvent(int key);
 extern void UI_MouseEvent(int dx, int dy);
 extern void UI_Refresh(int realtime);
+extern void UI_AddRefEntityWithMinLight(const refEntity_t *entity);
 extern qboolean UI_ConsoleCommand(int realTime);
 extern void UI_DrawHandlePic(float x, float y, float w, float h, qhandle_t hShader);
 extern void UI_FillRect(float x, float y, float width, float height, const float *color);
@@ -465,6 +464,8 @@ char *UI_GetBotInfoByName(const char *name);
 int UI_GetNumBots(void);
 void UI_LoadBots(void);
 char *UI_GetBotNameByNumber(int num);
+qhandle_t UI_AddSkinToFrame(const cgSkin_t *skin);
+qboolean UI_RegisterSkin(const char *name, cgSkin_t *skin, qboolean append);
 
 /*
 =======================================================================================================================================
@@ -484,19 +485,32 @@ void trap_Cvar_Update(vmCvar_t *vmCvar);
 void trap_Cvar_Reset(const char *name);
 
 qhandle_t trap_R_RegisterModel(const char *name);
-qhandle_t trap_R_RegisterSkin(const char *name);
+qhandle_t trap_R_RegisterShaderEx(const char *name, int lightmapIndex, qboolean mipRawImage); // returns all white if not found
 qhandle_t trap_R_RegisterShaderNoMip(const char *name);
-void trap_R_ClearScene(void);
-void trap_R_AddRefEntityToScene(const refEntity_t *re);
-void trap_R_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts);
-void trap_R_AddLightToScene(const vec3_t org, float intensity, float r, float g, float b);
 void trap_R_RenderScene(const refdef_t *fd);
+void trap_R_ClearScene(void);
 void trap_R_SetColor(const float *rgba);
+void trap_R_AddRefEntityToScene(const refEntity_t *re);
+void trap_R_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts, int bmodelNum, int sortLevel);
+void trap_R_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts, int numPolys, int bmodelNum, int sortLevel);
+void trap_R_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer);
+int trap_R_LightForPoint(vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec3_t lightDir);
+void trap_R_AddLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader);
+void trap_R_AddAdditiveLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b);
+void trap_R_AddVertexLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b);
+void trap_R_AddJuniorLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b);
+void trap_R_AddDirectedLightToScene(const vec3_t normal, float intensity, float r, float g, float b);
+void trap_R_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scale, int id, qboolean visible, qhandle_t hShader);
 void trap_R_DrawStretchPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader);
-void trap_R_ModelBounds(clipHandle_t model, vec3_t mins, vec3_t maxs);
+int trap_R_ModelBounds(clipHandle_t model, vec3_t mins, vec3_t maxs, int startFrame, int endFrame, float frac);
 void trap_UpdateScreen(void);
 void trap_R_SetClipRegion(const float *region);
 int trap_R_LerpTag(orientation_t *tag, clipHandle_t mod, int startFrame, int endFrame, float frac, const char *tagName);
+int trap_R_LerpTagFrameModel(orientation_t *tag, clipHandle_t mod, clipHandle_t frameModel, int startFrame, clipHandle_t endFrameModel, int endFrame, float frac, const char *tagName, int *tagIndex);
+int trap_R_LerpTagTorso(orientation_t *tag, clipHandle_t mod, clipHandle_t frameModel, int startFrame, clipHandle_t endFrameModel, int endFrame, float frac, const char *tagName, int *tagIndex, const vec3_t *torsoAxis, qhandle_t torsoFrameModel, int torsoFrame, qhandle_t oldTorsoFrameModel, int oldTorsoFrame, float torsoFrac);
+// skin(entity model surface remap)management
+qhandle_t trap_R_AllocSkinSurface(const char *surface, qhandle_t hShader);
+qhandle_t trap_R_AddSkinToFrame(int numSurfaces, const qhandle_t *surfaces);
 void trap_S_StartLocalSound(sfxHandle_t sfx, int channelNum);
 sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed);
 void trap_Key_KeynumToStringBuf(int keynum, char *buf, int buflen);
@@ -515,6 +529,10 @@ int trap_LAN_GetServerCount(int source);
 void trap_LAN_GetServerAddressString(int source, int n, char *buf, int buflen);
 void trap_LAN_GetServerInfo(int source, int n, char *buf, int buflen);
 int trap_LAN_GetServerPing(int source, int n);
+int trap_LAN_GetPingQueueCount(void);
+void trap_LAN_ClearPing(int n);
+void trap_LAN_GetPing(int n, char *buf, int buflen, int *pingtime);
+void trap_LAN_GetPingInfo(int n, char *buf, int buflen);
 void trap_LAN_LoadCachedServers(void);
 void trap_LAN_SaveCachedServers(void);
 void trap_LAN_MarkServerVisible(int source, int n, qboolean visible);

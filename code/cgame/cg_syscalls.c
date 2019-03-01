@@ -539,11 +539,11 @@ qhandle_t trap_R_RegisterModel(const char *name) {
 
 /*
 =======================================================================================================================================
-trap_R_RegisterSkin
+trap_R_RegisterShaderEx
 =======================================================================================================================================
 */
-qhandle_t trap_R_RegisterSkin(const char *name) {
-	return syscall(CG_R_REGISTERSKIN, name);
+qhandle_t trap_R_RegisterShaderEx(const char *name, int lightmapIndex, qboolean mipRawImage) {
+	return syscall(CG_R_REGISTERSHADEREX, name, lightmapIndex, mipRawImage);
 }
 
 /*
@@ -575,47 +575,20 @@ void trap_R_RegisterFont(const char *fontName, int pointSize, float borderWidth,
 
 /*
 =======================================================================================================================================
-trap_R_ClearScene
-=======================================================================================================================================
-*/
-void trap_R_ClearScene(void) {
-	syscall(CG_R_CLEARSCENE);
-}
-
-/*
-=======================================================================================================================================
-trap_R_AddRefEntityToScene
-=======================================================================================================================================
-*/
-void trap_R_AddRefEntityToScene(const refEntity_t *re) {
-	syscall(CG_R_ADDREFENTITYTOSCENE, re);
-}
-
-/*
-=======================================================================================================================================
-trap_R_AddPolyToScene
-=======================================================================================================================================
-*/
-void trap_R_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts) {
-	syscall(CG_R_ADDPOLYTOSCENE, hShader, numVerts, verts);
-}
-
-/*
-=======================================================================================================================================
-trap_R_AddPolysToScene
-=======================================================================================================================================
-*/
-void trap_R_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts, int num) {
-	syscall(CG_R_ADDPOLYSTOSCENE, hShader, numVerts, verts, num);
-}
-
-/*
-=======================================================================================================================================
 trap_R_RenderScene
 =======================================================================================================================================
 */
 void trap_R_RenderScene(const refdef_t *fd) {
 	syscall(CG_R_RENDERSCENE, fd);
+}
+
+/*
+=======================================================================================================================================
+trap_R_ClearScene
+=======================================================================================================================================
+*/
+void trap_R_ClearScene(void) {
+	syscall(CG_R_CLEARSCENE);
 }
 
 /*
@@ -626,52 +599,6 @@ trap_R_SetColor
 void trap_R_SetColor(const float *rgba) {
 	syscall(CG_R_SETCOLOR, rgba);
 }
-
-/*
-=======================================================================================================================================
-trap_R_DrawStretchPic
-=======================================================================================================================================
-*/
-void trap_R_DrawStretchPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader) {
-	syscall(CG_R_DRAWSTRETCHPIC, PASSFLOAT(x), PASSFLOAT(y), PASSFLOAT(w), PASSFLOAT(h), PASSFLOAT(s1), PASSFLOAT(t1), PASSFLOAT(s2), PASSFLOAT(t2), hShader);
-}
-
-/*
-=======================================================================================================================================
-trap_R_LerpTag
-=======================================================================================================================================
-*/
-int trap_R_LerpTag(orientation_t *tag, clipHandle_t mod, int startFrame, int endFrame, float frac, const char *tagName) {
-	return syscall(CG_R_LERPTAG, tag, mod, startFrame, endFrame, PASSFLOAT(frac), tagName);
-}
-
-/*
-=======================================================================================================================================
-trap_R_ModelBounds
-=======================================================================================================================================
-*/
-void trap_R_ModelBounds(clipHandle_t model, vec3_t mins, vec3_t maxs) {
-	syscall(CG_R_MODELBOUNDS, model, mins, maxs);
-}
-
-/*
-=======================================================================================================================================
-trap_R_RemapShader
-=======================================================================================================================================
-*/
-void trap_R_RemapShader(const char *oldShader, const char *newShader, const char *timeOffset) {
-	syscall(CG_R_REMAP_SHADER, oldShader, newShader, timeOffset);
-}
-
-/*
-=======================================================================================================================================
-trap_R_SetClipRegion
-=======================================================================================================================================
-*/
-void trap_R_SetClipRegion(const float *region) {
-	syscall(CG_R_SETCLIPREGION, region);
-}
-
 /*
 =======================================================================================================================================
 trap_R_LoadWorldMap
@@ -679,24 +606,6 @@ trap_R_LoadWorldMap
 */
 void trap_R_LoadWorldMap(const char *mapname) {
 	syscall(CG_R_LOADWORLDMAP, mapname);
-}
-
-/*
-=======================================================================================================================================
-trap_GetEntityToken
-=======================================================================================================================================
-*/
-qboolean trap_GetEntityToken(char *buffer, int bufferSize) {
-	return syscall(CG_GET_ENTITY_TOKEN, buffer, bufferSize);
-}
-
-/*
-=======================================================================================================================================
-trap_R_LightForPoint
-=======================================================================================================================================
-*/
-int trap_R_LightForPoint(vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec3_t lightDir) {
-	return syscall(CG_R_LIGHTFORPOINT, point, ambientLight, directedLight, lightDir);
 }
 
 /*
@@ -710,11 +619,74 @@ qboolean trap_R_inPVS(const vec3_t p1, const vec3_t p2) {
 
 /*
 =======================================================================================================================================
+trap_GetEntityToken
+=======================================================================================================================================
+*/
+qboolean trap_GetEntityToken(char *buffer, int bufferSize) {
+	return syscall(CG_GET_ENTITY_TOKEN, buffer, bufferSize);
+}
+
+/*
+=======================================================================================================================================
+trap_R_AddRefEntityToScene
+=======================================================================================================================================
+*/
+void trap_R_AddRefEntityToScene(const refEntity_t *re) {
+	syscall(CG_R_ADDREFENTITYTOSCENE, re, sizeof(refEntity_t));
+}
+
+/*
+=======================================================================================================================================
+trap_R_AddPolyRefEntityToScene
+=======================================================================================================================================
+*/
+void trap_R_AddPolyRefEntityToScene(const refEntity_t *re, int numVerts, const polyVert_t *verts, int numPolys) {
+	syscall(CG_R_ADDPOLYREFENTITYTOSCENE, re, sizeof(refEntity_t), numVerts, verts, numPolys);
+}
+
+/*
+=======================================================================================================================================
+trap_R_AddPolyToScene
+=======================================================================================================================================
+*/
+void trap_R_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts, int bmodelNum, int sortLevel) {
+	syscall(CG_R_ADDPOLYTOSCENE, hShader, numVerts, verts, bmodelNum, sortLevel);
+}
+
+/*
+=======================================================================================================================================
+trap_R_AddPolysToScene
+=======================================================================================================================================
+*/
+void trap_R_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts, int numPolys, int bmodelNum, int sortLevel) {
+	syscall(CG_R_ADDPOLYSTOSCENE, hShader, numVerts, verts, numPolys, bmodelNum, sortLevel);
+}
+
+/*
+=======================================================================================================================================
+trap_R_AddPolyBufferToScene
+=======================================================================================================================================
+*/
+void    trap_R_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer) {
+	syscall(CG_R_ADDPOLYBUFFERTOSCENE, pPolyBuffer);
+}
+
+/*
+=======================================================================================================================================
+trap_R_LightForPoint
+=======================================================================================================================================
+*/
+int trap_R_LightForPoint(vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec3_t lightDir) {
+	return syscall(CG_R_LIGHTFORPOINT, point, ambientLight, directedLight, lightDir);
+}
+
+/*
+=======================================================================================================================================
 trap_R_AddLightToScene
 =======================================================================================================================================
 */
-void trap_R_AddLightToScene(const vec3_t org, float intensity, float r, float g, float b) {
-	syscall(CG_R_ADDLIGHTTOSCENE, org, PASSFLOAT(intensity), PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b));
+void trap_R_AddLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader) {
+	syscall(CG_R_ADDLIGHTTOSCENE, org, PASSFLOAT(radius), PASSFLOAT(intensity), PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b), hShader);
 }
 
 /*
@@ -722,8 +694,170 @@ void trap_R_AddLightToScene(const vec3_t org, float intensity, float r, float g,
 trap_R_AddAdditiveLightToScene
 =======================================================================================================================================
 */
-void trap_R_AddAdditiveLightToScene(const vec3_t org, float intensity, float r, float g, float b) {
-	syscall(CG_R_ADDADDITIVELIGHTTOSCENE, org, PASSFLOAT(intensity), PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b));
+void trap_R_AddAdditiveLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b) {
+	syscall(CG_R_ADDADDITIVELIGHTTOSCENE, org, PASSFLOAT(radius), PASSFLOAT(intensity), PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b));
+}
+
+/*
+=======================================================================================================================================
+trap_R_AddVertexLightToScene
+=======================================================================================================================================
+*/
+void trap_R_AddVertexLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b) {
+	syscall(CG_R_ADDVERTEXLIGHTTOSCENE, org, PASSFLOAT(radius), PASSFLOAT(intensity), PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b));
+}
+
+/*
+=======================================================================================================================================
+trap_R_AddJuniorLightToScene
+=======================================================================================================================================
+*/
+void trap_R_AddJuniorLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b) {
+	syscall(CG_R_ADDJUNIORLIGHTTOSCENE, org, PASSFLOAT(radius), PASSFLOAT(intensity), PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b));
+}
+
+/*
+=======================================================================================================================================
+trap_R_AddDirectedLightToScene
+=======================================================================================================================================
+*/
+void trap_R_AddDirectedLightToScene(const vec3_t normal, float intensity, float r, float g, float b) {
+	syscall(CG_R_ADDDIRECTEDLIGHTTOSCENE, normal, PASSFLOAT(intensity), PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b));
+}
+
+/*
+=======================================================================================================================================
+trap_R_AddCoronaToScene
+=======================================================================================================================================
+*/
+void trap_R_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scale, int id, qboolean visible, qhandle_t hShader) {
+	syscall(CG_R_ADDCORONATOSCENE, org, PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b), PASSFLOAT(scale), id, visible, hShader);
+}
+
+/*
+=======================================================================================================================================
+trap_R_GetGlobalFog
+=======================================================================================================================================
+*/
+void trap_R_GetGlobalFog(fogType_t *type, vec3_t color, float *depthForOpaque, float *density, float *farClip) {
+	syscall(CG_R_GET_GLOBAL_FOG, type, color, depthForOpaque, density, farClip);
+}
+
+/*
+=======================================================================================================================================
+trap_R_GetViewFog
+=======================================================================================================================================
+*/
+void trap_R_GetViewFog(const vec3_t origin, fogType_t *type, vec3_t color, float *depthForOpaque, float *density, float *farClip, qboolean inwater) {
+	syscall(CG_R_GET_VIEW_FOG, origin, type, color, depthForOpaque, density, farClip, inwater);
+}
+
+/*
+=======================================================================================================================================
+trap_R_ModelBounds
+=======================================================================================================================================
+*/
+int trap_R_ModelBounds(clipHandle_t model, vec3_t mins, vec3_t maxs, int startFrame, int endFrame, float frac) {
+	return syscall(CG_R_MODELBOUNDS, model, mins, maxs, startFrame, endFrame, PASSFLOAT(frac));
+}
+
+/*
+=======================================================================================================================================
+trap_R_LerpTag
+=======================================================================================================================================
+*/
+int trap_R_LerpTag(orientation_t *tag, clipHandle_t mod, int startFrame, int endFrame, float frac, const char *tagName) {
+	return syscall(CG_R_LERPTAG, tag, mod, startFrame, endFrame, PASSFLOAT(frac), tagName);
+}
+
+/*
+=======================================================================================================================================
+trap_R_LerpTagFrameModel
+=======================================================================================================================================
+*/
+int trap_R_LerpTagFrameModel(orientation_t *tag, clipHandle_t mod, clipHandle_t frameModel, int startFrame, clipHandle_t endFrameModel, int endFrame, float frac, const char *tagName, int *tagIndex) {
+	return syscall(CG_R_LERPTAG_FRAMEMODEL, tag, mod, frameModel, startFrame, endFrameModel, endFrame, PASSFLOAT(frac), tagName, tagIndex);
+}
+
+/*
+=======================================================================================================================================
+trap_R_LerpTagTorso
+=======================================================================================================================================
+*/
+int trap_R_LerpTagTorso(orientation_t *tag, clipHandle_t mod, clipHandle_t frameModel, int startFrame, clipHandle_t endFrameModel, int endFrame, float frac, const char *tagName, int *tagIndex, const vec3_t *torsoAxis, qhandle_t torsoFrameModel, int torsoFrame, qhandle_t oldTorsoFrameModel, int oldTorsoFrame, float torsoFrac) {
+	return syscall(CG_R_LERPTAG_TORSO, tag, mod, frameModel, startFrame, endFrameModel, endFrame, PASSFLOAT(frac), tagName, tagIndex, torsoAxis, torsoFrameModel, torsoFrame, oldTorsoFrameModel, oldTorsoFrame, PASSFLOAT(torsoFrac));
+}
+
+/*
+=======================================================================================================================================
+trap_R_AllocSkinSurface
+=======================================================================================================================================
+*/
+qhandle_t trap_R_AllocSkinSurface(const char *surface, qhandle_t hShader) {
+	return syscall(CG_R_ALLOCSKINSURFACE, surface, hShader);
+}
+
+/*
+=======================================================================================================================================
+trap_R_AddSkinToFrame
+=======================================================================================================================================
+*/
+qhandle_t trap_R_AddSkinToFrame(int numSurfaces, const qhandle_t *surfaces) {
+	return syscall(CG_R_ADDSKINTOFRAME, numSurfaces, surfaces);
+}
+
+/*
+=======================================================================================================================================
+trap_R_SetClipRegion
+=======================================================================================================================================
+*/
+void trap_R_SetClipRegion(const float *region) {
+	syscall(CG_R_SETCLIPREGION, region);
+}
+
+/*
+=======================================================================================================================================
+trap_R_DrawStretchPic
+=======================================================================================================================================
+*/
+void trap_R_DrawStretchPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader) {
+	syscall(CG_R_DRAWSTRETCHPIC, PASSFLOAT(x), PASSFLOAT(y), PASSFLOAT(w), PASSFLOAT(h), PASSFLOAT(s1), PASSFLOAT(t1), PASSFLOAT(s2), PASSFLOAT(t2), hShader);
+}
+
+/*
+=======================================================================================================================================
+trap_R_DrawStretchPicGradient
+=======================================================================================================================================
+*/
+void trap_R_DrawStretchPicGradient(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader, const float *gradientColor) {
+	syscall(CG_R_DRAWSTRETCHPIC_GRADIENT, PASSFLOAT(x), PASSFLOAT(y), PASSFLOAT(w), PASSFLOAT(h), PASSFLOAT(s1), PASSFLOAT(t1), PASSFLOAT(s2), PASSFLOAT(t2), hShader, gradientColor);
+}
+
+/*
+=======================================================================================================================================
+trap_R_DrawRotatedPic
+=======================================================================================================================================
+*/
+void trap_R_DrawRotatedPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader, float angle) {
+	syscall(CG_R_DRAWROTATEDPIC, PASSFLOAT(x), PASSFLOAT(y), PASSFLOAT(w), PASSFLOAT(h), PASSFLOAT(s1), PASSFLOAT(t1), PASSFLOAT(s2), PASSFLOAT(t2), hShader, PASSFLOAT(angle));
+}
+
+/*
+=======================================================================================================================================
+trap_R_Add2dPolys
+=======================================================================================================================================
+*/
+void trap_R_Add2dPolys(polyVert_t *verts, int numverts, qhandle_t hShader) {
+	syscall(CG_R_DRAW2DPOLYS, verts, numverts, hShader);
+}
+
+/*
+=======================================================================================================================================
+trap_R_RemapShader
+=======================================================================================================================================
+*/
+void trap_R_RemapShader(const char *oldShader, const char *newShader, const char *timeOffset) {
+	syscall(CG_R_REMAP_SHADER, oldShader, newShader, timeOffset);
 }
 
 /*
@@ -791,24 +925,6 @@ void trap_S_AddLoopingSound(int entityNum, const vec3_t origin, const vec3_t vel
 
 /*
 =======================================================================================================================================
-trap_S_UpdateEntityPosition
-=======================================================================================================================================
-*/
-void trap_S_UpdateEntityPosition(int entityNum, const vec3_t origin) {
-	syscall(CG_S_UPDATEENTITYPOSITION, entityNum, origin);
-}
-
-/*
-=======================================================================================================================================
-trap_S_Respatialize
-=======================================================================================================================================
-*/
-void trap_S_Respatialize(int entityNum, const vec3_t origin, vec3_t axis[3], int inwater) {
-	syscall(CG_S_RESPATIALIZE, entityNum, origin, axis, inwater);
-}
-
-/*
-=======================================================================================================================================
 trap_S_AddRealLoopingSound
 =======================================================================================================================================
 */
@@ -827,11 +943,20 @@ void trap_S_StopLoopingSound(int entityNum) {
 
 /*
 =======================================================================================================================================
-trap_Key_IsDown
+trap_S_UpdateEntityPosition
 =======================================================================================================================================
 */
-qboolean trap_Key_IsDown(int keynum) {
-	return syscall(CG_KEY_ISDOWN, keynum);
+void trap_S_UpdateEntityPosition(int entityNum, const vec3_t origin) {
+	syscall(CG_S_UPDATEENTITYPOSITION, entityNum, origin);
+}
+
+/*
+=======================================================================================================================================
+trap_S_Respatialize
+=======================================================================================================================================
+*/
+void trap_S_Respatialize(int entityNum, const vec3_t origin, vec3_t axis[3], int inwater) {
+	syscall(CG_S_RESPATIALIZE, entityNum, origin, axis, inwater);
 }
 
 /*
@@ -850,6 +975,15 @@ trap_Key_SetCatcher
 */
 void trap_Key_SetCatcher(int catcher) {
 	syscall(CG_KEY_SETCATCHER, catcher);
+}
+
+/*
+=======================================================================================================================================
+trap_Key_IsDown
+=======================================================================================================================================
+*/
+qboolean trap_Key_IsDown(int keynum) {
+	return syscall(CG_KEY_ISDOWN, keynum);
 }
 
 /*
@@ -916,3 +1050,4 @@ Allows you to resize the animation dynamically.
 void trap_CIN_SetExtents(int handle, int x, int y, int w, int h) {
 	syscall(CG_CIN_SETEXTENTS, handle, x, y, w, h);
 }
+

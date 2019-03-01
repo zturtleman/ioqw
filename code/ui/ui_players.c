@@ -273,12 +273,13 @@ static void UI_LegsSequencing(playerInfo_t *pi) {
 UI_PositionEntityOnTag
 =======================================================================================================================================
 */
-static void UI_PositionEntityOnTag(refEntity_t *entity, const refEntity_t *parent, clipHandle_t parentModel, char *tagName) {
+static qboolean UI_PositionEntityOnTag(refEntity_t *entity, const refEntity_t *parent, clipHandle_t parentModel, char *tagName) {
 	int i;
 	orientation_t lerped;
+	qboolean returnValue;
 
 	// lerp the tag
-	trap_R_LerpTag(&lerped, parentModel, parent->oldframe, parent->frame, 1.0 - parent->backlerp, tagName);
+	returnValue = trap_R_LerpTagFrameModel(&lerped, parentModel, parent->oldframeModel, parent->oldframe, parent->frameModel, parent->frame, 1.0 - parent->backlerp, tagName, NULL);
 	// FIXME: allow origin offsets along tag?
 	VectorCopy(parent->origin, entity->origin);
 
@@ -289,6 +290,8 @@ static void UI_PositionEntityOnTag(refEntity_t *entity, const refEntity_t *paren
 	MatrixMultiply(lerped.axis, ((refEntity_t *)parent)->axis, entity->axis);
 
 	entity->backlerp = parent->backlerp;
+
+	return returnValue;
 }
 
 /*
@@ -296,13 +299,14 @@ static void UI_PositionEntityOnTag(refEntity_t *entity, const refEntity_t *paren
 UI_PositionRotatedEntityOnTag
 =======================================================================================================================================
 */
-static void UI_PositionRotatedEntityOnTag(refEntity_t *entity, const refEntity_t *parent, clipHandle_t parentModel, char *tagName) {
+static qboolean UI_PositionRotatedEntityOnTag(refEntity_t *entity, const refEntity_t *parent, clipHandle_t parentModel, char *tagName) {
 	int i;
 	orientation_t lerped;
 	vec3_t tempAxis[3];
+	qboolean returnValue;
 
 	// lerp the tag
-	trap_R_LerpTag(&lerped, parentModel, parent->oldframe, parent->frame, 1.0 - parent->backlerp, tagName);
+	returnValue = trap_R_LerpTagFrameModel(&lerped, parentModel, parent->oldframeModel, parent->oldframe, parent->frameModel, parent->frame, 1.0 - parent->backlerp, tagName, NULL);
 	// FIXME: allow origin offsets along tag?
 	VectorCopy(parent->origin, entity->origin);
 
@@ -312,6 +316,8 @@ static void UI_PositionRotatedEntityOnTag(refEntity_t *entity, const refEntity_t
 	// cast away const because of compiler problems
 	MatrixMultiply(entity->axis, lerped.axis, tempAxis);
 	MatrixMultiply(tempAxis, ((refEntity_t *)parent)->axis, entity->axis);
+
+	return returnValue;
 }
 
 /*
@@ -772,7 +778,7 @@ void UI_DrawPlayer(float x, float y, float w, float h, playerInfo_t *pi, int tim
 	renderfx = RF_LIGHTING_ORIGIN|RF_NOSHADOW;
 	// add the legs
 	legs.hModel = pi->legsModel;
-	legs.customSkin = pi->legsSkin;
+	legs.customSkin = UI_AddSkinToFrame(&pi->modelSkin);
 
 	VectorCopy(origin, legs.origin);
 	VectorCopy(origin, legs.lightingOrigin);
@@ -780,7 +786,8 @@ void UI_DrawPlayer(float x, float y, float w, float h, playerInfo_t *pi, int tim
 	legs.renderfx = renderfx;
 
 	VectorCopy(legs.origin, legs.oldorigin);
-	trap_R_AddRefEntityToScene(&legs);
+	Byte4Copy(pi->c1RGBA, legs.shaderRGBA);
+	UI_AddRefEntityWithMinLight(&legs);
 
 	if (!legs.hModel) {
 		return;
@@ -792,14 +799,15 @@ void UI_DrawPlayer(float x, float y, float w, float h, playerInfo_t *pi, int tim
 		return;
 	}
 
-	torso.customSkin = pi->torsoSkin;
+	torso.customSkin = legs.customSkin;
 
 	VectorCopy(origin, torso.lightingOrigin);
 	UI_PositionRotatedEntityOnTag(&torso, &legs, pi->legsModel, "tag_torso");
 
 	torso.renderfx = renderfx;
 
-	trap_R_AddRefEntityToScene(&torso);
+	Byte4Copy(pi->c1RGBA, torso.shaderRGBA);
+	UI_AddRefEntityWithMinLight(&torso);
 	// add the head
 	head.hModel = pi->headModel;
 
@@ -807,26 +815,28 @@ void UI_DrawPlayer(float x, float y, float w, float h, playerInfo_t *pi, int tim
 		return;
 	}
 
-	head.customSkin = pi->headSkin;
+	head.customSkin = legs.customSkin;
 
 	VectorCopy(origin, head.lightingOrigin);
 	UI_PositionRotatedEntityOnTag(&head, &torso, pi->torsoModel, "tag_head");
 
 	head.renderfx = renderfx;
 
-	trap_R_AddRefEntityToScene(&head);
+	Byte4Copy(pi->c1RGBA, head.shaderRGBA);
+	UI_AddRefEntityWithMinLight(&head);
 	// add the gun
 	if (pi->currentWeapon != WP_NONE) {
 		memset(&gun, 0, sizeof(gun));
 
 		gun.hModel = pi->weaponModel;
 
+		Byte4Copy(pi->c1RGBA, gun.shaderRGBA);
 		VectorCopy(origin, gun.lightingOrigin);
 		UI_PositionEntityOnTag(&gun, &torso, pi->torsoModel, "tag_weapon");
 
 		gun.renderfx = renderfx;
 
-		trap_R_AddRefEntityToScene(&gun);
+		UI_AddRefEntityWithMinLight(&gun);
 	}
 	// add the spinning barrel
 	if (pi->barrelModel) {
@@ -845,7 +855,7 @@ void UI_DrawPlayer(float x, float y, float w, float h, playerInfo_t *pi, int tim
 
 		AnglesToAxis(angles, barrel.axis);
 		UI_PositionRotatedEntityOnTag(&barrel, &gun, pi->weaponModel, "tag_barrel");
-		trap_R_AddRefEntityToScene(&barrel);
+		UI_AddRefEntityWithMinLight(&barrel);
 	}
 	// add muzzle flash
 	if (dp_realtime <= pi->muzzleFlashTime) {
@@ -853,17 +863,17 @@ void UI_DrawPlayer(float x, float y, float w, float h, playerInfo_t *pi, int tim
 			memset(&flash, 0, sizeof(flash));
 
 			flash.hModel = pi->flashModel;
-
+			Byte4Copy(pi->c1RGBA, flash.shaderRGBA);
 			VectorCopy(origin, flash.lightingOrigin);
 			UI_PositionEntityOnTag(&flash, &gun, pi->weaponModel, "tag_flash");
 
 			flash.renderfx = renderfx;
 
-			trap_R_AddRefEntityToScene(&flash);
+			UI_AddRefEntityWithMinLight(&flash);
 		}
 		// make a dlight for the flash
 		if (pi->flashDlightColor[0] || pi->flashDlightColor[1] || pi->flashDlightColor[2]) {
-			trap_R_AddLightToScene(flash.origin, 200 + (rand()&31), pi->flashDlightColor[0], pi->flashDlightColor[1], pi->flashDlightColor[2]);
+			trap_R_AddJuniorLightToScene(flash.origin, 200 + (rand()&31), 1.0f, pi->flashDlightColor[0], pi->flashDlightColor[1], pi->flashDlightColor[2]);
 		}
 	}
 	// add the chat icon
@@ -874,12 +884,12 @@ void UI_DrawPlayer(float x, float y, float w, float h, playerInfo_t *pi, int tim
 	origin[0] -= 100; // + = behind, - = in front
 	origin[1] += 100; // + = left, - = right
 	origin[2] += 100; // + = above, - = below
-	trap_R_AddLightToScene(origin, 500, 1.0, 1.0, 1.0);
+	trap_R_AddJuniorLightToScene(origin, 500, 1.0, 1.0, 1.0, 1.0);
 
 	origin[0] -= 100;
 	origin[1] -= 100;
 	origin[2] -= 100;
-	trap_R_AddLightToScene(origin, 500, 1.0, 0.0, 0.0);
+	trap_R_AddJuniorLightToScene(origin, 500, 1.0, 1.0, 0.0, 0.0);
 
 	trap_R_RenderScene(&refdef);
 }
@@ -958,11 +968,130 @@ static qboolean UI_FindClientHeadFile(char *filename, int length, const char *te
 
 /*
 =======================================================================================================================================
+UI_AddSkinToFrame
+=======================================================================================================================================
+*/
+qhandle_t UI_AddSkinToFrame(const cgSkin_t *skin) {
+
+	if (!skin || !skin->numSurfaces) {
+		return 0;
+	}
+
+	return trap_R_AddSkinToFrame(skin->numSurfaces, skin->surfaces);
+}
+
+/*
+=======================================================================================================================================
+UI_RegisterSkin
+=======================================================================================================================================
+*/
+qboolean UI_RegisterSkin(const char *name, cgSkin_t *skin, qboolean append) {
+	char *text_p;
+	int len;
+	char *token;
+	char text[20000];
+	fileHandle_t f;
+	char surfName[MAX_QPATH];
+	char shaderName[MAX_QPATH];
+	qhandle_t hShader;
+	int initialSurfaces;
+	int totalSurfaces;
+
+	if (!name || !name[0]) {
+		Com_Printf("Empty name passed to RE_RegisterSkin\n");
+		return 0;
+	}
+
+	if (strlen(name) >= MAX_QPATH) {
+		Com_Printf("Skin name exceeds MAX_QPATH\n");
+		return 0;
+	}
+
+	if (!COM_CompareExtension(name, ".skin")) {
+		Com_Printf("WARNING: UI_RegisterSkin ignoring '%s', must have \".skin\" extension\n", name);
+		return 0;
+	}
+
+	if (!append) {
+		skin->numSurfaces = 0;
+	}
+
+	initialSurfaces = skin->numSurfaces;
+	totalSurfaces = skin->numSurfaces;
+	// load the file
+	len = trap_FS_FOpenFile(name, &f, FS_READ);
+
+	if (len <= 0) {
+		return qfalse;
+	}
+
+	if (len >= sizeof(text) - 1) {
+		Com_Printf("File %s too long\n", name);
+		trap_FS_FCloseFile(f);
+		return qfalse;
+	}
+
+	trap_FS_Read(text, len, f);
+	text[len] = 0;
+	trap_FS_FCloseFile(f);
+	// parse the text
+	text_p = text;
+
+	while (text_p && *text_p) {
+		// get surface name
+		token = COM_ParseExt2(&text_p, qtrue, ',');
+		Q_strncpyz(surfName, token, sizeof(surfName));
+
+		if (!token[0]) {
+			break;
+		}
+
+		if (*text_p == ',') {
+			text_p++;
+		}
+
+		if (!Q_stricmpn(token, "tag_", 4)) {
+			SkipRestOfLine(&text_p);
+			continue;
+		}
+		// skip RTCW / ET skin settings
+		if (!Q_stricmpn(token, "md3_", 4) || !Q_stricmp(token, "playerscale")) {
+			SkipRestOfLine(&text_p);
+			continue;
+		}
+		// parse the shader name
+		token = COM_ParseExt2(&text_p, qfalse, ',');
+		Q_strncpyz(shaderName, token, sizeof(shaderName));
+
+		if (skin->numSurfaces < MAX_CG_SKIN_SURFACES) {
+			hShader = trap_R_RegisterShaderEx(shaderName, LIGHTMAP_NONE, qtrue);
+
+			skin->surfaces[skin->numSurfaces] = trap_R_AllocSkinSurface(surfName, hShader);
+			skin->numSurfaces++;
+		}
+
+		totalSurfaces++;
+	}
+
+	if (totalSurfaces > MAX_CG_SKIN_SURFACES) {
+		Com_Printf("WARNING: Ignoring excess surfaces(found %d, max is %d)in skin '%s'!\n", totalSurfaces - initialSurfaces, MAX_CG_SKIN_SURFACES - initialSurfaces, name);
+	}
+	// failed to load surfaces
+	if (!skin->numSurfaces) {
+		return qfalse;
+	}
+
+	return qtrue;
+}
+
+/*
+=======================================================================================================================================
 UI_RegisterClientSkin
 =======================================================================================================================================
 */
 static qboolean UI_RegisterClientSkin(playerInfo_t *pi, const char *modelName, const char *skinName, const char *headModelName, const char *headSkinName, const char *teamName) {
 	char filename[MAX_QPATH];
+	qboolean legsSkin, torsoSkin, headSkin;
 
 	if (teamName && *teamName) {
 		Com_sprintf(filename, sizeof(filename), "models/players/%s/%s/lower_%s.skin", modelName, teamName, skinName);
@@ -970,17 +1099,7 @@ static qboolean UI_RegisterClientSkin(playerInfo_t *pi, const char *modelName, c
 		Com_sprintf(filename, sizeof(filename), "models/players/%s/lower_%s.skin", modelName, skinName);
 	}
 
-	pi->legsSkin = trap_R_RegisterSkin(filename);
-
-	if (!pi->legsSkin) {
-		if (teamName && *teamName) {
-			Com_sprintf(filename, sizeof(filename), "models/players/characters/%s/%s/lower_%s.skin", modelName, teamName, skinName);
-		} else {
-			Com_sprintf(filename, sizeof(filename), "models/players/characters/%s/lower_%s.skin", modelName, skinName);
-		}
-
-		pi->legsSkin = trap_R_RegisterSkin(filename);
-	}
+	legsSkin = UI_RegisterSkin(filename, &pi->modelSkin, qfalse);
 
 	if (teamName && *teamName) {
 		Com_sprintf(filename, sizeof(filename), "models/players/%s/%s/upper_%s.skin", modelName, teamName, skinName);
@@ -988,23 +1107,15 @@ static qboolean UI_RegisterClientSkin(playerInfo_t *pi, const char *modelName, c
 		Com_sprintf(filename, sizeof(filename), "models/players/%s/upper_%s.skin", modelName, skinName);
 	}
 
-	pi->torsoSkin = trap_R_RegisterSkin(filename);
-
-	if (!pi->torsoSkin) {
-		if (teamName && *teamName) {
-			Com_sprintf(filename, sizeof(filename), "models/players/characters/%s/%s/upper_%s.skin", modelName, teamName, skinName);
-		} else {
-			Com_sprintf(filename, sizeof(filename), "models/players/characters/%s/upper_%s.skin", modelName, skinName);
-		}
-
-		pi->torsoSkin = trap_R_RegisterSkin(filename);
-	}
+	torsoSkin = UI_RegisterSkin(filename, &pi->modelSkin, qtrue);
 
 	if (UI_FindClientHeadFile(filename, sizeof(filename), teamName, headModelName, headSkinName, "head", "skin")) {
-		pi->headSkin = trap_R_RegisterSkin(filename);
+		headSkin = UI_RegisterSkin(filename, &pi->modelSkin, qtrue);
+	} else {
+		headSkin = qfalse;
 	}
 
-	if (!pi->legsSkin || !pi->torsoSkin || !pi->headSkin) {
+	if (!legsSkin || !torsoSkin || !headSkin) {
 		return qfalse;
 	}
 
@@ -1230,14 +1341,8 @@ qboolean UI_RegisterClientModelname(playerInfo_t *pi, const char *modelSkinName,
 	pi->legsModel = trap_R_RegisterModel(filename);
 
 	if (!pi->legsModel) {
-		Com_sprintf(filename, sizeof(filename), "models/players/characters/%s/lower.md3", modelName);
-
-		pi->legsModel = trap_R_RegisterModel(filename);
-
-		if (!pi->legsModel) {
-			Com_Printf("Failed to load model file %s\n", filename);
-			return qfalse;
-		}
+		Com_Printf("Failed to load model file %s\n", filename);
+		return qfalse;
 	}
 
 	Com_sprintf(filename, sizeof(filename), "models/players/%s/upper.md3", modelName);
@@ -1245,14 +1350,8 @@ qboolean UI_RegisterClientModelname(playerInfo_t *pi, const char *modelSkinName,
 	pi->torsoModel = trap_R_RegisterModel(filename);
 
 	if (!pi->torsoModel) {
-		Com_sprintf(filename, sizeof(filename), "models/players/characters/%s/upper.md3", modelName);
-
-		pi->torsoModel = trap_R_RegisterModel(filename);
-
-		if (!pi->torsoModel) {
-			Com_Printf("Failed to load model file %s\n", filename);
-			return qfalse;
-		}
+		Com_Printf("Failed to load model file %s\n", filename);
+		return qfalse;
 	}
 
 	if (headModelName[0] == '*') {
@@ -1284,12 +1383,8 @@ qboolean UI_RegisterClientModelname(playerInfo_t *pi, const char *modelSkinName,
 	Com_sprintf(filename, sizeof(filename), "models/players/%s/animation.cfg", modelName);
 
 	if (!UI_ParseAnimationFile(filename, pi)) {
-		Com_sprintf(filename, sizeof(filename), "models/players/characters/%s/animation.cfg", modelName);
-
-		if (!UI_ParseAnimationFile(filename, pi)) {
-			Com_Printf("Failed to load animation file %s\n", filename);
-			return qfalse;
-		}
+		Com_Printf("Failed to load animation file %s\n", filename);
+		return qfalse;
 	}
 
 	return qtrue;

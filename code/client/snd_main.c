@@ -471,7 +471,7 @@ void S_Play_f(void) {
 	c = Cmd_Argc();
 
 	if (c < 2) {
-		Com_Printf("Usage: play <sound filename> [sound filename] [sound filename] ...\n");
+		Com_Printf("Usage: play <sound filename> [sound filename][sound filename] ...\n");
 		return;
 	}
 

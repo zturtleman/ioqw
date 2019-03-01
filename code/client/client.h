@@ -373,6 +373,7 @@ void CL_StopRecord_f(void);
 void CL_InitDownloads(void);
 void CL_NextDownload(void);
 void CL_GetPing(int n, char *buf, int buflen, int *pingtime);
+void CL_GetPingInfo(int n, char *buf, int buflen);
 void CL_ClearPing(int n);
 int CL_GetPingQueueCount(void);
 void CL_ShutdownRef(void);

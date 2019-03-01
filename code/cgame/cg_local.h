@@ -245,6 +245,14 @@ typedef struct centity_s {
 	// exact interpolated position of entity on this frame
 	vec3_t lerpOrigin;
 	vec3_t lerpAngles;
+	// client side dlights
+	int dl_frame;
+	int dl_oldframe;
+	float dl_backlerp;
+	int dl_time;
+	char dl_stylestring[64];
+	int dl_sound;
+	int dl_atten;
 } centity_t;
 
 /**************************************************************************************************************************************
@@ -259,8 +267,9 @@ typedef struct markPoly_s {
 	qhandle_t markShader;
 	qboolean alphaFade; // fade alpha instead of rgb
 	float color[4];
-	poly_t poly;
+	int numVerts;
 	polyVert_t verts[MAX_VERTS_ON_POLY];
+	int bmodelNum;
 } markPoly_t;
 
 typedef enum {
@@ -385,11 +394,9 @@ typedef struct {
 	footstep_t footsteps8;
 	gender_t gender;		// from model
 	qhandle_t legsModel;
-	qhandle_t legsSkin;
 	qhandle_t torsoModel;
-	qhandle_t torsoSkin;
 	qhandle_t headModel;
-	qhandle_t headSkin;
+	cgSkin_t modelSkin;
 	qhandle_t modelIcon;
 	animation_t animations[MAX_TOTALANIMATIONS];
 	sfxHandle_t sounds[MAX_CUSTOM_SOUNDS];
@@ -456,6 +463,8 @@ typedef struct {
 **************************************************************************************************************************************/
 
 #define MAX_PREDICTED_EVENTS 16
+#define MAX_SPAWN_VARS 64
+#define MAX_SPAWN_VARS_CHARS 2048
 
 typedef struct {
 	int clientFrame;				// incremented each frame
@@ -475,7 +484,7 @@ typedef struct {
 	qboolean thisFrameTeleport;
 	qboolean nextFrameTeleport;
 	int frametime;					// cg.time - cg.oldTime
-	int time;						// this is the time value that the client is rendering at
+	int time;						// this is the server time value that the client is rendering at
 	int oldTime;					// time at last frame, used for missile trails and prediction checking
 	int physicsTime;				// either cg.snap->time or cg.nextSnap->time
 	int timelimitWarnings;			// 5 min, 1 min, overtime
@@ -509,15 +518,28 @@ typedef struct {
 	vec3_t refdefViewAngles;		// will be converted to refdef.viewaxis
 	float fov;						// either range checked cg_fov or forced value
 	// spawn variables
+	qboolean spawning;           	// the CG_Spawn *() functions are valid
+	int numSpawnVars;
+	char *spawnVars[MAX_SPAWN_VARS][2]; // key/value pairs
+	int numSpawnVarChars;
+	char spawnVarChars[MAX_SPAWN_VARS_CHARS];
+	int spawnEntityOffset;
 	vec2_t mapcoordsMins;
 	vec2_t mapcoordsMaxs;
 	qboolean mapcoordsValid;
+	int numMiscGameModels;
+	qboolean hasSkyPortal;
+	vec3_t skyPortalOrigin;
+	vec3_t skyPortalFogColor;
+	int skyPortalFogDepthForOpaque;
+	float skyAlpha;
 	// zoom key
 	qboolean zoomed;
 	int zoomTime;
 	float zoomSensitivity;
 	// information screen text during loading
 	char infoScreenText[MAX_STRING_CHARS];
+	qboolean lightstylesInited;
 	// scoreboard
 	int scoresRequestTime;
 	int numScores;
@@ -607,6 +629,7 @@ typedef struct {
 	qhandle_t charsetPropGlow;
 	qhandle_t charsetPropB;
 	qhandle_t whiteShader;
+	qhandle_t nodrawShader;
 	qhandle_t cursor;
 	qhandle_t selectCursor;
 	qhandle_t sizeCursor;
@@ -622,9 +645,9 @@ typedef struct {
 	qhandle_t flagShader[4];
 	qhandle_t flagPoleModel;
 	qhandle_t flagFlapModel;
-	qhandle_t redFlagFlapSkin;
-	qhandle_t blueFlagFlapSkin;
-	qhandle_t neutralFlagFlapSkin;
+	cgSkin_t redFlagFlapSkin;
+	cgSkin_t blueFlagFlapSkin;
+	cgSkin_t neutralFlagFlapSkin;
 	qhandle_t redFlagBaseModel;
 	qhandle_t blueFlagBaseModel;
 	qhandle_t neutralFlagBaseModel;
@@ -633,8 +656,8 @@ typedef struct {
 	qhandle_t overloadLightsModel;
 	qhandle_t overloadEnergyModel;
 	qhandle_t harvesterModel;
-	qhandle_t harvesterRedSkin;
-	qhandle_t harvesterBlueSkin;
+	cgSkin_t harvesterRedSkin;
+	cgSkin_t harvesterBlueSkin;
 	qhandle_t harvesterNeutralModel;
 	qhandle_t armorModel;
 	qhandle_t armorIcon;
@@ -661,6 +684,7 @@ typedef struct {
 	qhandle_t blueFriendShader;
 	qhandle_t balloonShader;
 	qhandle_t connectionShader;
+	qhandle_t coronaShader;
 	qhandle_t selectShader;
 	qhandle_t viewBloodShader;
 	qhandle_t tracerShader;
@@ -860,6 +884,16 @@ typedef struct {
 	sfxHandle_t footsteps4[FOOTSTEP_TOTAL][4];
 } cgMedia_t;
 
+#define MAX_STATIC_GAMEMODELS 1024
+
+typedef struct cg_gamemodel_s {
+	qhandle_t model;
+	cgSkin_t skin;
+	vec3_t org;
+	vec3_t axes[3];
+	vec_t radius;
+} cg_gamemodel_t;
+
 /**************************************************************************************************************************************
 
 	The client game static (cgs) structure hold everything loaded or calculated from the gamestate. It will NOT be cleared when a
@@ -906,8 +940,8 @@ typedef struct {
 	qhandle_t gameModels[MAX_MODELS];
 	sfxHandle_t gameSounds[MAX_SOUNDS];
 	int numInlineModels;
-	qhandle_t inlineDrawModel[MAX_MODELS];
-	vec3_t inlineModelMidpoints[MAX_MODELS];
+	qhandle_t inlineDrawModel[MAX_SUBMODELS];
+	vec3_t inlineModelMidpoints[MAX_SUBMODELS];
 	clientInfo_t clientinfo[MAX_CLIENTS];
 	// teamchat width is * 3 because of embedded color codes
 	char teamChatMsgs[TEAMCHAT_HEIGHT][TEAMCHAT_WIDTH * 3 + 1];
@@ -930,6 +964,13 @@ typedef struct {
 	int acceptTask;
 	int acceptLeader;
 	char acceptVoice[MAX_NAME_LENGTH];
+	// default global fog from bsp or fogvars in a shader
+	fogType_t globalFogType;
+	vec3_t globalFogColor;
+	float globalFogDepthForOpaque;
+	float globalFogDensity;
+	float globalFogFarClip;
+	cg_gamemodel_t miscGameModels[MAX_STATIC_GAMEMODELS];
 	// media
 	cgMedia_t media;
 } cgs_t;
@@ -1044,6 +1085,11 @@ extern vmCvar_t cg_enableDust;
 extern vmCvar_t cg_enableBreath;
 extern vmCvar_t cg_obeliskRespawnDelay;
 extern vmCvar_t cg_trueLightning;
+extern vmCvar_t cg_atmosphericEffects;
+extern vmCvar_t cg_coronafardist;
+extern vmCvar_t cg_coronas;
+extern vmCvar_t cg_fadeExplosions;
+extern vmCvar_t cg_skybox;
 extern vmCvar_t cg_redTeamName;
 extern vmCvar_t cg_blueTeamName;
 extern vmCvar_t cg_currentSelectedPlayer;
@@ -1060,6 +1106,7 @@ void CG_UpdateCvars(void);
 int CG_CrosshairPlayer(void);
 int CG_LastAttacker(void);
 void CG_LoadMenus(const char *menuFile);
+void CG_HudMenuHacks(void);
 void CG_KeyEvent(int key, qboolean down);
 void CG_MouseEvent(int x, int y);
 void CG_EventHandling(int type);
@@ -1067,6 +1114,7 @@ void CG_RankRunFrame(void);
 void CG_SetScoreSelection(void *menu);
 score_t *CG_GetSelectedScore(void);
 void CG_BuildSpectatorString(void);
+void CG_SetupDlightstyles(void);
 // cg_view.c
 void CG_TestModel_f(void);
 void CG_TestGun_f(void);
@@ -1101,7 +1149,11 @@ void CG_SetScreenPlacement(screenPlacement_e hpos, screenPlacement_e vpos);
 void CG_PopScreenPlacement(void);
 screenPlacement_e CG_GetScreenHorizontalPlacement(void);
 screenPlacement_e CG_GetScreenVerticalPlacement(void);
-
+void CG_AdjustFrom640(float *x, float *y, float *w, float *h);
+void CG_FillRect(float x, float y, float width, float height, const float *color);
+void CG_DrawPic(float x, float y, float width, float height, qhandle_t hShader);
+void CG_SetClipRegion(float x, float y, float w, float h);
+void CG_ClearClipRegion(void);
 void CG_Text_Paint(float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit, int style);
 void CG_Text_PaintChar(float x, float y, float width, float height, float scale, float s, float t, float s2, float t2, qhandle_t hShader);
 int CG_Text_Width(const char *text, float scale, int limit);
@@ -1114,11 +1166,6 @@ void CG_DrawBigStringColor(int x, int y, const char *s, vec4_t color);
 void CG_DrawSmallString(int x, int y, const char *s, float alpha);
 void CG_DrawSmallStringColor(int x, int y, const char *s, vec4_t color);
 int CG_DrawStrlen(const char *str);
-void CG_AdjustFrom640(float *x, float *y, float *w, float *h);
-void CG_FillRect(float x, float y, float width, float height, const float *color);
-void CG_DrawPic(float x, float y, float width, float height, qhandle_t hShader);
-void CG_SetClipRegion(float x, float y, float w, float h);
-void CG_ClearClipRegion(void);
 float *CG_FadeColor(int startMsec, int totalMsec);
 float *CG_TeamColor(int team);
 void CG_TileClear(void);
@@ -1161,7 +1208,7 @@ void CG_InitTeamChat(void);
 void CG_GetTeamColor(vec4_t *color);
 const char *CG_GetGameStatusText(void);
 const char *CG_GetKillerText(void);
-void CG_Draw3DModel(float x, float y, float w, float h, qhandle_t model, qhandle_t skin, vec3_t origin, vec3_t angles);
+void CG_Draw3DModel(float x, float y, float w, float h, qhandle_t model, cgSkin_t *skin, vec3_t origin, vec3_t angles);
 void CG_CheckOrderPending(void);
 const char *CG_GameTypeString(void);
 qboolean CG_YourTeamHasFlag(void);
@@ -1185,9 +1232,12 @@ int CG_NewParticleArea(int num);
 void CG_Player(centity_t *cent);
 void CG_ResetPlayerEntity(centity_t *cent);
 void CG_AddRefEntityWithPowerups(refEntity_t *ent, entityState_t *state);
+qhandle_t CG_AddSkinToFrame(const cgSkin_t *skin);
+qboolean CG_RegisterSkin(const char *name, cgSkin_t *skin, qboolean append);
 void CG_NewClientInfo(int clientNum);
 sfxHandle_t CG_CustomSound(int clientNum, const char *soundName);
-void CG_ColorFromIndex(int val, vec3_t color);
+void CG_CachePlayerSounds(const char *modelName);
+void CG_CachePlayerModels(const char *modelName, const char *headModelName);
 // cg_predict.c
 void CG_BuildSolidList(void);
 int CG_PointContents(const vec3_t point, int passEntityNum);
@@ -1200,12 +1250,13 @@ const char *CG_PlaceString(int rank);
 void CG_EntityEvent(centity_t *cent, vec3_t position);
 void CG_PainEvent(centity_t *cent, int health);
 // cg_ents.c
+void CG_AddRefEntityWithMinLight(const refEntity_t *entity);
 void CG_SetEntitySoundPosition(centity_t *cent);
 void CG_AddPacketEntities(void);
 void CG_Beam(centity_t *cent);
 void CG_AdjustPositionForMover(const vec3_t in, int moverNum, int fromTime, int toTime, vec3_t out, vec3_t angles_in, vec3_t angles_out);
-void CG_PositionEntityOnTag(refEntity_t *entity, const refEntity_t *parent, qhandle_t parentModel, char *tagName);
-void CG_PositionRotatedEntityOnTag(refEntity_t *entity, const refEntity_t *parent, qhandle_t parentModel, char *tagName);
+qboolean CG_PositionEntityOnTag(refEntity_t *entity, const refEntity_t *parent, qhandle_t parentModel, char *tagName);
+qboolean CG_PositionRotatedEntityOnTag(refEntity_t *entity, const refEntity_t *parent, qhandle_t parentModel, char *tagName);
 // cg_weapons.c
 void CG_NextWeapon_f(void);
 void CG_PrevWeapon_f(void);
@@ -1247,6 +1298,13 @@ void CG_Bleed(vec3_t origin, int entityNum);
 localEntity_t *CG_MakeExplosion(vec3_t origin, vec3_t dir, qhandle_t hModel, qhandle_t shader, int msec, qboolean isSprite);
 // cg_snapshot.c
 void CG_ProcessSnapshots(void);
+// cg_spawn.c
+qboolean CG_SpawnString(const char *key, const char *defaultString, char **out);
+// spawn string returns a temporary reference, you must CopyString()if you want to keep it
+qboolean CG_SpawnFloat(const char *key, const char *defaultString, float *out);
+qboolean CG_SpawnInt(const char *key, const char *defaultString, int *out);
+qboolean CG_SpawnVector(const char *key, const char *defaultString, float *out);
+void CG_ParseEntitiesFromString(void);
 // cg_info.c
 void CG_LoadingString(const char *s);
 void CG_LoadingItem(int itemNum);
@@ -1267,6 +1325,13 @@ void CG_PlayBufferedVoiceChats(void);
 void CG_Respawn(void);
 void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops);
 void CG_CheckChangedPredictableEvents(playerState_t *ps);
+// cg_atmospheric.c
+void CG_EffectParse(const char *effectstr);
+void CG_AddAtmosphericEffects(void);
+// cg_polybus.c
+polyBuffer_t *CG_PB_FindFreePolyBuffer(qhandle_t shader, int numVerts, int numIndicies);
+void CG_PB_ClearPolyBuffers(void);
+void CG_PB_RenderPolyBuffers(void);
 
 /*
 =======================================================================================================================================
@@ -1278,15 +1343,14 @@ void CG_CheckChangedPredictableEvents(playerState_t *ps);
 =======================================================================================================================================
 */
 
-// the glconfig_t will not change during the life of a cgame. If it needs to change, the entire cgame will be restarted,
-// because all the qhandle_t are then invalid.
+// the glconfig_t will not change during the life of a cgame. If it needs to change, the entire cgame will be restarted, because all the qhandle_t are then invalid
 void trap_GetGlconfig(glconfig_t *glconfig);
 // force a screen update, only used during gamestate load
 void trap_UpdateScreen(void);
 int trap_MemoryRemaining(void);
 // the gamestate should be grabbed at startup, and whenever a configstring changes
 void trap_GetGameState(gameState_t *gamestate);
-// cgame will poll each frame to see if a newer snapshot has arrived that it is interested in. The time is returned separately so that snapshot latency can be calculated.
+// cgame will poll each frame to see if a newer snapshot has arrived that it is interested in. The time is returned separately so that snapshot latency can be calculated
 void trap_GetCurrentSnapshotNumber(int *snapshotNumber, int *serverTime);
 // a snapshot get can fail if the snapshot (or the entties it holds) is so old that it has fallen out of the client system queue
 qboolean trap_GetSnapshot(int snapshotNumber, snapshot_t *snapshot);
@@ -1318,25 +1382,35 @@ void trap_R_LoadWorldMap(const char *mapname);
 qboolean trap_GetEntityToken(char *buffer, int bufferSize);
 // all media should be registered during level startup to prevent hitches during gameplay
 qhandle_t trap_R_RegisterModel(const char *name); // returns rgb axis if not found
-qhandle_t trap_R_RegisterSkin(const char *name); // returns all white if not found
+qhandle_t trap_R_RegisterShaderEx(const char *name, int lightmapIndex, qboolean mipRawImage); // returns all white if not found
 qhandle_t trap_R_RegisterShader(const char *name); // returns all white if not found
 qhandle_t trap_R_RegisterShaderNoMip(const char *name); // returns all white if not found
 // a scene is built up by calls to R_ClearScene and the various R_Add functions.
-// nothing is drawn until R_RenderScene is called.
+// nothing is drawn until R_RenderScene is called
+void trap_R_RenderScene(const refdef_t *fd);
 void trap_R_ClearScene(void);
+void trap_R_SetColor(const float *rgba); // NULL = 1, 1, 1, 1
 void trap_R_AddRefEntityToScene(const refEntity_t *re);
 // polys are intended for simple wall marks, not really for doing significant construction
-void trap_R_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts);
-void trap_R_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts, int numPolys);
-void trap_R_AddLightToScene(const vec3_t org, float intensity, float r, float g, float b);
-void trap_R_AddAdditiveLightToScene(const vec3_t org, float intensity, float r, float g, float b);
+void trap_R_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts, int bmodelNum, int sortLevel);
+void trap_R_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts, int numPolys, int bmodelNum, int sortLevel);
+void trap_R_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer);
 int trap_R_LightForPoint(vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec3_t lightDir);
-void trap_R_RenderScene(const refdef_t *fd);
-void trap_R_SetColor(const float *rgba); // NULL = 1, 1, 1, 1
+void trap_R_AddLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader);
+void trap_R_AddAdditiveLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b);
+void trap_R_AddVertexLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b);
+void trap_R_AddJuniorLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b);
+void trap_R_AddDirectedLightToScene(const vec3_t normal, float intensity, float r, float g, float b);
+void trap_R_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scale, int id, qboolean visible, qhandle_t hShader);
 void trap_R_SetClipRegion(const float *region);
 void trap_R_DrawStretchPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader);
-void trap_R_ModelBounds(clipHandle_t model, vec3_t mins, vec3_t maxs);
+int trap_R_ModelBounds(clipHandle_t handle, vec3_t mins, vec3_t maxs, int startFrame, int endFrame, float frac);
 int trap_R_LerpTag(orientation_t *tag, clipHandle_t mod, int startFrame, int endFrame, float frac, const char *tagName);
+int trap_R_LerpTagFrameModel(orientation_t *tag, clipHandle_t mod, clipHandle_t frameModel, int startFrame, clipHandle_t endFrameModel, int endFrame, float frac, const char *tagName, int *tagIndex);
+int trap_R_LerpTagTorso(orientation_t *tag, clipHandle_t mod, clipHandle_t frameModel, int startFrame, clipHandle_t endFrameModel, int endFrame, float frac, const char *tagName, int *tagIndex, const vec3_t *torsoAxis, qhandle_t torsoFrameModel, int torsoFrame, qhandle_t oldTorsoFrameModel, int oldTorsoFrame, float torsoFrac);
+// skin(entity model surface remap)management
+qhandle_t trap_R_AllocSkinSurface(const char *surface, qhandle_t hShader);
+qhandle_t trap_R_AddSkinToFrame(int numSurfaces, const qhandle_t *surfaces);
 void trap_R_RemapShader(const char *oldShader, const char *newShader, const char *timeOffset);
 qboolean trap_R_inPVS(const vec3_t p1, const vec3_t p2);
 // normal sounds will have their volume dynamically changed as their entity moves and the listener moves
@@ -1353,6 +1427,9 @@ void trap_S_Respatialize(int entityNum, const vec3_t origin, vec3_t axis[3], int
 sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed); // returns buzz if not found
 void trap_S_StartBackgroundTrack(const char *intro, const char *loop); // empty name stops music
 void trap_S_StopBackgroundTrack(void);
+void trap_R_GetGlobalFog(fogType_t *type, vec3_t color, float *depthForOpaque, float *density, float *farClip);
+void trap_R_GetViewFog(const vec3_t origin, fogType_t *type, vec3_t color, float *depthForOpaque, float *density, float *farClip, qboolean inwater);
+void trap_R_GetViewFog(const vec3_t origin, fogType_t *type, vec3_t color, float *depthForOpaque, float *density, float *farClip, qboolean inwater);
 qboolean trap_Key_IsDown(int keynum);
 int trap_Key_GetCatcher(void);
 void trap_Key_SetCatcher(int catcher);

@@ -489,6 +489,42 @@ static int LAN_CompareServers(int source, int sortKey, int sortDir, int s1, int 
 
 /*
 =======================================================================================================================================
+LAN_GetPingQueueCount
+=======================================================================================================================================
+*/
+static int LAN_GetPingQueueCount(void) {
+	return (CL_GetPingQueueCount());
+}
+
+/*
+=======================================================================================================================================
+LAN_ClearPing
+=======================================================================================================================================
+*/
+static void LAN_ClearPing(int n) {
+	CL_ClearPing(n);
+}
+
+/*
+=======================================================================================================================================
+LAN_GetPing
+=======================================================================================================================================
+*/
+static void LAN_GetPing(int n, char *buf, int buflen, int *pingtime) {
+	CL_GetPing(n, buf, buflen, pingtime);
+}
+
+/*
+=======================================================================================================================================
+LAN_GetPingInfo
+=======================================================================================================================================
+*/
+static void LAN_GetPingInfo(int n, char *buf, int buflen) {
+	CL_GetPingInfo(n, buf, buflen);
+}
+
+/*
+=======================================================================================================================================
 LAN_MarkServerVisible
 =======================================================================================================================================
 */
@@ -811,6 +847,17 @@ intptr_t CL_UISystemCalls(intptr_t *args) {
 		case UI_LAN_RESETPINGS:
 			LAN_ResetPings(args[1]);
 			return 0;
+		case UI_LAN_GETPINGQUEUECOUNT:
+			return LAN_GetPingQueueCount();
+		case UI_LAN_CLEARPING:
+			LAN_ClearPing(args[1]);
+			return 0;
+		case UI_LAN_GETPING:
+			LAN_GetPing(args[1], VMA(2), args[3], VMA(4));
+			return 0;
+		case UI_LAN_GETPINGINFO:
+			LAN_GetPingInfo(args[1], VMA(2), args[3]);
+			return 0;
 		case UI_LAN_LOADCACHEDSERVERS:
 			LAN_LoadCachedServers();
 			return 0;
@@ -832,8 +879,8 @@ intptr_t CL_UISystemCalls(intptr_t *args) {
 			return LAN_CompareServers(args[1], args[2], args[3], args[4], args[5]);
 		case UI_R_REGISTERMODEL:
 			return re.RegisterModel(VMA(1));
-		case UI_R_REGISTERSKIN:
-			return re.RegisterSkin(VMA(1));
+		case UI_R_REGISTERSHADEREX:
+			return re.RegisterShaderEx(VMA(1), args[2], args[3]);
 		case UI_R_REGISTERSHADER:
 			return re.RegisterShader(VMA(1));
 		case UI_R_REGISTERSHADERNOMIP:
@@ -841,37 +888,79 @@ intptr_t CL_UISystemCalls(intptr_t *args) {
 		case UI_R_REGISTERFONT:
 			re.RegisterFont(VMA(1), args[2], VMF(3), args[4], VMA(5));
 			return 0;
-		case UI_R_CLEARSCENE:
-			re.ClearScene();
-			return 0;
-		case UI_R_ADDREFENTITYTOSCENE:
-			re.AddRefEntityToScene(VMA(1));
-			return 0;
-		case UI_R_ADDPOLYTOSCENE:
-			re.AddPolyToScene(args[1], args[2], VMA(3), 1);
-			return 0;
-		case UI_R_ADDLIGHTTOSCENE:
-			re.AddLightToScene(VMA(1), VMF(2), VMF(3), VMF(4), VMF(5));
-			return 0;
 		case UI_R_RENDERSCENE:
 			re.RenderScene(VMA(1));
+			return 0;
+		case UI_R_CLEARSCENE:
+			re.ClearScene();
 			return 0;
 		case UI_R_SETCOLOR:
 			re.SetColor(VMA(1));
 			return 0;
+		case UI_R_ADDREFENTITYTOSCENE:
+			re.AddRefEntityToScene(VMA(1));
+			return 0;
+		case UI_R_ADDPOLYREFENTITYTOSCENE:
+			re.AddRefEntityToScene(VMA(1));
+			return 0;
+		case UI_R_ADDPOLYTOSCENE:
+			re.AddPolyToScene(args[1], args[2], VMA(3), 1, args[4], args[5]);
+			return 0;
+		case UI_R_ADDPOLYSTOSCENE:
+			re.AddPolyToScene(args[1], args[2], VMA(3), args[4], args[5], args[6]);
+			return 0;
+		case UI_R_ADDPOLYBUFFERTOSCENE:
+			re.AddPolyBufferToScene(VMA(1));
+			return 0;
+		case UI_R_LIGHTFORPOINT:
+			return re.LightForPoint(VMA(1), VMA(2), VMA(3), VMA(4));
+		case UI_R_ADDLIGHTTOSCENE:
+			re.AddLightToScene(VMA(1), VMF(2), VMF(3), VMF(4), VMF(5), VMF(6), args[7]);
+			return 0;
+		case UI_R_ADDADDITIVELIGHTTOSCENE:
+			re.AddAdditiveLightToScene(VMA(1), VMF(2), VMF(3), VMF(4), VMF(5), VMF(6));
+			return 0;
+		case UI_R_ADDVERTEXLIGHTTOSCENE:
+			re.AddVertexLightToScene(VMA(1), VMF(2), VMF(3), VMF(4), VMF(5), VMF(6));
+			return 0;
+		case UI_R_ADDJUNIORLIGHTTOSCENE:
+			re.AddJuniorLightToScene(VMA(1), VMF(2), VMF(3), VMF(4), VMF(5), VMF(6));
+			return 0;
+		case UI_R_ADDDIRECTEDLIGHTTOSCENE:
+			re.AddDirectedLightToScene(VMA(1), VMF(2), VMF(3), VMF(4), VMF(5));
+			return 0;
+		case UI_R_ADDCORONATOSCENE:
+			re.AddCoronaToScene(VMA(1), VMF(2), VMF(3), VMF(4), VMF(5), args[6], args[7], args[8]);
+			return 0;
+		case UI_R_MODELBOUNDS:
+			return re.ModelBounds(args[1], VMA(2), VMA(3), args[4], args[5], VMF(6));
+		case UI_R_LERPTAG:
+			return re.LerpTag(VMA(1), args[2], 0, args[3], 0, args[4], VMF(5), VMA(6), NULL, NULL, 0, 0, 0, 0, 0);
+		case UI_R_LERPTAG_FRAMEMODEL:
+			return re.LerpTag(VMA(1), args[2], args[3], args[4], args[5], args[6], VMF(7), VMA(8), VMA(9), NULL, 0, 0, 0, 0, 0);
+		case UI_R_LERPTAG_TORSO:
+			return re.LerpTag(VMA(1), args[2], args[3], args[4], args[5], args[6], VMF(7), VMA(8), VMA(9), VMA(10), args[11], args[12], args[13], args[14], VMF(15));
+		case UI_R_ALLOCSKINSURFACE:
+			return re.AllocSkinSurface(VMA(1), args[2]);
+		case UI_R_ADDSKINTOFRAME:
+			return re.AddSkinToFrame(args[1], VMA(2));
+		case UI_R_SETCLIPREGION:
+			re.SetClipRegion(VMA(1));
+			return 0;
 		case UI_R_DRAWSTRETCHPIC:
 			re.DrawStretchPic(VMF(1), VMF(2), VMF(3), VMF(4), VMF(5), VMF(6), VMF(7), VMF(8), args[9]);
 			return 0;
-		case UI_R_LERPTAG:
-			return re.LerpTag(VMA(1), args[2], args[3], args[4], VMF(5), VMA(6));
-		case UI_R_MODELBOUNDS:
-			re.ModelBounds(args[1], VMA(2), VMA(3));
+		case UI_R_DRAWSTRETCHPIC_GRADIENT:
+			re.DrawStretchPicGradient(VMF(1), VMF(2), VMF(3), VMF(4), VMF(5), VMF(6), VMF(7), VMF(8), args[9], VMA(10));
+			return 0;
+		case UI_R_DRAWROTATEDPIC:
+			// Tobias FIXME (activate): re.DrawRotatedPic(VMF(1), VMF(2), VMF(3), VMF(4), VMF(5), VMF(6), VMF(7), VMF(8), args[9], VMF(10));
+			return 0;
+		case UI_R_DRAW2DPOLYS:
+			// Tobias FIXME (activate): re.Add2dPolys(VMA(1), args[2], args[3]);
 			return 0;
 		case UI_R_REMAP_SHADER:
 			re.RemapShader(VMA(1), VMA(2), VMA(3));
-			return 0;
-		case UI_R_SETCLIPREGION:
-			re.SetClipRegion(VMA(1));
 			return 0;
 		case UI_S_REGISTERSOUND:
 			return S_RegisterSound(VMA(1), args[2]);
@@ -884,6 +973,14 @@ intptr_t CL_UISystemCalls(intptr_t *args) {
 		case UI_S_STOPBACKGROUNDTRACK:
 			S_StopBackgroundTrack();
 			return 0;
+		case UI_KEY_GETCATCHER:
+			return Key_GetCatcher();
+		case UI_KEY_SETCATCHER:
+			// don't allow the ui module to close the console
+			Key_SetCatcher(args[1] |(Key_GetCatcher()& KEYCATCH_CONSOLE));
+			return 0;
+		case UI_KEY_ISDOWN:
+			return Key_IsDown(args[1]);
 		case UI_KEY_KEYNUMTOSTRINGBUF:
 			Key_KeynumToStringBuf(args[1], VMA(2), args[3]);
 			return 0;
@@ -893,8 +990,6 @@ intptr_t CL_UISystemCalls(intptr_t *args) {
 		case UI_KEY_SETBINDING:
 			Key_SetBinding(args[1], VMA(2));
 			return 0;
-		case UI_KEY_ISDOWN:
-			return Key_IsDown(args[1]);
 		case UI_KEY_GETOVERSTRIKEMODE:
 			return Key_GetOverstrikeMode();
 		case UI_KEY_SETOVERSTRIKEMODE:
@@ -902,12 +997,6 @@ intptr_t CL_UISystemCalls(intptr_t *args) {
 			return 0;
 		case UI_KEY_CLEARSTATES:
 			Key_ClearStates();
-			return 0;
-		case UI_KEY_GETCATCHER:
-			return Key_GetCatcher();
-		case UI_KEY_SETCATCHER:
-			// don't allow the ui module to close the console
-			Key_SetCatcher(args[1]|(Key_GetCatcher() & KEYCATCH_CONSOLE));
 			return 0;
 		case UI_CIN_PLAYCINEMATIC:
 			Com_DPrintf("UI_CIN_PlayCinematic\n");

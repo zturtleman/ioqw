@@ -134,6 +134,11 @@ struct gentity_s {
 	float wait;
 	float random;
 	gitem_t *item;				// for bonus items
+	// dlights
+	vec3_t dl_color;
+	char *dl_stylestring;
+	char *dl_shader;
+	int dl_atten;
 };
 
 typedef enum {
@@ -322,6 +327,7 @@ void ClearRegisteredItems(void);
 void RegisterItem(gitem_t *item);
 void SaveRegisteredItems(void);
 // g_utils.c
+int G_FindConfigstringIndex(char *name, int start, int max, qboolean create);
 int G_ModelIndex(char *name);
 int G_SoundIndex(char *name);
 void G_TeamCommand(team_t team, char *cmd);
@@ -518,7 +524,6 @@ extern vmCvar_t g_blueteam;
 extern vmCvar_t g_smoothClients;
 extern vmCvar_t pmove_fixed;
 extern vmCvar_t pmove_msec;
-extern vmCvar_t g_rankings;
 extern vmCvar_t g_enableDust;
 extern vmCvar_t g_enableBreath;
 extern vmCvar_t g_singlePlayer;
@@ -537,7 +542,9 @@ void trap_Trace(trace_t *results, const vec3_t start, const vec3_t mins, const v
 void trap_ClipToEntities(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask);
 int trap_PointContents(const vec3_t point, int passEntityNum);
 qboolean trap_InPVS(const vec3_t p1, const vec3_t p2);
+qboolean trap_InPVSIgnorePortals(const vec3_t p1, const vec3_t p2);
 void trap_AdjustAreaPortalState(gentity_t *ent, qboolean open);
+qboolean trap_AreasConnected(int area1, int area2);
 void trap_LinkEntity(gentity_t *ent);
 void trap_UnlinkEntity(gentity_t *ent);
 int trap_EntitiesInBox(const vec3_t mins, const vec3_t maxs, int *entityList, int maxcount);

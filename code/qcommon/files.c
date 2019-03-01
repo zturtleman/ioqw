@@ -759,6 +759,10 @@ void FS_SV_Rename(const char *from, const char *to, qboolean safe) {
 	if (!fs_searchpaths) {
 		Com_Error(ERR_FATAL, "Filesystem call made without initialization");
 	}
+
+	if (!from || !*from || !to || !*to || Q_stricmp(from, to) == 0) {
+		return;
+	}
 	// don't let sound stutter
 	S_ClearSoundBuffer();
 
@@ -789,6 +793,10 @@ void FS_Rename(const char *from, const char *to) {
 	if (!fs_searchpaths) {
 		Com_Error(ERR_FATAL, "Filesystem call made without initialization");
 	}
+
+	if (!from || !*from || !to || !*to || Q_stricmp(from, to) == 0) {
+		return;
+	}
 	// don't let sound stutter
 	S_ClearSoundBuffer();
 
@@ -816,6 +824,10 @@ void FS_FCloseFile(fileHandle_t f) {
 
 	if (!fs_searchpaths) {
 		Com_Error(ERR_FATAL, "Filesystem call made without initialization");
+	}
+
+	if (f < 1 || f >= MAX_FILE_HANDLES) {
+		return;
 	}
 
 	if (fsh[f].zipFile == qtrue) {
@@ -1396,7 +1408,11 @@ int FS_Read(void *buffer, int len, fileHandle_t f) {
 		Com_Error(ERR_FATAL, "Filesystem call made without initialization");
 	}
 
-	if (!f) {
+	if (f < 1 || f >= MAX_FILE_HANDLES) {
+		return 0;
+	}
+
+	if (!buffer || len < 1) {
 		return 0;
 	}
 
@@ -1452,7 +1468,11 @@ int FS_Write(const void *buffer, int len, fileHandle_t h) {
 		Com_Error(ERR_FATAL, "Filesystem call made without initialization");
 	}
 
-	if (!h) {
+	if (h < 1 || h >= MAX_FILE_HANDLES) {
+		return 0;
+	}
+
+	if (!buffer || len < 1) {
 		return 0;
 	}
 
@@ -1519,6 +1539,10 @@ int FS_Seek(fileHandle_t f, long offset, int origin) {
 		return -1;
 	}
 
+	if (f < 1 || f >= MAX_FILE_HANDLES) {
+		return -1;
+	}
+
 	if (fsh[f].zipFile == qtrue) {
 		// FIXME: this is really, really crappy (but better than what was here before)
 		byte buffer[PK3_SEEK_BUFFER_SIZE];
@@ -1556,7 +1580,7 @@ int FS_Seek(fileHandle_t f, long offset, int origin) {
 		switch (origin) {
 			case FS_SEEK_SET:
 				if (remainder == currentPosition) {
-					return offset;
+					return 0;
 				}
 
 				unzSetOffset(fsh[f].handleFiles.file.z, fsh[f].zipFilePos);
@@ -1570,7 +1594,7 @@ int FS_Seek(fileHandle_t f, long offset, int origin) {
 				}
 
 				FS_Read(buffer, remainder, f);
-				return offset;
+				return 0;
 			default:
 				Com_Error(ERR_FATAL, "Bad origin in FS_Seek");
 				return -1;
@@ -2271,6 +2295,14 @@ FS_GetFileList
 int FS_GetFileList(const char *path, const char *extension, char *listbuf, int bufsize) {
 	int nFiles, i, nTotal, nLen;
 	char **pFiles = NULL;
+
+	if (!path || !listbuf || bufsize < 1) {
+		return 0;
+	}
+
+	if (!extension) {
+		extension = "";
+	}
 
 	*listbuf = 0;
 	nFiles = 0;
@@ -3311,10 +3343,7 @@ static void FS_CheckPak0(void) {
 
 		if (!Q_stricmpn(curpack->pakGamename, BASEGAME, MAX_OSPATH) && strlen(pakBasename) == 4 && !Q_stricmpn(pakBasename, "pak", 3) && pakBasename[3] >= '0' && pakBasename[3] <= '0' + NUM_QW_PAKS - 1) {
 			if (curpack->checksum != pak_checksums[pakBasename[3] - '0']) {
-
-
-
-					Com_Printf("\n\n**************************************************\nWARNING: "BASEGAME"/pak%d.pk3 is present but its checksum (%u) is not correct. Please re-copy pak%d.pk3.\n**************************************************\n\n\n", pakBasename[3] - '0', curpack->checksum, pakBasename[3] - '0');
+				Com_Printf("\n\n**************************************************\nWARNING: "BASEGAME"/pak%d.pk3 is present but its checksum (%u) is not correct. Please re-copy pak%d.pk3.\n**************************************************\n\n\n", pakBasename[3] - '0', curpack->checksum, pakBasename[3] - '0');
 			}
 
 			foundPak |= 1 << (pakBasename[3] - '0');
@@ -3797,6 +3826,10 @@ int FS_FOpenFileByMode(const char *qpath, fileHandle_t *f, fsMode_t mode) {
 	int r;
 	qboolean sync;
 
+	if (!qpath || !*qpath) {
+		return -1;
+	}
+
 	sync = qfalse;
 
 	switch (mode) {
@@ -3804,6 +3837,10 @@ int FS_FOpenFileByMode(const char *qpath, fileHandle_t *f, fsMode_t mode) {
 			r = FS_FOpenFileRead(qpath, f, qtrue);
 			break;
 		case FS_WRITE:
+			if (!f) {
+				return -1;
+			}
+
 			*f = FS_FOpenFileWrite(qpath);
 			r = 0;
 
@@ -3816,6 +3853,10 @@ int FS_FOpenFileByMode(const char *qpath, fileHandle_t *f, fsMode_t mode) {
 			sync = qtrue;
 		// fall through
 		case FS_APPEND:
+			if (!f) {
+				return -1;
+			}
+
 			*f = FS_FOpenFileAppend(qpath);
 			r = 0;
 
@@ -3849,6 +3890,14 @@ FS_FTell
 */
 int FS_FTell(fileHandle_t f) {
 	int pos;
+
+	if (!fs_searchpaths) {
+		Com_Error(ERR_FATAL, "Filesystem call made without initialization");
+	}
+
+	if (f < 1 || f >= MAX_FILE_HANDLES) {
+		return -1;
+	}
 
 	if (fsh[f].zipFile == qtrue) {
 		pos = unztell(fsh[f].handleFiles.file.z);

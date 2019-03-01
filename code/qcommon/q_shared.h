@@ -640,7 +640,7 @@ float Q_crandom(int *seed);
 #define random() ((rand() & 0x7fff) / ((float)0x7fff))
 #define crandom() (2.0 * (random() - 0.5))
 
-void vectoangles(const vec3_t value1, vec3_t angles);
+void VectorToAngles(const vec3_t value1, vec3_t angles);
 void AnglesToAxis(const vec3_t angles, vec3_t axis[3]);
 void AxisClear(vec3_t axis[3]);
 void AxisCopy(vec3_t in[3], vec3_t out[3]);
@@ -683,7 +683,8 @@ void COM_DefaultExtension(char *path, int maxSize, const char *extension);
 void COM_BeginParseSession(const char *name);
 int COM_GetCurrentParseLine(void);
 char *COM_Parse(char **data_p);
-char *COM_ParseExt(char **data_p, qboolean allowLineBreak);
+char *COM_ParseExt(char **data_p, qboolean allowLineBreaks);
+char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks, char delimiter);
 int COM_Compress(char *data_p);
 void COM_ParseError(char *format, ...) __attribute__((format(printf, 1, 2)));
 void COM_ParseWarning(char *format, ...) __attribute__((format(printf, 1, 2)));
@@ -912,6 +913,10 @@ typedef struct {
 typedef struct {
 	int firstPoint;
 	int numPoints;
+	int bmodelNum;
+	vec3_t bmodelOrigin;
+	vec3_t bmodelAxis[3];
+	vec3_t projectionDir;
 } markFragment_t;
 
 typedef struct {
@@ -962,9 +967,11 @@ typedef enum {
 #define ENTITYNUM_NONE (MAX_GENTITIES - 1)
 #define ENTITYNUM_WORLD (MAX_GENTITIES - 2)
 #define ENTITYNUM_MAX_NORMAL (MAX_GENTITIES - 2)
-
-#define MAX_MODELS 256 // these are sent over the net as 8 bits
-#define MAX_SOUNDS 256 // so they cannot be blindly increased
+#define MODELINDEX_BITS 10
+// these are networked using the modelindex and/or modelindex2 field, must fit in MODELINDEX_BITS
+#define MAX_SUBMODELS 1024 // max bsp models, q3map2 limits to 1024 via MAX_MAP_MODELS
+#define MAX_MODELS 256 // max model filenames set by game VM
+#define MAX_SOUNDS 256 // this is sent over the net as 8 bits (in eventParm) so they cannot be blindly increased
 #define MAX_CONFIGSTRINGS 1024
 // these are the only configstrings that the system reserves, all the other ones are strictly for servergame to clientgame communication
 #define CS_SERVERINFO 0 // an info string with all the serverinfo cvars
@@ -1016,6 +1023,7 @@ typedef struct playerState_s {
 	int eventParms[MAX_PS_EVENTS];
 	int externalEvent;		// events set on player from another source
 	int externalEventParm;
+	int externalEventTime;
 	int clientNum;			// ranges from 0 to MAX_CLIENTS - 1
 	// weapon info
 	int weapon;				// copied to entityState_t->weapon
@@ -1103,6 +1111,7 @@ typedef struct entityState_s {
 	int otherEntityNum2;
 	int groundEntityNum; // ENTITYNUM_NONE = in air
 	int constantLight;	// r + (g << 8) + (b << 16) + (intensity << 24)
+	int dl_intensity;	// used for coronas
 	int loopSound;		// constantly loop this sound
 	int modelindex;
 	int modelindex2;
@@ -1112,6 +1121,7 @@ typedef struct entityState_s {
 	int event;			// impulse events -- muzzle flashes, footsteps, etc.
 	int eventParm;
 	int team;
+	int density;		   // for particle effects
 	// for players
 	int powerups;		// bit flags
 	int weapon;			// determines weapon and flash model, etc.
@@ -1128,6 +1138,7 @@ typedef enum {
 	ET_TEAM,
 	ET_ITEM,
 	ET_MOVER,
+	ET_CORONA,
 	ET_SPEAKER,
 	ET_PORTAL,
 	ET_BEAM,

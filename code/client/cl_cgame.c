@@ -33,7 +33,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #endif
 
 extern botlib_export_t *botlib_export;
-
 /*
 =======================================================================================================================================
 CL_GetGameState
@@ -576,8 +575,8 @@ intptr_t CL_CgameSystemCalls(intptr_t *args) {
 			return 0;
 		case CG_R_REGISTERMODEL:
 			return re.RegisterModel(VMA(1));
-		case CG_R_REGISTERSKIN:
-			return re.RegisterSkin(VMA(1));
+		case CG_R_REGISTERSHADEREX:
+			return re.RegisterShaderEx(VMA(1), args[2], args[3]);
 		case CG_R_REGISTERSHADER:
 			return re.RegisterShader(VMA(1));
 		case CG_R_REGISTERSHADERNOMIP:
@@ -585,52 +584,91 @@ intptr_t CL_CgameSystemCalls(intptr_t *args) {
 		case CG_R_REGISTERFONT:
 			re.RegisterFont(VMA(1), args[2], VMF(3), args[4], VMA(5));
 			return 0;
-		case CG_R_CLEARSCENE:
-			re.ClearScene();
-			return 0;
-		case CG_R_ADDREFENTITYTOSCENE:
-			re.AddRefEntityToScene(VMA(1));
-			return 0;
-		case CG_R_ADDPOLYTOSCENE:
-			re.AddPolyToScene(args[1], args[2], VMA(3), 1);
-			return 0;
-		case CG_R_ADDPOLYSTOSCENE:
-			re.AddPolyToScene(args[1], args[2], VMA(3), args[4]);
-			return 0;
 		case CG_R_RENDERSCENE:
 			re.RenderScene(VMA(1));
+			return 0;
+		case CG_R_CLEARSCENE:
+			re.ClearScene();
 			return 0;
 		case CG_R_SETCOLOR:
 			re.SetColor(VMA(1));
 			return 0;
-		case CG_R_DRAWSTRETCHPIC:
-			re.DrawStretchPic(VMF(1), VMF(2), VMF(3), VMF(4), VMF(5), VMF(6), VMF(7), VMF(8), args[9]);
-			return 0;
-		case CG_R_LERPTAG:
-			return re.LerpTag(VMA(1), args[2], args[3], args[4], VMF(5), VMA(6));
-		case CG_R_MODELBOUNDS:
-			re.ModelBounds(args[1], VMA(2), VMA(3));
-			return 0;
-		case CG_R_REMAP_SHADER:
-			re.RemapShader(VMA(1), VMA(2), VMA(3));
-			return 0;
-		case CG_R_SETCLIPREGION:
-			re.SetClipRegion(VMA(1));
-			return 0;
 		case CG_R_LOADWORLDMAP:
 			re.LoadWorld(VMA(1));
 			return 0;
-		case CG_GET_ENTITY_TOKEN:
-			return re.GetEntityToken(VMA(1), args[2]);
-		case CG_R_LIGHTFORPOINT:
-			return re.LightForPoint(VMA(1), VMA(2), VMA(3), VMA(4));
 		case CG_R_INPVS:
 			return re.inPVS(VMA(1), VMA(2));
+		case CG_GET_ENTITY_TOKEN:
+			return re.GetEntityToken(VMA(1), args[2]);
+		case CG_R_ADDREFENTITYTOSCENE:
+			re.AddRefEntityToScene(VMA(1));
+		case CG_R_ADDPOLYREFENTITYTOSCENE:
+			re.AddRefEntityToScene(VMA(1));
+			return 0;
+		case CG_R_ADDPOLYTOSCENE:
+			re.AddPolyToScene(args[1], args[2], VMA(3), 1, args[4], args[5]);
+			return 0;
+		case CG_R_ADDPOLYSTOSCENE:
+			re.AddPolyToScene(args[1], args[2], VMA(3), args[4], args[5], args[6]);
+			return 0;
+		case CG_R_ADDPOLYBUFFERTOSCENE:
+			re.AddPolyBufferToScene(VMA(1));
+			return 0;
+		case CG_R_LIGHTFORPOINT:
+			return re.LightForPoint(VMA(1), VMA(2), VMA(3), VMA(4));
 		case CG_R_ADDLIGHTTOSCENE:
-			re.AddLightToScene(VMA(1), VMF(2), VMF(3), VMF(4), VMF(5));
+			re.AddLightToScene(VMA(1), VMF(2), VMF(3), VMF(4), VMF(5), VMF(6), args[7]);
 			return 0;
 		case CG_R_ADDADDITIVELIGHTTOSCENE:
-			re.AddAdditiveLightToScene(VMA(1), VMF(2), VMF(3), VMF(4), VMF(5));
+			re.AddAdditiveLightToScene(VMA(1), VMF(2), VMF(3), VMF(4), VMF(5), VMF(6));
+			return 0;
+		case CG_R_ADDVERTEXLIGHTTOSCENE:
+			re.AddVertexLightToScene(VMA(1), VMF(2), VMF(3), VMF(4), VMF(5), VMF(6));
+			return 0;
+		case CG_R_ADDJUNIORLIGHTTOSCENE:
+			re.AddJuniorLightToScene(VMA(1), VMF(2), VMF(3), VMF(4), VMF(5), VMF(6));
+			return 0;
+		case CG_R_ADDDIRECTEDLIGHTTOSCENE:
+			re.AddDirectedLightToScene(VMA(1), VMF(2), VMF(3), VMF(4), VMF(5));
+			return 0;
+		case CG_R_ADDCORONATOSCENE:
+			re.AddCoronaToScene(VMA(1), VMF(2), VMF(3), VMF(4), VMF(5), args[6], args[7], args[8]);
+			return 0;
+		case CG_R_GET_GLOBAL_FOG:
+			re.GetGlobalFog(VMA(1), VMA(2), VMA(3), VMA(4), VMA(5));
+			return 0;
+		case CG_R_GET_VIEW_FOG:
+			re.GetViewFog(VMA(1), VMA(2), VMA(3), VMA(4), VMA(5), VMA(6), args[7]);
+			return 0;
+		case CG_R_MODELBOUNDS:
+			return re.ModelBounds(args[1], VMA(2), VMA(3), args[4], args[5], VMF(6));
+		case CG_R_LERPTAG:
+			return re.LerpTag(VMA(1), args[2], 0, args[3], 0, args[4], VMF(5), VMA(6), NULL, NULL, 0, 0, 0, 0, 0);
+		case CG_R_LERPTAG_FRAMEMODEL:
+			return re.LerpTag(VMA(1), args[2], args[3], args[4], args[5], args[6], VMF(7), VMA(8), VMA(9), NULL, 0, 0, 0, 0, 0);
+		case CG_R_LERPTAG_TORSO:
+			return re.LerpTag(VMA(1), args[2], args[3], args[4], args[5], args[6], VMF(7), VMA(8), VMA(9), VMA(10), args[11], args[12], args[13], args[14], VMF(15));
+		case CG_R_ALLOCSKINSURFACE:
+			return re.AllocSkinSurface(VMA(1), args[2]);
+		case CG_R_ADDSKINTOFRAME:
+			return re.AddSkinToFrame(args[1], VMA(2));
+		case CG_R_SETCLIPREGION:
+			re.SetClipRegion(VMA(1));
+			return 0;
+		case CG_R_DRAWSTRETCHPIC:
+			re.DrawStretchPic(VMF(1), VMF(2), VMF(3), VMF(4), VMF(5), VMF(6), VMF(7), VMF(8), args[9]);
+			return 0;
+		case CG_R_DRAWSTRETCHPIC_GRADIENT:
+			re.DrawStretchPicGradient(VMF(1), VMF(2), VMF(3), VMF(4), VMF(5), VMF(6), VMF(7), VMF(8), args[9], VMA(10));
+			return 0;
+		case CG_R_DRAWROTATEDPIC:
+			// Tobias FIXME (activate): re.DrawRotatedPic(VMF(1), VMF(2), VMF(3), VMF(4), VMF(5), VMF(6), VMF(7), VMF(8), args[9], VMF(10));
+			return 0;
+		case CG_R_DRAW2DPOLYS:
+			// Tobias FIXME (activate): re.Add2dPolys(VMA(1), args[2], args[3]);
+			return 0;
+		case CG_R_REMAP_SHADER:
+			re.RemapShader(VMA(1), VMA(2), VMA(3));
 			return 0;
 		case CG_S_REGISTERSOUND:
 			return S_RegisterSound(VMA(1), args[2]);
@@ -652,26 +690,26 @@ intptr_t CL_CgameSystemCalls(intptr_t *args) {
 		case CG_S_ADDLOOPINGSOUND:
 			S_AddLoopingSound(args[1], VMA(2), VMA(3), args[4], args[5]);
 			return 0;
-		case CG_S_UPDATEENTITYPOSITION:
-			S_UpdateEntityPosition(args[1], VMA(2));
-			return 0;
-		case CG_S_RESPATIALIZE:
-			S_Respatialize(args[1], VMA(2), VMA(3), args[4]);
-			return 0;
 		case CG_S_ADDREALLOOPINGSOUND:
 			S_AddRealLoopingSound(args[1], VMA(2), VMA(3), args[4], args[5]);
 			return 0;
 		case CG_S_STOPLOOPINGSOUND:
 			S_StopLoopingSound(args[1]);
 			return 0;
-		case CG_KEY_ISDOWN:
-			return Key_IsDown(args[1]);
+		case CG_S_UPDATEENTITYPOSITION:
+			S_UpdateEntityPosition(args[1], VMA(2));
+			return 0;
+		case CG_S_RESPATIALIZE:
+			S_Respatialize(args[1], VMA(2), VMA(3), args[4]);
+			return 0;
 		case CG_KEY_GETCATCHER:
 			return Key_GetCatcher();
 		case CG_KEY_SETCATCHER:
 			// don't allow the cgame module to close the console
 			Key_SetCatcher(args[1]|(Key_GetCatcher() & KEYCATCH_CONSOLE));
 			return 0;
+		case CG_KEY_ISDOWN:
+			return Key_IsDown(args[1]);
 		case CG_KEY_GETKEY:
 			return Key_GetKey(VMA(1));
 		case CG_CIN_PLAYCINEMATIC:

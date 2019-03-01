@@ -1278,8 +1278,6 @@ void CL_Disconnect(qboolean showMainMenu) {
 	if (!com_cl_running || !com_cl_running->integer) {
 		return;
 	}
-	// shutting down the client so enter full screen ui mode
-	Cvar_Set("r_uiFullScreen", "1");
 
 	if (clc.demorecording) {
 		CL_StopRecord_f();
@@ -1906,8 +1904,6 @@ void CL_DownloadsComplete(void) {
 	if (clc.state != CA_LOADING) {
 		return;
 	}
-	// starting to load a map so we get out of full screen ui mode
-	Cvar_Set("r_uiFullScreen", "0");
 	// flush client memory and start loading stuff
 	// this will also (re)load the UI
 	// if this is a local client then only the client part of the hunk will be cleared, note that this is done after the hunk mark has been set
@@ -3156,10 +3152,10 @@ void CL_Init(void) {
 	Cvar_Get("name", DEFAULT_PLAYER_NAME, CVAR_USERINFO|CVAR_ARCHIVE);
 	cl_rate = Cvar_Get("rate", "25000", CVAR_USERINFO|CVAR_ARCHIVE);
 	Cvar_Get("snaps", "60", CVAR_USERINFO|CVAR_ARCHIVE);
-	Cvar_Get("model", "james", CVAR_USERINFO|CVAR_ARCHIVE);
-	Cvar_Get("headmodel", "*james", CVAR_USERINFO|CVAR_ARCHIVE);
-	Cvar_Get("team_model", "james", CVAR_USERINFO|CVAR_ARCHIVE);
-	Cvar_Get("team_headmodel", "*james", CVAR_USERINFO|CVAR_ARCHIVE);
+	Cvar_Get("model", DEFAULT_MODEL, CVAR_USERINFO|CVAR_ARCHIVE);
+	Cvar_Get("headmodel", DEFAULT_HEAD, CVAR_USERINFO|CVAR_ARCHIVE);
+	Cvar_Get("team_model", DEFAULT_TEAM_MODEL, CVAR_USERINFO|CVAR_ARCHIVE);
+	Cvar_Get("team_headmodel", DEFAULT_TEAM_HEAD, CVAR_USERINFO|CVAR_ARCHIVE);
 	Cvar_Get("color1", "5", CVAR_USERINFO|CVAR_ARCHIVE);
 	Cvar_Get("color2", "5", CVAR_USERINFO|CVAR_ARCHIVE);
 	Cvar_Get("teamtask", "0", CVAR_USERINFO);
@@ -3822,6 +3818,25 @@ void CL_GetPing(int n, char *buf, int buflen, int *pingtime) {
 	CL_SetServerInfoByAddress(cl_pinglist[n].adr, cl_pinglist[n].info, cl_pinglist[n].time);
 
 	*pingtime = time;
+}
+
+/*
+=======================================================================================================================================
+CL_GetPingInfo
+=======================================================================================================================================
+*/
+void CL_GetPingInfo(int n, char *buf, int buflen) {
+
+	if (n < 0 || n >= MAX_PINGREQUESTS || !cl_pinglist[n].adr.port) {
+		// empty or invalid slot
+		if (buflen) {
+			buf[0] = '\0';
+		}
+
+		return;
+	}
+
+	Q_strncpyz(buf, cl_pinglist[n].info, buflen);
 }
 
 /*

@@ -231,7 +231,7 @@ static void CG_DrawPlayerArmorIcon(rectDef_t *rect, qboolean draw2D) {
 		origin[2] = -10;
 		angles[YAW] = (cg.time &2047) * 360 / 2048.0f;
 
-		CG_Draw3DModel(rect->x, rect->y, rect->w, rect->h, cgs.media.armorModel, 0, origin, angles);
+		CG_Draw3DModel(rect->x, rect->y, rect->w, rect->h, cgs.media.armorModel, NULL, origin, angles);
 	}
 }
 
@@ -290,7 +290,7 @@ static void CG_DrawPlayerAmmoIcon(rectDef_t *rect, qboolean draw2D) {
 			origin[2] = 0;
 			angles[YAW] = 90 + 20 * sin(cg.time / 1000.0);
 
-			CG_Draw3DModel(rect->x, rect->y, rect->w, rect->h, cg_weapons[cent->currentState.weapon].ammoModel, 0, origin, angles);
+			CG_Draw3DModel(rect->x, rect->y, rect->w, rect->h, cg_weapons[cent->currentState.weapon].ammoModel, NULL, origin, angles);
 		}
 	}
 }
@@ -621,11 +621,13 @@ static void CG_DrawPlayerItem(rectDef_t *rect, float scale, qboolean draw2D) {
 			CG_DrawPic(rect->x, rect->y, rect->w, rect->h, cg_items[value].icon);
 		} else {
 			VectorClear(angles);
+
 			origin[0] = 90;
 			origin[1] = 0;
 			origin[2] = -10;
 			angles[YAW] = (cg.time &2047) * 360 / 2048.0;
-			CG_Draw3DModel(rect->x, rect->y, rect->w, rect->h, cg_items[value].models[0], 0, origin, angles);
+
+			CG_Draw3DModel(rect->x, rect->y, rect->w, rect->h, cg_items[value].models[0], NULL, origin, angles);
 		}
 	}
 }
@@ -683,7 +685,7 @@ static void CG_DrawSelectedPlayerHead(rectDef_t *rect, qboolean draw2D, qboolean
 				return;
 			}
 			// offset the origin y and z to center the head
-			trap_R_ModelBounds(cm, mins, maxs);
+			trap_R_ModelBounds(cm, mins, maxs, 0, 0, 0);
 
 			origin[2] = -0.5 * (mins[2] + maxs[2]);
 			origin[1] = 0.5 * (mins[1] + maxs[1]);
@@ -697,7 +699,7 @@ static void CG_DrawSelectedPlayerHead(rectDef_t *rect, qboolean draw2D, qboolean
 			angles[YAW] = 180;
 			angles[ROLL] = 0;
 
-			CG_Draw3DModel(rect->x, rect->y, rect->w, rect->h, ci->headModel, ci->headSkin, origin, angles);
+			CG_Draw3DModel(rect->x, rect->y, rect->w, rect->h, ci->headModel, &ci->modelSkin, origin, angles);
 		} else if (cg_drawIcons.integer) {
 			CG_DrawPic(rect->x, rect->y, rect->w, rect->h, ci->modelIcon);
 		}
@@ -989,7 +991,7 @@ static void CG_HarvesterSkulls(rectDef_t *rect, float scale, vec4_t color, qbool
 				handle = cgs.media.blueCubeModel;
 			}
 
-			CG_Draw3DModel(rect->x, rect->y, 35, 35, handle, 0, origin, angles);
+			CG_Draw3DModel(rect->x, rect->y, 35, 35, handle, NULL, origin, angles);
 		} else {
 			if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE) {
 				handle = cgs.media.redCubeIcon;
@@ -1769,6 +1771,8 @@ static void CG_DrawTeamSpectators(rectDef_t *rect, float scale, vec4_t color, qh
 	CG_SetClipRegion(rect->x, rect->y, rect->w, rect->h);
 	CG_Text_Paint(rect->x - cg.spectatorOffset, rect->y + rect->h - 3, scale, color, text, 0, 0, 0);
 	CG_Text_Paint(rect->x + textWidth - cg.spectatorOffset, rect->y + rect->h - 3, scale, color, text, 0, 0, 0);
+	//CG_Text_PaintInMotion(rect->x - cg.spectatorOffset, rect->y + rect->h - 3, scale, color, text, 0, 0, 0);
+	//CG_Text_PaintInMotion(rect->x + textWidth - cg.spectatorOffset, rect->y + rect->h - 3, scale, color, text, 0, 0, 0);
 	CG_ClearClipRegion();
 
 	cg.spectatorOffset += (delta / 1000.0f) * SPECTATORS_PIXELS_PER_SECOND;

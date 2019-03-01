@@ -2369,6 +2369,8 @@ static void UI_DrawServerMOTD(rectDef_t *rect, float scale, vec4_t color) {
 	UI_SetClipRegion(rect->x, rect->y, rect->w, rect->h);
 	Text_Paint(rect->x - uiInfo.serverStatus.motdOffset, rect->y + rect->h - 3, scale, color, text, 0, 0, 0);
 	Text_Paint(rect->x + textWidth - uiInfo.serverStatus.motdOffset, rect->y + rect->h - 3, scale, color, text, 0, 0, 0);
+//	Text_PaintInMotion(rect->x - uiInfo.serverStatus.motdOffset, rect->y + rect->h - 3, scale, color, text, 0, 0, 0);
+//	Text_PaintInMotion(rect->x + textWidth - uiInfo.serverStatus.motdOffset, rect->y + rect->h - 3, scale, color, text, 0, 0, 0);
 	UI_ClearClipRegion();
 
 	uiInfo.serverStatus.motdOffset += (delta / 1000.0f) * MOTD_PIXELS_PER_SECOND;
@@ -5633,9 +5635,9 @@ static qboolean Character_Parse(char **p) {
 			uiInfo.characterList[uiInfo.characterCount].imageName = String_Alloc(va("models/players/heads/%s/icon_default.tga", uiInfo.characterList[uiInfo.characterCount].name));
 
 			if (tempStr && (!Q_stricmp(tempStr, "female"))) {
-				uiInfo.characterList[uiInfo.characterCount].base = String_Alloc("Janet");
+				uiInfo.characterList[uiInfo.characterCount].base = String_Alloc(DEFAULT_TEAM_MODEL_FEMALE);
 			} else if (tempStr && (!Q_stricmp(tempStr, "male"))) {
-				uiInfo.characterList[uiInfo.characterCount].base = String_Alloc("James");
+				uiInfo.characterList[uiInfo.characterCount].base = String_Alloc(DEFAULT_TEAM_MODEL_MALE);
 			} else {
 				uiInfo.characterList[uiInfo.characterCount].base = String_Alloc(tempStr);
 			}
@@ -6092,7 +6094,7 @@ static void UI_BuildQ3Model_List(void) {
 			continue;
 		}
 		// iterate all skin files in directory
-		numfiles = trap_FS_GetFileList(va("models/players/%s", dirptr), "tga", filelist, 2048);
+		numfiles = trap_FS_GetFileList(va("models/players/%s", dirptr), "$images", filelist, 2048);
 		fileptr = filelist;
 
 		for (j = 0; j < numfiles && uiInfo.q3HeadCount < MAX_PLAYERMODELS; j++, fileptr += filelen + 1) {
@@ -6168,7 +6170,7 @@ void _UI_Init(qboolean inGameLoad) {
 	uiInfo.uiDC.drawSides = &_UI_DrawSides;
 	uiInfo.uiDC.drawTopBottom = &_UI_DrawTopBottom;
 	uiInfo.uiDC.clearScene = &trap_R_ClearScene;
-	uiInfo.uiDC.addRefEntityToScene = &trap_R_AddRefEntityToScene;
+	uiInfo.uiDC.addRefEntityToScene = &UI_AddRefEntityWithMinLight;
 	uiInfo.uiDC.renderScene = &trap_R_RenderScene;
 	uiInfo.uiDC.registerFont = &trap_R_RegisterFont;
 	uiInfo.uiDC.ownerDrawItem = &UI_OwnerDraw;

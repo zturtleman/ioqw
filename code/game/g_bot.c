@@ -1123,6 +1123,9 @@ static qboolean Character_Parse(char **p, const char *filename) {
 /*
 =======================================================================================================================================
 G_ParseTeamInfo
+
+Team Arena's addbot menu only allows adding characters from teaminfo.txt. In g_gametypes > GT_TOURNAMENT, so use them for random bot
+selection too.
 =======================================================================================================================================
 */
 static void G_ParseTeamInfo(const char *filename) {

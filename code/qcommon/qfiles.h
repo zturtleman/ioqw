@@ -35,8 +35,9 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #endif
 #endif
 // surface geometry should not exceed these limits
-#define SHADER_MAX_VERTEXES 1000
+#define SHADER_MAX_VERTEXES 10001 // 10000 + 1 buffer for RB_EndSurface overflow check
 #define SHADER_MAX_INDEXES (6 * SHADER_MAX_VERTEXES)
+#define SHADER_MAX_TRIANGLES (SHADER_MAX_INDEXES / 3)
 // the maximum size of game relative pathnames
 #define MAX_QPATH 64
 
@@ -410,7 +411,9 @@ typedef enum {
 	MST_PLANAR,
 	MST_PATCH,
 	MST_TRIANGLE_SOUP,
-	MST_FLARE
+	MST_FLARE,
+	MST_FOLIAGE, // 5 in ET
+	MST_MAX
 } mapSurfaceType_t;
 
 typedef struct {

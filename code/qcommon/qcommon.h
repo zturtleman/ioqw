@@ -112,7 +112,7 @@ void MSG_ReportChangeVectors_f(void);
 #define PACKET_BACKUP 32 // number of old messages that must be kept on client and server for delta compression and ping estimation
 #define PACKET_MASK (PACKET_BACKUP - 1)
 #define MAX_PACKET_USERCMDS 32 // max number of usercmd_t in a packet
-#define MAX_SNAPSHOT_ENTITIES 256
+#define MAX_SNAPSHOT_ENTITIES 512
 #define PORT_ANY -1
 #define MAX_RELIABLE_COMMANDS 64 // max string commands buffered for restransmit
 
@@ -667,7 +667,9 @@ extern cvar_t *com_unfocused;
 extern cvar_t *com_maxfpsUnfocused;
 extern cvar_t *com_minimized;
 extern cvar_t *com_maxfpsMinimized;
+#if idppc_altivec
 extern cvar_t *com_altivec;
+#endif
 extern cvar_t *com_basegame;
 extern cvar_t *com_homepath;
 // both client and server must agree to pause

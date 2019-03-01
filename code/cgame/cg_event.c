@@ -846,7 +846,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			break;
 		case EV_JUMP_PAD:
 			DEBUGNAME("EV_JUMP_PAD");
-//			CG_Printf("EV_JUMP_PAD w/effect #%i\n", es->eventParm);
+			//CG_Printf("EV_JUMP_PAD w/effect #%i\n", es->eventParm);
 			{
 				vec3_t up = {0, 0, 1};
 
@@ -858,7 +858,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			break;
 		case EV_PLAYER_TELEPORT_IN:
 			DEBUGNAME("EV_PLAYER_TELEPORT_IN");
-			trap_R_AddLightToScene(cent->lerpOrigin, 300, 1.0f, 1.0f, 0.9f);
+			trap_R_AddLightToScene(cent->lerpOrigin, 300, 1.0f, 1.0f, 1.0f, 0.9f, 0);
 			CG_SpawnEffectDefault(position);
 			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.teleInSound[rand()&2], 64);
 			break;
@@ -870,7 +870,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 		// weapon events
 		case EV_NOAMMO:
 			DEBUGNAME("EV_NOAMMO");
-//			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.noAmmoSound, 64);
+			//trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.noAmmoSound, 64);
 
 			if (es->number == cg.snap->ps.clientNum) {
 				CG_OutOfAmmoChange();
@@ -1415,7 +1415,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 			break;
 		case EV_ITEM_RESPAWN:
 			DEBUGNAME("EV_ITEM_RESPAWN");
-			trap_R_AddLightToScene(cent->lerpOrigin, 100, 1.0f, 1.0f, 0.9f);
+			trap_R_AddLightToScene(cent->lerpOrigin, 100, 1.0f, 1.0f, 1.0f, 0.9f, 0);
 			CG_SpawnEffectSmall(position);
 			cent->miscTime = cg.time; // scale up from this
 			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.respawnSound[rand()&2], 32);

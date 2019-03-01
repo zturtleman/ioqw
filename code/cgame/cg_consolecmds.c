@@ -147,7 +147,7 @@ static void CG_LoadHud_f(void) {
 	}
 
 	CG_LoadMenus(hudSet);
-
+	CG_HudMenuHacks();
 	menuScoreboard = NULL;
 }
 
@@ -629,7 +629,7 @@ void CG_GenerateTracemap(void) {
 	gen.trace = CG_Trace;
 	gen.pointcontents = CG_PointContents;
 
-	//BG_GenerateTracemap(cgs.mapname, cg.mapcoordsMins, cg.mapcoordsMaxs, &gen); // Tobias FIXME: currently not supported!
+	BG_GenerateTracemap(cgs.mapname, cg.mapcoordsMins, cg.mapcoordsMaxs, &gen);
 }
 
 typedef struct {

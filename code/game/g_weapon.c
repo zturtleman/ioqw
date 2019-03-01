@@ -209,8 +209,7 @@ void Bullet_Fire(gentity_t *ent, float spread, int damage, int mod) {
 =======================================================================================================================================
 */
 
-// DEFAULT_SHOTGUN_SPREAD and DEFAULT_SHOTGUN_COUNT are in bg_public.h, because
-// client predicts same spreads
+// DEFAULT_SHOTGUN_SPREAD and DEFAULT_SHOTGUN_COUNT are in bg_public.h, because client predicts same spreads
 #define DEFAULT_SHOTGUN_DAMAGE 10
 /*
 =======================================================================================================================================

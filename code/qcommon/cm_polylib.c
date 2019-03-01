@@ -114,6 +114,10 @@ void RemoveColinearPoints(winding_t *w) {
 		VectorNormalize2(v2, v2);
 
 		if (DotProduct(v1, v2) < 0.999) {
+			if (nump >= MAX_POINTS_ON_WINDING) {
+				Com_Error(ERR_DROP, "RemoveColinearPoints: MAX_POINTS_ON_WINDING");
+			}
+
 			VectorCopy(w->p[i], p[nump]);
 
 			nump++;

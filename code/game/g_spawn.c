@@ -126,6 +126,11 @@ field_t fields[] = {
 	{"angle", FOFS(s.angles), F_ANGLEHACK},
 	{"targetShaderName", FOFS(targetShaderName), F_STRING},
 	{"targetShaderNewName", FOFS(targetShaderNewName), F_STRING},
+	// dlight lightstyles (made all these unique variables for testing)
+	{"_color", FOFS(dl_color), F_VECTOR}, // color of the light (the underscore is inserted by the color picker in QER)
+	{"color", FOFS(dl_color), F_VECTOR}, // color of the light
+	{"stylestring", FOFS(dl_stylestring), F_STRING}, // user defined stylestring "fffndlsfaaaaaa" for example
+	{"shader", FOFS(dl_shader), F_STRING}, // shader to use for a target_effect or dlight
 	{NULL}
 };
 
@@ -165,12 +170,14 @@ void SP_target_position(gentity_t *ent);
 void SP_target_location(gentity_t *ent);
 void SP_target_push(gentity_t *ent);
 void SP_light(gentity_t *self);
+void SP_lightJunior(gentity_t *self);
 void SP_info_null(gentity_t *self);
 void SP_info_notnull(gentity_t *self);
 void SP_info_camp(gentity_t *self);
 void SP_path_corner(gentity_t *self);
 void SP_misc_teleporter_dest(gentity_t *self);
 void SP_misc_model(gentity_t *ent);
+void SP_misc_gamemodel(gentity_t *ent);
 void SP_misc_portal_camera(gentity_t *ent);
 void SP_misc_portal_surface(gentity_t *ent);
 void SP_misc_vis_dummy(gentity_t *ent);
@@ -185,6 +192,9 @@ void SP_team_CTF_bluespawn(gentity_t *ent);
 void SP_team_blueobelisk(gentity_t *ent);
 void SP_team_redobelisk(gentity_t *ent);
 void SP_team_neutralobelisk(gentity_t *ent);
+void SP_dlight(gentity_t *ent);
+void SP_corona(gentity_t *ent);
+void SP_props_skyportal(gentity_t *ent);
 void SP_item_botroam(gentity_t *ent) {}
 
 spawn_t spawns[] = {
@@ -228,9 +238,11 @@ spawn_t spawns[] = {
 	{"target_location", SP_target_location},
 	{"target_push", SP_target_push},
 	{"light", SP_light},
+	{"lightJunior", SP_lightJunior},
 	{"path_corner", SP_path_corner},
 	{"misc_teleporter_dest", SP_misc_teleporter_dest},
 	{"misc_model", SP_misc_model},
+	{"misc_gamemodel", SP_misc_gamemodel},
 	{"misc_portal_surface", SP_misc_portal_surface},
 	{"misc_portal_camera", SP_misc_portal_camera},
 	{"misc_vis_dummy", SP_misc_vis_dummy},
@@ -245,6 +257,9 @@ spawn_t spawns[] = {
 	{"team_redobelisk", SP_team_redobelisk},
 	{"team_blueobelisk", SP_team_blueobelisk},
 	{"team_neutralobelisk", SP_team_neutralobelisk},
+	{"dlight", SP_dlight},
+	{"corona", SP_corona},
+	{"props_skyportal", SP_props_skyportal},
 	{"item_botroam", SP_item_botroam},
 	{NULL, 0}
 };
@@ -380,8 +395,7 @@ Spawn an entity and fill in all of the level fields from level.spawnVars[], then
 void G_SpawnGEntityFromSpawnVars(void) {
 	int i;
 	gentity_t *ent;
-	char *s, *value, *gametypeName;
-	static char *gametypeNames[] = {"single", "ffa", "tournament", "team", "ctf", "oneflag", "obelisk", "harvester"};
+	bgEntitySpawnInfo_t spawnInfo;
 
 	// get the next free entity
 	ent = G_Spawn();
@@ -389,46 +403,15 @@ void G_SpawnGEntityFromSpawnVars(void) {
 	for (i = 0; i < level.numSpawnVars; i++) {
 		G_ParseField(level.spawnVars[i][0], level.spawnVars[i][1], ent);
 	}
-	// check for "notsingle" flag
-	if (g_gametype.integer == GT_SINGLE_PLAYER) {
-		G_SpawnInt("notsingle", "0", &i);
 
-		if (i) {
-			ADJUST_AREAPORTAL();
-			G_FreeEntity(ent);
-			return;
-		}
-	}
-	// check for "notteam" flag (GT_SINGLE_PLAYER, GT_FFA, GT_TOURNAMENT)
-	if (g_gametype.integer > GT_TOURNAMENT) {
-		G_SpawnInt("notteam", "0", &i);
-
-		if (i) {
-			ADJUST_AREAPORTAL();
-			G_FreeEntity(ent);
-			return;
-		}
-	} else {
-		G_SpawnInt("notfree", "0", &i);
-
-		if (i) {
-			ADJUST_AREAPORTAL();
-			G_FreeEntity(ent);
-			return;
-		}
-	}
-
-	if (G_SpawnString("gametype", NULL, &value)) {
-		if (g_gametype.integer >= GT_FFA && g_gametype.integer < GT_MAX_GAME_TYPE) {
-			gametypeName = gametypeNames[g_gametype.integer];
-			s = strstr(value, gametypeName);
-
-			if (!s) {
-				ADJUST_AREAPORTAL();
-				G_FreeEntity(ent);
-				return;
-			}
-		}
+	spawnInfo.gametype = g_gametype.integer;
+	spawnInfo.spawnInt = G_SpawnInt;
+	spawnInfo.spawnString = G_SpawnString;
+	// check "notsingle", "notfree", "notteam", etc.
+	if (!BG_CheckSpawnEntity(&spawnInfo)) {
+		ADJUST_AREAPORTAL();
+		G_FreeEntity(ent);
+		return;
 	}
 	// move editor origin to pos
 	VectorCopy(ent->s.origin, ent->s.pos.trBase);

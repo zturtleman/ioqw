@@ -112,7 +112,7 @@ void CG_TestGun_f(void) {
 	}
 
 	cg.testGun = qtrue;
-	cg.testModelEntity.renderfx = RF_MINLIGHT|RF_DEPTHHACK|RF_FIRST_PERSON;
+	cg.testModelEntity.renderfx = RF_DEPTHHACK|RF_NO_MIRROR;
 }
 
 /*
@@ -200,7 +200,7 @@ static void CG_AddTestModel(void) {
 		}
 	}
 
-	trap_R_AddRefEntityToScene(&cg.testModelEntity);
+	CG_AddRefEntityWithMinLight(&cg.testModelEntity);
 }
 
 /*
@@ -518,7 +518,6 @@ static int CG_CalcFov(void) {
 	float fov_x, fov_y;
 	float zoomFov;
 	float f;
-	int inwater;
 
 	if (cg.predictedPlayerState.pm_type == PM_INTERMISSION) {
 		// if in intermission, use a fixed value
@@ -585,9 +584,9 @@ static int CG_CalcFov(void) {
 		v = WAVE_AMPLITUDE * sin(phase);
 		fov_x += v;
 		fov_y -= v;
-		inwater = qtrue;
+		cg.refdef.rdflags |= RDF_UNDERWATER;
 	} else {
-		inwater = qfalse;
+		cg.refdef.rdflags &= ~RDF_UNDERWATER;
 	}
 	// set it
 	cg.refdef.fov_x = fov_x;
@@ -599,7 +598,45 @@ static int CG_CalcFov(void) {
 		cg.zoomSensitivity = cg.refdef.fov_y / 75.0;
 	}
 
-	return inwater;
+	return(cg.refdef.rdflags & RDF_UNDERWATER);
+}
+
+/*
+=======================================================================================================================================
+CG_DrawSkyBoxPortal
+=======================================================================================================================================
+*/
+void CG_DrawSkyBoxPortal(void) {
+	refdef_t backuprefdef;
+
+	if (!cg_skybox.integer || !cg.hasSkyPortal) {
+		return;
+	}
+
+	backuprefdef = cg.refdef;
+
+	VectorCopy(cg.skyPortalOrigin, cg.refdef.vieworg);
+
+	if (cg.skyPortalFogDepthForOpaque > 0) {
+		cg.refdef.fogType = FT_LINEAR;
+		cg.refdef.fogDensity = 1.0f;
+		cg.refdef.fogDepthForOpaque = cg.skyPortalFogDepthForOpaque;
+		cg.refdef.farClip = 0;
+	}
+
+	VectorCopy(cg.skyPortalFogColor, cg.refdef.fogColor);
+
+	cg.refdef.skyAlpha = cg.skyAlpha;
+	cg.refdef.time = cg.time;
+
+	if (cg_skybox.integer == 2) {
+		cg.refdef.rdflags |= RDF_ONLYSKY;
+	}
+	// draw the skybox
+	trap_R_RenderScene(&cg.refdef);
+
+	cg.refdef = backuprefdef;
+	cg.refdef.rdflags |= RDF_NOSKY;
 }
 
 /*
@@ -634,7 +671,7 @@ static void CG_DamageBlendBlob(void) {
 	memset(&ent, 0, sizeof(ent));
 
 	ent.reType = RT_SPRITE;
-	ent.renderfx = RF_FIRST_PERSON;
+	ent.renderfx = RF_NO_MIRROR;
 
 	VectorMA(cg.refdef.vieworg, 8, cg.refdef.viewaxis[0], ent.origin);
 	VectorMA(ent.origin, cg.damageX * -8, cg.refdef.viewaxis[1], ent.origin);
@@ -939,12 +976,18 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 	trap_S_ClearLoopingSounds(qfalse);
 	// clear all the render lists
 	trap_R_ClearScene();
+	// clear poly buffers for this frame
+	CG_PB_ClearPolyBuffers();
 	// set up cg.snap and possibly cg.nextSnap
 	CG_ProcessSnapshots();
 	// if we haven't received any snapshots yet, all we can draw is the information screen
 	if (!cg.snap || (cg.snap->snapFlags & SNAPFLAG_NOT_ACTIVE)) {
 		CG_DrawInformation();
 		return;
+	}
+
+	if (!cg.lightstylesInited) {
+		CG_SetupDlightstyles();
 	}
 	// let the client system know what our weapon and zoom settings are
 	trap_SetUserCmdValue(cg.weaponSelect, cg.zoomSensitivity);
@@ -958,19 +1001,21 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 	inwater = CG_CalcViewValues();
 
 	CG_SetupFrustum();
+	CG_DrawSkyBoxPortal();
+	// build the render lists
+	if (!cg.hyperspace) {
+		CG_AddPacketEntities(); // adter calcViewValues, so predicted player state is correct
+		CG_AddLocalEntities();
+		CG_AddMarks();
+		CG_AddParticles();
+		CG_AddAtmosphericEffects();
+	}
+
+	CG_AddViewWeapon(&cg.predictedPlayerState);
 	// first person blend blobs, done after AnglesToAxis
 	if (!cg.renderingThirdPerson) {
 		CG_DamageBlendBlob();
 	}
-	// build the render lists
-	if (!cg.hyperspace) {
-		CG_AddPacketEntities(); // adter calcViewValues, so predicted player state is correct
-		CG_AddMarks();
-		CG_AddParticles();
-		CG_AddLocalEntities();
-	}
-
-	CG_AddViewWeapon(&cg.predictedPlayerState);
 	// add buffered sounds
 	CG_PlayBufferedSounds();
 	// play buffered voice chats

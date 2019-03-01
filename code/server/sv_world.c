@@ -384,6 +384,10 @@ static void SV_AreaEntities_r(worldSector_t *node, areaParms_t *ap) {
 		next = check->nextEntityInWorldSector;
 		gcheck = SV_GEntityForSvEntity(check);
 
+		if (!gcheck->r.linked) {
+			continue;
+		}
+
 		if (gcheck->r.absmin[0] > ap->maxs[0] || gcheck->r.absmin[1] > ap->maxs[1] || gcheck->r.absmin[2] > ap->maxs[2] || gcheck->r.absmax[0] < ap->mins[0] || gcheck->r.absmax[1] < ap->mins[1] || gcheck->r.absmax[2] < ap->mins[2]) {
 			continue;
 		}
@@ -526,6 +530,11 @@ static void SV_ClipMoveToEntities(moveclip_t *clip) {
 		}
 		// might intersect, so do an exact clip
 		clipHandle = SV_ClipHandleForEntity(touch);
+		// non-worldspawn entities must not use world as clip model!
+		if (clipHandle == 0) {
+			continue;
+		}
+
 		origin = touch->r.currentOrigin;
 		angles = touch->r.currentAngles;
 
@@ -693,6 +702,11 @@ int SV_PointContents(const vec3_t p, int passEntityNum) {
 		hit = SV_GentityNum(touch[i]);
 		// might intersect, so do an exact clip
 		clipHandle = SV_ClipHandleForEntity(hit);
+		// non-worldspawn entities must not use world as clip model!
+		if (clipHandle == 0) {
+			continue;
+		}
+
 		angles = hit->r.currentAngles;
 
 		if (!hit->r.bmodel) {

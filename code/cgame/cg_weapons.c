@@ -465,7 +465,7 @@ static void CG_BeamgunBolt(centity_t *cent, vec3_t origin) {
 	beam.reType = RT_LIGHTNING;
 	beam.customShader = cgs.media.lightningShader;
 
-	trap_R_AddRefEntityToScene(&beam);
+	CG_AddRefEntityWithMinLight(&beam);
 	// add the impact flare if it hit something
 	if (trace.fraction < 1.0) {
 		vec3_t angles;
@@ -485,7 +485,7 @@ static void CG_BeamgunBolt(centity_t *cent, vec3_t origin) {
 		angles[2] = rand() % 360;
 
 		AnglesToAxis(angles, beam.axis);
-		trap_R_AddRefEntityToScene(&beam);
+		CG_AddRefEntityWithMinLight(&beam);
 	}
 }
 /*
@@ -1058,7 +1058,7 @@ void CG_Tracer(vec3_t source, vec3_t dest) {
 	verts[3].modulate[2] = 255;
 	verts[3].modulate[3] = 255;
 
-	trap_R_AddPolyToScene(cgs.media.tracerShader, 4, verts);
+	trap_R_AddPolyToScene(cgs.media.tracerShader, 4, verts, 0, 0);
 
 	midpoint[0] = (start[0] + finish[0]) * 0.5;
 	midpoint[1] = (start[1] + finish[1]) * 0.5;
@@ -1369,7 +1369,7 @@ void CG_RegisterWeapon(int weaponNum) {
 	// load cmodel before model so filecache works
 	weaponInfo->weaponModel = trap_R_RegisterModel(item->world_model[0]);
 	// calc midpoint for rotation
-	trap_R_ModelBounds(weaponInfo->weaponModel, mins, maxs);
+	trap_R_ModelBounds(weaponInfo->weaponModel, mins, maxs, 0, 0, 0);
 
 	for (i = 0; i < 3; i++) {
 		weaponInfo->weaponMidpoint[i] = mins[i] + 0.5 * (maxs[i] - mins[i]);
@@ -1700,13 +1700,13 @@ static void CG_AddWeaponWithPowerups(refEntity_t *gun, int powerups, int team) {
 			gun->customShader = cgs.media.invisShader;
 		}
 
-		trap_R_AddRefEntityToScene(gun);
+		CG_AddRefEntityWithMinLight(gun);
 	} else {
-		trap_R_AddRefEntityToScene(gun);
+		CG_AddRefEntityWithMinLight(gun);
 
 		if (powerups & (1 << PW_QUAD)) {
 			gun->customShader = cgs.media.quadWeaponShader;
-			trap_R_AddRefEntityToScene(gun);
+			CG_AddRefEntityWithMinLight(gun);
 		}
 	}
 }
@@ -1779,7 +1779,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent,
 	trap_R_LerpTag(&lerped, parent->hModel, parent->oldframe, parent->frame, 1.0 - parent->backlerp, "tag_weapon");
 	VectorCopy(parent->origin, gun.origin);
 	VectorMA(gun.origin, lerped.origin[0], parent->axis[0], gun.origin);
-	// Make weapon appear left-handed for 2 and centered for 3
+	// make weapon appear left-handed for 2 and centered for 3
 	if (ps && cg_drawGun.integer == 2) {
 		VectorMA(gun.origin, -lerped.origin[1], parent->axis[1], gun.origin);
 	} else if (!ps || cg_drawGun.integer != 3) {
@@ -1853,14 +1853,14 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent,
 	}
 
 	CG_PositionRotatedEntityOnTag(&flash, &gun, weapon->weaponModel, "tag_flash");
-	trap_R_AddRefEntityToScene(&flash);
+	CG_AddRefEntityWithMinLight(&flash);
 
 	if (ps || cg.renderingThirdPerson || cent->currentState.number != cg.predictedPlayerState.clientNum) {
 		// add beam gun bolt
 		CG_BeamgunBolt(nonPredictedCent, flash.origin);
 
 		if (weapon->flashDlightColor[0] || weapon->flashDlightColor[1] || weapon->flashDlightColor[2]) {
-			trap_R_AddLightToScene(flash.origin, 100 + (rand()&31), weapon->flashDlightColor[0], weapon->flashDlightColor[1], weapon->flashDlightColor[2]);
+			trap_R_AddLightToScene(flash.origin, 100 + (rand()&31), 1.0f, weapon->flashDlightColor[0], weapon->flashDlightColor[1], weapon->flashDlightColor[2], 0);
 		}
 	}
 }
@@ -1951,7 +1951,7 @@ void CG_AddViewWeapon(playerState_t *ps) {
 	}
 
 	hand.hModel = weapon->handsModel;
-	hand.renderfx = RF_DEPTHHACK|RF_FIRST_PERSON|RF_MINLIGHT;
+	hand.renderfx = RF_DEPTHHACK|RF_NO_MIRROR;
 	// add everything onto the hand
 	CG_AddPlayerWeapon(&hand, ps, &cg.predictedPlayerEntity, ps->persistant[PERS_TEAM]);
 }

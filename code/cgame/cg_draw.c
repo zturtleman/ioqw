@@ -303,7 +303,7 @@ static void CG_DrawField(int x, int y, int width, int value) {
 CG_Draw3DModel
 =======================================================================================================================================
 */
-void CG_Draw3DModel(float x, float y, float w, float h, qhandle_t model, qhandle_t skin, vec3_t origin, vec3_t angles) {
+void CG_Draw3DModelEx(float x, float y, float w, float h, qhandle_t model, cgSkin_t *skin, vec3_t origin, vec3_t angles, const byte *rgba) {
 	refdef_t refdef;
 	refEntity_t ent;
 
@@ -320,8 +320,12 @@ void CG_Draw3DModel(float x, float y, float w, float h, qhandle_t model, qhandle
 	VectorCopy(origin, ent.origin);
 
 	ent.hModel = model;
-	ent.customSkin = skin;
+	ent.customSkin = CG_AddSkinToFrame(skin);
 	ent.renderfx = RF_NOSHADOW; // no stencil shadows
+
+	if (rgba) {
+		Byte4Copy(rgba, ent.shaderRGBA);
+	}
 
 	refdef.rdflags = RDF_NOWORLDMODEL;
 
@@ -336,8 +340,17 @@ void CG_Draw3DModel(float x, float y, float w, float h, qhandle_t model, qhandle
 	refdef.time = cg.time;
 
 	trap_R_ClearScene();
-	trap_R_AddRefEntityToScene(&ent);
+	CG_AddRefEntityWithMinLight(&ent);
 	trap_R_RenderScene(&refdef);
+}
+
+/*
+=======================================================================================================================================
+CG_Draw3DModel
+=======================================================================================================================================
+*/
+void CG_Draw3DModel(float x, float y, float w, float h, qhandle_t model, cgSkin_t *skin, vec3_t origin, vec3_t angles) {
+	CG_Draw3DModelEx(x, y, w, h, model, skin, origin, angles, NULL);
 }
 
 /*
@@ -345,7 +358,7 @@ void CG_Draw3DModel(float x, float y, float w, float h, qhandle_t model, qhandle
 CG_DrawHealthModel
 =======================================================================================================================================
 */
-void CG_DrawHealthModel(float x, float y, float w, float h, qhandle_t model, qhandle_t skin, qhandle_t model2, vec3_t origin, vec3_t angles, float yaw2) {
+void CG_DrawHealthModel(float x, float y, float w, float h, qhandle_t model, cgSkin_t *skin, qhandle_t model2, vec3_t origin, vec3_t angles, float yaw2, const byte *rgba) {
 	refdef_t refdef;
 	refEntity_t ent;
 
@@ -362,8 +375,12 @@ void CG_DrawHealthModel(float x, float y, float w, float h, qhandle_t model, qha
 	VectorCopy(origin, ent.origin);
 
 	ent.hModel = model;
-	ent.customSkin = skin;
+	ent.customSkin = CG_AddSkinToFrame(skin);
 	ent.renderfx = RF_NOSHADOW; // no stencil shadows
+
+	if (rgba) {
+		Byte4Copy(rgba, ent.shaderRGBA);
+	}
 
 	refdef.rdflags = RDF_NOWORLDMODEL;
 
@@ -378,13 +395,13 @@ void CG_DrawHealthModel(float x, float y, float w, float h, qhandle_t model, qha
 	refdef.time = cg.time;
 
 	trap_R_ClearScene();
-	trap_R_AddRefEntityToScene(&ent);
+	CG_AddRefEntityWithMinLight(&ent);
 
 	if (model2) {
 		ent.hModel = model2;
 		angles[YAW] = yaw2;
 		AnglesToAxis(angles, ent.axis);
-		trap_R_AddRefEntityToScene(&ent);
+		CG_AddRefEntityWithMinLight(&ent);
 	}
 
 	trap_R_RenderScene(&refdef);
@@ -413,7 +430,7 @@ void CG_DrawHead(float x, float y, float w, float h, int clientNum, vec3_t headA
 			return;
 		}
 		// offset the origin y and z to center the head
-		trap_R_ModelBounds(cm, mins, maxs);
+		trap_R_ModelBounds(cm, mins, maxs, 0, 0, 0);
 
 		origin[2] = -0.5 * (mins[2] + maxs[2]);
 		origin[1] = 0.5 * (mins[1] + maxs[1]);
@@ -422,7 +439,7 @@ void CG_DrawHead(float x, float y, float w, float h, int clientNum, vec3_t headA
 		origin[0] = len / 0.268; // len / tan(fov / 2)
 		// allow per-model tweaking
 		VectorAdd(origin, ci->headOffset, origin);
-		CG_Draw3DModel(x, y, w, h, ci->headModel, ci->headSkin, origin, headAngles);
+		CG_Draw3DModelEx(x, y, w, h, ci->headModel, &ci->modelSkin, origin, headAngles, ci->c1RGBA);
 	} else if (cg_drawIcons.integer) {
 		CG_DrawPic(x, y, w, h, ci->modelIcon);
 	}
@@ -451,7 +468,7 @@ void CG_DrawFlagModel(float x, float y, float w, float h, int team, qboolean for
 
 		cm = cgs.media.redFlagModel;
 		// offset the origin y and z to center the flag
-		trap_R_ModelBounds(cm, mins, maxs);
+		trap_R_ModelBounds(cm, mins, maxs, 0, 0, 0);
 
 		origin[2] = -0.5 * (mins[2] + maxs[2]);
 		origin[1] = 0.5 * (mins[1] + maxs[1]);
@@ -470,7 +487,7 @@ void CG_DrawFlagModel(float x, float y, float w, float h, int team, qboolean for
 			return;
 		}
 
-		CG_Draw3DModel(x, y, w, h, handle, 0, origin, angles);
+		CG_Draw3DModel(x, y, w, h, handle, NULL, origin, angles);
 	} else if (cg_drawIcons.integer) {
 		gitem_t *item;
 
@@ -626,7 +643,7 @@ static void CG_DrawStatusBar(void) {
 		origin[2] = 0;
 		angles[YAW] = 90 + 20 * sin(cg.time / 1000.0);
 
-		CG_Draw3DModel(370 + CHAR_WIDTH * 3 + TEXT_ICON_SPACE, 480 - iconSize, iconSize, iconSize, cg_weapons[cent->currentState.weapon].ammoModel, 0, origin, angles);
+		CG_Draw3DModel(370 + CHAR_WIDTH * 3 + TEXT_ICON_SPACE, 480 - iconSize, iconSize, iconSize, cg_weapons[cent->currentState.weapon].ammoModel, NULL, origin, angles);
 	}
 	// health
 	if (cg_drawStatusHead.integer == 2) {
@@ -635,7 +652,7 @@ static void CG_DrawStatusBar(void) {
 		origin[2] = -5;
 		angles[YAW] = (cg.time & 2047) * 360 / 4096.0;
 
-		CG_DrawHealthModel(185 + CHAR_WIDTH * 3 + TEXT_ICON_SPACE, 480 - iconSize, iconSize, iconSize, cg_items[6/*item_health_large*/].models[0], 0, cg_items[6/*item_health_large*/].models[1], origin, angles, 0);
+		CG_DrawHealthModel(185 + CHAR_WIDTH * 3 + TEXT_ICON_SPACE, 480 - iconSize, iconSize, iconSize, cg_items[6/*item_health_large*/].models[0], NULL, cg_items[6/*item_health_large*/].models[1], origin, angles, 0, NULL);
 		// if we didn't draw a 3D icon, draw a 2D icon for health
 		if (!cg_draw3dIcons.integer && cg_drawIcons.integer) {
 			CG_DrawPic(185 + CHAR_WIDTH * 3 + TEXT_ICON_SPACE, 480 - iconSize, iconSize, iconSize, cg_items[6/*item_health_large*/].icon);
@@ -650,7 +667,7 @@ static void CG_DrawStatusBar(void) {
 		origin[2] = -10;
 		angles[YAW] = (cg.time & 2047) * 360 / 2048.0;
 
-		CG_Draw3DModel(CHAR_WIDTH * 3 + TEXT_ICON_SPACE, 480 - iconSize, iconSize, iconSize, cgs.media.armorModel, 0, origin, angles);
+		CG_Draw3DModel(CHAR_WIDTH * 3 + TEXT_ICON_SPACE, 480 - iconSize, iconSize, iconSize, cgs.media.armorModel, NULL, origin, angles);
 	}
 	// flags
 	if (cg.predictedPlayerState.powerups[PW_REDFLAG]) {
@@ -2543,6 +2560,112 @@ static void CG_Draw2D(stereoFrame_t stereoFrame) {
 
 /*
 =======================================================================================================================================
+CG_FogView
+=======================================================================================================================================
+*/
+void CG_FogView(void) {
+	qboolean inwater;
+
+	inwater = (cg.refdef.rdflags & RDF_UNDERWATER);
+
+	trap_R_GetViewFog(cg.refdef.vieworg, &cg.refdef.fogType, cg.refdef.fogColor, &cg.refdef.fogDepthForOpaque, &cg.refdef.fogDensity, &cg.refdef.farClip, inwater);
+
+	if (cg.refdef.fogType == FT_NONE && (cg.refdef.fogColor[0] || cg.refdef.fogColor[1] || cg.refdef.fogColor[2])) {
+		// use global fog with custom color
+		cg.refdef.fogType = cgs.globalFogType;
+		cg.refdef.fogDepthForOpaque = cgs.globalFogDepthForOpaque;
+		cg.refdef.fogDensity = cgs.globalFogDensity;
+		cg.refdef.farClip = cgs.globalFogFarClip;
+	} else if (cg.refdef.fogType == FT_NONE) {
+		// no view fog, use global fog
+		cg.refdef.fogType = cgs.globalFogType;
+		cg.refdef.fogDepthForOpaque = cgs.globalFogDepthForOpaque;
+		cg.refdef.fogDensity = cgs.globalFogDensity;
+		cg.refdef.farClip = cgs.globalFogFarClip;
+
+		VectorCopy(cgs.globalFogColor, cg.refdef.fogColor);
+	}
+}
+
+/*
+=======================================================================================================================================
+CG_DrawMiscGamemodels
+=======================================================================================================================================
+*/
+void CG_DrawMiscGamemodels(void) {
+	int i, j, drawn;
+	refEntity_t ent;
+
+	drawn = 0;
+
+	memset(&ent, 0, sizeof(ent));
+
+	ent.reType = RT_MODEL;
+	ent.nonNormalizedAxes = qtrue;
+	// ydnar: static gamemodels don't project shadows
+	ent.renderfx = RF_NOSHADOW;
+
+	for (i = 0; i < cg.numMiscGameModels; i++) {
+		if (cgs.miscGameModels[i].radius) {
+			if (CG_CullPointAndRadius(cgs.miscGameModels[i].org, cgs.miscGameModels[i].radius)) {
+				continue;
+			}
+		}
+
+		if (!trap_R_inPVS(cg.refdef.vieworg, cgs.miscGameModels[i].org)) {
+			continue;
+		}
+
+		VectorCopy(cgs.miscGameModels[i].org, ent.origin);
+		VectorCopy(cgs.miscGameModels[i].org, ent.oldorigin);
+		VectorCopy(cgs.miscGameModels[i].org, ent.lightingOrigin);
+/*
+		{
+			vec3_t v;
+			vec3_t vu = {0.f, 0.f, 1.f};
+			vec3_t vl = {0.f, 1.f, 0.f};
+			vec3_t vf = {1.f, 0.f, 0.f};
+
+			VectorCopy(cgs.miscGameModels[i].org, v);
+			VectorMA(v, cgs.miscGameModels[i].radius, vu, v);
+			CG_RailTrail2(NULL, cgs.miscGameModels[i].org, v);
+
+			VectorCopy(cgs.miscGameModels[i].org, v);
+			VectorMA(v, cgs.miscGameModels[i].radius, vf, v);
+			CG_RailTrail2(NULL, cgs.miscGameModels[i].org, v);
+
+			VectorCopy(cgs.miscGameModels[i].org, v);
+			VectorMA(v, cgs.miscGameModels[i].radius, vl, v);
+			CG_RailTrail2(NULL, cgs.miscGameModels[i].org, v);
+
+			VectorCopy(cgs.miscGameModels[i].org, v);
+			VectorMA(v, -cgs.miscGameModels[i].radius, vu, v);
+			CG_RailTrail2(NULL, cgs.miscGameModels[i].org, v);
+
+			VectorCopy(cgs.miscGameModels[i].org, v);
+			VectorMA(v, -cgs.miscGameModels[i].radius, vf, v);
+			CG_RailTrail2(NULL, cgs.miscGameModels[i].org, v);
+
+			VectorCopy(cgs.miscGameModels[i].org, v);
+			VectorMA(v, -cgs.miscGameModels[i].radius, vl, v);
+			CG_RailTrail2(NULL, cgs.miscGameModels[i].org, v);
+		}
+*/
+		for (j = 0; j < 3; j++) {
+			VectorCopy(cgs.miscGameModels[i].axes[j], ent.axis[j]);
+		}
+
+		ent.hModel = cgs.miscGameModels[i].model;
+		ent.customSkin = CG_AddSkinToFrame(&cgs.miscGameModels[i].skin);
+
+		trap_R_AddRefEntityToScene(&ent);
+
+		drawn++;
+	}
+}
+
+/*
+=======================================================================================================================================
 CG_DrawActive
 
 Perform all drawing needed to completely fill the screen.
@@ -2561,6 +2684,12 @@ void CG_DrawActive(stereoFrame_t stereoView) {
 	if (stereoView != STEREO_CENTER) {
 		CG_DrawCrosshair3D();
 	}
+
+	CG_DrawMiscGamemodels();
+	CG_PB_RenderPolyBuffers();
+	CG_FogView();
+
+	cg.refdef.skyAlpha = cg.skyAlpha;
 	// draw 3D view
 	trap_R_RenderScene(&cg.refdef);
 	// draw status bar and other floating elements

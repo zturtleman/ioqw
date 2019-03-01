@@ -762,6 +762,65 @@ int bg_numItems = ARRAY_LEN(bg_itemlist) - 1;
 
 /*
 =======================================================================================================================================
+BG_CheckSpawnEntity
+=======================================================================================================================================
+*/
+qboolean BG_CheckSpawnEntity(const bgEntitySpawnInfo_t *info) {
+	int i, gametype;
+	char *s, *value, *gametypeName;
+	static char *gametypeNames[GT_MAX_GAME_TYPE] = {"single", "ffa", "tournament", "team", "ctf", "oneflag", "obelisk", "harvester"};
+
+	gametype = info->gametype;
+	// check for "notsingle" flag
+	if (gametype == GT_SINGLE_PLAYER) {
+		info->spawnInt("notsingle", "0", &i);
+
+		if (i) {
+			return qfalse;
+		}
+	}
+	// check for "notteam" flag (GT_SINGLE_PLAYER, GT_FFA, GT_TOURNAMENT)
+	if (gametype > GT_TOURNAMENT) {
+		info->spawnInt("notteam", "0", &i);
+
+		if (i) {
+			return qfalse;
+		}
+	} else {
+		info->spawnInt("notfree", "0", &i);
+
+		if (i) {
+			return qfalse;
+		}
+	}
+
+	if (info->spawnString("!gametype", NULL, &value)) {
+		if (gametype >= 0 && gametype < GT_MAX_GAME_TYPE) {
+			gametypeName = gametypeNames[gametype];
+			s = strstr(value, gametypeName);
+
+			if (s) {
+				return qfalse;
+			}
+		}
+	}
+
+	if (info->spawnString("gametype", NULL, &value)) {
+		if (gametype >= 0 && gametype < GT_MAX_GAME_TYPE) {
+			gametypeName = gametypeNames[gametype];
+			s = strstr(value, gametypeName);
+
+			if (!s) {
+				return qfalse;
+			}
+		}
+	}
+
+	return qtrue;
+}
+
+/*
+=======================================================================================================================================
 BG_FindItemForPowerup
 =======================================================================================================================================
 */
@@ -1210,7 +1269,7 @@ void BG_TouchJumpPad(playerState_t *ps, entityState_t *jumppad) {
 	}
 	// if we didn't hit this same jumppad the previous frame then don't play the event sound again if we are in a fat trigger
 	if (ps->jumppad_ent != jumppad->number) {
-		vectoangles(jumppad->origin2, angles);
+		VectorToAngles(jumppad->origin2, angles);
 
 		p = fabs(AngleNormalize180(angles[PITCH]));
 

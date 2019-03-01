@@ -63,7 +63,9 @@ cvar_t *com_timescale;
 cvar_t *com_fixedtime;
 cvar_t *com_journal;
 cvar_t *com_maxfps;
+#if idppc_altivec
 cvar_t *com_altivec;
+#endif
 cvar_t *com_timedemo;
 cvar_t *com_sv_running;
 cvar_t *com_cl_running;
@@ -1778,9 +1780,9 @@ void *Hunk_Alloc(int size, ha_pref preference) {
 		Hunk_Log();
 		Hunk_SmallLog();
 
-		Com_Error(ERR_DROP, "Hunk_Alloc failed on %i: %s, line: %d (%s)", size, file, line, label);
+		Com_Error(ERR_DROP, "Hunk_Alloc failed on %i bytes (increase com_hunkMegs cvar value, current value %d): %s, line: %d (%s)", size, Cvar_VariableIntegerValue("com_hunkMegs"), file, line, label);
 #else
-		Com_Error(ERR_DROP, "Hunk_Alloc failed on %i", size);
+		Com_Error(ERR_DROP, "Hunk_Alloc failed on %i bytes (increase com_hunkMegs cvar value, current value %d)", size, Cvar_VariableIntegerValue("com_hunkMegs"));
 #endif
 	}
 
@@ -1836,7 +1838,7 @@ void *Hunk_AllocateTempMemory(int size) {
 	size = PAD(size, sizeof(intptr_t)) + sizeof(hunkHeader_t);
 
 	if (hunk_temp->temp + hunk_permanent->permanent + size > s_hunkTotal) {
-		Com_Error(ERR_DROP, "Hunk_AllocateTempMemory: failed on %i", size);
+		Com_Error(ERR_DROP, "Hunk_AllocateTempMemory: failed on %i bytes (increase com_hunkMegs cvar value, current value %d)", size, Cvar_VariableIntegerValue("com_hunkMegs"));
 	}
 
 	if (hunk_temp == &hunk_low) {
@@ -2447,6 +2449,7 @@ void Com_GameRestart_f(void) {
 	Com_GameRestart(0, qtrue);
 }
 
+#if idppc_altivec
 /*
 =======================================================================================================================================
 Com_DetectAltivec
@@ -2469,7 +2472,7 @@ static void Com_DetectAltivec(void) {
 		}
 	}
 }
-
+#endif
 #if id386 || idx64
 /*
 =======================================================================================================================================
@@ -2597,7 +2600,9 @@ void Com_Init(char *commandLine) {
 	// if any archived cvars are modified after this, we will trigger a writing of the config file
 	cvar_modifiedFlags &= ~CVAR_ARCHIVE;
 	// init commands and vars
+#if idppc_altivec
 	com_altivec = Cvar_Get("com_altivec", "1", CVAR_ARCHIVE);
+#endif
 	com_maxfps = Cvar_Get("com_maxfps", "60", CVAR_ARCHIVE);
 	com_singlePlayerActive = Cvar_Get("ui_singlePlayerActive", "0", CVAR_SYSTEMINFO|CVAR_ROM);
 	com_blood = Cvar_Get("com_blood", "1", CVAR_ARCHIVE);
@@ -2660,16 +2665,14 @@ void Com_Init(char *commandLine) {
 			}
 		}
 	}
-	// start in full screen ui mode
-	Cvar_Set("r_uiFullScreen", "1");
+
 	CL_StartHunkUsers(qfalse);
 	// make sure single player is off by default
 	Cvar_Set("ui_singlePlayerActive", "0");
 
 	com_fullyInitialized = qtrue;
-	// always set the cvar, but only print the info if it makes sense
+#if idppc_altivec
 	Com_DetectAltivec();
-#if idppc
 	Com_Printf("Altivec support is %s\n", com_altivec->integer ? "enabled" : "disabled");
 #endif
 	com_pipefile = Cvar_Get("com_pipefile", "", CVAR_ARCHIVE|CVAR_LATCH);
@@ -2946,11 +2949,12 @@ void Com_Frame(void) {
 	msec = com_frameTime - lastTime;
 
 	Cbuf_Execute();
-
+#if idppc_altivec
 	if (com_altivec->modified) {
 		Com_DetectAltivec();
 		com_altivec->modified = qfalse;
 	}
+#endif
 	// mess with msec if needed
 	msec = Com_ModifyMsec(msec);
 	// server side
