@@ -1375,7 +1375,7 @@ static void UI_DrawTeamMember(rectDef_t *rect, float scale, vec4_t color, qboole
 	// 0 - None
 	// 1 - Human
 	// 2 - Random Bot
-	// 3 - NumCharacters - Bot
+	// 3.. NumCharacters - Bot
 	int value = trap_Cvar_VariableValue(va(blue ? "ui_blueteam%i" : "ui_redteam%i", num));
 	const char *text;
 
@@ -1407,7 +1407,7 @@ static void UI_DrawNotTeamMember(rectDef_t *rect, float scale, vec4_t color, int
 	// 0 - None
 	// 1 - Human
 	// 2 - Random Bot
-	// 3 - NumCharacters - Bot
+	// 3.. NumCharacters - Bot
 	int value = trap_Cvar_VariableValue(va("ui_notteam%i", num));
 	const char *text;
 
@@ -2194,7 +2194,7 @@ UI_DrawBotName
 */
 static void UI_DrawBotName(rectDef_t *rect, float scale, vec4_t color, int textStyle) {
 	// 0 - Random Bot
-	// 1 - NumCharacters - Bot
+	// 1.. NumCharacters - Bot
 	int value = uiInfo.botIndex;
 	int game = trap_Cvar_VariableValue("g_gametype");
 	const char *text = "";
@@ -3014,7 +3014,7 @@ static qboolean UI_TeamMember_HandleKey(int flags, float *special, int key, qboo
 		// 0 - None
 		// 1 - Human
 		// 2 - Random Bot
-		// 3 - NumCharacters - Bot
+		// 3.. NumCharacters - Bot
 		char *cvar = va(blue ? "ui_blueteam%i" : "ui_redteam%i", num);
 		int value = trap_Cvar_VariableValue(cvar);
 
@@ -3045,7 +3045,7 @@ static qboolean UI_NotTeamMember_HandleKey(int flags, float *special, int key, i
 		// 0 - None
 		// 1 - Human
 		// 2 - Random Bot
-		// 3 - NumCharacters - Bot
+		// 3.. NumCharacters - Bot
 		char *cvar = va("ui_notteam%i", num);
 		int value = trap_Cvar_VariableValue(cvar);
 
@@ -3160,7 +3160,7 @@ static qboolean UI_BotName_HandleKey(int flags, float *special, int key) {
 
 	if (select != 0) {
 		// 0 - Random Bot
-		// 1 - NumCharacters - Bot
+		// 1.. NumCharacters - Bot
 		int game = trap_Cvar_VariableValue("g_gametype");
 		int value = uiInfo.botIndex;
 
@@ -3926,7 +3926,7 @@ static void UI_RunMenuScript(char **args) {
 					// 0 - None
 					// 1 - Human
 					// 2 - Random Bot
-					// 3 - NumCharacters - Bot
+					// 3.. NumCharacters - Bot
 					int bot = trap_Cvar_VariableValue(va("ui_redteam%i", i + 1));
 
 					if (bot > 1) {
@@ -4032,7 +4032,7 @@ static void UI_RunMenuScript(char **args) {
 				// 0 - None
 				// 1 - Human
 				// 2 - Random Bot
-				// 3 - NumCharacters - Bot
+				// 3.. NumCharacters - Bot
 				for (i = 0; i < PLAYERS_PER_TEAM; i++) {
 					int bot = trap_Cvar_VariableValue(va("ui_redteam%i", i + 1));
 
@@ -4242,7 +4242,7 @@ static void UI_RunMenuScript(char **args) {
 			}
 		} else if (Q_stricmp(name, "addBot") == 0) {
 			// 0 - Random Bot
-			// 1 - NumCharacters - Bot
+			// 1.. NumCharacters - Bot
 			if (uiInfo.botIndex == 0) {
 				name = "random";
 			} else if (trap_Cvar_VariableValue("g_gametype") > GT_TOURNAMENT) {

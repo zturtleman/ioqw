@@ -192,7 +192,7 @@ void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...) {
 	// the actual cause of the bug is probably further downstream and should maybe be addressed later, but this certainly
 	// fixes the problem for now
 	if (strlen((char *)message) > 1022) {
-		Com_DPrintf(S_COLOR_YELLOW "WARNING: Dropped long reliable command for client %d: %s\n", (int)(cl - svs.clients), message);
+		Com_Printf(S_COLOR_YELLOW "WARNING: Dropped long reliable command for client %d: %s\n", (int)(cl - svs.clients), message);
 		return;
 	}
 
@@ -608,11 +608,11 @@ void SVC_Info(netadr_t from) {
 	// check whether Cmd_Argv(1) has a sane length. This was not done in the original Quake3 version which led to the Infostring bug
 	// discovered by Luigi Auriemma. See http://aluigi.altervista.org/ for the advisory.
 
-	// a maximum challenge length of 128 should be more than plenty.
+	// a maximum challenge length of 128 should be more than plenty
 	if (strlen(Cmd_Argv(1)) > 128) {
 		return;
 	}
-	// don't count privateclients
+	// don't count private clients
 	count = humans = 0;
 
 	for (i = sv_privateClients->integer; i < sv_maxclients->integer; i++) {

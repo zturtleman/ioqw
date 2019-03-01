@@ -3311,7 +3311,10 @@ static void FS_CheckPak0(void) {
 
 		if (!Q_stricmpn(curpack->pakGamename, BASEGAME, MAX_OSPATH) && strlen(pakBasename) == 4 && !Q_stricmpn(pakBasename, "pak", 3) && pakBasename[3] >= '0' && pakBasename[3] <= '0' + NUM_QW_PAKS - 1) {
 			if (curpack->checksum != pak_checksums[pakBasename[3] - '0']) {
-				Com_Printf("\n\n**************************************************\nWARNING: "BASEGAME"/pak%d.pk3 is present but its checksum (%u) is not correct. Please re-copy pak%d.pk3.\n**************************************************\n\n\n", pakBasename[3] - '0', curpack->checksum, pakBasename[3] - '0');
+
+
+
+					Com_Printf("\n\n**************************************************\nWARNING: "BASEGAME"/pak%d.pk3 is present but its checksum (%u) is not correct. Please re-copy pak%d.pk3.\n**************************************************\n\n\n", pakBasename[3] - '0', curpack->checksum, pakBasename[3] - '0');
 			}
 
 			foundPak |= 1 << (pakBasename[3] - '0');

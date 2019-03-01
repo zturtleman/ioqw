@@ -1385,7 +1385,6 @@ makedirs:
 	@$(MKDIR) $(B)/renderergl2
 	@$(MKDIR) $(B)/renderergl2/glsl
 	@$(MKDIR) $(B)/ded
-
 	@$(MKDIR) $(B)/$(BASEGAME)/cgame
 	@$(MKDIR) $(B)/$(BASEGAME)/game
 	@$(MKDIR) $(B)/$(BASEGAME)/ui
