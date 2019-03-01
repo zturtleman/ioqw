@@ -14,16 +14,41 @@ Ioid3-qw is licensed under a [modified version of the GNU GPLv3](COPYING.txt#L62
 
 ## Main Features:
 
+  * OTBS-formatted code.
   * Enhanced BotAI.
   * Rotating gibs.
+  * Slightly faster maths.
 
+## Main features from Spearmint:
+
+  * Aspect correct widescreen.
+  * High resolution font support (TrueType).
+  * Enhanced model loading (incl. sub-models).
+  * Dynamic skin support.
+  * Bullet marks on doors and moving platforms.
+  * Gibs and bullet shells ride on moving platforms.
+  * New shader keywords and game objects.
+  * Foliage support.
+  * Better external lightmap support.
+  * Atmospheric effects, like rain and snow.
+  * Dynamic lights have smoother edges.
+  * Improved Bot AI.
 
 ## Goals:
 
-  * 64 weapon support.
-  * Advanced bot order menu.
   * Ragdoll physics.
-  * A modern rendering system (the 'real' Xreal renderer).
+  * Realtime lightning/shadowing.
+  * 64 weapon support.
+  * Even more improved Bot AI.
+  * Advanced bot order menu.
+
+
+## Current differences to Spearmint:
+
+  * Splitscreen support is still missing due to some rendering issues.
+  * Spearmint's gamepad/joystck support is missing.
+  * Lot of bot AI code is still compiled into the engine, like it was by default.
+  * The default code sctructure is kept alive, engine and game modules aren't seperated, so Ioid3-qw is less modding friendly.
 
 
 ## Credits:
