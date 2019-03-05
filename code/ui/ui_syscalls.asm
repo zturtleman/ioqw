@@ -55,14 +55,18 @@ equ trap_LAN_GetServerInfo					-203
 equ trap_LAN_MarkServerVisible				-204
 equ trap_LAN_UpdateVisiblePings				-205
 equ trap_LAN_ResetPings						-206
-equ trap_LAN_LoadCachedServers				-207
-equ trap_LAN_SaveCachedServers				-208
-equ trap_LAN_AddServer						-209
-equ trap_LAN_RemoveServer					-210
-equ trap_LAN_ServerStatus					-211
-equ trap_LAN_GetServerPing					-212
-equ trap_LAN_ServerIsVisible				-213
-equ trap_LAN_CompareServers					-214
+equ trap_LAN_GetPingQueueCount				-207
+equ trap_LAN_ClearPing						-208
+equ trap_LAN_GetPing						-209
+equ trap_LAN_GetPingInfo					-210
+equ trap_LAN_LoadCachedServers				-211
+equ trap_LAN_SaveCachedServers				-212
+equ trap_LAN_AddServer						-213
+equ trap_LAN_RemoveServer					-214
+equ trap_LAN_ServerStatus					-215
+equ trap_LAN_GetServerPing					-216
+equ trap_LAN_ServerIsVisible				-217
+equ trap_LAN_CompareServers					-218
 
 equ trap_R_RegisterModel					-301
 equ trap_R_RegisterShaderEx					-302

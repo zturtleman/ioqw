@@ -599,6 +599,7 @@ trap_R_SetColor
 void trap_R_SetColor(const float *rgba) {
 	syscall(CG_R_SETCOLOR, rgba);
 }
+
 /*
 =======================================================================================================================================
 trap_R_LoadWorldMap

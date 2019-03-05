@@ -808,7 +808,7 @@ int trap_AAS_PredictClientMovement(void /*struct aas_clientmove_s*/ *move, int e
 trap_AAS_PredictRoute
 =======================================================================================================================================
 */
-int trap_AAS_PredictRoute(void /*struct aas_predictroute_s*/ * route, int areanum, vec3_t origin, int goalareanum, int travelflags, int maxareas, int maxtime, int stopevent, int stopcontents, int stoptfl, int stopareanum) {
+int trap_AAS_PredictRoute(void /*struct aas_predictroute_s*/ *route, int areanum, vec3_t origin, int goalareanum, int travelflags, int maxareas, int maxtime, int stopevent, int stopcontents, int stoptfl, int stopareanum) {
 	return syscall(BOTLIB_AAS_PREDICT_ROUTE, route, areanum, origin, goalareanum, travelflags, maxareas, maxtime, stopevent, stopcontents, stoptfl, stopareanum);
 }
 
@@ -817,7 +817,7 @@ int trap_AAS_PredictRoute(void /*struct aas_predictroute_s*/ * route, int areanu
 trap_AAS_AlternativeRouteGoals
 =======================================================================================================================================
 */
-int trap_AAS_AlternativeRouteGoals(vec3_t start, int startareanum, vec3_t goal, int goalareanum, int travelflags, void /*struct aas_altroutegoal_s*/ * altroutegoals, int maxaltroutegoals, int type) {
+int trap_AAS_AlternativeRouteGoals(vec3_t start, int startareanum, vec3_t goal, int goalareanum, int travelflags, void /*struct aas_altroutegoal_s*/ *altroutegoals, int maxaltroutegoals, int type) {
 	return syscall(BOTLIB_AAS_ALTERNATIVE_ROUTE_GOAL, start, startareanum, goal, goalareanum, travelflags, altroutegoals, maxaltroutegoals, type);
 }
 
@@ -1576,6 +1576,7 @@ trap_BotMutateGoalFuzzyLogic
 void trap_BotMutateGoalFuzzyLogic(int goalstate, float range) {
 	syscall(BOTLIB_AI_MUTATE_GOAL_FUZZY_LOGIC, goalstate, PASSFLOAT(range));
 }
+
 /*
 =======================================================================================================================================
 trap_BotGetNextCampSpotGoal
@@ -1773,4 +1774,3 @@ trap_BotResetWeaponState
 void trap_BotResetWeaponState(int weaponstate) {
 	syscall(BOTLIB_AI_RESET_WEAPON_STATE, weaponstate);
 }
-
