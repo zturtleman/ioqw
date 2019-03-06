@@ -284,11 +284,11 @@ void *Hunk_Alloc(int size, ha_pref preference);
 #define Com_Memset memset
 #define Com_Memcpy memcpy
 
-#define CIN_system	 1
-#define CIN_loop	 2
-#define CIN_hold	 4
-#define CIN_silent	 8
-#define CIN_shader	16
+#define CIN_system	0x00000001
+#define CIN_loop	0x00000002
+#define CIN_hold	0x00000004
+#define CIN_silent	0x00000008
+#define CIN_shader	0x00000010
 
 #define SOUND_RANGE_DEFAULT 128
 
@@ -865,8 +865,8 @@ typedef struct {
 */
 
 // if you change the count of flags be sure to also change VOIP_FLAGNUM
-#define VOIP_SPATIAL	0x01 // spatialized voip message
-#define VOIP_DIRECT		0x02 // non-spatialized voip message
+#define VOIP_SPATIAL	0x00000001 // spatialized voip message
+#define VOIP_DIRECT		0x00000002 // non-spatialized voip message
 // number of flags voip knows. You will have to bump protocol version number if you change this.
 #define VOIP_FLAGCNT 2
 

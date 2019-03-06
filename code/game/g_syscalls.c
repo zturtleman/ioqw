@@ -733,20 +733,20 @@ int trap_AAS_BBoxAreas(vec3_t absmins, vec3_t absmaxs, int *areas, int maxareas)
 
 /*
 =======================================================================================================================================
-trap_AAS_PointAreaNum
-=======================================================================================================================================
-*/
-int trap_AAS_PointAreaNum(vec3_t point) {
-	return syscall(BOTLIB_AAS_POINT_AREA_NUM, point);
-}
-
-/*
-=======================================================================================================================================
 trap_AAS_TraceAreas
 =======================================================================================================================================
 */
 int trap_AAS_TraceAreas(vec3_t start, vec3_t end, int *areas, vec3_t *points, int maxareas) {
 	return syscall(BOTLIB_AAS_TRACE_AREAS, start, end, areas, points, maxareas);
+}
+
+/*
+=======================================================================================================================================
+trap_AAS_PointAreaNum
+=======================================================================================================================================
+*/
+int trap_AAS_PointAreaNum(vec3_t point) {
+	return syscall(BOTLIB_AAS_POINT_AREA_NUM, point);
 }
 
 /*
@@ -1486,11 +1486,20 @@ int trap_BotGetLevelItemGoal(int index, char *classname, void /*struct bot_goal_
 
 /*
 =======================================================================================================================================
-trap_BotSetAvoidGoalTime
+trap_BotGetNextCampSpotGoal
 =======================================================================================================================================
 */
-void trap_BotSetAvoidGoalTime(int goalstate, int number, float avoidtime) {
-	syscall(BOTLIB_AI_SET_AVOID_GOAL_TIME, goalstate, number, PASSFLOAT(avoidtime));
+int trap_BotGetNextCampSpotGoal(int num, void /*struct bot_goal_s*/ *goal) {
+	return syscall(BOTLIB_AI_GET_NEXT_CAMP_SPOT_GOAL, num, goal);
+}
+
+/*
+=======================================================================================================================================
+trap_BotGetMapLocationGoal
+=======================================================================================================================================
+*/
+int trap_BotGetMapLocationGoal(char *name, void /*struct bot_goal_s*/ *goal) {
+	return syscall(BOTLIB_AI_GET_MAP_LOCATION_GOAL, name, goal);
 }
 
 /*
@@ -1503,6 +1512,15 @@ float trap_BotAvoidGoalTime(int goalstate, int number) {
 
 	fi.i = syscall(BOTLIB_AI_AVOID_GOAL_TIME, goalstate, number);
 	return fi.f;
+}
+
+/*
+=======================================================================================================================================
+trap_BotSetAvoidGoalTime
+=======================================================================================================================================
+*/
+void trap_BotSetAvoidGoalTime(int goalstate, int number, float avoidtime) {
+	syscall(BOTLIB_AI_SET_AVOID_GOAL_TIME, goalstate, number, PASSFLOAT(avoidtime));
 }
 
 /*
@@ -1543,24 +1561,6 @@ void trap_BotFreeItemWeights(int goalstate) {
 
 /*
 =======================================================================================================================================
-trap_BotSaveGoalFuzzyLogic
-=======================================================================================================================================
-*/
-void trap_BotSaveGoalFuzzyLogic(int goalstate, char *filename) {
-	syscall(BOTLIB_AI_SAVE_GOAL_FUZZY_LOGIC, goalstate, filename);
-}
-
-/*
-=======================================================================================================================================
-trap_GeneticParentsAndChildSelection
-=======================================================================================================================================
-*/
-int trap_GeneticParentsAndChildSelection(int numranks, float *ranks, int *parent1, int *parent2, int *child) {
-	return syscall(BOTLIB_AI_GENETIC_PARENTS_AND_CHILD_SELECTION, numranks, ranks, parent1, parent2, child);
-}
-
-/*
-=======================================================================================================================================
 trap_BotInterbreedGoalFuzzyLogic
 =======================================================================================================================================
 */
@@ -1570,38 +1570,20 @@ void trap_BotInterbreedGoalFuzzyLogic(int parent1, int parent2, int child) {
 
 /*
 =======================================================================================================================================
+trap_BotSaveGoalFuzzyLogic
+=======================================================================================================================================
+*/
+void trap_BotSaveGoalFuzzyLogic(int goalstate, char *filename) {
+	syscall(BOTLIB_AI_SAVE_GOAL_FUZZY_LOGIC, goalstate, filename);
+}
+
+/*
+=======================================================================================================================================
 trap_BotMutateGoalFuzzyLogic
 =======================================================================================================================================
 */
 void trap_BotMutateGoalFuzzyLogic(int goalstate, float range) {
 	syscall(BOTLIB_AI_MUTATE_GOAL_FUZZY_LOGIC, goalstate, PASSFLOAT(range));
-}
-
-/*
-=======================================================================================================================================
-trap_BotGetNextCampSpotGoal
-=======================================================================================================================================
-*/
-int trap_BotGetNextCampSpotGoal(int num, void /*struct bot_goal_s*/ *goal) {
-	return syscall(BOTLIB_AI_GET_NEXT_CAMP_SPOT_GOAL, num, goal);
-}
-
-/*
-=======================================================================================================================================
-trap_BotGetMapLocationGoal
-=======================================================================================================================================
-*/
-int trap_BotGetMapLocationGoal(char *name, void /*struct bot_goal_s*/ *goal) {
-	return syscall(BOTLIB_AI_GET_MAP_LOCATION_GOAL, name, goal);
-}
-
-/*
-=======================================================================================================================================
-trap_BotPredictVisiblePosition
-=======================================================================================================================================
-*/
-int trap_BotPredictVisiblePosition(vec3_t origin, int areanum, void /*struct bot_goal_s*/ *goal, int travelflags, vec3_t target) {
-	return syscall(BOTLIB_AI_PREDICT_VISIBLE_POSITION, origin, areanum, goal, travelflags, target);
 }
 
 /*
@@ -1696,6 +1678,15 @@ int trap_BotMovementViewTarget(int movestate, void /*struct bot_goal_s*/ *goal, 
 
 /*
 =======================================================================================================================================
+trap_BotPredictVisiblePosition
+=======================================================================================================================================
+*/
+int trap_BotPredictVisiblePosition(vec3_t origin, int areanum, void /*struct bot_goal_s*/ *goal, int travelflags, vec3_t target) {
+	return syscall(BOTLIB_AI_PREDICT_VISIBLE_POSITION, origin, areanum, goal, travelflags, target);
+}
+
+/*
+=======================================================================================================================================
 trap_BotAllocMoveState
 =======================================================================================================================================
 */
@@ -1773,4 +1764,13 @@ trap_BotResetWeaponState
 */
 void trap_BotResetWeaponState(int weaponstate) {
 	syscall(BOTLIB_AI_RESET_WEAPON_STATE, weaponstate);
+}
+
+/*
+=======================================================================================================================================
+trap_GeneticParentsAndChildSelection
+=======================================================================================================================================
+*/
+int trap_GeneticParentsAndChildSelection(int numranks, float *ranks, int *parent1, int *parent2, int *child) {
+	return syscall(BOTLIB_AI_GENETIC_PARENTS_AND_CHILD_SELECTION, numranks, ranks, parent1, parent2, child);
 }

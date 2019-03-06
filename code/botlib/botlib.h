@@ -169,52 +169,28 @@ typedef struct botlib_import_s {
 } botlib_import_t;
 
 typedef struct aas_export_s {
-	//-----------------------------------
-	// be_aas_entity.h
-	//-----------------------------------
-	void (*AAS_EntityInfo)(int entnum, struct aas_entityinfo_s *info);
-	//-----------------------------------
-	// be_aas_main.h
-	//-----------------------------------
 	int (*AAS_Initialized)(void);
-	void (*AAS_PresenceTypeBoundingBox)(int presencetype, vec3_t mins, vec3_t maxs);
 	float (*AAS_Time)(void);
-	//--------------------------------------------
-	// be_aas_sample.c
-	//--------------------------------------------
-	int (*AAS_PointAreaNum)(vec3_t point);
-	int (*AAS_PointReachabilityAreaIndex)(vec3_t point);
-	int (*AAS_TraceAreas)(vec3_t start, vec3_t end, int *areas, vec3_t *points, int maxareas);
-	int (*AAS_BBoxAreas)(vec3_t absmins, vec3_t absmaxs, int *areas, int maxareas);
 	int (*AAS_AreaInfo)(int areanum, struct aas_areainfo_s *info);
-	//--------------------------------------------
-	// be_aas_bspq3.c
-	//--------------------------------------------
+	void (*AAS_EntityInfo)(int entnum, struct aas_entityinfo_s *info);
+	void (*AAS_PresenceTypeBoundingBox)(int presencetype, vec3_t mins, vec3_t maxs);
+	int (*AAS_BBoxAreas)(vec3_t absmins, vec3_t absmaxs, int *areas, int maxareas);
+	int (*AAS_TraceAreas)(vec3_t start, vec3_t end, int *areas, vec3_t *points, int maxareas);
+	int (*AAS_PointAreaNum)(vec3_t point);
 	int (*AAS_PointContents)(vec3_t point);
-	int (*AAS_NextBSPEntity)(int ent);
+	int (*AAS_PointReachabilityAreaIndex)(vec3_t point);
+	int (*AAS_AreaReachability)(int areanum);
+	int (*AAS_AreaTravelTimeToGoalArea)(int areanum, vec3_t origin, int goalareanum, int travelflags);
+	int (*AAS_EnableRoutingArea)(int areanum, int enable);
+	int (*AAS_PredictClientMovement)(struct aas_clientmove_s *move, int entnum, vec3_t origin, int presencetype, int onground, vec3_t velocity, vec3_t cmdmove, int cmdframes, int maxframes, float frametime, int stopevent, int stopareanum, int visualize);
+	int (*AAS_PredictRoute)(struct aas_predictroute_s *route, int areanum, vec3_t origin, int goalareanum, int travelflags, int maxareas, int maxtime, int stopevent, int stopcontents, int stoptfl, int stopareanum);
+	int (*AAS_AlternativeRouteGoals)(vec3_t start, int startareanum, vec3_t goal, int goalareanum, int travelflags, struct aas_altroutegoal_s *altroutegoals, int maxaltroutegoals, int type);
 	int (*AAS_ValueForBSPEpairKey)(int ent, char *key, char *value, int size);
 	int (*AAS_VectorForBSPEpairKey)(int ent, char *key, vec3_t v);
 	int (*AAS_FloatForBSPEpairKey)(int ent, char *key, float *value);
 	int (*AAS_IntForBSPEpairKey)(int ent, char *key, int *value);
-	//--------------------------------------------
-	// be_aas_reach.c
-	//--------------------------------------------
-	int (*AAS_AreaReachability)(int areanum);
-	//--------------------------------------------
-	// be_aas_route.c
-	//--------------------------------------------
-	int (*AAS_AreaTravelTimeToGoalArea)(int areanum, vec3_t origin, int goalareanum, int travelflags);
-	int (*AAS_EnableRoutingArea)(int areanum, int enable);
-	int (*AAS_PredictRoute)(struct aas_predictroute_s *route, int areanum, vec3_t origin, int goalareanum, int travelflags, int maxareas, int maxtime, int stopevent, int stopcontents, int stoptfl, int stopareanum);
-	//--------------------------------------------
-	// be_aas_altroute.c
-	//--------------------------------------------
-	int (*AAS_AlternativeRouteGoals)(vec3_t start, int startareanum, vec3_t goal, int goalareanum, int travelflags, struct aas_altroutegoal_s *altroutegoals, int maxaltroutegoals, int type);
-	//--------------------------------------------
-	// be_aas_move.c
-	//--------------------------------------------
+	int (*AAS_NextBSPEntity)(int ent);
 	int (*AAS_Swimming)(vec3_t origin);
-	int (*AAS_PredictClientMovement)(struct aas_clientmove_s *move, int entnum, vec3_t origin, int presencetype, int onground, vec3_t velocity, vec3_t cmdmove, int cmdframes, int maxframes, float frametime, int stopevent, int stopareanum, int visualize);
 } aas_export_t;
 // ClientCommand elementary actions
 typedef struct ea_export_s {
@@ -265,12 +241,12 @@ typedef struct ai_export_s {
 	void (*BotRemoveConsoleMessage)(int chatstate, int handle);
 	int (*BotNextConsoleMessage)(int chatstate, struct bot_consolemessage_s *cm);
 	int (*BotNumConsoleMessages)(int chatstate);
-	void (*BotInitialChat)(int chatstate, char *type, int mcontext, char *var0, char *var1, char *var2, char *var3, char *var4, char *var5, char *var6, char *var7);
 	int (*BotNumInitialChats)(int chatstate, char *type);
+	void (*BotInitialChat)(int chatstate, char *type, int mcontext, char *var0, char *var1, char *var2, char *var3, char *var4, char *var5, char *var6, char *var7);
+	void (*BotGetChatMessage)(int chatstate, char *buf, int size);
 	int (*BotReplyChat)(int chatstate, char *message, int mcontext, int vcontext, char *var0, char *var1, char *var2, char *var3, char *var4, char *var5, char *var6, char *var7);
 	int (*BotChatLength)(int chatstate);
 	void (*BotEnterChat)(int chatstate, int client, int sendto);
-	void (*BotGetChatMessage)(int chatstate, char *buf, int size);
 	int (*StringContains)(char *str1, char *str2, int casesensitive);
 	int (*BotFindMatch)(char *str, struct bot_match_s *match, unsigned long int context);
 	void (*BotMatchVariable)(struct bot_match_s *match, int variable, char *buf, int size);
@@ -319,13 +295,13 @@ typedef struct ai_export_s {
 	int (*BotMoveInDirection)(int movestate, vec3_t dir, float speed, int type);
 	void (*BotResetAvoidReach)(int movestate);
 	void (*BotResetLastAvoidReach)(int movestate);
+	void (*BotAddAvoidSpot)(int movestate, vec3_t origin, float radius, int type);
 	int (*BotReachabilityArea)(vec3_t origin, int testground);
 	int (*BotMovementViewTarget)(int movestate, struct bot_goal_s *goal, int travelflags, float lookahead, vec3_t target);
 	int (*BotPredictVisiblePosition)(vec3_t origin, int areanum, struct bot_goal_s *goal, int travelflags, vec3_t target);
 	int (*BotAllocMoveState)(void);
 	void (*BotFreeMoveState)(int handle);
 	void (*BotInitMoveState)(int handle, struct bot_initmove_s *initmove);
-	void (*BotAddAvoidSpot)(int movestate, vec3_t origin, float radius, int type);
 	//-----------------------------------
 	// be_ai_weap.h
 	//-----------------------------------

@@ -550,10 +550,10 @@ intptr_t SV_GameSystemCalls(intptr_t *args) {
 			return 0;
 		case BOTLIB_AAS_BBOX_AREAS:
 			return botlib_export->aas.AAS_BBoxAreas(VMA(1), VMA(2), VMA(3), args[4]);
-		case BOTLIB_AAS_POINT_AREA_NUM:
-			return botlib_export->aas.AAS_PointAreaNum(VMA(1));
 		case BOTLIB_AAS_TRACE_AREAS:
 			return botlib_export->aas.AAS_TraceAreas(VMA(1), VMA(2), VMA(3), VMA(4), args[5]);
+		case BOTLIB_AAS_POINT_AREA_NUM:
+			return botlib_export->aas.AAS_PointAreaNum(VMA(1));
 		case BOTLIB_AAS_POINT_CONTENTS:
 			return botlib_export->aas.AAS_PointContents(VMA(1));
 		case BOTLIB_AAS_POINT_REACHABILITY_AREA_INDEX:
@@ -762,11 +762,15 @@ intptr_t SV_GameSystemCalls(intptr_t *args) {
 			return botlib_export->ai.BotItemGoalInVisButNotVisible(args[1], VMA(2), VMA(3), VMA(4));
 		case BOTLIB_AI_GET_LEVEL_ITEM_GOAL:
 			return botlib_export->ai.BotGetLevelItemGoal(args[1], VMA(2), VMA(3));
+		case BOTLIB_AI_GET_NEXT_CAMP_SPOT_GOAL:
+			return botlib_export->ai.BotGetNextCampSpotGoal(args[1], VMA(2));
+		case BOTLIB_AI_GET_MAP_LOCATION_GOAL:
+			return botlib_export->ai.BotGetMapLocationGoal(VMA(1), VMA(2));
+		case BOTLIB_AI_AVOID_GOAL_TIME:
+			return FloatAsInt(botlib_export->ai.BotAvoidGoalTime(args[1], args[2]));
 		case BOTLIB_AI_SET_AVOID_GOAL_TIME:
 			botlib_export->ai.BotSetAvoidGoalTime(args[1], args[2], VMF(3));
 			return 0;
-		case BOTLIB_AI_AVOID_GOAL_TIME:
-			return FloatAsInt(botlib_export->ai.BotAvoidGoalTime(args[1], args[2]));
 		case BOTLIB_AI_INIT_LEVEL_ITEMS:
 			botlib_export->ai.BotInitLevelItems();
 			return 0;
@@ -778,23 +782,15 @@ intptr_t SV_GameSystemCalls(intptr_t *args) {
 		case BOTLIB_AI_FREE_ITEM_WEIGHTS:
 			botlib_export->ai.BotFreeItemWeights(args[1]);
 			return 0;
-		case BOTLIB_AI_SAVE_GOAL_FUZZY_LOGIC:
-			botlib_export->ai.BotSaveGoalFuzzyLogic(args[1], VMA(2));
-			return 0;
-		case BOTLIB_AI_GENETIC_PARENTS_AND_CHILD_SELECTION:
-			return botlib_export->ai.GeneticParentsAndChildSelection(args[1], VMA(2), VMA(3), VMA(4), VMA(5));
 		case BOTLIB_AI_INTERBREED_GOAL_FUZZY_LOGIC:
 			botlib_export->ai.BotInterbreedGoalFuzzyLogic(args[1], args[2], args[3]);
+			return 0;
+		case BOTLIB_AI_SAVE_GOAL_FUZZY_LOGIC:
+			botlib_export->ai.BotSaveGoalFuzzyLogic(args[1], VMA(2));
 			return 0;
 		case BOTLIB_AI_MUTATE_GOAL_FUZZY_LOGIC:
 			botlib_export->ai.BotMutateGoalFuzzyLogic(args[1], VMF(2));
 			return 0;
-		case BOTLIB_AI_GET_NEXT_CAMP_SPOT_GOAL:
-			return botlib_export->ai.BotGetNextCampSpotGoal(args[1], VMA(2));
-		case BOTLIB_AI_GET_MAP_LOCATION_GOAL:
-			return botlib_export->ai.BotGetMapLocationGoal(VMA(1), VMA(2));
-		case BOTLIB_AI_PREDICT_VISIBLE_POSITION:
-			return botlib_export->ai.BotPredictVisiblePosition(VMA(1), args[2], VMA(3), args[4], VMA(5));
 		case BOTLIB_AI_ALLOC_GOAL_STATE:
 			return botlib_export->ai.BotAllocGoalState(args[1]);
 		case BOTLIB_AI_FREE_GOAL_STATE:
@@ -821,6 +817,8 @@ intptr_t SV_GameSystemCalls(intptr_t *args) {
 			return botlib_export->ai.BotReachabilityArea(VMA(1), args[2]);
 		case BOTLIB_AI_MOVEMENT_VIEW_TARGET:
 			return botlib_export->ai.BotMovementViewTarget(args[1], VMA(2), args[3], VMF(4), VMA(5));
+		case BOTLIB_AI_PREDICT_VISIBLE_POSITION:
+			return botlib_export->ai.BotPredictVisiblePosition(VMA(1), args[2], VMA(3), args[4], VMA(5));
 		case BOTLIB_AI_ALLOC_MOVE_STATE:
 			return botlib_export->ai.BotAllocMoveState();
 		case BOTLIB_AI_FREE_MOVE_STATE:
@@ -844,6 +842,8 @@ intptr_t SV_GameSystemCalls(intptr_t *args) {
 		case BOTLIB_AI_RESET_WEAPON_STATE:
 			botlib_export->ai.BotResetWeaponState(args[1]);
 			return 0;
+		case BOTLIB_AI_GENETIC_PARENTS_AND_CHILD_SELECTION:
+			return botlib_export->ai.GeneticParentsAndChildSelection(args[1], VMA(2), VMA(3), VMA(4), VMA(5));
 		default:
 			Com_Error(ERR_DROP, "Bad game system trap: %ld", (long int)args[0]);
 	}

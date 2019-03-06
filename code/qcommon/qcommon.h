@@ -102,12 +102,12 @@ void MSG_ReportChangeVectors_f(void);
 =======================================================================================================================================
 */
 
-#define NET_ENABLEV4		0x01
-#define NET_ENABLEV6		0x02
+#define NET_ENABLEV4		0x00000001
+#define NET_ENABLEV6		0x00000002
 // if this flag is set, always attempt ipv6 connections instead of ipv4 if a v6 address is found.
-#define NET_PRIOV6			0x04
+#define NET_PRIOV6			0x00000004
 // disables ipv6 multicast support if set.
-#define NET_DISABLEMCAST	0x08
+#define NET_DISABLEMCAST	0x00000008
 
 #define PACKET_BACKUP 32 // number of old messages that must be kept on client and server for delta compression and ping estimation
 #define PACKET_MASK (PACKET_BACKUP - 1)
@@ -452,9 +452,9 @@ extern int cvar_modifiedFlags;
 
 // referenced flags
 // these are in loop specific order so don't change the order
-#define FS_GENERAL_REF	0x01
-#define FS_UI_REF		0x02
-#define FS_CGAME_REF	0x04
+#define FS_GENERAL_REF	0x00000001
+#define FS_UI_REF		0x00000002
+#define FS_CGAME_REF	0x00000004
 // number of qw paks that will never be autodownloaded from base game
 #define NUM_QW_PAKS 4
 

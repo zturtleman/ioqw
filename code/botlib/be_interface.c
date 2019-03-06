@@ -665,52 +665,29 @@ Init_AAS_Export
 */
 static void Init_AAS_Export(aas_export_t *aas) {
 
-	//--------------------------------------------
-	// be_aas_entity.c
-	//--------------------------------------------
-	aas->AAS_EntityInfo = AAS_EntityInfo;
-	//--------------------------------------------
-	// be_aas_main.c
-	//--------------------------------------------
 	aas->AAS_Initialized = AAS_Initialized;
-	aas->AAS_PresenceTypeBoundingBox = AAS_PresenceTypeBoundingBox;
 	aas->AAS_Time = AAS_Time;
-	//--------------------------------------------
-	// be_aas_sample.c
-	//--------------------------------------------
-	aas->AAS_PointAreaNum = AAS_PointAreaNum;
-	aas->AAS_PointReachabilityAreaIndex = AAS_PointReachabilityAreaIndex;
-	aas->AAS_TraceAreas = AAS_TraceAreas;
-	aas->AAS_BBoxAreas = AAS_BBoxAreas;
 	aas->AAS_AreaInfo = AAS_AreaInfo;
-	//--------------------------------------------
-	// be_aas_bspq3.c
-	//--------------------------------------------
+	aas->AAS_EntityInfo = AAS_EntityInfo;
+	aas->AAS_PresenceTypeBoundingBox = AAS_PresenceTypeBoundingBox;
+	aas->AAS_BBoxAreas = AAS_BBoxAreas;
+	aas->AAS_TraceAreas = AAS_TraceAreas;
+	aas->AAS_PointAreaNum = AAS_PointAreaNum;
 	aas->AAS_PointContents = AAS_PointContents;
-	aas->AAS_NextBSPEntity = AAS_NextBSPEntity;
+	aas->AAS_PointReachabilityAreaIndex = AAS_PointReachabilityAreaIndex;
+	aas->AAS_AreaReachability = AAS_AreaReachability;
+	aas->AAS_AreaTravelTimeToGoalArea = AAS_AreaTravelTimeToGoalArea;
+	aas->AAS_EnableRoutingArea = AAS_EnableRoutingArea;
+	aas->AAS_PredictClientMovement = AAS_PredictClientMovement;
+	aas->AAS_PredictRoute = AAS_PredictRoute;
+	aas->AAS_AlternativeRouteGoals = AAS_AlternativeRouteGoals;
 	aas->AAS_ValueForBSPEpairKey = AAS_ValueForBSPEpairKey;
 	aas->AAS_VectorForBSPEpairKey = AAS_VectorForBSPEpairKey;
 	aas->AAS_FloatForBSPEpairKey = AAS_FloatForBSPEpairKey;
 	aas->AAS_IntForBSPEpairKey = AAS_IntForBSPEpairKey;
-	//--------------------------------------------
-	// be_aas_reach.c
-	//--------------------------------------------
-	aas->AAS_AreaReachability = AAS_AreaReachability;
-	//--------------------------------------------
-	// be_aas_route.c
-	//--------------------------------------------
-	aas->AAS_AreaTravelTimeToGoalArea = AAS_AreaTravelTimeToGoalArea;
-	aas->AAS_EnableRoutingArea = AAS_EnableRoutingArea;
-	aas->AAS_PredictRoute = AAS_PredictRoute;
-	//--------------------------------------------
-	// be_aas_altroute.c
-	//--------------------------------------------
-	aas->AAS_AlternativeRouteGoals = AAS_AlternativeRouteGoals;
-	//--------------------------------------------
-	// be_aas_move.c
-	//--------------------------------------------
+	aas->AAS_NextBSPEntity = AAS_NextBSPEntity;
 	aas->AAS_Swimming = AAS_Swimming;
-	aas->AAS_PredictClientMovement = AAS_PredictClientMovement;
+
 }
 
 /*
@@ -773,12 +750,12 @@ static void Init_AI_Export(ai_export_t *ai) {
 	ai->BotRemoveConsoleMessage = BotRemoveConsoleMessage;
 	ai->BotNextConsoleMessage = BotNextConsoleMessage;
 	ai->BotNumConsoleMessages = BotNumConsoleMessages;
-	ai->BotInitialChat = BotInitialChat;
 	ai->BotNumInitialChats = BotNumInitialChats;
+	ai->BotInitialChat = BotInitialChat;
+	ai->BotGetChatMessage = BotGetChatMessage;
 	ai->BotReplyChat = BotReplyChat;
 	ai->BotChatLength = BotChatLength;
 	ai->BotEnterChat = BotEnterChat;
-	ai->BotGetChatMessage = BotGetChatMessage;
 	ai->StringContains = StringContains;
 	ai->BotFindMatch = BotFindMatch;
 	ai->BotMatchVariable = BotMatchVariable;
@@ -827,13 +804,13 @@ static void Init_AI_Export(ai_export_t *ai) {
 	ai->BotMoveInDirection = BotMoveInDirection;
 	ai->BotResetAvoidReach = BotResetAvoidReach;
 	ai->BotResetLastAvoidReach = BotResetLastAvoidReach;
+	ai->BotAddAvoidSpot = BotAddAvoidSpot;
 	ai->BotReachabilityArea = BotReachabilityArea;
 	ai->BotMovementViewTarget = BotMovementViewTarget;
 	ai->BotPredictVisiblePosition = BotPredictVisiblePosition;
 	ai->BotAllocMoveState = BotAllocMoveState;
 	ai->BotFreeMoveState = BotFreeMoveState;
 	ai->BotInitMoveState = BotInitMoveState;
-	ai->BotAddAvoidSpot = BotAddAvoidSpot;
 	//-----------------------------------
 	// be_ai_weap.h
 	//-----------------------------------
