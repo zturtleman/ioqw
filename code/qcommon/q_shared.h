@@ -1081,8 +1081,8 @@ typedef enum {
 	TR_INTERPOLATE,	// non-parametric, but interpolate between snapshots
 	TR_LINEAR,
 	TR_LINEAR_STOP,
-	TR_SINE,		// value = base + sin(time / duration) * delta
-	TR_GRAVITY
+	TR_GRAVITY,
+	TR_SINE			// value = base + sin(time / duration) * delta
 } trType_t;
 
 typedef struct {

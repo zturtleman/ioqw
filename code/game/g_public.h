@@ -39,16 +39,16 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 #define SVF_NOCLIENT			0x00000001 // don't send entity to clients, even if it has effects
 // https://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=551
-#define SVF_CLIENTMASK			0x00000002 // send to limited list of clients
-#define SVF_BOT					0x00000008 // set if the entity is a bot
+#define SVF_NOTSINGLECLIENT		0x00000002 // send entity to everyone but one client (entityShared_t->singleClient)
+#define SVF_SINGLECLIENT		0x00000004 // only send to a single client (entityShared_t->singleClient)
+#define SVF_CLIENTMASK			0x00000008 // send to limited list of clients
+#define SVF_BOT					0x00000010 // set if the entity is a bot
 #define SVF_BROADCAST			0x00000020 // send to all connected clients (r.cullDistance will still be checked)
-#define SVF_PORTAL				0x00000040 // merge a second pvs at origin2 into snapshots
-#define SVF_SINGLECLIENT		0x00000080 // only send to a single client (entityShared_t->singleClient)
-#define SVF_NOSERVERINFO		0x00000100 // don't send CS_SERVERINFO updates to this client so that it can be updated for ping tools without lagging clients
-#define SVF_CAPSULE				0x00000200 // use capsule for collision detection instead of bbox
-#define SVF_NOTSINGLECLIENT		0x00000400 // send entity to everyone but one client (entityShared_t->singleClient)
-#define SVF_VISDUMMY			0x00000800 // this ent is a "visibility dummy" and needs it's master to be sent to players that can see it even if they can't see the master ent
-#define SVF_VISDUMMY_MULTIPLE	0x00001000 // so that one vis dummy can add to snapshot multiple speakers
+#define SVF_VISDUMMY			0x00000040 // this ent is a "visibility dummy" and needs it's master to be sent to players that can see it even if they can't see the master ent
+#define SVF_VISDUMMY_MULTIPLE	0x00000080 // so that one vis dummy can add to snapshot multiple speakers
+#define SVF_PORTAL				0x00000100 // merge a second pvs at origin2 into snapshots
+#define SVF_NOSERVERINFO		0x00000200 // don't send CS_SERVERINFO updates to this client so that it can be updated for ping tools without lagging clients
+#define SVF_CAPSULE				0x00000400 // use capsule for collision detection instead of bbox
 
 typedef struct {
 	qboolean linked;		// qfalse if not in any good cluster

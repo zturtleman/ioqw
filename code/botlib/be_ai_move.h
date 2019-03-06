@@ -27,30 +27,30 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 **************************************************************************************************************************************/
 
 // movement types
-#define MOVE_WALK		 1
-#define MOVE_CROUCH		 2
-#define MOVE_JUMP		 4
-#define MOVE_ROCKETJUMP	 8
-#define MOVE_BFGJUMP	16
+#define MOVE_WALK		0x00000001
+#define MOVE_JUMP		0x00000002
+#define MOVE_CROUCH		0x00000004
+#define MOVE_ROCKETJUMP	0x00000008
+#define MOVE_BFGJUMP	0x00000010
 // move flags
-#define MFL_BARRIERJUMP		  1 // bot is performing a barrier jump
-#define MFL_ONGROUND		  2 // bot is in the ground
-#define MFL_SWIMMING		  4 // bot is swimming
-#define MFL_AGAINSTLADDER	  8 // bot is against a ladder
-#define MFL_WATERJUMP		 16 // bot is waterjumping
-#define MFL_TELEPORTED		 32 // bot is being teleported
-#define MFL_WALK			 64 // bot should walk slowly
-#define MFL_SCOUT			128 // bot is using the scout powerup
+#define MFL_ONGROUND		0x00000001 // bot is in the ground
+#define MFL_BARRIERJUMP		0x00000002 // bot is performing a barrier jump
+#define MFL_WATERJUMP		0x00000004 // bot is waterjumping
+#define MFL_SWIMMING		0x00000008 // bot is swimming
+#define MFL_AGAINSTLADDER	0x00000010 // bot is against a ladder
+#define MFL_SCOUT			0x00000020 // bot is using the scout powerup
+#define MFL_WALK			0x00000040 // bot should walk slowly
+#define MFL_TELEPORTED		0x00000080 // bot is being teleported
 // move result flags
-#define MOVERESULT_MOVEMENTVIEW			  1 // bot uses view for movement
-#define MOVERESULT_SWIMVIEW				  2 // bot uses view for swimming
-#define MOVERESULT_WAITING				  4 // bot is waiting for something
-#define MOVERESULT_MOVEMENTVIEWSET		  8 // bot has set the view in movement code
-#define MOVERESULT_MOVEMENTWEAPON		 16 // bot uses weapon for movement
-#define MOVERESULT_ONTOPOFOBSTACLE		 32 // bot is ontop of obstacle
-#define MOVERESULT_ONTOPOF_FUNCBOB		 64 // bot is ontop of a func_bobbing
-#define MOVERESULT_ONTOPOF_ELEVATOR		128 // bot is ontop of an elevator (func_plat)
-#define MOVERESULT_BLOCKEDBYAVOIDSPOT	256 // bot is blocked by an avoid spot
+#define MOVERESULT_MOVEMENTVIEW			0x00000001 // bot uses view for movement
+#define MOVERESULT_MOVEMENTVIEWSET		0x00000002 // bot has set the view in movement code
+#define MOVERESULT_MOVEMENTWEAPON		0x00000004 // bot uses weapon for movement
+#define MOVERESULT_BLOCKEDBYAVOIDSPOT	0x00000008 // bot is blocked by an avoid spot
+#define MOVERESULT_SWIMVIEW				0x00000010 // bot uses view for swimming
+#define MOVERESULT_WAITING				0x00000020 // bot is waiting for something
+#define MOVERESULT_ONTOPOF_OBSTACLE		0x00000040 // bot is ontop of obstacle
+#define MOVERESULT_ONTOPOF_FUNCBOB		0x00000080 // bot is ontop of a func_bobbing
+#define MOVERESULT_ONTOPOF_ELEVATOR		0x00000100 // bot is ontop of an elevator (func_plat)
 
 #define MAX_AVOIDREACH 1
 #define MAX_AVOIDSPOTS 128
@@ -59,11 +59,11 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define AVOID_ALWAYS	1 // avoid always
 #define AVOID_DONTBLOCK	2 // never totally block
 // restult types
-#define RESULTTYPE_ELEVATORUP			1 // elevator is up
-#define RESULTTYPE_WAITFORFUNCBOBBING	2 // waiting for func_bobbing to arrive
-#define RESULTTYPE_INSOLIDAREA			4 // stuck in solid area, this is bad
+#define RESULTTYPE_ELEVATORUP			0x00000001 // elevator is up
+#define RESULTTYPE_WAITFORFUNCBOBBING	0x00000002 // waiting for func_bobbing to arrive
+#define RESULTTYPE_INSOLIDAREA			0x00000004 // stuck in solid area, this is bad
 // structure used to initialize the movement state
-// the or_moveflags MFL_ONGROUND, MFL_TELEPORTED and MFL_WATERJUMP come from the playerstate
+// the or_moveflags MFL_ONGROUND, MFL_WATERJUMP and MFL_TELEPORTED come from the playerstate
 typedef struct bot_initmove_s {
 	vec3_t origin;		// origin of the bot
 	vec3_t velocity;	// velocity of the bot

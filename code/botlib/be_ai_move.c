@@ -46,7 +46,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 //#define DEBUG_AI_MOVE
 //#define DEBUG_ELEVATOR
 // movement state
-// NOTE: the moveflags MFL_ONGROUND, MFL_TELEPORTED and MFL_WATERJUMP must be set outside the movement code
+// NOTE: the moveflags MFL_ONGROUND, MFL_WATERJUMP and MFL_TELEPORTED must be set outside the movement code
 typedef struct bot_movestate_s {
 	// input vars (all set outside the movement code)
 	vec3_t origin;								// origin of the bot
@@ -186,16 +186,16 @@ void BotInitMoveState(int handle, bot_initmove_t *initmove) {
 		ms->moveflags |= MFL_ONGROUND;
 	}
 
-	ms->moveflags &= ~MFL_TELEPORTED;
-
-	if (initmove->or_moveflags & MFL_TELEPORTED) {
-		ms->moveflags |= MFL_TELEPORTED;
-	}
-
 	ms->moveflags &= ~MFL_WATERJUMP;
 
 	if (initmove->or_moveflags & MFL_WATERJUMP) {
 		ms->moveflags |= MFL_WATERJUMP;
+	}
+
+	ms->moveflags &= ~MFL_SCOUT;
+
+	if (initmove->or_moveflags & MFL_SCOUT) {
+		ms->moveflags |= MFL_SCOUT;
 	}
 
 	ms->moveflags &= ~MFL_WALK;
@@ -204,10 +204,10 @@ void BotInitMoveState(int handle, bot_initmove_t *initmove) {
 		ms->moveflags |= MFL_WALK;
 	}
 
-	ms->moveflags &= ~MFL_SCOUT;
+	ms->moveflags &= ~MFL_TELEPORTED;
 
-	if (initmove->or_moveflags & MFL_SCOUT) {
-		ms->moveflags |= MFL_SCOUT;
+	if (initmove->or_moveflags & MFL_TELEPORTED) {
+		ms->moveflags |= MFL_TELEPORTED;
 	}
 }
 
@@ -1369,7 +1369,7 @@ void BotCheckBlocked(bot_movestate_t *ms, vec3_t dir, int checkbottom, bot_mover
 		if (!trace.startsolid && trace.entityNum != ENTITYNUM_NONE) {
 			result->blocked = qtrue;
 			result->blockentity = trace.entityNum;
-			result->flags |= MOVERESULT_ONTOPOFOBSTACLE;
+			result->flags |= MOVERESULT_ONTOPOF_OBSTACLE;
 		}
 	// check for nearby entities only (sometimes world entity is hit before hitting nearby entities... this can cause entities to go unnoticed).
 	} else {
@@ -3198,7 +3198,7 @@ void BotMoveToGoal(bot_moveresult_t *result, int movestate, bot_goal_t *goal, in
 
 							result->blocked = qtrue;
 							result->blockentity = ent;
-							result->flags |= MOVERESULT_ONTOPOFOBSTACLE;
+							result->flags |= MOVERESULT_ONTOPOF_OBSTACLE;
 							return;
 						}
 					}
@@ -3222,7 +3222,7 @@ void BotMoveToGoal(bot_moveresult_t *result, int movestate, bot_goal_t *goal, in
 
 							result->blocked = qtrue;
 							result->blockentity = ent;
-							result->flags |= MOVERESULT_ONTOPOFOBSTACLE;
+							result->flags |= MOVERESULT_ONTOPOF_OBSTACLE;
 							return;
 						}
 					}
@@ -3235,13 +3235,13 @@ void BotMoveToGoal(bot_moveresult_t *result, int movestate, bot_goal_t *goal, in
 					if (!AAS_AreaReachability(ms->areanum)) {
 						result->blocked = qtrue;
 						result->blockentity = ent;
-						result->flags |= MOVERESULT_ONTOPOFOBSTACLE;
+						result->flags |= MOVERESULT_ONTOPOF_OBSTACLE;
 						return;
 					}
 				} else {
 					result->blocked = qtrue;
 					result->blockentity = ent;
-					result->flags |= MOVERESULT_ONTOPOFOBSTACLE;
+					result->flags |= MOVERESULT_ONTOPOF_OBSTACLE;
 					return;
 				}
 			}

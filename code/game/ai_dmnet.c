@@ -1459,7 +1459,7 @@ void BotClearPath(bot_state_t *bs, bot_moveresult_t *moveresult) {
 			}
 
 			if (moveresult->weapon) {
-				moveresult->flags |= MOVERESULT_MOVEMENTWEAPON|MOVERESULT_MOVEMENTVIEW;
+				moveresult->flags |= MOVERESULT_MOVEMENTVIEW|MOVERESULT_MOVEMENTWEAPON;
 				// if holding the right weapon
 				if (bs->cur_ps.weapon == moveresult->weapon) {
 					// if the bot is pretty close with its aim
@@ -1517,7 +1517,7 @@ void BotClearPath(bot_state_t *bs, bot_moveresult_t *moveresult) {
 			}
 
 			if (moveresult->weapon) {
-				moveresult->flags |= MOVERESULT_MOVEMENTWEAPON|MOVERESULT_MOVEMENTVIEW;
+				moveresult->flags |= MOVERESULT_MOVEMENTVIEW|MOVERESULT_MOVEMENTWEAPON;
 				// if holding the right weapon
 				if (bs->cur_ps.weapon == moveresult->weapon) {
 					// if the bot is pretty close with its aim
@@ -1599,7 +1599,7 @@ int AINode_Wait(bot_state_t *bs) {
 	// check if the bot is blocking teammates
 	BotCheckBlockedTeammates(bs);
 	// if the viewangles are used for the movement
-	if (moveresult.flags & (MOVERESULT_MOVEMENTVIEWSET|MOVERESULT_MOVEMENTVIEW|MOVERESULT_SWIMVIEW)) {
+	if (moveresult.flags & (MOVERESULT_MOVEMENTVIEW|MOVERESULT_MOVEMENTVIEWSET|MOVERESULT_SWIMVIEW)) {
 		VectorCopy(moveresult.ideal_viewangles, bs->ideal_viewangles);
 	// if waiting for something
 	} else if (moveresult.flags & MOVERESULT_WAITING) {
@@ -1807,7 +1807,7 @@ int AINode_Seek_ActivateEntity(bot_state_t *bs) {
 		}
 	}
 	// if the viewangles are used for the movement
-	if (moveresult.flags & (MOVERESULT_MOVEMENTVIEWSET|MOVERESULT_MOVEMENTVIEW|MOVERESULT_SWIMVIEW)) {
+	if (moveresult.flags & (MOVERESULT_MOVEMENTVIEW|MOVERESULT_MOVEMENTVIEWSET|MOVERESULT_SWIMVIEW)) {
 		VectorCopy(moveresult.ideal_viewangles, bs->ideal_viewangles);
 	// if waiting for something
 	} else if (moveresult.flags & MOVERESULT_WAITING) {
@@ -1949,7 +1949,7 @@ int AINode_Seek_NBG(bot_state_t *bs) {
 		return qfalse;
 	}
 	// if the viewangles are used for the movement
-	if (moveresult.flags & (MOVERESULT_MOVEMENTVIEWSET|MOVERESULT_MOVEMENTVIEW|MOVERESULT_SWIMVIEW)) {
+	if (moveresult.flags & (MOVERESULT_MOVEMENTVIEW|MOVERESULT_MOVEMENTVIEWSET|MOVERESULT_SWIMVIEW)) {
 		VectorCopy(moveresult.ideal_viewangles, bs->ideal_viewangles);
 	// if waiting for something
 	} else if (moveresult.flags & MOVERESULT_WAITING) {
@@ -2133,7 +2133,7 @@ int AINode_Seek_LTG(bot_state_t *bs) {
 		return qfalse;
 	}
 	// if the viewangles are used for the movement
-	if (moveresult.flags & (MOVERESULT_MOVEMENTVIEWSET|MOVERESULT_MOVEMENTVIEW|MOVERESULT_SWIMVIEW)) {
+	if (moveresult.flags & (MOVERESULT_MOVEMENTVIEW|MOVERESULT_MOVEMENTVIEWSET|MOVERESULT_SWIMVIEW)) {
 		VectorCopy(moveresult.ideal_viewangles, bs->ideal_viewangles);
 	// if waiting for something
 	} else if (moveresult.flags & MOVERESULT_WAITING) {
@@ -2467,7 +2467,7 @@ int AINode_Battle_Chase(bot_state_t *bs) {
 	// check if the bot is blocked
 	BotAIBlocked(bs, &moveresult, qfalse);
 	// if the viewangles are used for the movement
-	if (moveresult.flags & (MOVERESULT_MOVEMENTVIEWSET|MOVERESULT_MOVEMENTVIEW|MOVERESULT_SWIMVIEW)) {
+	if (moveresult.flags & (MOVERESULT_MOVEMENTVIEW|MOVERESULT_MOVEMENTVIEWSET|MOVERESULT_SWIMVIEW)) {
 		VectorCopy(moveresult.ideal_viewangles, bs->ideal_viewangles);
 	} else if (!(bs->flags & BFL_IDEALVIEWSET)) {
 		if (bs->chase_time > FloatTime() - 2) {

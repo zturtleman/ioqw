@@ -119,18 +119,18 @@ typedef enum {
 	WEAPON_FIRING
 } weaponstate_t;
 // pmove->pm_flags (sent as max 16 bits in msg.c)
-#define PMF_DUCKED			   1
-#define PMF_JUMP_HELD		   2
-#define PMF_BACKWARDS_JUMP	   4 // go into backwards land
-#define PMF_BACKWARDS_RUN	   8 // coast down to backwards run
-#define PMF_TIME_LAND		  16 // pm_time is time before rejump
-#define PMF_TIME_KNOCKBACK	  32 // pm_time is an air-accelerate only time
-#define PMF_TIME_WATERJUMP	  64 // pm_time is waterjump
-#define PMF_RESPAWNED		 128 // clear after attack and jump buttons come up
-#define PMF_USE_ITEM_HELD	 256
-#define PMF_FOLLOW			 512 // spectate following another player
-#define PMF_SCOREBOARD		1024 // spectate as a scoreboard
-#define PMF_ALL_TIMES (PMF_TIME_WATERJUMP|PMF_TIME_LAND|PMF_TIME_KNOCKBACK)
+#define PMF_DUCKED			0x00000001
+#define PMF_JUMP_HELD		0x00000002
+#define PMF_BACKWARDS_JUMP	0x00000004 // go into backwards land
+#define PMF_BACKWARDS_RUN	0x00000008 // coast down to backwards run
+#define PMF_TIME_LAND		0x00000010 // pm_time is time before rejump
+#define PMF_TIME_WATERJUMP	0x00000020 // pm_time is waterjump
+#define PMF_TIME_KNOCKBACK	0x00000040 // pm_time is an air-accelerate only time
+#define PMF_RESPAWNED		0x00000080 // clear after attack and jump buttons come up
+#define PMF_USE_ITEM_HELD	0x00000100
+#define PMF_FOLLOW			0x00000200 // spectate following another player
+#define PMF_SCOREBOARD		0x00000400 // spectate as a scoreboard
+#define PMF_ALL_TIMES (PMF_TIME_LAND|PMF_TIME_WATERJUMP|PMF_TIME_KNOCKBACK)
 
 #define MAXTOUCH 32
 
@@ -263,9 +263,9 @@ typedef enum {
 	WP_NUM_WEAPONS
 } weapon_t;
 // reward sounds (stored in ps->persistant[PERS_PLAYEREVENTS])
-#define PLAYEREVENT_DENIEDREWARD	0x0001
-#define PLAYEREVENT_GAUNTLETREWARD	0x0002
-#define PLAYEREVENT_HOLYSHIT		0x0004
+#define PLAYEREVENT_DENIEDREWARD	0x00000001
+#define PLAYEREVENT_GAUNTLETREWARD	0x00000002
+#define PLAYEREVENT_HOLYSHIT		0x00000004
 // entityState_t->event values
 // entity events are for effects that take place relative to an existing entities origin. Very network efficient.
 // two bits at the top of the entityState->event field will be incremented with each change in the event so

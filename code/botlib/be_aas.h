@@ -119,20 +119,20 @@ typedef struct aas_areainfo_s {
 	vec3_t center;
 } aas_areainfo_t;
 // client movement prediction stop events, stop as soon as:
-#define SE_NONE					   0
-#define SE_HITGROUND			   1 // the ground is hit
-#define SE_LEAVEGROUND			   2 // there's no ground
-#define SE_ENTERWATER			   4 // water is entered
-#define SE_ENTERSLIME			   8 // slime is entered
-#define SE_ENTERLAVA			  16 // lava is entered
-#define SE_HITGROUNDDAMAGE		  32 // the ground is hit with damage
-#define SE_GAP					  64 // there's a gap
-#define SE_TOUCHJUMPPAD			 128 // touching a jump pad area
-#define SE_TOUCHTELEPORTER		 256 // touching teleporter
-#define SE_ENTERAREA			 512 // the given stoparea is entered
-#define SE_HITGROUNDAREA		1024 // a ground face in the area is hit
-#define SE_HITBOUNDINGBOX		2048 // hit the specified bounding box
-#define SE_TOUCHCLUSTERPORTAL	4096 // touching a cluster portal
+#define SE_NONE					0x00000001
+#define SE_ENTERAREA			0x00000002 // the given stoparea is entered
+#define SE_TOUCHJUMPPAD			0x00000004 // touching a jump pad area
+#define SE_TOUCHTELEPORTER		0x00000008 // touching teleporter
+#define SE_TOUCHCLUSTERPORTAL	0x00000010 // touching a cluster portal
+#define SE_HITBOUNDINGBOX		0x00000020 // hit the specified bounding box
+#define SE_HITGROUNDAREA		0x00000040 // a ground face in the area is hit
+#define SE_HITGROUNDDAMAGE		0x00000080 // the ground is hit with damage
+#define SE_ENTERWATER			0x00000100 // water is entered
+#define SE_ENTERLAVA			0x00000200 // lava is entered
+#define SE_ENTERSLIME			0x00000400 // slime is entered
+#define SE_HITGROUND			0x00000800 // the ground is hit
+#define SE_LEAVEGROUND			0x00001000 // there's no ground
+#define SE_GAP					0x00002000 // there's a gap
 
 typedef struct aas_clientmove_s {
 	vec3_t endpos;		// position at the end of movement prediction
@@ -146,9 +146,9 @@ typedef struct aas_clientmove_s {
 	int frames;			// number of frames predicted ahead
 } aas_clientmove_t;
 // alternate route goals
-#define ALTROUTEGOAL_ALL			1
-#define ALTROUTEGOAL_CLUSTERPORTALS	2
-#define ALTROUTEGOAL_VIEWPORTALS	4
+#define ALTROUTEGOAL_ALL			0x00000001
+#define ALTROUTEGOAL_CLUSTERPORTALS	0x00000002
+#define ALTROUTEGOAL_VIEWPORTALS	0x00000004
 
 typedef struct aas_altroutegoal_s {
 	vec3_t origin;
@@ -158,11 +158,11 @@ typedef struct aas_altroutegoal_s {
 	unsigned short extratraveltime;
 } aas_altroutegoal_t;
 // route prediction stop events
-#define RSE_NONE			0
-#define RSE_NOROUTE			1 // no route to goal
-#define RSE_USETRAVELTYPE	2 // stop as soon as on of the given travel types is used
-#define RSE_ENTERCONTENTS	4 // stop when entering the given contents
-#define RSE_ENTERAREA		8 // stop when entering the given area
+#define RSE_NONE			0x00000001
+#define RSE_NOROUTE			0x00000002 // no route to goal
+#define RSE_USETRAVELTYPE	0x00000004 // stop as soon as on of the given travel types is used
+#define RSE_ENTERCONTENTS	0x00000008 // stop when entering the given contents
+#define RSE_ENTERAREA		0x00000010 // stop when entering the given area
 
 typedef struct aas_predictroute_s {
 	vec3_t endpos;		// position at the end of movement prediction

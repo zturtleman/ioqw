@@ -38,14 +38,14 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define INTERMISSION_DELAY_TIME 1000
 #define SP_INTERMISSION_DELAY_TIME 5000
 // gentity->flags
-#define FL_GODMODE			0x00000010
-#define FL_NOTARGET			0x00000020
-#define FL_TEAMSLAVE		0x00000400 // not the first on the team
-#define FL_NO_KNOCKBACK		0x00000800
-#define FL_DROPPED_ITEM		0x00001000
-#define FL_NO_BOTS			0x00002000 // spawn point not for bot use
-#define FL_NO_HUMANS		0x00004000 // spawn point just for bots
-#define FL_FORCE_GESTURE	0x00008000 // force gesture on client
+#define FL_GODMODE			0x00000001
+#define FL_NOTARGET			0x00000002
+#define FL_TEAMSLAVE		0x00000004 // not the first on the team
+#define FL_NO_KNOCKBACK		0x00000008
+#define FL_DROPPED_ITEM		0x00000010
+#define FL_NO_BOTS			0x00000020 // spawn point not for bot use
+#define FL_NO_HUMANS		0x00000040 // spawn point just for bots
+#define FL_FORCE_GESTURE	0x00000080 // force gesture on client
 // movers are things like doors, plats, buttons, etc.
 typedef enum {
 	MOVER_POS1,

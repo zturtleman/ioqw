@@ -45,7 +45,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "match.h" // string matching types and vars
 #include "../../ui/menudef.h" // for the voice chats
 // from aasfile.h
-#define AREACONTENTS_MOVER 1024
+#define AREACONTENTS_MOVER 0x00000400
 #define AREACONTENTS_MODELNUMSHIFT 24
 #define AREACONTENTS_MAXMODELNUM 0xFF
 #define AREACONTENTS_MODELNUM (AREACONTENTS_MAXMODELNUM << AREACONTENTS_MODELNUMSHIFT)
@@ -1849,26 +1849,11 @@ void BotSetupForMovement(bot_state_t *bs) {
 
 	memset(&initmove, 0, sizeof(bot_initmove_t));
 
-	VectorCopy(bs->cur_ps.origin, initmove.origin);
-	VectorCopy(bs->cur_ps.velocity, initmove.velocity);
-	VectorClear(initmove.viewoffset);
-
-	initmove.viewoffset[2] += bs->cur_ps.viewheight;
 	initmove.entitynum = bs->entitynum;
 	initmove.client = bs->client;
 	initmove.thinktime = bs->thinktime;
-	// set the onground flag
-	if (bs->cur_ps.groundEntityNum != ENTITYNUM_NONE) {
-		initmove.or_moveflags |= MFL_ONGROUND;
-	}
-	// set the teleported flag
-	if ((bs->cur_ps.pm_flags & PMF_TIME_KNOCKBACK) && (bs->cur_ps.pm_time > 0)) {
-		initmove.or_moveflags |= MFL_TELEPORTED;
-	}
-	// set the waterjump flag
-	if ((bs->cur_ps.pm_flags & PMF_TIME_WATERJUMP) && (bs->cur_ps.pm_time > 0)) {
-		initmove.or_moveflags |= MFL_WATERJUMP;
-	}
+
+	VectorClear(initmove.viewoffset);
 	// set presence type
 	if (bs->cur_ps.pm_flags & PMF_DUCKED) {
 		initmove.presencetype = PRESENCE_CROUCH;
@@ -1876,15 +1861,32 @@ void BotSetupForMovement(bot_state_t *bs) {
 		initmove.presencetype = PRESENCE_NORMAL;
 	}
 
-	if (BotWantsToWalk(bs)) {
-		initmove.or_moveflags |= MFL_WALK;
+	initmove.viewoffset[2] += bs->cur_ps.viewheight;
+	// set the onground flag
+	if (bs->cur_ps.groundEntityNum != ENTITYNUM_NONE) {
+		initmove.or_moveflags |= MFL_ONGROUND;
 	}
-
+	// set the waterjump flag
+	if ((bs->cur_ps.pm_flags & PMF_TIME_WATERJUMP) && (bs->cur_ps.pm_time > 0)) {
+		initmove.or_moveflags |= MFL_WATERJUMP;
+	}
+	// set the scout flag
 	if (bs->inventory[INVENTORY_SCOUT]) {
 		initmove.or_moveflags |= MFL_SCOUT;
 	}
+	// set the walk flag
+	if (BotWantsToWalk(bs)) {
+		initmove.or_moveflags |= MFL_WALK;
+	}
+	// set the teleported flag
+	if ((bs->cur_ps.pm_flags & PMF_TIME_KNOCKBACK) && (bs->cur_ps.pm_time > 0)) {
+		initmove.or_moveflags |= MFL_TELEPORTED;
+	}
 
+	VectorCopy(bs->cur_ps.origin, initmove.origin);
+	VectorCopy(bs->cur_ps.velocity, initmove.velocity);
 	VectorCopy(bs->viewangles, initmove.viewangles);
+
 	trap_BotInitMoveState(bs->ms, &initmove);
 }
 
@@ -6351,7 +6353,7 @@ void BotAIBlocked(bot_state_t *bs, bot_moveresult_t *moveresult, int activate) {
 						BotGoForActivateGoal(bs, &activategoal);
 					}
 					// if ontop of an obstacle or if the bot is not in a reachability area it'll still need some dynamic obstacle avoidance, otherwise return
-					if (!(moveresult->flags & MOVERESULT_ONTOPOFOBSTACLE) && trap_AAS_AreaReachability(bs->areanum)) {
+					if (!(moveresult->flags & MOVERESULT_ONTOPOF_OBSTACLE) && trap_AAS_AreaReachability(bs->areanum)) {
 						return;
 					}
 				} else {

@@ -942,6 +942,10 @@ static int AAS_ClientMovementPrediction(aas_clientmove_t *move, int entnum, cons
 			// get event from pc
 			event = SE_NONE;
 
+			if (pc & CONTENTS_WATER) {
+				event |= SE_ENTERWATER;
+			}
+
 			if (pc & CONTENTS_LAVA) {
 				event |= SE_ENTERLAVA;
 			}
@@ -950,11 +954,11 @@ static int AAS_ClientMovementPrediction(aas_clientmove_t *move, int entnum, cons
 				event |= SE_ENTERSLIME;
 			}
 
-			if (pc & CONTENTS_WATER) {
+			areanum = AAS_PointAreaNum(org);
+
+			if (aasworld.areasettings[areanum].contents & AREACONTENTS_WATER) {
 				event |= SE_ENTERWATER;
 			}
-
-			areanum = AAS_PointAreaNum(org);
 
 			if (aasworld.areasettings[areanum].contents & AREACONTENTS_LAVA) {
 				event |= SE_ENTERLAVA;
@@ -962,10 +966,6 @@ static int AAS_ClientMovementPrediction(aas_clientmove_t *move, int entnum, cons
 
 			if (aasworld.areasettings[areanum].contents & AREACONTENTS_SLIME) {
 				event |= SE_ENTERSLIME;
-			}
-
-			if (aasworld.areasettings[areanum].contents & AREACONTENTS_WATER) {
-				event |= SE_ENTERWATER;
 			}
 			// if in lava or slime
 			if (event & stopevent) {
