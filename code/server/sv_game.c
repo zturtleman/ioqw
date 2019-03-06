@@ -594,6 +594,9 @@ intptr_t SV_GameSystemCalls(intptr_t *args) {
 		case BOTLIB_EA_DELAYED_JUMP:
 			botlib_export->ea.EA_DelayedJump(args[1]);
 			return 0;
+		case BOTLIB_EA_ATTACK:
+			botlib_export->ea.EA_Attack(args[1]);
+			return 0;
 		case BOTLIB_EA_MOVE:
 			botlib_export->ea.EA_Move(args[1], VMA(2), VMF(3));
 			return 0;
@@ -614,12 +617,6 @@ intptr_t SV_GameSystemCalls(intptr_t *args) {
 			return 0;
 		case BOTLIB_EA_MOVE_RIGHT:
 			botlib_export->ea.EA_MoveRight(args[1]);
-			return 0;
-		case BOTLIB_EA_ATTACK:
-			botlib_export->ea.EA_Attack(args[1]);
-			return 0;
-		case BOTLIB_EA_ACTION:
-			botlib_export->ea.EA_Action(args[1], args[2]);
 			return 0;
 		case BOTLIB_EA_USE:
 			botlib_export->ea.EA_Use(args[1]);
@@ -644,6 +641,9 @@ intptr_t SV_GameSystemCalls(intptr_t *args) {
 			return 0;
 		case BOTLIB_EA_GESTURE:
 			botlib_export->ea.EA_Gesture(args[1]);
+			return 0;
+		case BOTLIB_EA_ACTION:
+			botlib_export->ea.EA_Action(args[1], args[2]);
 			return 0;
 		case BOTLIB_EA_TALK:
 			botlib_export->ea.EA_Talk(args[1]);

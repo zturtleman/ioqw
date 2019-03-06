@@ -75,28 +75,28 @@ struct weaponinfo_s;
 #define BLERR_CANNOTLOADWEAPONWEIGHTS	11 // cannot load weapon weights
 #define BLERR_CANNOTLOADWEAPONCONFIG	12 // cannot load weapon config
 // action flags
-#define ACTION_ATTACK			0x00000001
-#define ACTION_USE				0x00000002
-#define ACTION_RESPAWN			0x00000008
-#define ACTION_JUMP				0x00000010
-#define ACTION_MOVEUP			0x00000020
-#define ACTION_CROUCH			0x00000080
-#define ACTION_MOVEDOWN			0x00000100
-#define ACTION_MOVEFORWARD		0x00000200
-#define ACTION_MOVEBACK			0x00000800
-#define ACTION_MOVELEFT			0x00001000
-#define ACTION_MOVERIGHT		0x00002000
-#define ACTION_DELAYEDJUMP		0x00008000
-#define ACTION_TALK				0x00010000
-#define ACTION_GESTURE			0x00020000
-#define ACTION_WALK				0x00080000
-#define ACTION_AFFIRMATIVE		0x00100000
-#define ACTION_NEGATIVE			0x00200000
-#define ACTION_GETFLAG			0x00800000
-#define ACTION_GUARDBASE		0x01000000
-#define ACTION_PATROL			0x02000000
-#define ACTION_FOLLOWME			0x08000000
-#define ACTION_JUMPEDLASTFRAME	0x10000000
+#define ACTION_JUMP				0x00000001
+#define ACTION_DELAYEDJUMP		0x00000002
+#define ACTION_JUMPEDLASTFRAME	0x00000004
+#define ACTION_ATTACK			0x00000008
+#define ACTION_RESPAWN			0x00000010
+#define ACTION_WALK				0x00000020
+#define ACTION_MOVEUP			0x00000040
+#define ACTION_MOVEDOWN			0x00000080
+#define ACTION_MOVEFORWARD		0x00000100
+#define ACTION_MOVEBACK			0x00000200
+#define ACTION_MOVELEFT			0x00000400
+#define ACTION_MOVERIGHT		0x00000800
+#define ACTION_USE				0x00001000
+#define ACTION_CROUCH			0x00002000
+#define ACTION_GESTURE			0x00004000
+#define ACTION_AFFIRMATIVE		0x00008000
+#define ACTION_NEGATIVE			0x00010000
+#define ACTION_GETFLAG			0x00020000
+#define ACTION_GUARDBASE		0x00040000
+#define ACTION_PATROL			0x00080000
+#define ACTION_FOLLOWME			0x00100000
+#define ACTION_TALK				0x00200000
 // the bot input, will be converted to a usercmd_t
 typedef struct bot_input_s {
 	float thinktime;	// time since last output (in seconds)
@@ -216,34 +216,33 @@ typedef struct aas_export_s {
 	int (*AAS_Swimming)(vec3_t origin);
 	int (*AAS_PredictClientMovement)(struct aas_clientmove_s *move, int entnum, vec3_t origin, int presencetype, int onground, vec3_t velocity, vec3_t cmdmove, int cmdframes, int maxframes, float frametime, int stopevent, int stopareanum, int visualize);
 } aas_export_t;
-
+// ClientCommand elementary actions
 typedef struct ea_export_s {
-	// ClientCommand elementary actions
-	void (*EA_Command)(int client, char *command);
-	void (*EA_Say)(int client, char *str);
-	void (*EA_SayTeam)(int client, char *str);
-	void (*EA_Action)(int client, int action);
-	void (*EA_Gesture)(int client);
-	void (*EA_Talk)(int client);
+	// send regular input to the server
+	void (*EA_GetInput)(int client, float thinktime, bot_input_t *input);
+	void (*EA_ResetInput)(int client);
+	void (*EA_Jump)(int client);
+	void (*EA_DelayedJump)(int client);
 	void (*EA_Attack)(int client);
-	void (*EA_Use)(int client);
-	void (*EA_Respawn)(int client);
+	void (*EA_Move)(int client, vec3_t dir, float speed);
 	void (*EA_MoveUp)(int client);
 	void (*EA_MoveDown)(int client);
 	void (*EA_MoveForward)(int client);
 	void (*EA_MoveBack)(int client);
 	void (*EA_MoveLeft)(int client);
 	void (*EA_MoveRight)(int client);
+	void (*EA_Use)(int client);
+	void (*EA_View)(int client, vec3_t viewangles);
 	void (*EA_Crouch)(int client);
 	void (*EA_SelectWeapon)(int client, int weapon);
-	void (*EA_Jump)(int client);
-	void (*EA_DelayedJump)(int client);
-	void (*EA_Move)(int client, vec3_t dir, float speed);
-	void (*EA_View)(int client, vec3_t viewangles);
-	// send regular input to the server
+	void (*EA_Say)(int client, char *str);
+	void (*EA_SayTeam)(int client, char *str);
+	void (*EA_Command)(int client, char *command);
+	void (*EA_Gesture)(int client);
+	void (*EA_Action)(int client, int action);
+	void (*EA_Talk)(int client);
+	void (*EA_Respawn)(int client);
 	void (*EA_EndRegular)(int client, float thinktime);
-	void (*EA_GetInput)(int client, float thinktime, bot_input_t *input);
-	void (*EA_ResetInput)(int client);
 } ea_export_t;
 
 typedef struct ai_export_s {

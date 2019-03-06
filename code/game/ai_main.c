@@ -941,28 +941,24 @@ void BotInputToUserCommand(bot_input_t *bi, usercmd_t *ucmd, int delta_angles[3]
 		bi->actionflags &= ~ACTION_DELAYEDJUMP;
 	}
 	// set the buttons
-	if (bi->actionflags & ACTION_RESPAWN) {
-		ucmd->buttons = BUTTON_ATTACK;
-	}
-
 	if (bi->actionflags & ACTION_ATTACK) {
 		ucmd->buttons |= BUTTON_ATTACK;
 	}
 
-	if (bi->actionflags & ACTION_TALK) {
-		ucmd->buttons |= BUTTON_TALK;
+	if (bi->actionflags & ACTION_RESPAWN) {
+		ucmd->buttons = BUTTON_ATTACK;
 	}
 
-	if (bi->actionflags & ACTION_GESTURE) {
-		ucmd->buttons |= BUTTON_GESTURE;
+	if (bi->actionflags & ACTION_WALK) {
+		ucmd->buttons |= BUTTON_WALKING;
 	}
 
 	if (bi->actionflags & ACTION_USE) {
 		ucmd->buttons |= BUTTON_USE_HOLDABLE;
 	}
 
-	if (bi->actionflags & ACTION_WALK) {
-		ucmd->buttons |= BUTTON_WALKING;
+	if (bi->actionflags & ACTION_GESTURE) {
+		ucmd->buttons |= BUTTON_GESTURE;
 	}
 
 	if (bi->actionflags & ACTION_AFFIRMATIVE) {
@@ -981,12 +977,16 @@ void BotInputToUserCommand(bot_input_t *bi, usercmd_t *ucmd, int delta_angles[3]
 		ucmd->buttons |= BUTTON_GUARDBASE;
 	}
 
+	if (bi->actionflags & ACTION_FOLLOWME) {
+		ucmd->buttons |= BUTTON_FOLLOWME;
+	}
+
 	if (bi->actionflags & ACTION_PATROL) {
 		ucmd->buttons |= BUTTON_PATROL;
 	}
 
-	if (bi->actionflags & ACTION_FOLLOWME) {
-		ucmd->buttons |= BUTTON_FOLLOWME;
+	if (bi->actionflags & ACTION_TALK) {
+		ucmd->buttons |= BUTTON_TALK;
 	}
 
 	ucmd->weapon = bi->weapon;
