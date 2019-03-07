@@ -1257,8 +1257,8 @@ void Cmd_Where_f(gentity_t *ent) {
 
 static const char *gameNames[] = {
 	"Single Player",
-	"Tournament",
 	"Free For All",
+	"Tournament",
 	"Team Deathmatch",
 	"Capture the Flag",
 	"One Flag CTF",

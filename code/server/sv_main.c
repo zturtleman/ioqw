@@ -612,6 +612,24 @@ void SVC_Info(netadr_t from) {
 	if (strlen(Cmd_Argv(1)) > 128) {
 		return;
 	}
+
+	infostring[0] = 0;
+	// echo back the parameter to status. so servers can use it as a challenge to prevent timed spoofed reply packets that add ghost servers
+	gamedir = Cvar_VariableString("fs_game");
+
+	if (*gamedir) {
+		Info_SetValueForKey(infostring, "game", gamedir);
+	}
+
+	Info_SetValueForKey(infostring, "challenge", Cmd_Argv(1));
+	Info_SetValueForKey(infostring, "gamename", com_gamename->string);
+	Info_SetValueForKey(infostring, "protocol", va("%i", com_protocol->integer));
+	Info_SetValueForKey(infostring, "hostname", sv_hostname->string);
+	Info_SetValueForKey(infostring, "pure", va("%i", sv_pure->integer));
+	Info_SetValueForKey(infostring, "g_needpass", va("%d", Cvar_VariableIntegerValue("g_needpass")));
+	Info_SetValueForKey(infostring, "gametype", va("%i", sv_gametype->integer));
+	Info_SetValueForKey(infostring, "mapname", sv_mapname->string);
+	Info_SetValueForKey(infostring, "sv_maxclients", va("%i", sv_maxclients->integer - sv_privateClients->integer));
 	// don't count private clients
 	count = humans = 0;
 
@@ -625,19 +643,8 @@ void SVC_Info(netadr_t from) {
 		}
 	}
 
-	infostring[0] = 0;
-	// echo back the parameter to status. so servers can use it as a challenge to prevent timed spoofed reply packets that add ghost servers
-	Info_SetValueForKey(infostring, "challenge", Cmd_Argv(1));
-	Info_SetValueForKey(infostring, "gamename", com_gamename->string);
-	Info_SetValueForKey(infostring, "protocol", va("%i", com_protocol->integer));
-	Info_SetValueForKey(infostring, "hostname", sv_hostname->string);
-	Info_SetValueForKey(infostring, "gametype", va("%i", sv_gametype->integer));
-	Info_SetValueForKey(infostring, "mapname", sv_mapname->string);
-	Info_SetValueForKey(infostring, "sv_maxclients", va("%i", sv_maxclients->integer - sv_privateClients->integer));
 	Info_SetValueForKey(infostring, "clients", va("%i", count));
 	Info_SetValueForKey(infostring, "g_humanplayers", va("%i", humans));
-	Info_SetValueForKey(infostring, "pure", va("%i", sv_pure->integer));
-	Info_SetValueForKey(infostring, "g_needpass", va("%d", Cvar_VariableIntegerValue("g_needpass")));
 #ifdef USE_VOIP
 	if (sv_voipProtocol->string && *sv_voipProtocol->string) {
 		Info_SetValueForKey(infostring, "voip", sv_voipProtocol->string);
@@ -649,12 +656,6 @@ void SVC_Info(netadr_t from) {
 
 	if (sv_maxPing->integer) {
 		Info_SetValueForKey(infostring, "maxPing", va("%i", sv_maxPing->integer));
-	}
-
-	gamedir = Cvar_VariableString("fs_game");
-
-	if (*gamedir) {
-		Info_SetValueForKey(infostring, "game", gamedir);
 	}
 
 	NET_OutOfBandPrint(NS_SERVER, from, "infoResponse\n%s", infostring);

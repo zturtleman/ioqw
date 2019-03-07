@@ -75,7 +75,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #define SURF_LADDER				0x00000008
 #define SURF_NOIMPACT			0x00000010 // don't make missile explosions
 #define SURF_NOMARKS			0x00000020 // don't leave missile marks
-// #define SURF_FLESH				0x00000040 // make flesh sounds and effects // Tobias: replaced by MAT_*
+//#define SURF_FLESH				0x00000040 // make flesh sounds and effects // Tobias: replaced by MAT_*
 #define SURF_NODRAW				0x00000080 // don't generate a drawsurface at all
 #define SURF_HINT				0x00000100 // make a primary bsp splitter
 #define SURF_SKIP				0x00000200 // completely ignore, allowing non-closed brushes

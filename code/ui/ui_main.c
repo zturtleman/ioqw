@@ -85,8 +85,8 @@ static const int numNetSources = ARRAY_LEN(netSources);
 
 static const char *teamArenaGameTypes[] = {
 	"SP",
-	"TOURNAMENT",
 	"FFA",
+	"TOURNAMENT",
 	"TEAM DM",
 	"CTF",
 	"1FCTF",

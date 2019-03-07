@@ -1408,7 +1408,7 @@ int trap_R_ModelBounds(clipHandle_t handle, vec3_t mins, vec3_t maxs, int startF
 int trap_R_LerpTag(orientation_t *tag, clipHandle_t mod, int startFrame, int endFrame, float frac, const char *tagName);
 int trap_R_LerpTagFrameModel(orientation_t *tag, clipHandle_t mod, clipHandle_t frameModel, int startFrame, clipHandle_t endFrameModel, int endFrame, float frac, const char *tagName, int *tagIndex);
 int trap_R_LerpTagTorso(orientation_t *tag, clipHandle_t mod, clipHandle_t frameModel, int startFrame, clipHandle_t endFrameModel, int endFrame, float frac, const char *tagName, int *tagIndex, const vec3_t *torsoAxis, qhandle_t torsoFrameModel, int torsoFrame, qhandle_t oldTorsoFrameModel, int oldTorsoFrame, float torsoFrac);
-// skin(entity model surface remap)management
+// skin (entity model surface remap) management
 qhandle_t trap_R_AllocSkinSurface(const char *surface, qhandle_t hShader);
 qhandle_t trap_R_AddSkinToFrame(int numSurfaces, const qhandle_t *surfaces);
 void trap_R_RemapShader(const char *oldShader, const char *newShader, const char *timeOffset);
@@ -1434,7 +1434,7 @@ qboolean trap_Key_IsDown(int keynum);
 int trap_Key_GetCatcher(void);
 void trap_Key_SetCatcher(int catcher);
 int trap_Key_GetKey(const char *binding);
-// this returns a handle. arg0 is the name in the format "idlogo.roq", set arg1 to NULL, alteredstates to qfalse (do not alter gamestate)
+// this returns a handle. arg0 is the name in the format "idlogo.roq", set arg1 to NULL, altered states to qfalse (do not alter gamestate)
 int trap_CIN_PlayCinematic(const char *arg0, int xpos, int ypos, int width, int height, int bits);
 // stops playing the cinematic and ends it. should always return FMV_EOF
 // cinematics must be stopped in reverse order of when they are started
