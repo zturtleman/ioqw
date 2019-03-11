@@ -303,11 +303,15 @@ void CG_CheckLocalSounds(playerState_t *ps, playerState_t *ops) {
 			CG_PainEvent(&cg.predictedPlayerEntity, ps->stats[STAT_HEALTH]);
 		}
 	}
+	// never start any voices during warmup
+	if (cg.warmup) {
+		return;
+	}
 	// don't play the sounds in mission mode
 	if (cgs.gametype > GT_HARVESTER) {
 		return;
 	}
-	// hit changes
+	// health changes of more than -1 should make pain sounds
 	if (cg_hitSounds.integer) {
 		if (ps->persistant[PERS_HITS] > ops->persistant[PERS_HITS]) {
 			armor = ps->persistant[PERS_ATTACKEE_ARMOR] & 0xff;
@@ -327,10 +331,6 @@ void CG_CheckLocalSounds(playerState_t *ps, playerState_t *ops) {
 		} else if (ps->persistant[PERS_HITS] < ops->persistant[PERS_HITS]) {
 			trap_S_StartLocalSound(cgs.media.hitTeamSound, CHAN_LOCAL_SOUND);
 		}
-	}
-	// never start any voices during warmup
-	if (cg.warmup) {
-		return;
 	}
 	// check for flag pickup
 	if (cgs.gametype > GT_TEAM) {

@@ -375,9 +375,9 @@ void InitBodyQue(void) {
 
 /*
 =======================================================================================================================================
-BodyQueFree
+BodySink
 
-The body ques are never actually freed, they are just unlinked.
+After sitting around for five seconds, fall into the ground and disappear.
 =======================================================================================================================================
 */
 void BodySink(gentity_t *ent) {

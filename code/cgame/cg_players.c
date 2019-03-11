@@ -427,13 +427,13 @@ static qboolean CG_FindClientModelFile(char *filename, int length, clientInfo_t 
 
 	if (cgs.gametype > GT_TOURNAMENT) {
 		switch (ci->team) {
-			case TEAM_BLUE: {
-				team = "blue";
+			case TEAM_RED: {
+				team = "red";
 				break;
 			}
 
 			default: {
-				team = "red";
+				team = "blue";
 				break;
 			}
 		}
@@ -495,13 +495,13 @@ static qboolean CG_FindClientHeadFile(char *filename, int length, clientInfo_t *
 
 	if (cgs.gametype > GT_TOURNAMENT) {
 		switch (ci->team) {
-			case TEAM_BLUE: {
-				team = "blue";
+			case TEAM_RED: {
+				team = "red";
 				break;
 			}
 
 			default: {
-				team = "red";
+				team = "blue";
 				break;
 			}
 		}

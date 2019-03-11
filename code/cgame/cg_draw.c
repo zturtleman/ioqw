@@ -1008,7 +1008,7 @@ static float CG_DrawTeamOverlay(float y, qboolean right, qboolean upper) {
 				p = CG_ConfigString(CS_LOCATIONS + ci->location);
 
 				if (!p || !*p) {
-					p = "unknown";
+					p = "Unknown";
 				}
 
 				xx = x + TINYCHAR_WIDTH * 2 + TINYCHAR_WIDTH * pwidth;
@@ -1124,7 +1124,7 @@ static float CG_DrawScores(float y) {
 	s1 = cgs.scores1;
 	s2 = cgs.scores2;
 
-	y -= BIGCHAR_HEIGHT + 8;
+	y -= BIGCHAR_HEIGHT + 16;
 	y1 = y;
 	// draw from the right side to left
 	if (cgs.gametype > GT_TOURNAMENT) {
@@ -1156,6 +1156,34 @@ static float CG_DrawScores(float y) {
 
 				if (cgs.blueflag >= 0 && cgs.blueflag <= 2) {
 					CG_DrawPic(x, y1 - 4, w, BIGCHAR_HEIGHT + 8, cgs.media.blueFlagShader[cgs.blueflag]);
+				}
+			}
+		}
+
+		if (cgs.gametype == GT_1FCTF) {
+			// display flag status
+			item = BG_FindItemForPowerup(PW_NEUTRALFLAG);
+
+			if (item) {
+				y1 = y - scoreHeight;
+
+				if (cgs.flagStatus >= 0 && cgs.flagStatus <= 4) {
+					vec4_t color = {1, 1, 1, 1};
+					int index = 0;
+
+					if (cgs.flagStatus == FLAG_TAKEN_RED) {
+						color[1] = color[2] = 0;
+						index = 1;
+					} else if (cgs.flagStatus == FLAG_TAKEN_BLUE) {
+						color[0] = color[1] = 0;
+						index = 1;
+					} else if (cgs.flagStatus == FLAG_DROPPED) {
+						index = 2;
+					}
+
+					trap_R_SetColor(color);
+					CG_DrawPic(x, y1 - 4, w, scoreHeight, cgs.media.flagShaders[index]);
+					trap_R_SetColor(NULL);
 				}
 			}
 		}
@@ -1200,6 +1228,25 @@ static float CG_DrawScores(float y) {
 			s = va("%2i", v);
 			w = CG_DrawStrlen(s) * BIGCHAR_WIDTH + 8;
 			x -= w;
+
+			CG_DrawBigString(x + 4, y, s, 1.0f);
+		} else {
+			qboolean spectator;
+
+			score = cg.snap->ps.persistant[PERS_SCORE];
+			spectator = (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR);
+
+			s = va("%2i", score);
+			w = CG_DrawStrlen(s) * BIGCHAR_WIDTH + 8;
+			x -= w;
+
+			if (!spectator) {
+				color[0] = 0.5f;
+				color[1] = 0.5f;
+				color[2] = 0.5f;
+				color[3] = 0.33f;
+				CG_FillRect(x, y - 4, w, BIGCHAR_HEIGHT + 8, color);
+			}
 
 			CG_DrawBigString(x + 4, y, s, 1.0f);
 		}
@@ -1420,7 +1467,7 @@ static int CG_DrawPickupItem(int y) {
 	iconSize = ICON_SIZE * cg_drawPickups.value;
 	charWidth = BIGCHAR_WIDTH * cg_drawPickups.value;
 	charHeight = BIGCHAR_HEIGHT * cg_drawPickups.value;
-	y -= iconSize;
+	y -= iconSize + 12;
 	value = cg.itemPickup;
 
 	if (value) {
@@ -2542,7 +2589,6 @@ static void CG_Draw2D(stereoFrame_t stereoFrame) {
 	if (!cg_paused.integer) {
 		CG_DrawUpperRight(stereoFrame);
 	}
-
 #ifndef BASEGAME
 	CG_DrawLowerRight();
 	CG_DrawLowerLeft();

@@ -687,7 +687,6 @@ static void Init_AAS_Export(aas_export_t *aas) {
 	aas->AAS_IntForBSPEpairKey = AAS_IntForBSPEpairKey;
 	aas->AAS_NextBSPEntity = AAS_NextBSPEntity;
 	aas->AAS_Swimming = AAS_Swimming;
-
 }
 
 /*

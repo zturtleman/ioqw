@@ -390,13 +390,13 @@ static void CG_GrenadeTrail(centity_t *ent, const weaponInfo_t *wi) {
 
 /*
 =======================================================================================================================================
-CG_BeamgunBolt
+CG_BeamgunTrail
 
 Origin will be the exact tag point, which is slightly different than the muzzle point used for determining hits. The cent should be the
 non-predicted cent if it is from the player, so the endpoint will reflect the simulated strike (lagging the predicted angle).
 =======================================================================================================================================
 */
-static void CG_BeamgunBolt(centity_t *cent, vec3_t origin) {
+static void CG_BeamgunTrail(centity_t *cent, vec3_t origin) {
 	trace_t trace;
 	refEntity_t beam;
 	vec3_t forward;
@@ -489,7 +489,7 @@ static void CG_BeamgunBolt(centity_t *cent, vec3_t origin) {
 	}
 }
 /*
-static void CG_BeamgunBolt(centity_t *cent, vec3_t origin) {
+static void CG_BeamgunTrail(centity_t *cent, vec3_t origin) {
 	trace_t trace;
 	refEntity_t beam;
 	vec3_t forward;
@@ -586,45 +586,6 @@ void CG_RailTrail(clientInfo_t *ci, vec3_t start, vec3_t end) {
 	AxisClear(re->axis);
 
 	if (cg_oldRail.integer) {
-		// reimplementing the rail discs(removed in 1.30)
-		if (cg_oldRail.integer > 1) {
-			le = CG_AllocLocalEntity();
-			re = &le->refEntity;
-
-			VectorCopy(start, re->origin);
-			VectorCopy(end, re->oldorigin);
-
-			le->leType = LE_FADE_RGB;
-			le->startTime = cg.time;
-			le->endTime = cg.time + cg_railTrailTime.value;
-			le->lifeRate = 1.0 / (le->endTime - le->startTime);
-
-			re->shaderTime = cg.time / 1000.0f;
-			re->reType = RT_RAIL_RINGS;
-			re->customShader = cgs.media.railRingsShader;
-			re->shaderRGBA[0] = ci->color1[0] * 255;
-			re->shaderRGBA[1] = ci->color1[1] * 255;
-			re->shaderRGBA[2] = ci->color1[2] * 255;
-			re->shaderRGBA[3] = 255;
-	
-			le->color[0] = ci->color1[0] * 0.75;
-			le->color[1] = ci->color1[1] * 0.75;
-			le->color[2] = ci->color1[2] * 0.75;
-			le->color[3] = 1.0f;
-			// alternatively, use the secondary color
-			if (cg_oldRail.integer > 2) {
-				re->shaderRGBA[0] = ci->color2[0] * 255;
-				re->shaderRGBA[1] = ci->color2[1] * 255;
-				re->shaderRGBA[2] = ci->color2[2] * 255;
-				re->shaderRGBA[3] = 255;
-		
-				le->color[0] = ci->color2[0] * 0.75;
-				le->color[1] = ci->color2[1] * 0.75;
-				le->color[2] = ci->color2[2] * 0.75;
-				le->color[3] = 1.0f;
-			}
-		}
-
 		return;
 	}
 
@@ -854,7 +815,7 @@ static void CG_MachineGunEjectBrass(centity_t *cent) {
 	le->angles.trDelta[0] = 2;
 	le->angles.trDelta[1] = 1;
 	le->angles.trDelta[2] = 0;
-	le->leFlags = LEF_BRASS_MG;
+	le->leFlags = LEF_TUMBLE;
 	le->leBounceSoundType = LEBS_BRASS;
 	le->leMarkType = LEMT_NONE;
 }
@@ -934,7 +895,7 @@ static void CG_ShotgunEjectBrass(centity_t *cent) {
 		le->angles.trDelta[0] = 1;
 		le->angles.trDelta[1] = 0.5;
 		le->angles.trDelta[2] = 0;
-		le->leFlags = LEF_BRASS_SG;
+		le->leFlags = LEF_TUMBLE;
 		le->leBounceSoundType = LEBS_BRASS;
 		le->leMarkType = LEMT_NONE;
 	}
@@ -1801,6 +1762,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent,
 		barrel.shadowPlane = parent->shadowPlane;
 		barrel.renderfx = parent->renderfx;
 		barrel.hModel = weapon->barrelModel;
+
 		angles[YAW] = 0;
 		angles[PITCH] = 0;
 		angles[ROLL] = CG_MachinegunSpinAngle(cent);
@@ -1856,8 +1818,8 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent,
 	CG_AddRefEntityWithMinLight(&flash);
 
 	if (ps || cg.renderingThirdPerson || cent->currentState.number != cg.predictedPlayerState.clientNum) {
-		// add beam gun bolt
-		CG_BeamgunBolt(nonPredictedCent, flash.origin);
+		// add beam gun trail
+		CG_BeamgunTrail(nonPredictedCent, flash.origin);
 
 		if (weapon->flashDlightColor[0] || weapon->flashDlightColor[1] || weapon->flashDlightColor[2]) {
 			trap_R_AddLightToScene(flash.origin, 100 + (rand()&31), 1.0f, weapon->flashDlightColor[0], weapon->flashDlightColor[1], weapon->flashDlightColor[2], 0);
@@ -1899,7 +1861,7 @@ void CG_AddViewWeapon(playerState_t *ps) {
 			// special hack for beam gun...
 			VectorCopy(cg.refdef.vieworg, origin);
 			VectorMA(origin, -8, cg.refdef.viewaxis[2], origin);
-			CG_BeamgunBolt(&cg_entities[ps->clientNum], origin);
+			CG_BeamgunTrail(&cg_entities[ps->clientNum], origin);
 		}
 
 		return;
@@ -1933,9 +1895,11 @@ void CG_AddViewWeapon(playerState_t *ps) {
 	memset(&hand, 0, sizeof(hand));
 	// set up gun position
 	CG_CalculateWeaponPosition(hand.origin, angles);
+
 	VectorMA(hand.origin, (cg_gun_x.value + fovOffset[0]), cg.refdef.viewaxis[0], hand.origin);
 	VectorMA(hand.origin, (cg_gun_y.value + fovOffset[1]), cg.refdef.viewaxis[1], hand.origin);
 	VectorMA(hand.origin, (cg_gun_z.value + fovOffset[2]), cg.refdef.viewaxis[2], hand.origin);
+
 	AnglesToAxis(angles, hand.axis);
 	// map torso animations to weapon animations
 	if (cg_gun_frame.integer) {

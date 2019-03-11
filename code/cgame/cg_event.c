@@ -303,12 +303,9 @@ static void CG_Obituary(entityState_t *ent) {
 				message = "was railed by";
 				break;
 			case MOD_PLASMA:
-				message = "got burned by";
-				message2 = "'s plasma gun";
-				break;
 			case MOD_PLASMA_SPLASH:
 				message = "was melted by";
-				message2 = "'s blue-hot plasma";
+				message2 = "'s plasma gun";
 				break;
 			case MOD_BFG:
 				message = "was vaporized by";
@@ -398,6 +395,7 @@ static void CG_ItemPickup(int itemNum) {
 #ifndef BASEGAME
 	cg.itemPickup = itemNum;
 	cg.itemPickupTime = cg.time;
+	cg.itemPickupBlendTime = cg.time;
 #endif
 	// see if it should be the grabbed weapon
 	if (bg_itemlist[itemNum].giType == IT_WEAPON) {

@@ -1539,6 +1539,8 @@ const char *CG_GameTypeString(void) {
 
 	if (cgs.gametype == GT_FFA) {
 		return "Free For All";
+	} else if (cgs.gametype == GT_TOURNAMENT) {
+		return "Tournament";
 	} else if (cgs.gametype == GT_TEAM) {
 		return "Team Deathmatch";
 	} else if (cgs.gametype == GT_CTF) {

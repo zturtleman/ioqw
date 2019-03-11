@@ -606,7 +606,7 @@ void SVC_Info(netadr_t from) {
 		return;
 	}
 	// check whether Cmd_Argv(1) has a sane length. This was not done in the original Quake3 version which led to the Infostring bug
-	// discovered by Luigi Auriemma. See http://aluigi.altervista.org/ for the advisory.
+	// discovered by Luigi Auriemma. See http://aluigi.altervista.org/ for the advisory
 
 	// a maximum challenge length of 128 should be more than plenty
 	if (strlen(Cmd_Argv(1)) > 128) {

@@ -1001,22 +1001,21 @@ typedef struct {
 // playerState_t is a full superset of entityState_t as it is used by players, so if a playerState_t is transmitted, the entityState_t can be fully derived from it.
 typedef struct playerState_s {
 	int commandTime;		// cmd->serverTime of last executed command
-	int pm_type;
-	int bobCycle;			// for view bobbing and footstep generation
-	int pm_flags;			// ducked, jump_held, etc.
 	int pm_time;
+	int pm_type;
+	int pm_flags;			// ducked, jump_held, etc.
 	vec3_t origin;
 	vec3_t velocity;
-	int weaponTime;
 	int gravity;
 	int speed;
 	int delta_angles[3];	// add to command angles to get view direction, changed by spawns, rotating objects, and teleporters
 	int groundEntityNum;	// ENTITYNUM_NONE = in air
-	int legsTimer;			// don't change low priority animations until this runs out
-	int legsAnim;			// mask off ANIM_TOGGLEBIT
-	int torsoTimer;			// don't change low priority animations until this runs out
-	int torsoAnim;			// mask off ANIM_TOGGLEBIT
 	int movementDir;		// a number 0 to 7 that represents the relative angle of movement to the view angle (axial and diagonals) when at rest, the value will remain unchanged used to twist the legs during strafing
+	int clientNum;			// ranges from 0 to MAX_CLIENTS - 1
+	int legsTimer;			// don't change low priority animations until this runs out
+	int torsoTimer;			// don't change low priority animations until this runs out
+	int legsAnim;			// mask off ANIM_TOGGLEBIT
+	int torsoAnim;			// mask off ANIM_TOGGLEBIT
 	int eFlags;				// copied to entityState_t->eFlags
 	int eventSequence;		// pmove generated events
 	int events[MAX_PS_EVENTS];
@@ -1024,24 +1023,25 @@ typedef struct playerState_s {
 	int externalEvent;		// events set on player from another source
 	int externalEventParm;
 	int externalEventTime;
-	int clientNum;			// ranges from 0 to MAX_CLIENTS - 1
 	// weapon info
 	int weapon;				// copied to entityState_t->weapon
 	int weaponstate;
+	int weaponTime;
 	vec3_t viewangles;		// for fixed views
 	int viewheight;
+	int bobCycle;			// for view bobbing and footstep generation
 	// damage feedback
 	int damageEvent;		// when it changes, latch the other parms
 	int damageYaw;
 	int damagePitch;
 	int damageCount;
+	int tokens;				// harvester skulls
+	int jumppad_ent;		// jumppad entity hit this frame
+	int loopSound;
 	int stats[MAX_STATS];
 	int persistant[MAX_PERSISTANT];	// stats that aren't cleared on death
 	int powerups[MAX_POWERUPS];		// level.time that the powerup runs out
 	int ammo[MAX_WEAPONS];
-	int tokens;				// harvester skulls
-	int loopSound;
-	int jumppad_ent;		// jumppad entity hit this frame
 	// not communicated over the net at all
 	int ping;				// server to game info for scoreboard
 	int pmove_framecount;
@@ -1110,16 +1110,15 @@ typedef struct entityState_s {
 	int otherEntityNum;	// shotgun sources, etc.
 	int otherEntityNum2;
 	int groundEntityNum; // ENTITYNUM_NONE = in air
-	int constantLight;	// r + (g << 8) + (b << 16) + (intensity << 24)
-	int dl_intensity;	// used for coronas
-	int loopSound;		// constantly loop this sound
 	int modelindex;
 	int modelindex2;
-	int clientNum;		// 0 to (MAX_CLIENTS - 1), for players and corpses
+	int constantLight;	// r + (g << 8) + (b << 16) + (intensity << 24)
+	int dl_intensity;	// used for coronas
 	int frame;
 	int solid;			// for client side prediction, trap_linkentity sets this properly
 	int event;			// impulse events -- muzzle flashes, footsteps, etc.
 	int eventParm;
+	int clientNum;		// 0 to (MAX_CLIENTS - 1), for players and corpses
 	int team;
 	int density;		   // for particle effects
 	// for players
@@ -1128,6 +1127,7 @@ typedef struct entityState_s {
 	int legsAnim;		// mask off ANIM_TOGGLEBIT
 	int torsoAnim;		// mask off ANIM_TOGGLEBIT
 	int soundRange;
+	int loopSound;		// constantly loop this sound
 	int tokens;			// harvester skulls
 } entityState_t;
 // entityState_t->eType

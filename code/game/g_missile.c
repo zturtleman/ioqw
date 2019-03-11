@@ -408,7 +408,7 @@ void G_RunMissile(gentity_t *ent) {
 		}
 	}
 	// if the missile wasn't yet outside the player body
-	if (!ent->count) {
+	if (ent->s.weapon != WP_NAILGUN && !ent->count) {
 		// check if the missile is outside the owner bbox
 		trap_Trace(&tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, ent->r.currentOrigin, ENTITYNUM_NONE, ent->clipmask);
 

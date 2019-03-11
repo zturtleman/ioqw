@@ -148,6 +148,7 @@ static void CG_LoadHud_f(void) {
 
 	CG_LoadMenus(hudSet);
 	CG_HudMenuHacks();
+
 	menuScoreboard = NULL;
 }
 

@@ -176,8 +176,8 @@ typedef struct fileInPack_s {
 } fileInPack_t;
 
 typedef struct {
-	char pakPathname[MAX_OSPATH];	// c:\Quake Wars\Data
-	char pakFilename[MAX_OSPATH];	// c:\Quake Wars\Data\pak0.pk3
+	char pakPathname[MAX_OSPATH];	// C:\Quake Wars\Data
+	char pakFilename[MAX_OSPATH];	// C:\Quake Wars\Data\pak0.pk3
 	char pakBasename[MAX_OSPATH];	// pak0
 	char pakGamename[MAX_OSPATH];	// Data
 	unzFile handle;					// handle to zip file
@@ -191,8 +191,8 @@ typedef struct {
 } pack_t;
 
 typedef struct {
-	char path[MAX_OSPATH];		// c:\Quake Wars
-	char fullpath[MAX_OSPATH];	// c:\Quake Wars\Data
+	char path[MAX_OSPATH];		// C:\Quake Wars
+	char fullpath[MAX_OSPATH];	// C:\Quake Wars\Data
 	char gamedir[MAX_OSPATH];	// Data
 } directory_t;
 

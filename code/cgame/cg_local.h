@@ -291,10 +291,8 @@ typedef enum {
 	LEF_PUFF_DONT_SCALE = 0x0001, // do not scale size over time
 	LEF_TUMBLE			= 0x0002, // tumble over time, used for plasma balls etc.
 	LEF_GIBS			= 0x0004, // tumble over time, used for flying gibs
-	LEF_BRASS_MG		= 0x0008, // tumble over time, used for ejecting machine gun/chain gun shells
-	LEF_BRASS_SG		= 0x0010, // tumble over time, used for ejecting shotgun shells
-	LEF_SOUND1			= 0x0020, // sound 1 for kamikaze
-	LEF_SOUND2			= 0x0040  // sound 2 for kamikaze
+	LEF_SOUND1			= 0x0008, // sound 1 for kamikaze
+	LEF_SOUND2			= 0x0010  // sound 2 for kamikaze
 } leFlag_t;
 // fragment local entities can leave marks on walls
 typedef enum {
@@ -587,6 +585,7 @@ typedef struct {
 #ifndef BASEGAME
 	int itemPickup;
 	int itemPickupTime;
+	int itemPickupBlendTime; // the pulse around the crosshair is timed separately
 #endif
 	int weaponSelectTime;
 	int weaponAnimation;

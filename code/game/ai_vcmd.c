@@ -40,6 +40,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "ai_vcmd.h"
 #include "ai_dmnet.h"
 #include "ai_team.h"
+#include "ai_vcmd.h"
 #include "chars.h" // characteristics
 #include "inv.h" // indexes into the inventory
 #include "syn.h" // synonyms

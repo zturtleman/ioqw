@@ -288,13 +288,6 @@ void CG_AddFragment(localEntity_t *le) {
 				angles[0] = ((cg.time & 2047) * 360 / 2048.0);
 				angles[2] = ((cg.time & 2047) * 360 / 2048.0 + 240);
 				break;
-			case LEF_BRASS_MG:
-				angles[0] = angles[2] = angles[1] = ((cg.time & 2047) * 360 / 2048.0 + random() * 4);
-				break;
-			case LEF_BRASS_SG:
-				angles[1] = ((cg.time & 2047) * 360 / 2048.0 + random() * 2);
-				angles[0] = angles[2] = 90;
-				break;
 			default:
 				break;
 		}

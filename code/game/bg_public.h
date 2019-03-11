@@ -619,8 +619,8 @@ int BG_GetTracemapGroundFloor(void);
 int BG_GetTracemapGroundCeil(void);
 void FinalizeTracemapClamp(int *x, int *y);
 // g_dmflags->integer flags
-#define DF_NO_FALLING	8
-#define DF_FIXED_FOV	16
+#define DF_NO_FALLING	0x00000001
+#define DF_FIXED_FOV	0x00000002
 // content masks
 #define MASK_ALL			(-1)
 #define MASK_SOLID			(CONTENTS_SOLID)

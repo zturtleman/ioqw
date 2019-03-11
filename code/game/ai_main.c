@@ -38,9 +38,9 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "ai_dmq3.h"
 #include "ai_chat.h"
 #include "ai_cmd.h"
-#include "ai_vcmd.h"
 #include "ai_dmnet.h"
 #include "ai_team.h"
+#include "ai_vcmd.h"
 #include "chars.h" // characteristics
 #include "inv.h" // indexes into the inventory
 #include "syn.h" // synonyms
@@ -275,9 +275,9 @@ void BotTestAAS(vec3_t origin) {
 		areanum = BotPointAreaNum(origin);
 
 		if (areanum) {
-			BotAI_Print(PRT_MESSAGE, "\rEmpty area");
+			BotAI_Print(PRT_MESSAGE, "\rEmpty area.");
 		} else {
-			BotAI_Print(PRT_MESSAGE, "\r^1SOLID area");
+			BotAI_Print(PRT_MESSAGE, "\r^1SOLID area!");
 		}
 	} else if (bot_testclusters.integer) {
 		if (!trap_AAS_Initialized()) {
@@ -290,7 +290,7 @@ void BotTestAAS(vec3_t origin) {
 			BotAI_Print(PRT_MESSAGE, "\r^1Solid!");
 		} else {
 			trap_AAS_AreaInfo(areanum, &info);
-			BotAI_Print(PRT_MESSAGE, "\rArea %d, Cluster %d", areanum, info.cluster);
+			BotAI_Print(PRT_MESSAGE, "\rArea %d, Cluster %d.", areanum, info.cluster);
 		}
 	}
 }

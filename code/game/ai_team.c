@@ -37,9 +37,9 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "ai_dmq3.h"
 #include "ai_chat.h"
 #include "ai_cmd.h"
-#include "ai_vcmd.h"
 #include "ai_dmnet.h"
 #include "ai_team.h"
+#include "ai_vcmd.h"
 #include "chars.h" // characteristics
 #include "inv.h" // indexes into the inventory
 #include "syn.h" // synonyms
@@ -3922,10 +3922,11 @@ void BotTeamAI(bot_state_t *bs) {
 
 	bs->askteamleader_time = 0;
 	bs->becometeamleader_time = 0;
-	// set default strategy
+
 	ClientName(bs->client, netname, sizeof(netname));
 	// return if this bot is NOT the team leader
 	if (Q_stricmp(netname, bs->teamleader) != 0) {
+		// set default strategy
 		bs->ctfstrategy = CTFS_DEFENSIVE;
 		return;
 	}

@@ -384,7 +384,7 @@ void CL_SystemInfoChanged(void) {
 		if ((cvar_flags = Cvar_Flags(key)) == CVAR_NONEXISTENT) {
 			Cvar_Get(key, value, CVAR_SERVER_CREATED|CVAR_ROM);
 		} else {
-			// if this cvar may not be modified by a server discard the value.
+			// if this cvar may not be modified by a server discard the value
 			if (!(cvar_flags & (CVAR_SYSTEMINFO|CVAR_SERVER_CREATED|CVAR_USER_CREATED))) {
 				if (Q_stricmp(key, "g_synchronousClients") && Q_stricmp(key, "pmove_fixed") && Q_stricmp(key, "pmove_msec")) {
 					Com_Printf(S_COLOR_YELLOW "WARNING: server is not allowed to set %s = %s!\n", key, value);

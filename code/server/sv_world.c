@@ -645,13 +645,14 @@ void SV_ClipToEntities(trace_t *results, const vec3_t start, const vec3_t mins, 
 	Com_Memset(&clip, 0, sizeof(moveclip_t));
 	// skip clipping to world
 	clip.trace.fraction = 1; // assume it goes the entire distance until shown otherwise
-	VectorCopy(end, clip.trace.endpos);
-	clip.trace.entityNum = ENTITYNUM_NONE;
 
+	VectorCopy(end, clip.trace.endpos);
+
+	clip.trace.entityNum = ENTITYNUM_NONE;
 	clip.contentmask = contentmask;
 	clip.start = start;
 
-//	VectorCopy(clip.trace.endpos, clip.end);
+	//VectorCopy(clip.trace.endpos, clip.end);
 	VectorCopy(end, clip.end);
 
 	clip.mins = mins;
