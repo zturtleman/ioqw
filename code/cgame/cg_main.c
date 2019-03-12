@@ -657,19 +657,15 @@ static void CG_RegisterSounds(void) {
 	cgs.media.hitSound = trap_S_RegisterSound("snd/u/hit.wav", qfalse);
 	cgs.media.hitSoundHighArmor = trap_S_RegisterSound("snd/u/hithi.wav", qfalse);
 	cgs.media.hitSoundLowArmor = trap_S_RegisterSound("snd/u/hitlo.wav", qfalse);
-	cgs.media.ammoregenSound = trap_S_RegisterSound("snd/v/voc_ammoregen.wav", qfalse);
-	cgs.media.doublerSound = trap_S_RegisterSound("snd/v/voc_doubler.wav", qfalse);
-	cgs.media.guardSound = trap_S_RegisterSound("snd/v/voc_guard.wav", qfalse);
-	cgs.media.scoutSound = trap_S_RegisterSound("snd/v/voc_scout.wav", qfalse);
-	cgs.media.impressiveSound = trap_S_RegisterSound("snd/v/voc_impressive.wav", qtrue);
+	cgs.media.firstExcellentSound = trap_S_RegisterSound("snd/v/voc_first_excellent.wav", qtrue);
 	cgs.media.excellentSound = trap_S_RegisterSound("snd/v/voc_excellent.wav", qtrue);
-	cgs.media.deniedSound = trap_S_RegisterSound("snd/v/voc_denied.wav", qtrue);
+	cgs.media.firstImpressiveSound = trap_S_RegisterSound("snd/v/voc_first_impressive.wav", qtrue);
+	cgs.media.impressiveSound = trap_S_RegisterSound("snd/v/voc_impressive.wav", qtrue);
+	cgs.media.firstHumiliationSound = trap_S_RegisterSound("snd/v/voc_first_gauntlet.wav", qtrue);
 	cgs.media.humiliationSound = trap_S_RegisterSound("snd/v/voc_humiliation.wav", qtrue);
 	cgs.media.assistSound = trap_S_RegisterSound("snd/v/voc_assist.wav", qtrue);
 	cgs.media.defendSound = trap_S_RegisterSound("snd/v/voc_defense.wav", qtrue);
-	cgs.media.firstImpressiveSound = trap_S_RegisterSound("snd/v/voc_first_impressive.wav", qtrue);
-	cgs.media.firstExcellentSound = trap_S_RegisterSound("snd/v/voc_first_excellent.wav", qtrue);
-	cgs.media.firstHumiliationSound = trap_S_RegisterSound("snd/v/voc_first_gauntlet.wav", qtrue);
+	cgs.media.deniedSound = trap_S_RegisterSound("snd/v/voc_denied.wav", qtrue);
 	cgs.media.takenLeadSound = trap_S_RegisterSound("snd/v/voc_takenlead.wav", qtrue);
 	cgs.media.tiedLeadSound = trap_S_RegisterSound("snd/v/voc_tiedlead.wav", qtrue);
 	cgs.media.lostLeadSound = trap_S_RegisterSound("snd/v/voc_lostlead.wav", qtrue);
@@ -689,8 +685,8 @@ static void CG_RegisterSounds(void) {
 	cgs.media.countPrepareSound = trap_S_RegisterSound("snd/v/voc_prepare.wav", qtrue);
 
 	if (cgs.gametype > GT_TOURNAMENT || cg_buildScript.integer) {
-		cgs.media.hitTeamSound = trap_S_RegisterSound("snd/u/hit_teammate.wav", qtrue);
 		cgs.media.countPrepareTeamSound = trap_S_RegisterSound("snd/v/voc_prepare_team.wav", qtrue);
+		cgs.media.hitTeamSound = trap_S_RegisterSound("snd/u/hit_teammate.wav", qtrue);
 		cgs.media.redScoredSound = trap_S_RegisterSound("snd/v/voc_red_scores.wav", qtrue);
 		cgs.media.blueScoredSound = trap_S_RegisterSound("snd/v/voc_blue_scores.wav", qtrue);
 		cgs.media.redLeadsSound = trap_S_RegisterSound("snd/v/voc_redleads.wav", qtrue);
@@ -731,7 +727,6 @@ static void CG_RegisterSounds(void) {
 
 	cgs.media.winnerSound = trap_S_RegisterSound("sound/feedback/voc_youwin.wav", qfalse);
 	cgs.media.loserSound = trap_S_RegisterSound("sound/feedback/voc_youlose.wav", qfalse);
-	cgs.media.jumpPadSound = trap_S_RegisterSound("sound/world/jumppad.wav", qfalse);
 	// only register the items that the server says we need
 	Q_strncpyz(items, CG_ConfigString(CS_ITEMS), sizeof(items));
 
@@ -753,15 +748,19 @@ static void CG_RegisterSounds(void) {
 		cgs.gameSounds[i] = trap_S_RegisterSound(soundName, qfalse);
 	}
 	// FIXME: only needed with item
-	cgs.media.quadSound = trap_S_RegisterSound("snd/i/q.wav", qfalse);
-	cgs.media.regenSound = trap_S_RegisterSound("snd/i/r.wav", qfalse);
 	cgs.media.pickupSound = trap_S_RegisterSound("snd/i/pu.wav", qfalse);
-	cgs.media.wearOffSound = trap_S_RegisterSound("snd/i/po.wav", qfalse);
-	cgs.media.useNothingSound = trap_S_RegisterSound("snd/i/no.wav", qfalse);
 	cgs.media.medkitSound = trap_S_RegisterSound("snd/i/um.wav", qfalse);
 	cgs.media.kamikazeExplodeSound = trap_S_RegisterSound("snd/i/kam_e.wav", qfalse);
 	cgs.media.kamikazeImplodeSound = trap_S_RegisterSound("snd/i/kam_i.wav", qfalse);
 	cgs.media.kamikazeFarSound = trap_S_RegisterSound("snd/i/kam_f.wav", qfalse);
+	cgs.media.useNothingSound = trap_S_RegisterSound("snd/i/no.wav", qfalse);
+	cgs.media.quadSound = trap_S_RegisterSound("snd/i/q.wav", qfalse);
+	cgs.media.regenSound = trap_S_RegisterSound("snd/i/r.wav", qfalse);
+	cgs.media.wearOffSound = trap_S_RegisterSound("snd/i/po.wav", qfalse);
+	cgs.media.ammoregenSound = trap_S_RegisterSound("snd/v/voc_ammoregen.wav", qfalse);
+	cgs.media.doublerSound = trap_S_RegisterSound("snd/v/voc_doubler.wav", qfalse);
+	cgs.media.guardSound = trap_S_RegisterSound("snd/v/voc_guard.wav", qfalse);
+	cgs.media.scoutSound = trap_S_RegisterSound("snd/v/voc_scout.wav", qfalse);
 	cgs.media.obeliskHitSound1 = trap_S_RegisterSound("snd/i/obh1.wav", qfalse);
 	cgs.media.obeliskHitSound2 = trap_S_RegisterSound("snd/i/obh2.wav", qfalse);
 	cgs.media.obeliskHitSound3 = trap_S_RegisterSound("snd/i/obh3.wav", qfalse);
@@ -796,6 +795,7 @@ static void CG_RegisterSounds(void) {
 	cgs.media.gibBounce2Sound = trap_S_RegisterSound("snd/c/gibimp2.wav", qfalse);
 	cgs.media.gibBounce3Sound = trap_S_RegisterSound("snd/c/gibimp3.wav", qfalse);
 	cgs.media.teleOutSound = trap_S_RegisterSound("snd/c/to.wav", qfalse);
+	cgs.media.jumpPadSound = trap_S_RegisterSound("sound/world/jumppad.wav", qfalse);
 	cgs.media.landSound = trap_S_RegisterSound("snd/c/land1.wav", qfalse);
 	cgs.media.watrInSound = trap_S_RegisterSound("snd/c/watr_in.wav", qfalse);
 	cgs.media.watrOutSound = trap_S_RegisterSound("snd/c/watr_out.wav", qfalse);

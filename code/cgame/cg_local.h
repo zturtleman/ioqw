@@ -772,10 +772,6 @@ typedef struct {
 	sfxHandle_t hitSound;
 	sfxHandle_t hitSoundHighArmor;
 	sfxHandle_t hitSoundLowArmor;
-	sfxHandle_t ammoregenSound;
-	sfxHandle_t doublerSound;
-	sfxHandle_t guardSound;
-	sfxHandle_t scoutSound;
 	sfxHandle_t impressiveSound;
 	sfxHandle_t excellentSound;
 	sfxHandle_t deniedSound;
@@ -831,18 +827,21 @@ typedef struct {
 	sfxHandle_t yourBaseIsUnderAttackSound;
 	sfxHandle_t winnerSound;
 	sfxHandle_t loserSound;
-	sfxHandle_t jumpPadSound; // Tobias CHECK: move this out from 'world' folder?
 	// item sounds
 	sfxHandle_t itemPickupSounds[MAX_ITEMS];
-	sfxHandle_t quadSound;
-	sfxHandle_t regenSound;
 	sfxHandle_t pickupSound;
-	sfxHandle_t wearOffSound;
-	sfxHandle_t useNothingSound;
 	sfxHandle_t medkitSound;
 	sfxHandle_t kamikazeExplodeSound;
 	sfxHandle_t kamikazeImplodeSound;
 	sfxHandle_t kamikazeFarSound;
+	sfxHandle_t useNothingSound;
+	sfxHandle_t quadSound;
+	sfxHandle_t regenSound;
+	sfxHandle_t wearOffSound;
+	sfxHandle_t ammoregenSound;
+	sfxHandle_t doublerSound;
+	sfxHandle_t guardSound;
+	sfxHandle_t scoutSound;
 	sfxHandle_t obeliskHitSound1;
 	sfxHandle_t obeliskHitSound2;
 	sfxHandle_t obeliskHitSound3;
@@ -875,6 +874,7 @@ typedef struct {
 	sfxHandle_t gibBounce2Sound;
 	sfxHandle_t gibBounce3Sound;
 	sfxHandle_t teleOutSound;
+	sfxHandle_t jumpPadSound; // Tobias CHECK: move this out from 'world' folder?
 	sfxHandle_t landSound;
 	sfxHandle_t watrInSound;
 	sfxHandle_t watrOutSound;
