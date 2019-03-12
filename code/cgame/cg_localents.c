@@ -555,19 +555,19 @@ static void CG_AddFallScaleFade(localEntity_t *le) {
 CG_AddExplosion
 =======================================================================================================================================
 */
-static void CG_AddExplosion(localEntity_t *ex) {
+static void CG_AddExplosion(localEntity_t *le) {
 	refEntity_t *ent;
 
-	ent = &ex->refEntity;
+	ent = &le->refEntity;
 	// add the entity
 	CG_AddRefEntityWithMinLight(ent);
 	// add the dlight
-	if (ex->light) {
+	if (le->light) {
 		float light;
 		float radius;
 		float intensity;
 
-		light = (float)(cg.time - ex->startTime) / (ex->endTime - ex->startTime);
+		light = (float)(cg.time - le->startTime) / (le->endTime - le->startTime);
 
 		if (light < 0.5) {
 			light = 1.0;
@@ -575,17 +575,15 @@ static void CG_AddExplosion(localEntity_t *ex) {
 			light = 1.0 - (light - 0.5) * 2;
 		}
 
-		light = ex->light * light;
-
 		if (cg_fadeExplosions.integer) {
-			radius = ex->light;
+			radius = le->light;
 			intensity = light;
 		} else {
-			radius = ex->light * light;
+			radius = le->light * light;
 			intensity = 1;
 		}
 
-		trap_R_AddLightToScene(ent->origin, radius, intensity, ex->lightColor[0], ex->lightColor[1], ex->lightColor[2], 0);
+		trap_R_AddLightToScene(le->refEntity.origin, radius, intensity, le->lightColor[0], le->lightColor[1], le->lightColor[2], 0);
 	}
 }
 
@@ -626,8 +624,6 @@ static void CG_AddSpriteExplosion(localEntity_t *le) {
 		} else {
 			light = 1.0 - (light - 0.5) * 2;
 		}
-
-		light = le->light * light;
 
 		if (cg_fadeExplosions.integer) {
 			radius = le->light;
