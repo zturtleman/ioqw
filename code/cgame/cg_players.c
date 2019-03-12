@@ -100,7 +100,7 @@ void CG_CachePlayerSounds(const char *modelName) {
 			break;
 		}
 
-		Com_sprintf(filename, sizeof(filename), "sound/player/%s/%s", modelName, s + 1);
+		Com_sprintf(filename, sizeof(filename), "snd/c/%s/%s", modelName, s + 1);
 		trap_S_RegisterSound(filename, qfalse);
 	}
 }
