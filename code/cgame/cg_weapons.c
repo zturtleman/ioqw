@@ -1461,9 +1461,9 @@ void CG_RegisterWeapon(int weaponNum) {
 			cgs.media.railCoreShader = trap_R_RegisterShader("railCore");
 			break;
 		case WP_PLASMAGUN:
-//			MAKERGB(weaponInfo->flashDlightColor, 0.7f, 0.8f, 1.0f);
+			MAKERGB(weaponInfo->flashDlightColor, 0.7f, 0.8f, 1.0f);
 //			weaponInfo->missileDlight = 100;
-			MAKERGB(weaponInfo->missileDlightColor, 0.7f, 0.8f, 1.0f);
+//			MAKERGB(weaponInfo->missileDlightColor, 0.7f, 0.8f, 1.0f);
 			weaponInfo->missileTrailFunc = CG_PlasmaTrail;
 			weaponInfo->missileSound = trap_S_RegisterSound("sound/weapons/plasma/lasfly.wav", qfalse);
 			weaponInfo->flashSound[0] = trap_S_RegisterSound("sound/weapons/plasma/hyprbf1a.wav", qfalse);
