@@ -588,7 +588,7 @@ void FinishSpawningItem(gentity_t *ent) {
 		trap_Trace(&tr, ent->s.origin, ent->r.mins, ent->r.maxs, dest, ent->s.number, MASK_SOLID);
 
 		if (tr.startsolid) {
-			G_Printf("FinishSpawningItem: %s startsolid at %s\n", ent->classname, vtos(ent->s.origin));
+			G_Printf("FinishSpawningItem: %s startsolid at %s\n", ent->classname, VectorToString(ent->s.origin));
 			G_FreeEntity(ent);
 			return;
 		}

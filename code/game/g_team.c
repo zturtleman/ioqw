@@ -1435,7 +1435,7 @@ void ObeliskInit(gentity_t *ent) {
 
 		if (tr.startsolid) {
 			ent->s.origin[2] -= 1;
-			G_Printf("SpawnObelisk: %s startsolid at %s\n", ent->classname, vtos(ent->s.origin));
+			G_Printf("SpawnObelisk: %s startsolid at %s\n", ent->classname, VectorToString(ent->s.origin));
 
 			ent->s.groundEntityNum = ENTITYNUM_NONE;
 

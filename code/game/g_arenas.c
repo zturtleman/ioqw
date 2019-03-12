@@ -331,7 +331,7 @@ static gentity_t *SpawnPodium(void) {
 
 	VectorSubtract(level.intermission_origin, podium->r.currentOrigin, vec);
 
-	podium->s.apos.trBase[YAW] = vectoyaw(vec);
+	podium->s.apos.trBase[YAW] = VectorToYaw(vec);
 
 	trap_LinkEntity(podium);
 

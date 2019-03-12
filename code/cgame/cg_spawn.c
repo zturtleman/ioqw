@@ -99,12 +99,12 @@ This is just a convenience function
 for printing vectors
 =============
 */
-char    *vtos( const vec3_t v ) {
+char    *VectorToString( const vec3_t v ) {
 	static int index;
 	static char str[8][32];
 	char    *s;
 
-	// use an array so that multiple vtos won't collide
+	// use an array so that multiple VectorToString won't collide
 	s = str[index];
 	index = ( index + 1 ) & 7;
 

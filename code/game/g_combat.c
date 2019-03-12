@@ -219,7 +219,7 @@ void LookAtKiller(gentity_t *self, gentity_t *inflictor, gentity_t *attacker) {
 		return;
 	}
 
-	self->client->ps.stats[STAT_DEAD_YAW] = vectoyaw(dir);
+	self->client->ps.stats[STAT_DEAD_YAW] = VectorToYaw(dir);
 }
 
 /*

@@ -207,7 +207,7 @@ void LocateMaster(gentity_t *ent) {
 	if (ent->target_ent) {
 		ent->r.visDummyNum = ent->target_ent->s.number;
 	} else {
-		G_Printf("Couldn't find target (%s) for misc_vis_dummy at %s\n", ent->target, vtos(ent->r.currentOrigin));
+		G_Printf("Couldn't find target (%s) for misc_vis_dummy at %s\n", ent->target, VectorToString(ent->r.currentOrigin));
 		G_FreeEntity(ent);
 	}
 }
@@ -220,7 +220,7 @@ For safety, you should have each dummy only point at one entity (however, it's o
 void SP_misc_vis_dummy(gentity_t *ent) {
 
 	if (!ent->target) {
-		G_Printf("No target specified for misc_vis_dummy at %s\n", vtos(ent->r.currentOrigin));
+		G_Printf("No target specified for misc_vis_dummy at %s\n", VectorToString(ent->r.currentOrigin));
 		G_FreeEntity(ent);
 		return;
 	}
@@ -242,7 +242,7 @@ This entity was created to have multiple speakers targeting it
 void SP_misc_vis_dummy_multiple(gentity_t *ent) {
 
 	if (!ent->targetname) {
-		G_Printf("misc_vis_dummy_multiple needs a targetname at %s\n", vtos(ent->r.currentOrigin));
+		G_Printf("misc_vis_dummy_multiple needs a targetname at %s\n", VectorToString(ent->r.currentOrigin));
 		G_FreeEntity(ent);
 		return;
 	}

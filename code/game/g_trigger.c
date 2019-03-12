@@ -519,7 +519,7 @@ void SP_func_timer(gentity_t *self) {
 
 	if (self->random >= self->wait) {
 		self->random = self->wait - FRAMETIME;
-		G_Printf("func_timer at %s has random >= wait\n", vtos(self->s.origin));
+		G_Printf("func_timer at %s has random >= wait\n", VectorToString(self->s.origin));
 	}
 
 	if (self->spawnflags & 1) {
