@@ -311,7 +311,7 @@ void CG_CheckLocalSounds(playerState_t *ps, playerState_t *ops) {
 	if (cgs.gametype > GT_HARVESTER) {
 		return;
 	}
-	// health changes of more than -1 should make pain sounds
+	// hit changes
 	if (cg_hitSounds.integer) {
 		if (ps->persistant[PERS_HITS] > ops->persistant[PERS_HITS]) {
 			armor = ps->persistant[PERS_ATTACKEE_ARMOR] & 0xff;
