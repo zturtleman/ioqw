@@ -283,7 +283,7 @@ void R_AddMD3Surfaces( trRefEntity_t *ent ) {
 	int             cubemapIndex;
 	qboolean		personalModel;
 
-	// don't add third_person objects if not in a mirror/portal
+	// don't add mirror only objects if not in a mirror/portal
 	personalModel = (ent->e.renderfx & RF_ONLY_MIRROR) && !(tr.viewParms.isPortal 
 	                 || (tr.viewParms.flags & (VPF_SHADOWMAP | VPF_DEPTHSHADOW)));
 

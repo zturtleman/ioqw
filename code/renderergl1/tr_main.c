@@ -422,6 +422,7 @@ int R_PointFogNum( const trRefdef_t *refdef, vec3_t point, float radius ) {
 
 	return R_BoundsFogNum( refdef, mins, maxs );
 }
+
 /*
 =================
 R_CullLocalBox
@@ -1649,6 +1650,7 @@ int R_PolyEntFogNum( trRefEntity_t *ent ) {
 	return R_BoundsFogNum( &tr.refdef, mins, maxs );
 }
 
+
 /*
 ==========================================================================================
 
@@ -1852,7 +1854,7 @@ void R_SortDrawSurfs( drawSurf_t *drawSurfs, int numDrawSurfs ) {
 
 		// no shader should ever have this sort type
 		if ( shader->sort == SS_BAD ) {
-			ri.Error (ERR_DROP, "Shader '%s'with sort == SS_BAD", shader->name );
+			ri.Error (ERR_DROP, "Shader '%s' with sort == SS_BAD", shader->name );
 		}
 
 		// if the mirror was completely clipped away, we may need to check another surface
@@ -1895,6 +1897,7 @@ static void R_AddEntitySurface (int entityNum)
 	switch ( ent->e.reType ) {
 	case RT_PORTALSURFACE:
 		break;		// don't draw anything
+
 	case RT_SPRITE:
 	case RT_BEAM:
 	case RT_LIGHTNING:
@@ -1972,6 +1975,7 @@ R_GenerateDrawSurfs
 */
 void R_GenerateDrawSurfs( void ) {
 	R_CullDlights();
+
 	R_AddWorldSurfaces ();
 
 	R_AddPolygonSurfaces();
@@ -2099,6 +2103,7 @@ void R_RenderView (viewParms_t *parms) {
 	// draw main system development information (surface outlines, etc)
 	R_FogOff();
 	R_DebugGraphics();
+	//RB_FogOn();
 }
 
 

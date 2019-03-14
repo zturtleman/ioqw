@@ -52,6 +52,7 @@ int			r_numpolyverts;
 int			r_numpolybuffers;
 int			r_firstScenePolybuffer;
 
+
 /*
 ====================
 R_InitNextFrame
@@ -99,6 +100,7 @@ void RE_ClearScene( void ) {
 			tr.world->bmodels[ i ].entityNum = -1;
 		}
 	}
+
 	r_firstSceneDlight = r_numdlights;
 	r_firstSceneCorona = r_numcoronas;
 	r_firstSceneEntity = r_numentities;
@@ -357,7 +359,6 @@ void RE_AddPolyBufferToScene( polyBuffer_t* pPolyBuffer ) {
 	pPolySurf->pPolyBuffer = pPolyBuffer;
 }
 
-
 //=================================================================================
 
 
@@ -524,8 +525,6 @@ void RE_AddCoronaToScene( const vec3_t org, float r, float g, float b, float sca
 }
 
 
-
-
 void RE_BeginScene(const refdef_t *fd)
 {
 	Com_Memcpy( tr.refdef.text, fd->text, sizeof( tr.refdef.text ) );
@@ -685,6 +684,7 @@ void RE_BeginScene(const refdef_t *fd)
 
 	tr.refdef.num_pshadows = 0;
 	tr.refdef.pshadows = &backEndData->pshadows[0];
+
 	// a single frame may have multiple scenes draw inside it --
 	// a 3D game view, 3D status bar renderings, 3D menus, etc.
 	// They need to be distinguished by the light flare code, because

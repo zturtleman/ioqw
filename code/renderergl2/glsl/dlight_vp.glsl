@@ -132,6 +132,6 @@ void main()
 		dlightmod = step(0.0, dot(dist, normal));
 		dlightmod *= clamp(u_Intensity * 2.0 * (1.0 - abs(dist.z) * u_DlightInfo.a), 0.0, 1.0);
 	}
-	
+
 	var_Color = u_Color * dlightmod;
 }

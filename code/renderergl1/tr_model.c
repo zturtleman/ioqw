@@ -1427,18 +1427,18 @@ int R_LerpTag( orientation_t *tag, qhandle_t handle,
 	}
 
 	if ( lerpTag && tag ) {
-	frontLerp = frac;
-	backLerp = 1.0f - frac;
+		frontLerp = frac;
+		backLerp = 1.0f - frac;
 
-	for ( i = 0 ; i < 3 ; i++ ) {
+		for ( i = 0 ; i < 3 ; i++ ) {
 			tag->origin[i] = start.origin[i] * backLerp +  end.origin[i] * frontLerp;
 			tag->axis[0][i] = start.axis[0][i] * backLerp +  end.axis[0][i] * frontLerp;
 			tag->axis[1][i] = start.axis[1][i] * backLerp +  end.axis[1][i] * frontLerp;
 			tag->axis[2][i] = start.axis[2][i] * backLerp +  end.axis[2][i] * frontLerp;
-	}
-	VectorNormalize( tag->axis[0] );
-	VectorNormalize( tag->axis[1] );
-	VectorNormalize( tag->axis[2] );
+		}
+		VectorNormalize( tag->axis[0] );
+		VectorNormalize( tag->axis[1] );
+		VectorNormalize( tag->axis[2] );
 	}
 
 	return qtrue;
@@ -1701,3 +1701,4 @@ void MC_UnCompress(float mat[3][4],const unsigned char * comp)
 	val-=1<<(MC_BITS_VECT-1);
 	mat[2][2]=((float)(val))*MC_SCALE_VECT;
 }
+

@@ -100,7 +100,8 @@ typedef struct dlight_s {
 	float		intensity;			// 1.0 = fullbright, > 1.0 = overbright
 	int			flags;
 	struct shader_s	*dlshader;
-	vec3_t	transformed;		// origin in local coordinate system
+
+	vec3_t		transformed;		// origin in local coordinate system
 } dlight_t;
 
 
@@ -481,12 +482,11 @@ typedef struct {
 
 typedef struct {
 	fogType_t	fogType;
-	vec3_t	color;
-	float	depthForOpaque;
+	vec3_t		color;
+	float		depthForOpaque;
 	float		density;
 	float		farClip;
 } fogParms_t;
-
 
 typedef struct shader_s {
 	char		name[MAX_QPATH];		// game path, including extension
@@ -889,7 +889,6 @@ typedef struct skin_s {
 } skin_t;
 
 
-
 typedef struct {
 	int			modelNum;				// bsp model the fog belongs to
 	int			originalBrushNumber;
@@ -1237,7 +1236,6 @@ typedef struct cullinfo_s {
 typedef struct msurface_s {
 	//int					viewCount;		// if == tr.viewCount, already added
 	struct shader_s		*shader;			// shader for rendering
-	struct shader_s		*originalShader;	// original shader in BSP, for resetting shader
 	int					fogIndex;
 	int                 cubemapIndex;
 	cullinfo_t          cullinfo;
@@ -1806,6 +1804,7 @@ typedef struct {
 	float		skyFogTcScale;
 
 	fogParms_t	waterFogParms;
+
 	//
 	// put large tables at the end, so most elements will be
 	// within the +/32K indexed range on risc processors
@@ -1928,6 +1927,7 @@ extern	cvar_t	*r_logFile;						// number of frames to emit GL logs
 extern	cvar_t	*r_showtris;					// enables wireframe rendering of the world
 extern	cvar_t	*r_showsky;						// forces sky in front of all surfaces
 extern	cvar_t	*r_shownormals;					// draws wireframe normals
+extern  cvar_t	*r_bonesDebug;					// draws MDS bones
 extern	cvar_t	*r_clear;						// force screen clear every frame
 
 extern	cvar_t	*r_shadows;						// controls shadows: 0 = none, 1 = blur, 2 = stencil, 3 = black planar projection
@@ -2026,6 +2026,7 @@ extern cvar_t	*r_useGlFog;
 extern cvar_t	*r_defaultFogParmsType;
 extern cvar_t	*r_globalLinearFogDrawSky;
 extern cvar_t	*r_missingLightmapUseDiffuseLighting;
+
 //====================================================================
 
 static ID_INLINE qboolean ShaderRequiresCPUDeforms(const shader_t * shader)
@@ -2499,29 +2500,14 @@ void RE_EndScene( void );
 /*
 =============================================================
 
-UNCOMPRESSING BONES
-
-=============================================================
-*/
-
-#define MC_BITS_X (16)
-#define MC_BITS_Y (16)
-#define MC_BITS_Z (16)
-#define MC_BITS_VECT (16)
-
-#define MC_SCALE_X (1.0f/64)
-#define MC_SCALE_Y (1.0f/64)
-#define MC_SCALE_Z (1.0f/64)
-
-void MC_UnCompress(float mat[3][4],const unsigned char * comp);
-
-/*
-=============================================================
-
 ANIMATED MODELS
 
 =============================================================
 */
+
+void R_MDRAddAnimSurfaces( trRefEntity_t *ent );
+void RB_MDRSurfaceAnim( mdrSurface_t *surface );
+void MC_UnCompress(float mat[3][4],const unsigned char * comp);
 
 void R_MDRAddAnimSurfaces( trRefEntity_t *ent );
 void RB_MDRSurfaceAnim( mdrSurface_t *surface );
@@ -2576,7 +2562,7 @@ RENDERER BACK END COMMAND QUEUE
 =============================================================
 */
 
-#define	MAX_RENDER_COMMANDS (0x40000 * 8) ///< was 0x40000
+#define	MAX_RENDER_COMMANDS (0x40000 * 8) // < was 0x40000
 
 typedef struct {
 	byte	cmds[MAX_RENDER_COMMANDS];
@@ -2760,6 +2746,5 @@ int R_PointFogNum( const trRefdef_t *refdef, vec3_t point, float radius );
 void R_FogOff( void );
 void RB_FogOn( void );
 void RB_Fog( int fogNum );
-
 
 #endif //TR_LOCAL_H

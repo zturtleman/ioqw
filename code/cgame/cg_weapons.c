@@ -1915,7 +1915,7 @@ void CG_AddViewWeapon(playerState_t *ps) {
 	}
 
 	hand.hModel = weapon->handsModel;
-	hand.renderfx = RF_DEPTHHACK|RF_NO_MIRROR;
+	hand.renderfx = RF_NO_MIRROR|RF_DEPTHHACK;
 	// add everything onto the hand
 	CG_AddPlayerWeapon(&hand, ps, &cg.predictedPlayerEntity, ps->persistant[PERS_TEAM]);
 }

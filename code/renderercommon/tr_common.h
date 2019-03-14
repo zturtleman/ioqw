@@ -39,7 +39,7 @@ typedef enum
 	IMGTYPE_COLORALPHA, // for color, lightmap, diffuse, and specular
 	IMGTYPE_NORMAL,
 	IMGTYPE_NORMALHEIGHT,
-	IMGTYPE_DELUXE, // normals are swizzled, deluxe are not
+	IMGTYPE_DELUXE // normals are swizzled, deluxe are not
 } imgType_t;
 
 typedef enum
@@ -131,7 +131,7 @@ float R_NoiseGet4f( float x, float y, float z, double t );
 int R_RandomOn( double t );
 void  R_NoiseInit( void );
 
-image_t     *R_FindImageFile( const char *name, imgType_t type, imgFlags_t flags );
+image_t	*R_FindImageFile( const char *name, imgType_t type, imgFlags_t flags );
 image_t *R_CreateImage( const char *name, byte *pic, int width, int height, imgType_t type, imgFlags_t flags, int internalFormat );
 
 void R_IssuePendingRenderCommands( void );

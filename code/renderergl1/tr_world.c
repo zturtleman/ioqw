@@ -170,7 +170,7 @@ static int R_DlightSurface( msurface_t *surf, int dlightBits ) {
 	float       d;
 	int         i;
 	dlight_t    *dl;
-	
+
 	for ( i = 0 ; i < tr.refdef.num_dlights ; i++ ) {
 		if ( ! ( dlightBits & ( 1 << i ) ) ) {
 			continue;
@@ -238,6 +238,7 @@ static int R_DlightSurface( msurface_t *surf, int dlightBits ) {
 			if ( tr.refdef.dlights[ i ].flags & REF_DIRECTED_DLIGHT ) {
 				continue;
 			}
+
 			dl = &tr.refdef.dlights[i];
 			if (!SpheresIntersect(dl->origin, dl->radius, surf->cullinfo.localOrigin, surf->cullinfo.radius))
 			{
@@ -374,6 +375,7 @@ static void R_AddWorldSurface( msurface_t *surf, shader_t *shader, int fogNum, i
 	if ( ( tr.refdef.rdflags & RDF_ONLYSKY ) && !shader->isSky && !( shader->surfaceFlags & SURF_SKY ) ) {
 		return;
 	}
+
 	// try to cull before dlighting or adding
 	if ( R_CullSurface( surf ) ) {
 		return;
@@ -485,7 +487,6 @@ void R_AddBrushModelSurfaces ( trRefEntity_t *ent ) {
 }
 
 
-
 /*
 =============================================================
 
@@ -595,6 +596,7 @@ static void R_RecursiveWorldNode( mnode_t *node, uint32_t planeBits, uint32_t dl
 
 		// node is just a decision point, so go down both sides
 		// since we don't care about sort orders, just go positive to negative
+
 		newPShadows[0] = 0;
 		newPShadows[1] = 0;
 		if ( pshadowBits ) {

@@ -112,7 +112,7 @@ void CG_TestGun_f(void) {
 	}
 
 	cg.testGun = qtrue;
-	cg.testModelEntity.renderfx = RF_DEPTHHACK|RF_NO_MIRROR;
+	cg.testModelEntity.renderfx = RF_NO_MIRROR|RF_DEPTHHACK;
 }
 
 /*

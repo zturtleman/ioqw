@@ -70,11 +70,12 @@ Suite 120, Rockville, Maryland 20850 USA.
 #define	RF_RGB_TINT			0x0800		// override shader color values and take the ones from the entity
 
 #define	RF_LIGHTING_GRID	0x4000		// make refEntity in a scene with RDF_NOWORLDMODEL use lighting grid
+
 // refdef flags
 #define RDF_NOWORLDMODEL	0x0001		// used for player configuration screen
 #define RDF_UNDERWATER		0x0002		// underwater
 #define RDF_HYPERSPACE		0x0004		// teleportation effect
-#define RDF_SUNLIGHT		0x0008      // SmileTheory - render sunlight and shadows
+#define RDF_SUNLIGHT		0x0008		// render sunlight and shadows
 #define RDF_NOSKY			0x0010		// do not render sky. used on world when there is a separate skybox portal.
 #define RDF_ONLYSKY			0x0020		// only render sky. used on skybox portal when want to disable ground.
 
@@ -200,6 +201,7 @@ typedef struct {
 	float		fogDepthForOpaque;
 	float		fogDensity;
 
+	// OpenGL2 renderer extras
 	float			blurFactor;
 
 	// specific sun shadow casting information, if RDF_SUNLIGHT
@@ -209,6 +211,7 @@ typedef struct {
 
 	// for alphaGen skyAlpha and oneMinusSkyAlpha
 	float			skyAlpha;
+
 	//
 	// added in Spearmint 0.3
 	//

@@ -197,6 +197,7 @@ cvar_t	*r_picmip;
 cvar_t	*r_showtris;
 cvar_t	*r_showsky;
 cvar_t	*r_shownormals;
+cvar_t	*r_bonesDebug;
 cvar_t	*r_finish;
 cvar_t	*r_clear;
 cvar_t	*r_swapInterval;
@@ -246,6 +247,7 @@ cvar_t	*r_useGlFog;
 cvar_t	*r_defaultFogParmsType;
 cvar_t	*r_globalLinearFogDrawSky;
 cvar_t	*r_missingLightmapUseDiffuseLighting;
+
 cvar_t	*r_maxpolys;
 int		max_polys;
 cvar_t	*r_maxpolyverts;
@@ -1005,9 +1007,6 @@ void GL_SetDefaultState( void )
 	if (glRefConfig.seamlessCubeMap)
 		qglEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
-	// GL_POLYGON_OFFSET_FILL will be glEnable()d when this is used
-	qglPolygonOffset( r_offsetFactor->value, r_offsetUnits->value );
-
 	qglClearColor( 0.0f, 0.0f, 0.0f, 1.0f );	// FIXME: get color of sky
 }
 
@@ -1345,7 +1344,8 @@ void R_Register( void )
 	r_nocurves = ri.Cvar_Get ("r_nocurves", "0", CVAR_CHEAT );
 	r_drawworld = ri.Cvar_Get ("r_drawworld", "1", CVAR_CHEAT );
 	r_drawfoliage = ri.Cvar_Get( "r_drawfoliage", "1", CVAR_CHEAT );
-	r_lightmap = ri.Cvar_Get ("r_lightmap", "0", CVAR_CHEAT );
+	r_lightmap = ri.Cvar_Get ("r_lightmap", "0", CVAR_CHEAT | CVAR_LATCH );
+	ri.Cvar_CheckRange(r_lightmap, 0, 3, qtrue);
 	r_portalOnly = ri.Cvar_Get ("r_portalOnly", "0", CVAR_CHEAT );
 
 	r_flareSize = ri.Cvar_Get ("r_flareSize", "40", CVAR_CHEAT);
@@ -1370,6 +1370,7 @@ void R_Register( void )
 	r_showtris = ri.Cvar_Get ("r_showtris", "0", CVAR_CHEAT);
 	r_showsky = ri.Cvar_Get ("r_showsky", "0", CVAR_CHEAT);
 	r_shownormals = ri.Cvar_Get ("r_shownormals", "0", CVAR_CHEAT);
+	r_bonesDebug = ri.Cvar_Get ("r_bonesDebug", "0", CVAR_CHEAT);
 	r_clear = ri.Cvar_Get ("r_clear", "0", CVAR_CHEAT);
 	r_offsetFactor = ri.Cvar_Get( "r_offsetfactor", "-1", CVAR_CHEAT );
 	r_offsetUnits = ri.Cvar_Get( "r_offsetunits", "-8", CVAR_CHEAT );

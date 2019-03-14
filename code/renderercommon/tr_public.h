@@ -86,8 +86,7 @@ typedef struct {
 
 	void	(*SetColor)( const float *rgba );	// NULL = 1,1,1,1
 	void	(*SetClipRegion)( const float *region );
-	void	(*DrawStretchPic) ( float x, float y, float w, float h, 
-		float s1, float t1, float s2, float t2, qhandle_t hShader );	// 0 = white
+	void	(*DrawStretchPic)( float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader );	// 0 = white
 	void	(*DrawStretchPicGradient)( float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader, const float *gradientColor );
 
 	// Draw images for cinematic rendering, pass as 32 bit rgba
@@ -170,11 +169,12 @@ typedef struct {
 
 	// visualization for debugging collision detection
 	void	(*CM_DrawDebugSurface)( void (*drawPoly)(int color, int numPoints, float *points) );
+	void	(*SV_BotDrawDebugPolygons)( void (*drawPoly)(int color, int numPoints, float *points) );
 
 	// a -1 return means the file does not exist
 	// NULL can be passed for buf to just determine existence
 	int		(*FS_FileIsInPAK)( const char *name, int *pCheckSum );
-	long		(*FS_ReadFile)( const char *name, void **buf );
+	long	(*FS_ReadFile)( const char *name, void **buf );
 	void	(*FS_FreeFile)( void *buf );
 	char **	(*FS_ListFiles)( const char *name, const char *extension, int *numfilesfound );
 	void	(*FS_FreeFileList)( char **filelist );

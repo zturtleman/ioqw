@@ -900,7 +900,6 @@ static void ParseFace( dsurface_t *ds, drawVert_t *verts, float *hdrVertColors, 
 	}
 }
 
-
 /*
 ===============
 ParseMesh
@@ -1093,7 +1092,6 @@ static void ParseFoliage( dsurface_t *ds, drawVert_t *verts, float *hdrVertColor
 	if ( r_singleShader->integer && !surf->shader->isSky ) {
 		surf->shader = tr.defaultShader;
 	}
-	surf->originalShader = surf->shader;
 
 	numVerts = LittleLong(ds->patchHeight);
 	numIndexes = LittleLong(ds->numIndexes);
@@ -1910,7 +1908,8 @@ void R_StitchAllPatches( void ) {
 		}
 	}
 	while (stitched);
-	ri.Printf( PRINT_ALL, "stitched %d LoD cracks\n", numstitches );
+
+	ri.Printf(PRINT_ALL, "stitched %d LoD cracks\n", numstitches);
 }
 
 /*
@@ -2145,6 +2144,9 @@ static	void R_LoadSubmodels( lump_t *l ) {
 }
 
 
+
+//==================================================================
+
 /*
 =================
 R_SetParent
@@ -2221,7 +2223,7 @@ static	void R_LoadNodesAndLeafs (lump_t *nodeLump, lump_t *leafLump) {
 			out->mins[j] = LittleLong (in->mins[j]);
 			out->maxs[j] = LittleLong (in->maxs[j]);
 		}
-	
+
 		// surface bounds
 		VectorCopy( out->mins, out->surfMins );
 		VectorCopy( out->maxs, out->surfMaxs );
@@ -2303,7 +2305,7 @@ static	void R_LoadShaders( lump_t *l ) {
 R_LoadMarksurfaces
 =================
 */
-static	void R_LoadMarksurfaces (lump_t *l)
+static	void R_LoadMarksurfaces(lump_t *l)
 {	
 	int		i, j, count;
 	int		*in;
@@ -2400,6 +2402,7 @@ static	void R_LoadFogs( lump_t *l, lump_t *brushesLump, lump_t *sidesLump ) {
 	VectorSet( out->bounds[ 0 ], MIN_WORLD_COORD, MIN_WORLD_COORD, MIN_WORLD_COORD );
 	VectorSet( out->bounds[ 1 ], MAX_WORLD_COORD, MAX_WORLD_COORD, MAX_WORLD_COORD );
 	out++;
+
 	if ( !count ) {
 		return;
 	}
@@ -2440,38 +2443,38 @@ static	void R_LoadFogs( lump_t *l, lump_t *brushesLump, lump_t *sidesLump ) {
 				}
 			}
 
-		brush = brushes + out->originalBrushNumber;
+			brush = brushes + out->originalBrushNumber;
 
-		firstSide = LittleLong( brush->firstSide );
+			firstSide = LittleLong( brush->firstSide );
 
 			if ( (unsigned)firstSide > sidesCount - 6 ) {
-			ri.Error( ERR_DROP, "fog brush sideNumber out of range" );
-		}
+				ri.Error( ERR_DROP, "fog brush sideNumber out of range" );
+			}
 
-		// brushes are always sorted with the axial sides first
-		sideNum = firstSide + 0;
-		planeNum = LittleLong( sides[ sideNum ].planeNum );
-		out->bounds[0][0] = -s_worldData.planes[ planeNum ].dist;
+			// brushes are always sorted with the axial sides first
+			sideNum = firstSide + 0;
+			planeNum = LittleLong( sides[ sideNum ].planeNum );
+			out->bounds[0][0] = -s_worldData.planes[ planeNum ].dist;
 
-		sideNum = firstSide + 1;
-		planeNum = LittleLong( sides[ sideNum ].planeNum );
-		out->bounds[1][0] = s_worldData.planes[ planeNum ].dist;
+			sideNum = firstSide + 1;
+			planeNum = LittleLong( sides[ sideNum ].planeNum );
+			out->bounds[1][0] = s_worldData.planes[ planeNum ].dist;
 
-		sideNum = firstSide + 2;
-		planeNum = LittleLong( sides[ sideNum ].planeNum );
-		out->bounds[0][1] = -s_worldData.planes[ planeNum ].dist;
+			sideNum = firstSide + 2;
+			planeNum = LittleLong( sides[ sideNum ].planeNum );
+			out->bounds[0][1] = -s_worldData.planes[ planeNum ].dist;
 
-		sideNum = firstSide + 3;
-		planeNum = LittleLong( sides[ sideNum ].planeNum );
-		out->bounds[1][1] = s_worldData.planes[ planeNum ].dist;
+			sideNum = firstSide + 3;
+			planeNum = LittleLong( sides[ sideNum ].planeNum );
+			out->bounds[1][1] = s_worldData.planes[ planeNum ].dist;
 
-		sideNum = firstSide + 4;
-		planeNum = LittleLong( sides[ sideNum ].planeNum );
-		out->bounds[0][2] = -s_worldData.planes[ planeNum ].dist;
+			sideNum = firstSide + 4;
+			planeNum = LittleLong( sides[ sideNum ].planeNum );
+			out->bounds[0][2] = -s_worldData.planes[ planeNum ].dist;
 
-		sideNum = firstSide + 5;
-		planeNum = LittleLong( sides[ sideNum ].planeNum );
-		out->bounds[1][2] = s_worldData.planes[ planeNum ].dist;
+			sideNum = firstSide + 5;
+			planeNum = LittleLong( sides[ sideNum ].planeNum );
+			out->bounds[1][2] = s_worldData.planes[ planeNum ].dist;
 		}
 
 		// get information from the shader for fog parameters
@@ -2489,22 +2492,21 @@ static	void R_LoadFogs( lump_t *l, lump_t *brushesLump, lump_t *sidesLump ) {
 		if ( out->originalBrushNumber == -1 ) {
 			s_worldData.globalFogNum = i;
 		} else {
-		// set the gradient vector
-		sideNum = LittleLong( fogs->visibleSide );
+			// set the gradient vector
+			sideNum = LittleLong( fogs->visibleSide );
 
 			if ( sideNum < 0 || sideNum >= sidesCount ) {
-			out->hasSurface = qfalse;
-		} else {
-			out->hasSurface = qtrue;
-			planeNum = LittleLong( sides[ firstSide + sideNum ].planeNum );
-			VectorSubtract( vec3_origin, s_worldData.planes[ planeNum ].normal, out->surface );
-			out->surface[3] = -s_worldData.planes[ planeNum ].dist;
-		}
+				out->hasSurface = qfalse;
+			} else {
+				out->hasSurface = qtrue;
+				planeNum = LittleLong( sides[ firstSide + sideNum ].planeNum );
+				VectorSubtract( vec3_origin, s_worldData.planes[ planeNum ].normal, out->surface );
+				out->surface[3] = -s_worldData.planes[ planeNum ].dist;
+			}
 		}
 
 		out++;
 	}
-
 }
 
 
@@ -3386,6 +3388,7 @@ void RE_LoadWorldMap( const char *name ) {
 	}
 
 	R_InitExternalShaders();
+
 	// Render or load all cubemaps
 	if (r_cubeMapping->integer && tr.numCubemaps && glRefConfig.framebufferObject)
 	{

@@ -772,6 +772,7 @@ static qboolean ParseStage( shaderStage_t *stage, char **text )
 				continue;
 			}
 		}
+
 		//
 		// map <name>
 		//
@@ -858,7 +859,6 @@ static qboolean ParseStage( shaderStage_t *stage, char **text )
 				return qfalse;
 			}
 
-//----(SA)	fixes startup error and allows polygon shadows to work again
 			if ( !Q_stricmp( token, "$whiteimage" ) || !Q_stricmp( token, "*white" ) ) {
 				bundle->image[0] = tr.whiteImage;
 				continue;
@@ -961,6 +961,7 @@ static qboolean ParseStage( shaderStage_t *stage, char **text )
 			stage_noMipMaps = qtrue;
 			continue;
 		}
+		//
 		// alphafunc <func>
 		//
 		else if ( !Q_stricmp( token, "alphaFunc" ) )
@@ -2488,7 +2489,7 @@ static qboolean ParseShader( char **text )
 			}
 		}
 		// fogParms ( <red> <green> <blue> ) <depthForOpaque> [fog type]
-		else if ( !Q_stricmp( token, "fogParms" ) ) 
+		else if ( !Q_stricmp( token, "fogParms" ) )
 		{
 			if ( !ParseVector( text, 3, shader.fogParms.color ) ) {
 				return qfalse;
@@ -2512,11 +2513,11 @@ static qboolean ParseShader( char **text )
 			}
 
 			token = COM_ParseExt( text, qfalse );
-			if ( !token[0] ) 
-			{
+			if ( !token[0] ) {
 				ri.Printf( PRINT_WARNING, "WARNING: missing parm for 'fogParms' keyword in shader '%s'\n", shader.name );
 				continue;
 			}
+
 			shader.fogParms.depthForOpaque = atof( token );
 
 			// note: there could not be a token, or token might be old gradient directions
@@ -2818,7 +2819,7 @@ static qboolean ParseShader( char **text )
 	}
 
 	//
-	// ignore shaders that don't have any stages, unless it is a sky or fog
+	// ignore shaders that don't have any stages, unless it is a sky, fog, or have implicit mapping
 	//
 	if ( s == 0 && !shader.isSky && !(shader.contentFlags & CONTENTS_FOG ) && implicitMap[ 0 ] == '\0' ) {
 		return qfalse;
@@ -3655,6 +3656,8 @@ Arnout: this is a nasty issue. Shaders can be registered after drawsurfaces are 
 but before the frame is rendered. This will, for the duration of one frame, cause drawsurfaces
 to be rendered with bad shaders. To fix this, need to go through all render commands and fix
 sortedIndex.
+ZTM: Spearmint keeps shaderIndex in drawSurf_t so this function only fixes the sort order,
+not the actual shader
 ==============
 */
 static void FixRenderCommandList( int newSortOrder ) {
@@ -4035,6 +4038,8 @@ static void SetImplicitShaderStages( image_t *image ) {
 }
 
 
+
+
 /*
 ===============
 InitShader
@@ -4137,7 +4142,7 @@ static shader_t *FinishShader( void ) {
 		}
 
 		//
-		// ditch this stage if it's detail and detail textures are disabled
+		// default texture coordinate generation
 		//
 		isLightmap = qtrue;
 		for ( bundle = 0; bundle < NUM_TEXTURE_BUNDLES; bundle++ ) {
@@ -4498,6 +4503,7 @@ shader_t *R_FindShader( const char *name, int lightmapIndex, imgFlags_t rawImage
 	} else {
 		shader_allowCompress = qtrue;
 	}
+
 	// default to no implicit mappings
 	implicitMap[ 0 ] = '\0';
 	implicitStateBits = GLS_DEFAULT;
@@ -4522,8 +4528,8 @@ shader_t *R_FindShader( const char *name, int lightmapIndex, imgFlags_t rawImage
 		}
 		// allow implicit mappings
 		if ( implicitMap[ 0 ] == '\0' ) {
-		sh = FinishShader();
-		return sh;
+			sh = FinishShader();
+			return sh;
 		}
 	}
 
@@ -4538,6 +4544,7 @@ shader_t *R_FindShader( const char *name, int lightmapIndex, imgFlags_t rawImage
 	// implicit shaders were breaking nopicmip/nomipmaps
 	shader.noMipMaps = !( rawImageFlags & IMGFLAG_MIPMAP );
 	shader.noPicMip = !( rawImageFlags & IMGFLAG_PICMIP );
+
 	//
 	// if not defined in the in-memory shader descriptions,
 	// look for a single supported image file
@@ -4547,6 +4554,7 @@ shader_t *R_FindShader( const char *name, int lightmapIndex, imgFlags_t rawImage
 
 		flags = IMGFLAG_NONE;
 		flags |= rawImageFlags;
+
 		if (rawImageFlags & IMGFLAG_MIPMAP)
 		{
 			if (r_genNormalMaps->integer)
@@ -4563,6 +4571,7 @@ shader_t *R_FindShader( const char *name, int lightmapIndex, imgFlags_t rawImage
 			return FinishShader();
 		}
 	}
+
 	// set default stages
 	SetImplicitShaderStages( image );
 
@@ -4611,13 +4620,10 @@ qhandle_t RE_RegisterShaderFromImage(const char *name, int lightmapIndex, image_
 
 /* 
 ====================
-RE_RegisterShader
+RE_RegisterShaderEx
 
 This is the exported shader entry point for the rest of the system
 It will always return an index that will be valid.
-
-This should really only be used for explicit shaders, because there is no
-way to ask for different implicit lighting modes (vertex, lightmap, etc)
 ====================
 */
 qhandle_t RE_RegisterShaderEx( const char *name, int lightmapIndex, qboolean mipRawImage ) {
@@ -5020,7 +5026,7 @@ R_InitShaders
 ==================
 */
 void R_InitShaders( void ) {
-	ri.Printf( PRINT_ALL, "Initializing Shaders\n" );
+	ri.Printf(PRINT_ALL, "Initializing Shaders\n");
 
 	Com_Memset(hashTable, 0, sizeof(hashTable));
 
@@ -5035,6 +5041,5 @@ R_InitExternalShaders
 ==================
 */
 void R_InitExternalShaders( void ) {
-
 	CreateExternalShaders();
 }

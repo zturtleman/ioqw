@@ -124,18 +124,18 @@ void R_DlightBmodel( bmodel_t *bmodel ) {
 
 		// parallel dlights affect all entities
 		if ( !( dl->flags & REF_DIRECTED_DLIGHT ) ) {
-		// see if the point is close enough to the bounds to matter
-		for ( j = 0 ; j < 3 ; j++ ) {
-			if ( dl->transformed[j] - bmodel->bounds[1][j] > dl->radius ) {
-				break;
+			// see if the point is close enough to the bounds to matter
+			for ( j = 0 ; j < 3 ; j++ ) {
+				if ( dl->transformed[j] - bmodel->bounds[1][j] > dl->radius ) {
+					break;
+				}
+				if ( bmodel->bounds[0][j] - dl->transformed[j] > dl->radius ) {
+					break;
+				}
 			}
-			if ( bmodel->bounds[0][j] - dl->transformed[j] > dl->radius ) {
-				break;
+			if ( j < 3 ) {
+				continue;
 			}
-		}
-		if ( j < 3 ) {
-			continue;
-		}
 		}
 
 		// we need to check this light
@@ -444,14 +444,14 @@ void R_SetupEntityLighting( const trRefdef_t *refdef, trRefEntity_t *ent ) {
 		VectorClear( ent->directedLight );
 		VectorClear( lightDir );
 	} else {
-	//
-	// modify the light by dynamic lights
-	//
-	d = VectorLength( ent->directedLight );
-	VectorScale( ent->lightDir, d, lightDir );
+		//
+		// modify the light by dynamic lights
+		//
+		d = VectorLength( ent->directedLight );
+		VectorScale( ent->lightDir, d, lightDir );
 
-	for ( i = 0 ; i < refdef->num_dlights ; i++ ) {
-		dl = &refdef->dlights[i];
+		for ( i = 0 ; i < refdef->num_dlights ; i++ ) {
+			dl = &refdef->dlights[i];
 
 			if ( !( dl->flags & REF_GRID_DLIGHT ) ) {
 				continue;

@@ -1989,6 +1989,7 @@ void RB_StageIteratorGeneric( void )
 	if ( input->shader->polygonOffset )
 	{
 		qglEnable( GL_POLYGON_OFFSET_FILL );
+		qglPolygonOffset( r_offsetFactor->value, r_offsetUnits->value );
 	}
 
 	//
