@@ -38,8 +38,8 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 #include "botlib.h"
 #include "be_aas.h"
 #include "be_aas_funcs.h"
-#include "be_interface.h"
 #include "be_aas_def.h"
+#include "be_interface.h"
 
 //#define REACH_DEBUG
 

@@ -69,11 +69,11 @@ typedef enum {
 	UI_PC_FREE_SOURCE,
 	UI_PC_READ_TOKEN,
 	UI_PC_SOURCE_FILE_AND_LINE,
-	//=========== client ui specific functionality =============
+
 	UI_GETGLCONFIG = 100,
 	UI_MEMORY_REMAINING,
 	UI_UPDATESCREEN,
-	// not available in cgame
+
 	UI_GETCLIENTSTATE = 150,
 	UI_GETCONFIGSTRING,
 	// NOTE: LAN functions are not available in cgame.

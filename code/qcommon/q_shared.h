@@ -1120,7 +1120,7 @@ typedef struct entityState_s {
 	int eventParm;
 	int clientNum;		// 0 to (MAX_CLIENTS - 1), for players and corpses
 	int team;
-	int density;		   // for particle effects
+	int density;		// for particle effects
 	// for players
 	int powerups;		// bit flags
 	int weapon;			// determines weapon and flash model, etc.

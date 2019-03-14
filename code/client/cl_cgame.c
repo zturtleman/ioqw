@@ -602,6 +602,7 @@ intptr_t CL_CgameSystemCalls(intptr_t *args) {
 			return re.GetEntityToken(VMA(1), args[2]);
 		case CG_R_ADDREFENTITYTOSCENE:
 			re.AddRefEntityToScene(VMA(1));
+			return 0;
 		case CG_R_ADDPOLYREFENTITYTOSCENE:
 			re.AddRefEntityToScene(VMA(1));
 			return 0;

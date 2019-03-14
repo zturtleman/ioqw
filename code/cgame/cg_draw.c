@@ -2570,8 +2570,7 @@ static void CG_Draw2D(stereoFrame_t stereoFrame) {
 			CG_DrawWeaponSelect();
 #ifndef BASEGAME
 			CG_DrawHoldableItem();
-#else
-			//CG_DrawPersistantPowerup();
+			CG_DrawPersistantPowerup();
 #endif
 		}
 	}
