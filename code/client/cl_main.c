@@ -1569,7 +1569,7 @@ void CL_Connect_f(void) {
 		clc.state = CA_CHALLENGING;
 	} else {
 		clc.state = CA_CONNECTING;
-		// set a client challenge number that ideally is mirrored back by the server.
+		// set a client challenge number that ideally is mirrored back by the server
 		clc.challenge = (((unsigned int)rand() << 16) ^ (unsigned int)rand()) ^ Com_Milliseconds();
 	}
 

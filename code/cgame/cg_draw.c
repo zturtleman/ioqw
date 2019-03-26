@@ -300,7 +300,7 @@ static void CG_DrawField(int x, int y, int width, int value) {
 #endif
 /*
 =======================================================================================================================================
-CG_Draw3DModel
+CG_Draw3DModelEx
 =======================================================================================================================================
 */
 void CG_Draw3DModelEx(float x, float y, float w, float h, qhandle_t model, cgSkin_t *skin, vec3_t origin, vec3_t angles, const byte *rgba) {

@@ -237,6 +237,24 @@ static void CG_CalcVrect(void) {
 	cg.refdef.y = (cgs.glconfig.vidHeight - cg.refdef.height) / 2;
 }
 
+/*
+=======================================================================================================================================
+CG_StepOffset
+
+NOTE: This causes a compiler bug on mac MrC compiler.
+=======================================================================================================================================
+*/
+static void CG_StepOffset(void) {
+	int timeDelta;
+
+	// smooth out stair climbing
+	timeDelta = cg.time - cg.stepTime;
+
+	if (timeDelta < STEP_TIME) {
+		cg.refdef.vieworg[2] -= cg.stepChange * (STEP_TIME - timeDelta) / STEP_TIME;
+	}
+}
+
 #define FOCUS_DISTANCE 512
 /*
 =======================================================================================================================================
@@ -307,24 +325,6 @@ static void CG_OffsetThirdPersonView(void) {
 
 	cg.refdefViewAngles[PITCH] = -180 / M_PI * atan2(focusPoint[2], focusDist);
 	cg.refdefViewAngles[YAW] -= cg_thirdPersonAngle.value;
-}
-
-/*
-=======================================================================================================================================
-CG_StepOffset
-
-NOTE: This causes a compiler bug on mac MrC compiler.
-=======================================================================================================================================
-*/
-static void CG_StepOffset(void) {
-	int timeDelta;
-
-	// smooth out stair climbing
-	timeDelta = cg.time - cg.stepTime;
-
-	if (timeDelta < STEP_TIME) {
-		cg.refdef.vieworg[2] -= cg.stepChange * (STEP_TIME - timeDelta) / STEP_TIME;
-	}
 }
 
 /*
@@ -598,7 +598,7 @@ static int CG_CalcFov(void) {
 		cg.zoomSensitivity = cg.refdef.fov_y / 75.0;
 	}
 
-	return(cg.refdef.rdflags & RDF_UNDERWATER);
+	return (cg.refdef.rdflags & RDF_UNDERWATER);
 }
 
 /*

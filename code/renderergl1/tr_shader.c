@@ -2821,7 +2821,7 @@ static qboolean ParseShader( char **text )
 	//
 	// ignore shaders that don't have any stages, unless it is a sky, fog, or have implicit mapping
 	//
-	if ( s == 0 && !shader.isSky && !(shader.contentFlags & CONTENTS_FOG ) && implicitMap[ 0 ] == '\0' ) {
+	if ( s == 0 && !shader.isSky && !( shader.contentFlags & CONTENTS_FOG ) && implicitMap[ 0 ] == '\0' ) {
 		return qfalse;
 	}
 

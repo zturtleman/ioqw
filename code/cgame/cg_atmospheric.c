@@ -1,31 +1,25 @@
 /*
-===========================================================================
+=======================================================================================================================================
 Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
 This file is part of Spearmint Source Code.
 
-Spearmint Source Code is free software; you can redistribute it
-and/or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 3 of the License,
-or (at your option) any later version.
+Spearmint Source Code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
 
-Spearmint Source Code is distributed in the hope that it will be
-useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+Spearmint Source Code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with Spearmint Source Code.  If not, see <http://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License along with Spearmint Source Code.
+If not, see <http://www.gnu.org/licenses/>.
 
-In addition, Spearmint Source Code is also subject to certain additional terms.
-You should have received a copy of these additional terms immediately following
-the terms and conditions of the GNU General Public License.  If not, please
-request a copy in writing from id Software at the address below.
+In addition, Spearmint Source Code is also subject to certain additional terms. You should have received a copy of these additional
+terms immediately following the terms and conditions of the GNU General Public License. If not, please request a copy in writing from
+id Software at the address below.
 
-If you have questions concerning this license or the applicable additional
-terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc.,
-Suite 120, Rockville, Maryland 20850 USA.
-===========================================================================
+If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o
+ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+=======================================================================================================================================
 */
 
 /*
@@ -42,23 +36,21 @@ Suite 120, Rockville, Maryland 20850 USA.
 
 #define ATM_NEW // Use PolyBuffer
 
-#define MAX_ATMOSPHERIC_HEIGHT          MAX_MAP_SIZE    // maximum world height
-#define MIN_ATMOSPHERIC_HEIGHT          -MAX_MAP_SIZE   // minimum world height
+#define MAX_ATMOSPHERIC_HEIGHT MAX_MAP_SIZE // maximum world height
+#define MIN_ATMOSPHERIC_HEIGHT -MAX_MAP_SIZE // minimum world height
 
 //int getgroundtime, getskytime, rendertime, checkvisibletime, generatetime;
 //int n_getgroundtime, n_getskytime, n_rendertime, n_checkvisibletime, n_generatetime;
 
-#define MAX_ATMOSPHERIC_PARTICLES       4000    // maximum # of particles
-#define MAX_ATMOSPHERIC_DISTANCE        1000    // maximum distance from refdef origin that particles are visible
-#define MAX_ATMOSPHERIC_EFFECTSHADERS   6       // maximum different effectshaders for an atmospheric effect
-#define ATMOSPHERIC_DROPDELAY           1000
-#define ATMOSPHERIC_CUTHEIGHT           800
-
-#define ATMOSPHERIC_RAIN_SPEED      ( 1.1f * DEFAULT_GRAVITY )
-#define ATMOSPHERIC_RAIN_HEIGHT     150
-
-#define ATMOSPHERIC_SNOW_SPEED      ( 0.1f * DEFAULT_GRAVITY )
-#define ATMOSPHERIC_SNOW_HEIGHT     3
+#define MAX_ATMOSPHERIC_PARTICLES 4000 // maximum # of particles
+#define MAX_ATMOSPHERIC_DISTANCE 1000 // maximum distance from refdef origin that particles are visible
+#define MAX_ATMOSPHERIC_EFFECTSHADERS 6 // maximum different effectshaders for an atmospheric effect
+#define ATMOSPHERIC_DROPDELAY 1000
+#define ATMOSPHERIC_CUTHEIGHT 800
+#define ATMOSPHERIC_RAIN_SPEED (1.1f * DEFAULT_GRAVITY)
+#define ATMOSPHERIC_RAIN_HEIGHT 150
+#define ATMOSPHERIC_SNOW_SPEED (0.1f * DEFAULT_GRAVITY)
+#define ATMOSPHERIC_SNOW_HEIGHT 3
 
 typedef enum {
 	ATM_NONE,
@@ -74,47 +66,48 @@ static polyVert_t atmPolyPool[MAX_ATMOSPHERIC_PARTICLES * 3];
 static int numParticlesInFrame;
 static qhandle_t atmPolyShader;
 
-static void CG_ClearPolyPool( void ) {
+static void CG_ClearPolyPool(void) {
 	numParticlesInFrame = 0;
 	atmPolyShader = 0;
 }
 
-static void CG_RenderPolyPool( void ) {
-	if ( numParticlesInFrame ) {
-		trap_R_AddPolysToScene( atmPolyShader, 3, atmPolyPool, numParticlesInFrame, 0, 0 );
+static void CG_RenderPolyPool(void) {
+	if (numParticlesInFrame) {
+		trap_R_AddPolysToScene(atmPolyShader, 3, atmPolyPool, numParticlesInFrame, 0, 0);
 		CG_ClearPolyPool();
 	}
 }
 #endif // ATM_NEW
 
-static void CG_AddPolyToPool( qhandle_t shader, const polyVert_t *verts ) {
+static void CG_AddPolyToPool(qhandle_t shader, const polyVert_t *verts) {
 #ifndef ATM_NEW
-	if ( atmPolyShader && atmPolyShader != shader ) {
+	if (atmPolyShader && atmPolyShader != shader) {
 		CG_RenderPolyPool();
 	}
 
-	if ( numParticlesInFrame == MAX_ATMOSPHERIC_PARTICLES ) {
+	if (numParticlesInFrame == MAX_ATMOSPHERIC_PARTICLES) {
 		CG_RenderPolyPool();
 	}
 
 	atmPolyShader = shader;
-	memcpy( &atmPolyPool[numParticlesInFrame * 3], verts, 3 * sizeof( polyVert_t ) );
+	memcpy(&atmPolyPool[numParticlesInFrame * 3], verts, 3 * sizeof(polyVert_t));
 	numParticlesInFrame++;
 #else
 	int firstIndex;
 	int firstVertex;
 	int i;
 
-	polyBuffer_t* pPolyBuffer = CG_PB_FindFreePolyBuffer( shader, 3, 3 );
-	if ( !pPolyBuffer ) {
+	polyBuffer_t *pPolyBuffer = CG_PB_FindFreePolyBuffer(shader, 3, 3);
+
+	if (!pPolyBuffer) {
 		return;
 	}
 
 	firstIndex = pPolyBuffer->numIndicies;
 	firstVertex = pPolyBuffer->numVerts;
 
-	for ( i = 0; i < 3; i++ ) {
-		VectorCopy( verts[i].xyz, pPolyBuffer->xyz[firstVertex + i] );
+	for (i = 0; i < 3; i++) {
+		VectorCopy(verts[i].xyz, pPolyBuffer->xyz[firstVertex + i]);
 
 		pPolyBuffer->st[firstVertex + i][0] = verts[i].st[0];
 		pPolyBuffer->st[firstVertex + i][1] = verts[i].st[1];
@@ -138,52 +131,47 @@ static void CG_AddPolyToPool( qhandle_t shader, const polyVert_t *verts ) {
 
 static qboolean kludgeChecked, kludgeResult;
 qboolean CG_AtmosphericKludge(void) {
-	// Activate rain for specified kludge maps that don't
-	// have it specified for them.
+	// Activate rain for specified kludge maps that don't have it specified for them.
 
-	if ( kludgeChecked ) {
-		return( kludgeResult );
+	if (kludgeChecked) {
+		return (kludgeResult);
 	}
+
 	kludgeChecked = qtrue;
 	kludgeResult = qfalse;
 
-	/*if( !Q_stricmp( cgs.mapname, "maps/trainyard.bsp" ) )
-	{
-		//CG_EffectParse( "T=RAIN,B=5 10,C=0.5 2,G=0.5 2,BV=30 100,GV=20 80,W=1 2,D=1000 1000" );
-		CG_EffectParse( "T=RAIN,B=5 10,C=0.5,G=0.5 2,BV=50 50,GV=200 200,W=1 2,D=1000" );
-		return( kludgeResult = qtrue );
+	/*if(!Q_stricmp(cgs.mapname, "maps/trainyard.bsp")) {
+		//CG_EffectParse("T=RAIN,B=5 10,C=0.5 2,G=0.5 2,BV=30 100,GV=20 80,W=1 2,D=1000 1000");
+		CG_EffectParse("T=RAIN,B=5 10,C=0.5,G=0.5 2,BV=50 50,GV=200 200,W=1 2,D=1000");
+		return (kludgeResult = qtrue);
 	}*/
-/*	if( !Q_stricmp( cgs.mapname, "maps/mp_railgun.bsp" ) )
-	{
-		//CG_EffectParse( "T=RAIN,B=5 10,C=0.5 2,G=0.5 2,BV=30 100,GV=20 80,W=1 2,D=1000 1000" );
-//		CG_EffectParse( "T=SNOW,B=5 10,C=0.5,G=0.3 2,BV=50 50,GV=30 80,W=1 2,D=5000" );
-
+/*	if (!Q_stricmp(cgs.mapname, "maps/mp_railgun.bsp")) {
+		//CG_EffectParse("T=RAIN,B=5 10,C=0.5 2,G=0.5 2,BV=30 100,GV=20 80,W=1 2,D=1000 1000");
+//		CG_EffectParse("T=SNOW,B=5 10,C=0.5,G=0.3 2,BV=50 50,GV=30 80,W=1 2,D=5000");
 		// snow storm, quite horizontally
-		//CG_EffectParse( "T=SNOW,B=20 30,C=0.8,G=0.5 8,BV=100 100,GV=70 150,W=3 5,D=5000" );
-
+		//CG_EffectParse("T=SNOW,B=20 30,C=0.8,G=0.5 8,BV=100 100,GV=70 150,W=3 5,D=5000");
 		// mild snow storm, quite vertically - likely go for this
-		//CG_EffectParse( "T=SNOW,B=5 10,C=0.5,G=0.3 2,BV=20 30,GV=25 40,W=3 5,D=5000" );
-		CG_EffectParse( "T=SNOW,B=5 10,C=0.5,G=0.3 2,BV=20 30,GV=25 40,W=3 5,D=2000" );
-
+		//CG_EffectParse("T=SNOW,B=5 10,C=0.5,G=0.3 2,BV=20 30,GV=25 40,W=3 5,D=5000");
+		CG_EffectParse("T=SNOW,B=5 10,C=0.5,G=0.3 2,BV=20 30,GV=25 40,W=3 5,D=2000");
 		// cpu-cheap press event effect
-		//CG_EffectParse( "T=SNOW,B=5 10,C=0.5,G=0.3 2,BV=20 30,GV=25 40,W=3 5,D=500" );
-//		CG_EffectParse( "T=SNOW,B=5 10,C=0.5,G=0.3 2,BV=20 30,GV=25 40,W=3 5,D=750" );
-		return( kludgeResult = qtrue );
+		//CG_EffectParse("T=SNOW,B=5 10,C=0.5,G=0.3 2,BV=20 30,GV=25 40,W=3 5,D=500");
+//		CG_EffectParse("T=SNOW,B=5 10,C=0.5,G=0.3 2,BV=20 30,GV=25 40,W=3 5,D=750");
+		return (kludgeResult = qtrue);
 	}*/
 
-	/*if( !Q_stricmp( cgs.mapname, "maps/mp_goliath.bsp" ) ) {
-		//CG_EffectParse( "T=SNOW,B=5 7,C=0.2,G=0.1 5,BV=15 25,GV=25 40,W=3 5,D=400" );
-		CG_EffectParse( "T=SNOW,B=5 7,C=0.2,G=0.1 5,BV=15 25,GV=25 40,W=3 5,H=512,D=2000" );
-		return( kludgeResult = qtrue );
+	/*if(!Q_stricmp(cgs.mapname, "maps/mp_goliath.bsp")) {
+		//CG_EffectParse("T=SNOW,B=5 7,C=0.2,G=0.1 5,BV=15 25,GV=25 40,W=3 5,D=400");
+		CG_EffectParse("T=SNOW,B=5 7,C=0.2,G=0.1 5,BV=15 25,GV=25 40,W=3 5,H=512,D=2000");
+		return (kludgeResult = qtrue);
 	}*/
-	/*if( !Q_stricmp( cgs.rawmapname, "sp_bruck_test006" ) ) {
+	/*if(!Q_stricmp(cgs.rawmapname, "sp_bruck_test006")) {
 		//T=SNOW,B=5 10,C=0.5,G=0.3 2,BV=20 30,GV=25 40,W=3 5,H=608,D=2000
-		CG_EffectParse( "T=SNOW,B=5 10,C=0.5,G=0.3 2,BV=20 30,GV=25 40,W=3 5,H=512,D=2000 4000" );
-		//CG_EffectParse( "T=SNOW,B=5 7,C=0.2,G=0.1 5,BV=15 25,GV=25 40,W=3 5,H=512,D=2000" );
-		return( kludgeResult = qtrue );
+		CG_EffectParse("T=SNOW,B=5 10,C=0.5,G=0.3 2,BV=20 30,GV=25 40,W=3 5,H=512,D=2000 4000");
+		//CG_EffectParse("T=SNOW,B=5 7,C=0.2,G=0.1 5,BV=15 25,GV=25 40,W=3 5,H=512,D=2000");
+		return (kludgeResult = qtrue);
 	}*/
 
-	return( kludgeResult = qfalse );
+	return (kludgeResult = qfalse);
 }
 
 typedef enum {
@@ -216,9 +204,9 @@ typedef struct cg_atmosphericEffect_s {
 
 	vec3_t viewDir;
 
-	qboolean ( *ParticleCheckVisible )( cg_atmosphericParticle_t *particle );
-	qboolean ( *ParticleGenerate )( cg_atmosphericParticle_t *particle, vec3_t currvec, float currweight );
-	void ( *ParticleRender )( cg_atmosphericParticle_t *particle );
+	qboolean (*ParticleCheckVisible)(cg_atmosphericParticle_t *particle);
+	qboolean (*ParticleGenerate)(cg_atmosphericParticle_t *particle, vec3_t currvec, float currweight);
+	void (*ParticleRender)(cg_atmosphericParticle_t *particle);
 
 	int dropsActive, oldDropsActive;
 	int dropsRendered, dropsCreated, dropsSkipped;
@@ -227,17 +215,16 @@ typedef struct cg_atmosphericEffect_s {
 static cg_atmosphericEffect_t cg_atmFx;
 
 
-static qboolean CG_SetParticleActive( cg_atmosphericParticle_t *particle, active_t active ) {
+static qboolean CG_SetParticleActive(cg_atmosphericParticle_t *particle, active_t active) {
 	particle->active = active;
 	return active ? qtrue : qfalse;
 }
-
 
 /*
 **	Raindrop management functions
 */
 
-static qboolean CG_RainParticleGenerate( cg_atmosphericParticle_t *particle, vec3_t currvec, float currweight ) {
+static qboolean CG_RainParticleGenerate(cg_atmosphericParticle_t *particle, vec3_t currvec, float currweight) {
 	// Attempt to 'spot' a raindrop somewhere below a sky texture.
 
 	float angle, distance;
@@ -249,113 +236,119 @@ static qboolean CG_RainParticleGenerate( cg_atmosphericParticle_t *particle, vec
 	angle = random() * 2 * M_PI;
 	distance = 20 + MAX_ATMOSPHERIC_DISTANCE * random();
 
-	particle->pos[0] = cg.refdef.vieworg[0] + sin( angle ) * distance;
-	particle->pos[1] = cg.refdef.vieworg[1] + cos( angle ) * distance;
+	particle->pos[0] = cg.refdef.vieworg[0] + sin(angle) * distance;
+	particle->pos[1] = cg.refdef.vieworg[1] + cos(angle) * distance;
 
 	// ydnar: choose a spawn point randomly between sky and ground
-	skyHeight = BG_GetSkyHeightAtPoint( particle->pos );
-	if ( skyHeight == MAX_ATMOSPHERIC_HEIGHT ) {
+	skyHeight = BG_GetSkyHeightAtPoint(particle->pos);
+
+	if (skyHeight == MAX_ATMOSPHERIC_HEIGHT) {
 		return qfalse;
 	}
-	groundHeight = BG_GetSkyGroundHeightAtPoint( particle->pos );
-	if ( groundHeight >= skyHeight ) {
+
+	groundHeight = BG_GetSkyGroundHeightAtPoint(particle->pos);
+
+	if (groundHeight >= skyHeight) {
 		return qfalse;
 	}
-	particle->pos[2] = groundHeight + random() * ( skyHeight - groundHeight );
+
+	particle->pos[2] = groundHeight + random() * (skyHeight - groundHeight);
 
 	// make sure it doesn't fall from too far cause it then will go over our heads ('lower the ceiling')
-	if ( cg_atmFx.baseHeightOffset > 0 ) {
-		if ( particle->pos[2] - cg.refdef.vieworg[2] > cg_atmFx.baseHeightOffset ) {
+	if (cg_atmFx.baseHeightOffset > 0) {
+		if (particle->pos[2] - cg.refdef.vieworg[2] > cg_atmFx.baseHeightOffset) {
 			particle->pos[2] = cg.refdef.vieworg[2] + cg_atmFx.baseHeightOffset;
 
-			if ( particle->pos[2] < groundHeight ) {
+			if (particle->pos[2] < groundHeight) {
 				return qfalse;
 			}
 		}
 	}
-
 	// ydnar: rain goes in bursts
 	{
 		float maxActiveDrops;
-
 		// every 10 seconds allow max raindrops
-		maxActiveDrops = 0.50 * cg_atmFx.numDrops + 0.001 * cg_atmFx.numDrops * ( 10000 - ( cg.time % 10000 ) );
-		if ( cg_atmFx.oldDropsActive > maxActiveDrops ) {
+		maxActiveDrops = 0.50 * cg_atmFx.numDrops + 0.001 * cg_atmFx.numDrops * (10000 - (cg.time % 10000));
+
+		if (cg_atmFx.oldDropsActive > maxActiveDrops) {
 			return qfalse;
 		}
 	}
 
-	CG_SetParticleActive( particle, ACT_FALLING );
+	CG_SetParticleActive(particle, ACT_FALLING);
 	particle->colour[0] = 0.6 + 0.2 * random() * 0xFF;
 	particle->colour[1] = 0.6 + 0.2 * random() * 0xFF;
 	particle->colour[2] = 0.6 + 0.2 * random() * 0xFF;
-	VectorCopy( currvec, particle->delta );
+	VectorCopy(currvec, particle->delta);
 	particle->delta[2] += crandom() * 100;
-	VectorCopy( particle->delta, particle->deltaNormalized );
-	VectorNormalizeFast( particle->deltaNormalized );
+	VectorCopy(particle->delta, particle->deltaNormalized);
+	VectorNormalizeFast(particle->deltaNormalized);
 	particle->height = ATMOSPHERIC_RAIN_HEIGHT + crandom() * 100;
 	particle->weight = currweight;
 
 	if (cg_atmFx.numEffectShaders > 1) {
-		particle->effectshader = &cg_atmFx.effectshaders[ rand()%cg_atmFx.numEffectShaders ];
+		particle->effectshader = &cg_atmFx.effectshaders[rand()%cg_atmFx.numEffectShaders];
 	} else {
 		particle->effectshader = &cg_atmFx.effectshaders[0];
 	}
 
 //	generatetime += trap_Milliseconds() - msec;
-	return( qtrue );
+	return (qtrue);
 }
 
-static qboolean CG_RainParticleCheckVisible( cg_atmosphericParticle_t *particle ) {
+static qboolean CG_RainParticleCheckVisible(cg_atmosphericParticle_t *particle) {
 	// Check the raindrop is visible and still going, wrapping if necessary.
 
 	float moved;
 	vec2_t distance;
 //	int msec = trap_Milliseconds();
 
-	if ( !particle || particle->active == ACT_NOT ) {
+	if (!particle || particle->active == ACT_NOT) {
 //		checkvisibletime += trap_Milliseconds() - msec;
-		return( qfalse );
+		return (qfalse);
 	}
 
-	moved = ( cg.time - cg_atmFx.lastRainTime ) * 0.001;  // Units moved since last frame
-	VectorMA( particle->pos, moved, particle->delta, particle->pos );
-	if ( particle->pos[2] + particle->height < BG_GetSkyGroundHeightAtPoint( particle->pos ) ) {
+	moved = (cg.time - cg_atmFx.lastRainTime) * 0.001;  // Units moved since last frame
+	VectorMA(particle->pos, moved, particle->delta, particle->pos);
+
+	if (particle->pos[2] + particle->height < BG_GetSkyGroundHeightAtPoint(particle->pos)) {
 //		checkvisibletime += trap_Milliseconds() - msec;
-		return CG_SetParticleActive( particle, ACT_NOT );
+		return CG_SetParticleActive(particle, ACT_NOT);
 	}
 
 	distance[0] = particle->pos[0] - cg.refdef.vieworg[0];
 	distance[1] = particle->pos[1] - cg.refdef.vieworg[1];
-	if ( ( distance[0] * distance[0] + distance[1] * distance[1] ) > Square( MAX_ATMOSPHERIC_DISTANCE ) ) {
+
+	if ((distance[0] * distance[0] + distance[1] * distance[1]) > Square(MAX_ATMOSPHERIC_DISTANCE)) {
 		// ydnar: just nuke this particle, let it respawn
-		return CG_SetParticleActive( particle, ACT_NOT );
+		return CG_SetParticleActive(particle, ACT_NOT);
 
 		/*
 		// Attempt to respot the particle at our other side
 		particle->pos[0] -= 1.85f * distance[0];
 		particle->pos[1] -= 1.85f * distance[1];
-
 		// Valid spot?
-		pointHeight = BG_GetSkyHeightAtPoint( particle->pos );
-		if( pointHeight == MAX_ATMOSPHERIC_HEIGHT ) {
+		pointHeight = BG_GetSkyHeightAtPoint(particle->pos);
+
+		if (pointHeight == MAX_ATMOSPHERIC_HEIGHT) {
 //			checkvisibletime += trap_Milliseconds() - msec;
-			return CG_SetParticleActive( particle, ACT_NOT );
+			return CG_SetParticleActive(particle, ACT_NOT);
 		}
 
-		pointHeight = BG_GetSkyGroundHeightAtPoint( particle->pos );
-		if( pointHeight == MAX_ATMOSPHERIC_HEIGHT || pointHeight >= particle->pos[2] ) {
+		pointHeight = BG_GetSkyGroundHeightAtPoint(particle->pos);
+
+		if (pointHeight == MAX_ATMOSPHERIC_HEIGHT || pointHeight >= particle->pos[2]) {
 //			checkvisibletime += trap_Milliseconds() - msec;
-			return CG_SetParticleActive( particle, ACT_NOT );
+			return CG_SetParticleActive(particle, ACT_NOT);
 		}
 		*/
 	}
 
 //	checkvisibletime += trap_Milliseconds() - msec;
-	return( qtrue );
+	return (qtrue);
 }
 
-static void CG_RainParticleRender( cg_atmosphericParticle_t *particle ) {
+static void CG_RainParticleRender(cg_atmosphericParticle_t *particle) {
 	// Draw a raindrop
 
 	vec3_t forward, right;
@@ -364,57 +357,57 @@ static void CG_RainParticleRender( cg_atmosphericParticle_t *particle ) {
 	float len, dist;
 	vec3_t start, finish;
 	float groundHeight;
-//	int			msec = trap_Milliseconds();
+//	int msec = trap_Milliseconds();
 
 //	n_rendertime++;
 
-	if ( particle->active == ACT_NOT ) {
+	if (particle->active == ACT_NOT) {
 //		rendertime += trap_Milliseconds() - msec;
 		return;
 	}
 
-	if ( CG_CullPoint( particle->pos ) ) {
+	if (CG_CullPoint(particle->pos)) {
 		return;
 	}
 
-	VectorCopy( particle->pos, start );
+	VectorCopy(particle->pos, start);
 
-	dist = DistanceSquared( particle->pos, cg.refdef.vieworg );
+	dist = DistanceSquared(particle->pos, cg.refdef.vieworg);
 
 	// Make sure it doesn't clip through surfaces
-	groundHeight = BG_GetSkyGroundHeightAtPoint( start );
+	groundHeight = BG_GetSkyGroundHeightAtPoint(start);
 	len = particle->height;
-	if ( start[2] <= groundHeight ) {
+
+	if (start[2] <= groundHeight) {
 		// Stop snow going through surfaces.
 		len = particle->height - groundHeight + start[2];
-		VectorMA( start, len - particle->height, particle->deltaNormalized, start );
+		VectorMA(start, len - particle->height, particle->deltaNormalized, start);
 	}
 
-	if ( len <= 0 ) {
+	if (len <= 0) {
 //		rendertime += trap_Milliseconds() - msec;
 		return;
 	}
-
 	// fade nearby rain particles
-	if ( dist < Square( 128.f ) ) {
-		dist = .25f + .75f * ( dist / Square( 128.f ) );
+	if (dist < Square(128.f)) {
+		dist = .25f + .75f * (dist / Square(128.f));
 	} else {
 		dist = 1.0f;
 	}
 
-	VectorCopy( particle->deltaNormalized, forward );
-	VectorMA( start, -len, forward, finish );
+	VectorCopy(particle->deltaNormalized, forward);
+	VectorMA(start, -len, forward, finish);
 
-	line[0] = DotProduct( forward, cg.refdef.viewaxis[1] );
-	line[1] = DotProduct( forward, cg.refdef.viewaxis[2] );
+	line[0] = DotProduct(forward, cg.refdef.viewaxis[1]);
+	line[1] = DotProduct(forward, cg.refdef.viewaxis[2]);
 
-	VectorScale( cg.refdef.viewaxis[1], line[1], right );
-	VectorMA( right, -line[0], cg.refdef.viewaxis[2], right );
-	VectorNormalize( right );
+	VectorScale(cg.refdef.viewaxis[1], line[1], right);
+	VectorMA(right, -line[0], cg.refdef.viewaxis[2], right);
+	VectorNormalize(right);
 
 	// dist = 1.0;
 
-	VectorCopy( finish, verts[0].xyz );
+	VectorCopy(finish, verts[0].xyz);
 	verts[0].st[0] = 0.5f;
 	verts[0].st[1] = 0;
 	verts[0].modulate[0] = particle->colour[0];
@@ -422,7 +415,7 @@ static void CG_RainParticleRender( cg_atmosphericParticle_t *particle ) {
 	verts[0].modulate[2] = particle->colour[2];
 	verts[0].modulate[3] = 100 * dist;
 
-	VectorMA( start, -particle->weight, right, verts[1].xyz );
+	VectorMA(start, -particle->weight, right, verts[1].xyz);
 	verts[1].st[0] = 0;
 	verts[1].st[1] = 1;
 	verts[1].modulate[0] = particle->colour[0];
@@ -430,7 +423,7 @@ static void CG_RainParticleRender( cg_atmosphericParticle_t *particle ) {
 	verts[2].modulate[2] = particle->colour[2];
 	verts[1].modulate[3] = 200 * dist;
 
-	VectorMA( start, particle->weight, right, verts[2].xyz );
+	VectorMA(start, particle->weight, right, verts[2].xyz);
 	verts[2].st[0] = 1;
 	verts[2].st[1] = 1;
 	verts[2].modulate[0] = particle->colour[0];
@@ -438,7 +431,7 @@ static void CG_RainParticleRender( cg_atmosphericParticle_t *particle ) {
 	verts[2].modulate[2] = particle->colour[2];
 	verts[2].modulate[3] = 200 * dist;
 
-	CG_AddPolyToPool( *particle->effectshader, verts );
+	CG_AddPolyToPool(*particle->effectshader, verts);
 
 //	rendertime += trap_Milliseconds() - msec;
 }
@@ -447,7 +440,7 @@ static void CG_RainParticleRender( cg_atmosphericParticle_t *particle ) {
 **	Snow management functions
 */
 
-static qboolean CG_SnowParticleGenerate( cg_atmosphericParticle_t *particle, vec3_t currvec, float currweight ) {
+static qboolean CG_SnowParticleGenerate(cg_atmosphericParticle_t *particle, vec3_t currvec, float currweight) {
 	// Attempt to 'spot' a snowflake somewhere below a sky texture.
 
 	float angle, distance;
@@ -459,49 +452,54 @@ static qboolean CG_SnowParticleGenerate( cg_atmosphericParticle_t *particle, vec
 	angle = random() * 2 * M_PI;
 	distance = 20 + MAX_ATMOSPHERIC_DISTANCE * random();
 
-	particle->pos[0] = cg.refdef.vieworg[0] + sin( angle ) * distance;
-	particle->pos[1] = cg.refdef.vieworg[1] + cos( angle ) * distance;
+	particle->pos[0] = cg.refdef.vieworg[0] + sin(angle) * distance;
+	particle->pos[1] = cg.refdef.vieworg[1] + cos(angle) * distance;
 
 	// ydnar: choose a spawn point randomly between sky and ground
-	skyHeight = BG_GetSkyHeightAtPoint( particle->pos );
-	if ( skyHeight == MAX_ATMOSPHERIC_HEIGHT ) {
+	skyHeight = BG_GetSkyHeightAtPoint(particle->pos);
+
+	if (skyHeight == MAX_ATMOSPHERIC_HEIGHT) {
 		return qfalse;
 	}
-	groundHeight = BG_GetSkyGroundHeightAtPoint( particle->pos );
-	if ( groundHeight >= skyHeight ) {
+
+	groundHeight = BG_GetSkyGroundHeightAtPoint(particle->pos);
+
+	if (groundHeight >= skyHeight) {
 		return qfalse;
 	}
-	particle->pos[2] = groundHeight + random() * ( skyHeight - groundHeight );
+
+	particle->pos[2] = groundHeight + random() * (skyHeight - groundHeight);
 
 	// make sure it doesn't fall from too far cause it then will go over our heads ('lower the ceiling')
-	if ( cg_atmFx.baseHeightOffset > 0 ) {
-		if ( particle->pos[2] - cg.refdef.vieworg[2] > cg_atmFx.baseHeightOffset ) {
+	if (cg_atmFx.baseHeightOffset > 0) {
+		if (particle->pos[2] - cg.refdef.vieworg[2] > cg_atmFx.baseHeightOffset) {
 			particle->pos[2] = cg.refdef.vieworg[2] + cg_atmFx.baseHeightOffset;
-			if ( particle->pos[2] < groundHeight ) {
+
+			if (particle->pos[2] < groundHeight) {
 				return qfalse;
 			}
 		}
 	}
 
-	CG_SetParticleActive( particle, ACT_FALLING );
-	VectorCopy( currvec, particle->delta );
+	CG_SetParticleActive(particle, ACT_FALLING);
+	VectorCopy(currvec, particle->delta);
 	particle->delta[2] += crandom() * 25;
-	VectorCopy( particle->delta, particle->deltaNormalized );
-	VectorNormalizeFast( particle->deltaNormalized );
+	VectorCopy(particle->delta, particle->deltaNormalized);
+	VectorNormalizeFast(particle->deltaNormalized);
 	particle->height = ATMOSPHERIC_SNOW_HEIGHT + random() * 2;
 	particle->weight = particle->height * 0.5f;
 
 	if (cg_atmFx.numEffectShaders > 1) {
-		particle->effectshader = &cg_atmFx.effectshaders[ rand()%cg_atmFx.numEffectShaders ];
+		particle->effectshader = &cg_atmFx.effectshaders[rand()%cg_atmFx.numEffectShaders];
 	} else {
 		particle->effectshader = &cg_atmFx.effectshaders[0];
 	}
 
 //	generatetime += trap_Milliseconds() - msec;
-	return( qtrue );
+	return (qtrue);
 }
 
-static qboolean CG_SnowParticleCheckVisible( cg_atmosphericParticle_t *particle ) {
+static qboolean CG_SnowParticleCheckVisible(cg_atmosphericParticle_t *particle) {
 	// Check the snowflake is visible and still going, wrapping if necessary.
 
 	float moved;
@@ -510,47 +508,51 @@ static qboolean CG_SnowParticleCheckVisible( cg_atmosphericParticle_t *particle 
 
 //	n_checkvisibletime++;
 
-	if ( !particle || particle->active == ACT_NOT ) {
+	if (!particle || particle->active == ACT_NOT) {
 //		checkvisibletime += trap_Milliseconds() - msec;
-		return( qfalse );
+		return (qfalse);
 	}
 
-	moved = ( cg.time - cg_atmFx.lastRainTime ) * 0.001;  // Units moved since last frame
-	VectorMA( particle->pos, moved, particle->delta, particle->pos );
-	if ( particle->pos[2] < BG_GetSkyGroundHeightAtPoint( particle->pos ) ) {
+	moved = (cg.time - cg_atmFx.lastRainTime) * 0.001;  // Units moved since last frame
+	VectorMA(particle->pos, moved, particle->delta, particle->pos);
+
+	if (particle->pos[2] < BG_GetSkyGroundHeightAtPoint(particle->pos)) {
 //		checkvisibletime += trap_Milliseconds() - msec;
-		return CG_SetParticleActive( particle, ACT_NOT );
+		return CG_SetParticleActive(particle, ACT_NOT);
 	}
 
 	distance[0] = particle->pos[0] - cg.refdef.vieworg[0];
 	distance[1] = particle->pos[1] - cg.refdef.vieworg[1];
-	if ( ( distance[0] * distance[0] + distance[1] * distance[1] ) > Square( MAX_ATMOSPHERIC_DISTANCE ) ) {
+
+	if ((distance[0] * distance[0] + distance[1] * distance[1]) > Square(MAX_ATMOSPHERIC_DISTANCE)) {
 		// ydnar: just nuke this particle, let it respawn
-		return CG_SetParticleActive( particle, ACT_NOT );
+		return CG_SetParticleActive(particle, ACT_NOT);
 
 		/*
 		// Attempt to respot the particle at our other side
 		particle->pos[0] -= 1.85f * distance[0];
+
 		particle->pos[1] -= 1.85f * distance[1];
-
 		// ydnar: place particle in random position between ground and sky
-		groundHeight = BG_GetSkyGroundHeightAtPoint( particle->pos );
-		skyHeight = BG_GetSkyHeightAtPoint( particle->pos );
-		if( skyHeight == MAX_ATMOSPHERIC_HEIGHT )
-			return CG_SetParticleActive( particle, ACT_NOT );
-		particle->pos[ 2 ] = groundHeight + random() * (skyHeight - groundHeight);
+		groundHeight = BG_GetSkyGroundHeightAtPoint(particle->pos);
 
+		skyHeight = BG_GetSkyHeightAtPoint(particle->pos);
+
+		if (skyHeight == MAX_ATMOSPHERIC_HEIGHT)
+			return CG_SetParticleActive(particle, ACT_NOT);
+
+		particle->pos[2] = groundHeight + random() * (skyHeight - groundHeight);
 		// ydnar: valid spot?
-		if( particle->pos[ 2 ] <= groundHeight || particle->pos[ 2 ] >= skyHeight )
-			return CG_SetParticleActive( particle, ACT_NOT );
+		if (particle->pos[2] <= groundHeight || particle->pos[2] >= skyHeight)
+			return CG_SetParticleActive(particle, ACT_NOT);
 		*/
 	}
 
 //	checkvisibletime += trap_Milliseconds() - msec;
-	return( qtrue );
+	return (qtrue);
 }
 
-static void CG_SnowParticleRender( cg_atmosphericParticle_t *particle ) {
+static void CG_SnowParticleRender(cg_atmosphericParticle_t *particle) {
 	// Draw a snowflake
 
 	vec3_t forward, right;
@@ -559,36 +561,37 @@ static void CG_SnowParticleRender( cg_atmosphericParticle_t *particle ) {
 	float len, sinTumbling, cosTumbling, particleWidth, dist;
 	vec3_t start, finish;
 	float groundHeight;
-//	int			msec = trap_Milliseconds();
+//	int msec = trap_Milliseconds();
 
 //	n_rendertime++;
 
-	if ( particle->active == ACT_NOT ) {
+	if (particle->active == ACT_NOT) {
 //		rendertime += trap_Milliseconds() - msec;
 		return;
 	}
 
-	if ( CG_CullPoint( particle->pos ) ) {
+	if (CG_CullPoint(particle->pos)) {
 		return;
 	}
 
-	VectorCopy( particle->pos, start );
+	VectorCopy(particle->pos, start);
 
-	sinTumbling = sin( particle->pos[2] * 0.03125f * ( 0.5f * particle->weight ) );
-	cosTumbling = cos( ( particle->pos[2] + particle->pos[1] ) * 0.03125f * ( 0.5f * particle->weight ) );
-	start[0] += 24 * ( 1 - particle->deltaNormalized[2] ) * sinTumbling;
-	start[1] += 24 * ( 1 - particle->deltaNormalized[2] ) * cosTumbling;
+	sinTumbling = sin(particle->pos[2] * 0.03125f * (0.5f * particle->weight));
+	cosTumbling = cos((particle->pos[2] + particle->pos[1]) * 0.03125f * (0.5f * particle->weight));
+	start[0] += 24 * (1 - particle->deltaNormalized[2]) * sinTumbling;
+	start[1] += 24 * (1 - particle->deltaNormalized[2]) * cosTumbling;
 
 	// Make sure it doesn't clip through surfaces
-	groundHeight = BG_GetSkyGroundHeightAtPoint( start );
+	groundHeight = BG_GetSkyGroundHeightAtPoint(start);
 	len = particle->height;
-	if ( start[2] <= groundHeight ) {
+
+	if (start[2] <= groundHeight) {
 		// Stop snow going through surfaces.
 		len = particle->height - groundHeight + start[2];
-		VectorMA( start, len - particle->height, particle->deltaNormalized, start );
+		VectorMA(start, len - particle->height, particle->deltaNormalized, start);
 	}
 
-	if ( len <= 0 ) {
+	if (len <= 0) {
 //		rendertime += trap_Milliseconds() - msec;
 		return;
 	}
@@ -596,29 +599,29 @@ static void CG_SnowParticleRender( cg_atmosphericParticle_t *particle ) {
 	line[0] = particle->pos[0] - cg.refdef.vieworg[0];
 	line[1] = particle->pos[1] - cg.refdef.vieworg[1];
 
-	dist = DistanceSquared( particle->pos, cg.refdef.vieworg );
+	dist = DistanceSquared(particle->pos, cg.refdef.vieworg);
 	// dist becomes scale
-	if ( dist > Square( 500.f ) ) {
-		dist = 1.f + ( ( dist - Square( 500.f ) ) * ( 10.f / Square( 2000.f ) ) );
+	if (dist > Square(500.f)) {
+		dist = 1.f + ((dist - Square(500.f)) * (10.f / Square(2000.f)));
 	} else {
 		dist = 1.f;
 	}
 
 	len *= dist;
 
-	VectorCopy( particle->deltaNormalized, forward );
-	VectorMA( start, -( len /** sinTumbling*/ ), forward, finish );
+	VectorCopy(particle->deltaNormalized, forward);
+	VectorMA(start, -(len /** sinTumbling*/), forward, finish);
 
-	line[0] = DotProduct( forward, cg.refdef.viewaxis[1] );
-	line[1] = DotProduct( forward, cg.refdef.viewaxis[2] );
+	line[0] = DotProduct(forward, cg.refdef.viewaxis[1]);
+	line[1] = DotProduct(forward, cg.refdef.viewaxis[2]);
 
-	VectorScale( cg.refdef.viewaxis[1], line[1], right );
-	VectorMA( right, -line[0], cg.refdef.viewaxis[2], right );
-	VectorNormalize( right );
+	VectorScale(cg.refdef.viewaxis[1], line[1], right);
+	VectorMA(right, -line[0], cg.refdef.viewaxis[2], right);
+	VectorNormalize(right);
 
-	particleWidth = dist * ( /*cosTumbling **/ particle->weight );
+	particleWidth = dist * (/*cosTumbling **/ particle->weight);
 
-	VectorMA( finish, -particleWidth, right, verts[0].xyz );
+	VectorMA(finish, -particleWidth, right, verts[0].xyz);
 	verts[0].st[0] = 0;
 	verts[0].st[1] = 0;
 	verts[0].modulate[0] = 255;
@@ -626,7 +629,7 @@ static void CG_SnowParticleRender( cg_atmosphericParticle_t *particle ) {
 	verts[0].modulate[2] = 255;
 	verts[0].modulate[3] = 255;
 
-	VectorMA( start, -particleWidth, right, verts[1].xyz );
+	VectorMA(start, -particleWidth, right, verts[1].xyz);
 	verts[1].st[0] = 0;
 	verts[1].st[1] = 1;
 	verts[1].modulate[0] = 255;
@@ -634,7 +637,7 @@ static void CG_SnowParticleRender( cg_atmosphericParticle_t *particle ) {
 	verts[1].modulate[2] = 255;
 	verts[1].modulate[3] = 255;
 
-	VectorMA( start, particleWidth, right, verts[2].xyz );
+	VectorMA(start, particleWidth, right, verts[2].xyz);
 	verts[2].st[0] = 1;
 	verts[2].st[1] = 1;
 	verts[2].modulate[0] = 255;
@@ -642,7 +645,7 @@ static void CG_SnowParticleRender( cg_atmosphericParticle_t *particle ) {
 	verts[2].modulate[2] = 255;
 	verts[2].modulate[3] = 255;
 
-	CG_AddPolyToPool( *particle->effectshader, verts );
+	CG_AddPolyToPool(*particle->effectshader, verts);
 
 //	rendertime += trap_Milliseconds() - msec;
 }
@@ -656,85 +659,91 @@ static void CG_EffectGust(void) {
 
 	int diff;
 
-	cg_atmFx.baseEndTime        = cg.time                   + cg_atmFx.baseMinTime      + ( rand() % ( cg_atmFx.baseMaxTime - cg_atmFx.baseMinTime ) );
-	diff                        = cg_atmFx.changeMaxTime    - cg_atmFx.changeMinTime;
-	cg_atmFx.gustStartTime      = cg_atmFx.baseEndTime      + cg_atmFx.changeMinTime    + ( diff ? ( rand() % diff ) : 0 );
-	diff                        = cg_atmFx.gustMaxTime      - cg_atmFx.gustMinTime;
-	cg_atmFx.gustEndTime        = cg_atmFx.gustStartTime    + cg_atmFx.gustMinTime      + ( diff ? ( rand() % diff ) : 0 );
-	diff                        = cg_atmFx.changeMaxTime    - cg_atmFx.changeMinTime;
-	cg_atmFx.baseStartTime      = cg_atmFx.gustEndTime      + cg_atmFx.changeMinTime    + ( diff ? ( rand() % diff ) : 0 );
+	cg_atmFx.baseEndTime = cg.time + cg_atmFx.baseMinTime + (rand() % (cg_atmFx.baseMaxTime - cg_atmFx.baseMinTime));
+	diff = cg_atmFx.changeMaxTime - cg_atmFx.changeMinTime;
+	cg_atmFx.gustStartTime = cg_atmFx.baseEndTime + cg_atmFx.changeMinTime + (diff ? (rand() % diff) : 0);
+	diff = cg_atmFx.gustMaxTime - cg_atmFx.gustMinTime;
+	cg_atmFx.gustEndTime = cg_atmFx.gustStartTime + cg_atmFx.gustMinTime + (diff ? (rand() % diff) : 0);
+	diff = cg_atmFx.changeMaxTime - cg_atmFx.changeMinTime;
+	cg_atmFx.baseStartTime = cg_atmFx.gustEndTime + cg_atmFx.changeMinTime + (diff ? (rand() % diff) : 0);
 }
 
-static qboolean CG_EffectGustCurrent( vec3_t curr, float *weight, int *num ) {
+static qboolean CG_EffectGustCurrent(vec3_t curr, float *weight, int *num) {
 	// Calculate direction for new drops.
 
 	vec3_t temp;
 	float frac;
 
-	if ( cg.time < cg_atmFx.baseEndTime ) {
-		VectorCopy( cg_atmFx.baseVec, curr );
+	if (cg.time < cg_atmFx.baseEndTime) {
+		VectorCopy(cg_atmFx.baseVec, curr);
 		*weight = cg_atmFx.baseWeight;
 		*num = cg_atmFx.baseDrops;
 	} else {
-		VectorSubtract( cg_atmFx.gustVec, cg_atmFx.baseVec, temp );
-		if ( cg.time < cg_atmFx.gustStartTime ) {
-			frac = ( (float)( cg.time - cg_atmFx.baseEndTime ) ) / ( (float)( cg_atmFx.gustStartTime - cg_atmFx.baseEndTime ) );
-			VectorMA( cg_atmFx.baseVec, frac, temp, curr );
-			*weight = cg_atmFx.baseWeight + ( cg_atmFx.gustWeight - cg_atmFx.baseWeight ) * frac;
-			*num = cg_atmFx.baseDrops + ( (float)( cg_atmFx.gustDrops - cg_atmFx.baseDrops ) ) * frac;
-		} else if ( cg.time < cg_atmFx.gustEndTime )    {
-			VectorCopy( cg_atmFx.gustVec, curr );
+		VectorSubtract(cg_atmFx.gustVec, cg_atmFx.baseVec, temp);
+
+		if (cg.time < cg_atmFx.gustStartTime) {
+			frac = ((float)(cg.time - cg_atmFx.baseEndTime)) / ((float)(cg_atmFx.gustStartTime - cg_atmFx.baseEndTime));
+			VectorMA(cg_atmFx.baseVec, frac, temp, curr);
+			*weight = cg_atmFx.baseWeight + (cg_atmFx.gustWeight - cg_atmFx.baseWeight) * frac;
+			*num = cg_atmFx.baseDrops + ((float)(cg_atmFx.gustDrops - cg_atmFx.baseDrops)) * frac;
+		} else if (cg.time < cg_atmFx.gustEndTime) {
+			VectorCopy(cg_atmFx.gustVec, curr);
 			*weight = cg_atmFx.gustWeight;
 			*num = cg_atmFx.gustDrops;
-		} else
-		{
-			frac = 1.0 - ( (float)( cg.time - cg_atmFx.gustEndTime ) ) / ( (float)( cg_atmFx.baseStartTime - cg_atmFx.gustEndTime ) );
-			VectorMA( cg_atmFx.baseVec, frac, temp, curr );
-			*weight = cg_atmFx.baseWeight + ( cg_atmFx.gustWeight - cg_atmFx.baseWeight ) * frac;
-			*num = cg_atmFx.baseDrops + ( (float)( cg_atmFx.gustDrops - cg_atmFx.baseDrops ) ) * frac;
-			if ( cg.time >= cg_atmFx.baseStartTime ) {
-				return( qtrue );
+		} else {
+			frac = 1.0 - ((float)(cg.time - cg_atmFx.gustEndTime)) / ((float)(cg_atmFx.baseStartTime - cg_atmFx.gustEndTime));
+			VectorMA(cg_atmFx.baseVec, frac, temp, curr);
+			*weight = cg_atmFx.baseWeight + (cg_atmFx.gustWeight - cg_atmFx.baseWeight) * frac;
+			*num = cg_atmFx.baseDrops + ((float)(cg_atmFx.gustDrops - cg_atmFx.baseDrops)) * frac;
+
+			if (cg.time >= cg_atmFx.baseStartTime) {
+				return (qtrue);
 			}
 		}
 	}
-	return( qfalse );
+
+	return (qfalse);
 }
 
-static void CG_EP_ParseFloats( char *floatstr, float *f1, float *f2 ) {
+static void CG_EP_ParseFloats(char *floatstr, float *f1, float *f2) {
 	// Parse the float or floats
 
 	char *middleptr;
 	char buff[64];
 
-	Q_strncpyz( buff, floatstr, sizeof( buff ) );
-	for ( middleptr = buff; *middleptr && *middleptr != ' '; middleptr++ ) ;
-	if ( *middleptr ) {
+	Q_strncpyz(buff, floatstr, sizeof(buff));
+
+	for (middleptr = buff; *middleptr && *middleptr != ' '; middleptr++);
+
+	if (*middleptr) {
 		*middleptr++ = 0;
-		*f1 = atof( floatstr );
-		*f2 = atof( middleptr );
+		*f1 = atof(floatstr);
+		*f2 = atof(middleptr);
 	} else {
-		*f1 = *f2 = atof( floatstr );
+		*f1 = *f2 = atof(floatstr);
 	}
 }
 
-static void CG_EP_ParseInts( char *intstr, int *i1, int *i2 ) {
+static void CG_EP_ParseInts(char *intstr, int *i1, int *i2) {
 	// Parse the int or ints
 
 	char *middleptr;
 	char buff[64];
 
-	Q_strncpyz( buff, intstr, sizeof( buff ) );
-	for ( middleptr = buff; *middleptr && *middleptr != ' '; middleptr++ ) ;
-	if ( *middleptr ) {
+	Q_strncpyz(buff, intstr, sizeof(buff));
+
+	for (middleptr = buff; *middleptr && *middleptr != ' '; middleptr++);
+
+	if (*middleptr) {
 		*middleptr++ = 0;
-		*i1 = atof( intstr );
-		*i2 = atof( middleptr );
+		*i1 = atof(intstr);
+		*i2 = atof(middleptr);
 	} else {
-		*i1 = *i2 = atof( intstr );
+		*i1 = *i2 = atof(intstr);
 	}
 }
 
-void CG_EffectParse( const char *effectstr ) {
+void CG_EffectParse(const char *effectstr) {
 	// Split the string into it's component parts.
 
 	float bmin, bmax, cmin, cmax, gmin, gmax, bdrop, gdrop /*, wsplash, lsplash*/;
@@ -744,10 +753,9 @@ void CG_EffectParse( const char *effectstr ) {
 	atmFXType_t atmFXType = ATM_NONE;
 	int i;
 
-	if ( CG_AtmosphericKludge() ) {
+	if (CG_AtmosphericKludge()) {
 		return;
 	}
-
 	// Set up some default values
 	cg_atmFx.baseVec[0] = cg_atmFx.baseVec[1] = 0;
 	cg_atmFx.gustVec[0] = cg_atmFx.gustVec[1] = 100;
@@ -763,37 +771,43 @@ void CG_EffectParse( const char *effectstr ) {
 	bheight = 0;
 
 	// Parse the parameter string
-	Q_strncpyz( workbuff, effectstr, sizeof( workbuff ) );
-	for ( startptr = workbuff; *startptr; )
-	{
-		for ( eqptr = startptr; *eqptr && *eqptr != '=' && *eqptr != ','; eqptr++ ) ;
-		if ( !*eqptr ) {
-			break;          // No more string
+	Q_strncpyz(workbuff, effectstr, sizeof(workbuff));
+
+	for (startptr = workbuff; *startptr;) {
+		for (eqptr = startptr; *eqptr && *eqptr != '=' && *eqptr != ','; eqptr++);
+
+		if (!*eqptr) {
+			break; // No more string
 		}
-		if ( *eqptr == ',' ) {
+
+		if (*eqptr == ',') {
 			startptr = eqptr + 1;   // Bad argument, continue
 			continue;
 		}
 		*eqptr++ = 0;
-		for ( endptr = eqptr; *endptr && *endptr != ','; endptr++ ) ;
-		if ( *endptr ) {
+
+		for (endptr = eqptr; *endptr && *endptr != ','; endptr++);
+
+		if (*endptr) {
 			*endptr++ = 0;
 		}
 
-		if ( atmFXType == ATM_NONE ) {
-			if ( Q_stricmp( startptr, "T" ) ) {
+		if (atmFXType == ATM_NONE) {
+			if (Q_stricmp(startptr, "T")) {
 				cg_atmFx.numDrops = 0;
-				CG_Printf( "Atmospheric effect must start with a type.\n" );
+
+				CG_Printf("Atmospheric effect must start with a type.\n");
 				return;
 			}
-			if ( !Q_stricmp( eqptr, "RAIN" ) ) {
+
+			if (!Q_stricmp(eqptr, "RAIN")) {
 				atmFXType = ATM_RAIN;
 				cg_atmFx.ParticleCheckVisible = &CG_RainParticleCheckVisible;
 				cg_atmFx.ParticleGenerate = &CG_RainParticleGenerate;
 				cg_atmFx.ParticleRender = &CG_RainParticleRender;
 
 				cg_atmFx.baseVec[2] = cg_atmFx.gustVec[2] = -ATMOSPHERIC_RAIN_SPEED;
-			} else if ( !Q_stricmp( eqptr, "SNOW" ) ) {
+			} else if (!Q_stricmp(eqptr, "SNOW")) {
 				atmFXType = ATM_SNOW;
 				cg_atmFx.ParticleCheckVisible = &CG_SnowParticleCheckVisible;
 				cg_atmFx.ParticleGenerate = &CG_SnowParticleGenerate;
@@ -802,41 +816,46 @@ void CG_EffectParse( const char *effectstr ) {
 				cg_atmFx.baseVec[2] = cg_atmFx.gustVec[2] = -ATMOSPHERIC_SNOW_SPEED;
 			} else {
 				cg_atmFx.numDrops = 0;
-				CG_Printf( "Only effect type 'rain' and 'snow' are supported.\n" );
+				CG_Printf("Only effect type 'rain' and 'snow' are supported.\n");
 				return;
 			}
 		} else {
-			if ( !Q_stricmp( startptr, "B" ) ) {
-				CG_EP_ParseFloats( eqptr, &bmin, &bmax );
-			} else if ( !Q_stricmp( startptr, "C" ) ) {
-				CG_EP_ParseFloats( eqptr, &cmin, &cmax );
-			} else if ( !Q_stricmp( startptr, "G" ) ) {
-				CG_EP_ParseFloats( eqptr, &gmin, &gmax );
-			} else if ( !Q_stricmp( startptr, "BV" ) ) {
-				CG_EP_ParseFloats( eqptr, &cg_atmFx.baseVec[0], &cg_atmFx.baseVec[1] );
-			} else if ( !Q_stricmp( startptr, "GV" ) ) {
-				CG_EP_ParseFloats( eqptr, &cg_atmFx.gustVec[0], &cg_atmFx.gustVec[1] );
-			} else if ( !Q_stricmp( startptr, "W" ) ) {
-				CG_EP_ParseFloats( eqptr, &cg_atmFx.baseWeight, &cg_atmFx.gustWeight );
-			} else if ( !Q_stricmp( startptr, "D" ) ) {
-				CG_EP_ParseFloats( eqptr, &bdrop, &gdrop );
-			} else if ( !Q_stricmp( startptr, "H" ) ) {
-				CG_EP_ParseInts( eqptr, &bheight, &bheight );
-			} else { CG_Printf( "Unknown effect key '%s'.\n", startptr );}
+			if (!Q_stricmp(startptr, "B")) {
+				CG_EP_ParseFloats(eqptr, &bmin, &bmax);
+			} else if (!Q_stricmp(startptr, "C")) {
+				CG_EP_ParseFloats(eqptr, &cmin, &cmax);
+			} else if (!Q_stricmp(startptr, "G")) {
+				CG_EP_ParseFloats(eqptr, &gmin, &gmax);
+			} else if (!Q_stricmp(startptr, "BV")) {
+				CG_EP_ParseFloats(eqptr, &cg_atmFx.baseVec[0], &cg_atmFx.baseVec[1]);
+			} else if (!Q_stricmp(startptr, "GV")) {
+				CG_EP_ParseFloats(eqptr, &cg_atmFx.gustVec[0], &cg_atmFx.gustVec[1]);
+			} else if (!Q_stricmp(startptr, "W")) {
+				CG_EP_ParseFloats(eqptr, &cg_atmFx.baseWeight, &cg_atmFx.gustWeight);
+			} else if (!Q_stricmp(startptr, "D")) {
+				CG_EP_ParseFloats(eqptr, &bdrop, &gdrop);
+			} else if (!Q_stricmp(startptr, "H")) {
+				CG_EP_ParseInts(eqptr, &bheight, &bheight);
+			} else {
+				CG_Printf("Unknown effect key '%s'.\n", startptr);
+			}
 		}
+
 		startptr = endptr;
 	}
 
-	if ( atmFXType == ATM_NONE || !BG_LoadTraceMap( cgs.mapname, cg.mapcoordsMins, cg.mapcoordsMaxs ) ) {
+	if (atmFXType == ATM_NONE || !BG_LoadTraceMap(cgs.mapname, cg.mapcoordsMins, cg.mapcoordsMaxs)) {
 		// No effects
 		cg_atmFx.numDrops = -1;
 		return;
 	}
 
 	cg_atmFx.baseHeightOffset = bheight;
-	if ( cg_atmFx.baseHeightOffset < 0 ) {
+
+	if (cg_atmFx.baseHeightOffset < 0) {
 		cg_atmFx.baseHeightOffset = 0;
 	}
+
 	cg_atmFx.baseMinTime = 1000 * bmin;
 	cg_atmFx.baseMaxTime = 1000 * bmax;
 	cg_atmFx.changeMinTime = 1000 * cmin;
@@ -846,34 +865,36 @@ void CG_EffectParse( const char *effectstr ) {
 	cg_atmFx.baseDrops = bdrop;
 	cg_atmFx.gustDrops = gdrop;
 
-	cg_atmFx.numDrops = ( cg_atmFx.baseDrops > cg_atmFx.gustDrops ) ? cg_atmFx.baseDrops : cg_atmFx.gustDrops;
-	if ( cg_atmFx.numDrops > MAX_ATMOSPHERIC_PARTICLES ) {
+	cg_atmFx.numDrops = (cg_atmFx.baseDrops > cg_atmFx.gustDrops) ? cg_atmFx.baseDrops : cg_atmFx.gustDrops;
+
+	if (cg_atmFx.numDrops > MAX_ATMOSPHERIC_PARTICLES) {
 		cg_atmFx.numDrops = MAX_ATMOSPHERIC_PARTICLES;
 	}
-
 	// Load graphics
-	if ( atmFXType == ATM_RAIN ) {
+	if (atmFXType == ATM_RAIN) {
 		// Rain
-		cg_atmFx.effectshaders[0] = trap_R_RegisterShader( "gfx/misc/raindrop" );
+		cg_atmFx.effectshaders[0] = trap_R_RegisterShader("gfx/misc/raindrop");
+
 		cg_atmFx.numEffectShaders = 1;
 
-		for (i = 1; i < MAX_ATMOSPHERIC_EFFECTSHADERS; i++)
-		{
-			cg_atmFx.effectshaders[i] = trap_R_RegisterShader( va("gfx/misc/raindrop%d", i) );
+		for (i = 1; i < MAX_ATMOSPHERIC_EFFECTSHADERS; i++) {
+			cg_atmFx.effectshaders[i] = trap_R_RegisterShader(va("gfx/misc/raindrop%d", i));
+
 			if (cg_atmFx.effectshaders[i]) {
 				cg_atmFx.numEffectShaders++;
 			} else {
 				break;
 			}
 		}
-	} else if ( atmFXType == ATM_SNOW ) {
+	} else if (atmFXType == ATM_SNOW) {
 		// Snow
-		cg_atmFx.effectshaders[0] = trap_R_RegisterShader( "gfx/misc/snow" );
+		cg_atmFx.effectshaders[0] = trap_R_RegisterShader("gfx/misc/snow");
+
 		cg_atmFx.numEffectShaders = 1;
 
-		for (i = 1; i < MAX_ATMOSPHERIC_EFFECTSHADERS; i++)
-		{
-			cg_atmFx.effectshaders[i] = trap_R_RegisterShader( va("gfx/misc/snow%d", i) );
+		for (i = 1; i < MAX_ATMOSPHERIC_EFFECTSHADERS; i++) {
+			cg_atmFx.effectshaders[i] = trap_R_RegisterShader(va("gfx/misc/snow%d", i));
+
 			if (cg_atmFx.effectshaders[i]) {
 				cg_atmFx.numEffectShaders++;
 			} else {
@@ -885,14 +906,13 @@ void CG_EffectParse( const char *effectstr ) {
 		cg_atmFx.numEffectShaders = 0;
 	}
 
-	if ( !( cg_atmFx.effectshaders[0] ) ) {
+	if (!(cg_atmFx.effectshaders[0])) {
 		cg_atmFx.effectshaders[0] = -1;
 		cg_atmFx.numEffectShaders = 0;
 	}
-
 	// Initialise atmospheric effect to prevent all particles falling at the start
-	for ( count = 0; count < cg_atmFx.numDrops; count++ )
-		cg_atmFx.particles[count].nextDropTime = ATMOSPHERIC_DROPDELAY + ( rand() % ATMOSPHERIC_DROPDELAY );
+	for (count = 0; count < cg_atmFx.numDrops; count++)
+		cg_atmFx.particles[count].nextDropTime = ATMOSPHERIC_DROPDELAY + (rand()% ATMOSPHERIC_DROPDELAY);
 
 	CG_EffectGust();
 }
@@ -909,7 +929,7 @@ void CG_AddAtmosphericEffects(void) {
 	vec3_t currvec;
 	float currweight;
 
-	if ( cg_atmFx.numDrops <= 0 || cg_atmFx.numEffectShaders == 0 || cg_atmosphericEffects.value <= 0 ) {
+	if (cg_atmFx.numDrops <= 0 || cg_atmFx.numEffectShaders == 0 || cg_atmosphericEffects.value <= 0) {
 		return;
 	}
 
@@ -918,8 +938,9 @@ void CG_AddAtmosphericEffects(void) {
 #endif // ATM_NEW
 
 	max = cg_atmosphericEffects.value < 1 ? cg_atmosphericEffects.value * cg_atmFx.numDrops : cg_atmFx.numDrops;
-	if ( CG_EffectGustCurrent( currvec, &currweight, &currnum ) ) {
-		CG_EffectGust();            // Recalculate gust parameters
+
+	if (CG_EffectGustCurrent(currvec, &currweight, &currnum)) {
+		CG_EffectGust(); // Recalculate gust parameters
 	}
 	// ydnar: allow parametric management of drop count for swelling/waning precip
 	cg_atmFx.oldDropsActive = cg_atmFx.dropsActive;
@@ -930,27 +951,25 @@ void CG_AddAtmosphericEffects(void) {
 //	getgroundtime = getskytime = rendertime = checkvisibletime = generatetime = 0;
 //	n_getgroundtime = n_getskytime = n_rendertime = n_checkvisibletime = n_generatetime = 0;
 
-	VectorSet( cg_atmFx.viewDir, cg.refdef.viewaxis[0][0], cg.refdef.viewaxis[0][1], 0.f );
+	VectorSet(cg_atmFx.viewDir, cg.refdef.viewaxis[0][0], cg.refdef.viewaxis[0][1], 0.f);
 
-	for ( curr = 0; curr < max; curr++ )
-	{
+	for (curr = 0; curr < max; curr++) {
 		particle = &cg_atmFx.particles[curr];
-		//%	if( !CG_SnowParticleCheckVisible( particle ) )
-		if ( !cg_atmFx.ParticleCheckVisible( particle ) ) {
+		//%	if (!CG_SnowParticleCheckVisible(particle))
+		if (!cg_atmFx.ParticleCheckVisible(particle)) {
 			// Effect has terminated / fallen from screen view
 			/*
-			if( !particle->nextDropTime )
-			{
+			if (!particle->nextDropTime) {
 				// Stop rain being synchronized
-				particle->nextDropTime = cg.time + rand() % ATMOSPHERIC_DROPDELAY;
+				particle->nextDropTime = cg.time + rand()% ATMOSPHERIC_DROPDELAY;
 			}
-			if( currnum < curr || particle->nextDropTime > cg.time )
-			{
+
+			if (currnum < curr || particle->nextDropTime > cg.time) {
 				cg_atmFx.dropsRendered++;
 				continue;
 			} */
-			//%	if( !CG_SnowParticleGenerate( particle, currvec, currweight ) )
-			if ( !cg_atmFx.ParticleGenerate( particle, currvec, currweight ) ) {
+			//%	if (!CG_SnowParticleGenerate(particle, currvec, currweight))
+			if (!cg_atmFx.ParticleGenerate(particle, currvec, currweight)) {
 				// Ensure it doesn't attempt to generate every frame, to prevent
 				// 'clumping' when there's only a small sky area available.
 				particle->nextDropTime = cg.time + ATMOSPHERIC_DROPDELAY;
@@ -960,8 +979,9 @@ void CG_AddAtmosphericEffects(void) {
 			}
 		}
 
-		//%	CG_RainParticleRender( particle );
-		cg_atmFx.ParticleRender( particle );
+		//%	CG_RainParticleRender(particle);
+
+		cg_atmFx.ParticleRender(particle);
 		cg_atmFx.dropsActive++;
 	}
 
@@ -971,7 +991,7 @@ void CG_AddAtmosphericEffects(void) {
 
 	cg_atmFx.lastRainTime = cg.time;
 
-//	CG_Printf( "Active: %d Generated: %d Rendered: %d Skipped: %d\n", cg_atmFx.dropsActive, cg_atmFx.dropsCreated, cg_atmFx.dropsRendered, cg_atmFx.dropsSkipped );
-//	CG_Printf( "gg: %i gs: %i rt: %i cv: %i ge: %i\n", getgroundtime, getskytime, rendertime, checkvisibletime, generatetime );
-//	CG_Printf( "\\-> %i \\-> %i \\-> %i \\-> %i \\-> %i\n", n_getgroundtime, n_getskytime, n_rendertime, n_checkvisibletime, n_generatetime );
+//	CG_Printf("Active: %d Generated: %d Rendered: %d Skipped: %d\n", cg_atmFx.dropsActive, cg_atmFx.dropsCreated, cg_atmFx.dropsRendered, cg_atmFx.dropsSkipped);
+//	CG_Printf("gg: %i gs: %i rt: %i cv: %i ge: %i\n", getgroundtime, getskytime, rendertime, checkvisibletime, generatetime);
+//	CG_Printf("\\-> %i \\-> %i \\-> %i \\-> %i \\-> %i\n", n_getgroundtime, n_getskytime, n_rendertime, n_checkvisibletime, n_generatetime);
 }

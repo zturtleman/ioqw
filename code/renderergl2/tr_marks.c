@@ -151,29 +151,29 @@ void R_AddSurfaceToList( int bmodelNum, int surfNum, vec3_t mins, vec3_t maxs, s
 	surf = ( msurface_t * )( tr.world->surfaces + surfNum );
 
 	// check if the surface has NOIMPACT or NOMARKS set
-		if ( ( surf->shader->surfaceFlags & ( SURF_NOIMPACT | SURF_NOMARKS ) )
-			|| ( surf->shader->contentFlags & CONTENTS_FOG ) ) {
+	if ( ( surf->shader->surfaceFlags & ( SURF_NOIMPACT | SURF_NOMARKS ) )
+		|| ( surf->shader->contentFlags & CONTENTS_FOG ) ) {
+		*surfViewCount = tr.viewCount;
+	}
+	// extra check for surfaces to avoid list overflows
+	else if (*(surf->data) == SF_FACE) {
+		// the face plane should go through the box
+		s = BoxOnPlaneSide( mins, maxs, &surf->cullinfo.plane );
+		if (s == 1 || s == 2) {
+			*surfViewCount = tr.viewCount;
+		} else if (DotProduct(surf->cullinfo.plane.normal, dir) > -0.5) {
+		// don't add faces that make sharp angles with the projection direction
 			*surfViewCount = tr.viewCount;
 		}
-		// extra check for surfaces to avoid list overflows
-		else if (*(surf->data) == SF_FACE) {
-			// the face plane should go through the box
-			s = BoxOnPlaneSide( mins, maxs, &surf->cullinfo.plane );
-			if (s == 1 || s == 2) {
-				*surfViewCount = tr.viewCount;
-			} else if (DotProduct(surf->cullinfo.plane.normal, dir) > -0.5) {
-			// don't add faces that make sharp angles with the projection direction
-				*surfViewCount = tr.viewCount;
-			}
-		}
-		else if (*(surf->data) != SF_GRID &&
-			 *(surf->data) != SF_TRIANGLES)
-			*surfViewCount = tr.viewCount;
-		// check the viewCount because the surface may have
-		// already been added if it spans multiple leafs
-		if (*surfViewCount != tr.viewCount) {
-			*surfViewCount = tr.viewCount;
-			list[*listlength] = surf->data;
+	}
+	else if (*(surf->data) != SF_GRID &&
+		 *(surf->data) != SF_TRIANGLES)
+		*surfViewCount = tr.viewCount;
+	// check the viewCount because the surface may have
+	// already been added if it spans multiple leafs
+	if (*surfViewCount != tr.viewCount) {
+		*surfViewCount = tr.viewCount;
+		list[*listlength] = surf->data;
 		listbmodel[*listlength] = bmodelNum;
 		(*listlength)++;
 	}

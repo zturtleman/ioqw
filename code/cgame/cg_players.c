@@ -145,7 +145,7 @@ void CG_CachePlayerModels(const char *modelName, const char *headModelName) {
 =======================================================================================================================================
 CG_ParseAnimationFile
 
-Read a configuration file containing animation counts and rates models/players/visor/animation.cfg, etc.
+Read a configuration file containing animation counts and rates, models/players/visor/animation.cfg, etc.
 =======================================================================================================================================
 */
 static qboolean CG_ParseAnimationFile(const char *filename, clientInfo_t *ci) {
@@ -639,7 +639,9 @@ qboolean CG_RegisterSkin(const char *name, cgSkin_t *skin, qboolean append) {
 	}
 
 	trap_FS_Read(text, len, f);
+
 	text[len] = 0;
+
 	trap_FS_FCloseFile(f);
 	// parse the text
 	text_p = text;
@@ -647,6 +649,7 @@ qboolean CG_RegisterSkin(const char *name, cgSkin_t *skin, qboolean append) {
 	while (text_p && *text_p) {
 		// get surface name
 		token = COM_ParseExt2(&text_p, qtrue, ',');
+
 		Q_strncpyz(surfName, token, sizeof(surfName));
 
 		if (!token[0]) {
@@ -668,6 +671,7 @@ qboolean CG_RegisterSkin(const char *name, cgSkin_t *skin, qboolean append) {
 		}
 		// parse the shader name
 		token = COM_ParseExt2(&text_p, qfalse, ',');
+
 		Q_strncpyz(shaderName, token, sizeof(shaderName));
 
 		if (skin->numSurfaces < MAX_CG_SKIN_SURFACES) {
@@ -1192,8 +1196,8 @@ void CG_NewClientInfo(int clientNum) {
 				*skin++ = 0;
 			}
 
-			Q_strncpyz(newInfo.skinName, skin, sizeof(newInfo.skinName));
 			Q_strncpyz(newInfo.modelName, modelStr, sizeof(newInfo.modelName));
+			Q_strncpyz(newInfo.skinName, skin, sizeof(newInfo.skinName));
 		}
 
 		if (cgs.gametype > GT_TOURNAMENT) {
@@ -1238,8 +1242,8 @@ void CG_NewClientInfo(int clientNum) {
 				*skin++ = 0;
 			}
 
-			Q_strncpyz(newInfo.headSkinName, skin, sizeof(newInfo.headSkinName));
 			Q_strncpyz(newInfo.headModelName, modelStr, sizeof(newInfo.headModelName));
+			Q_strncpyz(newInfo.headSkinName, skin, sizeof(newInfo.headSkinName));
 		}
 
 		if (cgs.gametype > GT_TOURNAMENT) {

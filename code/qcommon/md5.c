@@ -55,6 +55,7 @@ Start MD5 accumulation. Set bit count to 0 and buffer to mysterious initializati
 =======================================================================================================================================
 */
 static void MD5Init(struct MD5Context *ctx) {
+
 	ctx->buf[0] = 0x67452301;
 	ctx->buf[1] = 0xefcdab89;
 	ctx->buf[2] = 0x98badcfe;
@@ -219,7 +220,7 @@ static void MD5Update(struct MD5Context *ctx, unsigned char const *buf, unsigned
 =======================================================================================================================================
 MD5Final
 
-Final wrapup - pad to 64-byte boundary with the bit pattern. 1 0 * (64-bit count of bits processed, MSB-first).
+Final wrapup-pad to 64-byte boundary with the bit pattern. 10 * (64-bit count of bits processed, MSB-first).
 =======================================================================================================================================
 */
 static void MD5Final(struct MD5Context *ctx, unsigned char *digest) {

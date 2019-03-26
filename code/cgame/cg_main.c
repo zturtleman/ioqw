@@ -281,7 +281,7 @@ static cvarTable_t cvarTable[] = {
 	{&cg_teamChatTime, "cg_teamChatTime", "3000", CVAR_ARCHIVE},
 	{&cg_teamChatHeight, "cg_teamChatHeight", "0", CVAR_ARCHIVE},
 	{&cg_forceModel, "cg_forceModel", "0", CVAR_ARCHIVE},
-	{&cg_predictItems, "cg_predictItems", "1", CVAR_ARCHIVE},
+	{&cg_predictItems, "cg_predictItems", "0", CVAR_ARCHIVE},
 	{&cg_deferPlayers, "cg_deferPlayers", "0", CVAR_ARCHIVE},
 	{&cg_drawTeamOverlay, "cg_drawTeamOverlay", "0", CVAR_ARCHIVE},
 	{&cg_teamOverlayUserinfo, "teamoverlay", "1", CVAR_ROM|CVAR_USERINFO},

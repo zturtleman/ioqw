@@ -1344,7 +1344,7 @@ void Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultVal
 	}
 
 	cv = Cvar_FindVar(varName);
-	// don't modify cvar if it's protected.
+	// don't modify cvar if it's protected
 	if (cv && (cv->flags & CVAR_PROTECTED)) {
 		Com_DPrintf(S_COLOR_YELLOW "WARNING: VM tried to register protected cvar '%s' with value '%s'%s\n", varName, defaultValue, (flags & ~cv->flags) != 0 ? " and new flags" : "");
 	} else {

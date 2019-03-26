@@ -1806,7 +1806,7 @@ int AINode_Seek_ActivateEntity(bot_state_t *bs) {
 			moveresult.weapon = bs->activatestack->weapon;
 		}
 	}
-	// if the viewangles are used for the movement
+	// if the view angles are used for the movement
 	if (moveresult.flags & (MOVERESULT_MOVEMENTVIEW|MOVERESULT_MOVEMENTVIEWSET|MOVERESULT_SWIMVIEW)) {
 		VectorCopy(moveresult.ideal_viewangles, bs->ideal_viewangles);
 	// if waiting for something
@@ -2466,7 +2466,7 @@ int AINode_Battle_Chase(bot_state_t *bs) {
 	}
 	// check if the bot is blocked
 	BotAIBlocked(bs, &moveresult, qfalse);
-	// if the viewangles are used for the movement
+	// if the view angles are used for the movement
 	if (moveresult.flags & (MOVERESULT_MOVEMENTVIEW|MOVERESULT_MOVEMENTVIEWSET|MOVERESULT_SWIMVIEW)) {
 		VectorCopy(moveresult.ideal_viewangles, bs->ideal_viewangles);
 	} else if (!(bs->flags & BFL_IDEALVIEWSET)) {

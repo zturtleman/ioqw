@@ -1821,8 +1821,8 @@ static int dopr(char *buffer, size_t maxlen, const char *format, va_list args) {
 						flags |= DP_F_UNSIGNED;
 
 						if (cflags == DP_C_SHORT) {
-							//value = (unsigned short int) va_arg(args, unsigned short int); // this does not work because the rcc compiler cannot do that cast correctly.
-							value = va_arg(args, unsigned int) & ((1 << sizeof(unsigned short int) * 8) - 1); // using this workaround instead.
+							//value = (unsigned short int) va_arg(args, unsigned short int); // this does not work because the rcc compiler cannot do that cast correctly
+							value = va_arg(args, unsigned int) & ((1 << sizeof(unsigned short int) * 8) - 1); // using this workaround instead
 						} else if (cflags == DP_C_LONG) {
 							value = va_arg(args, unsigned long int);
 						} else if (cflags == DP_C_LLONG) {
@@ -2262,7 +2262,7 @@ static int fmtfp(char *buffer, size_t *currlen, size_t maxlen, LDOUBLE fvalue, i
 	while (iplace > 0) {
 		total += dopr_outch(buffer, currlen, maxlen, iconvert[--iplace]);
 	}
-	// decimal point. This should probably use locale to find the correct char to print out.
+	// decimal point. This should probably use locale to find the correct char to print out
 	if (max > 0) {
 		total += dopr_outch(buffer, currlen, maxlen, '.');
 

@@ -830,12 +830,12 @@ void UI_DrawPlayer(float x, float y, float w, float h, playerInfo_t *pi, int tim
 
 		gun.hModel = pi->weaponModel;
 
-		Byte4Copy(pi->c1RGBA, gun.shaderRGBA);
 		VectorCopy(origin, gun.lightingOrigin);
 		UI_PositionEntityOnTag(&gun, &torso, pi->torsoModel, "tag_weapon");
 
 		gun.renderfx = renderfx;
 
+		Byte4Copy(pi->c1RGBA, gun.shaderRGBA);
 		UI_AddRefEntityWithMinLight(&gun);
 	}
 	// add the spinning barrel
@@ -844,9 +844,6 @@ void UI_DrawPlayer(float x, float y, float w, float h, playerInfo_t *pi, int tim
 
 		memset(&barrel, 0, sizeof(barrel));
 
-		VectorCopy(origin, barrel.lightingOrigin);
-
-		barrel.renderfx = renderfx;
 		barrel.hModel = pi->barrelModel;
 
 		angles[YAW] = 0;
@@ -854,7 +851,12 @@ void UI_DrawPlayer(float x, float y, float w, float h, playerInfo_t *pi, int tim
 		angles[ROLL] = UI_MachinegunSpinAngle(pi);
 
 		AnglesToAxis(angles, barrel.axis);
+		VectorCopy(origin, barrel.lightingOrigin);
 		UI_PositionRotatedEntityOnTag(&barrel, &gun, pi->weaponModel, "tag_barrel");
+
+		barrel.renderfx = renderfx;
+
+		Byte4Copy(pi->c1RGBA, barrel.shaderRGBA);
 		UI_AddRefEntityWithMinLight(&barrel);
 	}
 	// add muzzle flash
@@ -863,12 +865,13 @@ void UI_DrawPlayer(float x, float y, float w, float h, playerInfo_t *pi, int tim
 			memset(&flash, 0, sizeof(flash));
 
 			flash.hModel = pi->flashModel;
-			Byte4Copy(pi->c1RGBA, flash.shaderRGBA);
+
 			VectorCopy(origin, flash.lightingOrigin);
 			UI_PositionEntityOnTag(&flash, &gun, pi->weaponModel, "tag_flash");
 
 			flash.renderfx = renderfx;
 
+			Byte4Copy(pi->c1RGBA, flash.shaderRGBA);
 			UI_AddRefEntityWithMinLight(&flash);
 		}
 		// make a dlight for the flash

@@ -1529,6 +1529,8 @@ void QDECL FS_Printf(fileHandle_t h, const char *fmt, ...) {
 /*
 =======================================================================================================================================
 FS_Seek
+
+Returns 0 on success and non-zero on failure.
 =======================================================================================================================================
 */
 int FS_Seek(fileHandle_t f, long offset, int origin) {
@@ -3149,8 +3151,8 @@ void FS_Shutdown(qboolean closemfp) {
 =======================================================================================================================================
 FS_ReorderPurePaks
 
-NOTE: the reordering that happens here is not reflected in the cvars (\cvarlist *pak*). This can lead to misleading situations,
-see https://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=540.
+NOTE: the reordering that happens here is not reflected in the cvars (\cvarlist *pak*).
+This can lead to misleading situations, see https://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=540.
 =======================================================================================================================================
 */
 static void FS_ReorderPurePaks(void) {

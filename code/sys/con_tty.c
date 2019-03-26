@@ -170,7 +170,7 @@ Hist_Add
 void Hist_Add(field_t *field) {
 	int i;
 
-	// don't save blank lines in history.
+	// don't save blank lines in history
 	if (!field->cursor) {
 		return;
 	}

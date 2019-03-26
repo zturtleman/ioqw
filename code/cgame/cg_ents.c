@@ -534,7 +534,7 @@ static void CG_Missile(centity_t *cent) {
 	}
 	// add dynamic light
 	if (weapon->missileDlight) {
-		trap_R_AddLightToScene(cent->lerpOrigin, weapon->missileDlight, weapon->missileDlightColor[col][0], weapon->missileDlightColor[col][1], weapon->missileDlightColor[col][2]);
+		trap_R_AddLightToScene(cent->lerpOrigin, weapon->missileDlight, 1.0f, weapon->missileDlightColor[col][0], weapon->missileDlightColor[col][1], weapon->missileDlightColor[col][2], 0);
 	}
 */
 	// add dynamic light

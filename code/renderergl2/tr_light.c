@@ -264,7 +264,7 @@ static void R_SetupEntityLightingGrid( trRefEntity_t *ent, world_t *world ) {
 		if (world->lightGrid16)
 		{
 			uint16_t *data16 = world->lightGrid16 + (int)(data - world->lightGridData) / 8 * 6;
-			if (!(data16[0]+data16[1]+data16[2]+data16[3]+data16[4]+data16[5])) {
+			if (!(data16[0]+data16[1]+data16[2]+data16[3]+data16[4]+data16[5]) ) {
 				continue;	// ignore samples in walls
 			}
 		}

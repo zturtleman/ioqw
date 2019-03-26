@@ -61,14 +61,14 @@ void SP_light(gentity_t *self) {
 	G_FreeEntity(self);
 }
 
-/*QUAKED lightJunior (0 0.7 0.3) (-8 -8 -8) (8 8 8)nonlinear angle negative_spot negative_point
-Non - displayed light that only affects dynamic game models, but does not contribute to lightmaps
+/*QUAKED lightJunior (0 0.7 0.3) (-8 -8 -8) (8 8 8) NONLINEAR ANGLE NEGATIVE_SPOT NEGATIVE_POINT
+Non-displayed light that only affects dynamic game models, but does not contribute to lightmaps
 "light" overrides the default 300 intensity.
 Nonlinear checkbox gives inverse square falloff instead of linear
-Angle adds light:surface angle calculations(only valid for "Linear" lights)
+Angle adds light:surface angle calculations (only valid for "Linear" lights)
 Lights pointed at a target will be spotlights.
 "radius" overrides the default 64 unit radius of a spotlight at the target point.
-"fade" falloff / radius adjustment value. multiply the run of the slope by "fade"(1.0f default)(only valid for "Linear" lights)
+"fade" falloff/radius adjustment value. multiply the run of the slope by "fade" (1.0f default)(only valid for "linear" lights)
 */
 void SP_lightJunior(gentity_t *self) {
 	G_FreeEntity(self);
@@ -190,7 +190,13 @@ void SP_misc_gamemodel(gentity_t *ent) {
 	G_FreeEntity(ent);
 }
 
-// loaded by CGame
+/*
+=======================================================================================================================================
+SP_props_skyportal
+
+Loaded by CGame.
+=======================================================================================================================================
+*/
 void SP_props_skyportal(gentity_t *ent) {
 	G_FreeEntity(ent);
 }
@@ -547,16 +553,16 @@ void dlight_finish_spawning(gentity_t *ent) {
 
 static int dlightstarttime = 0;
 
-/*QUAKED dlight (0 1 0) (-12 - 12 - 12) (12 12 12) FORCEACTIVE STARTOFF ONETIME
-"style": value is an int from 1 - 19 that contains a pre - defined 'flicker' string.
-"stylestring": set your own 'flicker' string.(ex. "klmnmlk"). NOTE: this should be all lowercase
+/*QUAKED dlight (0 1 0) (-12 -12 -12) (12 12 12) FORCEACTIVE STARTOFF ONETIME
+"style": value is an int from 1-19 that contains a pre-defined 'flicker' string.
+"stylestring": set your own 'flicker' string (ex. "klmnmlk"). NOTE: this should be all lowercase
 Stylestring characters run at 10 cps in the game.(meaning the alphabet, at 24 characters, would take 2.4 seconds to cycle)
-"offset": change the initial index in a style string.  So val of 3 in the above example would start this light at 'N'.(used to get dlights using the same style out of sync).
-"atten": offset from the alpha values of the stylestring.  stylestring of "ddeeffzz" with an atten of - 1 would result in "ccddeeyy"
-Use color picker to set color or key "color".  values are 0.0 - 1.0 for each color(rgb).
-FORCEACTIVE	-toggle makes sure this light stays alive in a map even if the user has r_dynamiclight set to 0.
-STARTOFF	-means the dlight doesn't spawn in until ent is triggered
-ONETIME		-when the dlight is triggered, it will play through it's cycle once, then shut down until triggered again
+"offset": change the initial index in a style string.  So val of 3 in the above example would start this light at 'N' (used to get dlights using the same style out of sync).
+"atten": offset from the alpha values of the stylestring. stylestring of "ddeeffzz" with an atten of -1 would result in "ccddeeyy"
+Use color picker to set color or key "color".  values are 0.0-1.0 for each color(rgb).
+FORCEACTIVE	- toggle makes sure this light stays alive in a map even if the user has r_dynamiclight set to 0.
+STARTOFF	- means the dlight doesn't spawn in until ent is triggered
+ONETIME		- when the dlight is triggered, it will play through it's cycle once, then shut down until triggered again
 "shader" name of shader to apply
 "sound" sound to loop every cycle(this actually just plays the sound at the beginning of each cycle)
 
@@ -624,9 +630,9 @@ void use_dlight(gentity_t *ent, gentity_t *other, gentity_t *activator) {
 =======================================================================================================================================
 SP_dlight
 
-ent->dl_stylestring contains the lightstyle string
-ent->health tracks current index into style string
-ent->count tracks length of style string
+ent->dl_stylestring contains the lightstyle string.
+ent->health tracks current index into style string.
+ent->count tracks length of style string.
 =======================================================================================================================================
 */
 void SP_dlight(gentity_t *ent) {
@@ -649,7 +655,7 @@ void SP_dlight(gentity_t *ent) {
 	} else if (style) {
 		style = MAX(1, style); // clamp to predefined range
 		style = MIN(19, style);
-		ent->dl_stylestring = predef_lightstyles[style - 1]; // these are input as 1 - 20
+		ent->dl_stylestring = predef_lightstyles[style - 1]; // these are input as 1-20
 	} else {
 		ent->dl_stylestring = "mmmaaa"; // default to a strobe to call attention to this not being set
 	}
@@ -658,7 +664,6 @@ void SP_dlight(gentity_t *ent) {
 	ent->dl_atten = atten;
 	// make the initial offset a valid index into the stylestring
 	offset = offset %(ent->count);
-
 	ent->health = offset; // set the offset into the string
 	ent->think = dlight_finish_spawning;
 
@@ -672,14 +677,14 @@ void SP_dlight(gentity_t *ent) {
 		ent->dl_color[0] = ent->dl_color[1] = ent->dl_color[2] = 1;
 	}
 
-	ent->dl_color[0] = ent->dl_color[0] * 255; // range 0 - 255 now so the client doesn't have to on every update
+	ent->dl_color[0] = ent->dl_color[0] * 255; // range 0-255 now so the client doesn't have to on every update
 	ent->dl_color[1] = ent->dl_color[1] * 255;
 	ent->dl_color[2] = ent->dl_color[2] * 255;
 
 	i = (int)(ent->dl_stylestring[offset]) - (int)'a';
 	i = i * (1000.0f / 24.0f);
 
-	ent->s.constantLight = (int)ent->dl_color[0] |((int)ent->dl_color[1] << 8)|((int)ent->dl_color[2] << 16)|(i / 4 << 24);
+	ent->s.constantLight = (int)ent->dl_color[0]|((int)ent->dl_color[1] << 8)|((int)ent->dl_color[2] << 16)|(i / 4 << 24);
 	ent->use = use_dlight;
 
 	if (!(ent->spawnflags & 2)) {
