@@ -53,7 +53,7 @@ void SP_info_notnull(gentity_t *self) {
 /*QUAKED light (0 1 0) (-8 -8 -8) (8 8 8) LINEAR
 Non-displayed light.
 "light" overrides the default 300 intensity.
-Linear checbox gives linear falloff instead of inverse square
+Linear checkbox gives linear falloff instead of inverse square
 Lights pointed at a target will be spotlights.
 "radius" overrides the default 64 unit radius of a spotlight at the target point.
 */
@@ -65,7 +65,7 @@ void SP_light(gentity_t *self) {
 Non-displayed light that only affects dynamic game models, but does not contribute to lightmaps
 "light" overrides the default 300 intensity.
 Nonlinear checkbox gives inverse square falloff instead of linear
-Angle adds light:surface angle calculations (only valid for "Linear" lights)
+Angle adds light:surface angle calculations (only valid for "linear" lights)
 Lights pointed at a target will be spotlights.
 "radius" overrides the default 64 unit radius of a spotlight at the target point.
 "fade" falloff/radius adjustment value. multiply the run of the slope by "fade" (1.0f default)(only valid for "linear" lights)
@@ -181,9 +181,7 @@ void SP_misc_model(gentity_t *ent) {
 md3 placed in the game at runtime (rather than in the bsp)
 "model" arbitrary .md3 file to display
 "modelscale" scale multiplier (defaults to 1x, and scales uniformly)
-"modelscale_vec" scale multiplier (defaults to 1 1 1, scales each axis as requested)
-
-"modelscale_vec" - Set scale per-axis.  Overrides "modelscale", so if you have both, the "modelscale" is ignored
+"modelscale_vec" set scale per-axis. Overrides "modelscale", so if you have both, the "modelscale" is ignored (defaults to 1 1 1)
 */
 // ZTM: FIXME: Stub. Currently just loaded by cgame
 void SP_misc_gamemodel(gentity_t *ent) {
