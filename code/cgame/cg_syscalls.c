@@ -668,7 +668,7 @@ void trap_R_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *v
 trap_R_AddPolyBufferToScene
 =======================================================================================================================================
 */
-void    trap_R_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer) {
+void trap_R_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer) {
 	syscall(CG_R_ADDPOLYBUFFERTOSCENE, pPolyBuffer);
 }
 

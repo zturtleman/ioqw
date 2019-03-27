@@ -516,7 +516,7 @@ typedef struct {
 	vec3_t refdefViewAngles;		// will be converted to refdef.viewaxis
 	float fov;						// either range checked cg_fov or forced value
 	// spawn variables
-	qboolean spawning;           	// the CG_Spawn *() functions are valid
+	qboolean spawning;				// the CG_Spawn *() functions are valid
 	int numSpawnVars;
 	char *spawnVars[MAX_SPAWN_VARS][2]; // key/value pairs
 	int numSpawnVarChars;
