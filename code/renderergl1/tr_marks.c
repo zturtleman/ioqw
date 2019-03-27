@@ -135,8 +135,9 @@ static void R_ChopPolyBehindPlane( int numInPoints, vec3_t inPoints[MAX_VERTS_ON
 
 /*
 =================
-R_BoxSurfaces_r
+R_AddSurfaceToList
 
+mins and maxs needs to be in bmodel local space
 =================
 */
 void R_AddSurfaceToList( int bmodelNum, int surfNum, vec3_t mins, vec3_t maxs, surfaceType_t **list, int *listbmodel, int listsize, int *listlength, vec3_t dir ) {
