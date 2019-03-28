@@ -1094,8 +1094,11 @@ UI_Load
 */
 void UI_Load(void) {
 	char lastName[1024];
-	menuDef_t *menu = Menu_GetFocused();
-	char *menuSet = UI_Cvar_VariableString("ui_menuFiles");
+	menuDef_t *menu;
+	char *menuSet;
+
+	menu = Menu_GetFocused();
+	menuSet = UI_Cvar_VariableString("ui_menuFiles");
 
 	if (menu && menu->window.name) {
 		Q_strncpyz(lastName, menu->window.name, sizeof(lastName));
@@ -1113,11 +1116,11 @@ void UI_Load(void) {
 	Menus_ActivateByName(lastName);
 }
 
-// Convert ui's net source to AS_* used by trap calls.
-
 /*
 =======================================================================================================================================
 UI_SourceForLAN
+
+Convert ui's net source to AS_* used by trap calls.
 =======================================================================================================================================
 */
 int UI_SourceForLAN(void) {

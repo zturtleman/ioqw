@@ -311,7 +311,7 @@ static void SV_MapRestart_f(void) {
 			SV_ClientEnterWorld(client, &client->lastUsercmd);
 		} else {
 			// if we don't reset client->lastUsercmd and are restarting during map load, the client will hang because we'll use the
-			// last Usercmd from the previous map, which is wrong obviously.
+			// last Usercmd from the previous map, which is wrong obviously
 			SV_ClientEnterWorld(client, NULL);
 		}
 	}
