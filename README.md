@@ -4,7 +4,7 @@
 
 **A second breath of life for Xreal, based on Zack Middleton's ioq3ztm engine**
 
-Ioid3-qw is currently based on ioq3ztm and also contains code from [Spearmint](http://spearmint.pw/) (the successor of ioq3ztm), and code from other repositories owned by [Zack Middleton](https://github.com/zturtleman?tab=repositories).
+Ioid3-qw is currently based on ioq3ztm and also contains code from [Spearmint](https://clover.moe/spearmint/) (the successor of ioq3ztm), and code from other repositories owned by [Zack Middleton](https://github.com/zturtleman?tab=repositories).
 
 
 ## License:
@@ -66,7 +66,7 @@ Ioid3-qw is licensed under a [modified version of the GNU GPLv3](COPYING.txt#L62
 * Wolfenstein: Enemy Territory - Splash Damage
 * Tremulous - Dark Legion Development
 * World of Padman - Padworld Entertainment
-* [ioquake3 Elite Force MP patch](http://thilo.kickchat.com/efport-progress/) - Thilo Schulz
+* ioquake3 Elite Force MP patch - Thilo Schulz
 * NetRadiant's q3map2 - Rudolf Polzer
 * OpenArena - OpenArena contributors
 * OpenMoHAA - OpenMoHAA contributors
