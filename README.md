@@ -12,9 +12,9 @@ Ioid3-qw is currently based on ioq3ztm and also contains code from [Spearmint](h
 Ioid3-qw is licensed under a [modified version of the GNU GPLv3](COPYING.txt#L625) (or at your option, any later version). The license is also used by Return to Castle Wolfenstein, Wolfenstein: Enemy Territory, and Doom 3.
 
 
-## Main Features:
+## Main features:
 
-  * OTBS-formatted code.
+  * K&R (aka 1TBS/OTBS) formatted code.
   * Enhanced BotAI.
   * Rotating gibs.
   * Slightly faster maths.
