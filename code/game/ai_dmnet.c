@@ -1598,7 +1598,7 @@ int AINode_Wait(bot_state_t *bs) {
 	}
 	// check if the bot is blocking teammates
 	BotCheckBlockedTeammates(bs);
-	// if the viewangles are used for the movement
+	// if the view angles are used for the movement
 	if (moveresult.flags & (MOVERESULT_MOVEMENTVIEW|MOVERESULT_MOVEMENTVIEWSET|MOVERESULT_SWIMVIEW)) {
 		VectorCopy(moveresult.ideal_viewangles, bs->ideal_viewangles);
 	// if waiting for something
@@ -1948,7 +1948,7 @@ int AINode_Seek_NBG(bot_state_t *bs) {
 	if (BotAIPredictObstacles(bs, &goal)) {
 		return qfalse;
 	}
-	// if the viewangles are used for the movement
+	// if the view angles are used for the movement
 	if (moveresult.flags & (MOVERESULT_MOVEMENTVIEW|MOVERESULT_MOVEMENTVIEWSET|MOVERESULT_SWIMVIEW)) {
 		VectorCopy(moveresult.ideal_viewangles, bs->ideal_viewangles);
 	// if waiting for something
@@ -2132,7 +2132,7 @@ int AINode_Seek_LTG(bot_state_t *bs) {
 	if (BotAIPredictObstacles(bs, &goal)) {
 		return qfalse;
 	}
-	// if the viewangles are used for the movement
+	// if the view angles are used for the movement
 	if (moveresult.flags & (MOVERESULT_MOVEMENTVIEW|MOVERESULT_MOVEMENTVIEWSET|MOVERESULT_SWIMVIEW)) {
 		VectorCopy(moveresult.ideal_viewangles, bs->ideal_viewangles);
 	// if waiting for something
