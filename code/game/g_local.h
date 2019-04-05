@@ -524,8 +524,6 @@ extern vmCvar_t g_blueteam;
 extern vmCvar_t g_smoothClients;
 extern vmCvar_t pmove_fixed;
 extern vmCvar_t pmove_msec;
-extern vmCvar_t g_enableDust;
-extern vmCvar_t g_enableBreath;
 extern vmCvar_t g_singlePlayer;
 extern vmCvar_t g_proxMineTimeout;
 // Additional shared traps in bg_public.h

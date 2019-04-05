@@ -538,12 +538,6 @@ void SP_worldspawn(void) {
 		level.mapcoordsValid = qtrue;
 	}
 #endif
-	G_SpawnString("enableDust", "0", &s);
-	trap_Cvar_Set("g_enableDust", s);
-
-	G_SpawnString("enableBreath", "0", &s);
-	trap_Cvar_Set("g_enableBreath", s);
-
 	g_entities[ENTITYNUM_WORLD].s.number = ENTITYNUM_WORLD;
 	g_entities[ENTITYNUM_WORLD].r.ownerNum = ENTITYNUM_NONE;
 	g_entities[ENTITYNUM_WORLD].classname = "worldspawn";
