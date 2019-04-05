@@ -178,7 +178,7 @@ localEntity_t *CG_SmokePuff(const vec3_t p, const vec3_t vel, float radius, floa
 	re = &le->refEntity;
 	re->rotation = Q_random(&seed) * 360;
 	re->radius = radius;
-	re->shaderTime = startTime / 1000.0f;
+	re->shaderTime = startTime;
 
 	le->leType = LE_MOVE_SCALE_FADE;
 	le->startTime = startTime;
@@ -454,7 +454,7 @@ localEntity_t *CG_MakeExplosion(vec3_t origin, vec3_t dir, qhandle_t hModel, qha
 	ex->startTime = cg.time - offset;
 	ex->endTime = ex->startTime + msec;
 	// bias the time so all shader effects start correctly
-	ex->refEntity.shaderTime = ex->startTime / 1000.0f;
+	ex->refEntity.shaderTime = ex->startTime;
 	ex->refEntity.hModel = hModel;
 	ex->refEntity.customShader = shader;
 	// set origin
