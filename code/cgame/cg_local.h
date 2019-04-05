@@ -1299,7 +1299,7 @@ localEntity_t *CG_MakeExplosion(vec3_t origin, vec3_t dir, qhandle_t hModel, qha
 void CG_ProcessSnapshots(void);
 // cg_spawn.c
 qboolean CG_SpawnString(const char *key, const char *defaultString, char **out);
-// spawn string returns a temporary reference, you must CopyString()if you want to keep it
+// spawn string returns a temporary reference, you must CopyString() if you want to keep it
 qboolean CG_SpawnFloat(const char *key, const char *defaultString, float *out);
 qboolean CG_SpawnInt(const char *key, const char *defaultString, int *out);
 qboolean CG_SpawnVector(const char *key, const char *defaultString, float *out);
