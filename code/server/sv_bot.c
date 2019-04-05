@@ -94,7 +94,7 @@ void SV_BotFreeClient(int clientNum) {
 BotDrawDebugPolygons
 =======================================================================================================================================
 */
-void BotDrawDebugPolygons(void (*drawPoly)(int color, int numPoints, float *points), int value) {
+void BotDrawDebugPolygons(void (*DrawPoly)(int color, int numPoints, float *points), int value) {
 	static cvar_t *bot_debug, *bot_groundonly, *bot_reachability, *bot_highlightarea;
 	bot_debugpoly_t *poly;
 	int i, parm0;
@@ -146,7 +146,7 @@ void BotDrawDebugPolygons(void (*drawPoly)(int color, int numPoints, float *poin
 			continue;
 		}
 
-		drawPoly(poly->color, poly->numPoints, (float *)poly->points);
+		DrawPoly(poly->color, poly->numPoints, (float *)poly->points);
 		//Com_Printf("poly %i, numpoints = %d\n", i, poly->numPoints);
 	}
 }

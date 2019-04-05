@@ -1307,6 +1307,7 @@ void Cmd_CallVote_f(gentity_t *ent) {
 			case ';':
 				trap_SendServerCommand(ent - g_entities, "print \"Invalid vote string.\n\"");
 				return;
+			default:
 				break;
 		}
 	}

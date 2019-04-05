@@ -203,7 +203,7 @@ typedef struct {
 	qboolean voipIgnore[MAX_CLIENTS];
 	qboolean voipMuteAll;
 	// outgoing data...
-	// if voipTargets[i / 8] & (1 << (i % 8)), then we are sending to clientnum i
+	// if voipTargets[i / 8] & (1 << (i % 8)), then we are sending to clientNum i
 	uint8_t voipTargets[(MAX_CLIENTS + 7) / 8];
 	uint8_t voipFlags;
 	OpusEncoder *opusEncoder;

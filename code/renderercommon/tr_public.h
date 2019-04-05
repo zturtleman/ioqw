@@ -168,8 +168,8 @@ typedef struct {
 	byte	*(*CM_ClusterPVS)(int cluster);
 
 	// visualization for debugging collision detection
-	void	(*CM_DrawDebugSurface)( void (*drawPoly)(int color, int numPoints, float *points) );
-	void	(*SV_BotDrawDebugPolygons)( void (*drawPoly)(int color, int numPoints, float *points) );
+	void	(*CM_DrawDebugSurface)( void (*DrawPoly)(int color, int numPoints, float *points) );
+	void	(*SV_BotDrawDebugPolygons)( void (*DrawPoly)(int color, int numPoints, float *points) );
 
 	// a -1 return means the file does not exist
 	// NULL can be passed for buf to just determine existence

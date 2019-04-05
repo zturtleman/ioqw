@@ -948,7 +948,6 @@ static void S_AL_SaveLoopPos(src_t *dest, ALuint alSource) {
 	int error;
 
 	S_AL_ClearError(qfalse);
-
 	qalGetSourcef(alSource, AL_SEC_OFFSET, &dest->lastTimePos);
 
 	if ((error = qalGetError()) != AL_NO_ERROR) {

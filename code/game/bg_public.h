@@ -194,7 +194,7 @@ typedef enum {
 	PERS_TEAM,					// player team
 	PERS_RANK,					// player rank or team rank
 	PERS_HITS,					// total points damage inflicted so damage beeps can sound on change
-	PERS_ATTACKER,				// clientnum of last damage inflicter
+	PERS_ATTACKER,				// clientNum of last damage inflicter
 	PERS_ATTACKEE_ARMOR,		// health/armor of last person we attacked
 	PERS_PLAYEREVENTS,			// 16 bits that can be flipped for events
 	PERS_SPAWN_COUNT,			// incremented every respawn

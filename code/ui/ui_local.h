@@ -441,7 +441,7 @@ extern void UI_MouseEvent(int dx, int dy);
 extern void UI_Refresh(int realtime);
 extern void UI_AddRefEntityWithMinLight(const refEntity_t *entity);
 extern qboolean UI_ConsoleCommand(int realTime);
-extern void UI_DrawHandlePic(float x, float y, float w, float h, qhandle_t hShader);
+extern void UI_DrawPic(float x, float y, float w, float h, qhandle_t hShader);
 extern void UI_FillRect(float x, float y, float width, float height, const float *color);
 extern void UI_DrawRect(float x, float y, float width, float height, const float *color);
 extern void UI_DrawTopBottom(float x, float y, float w, float h);

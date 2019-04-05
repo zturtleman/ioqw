@@ -421,7 +421,7 @@ void S_PaintChannelFromWavelet(channel_t *ch, sfx_t *sc, int count, int sampleOf
 
 		if (sampleOffset == SND_CHUNK_SIZE * 2) {
 			chunk = chunk->next;
-			decodeWavelet(chunk, sfxScratchBuffer);
+			DecodeWavelet(chunk, sfxScratchBuffer);
 			sfxScratchIndex++;
 			sampleOffset = 0;
 		}

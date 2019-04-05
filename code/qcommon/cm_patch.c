@@ -29,7 +29,7 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  struct patchCollide_s *CM_GeneratePatchCollide(int width, int height, const vec3_t *points);
  void CM_TraceThroughPatchCollide(traceWork_t *tw, const struct patchCollide_s *pc);
  qboolean CM_PositionTestInPatchCollide(traceWork_t *tw, const struct patchCollide_s *pc);
- void CM_DrawDebugSurface(void (*drawPoly)(int color, int numPoints, flaot *points));
+ void CM_DrawDebugSurface(void (*DrawPoly)(int color, int numPoints, flaot *points));
 
  WARNING: this may misbehave with meshes that have rows or columns that only degenerate a few triangles. Completely degenerate rows
  and columns are handled properly.
@@ -1686,9 +1686,9 @@ Called from the renderer.
 =======================================================================================================================================
 */
 #ifndef BSPC
-void BotDrawDebugPolygons(void (*drawPoly)(int color, int numPoints, float *points), int value);
+void BotDrawDebugPolygons(void (*DrawPoly)(int color, int numPoints, float *points), int value);
 #endif
-void CM_DrawDebugSurface(void (*drawPoly)(int color, int numPoints, float *points)) {
+void CM_DrawDebugSurface(void (*DrawPoly)(int color, int numPoints, float *points)) {
 	static cvar_t *cv;
 #ifndef BSPC
 	static cvar_t *cv2;
@@ -1708,7 +1708,7 @@ void CM_DrawDebugSurface(void (*drawPoly)(int color, int numPoints, float *point
 	}
 
 	if (cv2->integer != 1) {
-		BotDrawDebugPolygons(drawPoly, cv2->integer);
+		BotDrawDebugPolygons(DrawPoly, cv2->integer);
 		return;
 	}
 #endif
@@ -1798,10 +1798,10 @@ void CM_DrawDebugSurface(void (*drawPoly)(int color, int numPoints, float *point
 
 			if (w) {
 				if (facet == debugFacet) {
-					drawPoly(4, w->numpoints, w->p[0]);
+					DrawPoly(4, w->numpoints, w->p[0]);
 					//Com_Printf("blue facet has %d border planes\n", facet->numBorders);
 				} else {
-					drawPoly(1, w->numpoints, w->p[0]);
+					DrawPoly(1, w->numpoints, w->p[0]);
 				}
 
 				FreeWinding(w);
@@ -1817,12 +1817,12 @@ void CM_DrawDebugSurface(void (*drawPoly)(int color, int numPoints, float *point
 		VectorCopy(debugBlockPoints[0], v[0]);
 		VectorCopy(debugBlockPoints[1], v[1]);
 		VectorCopy(debugBlockPoints[2], v[2]);
-		drawPoly(2, 3, v[0]);
+		DrawPoly(2, 3, v[0]);
 
 		VectorCopy(debugBlockPoints[2], v[0]);
 		VectorCopy(debugBlockPoints[3], v[1]);
 		VectorCopy(debugBlockPoints[0], v[2]);
-		drawPoly(2, 3, v[0]);
+		DrawPoly(2, 3, v[0]);
 	}
 #if 0
 	vec3_t v[4];
@@ -1843,6 +1843,6 @@ void CM_DrawDebugSurface(void (*drawPoly)(int color, int numPoints, float *point
 	v[3][1] = pc->bounds[1][1];
 	v[3][2] = pc->bounds[1][2];
 
-	drawPoly(4, v[0]);
+	DrawPoly(4, v[0]);
 #endif
 }

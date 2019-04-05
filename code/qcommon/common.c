@@ -2545,7 +2545,7 @@ void Com_Init(char *commandLine) {
 	}
 	// clear queues
 	Com_Memset(&eventQueue[0], 0, MAX_QUEUED_EVENTS * sizeof(sysEvent_t));
-	// initialize the weak pseudo-random number generator for use later.
+	// initialize the weak pseudo-random number generator for use later
 	Com_InitRand();
 	// do this before anything else decides to push events
 	Com_InitPushEvent();
@@ -2553,7 +2553,7 @@ void Com_Init(char *commandLine) {
 	Cvar_Init();
 	// prepare enough of the subsystems to handle cvar and command buffer management
 	Com_ParseCommandLine(commandLine);
-//	Swap_Init();
+	//Swap_Init();
 	Cbuf_Init();
 	Com_DetectSSE();
 	// override anything from the config files with command line args
