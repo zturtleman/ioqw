@@ -566,7 +566,7 @@ void CG_RailTrail(clientInfo_t *ci, vec3_t start, vec3_t end) {
 	le->endTime = cg.time + cg_railTrailTime.value;
 	le->lifeRate = 1.0 / (le->endTime - le->startTime);
 
-	re->shaderTime = cg.time / 1000.0f;
+	re->shaderTime = cg.time;
 	re->reType = RT_RAIL_CORE;
 	re->customShader = cgs.media.railCoreShader;
 
@@ -620,7 +620,7 @@ void CG_RailTrail(clientInfo_t *ci, vec3_t start, vec3_t end) {
 			le->endTime = cg.time + (i >> 1) + 600;
 			le->lifeRate = 1.0 / (le->endTime - le->startTime);
 
-			re->shaderTime = cg.time / 1000.0f;
+			re->shaderTime = cg.time;
 			re->reType = RT_SPRITE;
 			re->radius = 1.1f;
 			re->customShader = cgs.media.railRingsShader;
@@ -715,7 +715,7 @@ static void CG_PlasmaTrail(centity_t *cent, const weaponInfo_t *wi) {
 	VectorScale(xvelocity, waterScale, le->pos.trDelta);
 	AxisCopy(axisDefault, re->axis);
 
-	re->shaderTime = cg.time / 1000.0f;
+	re->shaderTime = cg.time;
 	re->reType = RT_SPRITE;
 	re->radius = 0.25f;
 	re->customShader = cgs.media.railRingsShader;

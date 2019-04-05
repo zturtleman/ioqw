@@ -234,7 +234,7 @@ void CG_SpawnEffectSmall(vec3_t org) {
 
 	re = &le->refEntity;
 	re->reType = RT_MODEL;
-	re->shaderTime = cg.time / 1000.0f;
+	re->shaderTime = cg.time;
 	re->customShader = cgs.media.teleportEffectShader;
 	re->hModel = cgs.media.teleportEffectModel;
 
@@ -266,7 +266,7 @@ void CG_SpawnEffectDefault(vec3_t org) {
 
 	re = &le->refEntity;
 	re->reType = RT_MODEL;
-	re->shaderTime = cg.time / 1000.0f;
+	re->shaderTime = cg.time;
 	re->customShader = cgs.media.teleportEffectShader;
 	re->hModel = cgs.media.teleportEffectModel;
 
@@ -322,7 +322,7 @@ void CG_KamikazeEffect(vec3_t org) {
 
 	re = &le->refEntity;
 	re->reType = RT_MODEL;
-	re->shaderTime = cg.time / 1000.0f;
+	re->shaderTime = cg.time;
 	re->hModel = cgs.media.kamikazeEffectModel;
 
 	VectorCopy(org, re->origin);
