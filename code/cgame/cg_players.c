@@ -851,6 +851,19 @@ static qboolean CG_RegisterClientModelname(clientInfo_t *ci, const char *modelNa
 
 /*
 =======================================================================================================================================
+CG_ColorFromString
+=======================================================================================================================================
+*/
+static void CG_ColorFromString(const char *v, vec3_t color) {
+	int val;
+
+	val = atoi(v);
+
+	CG_ColorFromIndex(val, color);
+}
+
+/*
+=======================================================================================================================================
 CG_ColorFromIndex
 =======================================================================================================================================
 */
@@ -905,19 +918,6 @@ void CG_ColorFromIndex(int val, vec3_t color) {
 
 /*
 =======================================================================================================================================
-CG_ColorFromString
-=======================================================================================================================================
-*/
-static void CG_ColorFromString(const char *v, vec3_t color) {
-	int val;
-
-	val = atoi(v);
-
-	CG_ColorFromIndex(val, color);
-}
-
-/*
-=======================================================================================================================================
 CG_LoadClientInfo
 
 Load it now, taking the disk hits. This will usually be deferred to a safe time.
@@ -962,7 +962,7 @@ static void CG_LoadClientInfo(int clientNum, clientInfo_t *ci) {
 				CG_Error("DEFAULT_TEAM_MODEL/skin (%s/%s) failed to register", DEFAULT_TEAM_MODEL, ci->skinName);
 			}
 		} else {
-			if (!CG_RegisterClientModelname(ci, DEFAULT_MODEL, "default", DEFAULT_MODEL, "default", teamname)) {
+			if (!CG_RegisterClientModelname(ci, DEFAULT_MODEL, "default", DEFAULT_HEAD, "default", teamname)) {
 				CG_Error("DEFAULT_MODEL (%s) failed to register", DEFAULT_MODEL);
 			}
 		}
