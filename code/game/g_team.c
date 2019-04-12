@@ -916,7 +916,7 @@ gentity_t *Team_GetLocation(gentity_t *ent) {
 	}
 
 	best = NULL;
-	bestlen = 262144;
+	bestlen = 201326592; // 3 * 8192.0 * 8192.0
 
 	VectorCopy(ent->r.currentOrigin, origin);
 

@@ -1876,7 +1876,7 @@ static void CG_TrailItem(centity_t *cent, qhandle_t hModel) {
 
 	ent.hModel = hModel;
 
-	CG_AddRefEntityWithMinLight(&ent);
+	trap_R_AddRefEntityToScene(&ent);
 }
 
 /*
@@ -1903,7 +1903,7 @@ static void CG_PlayerFlag(centity_t *cent, const cgSkin_t *skin, refEntity_t *to
 	pole.renderfx = torso->renderfx;
 
 	CG_PositionEntityOnTag(&pole, torso, torso->hModel, "tag_flag");
-	CG_AddRefEntityWithMinLight(&pole);
+	trap_R_AddRefEntityToScene(&pole);
 	// show the flag model
 	memset(&flag, 0, sizeof(flag));
 
@@ -2002,7 +2002,7 @@ static void CG_PlayerFlag(centity_t *cent, const cgSkin_t *skin, refEntity_t *to
 
 	AnglesToAxis(angles, flag.axis);
 	CG_PositionRotatedEntityOnTag(&flag, &pole, pole.hModel, "tag_flag");
-	CG_AddRefEntityWithMinLight(&flag);
+	trap_R_AddRefEntityToScene(&flag);
 }
 
 /*
@@ -2080,7 +2080,7 @@ static void CG_PlayerTokens(centity_t *cent, int renderfx) {
 		angle = (((cg.time + 500 * MAX_SKULLTRAIL - 500 * i) / 16) & 255) * (M_PI * 2) / 255;
 		ent.origin[2] += sin(angle) * 10;
 
-		CG_AddRefEntityWithMinLight(&ent);
+		trap_R_AddRefEntityToScene(&ent);
 		VectorCopy(trail->positions[i], origin);
 	}
 }
@@ -2361,19 +2361,19 @@ void CG_AddRefEntityWithPowerups(refEntity_t *ent, entityState_t *state) {
 			ent->customShader = cgs.media.invisShader;
 		}
 
-		CG_AddRefEntityWithMinLight(ent);
+		trap_R_AddRefEntityToScene(ent);
 	} else {
-		CG_AddRefEntityWithMinLight(ent);
+		trap_R_AddRefEntityToScene(ent);
 
 		if (state->powerups & (1 << PW_QUAD)) {
 			ent->customShader = cgs.media.quadShader;
-			CG_AddRefEntityWithMinLight(ent);
+			trap_R_AddRefEntityToScene(ent);
 		}
 
 		if (state->powerups & (1 << PW_REGEN)) {
 			if (((cg.time / 100) % 10) == 1) {
 				ent->customShader = cgs.media.regenShader;
-				CG_AddRefEntityWithMinLight(ent);
+				trap_R_AddRefEntityToScene(ent);
 			}
 		}
 	}
@@ -2485,7 +2485,7 @@ void CG_Player(centity_t *cent) {
 	memset(&head, 0, sizeof(head));
 	// get the rotation information
 	CG_PlayerAngles(cent, legs.axis, torso.axis, head.axis);
-// Tobias HACK: make player models(visually)bigger until we have new models...
+// Tobias HACK: make player models (visually) bigger until we have new models...
 	VectorScale(legs.axis[0], 1.19, legs.axis[0]);
 	VectorScale(legs.axis[1], 1.19, legs.axis[1]);
 	VectorScale(legs.axis[2], 1.19, legs.axis[2]);
@@ -2573,7 +2573,7 @@ void CG_Player(centity_t *cent) {
 			powerup.shaderRGBA[3] = 0xff;
 		}
 
-		CG_AddRefEntityWithMinLight(&powerup);
+		trap_R_AddRefEntityToScene(&powerup);
 	}
 
 	if (cent->currentState.eFlags & EF_KAMIKAZE) {
@@ -2608,11 +2608,11 @@ void CG_Player(centity_t *cent) {
 
 			skull.hModel = cgs.media.kamikazeHeadModel;
 
-			CG_AddRefEntityWithMinLight(&skull);
+			trap_R_AddRefEntityToScene(&skull);
 
 			skull.hModel = cgs.media.kamikazeHeadTrail;
 
-			CG_AddRefEntityWithMinLight(&skull);
+			trap_R_AddRefEntityToScene(&skull);
 		} else {
 			// three skulls spinning around the player
 			angle = ((cg.time / 4) & 255) * (M_PI * 2) / 255;
@@ -2643,13 +2643,13 @@ void CG_Player(centity_t *cent) {
 			*/
 			skull.hModel = cgs.media.kamikazeHeadModel;
 
-			CG_AddRefEntityWithMinLight(&skull);
+			trap_R_AddRefEntityToScene(&skull);
 			// flip the trail because this skull is spinning in the other direction
 			VectorInverse(skull.axis[1]);
 
 			skull.hModel = cgs.media.kamikazeHeadTrail;
 
-			CG_AddRefEntityWithMinLight(&skull);
+			trap_R_AddRefEntityToScene(&skull);
 
 			angle = ((cg.time / 4) & 255) * (M_PI * 2) / 255 + M_PI;
 
@@ -2682,11 +2682,11 @@ void CG_Player(centity_t *cent) {
 			*/
 			skull.hModel = cgs.media.kamikazeHeadModel;
 
-			CG_AddRefEntityWithMinLight(&skull);
+			trap_R_AddRefEntityToScene(&skull);
 
 			skull.hModel = cgs.media.kamikazeHeadTrail;
 
-			CG_AddRefEntityWithMinLight(&skull);
+			trap_R_AddRefEntityToScene(&skull);
 
 			angle = ((cg.time / 3) & 255) * (M_PI * 2) / 255 + 0.5 * M_PI;
 
@@ -2706,11 +2706,11 @@ void CG_Player(centity_t *cent) {
 
 			skull.hModel = cgs.media.kamikazeHeadModel;
 
-			CG_AddRefEntityWithMinLight(&skull);
+			trap_R_AddRefEntityToScene(&skull);
 
 			skull.hModel = cgs.media.kamikazeHeadTrail;
 
-			CG_AddRefEntityWithMinLight(&skull);
+			trap_R_AddRefEntityToScene(&skull);
 		}
 	}
 
@@ -2720,7 +2720,7 @@ void CG_Player(centity_t *cent) {
 		powerup.frame = 0;
 		powerup.oldframe = 0;
 		powerup.customSkin = 0;
-		CG_AddRefEntityWithMinLight(&powerup);
+		trap_R_AddRefEntityToScene(&powerup);
 	}
 
 	if (cent->currentState.powerups & (1 << PW_GUARD)) {
@@ -2729,7 +2729,7 @@ void CG_Player(centity_t *cent) {
 		powerup.frame = 0;
 		powerup.oldframe = 0;
 		powerup.customSkin = 0;
-		CG_AddRefEntityWithMinLight(&powerup);
+		trap_R_AddRefEntityToScene(&powerup);
 	}
 
 	if (cent->currentState.powerups & (1 << PW_DOUBLER)) {
@@ -2738,7 +2738,7 @@ void CG_Player(centity_t *cent) {
 		powerup.frame = 0;
 		powerup.oldframe = 0;
 		powerup.customSkin = 0;
-		CG_AddRefEntityWithMinLight(&powerup);
+		trap_R_AddRefEntityToScene(&powerup);
 	}
 
 	if (cent->currentState.powerups & (1 << PW_SCOUT)) {
@@ -2747,7 +2747,7 @@ void CG_Player(centity_t *cent) {
 		powerup.frame = 0;
 		powerup.oldframe = 0;
 		powerup.customSkin = 0;
-		CG_AddRefEntityWithMinLight(&powerup);
+		trap_R_AddRefEntityToScene(&powerup);
 	}
 	// add the talk baloon or disconnect icon
 	CG_PlayerSprites(cent, &torso);

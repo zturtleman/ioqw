@@ -340,7 +340,7 @@ void CG_Draw3DModelEx(float x, float y, float w, float h, qhandle_t model, cgSki
 	refdef.time = cg.time;
 
 	trap_R_ClearScene();
-	CG_AddRefEntityWithMinLight(&ent);
+	trap_R_AddRefEntityToScene(&ent);
 	trap_R_RenderScene(&refdef);
 }
 
@@ -395,13 +395,13 @@ void CG_DrawHealthModel(float x, float y, float w, float h, qhandle_t model, cgS
 	refdef.time = cg.time;
 
 	trap_R_ClearScene();
-	CG_AddRefEntityWithMinLight(&ent);
+	trap_R_AddRefEntityToScene(&ent);
 
 	if (model2) {
 		ent.hModel = model2;
 		angles[YAW] = yaw2;
 		AnglesToAxis(angles, ent.axis);
-		CG_AddRefEntityWithMinLight(&ent);
+		trap_R_AddRefEntityToScene(&ent);
 	}
 
 	trap_R_RenderScene(&refdef);

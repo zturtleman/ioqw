@@ -685,6 +685,7 @@ static consoleCommand_t commands[] = {
 	{"scoresDown", CG_scrollScoresDown_f},
 	{"scoresUp", CG_scrollScoresUp_f},
 	{"startOrbit", CG_StartOrbit_f},
+	//{"camera", CG_Camera_f},
 	{"loaddeferred", CG_LoadDeferredPlayers},
 	{"generateTracemap", CG_GenerateTracemap}
 };

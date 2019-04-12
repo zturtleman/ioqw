@@ -30,27 +30,6 @@ ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 /*
 =======================================================================================================================================
-CG_AddRefEntityWithMinLight
-=======================================================================================================================================
-*/
-void CG_AddRefEntityWithMinLight(const refEntity_t *entity) {
-	refEntity_t re;
-
-	if (!entity) {
-		return;
-	}
-
-	re = *entity;
-	// give everything a minimum light add
-	re.ambientLight[0] = 32;
-	re.ambientLight[1] = 32;
-	re.ambientLight[2] = 32;
-
-	trap_R_AddRefEntityToScene(&re);
-}
-
-/*
-=======================================================================================================================================
 CG_PositionEntityOnTag
 
 Modifies the entities position and axis by the given tag location.
@@ -293,7 +272,7 @@ static void CG_General(centity_t *cent) {
 	// convert angles to axis
 	AnglesToAxis(cent->lerpAngles, ent.axis);
 	// add to refresh list
-	CG_AddRefEntityWithMinLight(&ent);
+	trap_R_AddRefEntityToScene(&ent);
 }
 
 /*
@@ -434,7 +413,7 @@ static void CG_Item(centity_t *cent) {
 		ent.nonNormalizedAxes = qtrue;
 	}
 	// add to refresh list
-	CG_AddRefEntityWithMinLight(&ent);
+	trap_R_AddRefEntityToScene(&ent);
 
 	if (item->giType == IT_WEAPON && wi && wi->barrelModel) {
 		refEntity_t barrel;
@@ -458,7 +437,7 @@ static void CG_Item(centity_t *cent) {
 
 		barrel.nonNormalizedAxes = ent.nonNormalizedAxes;
 
-		CG_AddRefEntityWithMinLight(&barrel);
+		trap_R_AddRefEntityToScene(&barrel);
 	}
 	// accompanying rings/spheres for powerups
 	if (!cg_simpleItems.integer) {
@@ -488,7 +467,7 @@ static void CG_Item(centity_t *cent) {
 					VectorScale(ent.axis[2], 0.45, ent.axis[2]);
 				}
 // Tobias END
-				CG_AddRefEntityWithMinLight(&ent);
+				trap_R_AddRefEntityToScene(&ent);
 			}
 		}
 	}
@@ -559,7 +538,7 @@ static void CG_Missile(centity_t *cent) {
 		ent.radius = 16;
 		ent.rotation = 0;
 		ent.customShader = cgs.media.plasmaBallShader;
-		CG_AddRefEntityWithMinLight(&ent);
+		trap_R_AddRefEntityToScene(&ent);
 		return;
 	}
 	// flicker between two skins
@@ -623,12 +602,12 @@ static void CG_Mover(centity_t *cent) {
 		ent.hModel = cgs.gameModels[s1->modelindex];
 	}
 	// add to refresh list
-	CG_AddRefEntityWithMinLight(&ent);
+	trap_R_AddRefEntityToScene(&ent);
 	// add the secondary model
 	if (s1->modelindex2) {
 		ent.skinNum = 0;
 		ent.hModel = cgs.gameModels[s1->modelindex2];
-		CG_AddRefEntityWithMinLight(&ent);
+		trap_R_AddRefEntityToScene(&ent);
 	}
 }
 
@@ -654,7 +633,7 @@ void CG_Beam(centity_t *cent) {
 	ent.reType = RT_BEAM;
 	ent.renderfx = RF_NOSHADOW;
 	// add to refresh list
-	CG_AddRefEntityWithMinLight(&ent);
+	trap_R_AddRefEntityToScene(&ent);
 }
 
 /*
@@ -684,7 +663,7 @@ static void CG_Portal(centity_t *cent) {
 	ent.frame = s1->frame; // rotation speed
 	ent.skinNum = s1->clientNum / 256.0 * 360; // roll offset
 	// add to refresh list
-	CG_AddRefEntityWithMinLight(&ent);
+	trap_R_AddRefEntityToScene(&ent);
 }
 
 /*
@@ -872,7 +851,7 @@ static void CG_TeamBase(centity_t *cent) {
 			model.hModel = cgs.media.neutralFlagBaseModel;
 		}
 
-		CG_AddRefEntityWithMinLight(&model);
+		trap_R_AddRefEntityToScene(&model);
 	} else if (cgs.gametype == GT_OBELISK) {
 		// show the obelisk
 		memset(&model, 0, sizeof(model));
@@ -885,7 +864,7 @@ static void CG_TeamBase(centity_t *cent) {
 
 		model.hModel = cgs.media.overloadBaseModel;
 
-		CG_AddRefEntityWithMinLight(&model);
+		trap_R_AddRefEntityToScene(&model);
 		// if hit
 		if (cent->currentState.frame == 1) {
 			// show hit model
@@ -897,7 +876,7 @@ static void CG_TeamBase(centity_t *cent) {
 			model.shaderRGBA[3] = 0xff;
 			model.hModel = cgs.media.overloadEnergyModel;
 
-			CG_AddRefEntityWithMinLight(&model);
+			trap_R_AddRefEntityToScene(&model);
 		}
 		// if respawning
 		if (cent->currentState.frame == 2) {
@@ -926,7 +905,7 @@ static void CG_TeamBase(centity_t *cent) {
 			model.shaderRGBA[3] = c * 0xff;
 			model.hModel = cgs.media.overloadLightsModel;
 
-			CG_AddRefEntityWithMinLight(&model);
+			trap_R_AddRefEntityToScene(&model);
 			// show the target
 			if (t > h) {
 				if (!cent->muzzleFlashTime) {
@@ -951,7 +930,7 @@ static void CG_TeamBase(centity_t *cent) {
 				model.origin[2] += OBELISK_TARGET_HEIGHT;
 				model.hModel = cgs.media.overloadTargetModel;
 
-				CG_AddRefEntityWithMinLight(&model);
+				trap_R_AddRefEntityToScene(&model);
 			} else {
 				// FIXME: show animated smoke
 			}
@@ -968,12 +947,12 @@ static void CG_TeamBase(centity_t *cent) {
 			// show the lights
 			model.hModel = cgs.media.overloadLightsModel;
 
-			CG_AddRefEntityWithMinLight(&model);
+			trap_R_AddRefEntityToScene(&model);
 			// show the target
 			model.origin[2] += OBELISK_TARGET_HEIGHT;
 			model.hModel = cgs.media.overloadTargetModel;
 
-			CG_AddRefEntityWithMinLight(&model);
+			trap_R_AddRefEntityToScene(&model);
 		}
 	} else if (cgs.gametype == GT_HARVESTER) {
 		// show harvester model
@@ -996,7 +975,7 @@ static void CG_TeamBase(centity_t *cent) {
 			model.customSkin = 0;
 		}
 
-		CG_AddRefEntityWithMinLight(&model);
+		trap_R_AddRefEntityToScene(&model);
 	}
 }
 

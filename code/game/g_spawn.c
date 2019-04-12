@@ -311,7 +311,7 @@ char *G_NewString(const char *string) {
 	int i, l;
 
 	l = strlen(string) + 1;
-	newb = BG_Alloc(l);
+	newb = G_Alloc(l);
 	new_p = newb;
 	// turn \n into a real linefeed
 	for (i = 0; i < l; i++) {

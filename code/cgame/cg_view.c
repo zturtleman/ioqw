@@ -200,7 +200,7 @@ static void CG_AddTestModel(void) {
 		}
 	}
 
-	CG_AddRefEntityWithMinLight(&cg.testModelEntity);
+	trap_R_AddRefEntityToScene(&cg.testModelEntity);
 }
 
 /*

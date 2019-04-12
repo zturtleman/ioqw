@@ -60,6 +60,24 @@ void QDECL Com_Printf(const char *msg, ...) {
 
 /*
 =======================================================================================================================================
+UI_ClampCvar
+=======================================================================================================================================
+*/
+float UI_ClampCvar(float min, float max, float value) {
+
+	if (value < min) {
+		return min;
+	}
+
+	if (value > max) {
+		return max;
+	}
+
+	return value;
+}
+
+/*
+=======================================================================================================================================
 UI_Argv
 =======================================================================================================================================
 */
@@ -80,27 +98,6 @@ char *UI_Cvar_VariableString(const char *var_name) {
 
 	trap_Cvar_VariableStringBuffer(var_name, buffer, sizeof(buffer));
 	return buffer;
-}
-
-/*
-=======================================================================================================================================
-UI_AddRefEntityWithMinLight
-=======================================================================================================================================
-*/
-void UI_AddRefEntityWithMinLight(const refEntity_t *entity) {
-	refEntity_t re;
-
-	if (!entity) {
-		return;
-	}
-
-	re = *entity;
-	// give everything a minimum light add
-	re.ambientLight[0] = 32;
-	re.ambientLight[1] = 32;
-	re.ambientLight[2] = 32;
-
-	trap_R_AddRefEntityToScene(&re);
 }
 
 /*

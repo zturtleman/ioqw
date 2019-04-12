@@ -465,7 +465,7 @@ static void CG_BeamgunTrail(centity_t *cent, vec3_t origin) {
 	beam.reType = RT_LIGHTNING;
 	beam.customShader = cgs.media.lightningShader;
 
-	CG_AddRefEntityWithMinLight(&beam);
+	trap_R_AddRefEntityToScene(&beam);
 	// add the impact flare if it hit something
 	if (trace.fraction < 1.0) {
 		vec3_t angles;
@@ -485,7 +485,7 @@ static void CG_BeamgunTrail(centity_t *cent, vec3_t origin) {
 		angles[2] = rand() % 360;
 
 		AnglesToAxis(angles, beam.axis);
-		CG_AddRefEntityWithMinLight(&beam);
+		trap_R_AddRefEntityToScene(&beam);
 	}
 }
 /*
@@ -1188,7 +1188,7 @@ static void CG_ShotgunPattern(vec3_t origin, vec3_t origin2, int seed, int other
 		r = Q_crandom(&seed) * DEFAULT_SHOTGUN_SPREAD * 16;
 		u = Q_crandom(&seed) * DEFAULT_SHOTGUN_SPREAD * 16;
 
-		VectorMA(origin, 131072, forward, end);
+		VectorMA(origin, 131072, forward, end); // 8192 * 16
 		VectorMA(end, r, right, end);
 		VectorMA(end, u, up, end);
 		CG_ShotgunPellet(origin, end, otherEntNum);
@@ -1661,13 +1661,13 @@ static void CG_AddWeaponWithPowerups(refEntity_t *gun, int powerups, int team) {
 			gun->customShader = cgs.media.invisShader;
 		}
 
-		CG_AddRefEntityWithMinLight(gun);
+		trap_R_AddRefEntityToScene(gun);
 	} else {
-		CG_AddRefEntityWithMinLight(gun);
+		trap_R_AddRefEntityToScene(gun);
 
 		if (powerups & (1 << PW_QUAD)) {
 			gun->customShader = cgs.media.quadWeaponShader;
-			CG_AddRefEntityWithMinLight(gun);
+			trap_R_AddRefEntityToScene(gun);
 		}
 	}
 }
@@ -1815,7 +1815,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent,
 	}
 
 	CG_PositionRotatedEntityOnTag(&flash, &gun, weapon->weaponModel, "tag_flash");
-	CG_AddRefEntityWithMinLight(&flash);
+	trap_R_AddRefEntityToScene(&flash);
 
 	if (ps || cg.renderingThirdPerson || cent->currentState.number != cg.predictedPlayerState.clientNum) {
 		// add beam gun trail

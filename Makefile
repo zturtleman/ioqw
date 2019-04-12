@@ -27,7 +27,7 @@ ifndef BUILD_BASEGAME
   BUILD_BASEGAME =
 endif
 ifndef BUILD_RENDERER_OPENGL2
-  BUILD_RENDERER_OPENGL2=
+  BUILD_RENDERER_OPENGL2=0
 endif
 ifndef BUILD_AUTOUPDATER  # DON'T build unless you mean to!
   BUILD_AUTOUPDATER=0
@@ -175,7 +175,7 @@ USE_CODEC_OPUS=1
 endif
 
 ifndef USE_MUMBLE
-USE_MUMBLE=0
+USE_MUMBLE=1
 endif
 
 ifndef USE_VOIP
@@ -2368,7 +2368,6 @@ $(B)/$(SERVERBIN)$(FULLBINEXT): $(Q3DOBJ)
 
 Q3CGOBJ_ = \
   $(B)/$(BASEGAME)/cgame/cg_main.o \
-  $(B)/$(BASEGAME)/cgame/bg_alloc.o \
   $(B)/$(BASEGAME)/cgame/bg_misc.o \
   $(B)/$(BASEGAME)/cgame/bg_pmove.o \
   $(B)/$(BASEGAME)/cgame/bg_slidemove.o \
@@ -2424,7 +2423,6 @@ Q3GOBJ_ = \
   $(B)/$(BASEGAME)/game/ai_main.o \
   $(B)/$(BASEGAME)/game/ai_team.o \
   $(B)/$(BASEGAME)/game/ai_vcmd.o \
-  $(B)/$(BASEGAME)/game/bg_alloc.o \
   $(B)/$(BASEGAME)/game/bg_misc.o \
   $(B)/$(BASEGAME)/game/bg_pmove.o \
   $(B)/$(BASEGAME)/game/bg_slidemove.o \
@@ -2437,6 +2435,7 @@ Q3GOBJ_ = \
   $(B)/$(BASEGAME)/game/g_cmds.o \
   $(B)/$(BASEGAME)/game/g_combat.o \
   $(B)/$(BASEGAME)/game/g_items.o \
+  $(B)/$(BASEGAME)/game/g_mem.o \
   $(B)/$(BASEGAME)/game/g_misc.o \
   $(B)/$(BASEGAME)/game/g_missile.o \
   $(B)/$(BASEGAME)/game/g_mover.o \
@@ -2474,7 +2473,6 @@ Q3UIOBJ_ = \
   $(B)/$(BASEGAME)/ui/ui_players.o \
   $(B)/$(BASEGAME)/ui/ui_shared.o \
   \
-  $(B)/$(BASEGAME)/ui/bg_alloc.o \
   $(B)/$(BASEGAME)/ui/bg_misc.o \
   $(B)/$(BASEGAME)/ui/bg_lib.o \
   \

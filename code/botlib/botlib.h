@@ -136,10 +136,10 @@ typedef struct botlib_import_s {
 	void (QDECL *Print)(int type, char *fmt, ...) __attribute__((format(printf, 2, 3)));
 	// trace a bbox through the world
 	void (*Trace)(bsp_trace_t *trace, vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, int passent, int contentmask);
-	// trace a bbox against a specific entity
-	void (*EntityTrace)(bsp_trace_t *trace, vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, int entnum, int contentmask);
 	// trace a bbox against entities
 	void (*EntitiesTrace)(bsp_trace_t *trace, vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, int passent, int contentmask);
+	// trace a bbox against a specific entity
+	void (*EntityTrace)(bsp_trace_t *trace, vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, int entnum, int contentmask);
 	// retrieve the contents at the given point
 	int (*PointContents)(vec3_t point);
 	// check if the point is in potential visible sight

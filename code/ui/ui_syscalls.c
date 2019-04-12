@@ -289,7 +289,7 @@ int trap_FS_GetFileList(const char *path, const char *extension, char *listbuf, 
 trap_PC_AddGlobalDefine
 =======================================================================================================================================
 */
-int trap_PC_AddGlobalDefine(char *define) {
+int trap_PC_AddGlobalDefine(const char *define) {
 	return syscall(UI_PC_ADD_GLOBAL_DEFINE, define);
 }
 

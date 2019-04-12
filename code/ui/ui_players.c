@@ -787,7 +787,7 @@ void UI_DrawPlayer(float x, float y, float w, float h, playerInfo_t *pi, int tim
 
 	VectorCopy(legs.origin, legs.oldorigin);
 	Byte4Copy(pi->c1RGBA, legs.shaderRGBA);
-	UI_AddRefEntityWithMinLight(&legs);
+	trap_R_AddRefEntityToScene(&legs);
 
 	if (!legs.hModel) {
 		return;
@@ -807,7 +807,7 @@ void UI_DrawPlayer(float x, float y, float w, float h, playerInfo_t *pi, int tim
 	torso.renderfx = renderfx;
 
 	Byte4Copy(pi->c1RGBA, torso.shaderRGBA);
-	UI_AddRefEntityWithMinLight(&torso);
+	trap_R_AddRefEntityToScene(&torso);
 	// add the head
 	head.hModel = pi->headModel;
 
@@ -823,7 +823,7 @@ void UI_DrawPlayer(float x, float y, float w, float h, playerInfo_t *pi, int tim
 	head.renderfx = renderfx;
 
 	Byte4Copy(pi->c1RGBA, head.shaderRGBA);
-	UI_AddRefEntityWithMinLight(&head);
+	trap_R_AddRefEntityToScene(&head);
 	// add the gun
 	if (pi->currentWeapon != WP_NONE) {
 		memset(&gun, 0, sizeof(gun));
@@ -836,7 +836,7 @@ void UI_DrawPlayer(float x, float y, float w, float h, playerInfo_t *pi, int tim
 		gun.renderfx = renderfx;
 
 		Byte4Copy(pi->c1RGBA, gun.shaderRGBA);
-		UI_AddRefEntityWithMinLight(&gun);
+		trap_R_AddRefEntityToScene(&gun);
 	}
 	// add the spinning barrel
 	if (pi->barrelModel) {
@@ -857,7 +857,7 @@ void UI_DrawPlayer(float x, float y, float w, float h, playerInfo_t *pi, int tim
 		barrel.renderfx = renderfx;
 
 		Byte4Copy(pi->c1RGBA, barrel.shaderRGBA);
-		UI_AddRefEntityWithMinLight(&barrel);
+		trap_R_AddRefEntityToScene(&barrel);
 	}
 	// add muzzle flash
 	if (dp_realtime <= pi->muzzleFlashTime) {
@@ -872,7 +872,7 @@ void UI_DrawPlayer(float x, float y, float w, float h, playerInfo_t *pi, int tim
 			flash.renderfx = renderfx;
 
 			Byte4Copy(pi->c1RGBA, flash.shaderRGBA);
-			UI_AddRefEntityWithMinLight(&flash);
+			trap_R_AddRefEntityToScene(&flash);
 		}
 		// make a dlight for the flash
 		if (pi->flashDlightColor[0] || pi->flashDlightColor[1] || pi->flashDlightColor[2]) {

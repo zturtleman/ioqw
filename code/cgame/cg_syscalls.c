@@ -281,7 +281,7 @@ int trap_FS_GetFileList(const char *path, const char *extension, char *listbuf, 
 trap_PC_AddGlobalDefine
 =======================================================================================================================================
 */
-int trap_PC_AddGlobalDefine(char *define) {
+int trap_PC_AddGlobalDefine(const char *define) {
 	return syscall(CG_PC_ADD_GLOBAL_DEFINE, define);
 }
 
@@ -1052,3 +1052,33 @@ void trap_CIN_SetExtents(int handle, int x, int y, int w, int h) {
 	syscall(CG_CIN_SETEXTENTS, handle, x, y, w, h);
 }
 
+/*
+=======================================================================================================================================
+trap_loadCamera
+=======================================================================================================================================
+*/
+/*
+qboolean trap_loadCamera(const char *name) {
+	return syscall(CG_LOADCAMERA, name);
+}
+*/
+/*
+=======================================================================================================================================
+trap_startCamera
+=======================================================================================================================================
+*/
+/*
+void trap_startCamera(int time) {
+	syscall(CG_STARTCAMERA, time);
+}
+*/
+/*
+=======================================================================================================================================
+trap_getCameraInfo
+=======================================================================================================================================
+*/
+/*
+qboolean trap_getCameraInfo(int time, vec3_t *origin, vec3_t *angles) {
+	return syscall(CG_GETCAMERAINFO, time, origin, angles);
+}
+*/

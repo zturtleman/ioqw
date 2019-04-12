@@ -454,7 +454,7 @@ gentity_t *fire_nail(gentity_t *self, vec3_t start, vec3_t forward, vec3_t right
 	u = sin(r) * crandom() * NAILGUN_SPREAD * 16;
 	r = cos(r) * crandom() * NAILGUN_SPREAD * 16;
 
-	VectorMA(start, 131072, forward, end);
+	VectorMA(start, 131072, forward, end); // 8192 * 16
 	VectorMA(end, r, right, end);
 	VectorMA(end, u, up, end);
 	VectorSubtract(end, start, dir);

@@ -439,6 +439,10 @@ qboolean OnSameTeam(gentity_t *ent1, gentity_t *ent2);
 void Team_CheckDroppedItem(gentity_t *dropped);
 qboolean CheckObeliskAttack(gentity_t *obelisk, gentity_t *attacker);
 void ObeliskPain(gentity_t *self, gentity_t *attacker, int damage);
+// g_mem.c
+void *G_Alloc(int size);
+void G_InitMemory(void);
+void Svcmd_GameMem_f(void);
 // g_session.c
 void G_ReadSessionData(gclient_t *client);
 void G_InitSessionData(gclient_t *client, char *userinfo);
@@ -501,6 +505,7 @@ extern vmCvar_t g_quadfactor;
 extern vmCvar_t g_forcerespawn;
 extern vmCvar_t g_inactivity;
 extern vmCvar_t g_debugMove;
+extern vmCvar_t g_debugAlloc;
 extern vmCvar_t g_debugDamage;
 extern vmCvar_t g_weaponRespawn;
 extern vmCvar_t g_weaponTeamRespawn;

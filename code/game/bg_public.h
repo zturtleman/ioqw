@@ -630,13 +630,6 @@ void FinalizeTracemapClamp(int *x, int *y);
 #define MASK_OPAQUE			(CONTENTS_SOLID|CONTENTS_SLIME|CONTENTS_LAVA)
 #define MASK_SHOT			(CONTENTS_SOLID|CONTENTS_BODY|CONTENTS_CORPSE)
 
-qboolean BG_CanAlloc(unsigned int size);
-void *BG_Alloc(unsigned int size);
-void BG_InitMemory(void);
-void BG_Free(void *ptr);
-void BG_DefragmentMemory(void);
-void BG_MemoryInfo(void);
-
 void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result);
 void BG_EvaluateTrajectoryDelta(const trajectory_t *tr, int atTime, vec3_t result);
 void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerState_t *ps);
@@ -722,6 +715,7 @@ void trap_FS_Write(const void *buffer, int len, fileHandle_t f);
 int trap_FS_Seek(fileHandle_t f, long offset, int origin); // fsOrigin_t
 void trap_FS_FCloseFile(fileHandle_t f);
 int trap_FS_GetFileList(const char *path, const char *extension, char *listbuf, int bufsize);
+int trap_PC_AddGlobalDefine(const char *define);
 int trap_PC_LoadSource(const char *filename);
 int trap_PC_ReadToken(int handle, pc_token_t *pc_token);
 int trap_PC_SourceFileAndLine(int handle, char *filename, int *line);

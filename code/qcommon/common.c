@@ -2361,7 +2361,7 @@ void Com_Setenv_f(void) {
 		char *env = getenv(arg1);
 
 		if (env) {
-			Com_Printf("%s=%s\n", arg1, env);
+			Com_Printf("%s = %s\n", arg1, env);
 		} else {
 			Com_Printf("%s undefined\n", arg1);
 		}
