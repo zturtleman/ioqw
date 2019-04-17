@@ -3796,6 +3796,7 @@ static void UI_Update(const char *name) {
 				trap_Cvar_SetValue("r_stencilbits", 8);
 				trap_Cvar_SetValue("r_picmip", 0);
 				trap_Cvar_SetValue("r_mode", 4);
+				trap_Cvar_Set("ui_videomode", "800x600");
 				trap_Cvar_SetValue("r_texturebits", 32);
 				trap_Cvar_SetValue("r_fastSky", 0);
 				trap_Cvar_SetValue("r_inGameVideo", 1);
@@ -3813,6 +3814,7 @@ static void UI_Update(const char *name) {
 				trap_Cvar_Reset("r_stencilbits");
 				trap_Cvar_SetValue("r_picmip", 1);
 				trap_Cvar_SetValue("r_mode", 3);
+				trap_Cvar_Set("ui_videomode", "640x480");
 				trap_Cvar_SetValue("r_texturebits", 0);
 				trap_Cvar_SetValue("r_fastSky", 0);
 				trap_Cvar_SetValue("r_inGameVideo", 1);
@@ -3830,6 +3832,7 @@ static void UI_Update(const char *name) {
 				trap_Cvar_Reset("r_stencilbits");
 				trap_Cvar_SetValue("r_picmip", 1);
 				trap_Cvar_SetValue("r_mode", 3);
+				trap_Cvar_Set("ui_videomode", "640x480");
 				trap_Cvar_SetValue("r_texturebits", 0);
 				trap_Cvar_SetValue("cg_shadows", 0);
 				trap_Cvar_SetValue("r_fastSky", 1);
@@ -3846,6 +3849,7 @@ static void UI_Update(const char *name) {
 				trap_Cvar_SetValue("r_depthbits", 16);
 				trap_Cvar_SetValue("r_stencilbits", 0);
 				trap_Cvar_SetValue("r_mode", 3);
+				trap_Cvar_Set("ui_videomode", "640x480");
 				trap_Cvar_SetValue("r_picmip", 2);
 				trap_Cvar_SetValue("r_texturebits", 16);
 				trap_Cvar_SetValue("cg_shadows", 0);
@@ -6144,6 +6148,7 @@ void _UI_Init(qboolean inGameLoad) {
 	UI_InitMemory();
 	// cache redundant calulations
 	trap_GetGlconfig(&uiInfo.uiDC.glconfig);
+	trap_Cvar_Set("ui_videomode", va("%dx%d", uiInfo.uiDC.glconfig.vidWidth, uiInfo.uiDC.glconfig.vidHeight));
 	// for 640 * 480 virtualized screen
 	uiInfo.uiDC.yscale = uiInfo.uiDC.glconfig.vidHeight * (1.0 / 480.0);
 	uiInfo.uiDC.xscale = uiInfo.uiDC.glconfig.vidWidth * (1.0 / 640.0);
@@ -6913,6 +6918,7 @@ static cvarTable_t cvarTable[] = {
 	{NULL, "timelimit", "15", CVAR_SERVERINFO|CVAR_ARCHIVE|CVAR_NORESTART},
 	{NULL, "capturelimit", "8", CVAR_SERVERINFO|CVAR_ARCHIVE|CVAR_NORESTART},
 	{&ui_serverStatusTimeOut, "ui_serverStatusTimeOut", "7000", CVAR_ARCHIVE},
+	{NULL, "ui_videomode", "", CVAR_ROM},
 };
 
 static int cvarTableSize = ARRAY_LEN(cvarTable);
