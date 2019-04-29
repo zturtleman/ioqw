@@ -484,15 +484,6 @@ void BotSetTeamStatus(bot_state_t *bs) {
 		case LTG_CAMPORDER:
 			teamtask = TEAMTASK_CAMP;
 			break;
-		case LTG_PATROL:
-			teamtask = TEAMTASK_PATROL;
-			break;
-		case LTG_GETITEM:
-			teamtask = TEAMTASK_PATROL;
-			break;
-		case LTG_KILL:
-			teamtask = TEAMTASK_PATROL;
-			break;
 		default:
 			teamtask = TEAMTASK_PATROL;
 			break;
