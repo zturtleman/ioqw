@@ -1835,6 +1835,10 @@ void ClientCommand(int clientNum) {
 		Cmd_SetViewpos_f(ent);
 	} else if (Q_stricmp(cmd, "stats") == 0) {
 		Cmd_Stats_f(ent);
+// Tobias BULLET
+	} else if (Q_stricmp(cmd, "shootbox") == 0) {
+//		Cmd_PhysicsTest_ShootBox_f(ent);
+// Tobias END
 	} else {
 		trap_SendServerCommand(clientNum, va("print \"unknown cmd %s\n\"", cmd));
 	}

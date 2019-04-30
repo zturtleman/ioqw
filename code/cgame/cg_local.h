@@ -766,6 +766,11 @@ typedef struct {
 	qhandle_t teamLeaderShader;
 	qhandle_t retrieveShader;
 	qhandle_t escortShader;
+// Tobias BULLET
+	// debug utils
+	qhandle_t debugPlayerAABB;
+	qhandle_t debugPlayerAABB_twoSided;
+// Tobias END
 	// sounds
 	sfxHandle_t talkSound;
 	sfxHandle_t killSound;

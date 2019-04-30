@@ -298,6 +298,12 @@ typedef struct {
 	int bodyQueIndex;				// dead bodies
 	gentity_t *bodyQue[BODY_QUEUE_SIZE];
 } level_locals_t;
+// Tobias BULLET
+void G_InitBulletPhysics();
+void G_ShutdownBulletPhysics();
+void G_RunPhysics(int deltaTime);
+void Cmd_PhysicsTest_ShootBox_f(gentity_t *ent);
+// Tobias END
 // g_spawn.c
 qboolean G_SpawnString(const char *key, const char *defaultString, char **out);
 // spawn string returns a temporary reference, you must CopyString() if you want to keep it

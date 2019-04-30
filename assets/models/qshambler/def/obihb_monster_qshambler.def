@@ -1,0 +1,322 @@
+
+model monster_qshambler {
+	mesh						models/obihb/qshambler/md5/qshambler.md5mesh
+
+	channel torso					(*chest )
+	channel legs					(*bip01 pelvis origin SPINNER -*chest)
+
+	anim af_pose					models/obihb/qshambler/md5/bindpose.md5anim
+	anim ik_pose					models/obihb/qshambler/md5/bindpose.md5anim
+
+	anim initial					models/obihb/qshambler/md5/qshambler.md5anim
+
+	anim idle					models/obihb/qshambler/md5/idle02.md5anim
+	anim stand					models/obihb/qshambler/md5/idle02.md5anim
+
+	anim walk					models/obihb/qshambler/md5/walk.md5anim {
+		frame 11					sound_body snd_footstep
+		frame 11					sound_body2 snd_deepfs
+		frame 23					sound_body snd_footstep
+		frame 23					sound_body2 snd_deepfs
+	}
+
+	anim sight					models/obihb/qshambler/md5/sight.md5anim {
+		frame 1						sound_voice snd_sight2
+		frame 32					sound_body snd_footstep
+		frame 32					sound_body2 snd_deepfs
+		frame 40					sound_voice snd_chatter_combat
+	}
+
+	anim pain					models/obihb/qshambler/md5/pain01.md5anim {
+		frame 1							sound_voice snd_pain
+	}
+
+	anim pain_chest					models/obihb/qshambler/md5/pain02.md5anim {
+		frame 1							sound_voice snd_pain
+	}
+
+	anim pain_head					models/obihb/qshambler/md5/pain03.md5anim {
+		frame 1							sound_voice snd_pain
+	}
+
+	anim pain_right_arm				models/obihb/qshambler/md5/pain04.md5anim {
+		frame 1							sound_voice snd_pain
+	}
+
+	anim pain_left_arm				models/obihb/qshambler/md5/pain05.md5anim {
+		frame 1							sound_voice snd_pain
+	}
+
+	anim melee_attack1				models/obihb/qshambler/md5/attack05.md5anim {
+		frame 4						sound_voice snd_chatter_combat
+		frame 14					melee melee_qshamblerBite
+	}
+
+	anim melee_attack2				models/obihb/qshambler/md5/attack01.md5anim {
+		frame 4						sound_voice snd_chatter_combat
+		frame 17					melee melee_qshamblerRightClaw
+	}
+
+	anim melee_attack3				models/obihb/qshambler/md5/attack04.md5anim {
+		frame 8						sound_voice snd_chatter_combat
+		frame 19					melee melee_qshamblerLeftClaw
+	}
+
+	anim range_attack1				models/obihb/qshambler/md5/attack02.md5anim {
+		frame 19					sound_body2 monster_demon_hellknight_fireball_create
+		frame 19					create_missile rmissile
+		frame 44					sound_body2 monster_demon_hellknight_fireball_create
+		frame 44					create_missile lmissile
+		frame 43					sound_weapon snd_attackmissile
+		frame 43					launch_missile rmissile
+		frame 59					sound_weapon snd_attackmissile
+		frame 59					launch_missile lmissile
+		frame 60					sound_voice snd_chatter_combat
+	}
+
+	anim range_attack2				models/obihb/qshambler/md5/walking_attack01.md5anim {
+		frame 2						sound_body2 monster_demon_hellknight_fireball_create
+		frame 2						create_missile rmissile
+		frame 18					sound_body2 monster_demon_hellknight_fireball_create
+		frame 18					create_missile lmissile
+		frame 10					sound_weapon snd_attackmissile
+		frame 10					launch_missile rmissile
+		frame 26					sound_weapon snd_attackmissile
+		frame 26					launch_missile lmissile
+		frame 34					sound_voice snd_chatter_combat
+	}
+
+	anim turret_attack				models/obihb/qshambler/md5/attack03.md5anim {
+		frame 25					sound_body2 monster_demon_hellknight_fireball_create
+		frame 25					create_missile rmissile
+		frame 26					create_missile lmissile
+		frame 58					sound_weapon snd_attackmissile
+		frame 58					launch_missile rmissile
+		frame 58					launch_missile lmissile
+	}
+}
+
+entityDef monster_qshambler {
+	"editor_mins"					"-48 -48 0"
+	"editor_maxs"					"48 48 96"
+	"inherit"					"monster_default"
+	"scriptobject"					"monster_demon_hellknight"
+	"model"						"monster_qshambler"
+	"ragdoll"					"monster_qshambler"
+	"size"						"80 80 96"
+	"use_aas"					"aas96"
+	"team"						"1"
+	"rank"						"2"
+	"health"					"1200"
+	"melee_range"					"75"
+	"turn_rate"					"120"
+	"def_projectile"				"projectile_lightning_qshambler"
+	"attack_cone"					"70"
+	"attack_accuracy"				"0"
+	"mass"						"600"
+	"pain_threshold"				"8"	
+	
+	"burnaway"					"1.5"
+	"smoke_burnParticleSystem"			"burn_manc.prt-chest"
+	"smokeParticleSystem"				"obihb_qshambler_smoke01.prt-lmissile"
+	"smokeParticleSystem2"				"obihb_qshambler_smoke02.prt-rmissile"
+
+	"ik_numLegs"					"2"
+	"ik_footSize"					"8"
+	"ik_minWaistAnkleDist"				"30"
+	"ik_footUpTrace"				"32"
+	"ik_footDownTrace"				"64"
+	"ik_waist"					"bip01"
+	"ik_hip1"					"lthigh"
+	"ik_hip2"					"rthigh"
+	"ik_knee1"					"lcalf"
+	"ik_knee2"					"rcalf"
+	"ik_ankle1"					"lfoot"
+	"ik_ankle2"					"rfoot"
+	"ik_dir1"					"lknee"
+	"ik_dir2"					"rknee"
+	"ik_foot1"					"ltoe0"
+	"ik_foot2"					"rtoe0"
+
+	"look_min"					"-90 -125 0"
+	"look_max"					"25 125 0"
+	"look_joint head"				"0.4 0.4 0"
+
+	"damage_zone head"				"*neck"
+	"damage_zone chest"				"*chest spine2 -*rupperarm -*lupperarm -*head"
+	"damage_zone left_arm"				"*lupperarm"
+	"damage_zone right_arm"				"*rupperarm"
+	"damage_zone legs"				"*SPINNER -*chest"
+	"damage_scale head"				"2"
+	
+	//"anim"						"idle"
+
+	"snd_sight1"					"monster_demon_hellknight_sight1"
+	"snd_sight2"					"monster_demon_hellknight_sight2"
+	"snd_sight3"					"monster_demon_hellknight_sight3"
+	"snd_chatter"					"monster_demon_hellknight_chatter"
+	"snd_chatter_combat"				"monster_demon_hellknight_chatter_combat"
+	"snd_pain"					"monster_demon_hellknight_pain"
+	"snd_attackmissile"				"monster_demon_hellknight_attackmissile"
+	"snd_death"					"monster_demon_hellknight_die"
+	"snd_footstep"					"monster_demon_hellknight_footstep"
+	"snd_deepfs"					"hellknight_deepfs"
+	"snd_burn"					"monster_demon_hellknight_burn"
+}
+
+entityDef damage_lightning_qshambler {
+	"damage"					"18"
+	"kickDir"					"1 0 0"
+
+	"mtr_blob"					"genericDamage"
+	"blob_time"					"300"
+	"blob_size"					"400"
+	"blob_offset_x"					"400"
+
+	"knockback"					"10"
+
+	"kick_time"					"400"
+	"kick_amplitude"				"1"
+
+	"dv_time"					"100"
+	"smoke_wound_flesh"				"bloodwound.smoke"
+}
+ 
+
+entityDef damage_lightning_qshambler_splash {
+	"damage"					"22"
+	"radius"					"120"
+}
+
+entityDef projectile_lightning_qshambler {
+	"spawnclass"					"idProjectile"
+	"mins"						"-4 -4 -4"
+	"maxs"						"4 4 4"
+	"cone"						"3"
+	"model" 					"obihb_qshambler_lightning.prt"
+
+	"def_damage"					"damage_lightning_qshambler"
+	"def_splash_damage"				"damage_lightning_qshambler_splash"
+								
+	"launchFromBarrel"				"1"
+	"health"					"25"				// amount of damage projectile can take if damaged (0 means it can't be destroyed)
+	"velocity"					"1800 0 -50"			// how fast the projectile leaves the gun (or distance if fuse is 0)
+	"angular_velocity"				"0 0 0"				// how the projectile is rotating when it leaves the gun
+	"thrust"					"0"				// the rate of acceleration (always in the direction of the projectiles model)
+	"thrust_start"					"0"				// when to start accelerating
+	"thrust_end"					"0"				// when to stop accelerating
+	"linear_friction"				"0"				// "air" friction
+	"angular_friction"				"0"
+	"contact_friction"				"0"
+	"bounce"					"0"					// how much speed a projectile retains when it bounces off of objects (coefficient of restitution).  0 means no bounce.
+	"mass"						"5"
+	"gravity"					"250"					// how much gravity affects the trajectory.  gravity direction is same as the entity that fired it.
+	"fuse"						"0.5"					// how long before the projectile is removed or self-detonates.  Use 0 for beam weapons (velocity == distance).
+								
+	"detonate_on_fuse"				"1"					// whether projectile should detonate when it's fuse runs out
+	"detonate_on_death"				"1"					// whether projectile should detonate when it's "killed" (health runs out)
+	"detonate_on_world"				"1"					// whether projectile should detonate when it hits an obstacle
+	"detonate_on_actor"				"1"					// whether projectile should detonate when it hits a character in the game
+								
+	"impact_damage_effect"				"0"					// whether projectile causes blood splats from characters that bleed
+	"impact_gib"					"1"					// whether projectile can gib a character or not (for example: bullets don't gib, but rockets do)
+								
+	"mtr_detonate"					"textures/decals/ballburn_plasma"
+	"decal_size"					"75" 
+
+	"smoke_fly"					"obihb_qshambler_lightning_trail.prt"	// particle effect while in the air
+	"smoke_detonate"				""					// particle effect when detonates
+	"smoke_residue"					""					// particle effect while in the air
+	"smoke_bounce"					""					// particle effect when bounces
+	"smoke_fuse"					""					// particle effect when removed from fuse expiring
+	
+	// parametric particles -- temp
+	"model_detonate"				"obihb_qshambler_explosion.prt"
+									
+	"debris_count"					"3"
+	"def_debris"					"debris_largeshrapnel"
+	"def_shrapnel"					"debris_shrapnel"
+	
+	"mtr_light_shader"				"lights/square_flicker"
+//	"light_color"					"0.9 0.8 1.0"
+	"light_radius"					"160"
+	"light_offset"					"0 0 0"
+
+	"mtr_explode_light_shader"			"lights/square_flicker"
+	"light_color"					"0.9 0.8 1.0"
+	"explode_light_radius"				"320"
+	"explode_light_fadetime"			"1"
+
+	"snd_explode"					"monster_demon_imp_fireball_explode"
+	"snd_fly"					"monster_demon_imp_fireball_flight"		// particle effect while in the air
+}
+
+entityDef melee_qshamblerLeftClaw {
+	// melee specific parameters
+	"snd_hit"					"monster_demon_imp_melee_hit"
+	"snd_miss"					"monster_demon_imp_melee_miss"
+	"kickDir"					"0 -1 0"
+
+	// damage parameters
+	"damage"					"27"
+
+	"mtr_blob"					"leftSlash"
+	"blob_time"					"300"
+	"blob_x"					"140"
+	"blob_y"					"-100"
+	"blob_width"					"600"
+	"blob_height"					"600"
+
+	"knockback"					"240"
+
+	"kick_time"					"400"
+	"kick_amplitude"				"2"
+
+	"dv_time"					"100"
+}
+
+entityDef melee_qshamblerRightClaw {
+	"snd_hit"					"monster_demon_imp_melee_hit"
+	"snd_miss"					"monster_demon_imp_melee_miss"
+	"kickDir"					"0 1 0"
+
+
+	"damage"					"27"
+
+	"mtr_blob"					"rightSlash"
+	"blob_time"					"300"
+	"blob_x"					"-100"
+	"blob_y"					"-100"
+	"blob_width"					"600"
+	"blob_height"					"600"
+
+	"knockback"					"120"
+
+	"kick_time"					"400"
+	"kick_amplitude"				"2"
+
+	"dv_time"					"100"
+}
+
+entityDef melee_qshamblerBite {
+	"damage"					"33"
+	"kickDir"					"1 0 0"
+
+	"snd_hit"					"monster_demon_hellknight_melee_2"
+	"snd_miss"					"monster_demon_hellknight_melee_2"
+
+	"mtr_blob"					"bite"
+	"blob_time"					"600"
+
+	"blob_x"					"0"
+	"blob_y"					"-125"
+	"blob_width"					"650"
+	"blob_height"					"650"
+
+	"knockback"					"100"
+
+	"kick_time"					"400"
+	"kick_amplitude"				"1"
+
+	"dv_time"					"100"
+}

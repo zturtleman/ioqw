@@ -306,6 +306,7 @@ typedef vec_t vec3_t[3];
 typedef vec_t vec4_t[4];
 typedef vec_t vec5_t[5];
 
+typedef vec_t matrix_t[16]; // Tobias BULLET
 typedef int fixed4_t;
 typedef int fixed8_t;
 typedef int fixed16_t;
@@ -664,6 +665,11 @@ void MakeNormalVectors(const vec3_t forward, vec3_t right, vec3_t up);
 // perpendicular vector could be replaced by this
 //int PlaneTypeForNormal(vec3_t normal);
 void MatrixMultiply(float in1[3][3], float in2[3][3], float out[3][3]);
+// Tobias BULLET
+void MatrixFromAngles(matrix_t m, vec_t pitch, vec_t yaw, vec_t roll);
+void MatrixSetupTransformFromRotation(matrix_t m, const matrix_t rot, const vec3_t origin);
+void MatrixTransformPoint2(const matrix_t m, vec3_t inout);
+// Tobias END
 void AngleVectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up);
 // optimized version of AngleVectors (when only forward is needed)
 void AngleVectorsForward(const vec3_t angles, vec3_t forward);
@@ -1135,6 +1141,7 @@ typedef enum {
 	ET_GENERAL,
 	ET_PLAYER,
 	ET_MISSILE,
+	ET_PHYSICS_BOX,	// Tobias BULLET: 'Physics Engine' visualization tool
 	ET_TEAM,
 	ET_ITEM,
 	ET_MOVER,

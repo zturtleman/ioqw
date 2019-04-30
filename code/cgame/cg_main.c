@@ -1211,7 +1211,10 @@ static void CG_RegisterGraphics(void) {
 	cgs.media.teamLeaderShader = trap_R_RegisterShaderNoMip("ui/assets/statusbar/team_leader.tga");
 	cgs.media.retrieveShader = trap_R_RegisterShaderNoMip("ui/assets/statusbar/retrieve.tga");
 	cgs.media.escortShader = trap_R_RegisterShaderNoMip("ui/assets/statusbar/escort.tga");
-
+// Tobias BULLET
+	cgs.media.debugPlayerAABB = trap_R_RegisterShader("debugPlayerAABB");
+	cgs.media.debugPlayerAABB_twoSided = trap_R_RegisterShader("debugPlayerAABB_twoSided");
+// Tobias END
 	if (cgs.gametype > GT_TOURNAMENT || cg_buildScript.integer) {
 		CG_CachePlayerModels(DEFAULT_TEAM_MODEL_MALE, DEFAULT_TEAM_HEAD_MALE);
 		CG_CachePlayerModels(DEFAULT_TEAM_MODEL_FEMALE, DEFAULT_TEAM_HEAD_FEMALE);

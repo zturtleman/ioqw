@@ -1,0 +1,477 @@
+
+model monster_qvore {
+	mesh						models/obihb/qvore/md5/qvore.md5mesh
+
+	channel torso					(*spine01)
+	channel legs					(*origin body -*spine01)
+
+	anim af_pose					models/obihb/qvore/md5/afpose.md5anim
+	anim ik_pose					models/obihb/qvore/md5/ikpose.md5anim
+
+	anim idle					models/obihb/qvore/md5/idle.md5anim
+
+	anim teleport					models/obihb/qvore/md5/ikpose.md5anim {
+
+		frame 5							sound_body snd_footstep
+		frame 6							sound_body snd_footstep
+		frame 11						sound_voice snd_sight
+	}
+
+	anim sight1					models/obihb/qvore/md5/sight.md5anim {
+		frame 5							sound_voice snd_sight
+	}
+
+	anim sight2					models/obihb/qvore/md5/sight.md5anim {
+		frame 5							sound_voice snd_sight2
+	}
+
+	anim walk					models/obihb/qvore/md5/walk.md5anim {
+		frame 1							sound_body snd_footstep
+		frame 6							sound_body snd_footstep
+		frame 12						sound_body snd_footstep
+		frame 19						sound_body snd_footstep
+	}
+
+	anim pain					models/obihb/qvore/md5/pain_chest.md5anim {
+		frame 1							sound_voice snd_pain
+	}
+
+	anim pain_chest2				models/obihb/qvore/md5/pain_chest.md5anim {
+		frame 1							sound_voice snd_pain
+	}
+
+	anim pain_head1					models/obihb/qvore/md5/pain_head.md5anim {
+		frame 1							sound_voice snd_pain
+	}
+
+	anim pain_head2					models/obihb/qvore/md5/pain_head.md5anim {
+		frame 1							sound_voice snd_pain
+	}
+
+	anim pain_left_arm1				models/obihb/qvore/md5/pain_leftarm.md5anim {
+		frame 1							sound_voice snd_pain
+	}
+
+	anim pain_left_arm2				models/obihb/qvore/md5/pain_leftarm.md5anim {
+		frame 1							sound_voice snd_pain
+	}
+
+	anim pain_right_arm1				models/obihb/qvore/md5/pain_rightarm.md5anim {
+		frame 1							sound_voice snd_pain
+	}
+
+	anim pain_right_arm2				models/obihb/qvore/md5/pain_rightarm.md5anim {
+		frame 1							sound_voice snd_pain
+	}
+
+	anim pain_legs					models/obihb/qvore/md5/pain_chest.md5anim {
+		frame 1							sound_voice snd_pain
+	}
+
+	anim run					models/obihb/qvore/md5/walk.md5anim {
+		frame 1							sound_body snd_footstep
+		frame 6							sound_body snd_footstep
+		frame 12						sound_body snd_footstep
+		frame 19						sound_body snd_footstep
+	}
+
+	anim melee_attack1				models/obihb/qvore/md5/attack1.md5anim {
+		frame 1							call overrideLegs
+		frame 12						melee melee_qvore_right	
+		frame 12						sound_weapon snd_attackmelee_1
+		frame 12						sound_body snd_footstep
+		frame 13						sound_body snd_footstep
+	}
+
+	anim melee_attack2				models/obihb/qvore/md5/attack2.md5anim {
+		frame 1							call overrideLegs
+		frame 9							melee melee_qvore_left
+		frame 9							sound_weapon snd_attackmelee_1
+		frame 10						sound_body snd_footstep
+		frame 15						sound_body snd_footstep
+		frame 24						sound_body snd_footstep
+	}
+
+//	anim melee_attack3				models/obihb/qvore/md5/attack1.md5anim {
+//		frame 1							call overrideLegs
+//		frame 11						melee melee_qvore_right	
+//		frame 11						sound_weapon snd_attackmelee_1
+//		frame 12						sound_body snd_footstep
+//		frame 13						sound_body snd_footstep
+//	}
+
+	anim evade_left1				models/obihb/qvore/md5/evade_left.md5anim {
+		frame 1							sound_voice snd_pain
+		frame 7							sound_body snd_footstep
+		frame 9							sound_body snd_footstep
+		frame 15						sound_body snd_footstep
+	}
+
+	anim evade_left2				models/obihb/qvore/md5/evade_left.md5anim {
+		frame 1							sound_voice snd_pain
+		frame 7							sound_body snd_footstep
+		frame 9							sound_body snd_footstep
+		frame 15						sound_body snd_footstep
+	}
+	
+	anim evade_right1				models/obihb/qvore/md5/evade_right.md5anim {
+		frame 1							sound_voice snd_pain
+		frame 3							sound_body snd_footstep
+		frame 7							sound_body snd_footstep
+		frame 9							sound_body snd_footstep
+		frame 15						sound_body snd_footstep
+	}
+
+	anim evade_right2				models/obihb/qvore/md5/evade_right.md5anim {
+		frame 1							sound_voice snd_pain
+		frame 3							sound_body snd_footstep
+		frame 7							sound_body snd_footstep
+		frame 9							sound_body snd_footstep
+		frame 15						sound_body snd_footstep
+	}
+
+	anim range_attack1				models/obihb/qvore/md5/range_attack1.md5anim {
+		frame 1							call overrideLegs
+		frame 1							create_missile qvore_missile_l
+		frame 10						launch_missile qvore_missile_l	
+		frame 10						sound_weapon snd_attackmissile
+	}
+
+	anim range_attack2				models/obihb/qvore/md5/range_attack2.md5anim {
+		frame 1							call overrideLegs
+		frame 6							create_missile qvore_missile_r
+		frame 22						launch_missile qvore_missile_r	
+		frame 22						sound_weapon snd_attackmissile
+	}
+
+//	anim range_attack3				models/obihb/qvore/md5/range_attack3.md5anim {
+//		frame 1							call overrideLegs
+//		frame 1							create_missile qvore_missile_r
+//		frame 11						launch_missile qvore_missile_r
+//		frame 12						create_missile qvore_missile_l
+//		frame 19						launch_missile qvore_missile_l
+//		frame 19						sound_body snd_footstep
+//	}
+
+//	anim turret_attack				models/obihb/qvore/md5/range_attack3.md5anim {
+//		frame 1							call overrideLegs
+//		frame 7							create_missile qvore_missile_r
+//		frame 11						launch_missile qvore_missile_r
+//		frame 15						create_missile qvore_missile_l
+//		frame 19						launch_missile qvore_missile_l
+//		frame 19						sound_body snd_footstep
+//	}
+}
+
+entityDef monster_qvore {
+	"editor_mins"					"-48 -48 0"
+	"editor_maxs"					"48 48 96"
+	"inherit"					"monster_default"
+	"model"						"monster_qvore"
+	"scriptobject"					"monster_demon_revenant"
+	"size"						"94 94 96"
+	"use_aas"					"aas96"
+	"team"						"1"
+	"rank"						"2"
+	"health"					"800"
+	"melee_range"					"80"
+	"def_projectile"				"projectile_qvore_rocket"
+	"attack_cone"					"70"
+	"attack_accuracy"				"0"
+	"chatter_min"					"6"
+	"chatter_max"					"15"
+	"chatter_combat_min"				"3"
+	"chatter_combat_max"				"7"
+	"ragdoll"					"monster_qvore"
+	"bone_focus"					"head"
+	"mass"   					"250"
+
+	"burnaway"					"1.0"
+	"smoke_burnParticleSystem"			"burn_imp.prt-body"
+
+	"look_min"					"-90 -125 0"
+	"look_max"					"25 125 0"
+	"look_joint spine02"				"0.4 0.4 0"
+	"look_joint head"				"0.6 0.6 0"	
+
+	"damage_zone head"				"*neck *head"
+	"damage_zone chest"				"spine01 spine02"
+	"damage_zone left_arm"				"*upper_arm_l *lower_arm_l"
+	"damage_zone right_arm"				"*upper_arm_r *lower_arm_r"
+	"damage_zone legs"				"*upper_leg_r *upper_leg_l *upper_leg_b"
+	"damage_scale head"				"2"
+
+	"ik_numLegs"					"3"
+	"ik_footSize"					"1"
+	"ik_minWaistFloorDist"				"40"
+	"ik_waist"					"body"
+	"ik_hip1"					"upper_leg_l"
+	"ik_hip2"					"upper_leg_r"
+	"ik_hip3"					"upper_leg_b"
+	"ik_knee1"					"lower_leg_l"
+	"ik_knee2"					"lower_leg_r"
+	"ik_knee3"					"lower_leg_b"
+	"ik_ankle1"					"ankle_l"
+	"ik_ankle2"					"ankle_r"
+	"ik_ankle3"					"ankle_b"
+	"ik_dir1"					"knee_l"
+	"ik_dir2"					"knee_r"
+	"ik_dir3"					"knee_b"
+	"ik_foot1"					"foot_l"
+	"ik_foot2"					"foot_r"
+	"ik_foot3"					"foot_b"
+
+	"snd_footstep"					"monster_demon_revenant_footstep"
+	"snd_attackmelee_1"				"monster_demon_revenant_attackmelee"
+	"snd_sight"					"monster_qvore_sight1"
+	"snd_sight2"					"monster_qvore_sight1"
+	"snd_chatter"					"monster_demon_revenant_chatter"
+	"snd_chatter_combat"				"monster_demon_revenant_chatter_combat"
+	"snd_pain"					"monster_demon_revenant_pain"
+	"snd_attackmissile"				"monster_demon_imp_fireball_create"
+	"snd_death"					"monster_boss_vagary_death"
+	"snd_burn"					"monster_demon_archvile_burn"
+}
+
+entityDef damage_qvore_rocket {
+	"damage"						"50"
+	"kickDir"						"1 0 0"
+
+	"mtr_blob"						"genericDamage"
+	"blob_time"						"300"
+	"blob_size"						"400"
+	"blob_offset_x"						"400"
+
+	"knockback"						"10"
+
+	//"smoke_wound_flesh"					"bloodwound.smoke"
+	"snd_flesh"						"bullet_impact_flesh"
+
+	"kick_time"						"400"
+	"kick_amplitude"					"1"
+
+	"dv_time"						"100"
+}
+
+entityDef damage_qvore_rocketsplash {
+	"damage"						"10"
+	"radius"						"30"
+}
+
+entityDef projectile_qvore_rocket {
+	"spawnclass"						"idGuidedProjectile"
+	"mins"							"-2 -2 -5"
+	"maxs"							"2 2 5"
+	"cone"							"3"
+	"model"							"models/obihb/qvore/qvore_projectile.ase"
+
+	"def_damage"						"damage_qvore_rocket"
+	"def_splash_damage"					"damage_qvore_rocketsplash"
+	
+	"random"						"15 15 0"
+	"turn_max"						"180"
+	"clamp_dist"						"256"
+	"launchFromBarrel"					"1"
+	"health"						"5"
+	"velocity"						"300 0 0"
+	"angular_velocity"					"0"
+	"thrust"						""
+	"thrust_start"						"0"
+	"thrust_end"						"4"
+	"linear_friction"					"0"
+	"angular_friction"					"0"
+	"contact_friction"					"0"
+	"bounce"						"0"
+	"mass"							"10"
+	"gravity"						"0"
+	"fuse"							"7"
+	"burstMode"						"1"
+	"burstDist"						"32"
+	"burstVelocity"						"1.25"
+
+	"detonate_on_fuse"					"0"
+	"detonate_on_death"					"1"
+	"detonate_on_world"					"1"
+	"detonate_on_actor"					"1"
+
+	"impact_damage_effect"					"0"
+	"impact_gib"						"1"
+
+	//"mtr_detonate"					"textures/decals/ballburn_rev"
+	"decal_size"						"75" 
+
+	"smoke_fly"						"obihb_qvore_rocket_trail.prt"
+	"smoke_detonate"					""
+	"smoke_residue"						""
+	"smoke_bounce"						""
+	"smoke_fuse"						""
+
+	"debris_count"						"3"
+	"def_debris"						"debris_largeshrapnel"
+	"def_shrapnel"						"debris_shrapnel"
+
+	// parametric particles -- temp
+	"model_detonate"					"obihb_qvore_rocket_explode.prt"
+
+	"mtr_light_shader"					"lights/obihb_qvore_projectile"
+	"light_color"						"0.3 0.6 0.8"
+	"light_radius"						"100"
+	"light_offset"						"0 0 0"
+
+	"mtr_explode_light_shader"				"muzzleflash"
+	"explode_light_color"					"0.3 0.6 0.8"
+	"explode_light_radius"					"120"
+	"explode_light_fadetime"				"0.25"
+
+	"snd_fly"						"monster_demon_imp_fireball_flight"
+	"snd_explode"						"monster_demon_revenant_rocket_explode"
+	"snd_havetone"						"monster_demon_revenant_rocket_tone"
+}
+
+entityDef melee_qvoreLeftClaw {
+	// melee specific parameters
+	"snd_hit"						"monster_demon_imp_melee_hit"
+	"snd_miss"						"monster_demon_imp_melee_miss"
+	"kickDir"						"0 -1 0"
+
+
+	// damage parameters
+	"damage"						"16"
+
+	"mtr_blob"						"leftSlash"
+	"blob_time"						"300"
+	"blob_x"						"140"
+	"blob_y"						"-100"
+	"blob_width"						"600"
+	"blob_height"						"600"
+
+	"knockback"						"40"
+
+	"kick_time"						"400"
+	"kick_amplitude"					"2"
+
+	"dv_time"						"100"
+}
+
+entityDef melee_qvoreRightClaw {
+	"snd_hit"						"monster_demon_imp_melee_hit"
+	"snd_miss"						"monster_demon_imp_melee_miss"
+	"kickDir"						"0 1 0"
+
+	"damage"						"16"
+
+	"mtr_blob"						"rightSlash"
+	"blob_time"						"300"
+	"blob_x"						"-100"
+	"blob_y"						"-100"
+	"blob_width"						"600"
+	"blob_height"						"600"
+
+	"knockback"						"30"
+
+	"kick_time"						"400"
+	"kick_amplitude"					"2"
+
+	"dv_time"						"100"
+}
+
+entityDef melee_qvore {
+	"damage"						"16"
+	"kickDir"						".5 0 0"
+	"mtr_blob"						"genericDamage"
+	"blob_time"						"300"
+	"blob_size"						"400"
+	"blob_offset_x"						"400"
+
+
+	"knockback"						"40"
+	"kick_time"						"400"
+	"kick_amplitude"					"1"
+
+	"dv_time"						"100"
+	"snd_hit"						"fist_impact"
+	"snd_miss"						"fist_whoosh"	
+}
+
+entityDef melee_qvore_right {	
+	"damage"						"16"
+	"kickDir"						"0 1 0"
+
+	"mtr_blob"						"rightSmack"
+	"blob_time"						"600"
+	"blob_x"						"140"
+	"blob_y"						"-100"
+	"blob_width"						"600"
+	"blob_height"						"600"
+	
+	"knockback"						"60"
+	"kick_time"						"400"
+	"kick_amplitude"					"1"
+
+	"dv_time"						"100"
+	"snd_hit"						"monster_demon_imp_melee_hit"
+	"snd_miss"						"monster_demon_imp_melee_miss"	
+}
+
+entityDef melee_qvore_right_down {
+	"damage"						"16"
+	"kickDir"						".5 0 -1"
+	
+	"mtr_blob"						"rightSmack"
+	"blob_time"						"600"
+	"blob_x"						"140"
+	"blob_y"						"-100"
+	"blob_width"						"600"
+	"blob_height"						"600"
+
+
+	"knockback"						"70"
+	"kick_time"						"400"
+	"kick_amplitude"					"1"
+
+	"dv_time"						"100"
+	"snd_hit"						"fist_impact"
+	"snd_miss"						"fist_whoosh"	
+}
+
+entityDef melee_qvore_left {
+	"damage"						"16"
+	"kickDir"						"0 -1 0"
+	
+	"mtr_blob"						"leftSmack"
+	"blob_time"						"600"
+	"blob_x"						"-140"
+	"blob_y"						"-100"
+	"blob_width"						"600"
+	"blob_height"						"600"
+
+
+	"knockback"						"80"
+	"kick_time"						"400"
+	"kick_amplitude"					"1"
+
+	"dv_time"						"100"
+	"snd_hit"						"monster_demon_imp_melee_hit"
+	"snd_miss"						"monster_demon_imp_melee_miss"
+}
+
+entityDef melee_qvore_left_down {
+	"damage"						"16"
+	"kickDir"						"0 -1 0"
+	
+	"mtr_blob"						"leftSmack"
+	"blob_time"						"600"
+	"blob_x"						"-140"
+	"blob_y"						"-100"
+	"blob_width"						"600"
+	"blob_height"						"600"
+
+
+	"knockback"						"40"
+	"kick_time"						"400"
+	"kick_amplitude"					"1"
+
+	"dv_time"						"100"
+	"snd_hit"						"fist_impact"
+	"snd_miss"						"fist_whoosh"	
+}

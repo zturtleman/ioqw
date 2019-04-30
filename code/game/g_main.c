@@ -232,6 +232,8 @@ void QDECL G_Error(const char *fmt, ...) {
 	Q_vsnprintf(text, sizeof(text), fmt, argptr);
 	va_end(argptr);
 
+//	G_ShutdownBulletPhysics(); // Tobias BULLET
+
 	trap_Error(text);
 }
 
@@ -432,6 +434,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart) {
 		G_Printf("Not logging to disk.\n");
 	}
 
+//	G_InitBulletPhysics(); // Tobias BULLET
 	G_InitWorldSession();
 	G_RegisterCommands();
 	// initialize all entities for this game
@@ -493,6 +496,8 @@ G_ShutdownGame
 void G_ShutdownGame(int restart) {
 
 	G_Printf("==== ShutdownGame ====\n");
+
+//	G_ShutdownBulletPhysics(); // Tobias BULLET
 
 	if (level.logFile) {
 		G_LogPrintf("ShutdownGame:\n");
@@ -1755,7 +1760,7 @@ Advances the non-player objects in the world.
 =======================================================================================================================================
 */
 void G_RunFrame(int levelTime) {
-	int i;
+	int msec, i; // Tobias BULLET: added msec
 	gentity_t *ent;
 
 	// if we are waiting for the level to restart, do nothing
@@ -1766,8 +1771,14 @@ void G_RunFrame(int levelTime) {
 	level.framenum++;
 	level.previousTime = level.time;
 	level.time = levelTime;
+
+	msec = level.time - level.previousTime; // Tobias BULLET
 	// get any cvar changes
 	G_UpdateCvars();
+// Tobias BULLET
+	// simulate dynamics world
+//	G_RunPhysics(msec);
+// Tobias END
 	// go through all allocated objects
 	ent = &g_entities[0];
 

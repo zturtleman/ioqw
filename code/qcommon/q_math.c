@@ -1282,3 +1282,80 @@ float Q_acos(float c) {
 	return angle;
 }
 #endif
+// Tobias BULLET
+/*
+=======================================================================================================================================
+MatrixFromAngles
+=======================================================================================================================================
+*/
+void MatrixFromAngles(matrix_t m, vec_t pitch, vec_t yaw, vec_t roll) {
+	static float sr, sp, sy, cr, cp, cy;
+
+	// static to help MS compiler fp bugs
+	sp = sin(DEG2RAD(pitch));
+	cp = cos(DEG2RAD(pitch));
+
+	sy = sin(DEG2RAD(yaw));
+	cy = cos(DEG2RAD(yaw));
+
+	sr = sin(DEG2RAD(roll));
+	cr = cos(DEG2RAD(roll));
+
+	m[0] = cp * cy;
+	m[4] = (sr * sp * cy + cr * - sy);
+	m[8] = (cr * sp * cy + -sr * - sy);
+	m[12] = 0;
+	m[1] = cp * sy;
+	m[5] = (sr * sp * sy + cr * cy);
+	m[9] = (cr * sp * sy + -sr * cy);
+	m[13] = 0;
+	m[2] = -sp;
+	m[6] = sr * cp;
+	m[10] = cr * cp;
+	m[14] = 0;
+	m[3] = 0;
+	m[7] = 0;
+	m[11] = 0;
+	m[15] = 1;
+}
+
+/*
+=======================================================================================================================================
+MatrixSetupTransformFromRotation
+=======================================================================================================================================
+*/
+void MatrixSetupTransformFromRotation(matrix_t m, const matrix_t rot, const vec3_t origin) {
+
+	m[0] = rot[0];
+	m[4] = rot[4];
+	m[8] = rot[8];
+	m[12] = origin[0];
+	m[1] = rot[1];
+	m[5] = rot[5];
+	m[9] = rot[9];
+	m[13] = origin[1];
+	m[2] = rot[2];
+	m[6] = rot[6];
+	m[10] = rot[10];
+	m[14] = origin[2];
+	m[3] = 0;
+	m[7] = 0;
+	m[11] = 0;
+	m[15] = 1;
+}
+
+/*
+=======================================================================================================================================
+MatrixTransformPoint2
+=======================================================================================================================================
+*/
+void MatrixTransformPoint2(const matrix_t m, vec3_t inout) {
+	vec3_t tmp;
+
+	tmp[0] = m[0] * inout[0] + m[4] * inout[1] + m[8] * inout[2] + m[12];
+	tmp[1] = m[1] * inout[0] + m[5] * inout[1] + m[9] * inout[2] + m[13];
+	tmp[2] = m[2] * inout[0] + m[6] * inout[1] + m[10] * inout[2] + m[14];
+
+	VectorCopy(tmp, inout);
+}
+// Tobias END
